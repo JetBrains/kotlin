@@ -387,6 +387,10 @@ public abstract class StackValue {
             coerceFrom(topOfStackType, v);
             v.store(index, this.type);
         }
+
+        public int getIndex() {
+            return index;
+        }
     }
 
     public static class OnStack extends StackValue {

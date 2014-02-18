@@ -61,7 +61,7 @@ public interface LocalLookup {
                                         : StackValue.field(type, classType, fieldName, false);
 
                 closure.recordField(fieldName, type);
-                closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, type));
+                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, type));
 
                 return innerValue;
             }
@@ -92,7 +92,7 @@ public interface LocalLookup {
                 StackValue innerValue = StackValue.field(localType, classType, fieldName, false);
 
                 closure.recordField(fieldName, localType);
-                closure.captureVariable(new EnclosedValueDescriptor(d, innerValue, localType));
+                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, localType));
 
                 return innerValue;
             }

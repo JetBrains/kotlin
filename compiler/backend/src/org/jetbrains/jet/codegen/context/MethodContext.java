@@ -23,10 +23,7 @@ import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
@@ -81,4 +78,11 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return "Method: " + getContextDescriptor();
     }
 
+    public boolean isInlineFunction() {
+        DeclarationDescriptor descriptor = getContextDescriptor();
+        if (descriptor instanceof SimpleFunctionDescriptor) {
+            return ((SimpleFunctionDescriptor) descriptor).isInline();
+        }
+        return false;
+    }
 }

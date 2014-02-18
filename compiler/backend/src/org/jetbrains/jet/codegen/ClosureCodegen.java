@@ -28,12 +28,15 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.LocalLookup;
+import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -294,7 +297,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         return signature;
     }
 
-    private static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
+    public static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
         int paramCount = funDescriptor.getValueParameters().size();
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         ClassDescriptor funClass = funDescriptor.getReceiverParameter() == null

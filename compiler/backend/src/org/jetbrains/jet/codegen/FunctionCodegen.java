@@ -130,7 +130,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                     mv,
                     jvmSignature,
                     functionDescriptor,
-                    getThisTypeForFunction(functionDescriptor, methodContext),
+                    getThisTypeForFunction(functionDescriptor, methodContext, state.getTypeMapper()),
                     new Label(),
                     new Label(),
                     methodContext.getContextKind()
@@ -138,7 +138,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             return;
         }
 
-        generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy);
+        generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
 
         endVisit(mv, null, origin);
 
@@ -237,7 +237,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     }
 
     @Nullable
-    private Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context) {
+    private static Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context, @NotNull JetTypeMapper typeMapper) {
         ReceiverParameterDescriptor expectedThisObject = functionDescriptor.getExpectedThisObject();
         if (functionDescriptor instanceof ConstructorDescriptor) {
             return typeMapper.mapType(functionDescriptor);
@@ -253,17 +253,21 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    private void generateMethodBody(
+    public static void generateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext context,
             @NotNull JvmMethodSignature signature,
-            @NotNull FunctionGenerationStrategy strategy
+            @NotNull FunctionGenerationStrategy strategy,
+            @NotNull MemberCodegen parentCodegen
     ) {
         mv.visitCode();
 
         Label methodBegin = new Label();
         mv.visitLabel(methodBegin);
+
+        GenerationState state = parentCodegen.getState();
+        JetTypeMapper typeMapper = state.getTypeMapper();
 
         if (context.getParentContext() instanceof PackageFacadeContext) {
             generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
@@ -283,15 +287,16 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                 genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
             }
 
-            strategy.generateBody(mv, signature, context, getParentCodegen());
+            strategy.generateBody(mv, signature, context, parentCodegen);
         }
 
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-
-        Type thisType = getThisTypeForFunction(functionDescriptor, context);
-        generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
+        if (strategy.generateLocalVarTable()) {
+            Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
+            generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
+        }
     }
 
     private static void generateLocalVariableTable(

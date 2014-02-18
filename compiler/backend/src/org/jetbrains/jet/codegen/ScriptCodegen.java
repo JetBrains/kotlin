@@ -53,8 +53,12 @@ public class ScriptCodegen extends MemberCodegen {
         ClassDescriptor classDescriptorForScript = state.getBindingContext().get(CLASS_FOR_SCRIPT, scriptDescriptor);
         assert classDescriptorForScript != null;
 
+        Type className = state.getBindingContext().get(ASM_TYPE, classDescriptorForScript);
+        assert className != null;
+
+        ClassBuilder builder = state.getFactory().newVisitor(className, declaration.getContainingFile());
         ScriptContext scriptContext = parentContext.intoScript(scriptDescriptor, classDescriptorForScript);
-        return new ScriptCodegen(declaration, state, scriptContext, state.getEarlierScriptsForReplInterpreter());
+        return new ScriptCodegen(declaration, state, scriptContext, state.getEarlierScriptsForReplInterpreter(), builder);
     }
 
     @NotNull
@@ -70,9 +74,10 @@ public class ScriptCodegen extends MemberCodegen {
             @NotNull JetScript scriptDeclaration,
             @NotNull GenerationState state,
             @NotNull ScriptContext context,
-            @Nullable List<ScriptDescriptor> earlierScripts
+            @Nullable List<ScriptDescriptor> earlierScripts,
+            @NotNull ClassBuilder builder
     ) {
-        super(state, null);
+        super(state, null, context, builder);
         this.scriptDeclaration = scriptDeclaration;
         this.context = context;
         this.earlierScripts = earlierScripts == null ? Collections.<ScriptDescriptor>emptyList() : earlierScripts;
@@ -84,8 +89,7 @@ public class ScriptCodegen extends MemberCodegen {
         Type classType = bindingContext.get(ASM_TYPE, classDescriptorForScript);
         assert classType != null;
 
-        ClassBuilder classBuilder = state.getFactory().newVisitor(classType, scriptDeclaration.getContainingFile());
-
+        ClassBuilder classBuilder = getBuilder();
         classBuilder.defineClass(scriptDeclaration,
                                  V1_6,
                                  ACC_PUBLIC,

@@ -31,6 +31,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
@@ -53,7 +54,8 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public class PackageCodegen extends MemberCodegen {
+public class PackageCodegen extends GenerationStateAware {
+    @NotNull
     private final ClassBuilderOnDemand v;
 
     @NotNull
@@ -69,7 +71,7 @@ public class PackageCodegen extends MemberCodegen {
             @NotNull GenerationState state,
             @NotNull Collection<JetFile> packageFiles
     ) {
-        super(state, null);
+        super(state);
         checkAllFilesHaveSamePackage(packageFiles);
 
         this.v = v;
@@ -192,10 +194,10 @@ public class PackageCodegen extends MemberCodegen {
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
-
+        MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null);
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                memberCodegen.genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
         }
 
@@ -211,7 +213,7 @@ public class PackageCodegen extends MemberCodegen {
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment((JetFile) classOrObject.getContainingFile()));
-        genClassOrObject(context, classOrObject);
+        MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 
     /**

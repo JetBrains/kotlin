@@ -23,11 +23,13 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 public final class EnclosedValueDescriptor {
+    private final String fieldName;
     private final DeclarationDescriptor descriptor;
     private final StackValue innerValue;
     private final Type type;
 
-    public EnclosedValueDescriptor(DeclarationDescriptor descriptor, StackValue innerValue, Type type) {
+    public EnclosedValueDescriptor(String fieldName, DeclarationDescriptor descriptor, StackValue innerValue, Type type) {
+        this.fieldName = fieldName;
         this.descriptor = descriptor;
         this.innerValue = innerValue;
         this.type = type;
@@ -54,5 +56,9 @@ public final class EnclosedValueDescriptor {
         }
 
         throw new IllegalStateException();
+    }
+
+    public String getFieldName() {
+        return fieldName;
     }
 }
