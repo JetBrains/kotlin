@@ -1,5 +1,9 @@
+public fun <T> Iterable<T>.myforEach(operation: (T) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
 fun foo1() {
-    (1..5).forEach {
+    (1..5).myforEach {
         println(it)
     }
 }
