@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
@@ -181,8 +183,8 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         JetPsiUtil.deleteClass(this);
     }
 
-    //@Override
-    //public ItemPresentation getPresentation() {
-    //    return ItemPresentationProviders.getItemPresentation(this);
-    //}
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
+    }
 }

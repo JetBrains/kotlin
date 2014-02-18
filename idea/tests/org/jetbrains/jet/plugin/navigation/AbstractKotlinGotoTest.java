@@ -19,7 +19,10 @@ package org.jetbrains.jet.plugin.navigation;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.intellij.ide.util.gotoByName.FilteringGotoByModel;
+import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
+import com.intellij.lang.Language;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -37,9 +40,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureTestCase {
-    protected void doTest(String path) {
+    protected void doSymbolTest(String path) {
         myFixture.configureByFile(path);
-        assertGotoSymbol(getProject(), myFixture.getEditor());
+        assertGotoSymbol(new GotoSymbolModel2(getProject()), getProject(), myFixture.getEditor());
+    }
+
+    protected void doClassTest(String path) {
+        myFixture.configureByFile(path);
+        assertGotoSymbol(new GotoClassModel2(getProject()), getProject(), myFixture.getEditor());
     }
 
     private String dirPath = null;
@@ -68,7 +76,7 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
         return getTestName(true) + ".kt";
     }
 
-    private static void assertGotoSymbol(@NotNull Project project, @NotNull Editor editor) {
+    private static void assertGotoSymbol(FilteringGotoByModel<Language> model, @NotNull Project project, @NotNull Editor editor) {
         List<String> searchTextList = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// SEARCH_TEXT:");
         Assert.assertFalse("There's no search text in test data file given. Use '// SEARCH_TEXT:' directive",
                            searchTextList.isEmpty());
@@ -80,7 +88,6 @@ public abstract class AbstractKotlinGotoTest extends JetLightCodeInsightFixtureT
 
         List<Object> elementsByName = new ArrayList<Object>();
 
-        GotoSymbolModel2 model = new GotoSymbolModel2(project);
         String[] names = model.getNames(enableCheckbox);
         for (String name : names) {
             if (name != null && name.startsWith(searchText)) {

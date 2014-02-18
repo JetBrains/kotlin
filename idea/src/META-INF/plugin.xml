@@ -266,6 +266,8 @@
                               forClass="org.jetbrains.jet.lang.psi.JetNamedFunction"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetClassPresenter"
                               forClass="org.jetbrains.jet.lang.psi.JetClass"/>
+    <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetObjectPresenter"
+                              forClass="org.jetbrains.jet.lang.psi.JetObjectDeclaration"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetPropertyPresenter"
                               forClass="org.jetbrains.jet.lang.psi.JetProperty"/>
     <itemPresentationProvider implementationClass="org.jetbrains.jet.plugin.presentation.JetParameterPresenter"

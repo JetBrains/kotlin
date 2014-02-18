@@ -295,7 +295,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinGotoTest>()) {
-            model("navigation/gotoSymbol")
+            model("navigation/gotoClass", testMethod = "doClassTest")
+            model("navigation/gotoSymbol", testMethod = "doSymbolTest")
         }
 
         testClass(javaClass<AbstractQuickFixMultiFileTest>()) {
