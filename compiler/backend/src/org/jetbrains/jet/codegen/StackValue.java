@@ -29,7 +29,6 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -230,7 +229,7 @@ public abstract class StackValue {
             pop(v, fromType);
         }
         else if (fromType.getSort() == Type.VOID) {
-            if (toType.equals(JET_UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
+            if (toType.equals(UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
                 putUnitInstance(v);
             }
             else if (toType.getSort() == Type.OBJECT || toType.getSort() == Type.ARRAY) {
@@ -240,9 +239,9 @@ public abstract class StackValue {
                 pushDefaultPrimitiveValueOnStack(toType, v);
             }
         }
-        else if (toType.equals(JET_UNIT_TYPE)) {
+        else if (toType.equals(UNIT_TYPE)) {
             if (fromType.equals(getType(Object.class))) {
-                v.checkcast(JET_UNIT_TYPE);
+                v.checkcast(UNIT_TYPE);
             }
             else if (!fromType.equals(getType(Void.class))) {
                 pop(v, fromType);
@@ -283,7 +282,7 @@ public abstract class StackValue {
     }
 
     public static void putUnitInstance(InstructionAdapter v) {
-        v.visitFieldInsn(GETSTATIC, AsmTypeConstants.JET_UNIT_TYPE.getInternalName(), "VALUE", AsmTypeConstants.JET_UNIT_TYPE.getDescriptor());
+        v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), "VALUE", UNIT_TYPE.getDescriptor());
     }
 
     protected void putAsBoolean(InstructionAdapter v) {

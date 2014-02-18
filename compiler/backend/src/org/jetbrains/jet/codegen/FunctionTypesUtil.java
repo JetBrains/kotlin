@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+
 public class FunctionTypesUtil {
     private static final List<ClassDescriptor> FUNCTIONS;
     private static final List<ClassDescriptor> EXTENSION_FUNCTIONS;
@@ -163,10 +165,10 @@ public class FunctionTypesUtil {
     public static Type getFunctionTraitClassName(@NotNull FunctionDescriptor descriptor) {
         int paramCount = descriptor.getValueParameters().size();
         if (descriptor.getReceiverParameter() != null) {
-            return Type.getObjectType("jet/ExtensionFunction" + paramCount);
+            return Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/ExtensionFunction" + paramCount);
         }
         else {
-            return Type.getObjectType("jet/Function" + paramCount);
+            return Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function" + paramCount);
         }
     }
 

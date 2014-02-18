@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+
 public class IteratorNext extends IntrinsicMethod {
     @NotNull
     @Override
@@ -67,7 +69,7 @@ public class IteratorNext extends IntrinsicMethod {
             throw new UnsupportedOperationException();
         }
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        v.invokevirtual("jet/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor());
+        v.invokevirtual(BUILT_INS_PACKAGE_FQ_NAME + "/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor());
         return returnType;
     }
 }

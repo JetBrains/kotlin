@@ -26,7 +26,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JET_INT_RANGE_TYPE;
+import static org.jetbrains.asm4.Type.INT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.INT_RANGE_TYPE;
 
 public class ArrayIndices extends IntrinsicMethod {
     @NotNull
@@ -41,7 +42,7 @@ public class ArrayIndices extends IntrinsicMethod {
     ) {
         receiver.put(receiver.type, v);
         v.arraylength();
-        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", "(I)Ljet/IntRange;");
-        return JET_INT_RANGE_TYPE;
+        v.invokestatic("kotlin/jvm/internal/Intrinsics", "arrayIndices", Type.getMethodDescriptor(INT_RANGE_TYPE, INT_TYPE));
+        return INT_RANGE_TYPE;
     }
 }
