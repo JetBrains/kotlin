@@ -350,6 +350,11 @@ fun main(args: Array<String>) {
             model("intentions/removeUnnecessaryParentheses", testMethod = "doTestRemoveUnnecessaryParentheses")
             model("intentions/replaceWithDotQualifiedMethodCall", testMethod = "doTestReplaceWithDotQualifiedMethodCall")
             model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
+            model("intentions/replaceWithDotQualifiedMethodCall", testMethod = "doTestReplaceWithDotQualifiedMethodCall")
+            model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
+            model("intentions/insertCurlyBracesToTemplate", testMethod = "doTestInsertCurlyToTemplate")
+            model("intentions/moveLambdaInsideParenthesis", testMethod = "doTestMoveLambdaInsideParenthesis")
+            model("intentions/moveLambdaOutsideParenthesis", testMethod = "doTestMoveLambdaOutsideParenthesis")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

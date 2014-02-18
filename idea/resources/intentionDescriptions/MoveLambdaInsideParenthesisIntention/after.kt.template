@@ -1,0 +1,7 @@
+fun foo() {
+	bar(2, {it * 3})
+}
+
+fun bar(a: Int, b: Int->Int) {
+	return b(a)
+}
