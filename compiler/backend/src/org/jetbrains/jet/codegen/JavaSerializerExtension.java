@@ -21,11 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.NameTable;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.SerializerExtension;
+import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.kotlin.SignatureDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -67,10 +66,11 @@ public class JavaSerializerExtension extends SerializerExtension {
             @NotNull ProtoBuf.Callable.Builder proto,
             @NotNull NameTable nameTable
     ) {
+        SignatureSerializer signatureSerializer = new SignatureSerializer(nameTable);
         if (callable instanceof FunctionDescriptor) {
             Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
             if (method != null) {
-                proto.setExtension(JavaProtoBuf.methodSignature, new SignatureSerializer(nameTable).methodSignature(method));
+                proto.setExtension(JavaProtoBuf.methodSignature, signatureSerializer.methodSignature(method));
             }
         }
         else if (callable instanceof PropertyDescriptor) {
@@ -99,8 +99,18 @@ public class JavaSerializerExtension extends SerializerExtension {
                 syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, property);
             }
 
-            JavaProtoBuf.JavaPropertySignature signature = new SignatureSerializer(nameTable)
-                            .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getterMethod, setterMethod);
+            JavaProtoBuf.JavaPropertySignature signature;
+            if (callable instanceof DeserializedPropertyDescriptor) {
+                DeserializedPropertyDescriptor deserializedCallable = (DeserializedPropertyDescriptor) callable;
+                signature = signatureSerializer.copyPropertySignature(
+                        deserializedCallable.getProto().getExtension(JavaProtoBuf.propertySignature),
+                        deserializedCallable.getNameResolver()
+                );
+            }
+            else {
+                signature = signatureSerializer
+                        .propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getterMethod, setterMethod);
+            }
             proto.setExtension(JavaProtoBuf.propertySignature, signature);
         }
     }
@@ -136,6 +146,37 @@ public class JavaSerializerExtension extends SerializerExtension {
             }
 
             return signature.build();
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaPropertySignature copyPropertySignature(
+                @NotNull JavaProtoBuf.JavaPropertySignature signature,
+                @NotNull NameResolver nameResolver
+        ) {
+            Type fieldType;
+            String fieldName;
+            boolean isStaticInOuter;
+            SignatureDeserializer signatureDeserializer = new SignatureDeserializer(nameResolver);
+            if (signature.hasField()) {
+                JavaProtoBuf.JavaFieldSignature field = signature.getField();
+                fieldType = Type.getType(signatureDeserializer.typeDescriptor(field.getType()));
+                fieldName = nameResolver.getName(field.getName()).asString();
+                isStaticInOuter = field.getIsStaticInOuter();
+            }
+            else {
+                fieldType = null;
+                fieldName = null;
+                isStaticInOuter = false;
+            }
+
+            Method syntheticMethod = signature.hasSyntheticMethod()
+                    ? signatureDeserializer.methodSignature(signature.getSyntheticMethod())
+                    : null;
+
+            Method getter = signature.hasGetter() ? signatureDeserializer.methodSignature(signature.getGetter()) : null;
+            Method setter = signature.hasSetter() ? signatureDeserializer.methodSignature(signature.getSetter()) : null;
+
+            return propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getter, setter);
         }
 
         @NotNull

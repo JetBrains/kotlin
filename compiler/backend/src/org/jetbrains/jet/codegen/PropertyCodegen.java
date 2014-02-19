@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -80,27 +81,43 @@ public class PropertyCodegen extends GenerationStateAware {
         this.kind = context.getContextKind();
     }
 
-    public void gen(JetProperty p) {
-        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, p);
+    public void gen(@NotNull JetProperty property) {
+        VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
         assert variableDescriptor instanceof PropertyDescriptor : "Property should have a property descriptor: " + variableDescriptor;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
-                : "Generating property with a wrong kind (" + kind + "): " + propertyDescriptor;
+        gen(property, propertyDescriptor, property.getGetter(), property.getSetter());
+    }
 
+    public void generateInPackageFacade(@NotNull DeserializedPropertyDescriptor deserializedProperty) {
+        assert context instanceof PackageFacadeContext : "should be called only for generating package facade: " + context;
+        gen(null, deserializedProperty, null, null);
+    }
+
+    private void gen(
+            @Nullable JetProperty declaration,
+            @NotNull PropertyDescriptor descriptor,
+            @Nullable JetPropertyAccessor getter,
+            @Nullable JetPropertyAccessor setter
+    ) {
+        assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.TRAIT_IMPL
+                : "Generating property with a wrong kind (" + kind + "): " + descriptor;
 
         if (context instanceof PackageFacadeContext) {
             Type ownerType = ((PackageFacadeContext) context).getDelegateToClassType();
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, propertyDescriptor, shortNameByAsmType(ownerType));
+            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(ownerType));
         }
-        else if (!generateBackingField(p, propertyDescriptor)) {
-            generateSyntheticMethodIfNeeded(propertyDescriptor);
+        else {
+            assert declaration != null : "Declaration is null for different context: " + context;
+            if (!generateBackingField(declaration, descriptor)) {
+                generateSyntheticMethodIfNeeded(descriptor);
+            }
         }
 
-        generateGetter(p, propertyDescriptor, p.getGetter());
-        generateSetter(p, propertyDescriptor, p.getSetter());
+        generateGetter(declaration, descriptor, getter);
+        generateSetter(declaration, descriptor, setter);
 
-        context.recordSyntheticAccessorIfNeeded(propertyDescriptor, bindingContext);
+        context.recordSyntheticAccessorIfNeeded(descriptor, bindingContext);
     }
 
     public void generatePrimaryConstructorProperty(JetParameter p, PropertyDescriptor descriptor) {
@@ -244,7 +261,7 @@ public class PropertyCodegen extends GenerationStateAware {
         return generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
     }
 
-    private void generateGetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor getter) {
+    private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor getter) {
         boolean defaultGetter = getter == null || getter.getBodyExpression() == null;
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
@@ -274,7 +291,7 @@ public class PropertyCodegen extends GenerationStateAware {
         //}
     }
 
-    private void generateSetter(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor, JetPropertyAccessor setter) {
+    private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor setter) {
         boolean defaultSetter = setter == null || setter.getBodyExpression() == null;
 
         //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter

@@ -29,7 +29,7 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
@@ -132,8 +132,10 @@ public class JetTypeMapper extends BindingTraceAware {
             if (file != null) {
                 return PackageCodegen.getPackagePartInternalName(file);
             }
-            if (descriptor instanceof DeserializedSimpleFunctionDescriptor) {
-                return PackageCodegen.getPackagePartInternalName((DeserializedSimpleFunctionDescriptor) descriptor);
+            if (descriptor instanceof DeserializedCallableMemberDescriptor) {
+                //
+                // TODO calls from other modules/libraries should use facade: KT-4590
+                return PackageCodegen.getPackagePartInternalName((DeserializedCallableMemberDescriptor) descriptor);
             }
         }
         return PackageClassUtils.getPackageClassFqName(packageFragment.getFqName()).asString().replace('.', '/');

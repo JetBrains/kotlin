@@ -155,8 +155,24 @@ public class CodegenUtil {
 
         return !isFakeOverride && !isDelegate &&
                (((context.hasThisDescriptor() && containingDeclaration == context.getThisDescriptor()) ||
-                 (context.getParentContext() instanceof PackageContext && context.getParentContext().getContextDescriptor() == containingDeclaration))
+                 (context.getParentContext() instanceof PackageContext
+                  && isSamePackageInSameModule(context.getParentContext().getContextDescriptor(), containingDeclaration)))
                 && context.getContextKind() != OwnerKind.TRAIT_IMPL);
+    }
+
+    private static boolean isSamePackageInSameModule(
+            @NotNull DeclarationDescriptor owner1,
+            @NotNull DeclarationDescriptor owner2
+    ) {
+        if (owner1 instanceof PackageFragmentDescriptor && owner2 instanceof PackageFragmentDescriptor) {
+            PackageFragmentDescriptor fragment1 = (PackageFragmentDescriptor) owner1;
+            PackageFragmentDescriptor fragment2 = (PackageFragmentDescriptor) owner2;
+
+            // backing field should be used directly within same module of same package
+            // TODO calls from other modules/libraries should use facade: KT-4590
+            return fragment1.getFqName().equals(fragment2.getFqName()) && DescriptorUtils.areInSameModule(fragment1, fragment2);
+        }
+        return false;
     }
 
     public static boolean isCallInsideSameModuleAsDeclared(CallableMemberDescriptor declarationDescriptor, CodegenContext context) {

@@ -38,6 +38,8 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -123,12 +125,12 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    private List<CallableMemberDescriptor> getAlreadyCompiledCallables() {
-        List<CallableMemberDescriptor> callables = Lists.newArrayList();
+    private List<DeserializedCallableMemberDescriptor> getAlreadyCompiledCallables() {
+        List<DeserializedCallableMemberDescriptor> callables = Lists.newArrayList();
         if (compiledPackageFragment != null) {
             for (DeclarationDescriptor member : compiledPackageFragment.getMemberScope().getAllDescriptors()) {
-                if (member instanceof DeserializedSimpleFunctionDescriptor) {
-                    callables.add((DeserializedSimpleFunctionDescriptor) member);
+                if (member instanceof DeserializedCallableMemberDescriptor) {
+                    callables.add((DeserializedCallableMemberDescriptor) member);
                 }
             }
         }
@@ -136,38 +138,47 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     private void generateDelegationsToAlreadyCompiled(Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
-        for (final CallableMemberDescriptor member : getAlreadyCompiledCallables()) {
+        for (final DeserializedCallableMemberDescriptor member : getAlreadyCompiledCallables()) {
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
                 public void run() {
-                    DeserializedSimpleFunctionDescriptor deserializedFunction = (DeserializedSimpleFunctionDescriptor) member;
-
                     FieldOwnerContext context = CodegenContext.STATIC.intoPackageFacade(
-                            Type.getObjectType(getPackagePartInternalName(deserializedFunction)),
+                            Type.getObjectType(getPackagePartInternalName(member)),
                             compiledPackageFragment);
 
-                    FunctionCodegen fuCo = new FunctionCodegen(
+                    FunctionCodegen functionCodegen = new FunctionCodegen(
                             context,
                             v.getClassBuilder(),
                             state,
                             getMemberCodegen(context)
                     );
 
-                    JvmMethodSignature signature = typeMapper.mapSignature(deserializedFunction, OwnerKind.PACKAGE);
-                    fuCo.generateMethod(null, signature, deserializedFunction,
-                                        new FunctionGenerationStrategy() {
-                                            @Override
-                                            public void generateBody(
-                                                    @NotNull MethodVisitor mv,
-                                                    @NotNull JvmMethodSignature signature,
-                                                    @NotNull MethodContext context,
-                                                    @Nullable MemberCodegen parentCodegen
-                                            ) {
-                                                throw new IllegalStateException("shouldn't be called");
-                                            }
-                                        });
+                    if (member instanceof DeserializedSimpleFunctionDescriptor) {
+                        DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
+                        JvmMethodSignature signature = typeMapper.mapSignature(function, OwnerKind.PACKAGE);
+                        functionCodegen.generateMethod(null, signature, function,
+                                                       new FunctionGenerationStrategy() {
+                                                           @Override
+                                                           public void generateBody(
+                                                                   @NotNull MethodVisitor mv,
+                                                                   @NotNull JvmMethodSignature signature,
+                                                                   @NotNull MethodContext context,
+                                                                   @Nullable MemberCodegen parentCodegen
+                                                           ) {
+                                                               throw new IllegalStateException("shouldn't be called");
+                                                           }
+                                                       });
 
-                    v.getClassBuilder().getSerializationBindings().put(METHOD_FOR_FUNCTION, deserializedFunction, signature.getAsmMethod());
+                        v.getClassBuilder().getSerializationBindings().put(METHOD_FOR_FUNCTION, function, signature.getAsmMethod());
+                    }
+                    else if (member instanceof DeserializedPropertyDescriptor) {
+                        PropertyCodegen propertyCodegen = new PropertyCodegen(
+                                context, v.getClassBuilder(), functionCodegen, getMemberCodegen(context));
+                        propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
+                    }
+                    else {
+                        throw new IllegalStateException("Unexpected member: " + member);
+                    }
                 }
             });
         }
@@ -386,14 +397,14 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    public static String getPackagePartInternalName(@NotNull DeserializedSimpleFunctionDescriptor deserializedFunction) {
-        DeclarationDescriptor parent = deserializedFunction.getContainingDeclaration();
+    public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor deserializedCallable) {
+        DeclarationDescriptor parent = deserializedCallable.getContainingDeclaration();
         assert parent instanceof PackageFragmentDescriptor : "parent should be package, but was: " + parent;
 
-        assert deserializedFunction.getProto().hasExtension(JavaProtoBuf.implClassName)
-                : "implClassName extension is absent for " + deserializedFunction;
-        Name shortName = deserializedFunction.getNameResolver()
-                .getName(deserializedFunction.getProto().getExtension(JavaProtoBuf.implClassName));
+        assert deserializedCallable.getProto().hasExtension(JavaProtoBuf.implClassName)
+                : "implClassName extension is absent for " + deserializedCallable;
+        Name shortName = deserializedCallable.getNameResolver()
+                .getName(deserializedCallable.getProto().getExtension(JavaProtoBuf.implClassName));
         FqName packagePartFqName = ((PackageFragmentDescriptor) parent).getFqName().child(shortName);
         return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
     }
