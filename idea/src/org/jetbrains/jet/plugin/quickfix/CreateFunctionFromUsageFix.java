@@ -117,7 +117,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             }
         }
 
-        @NotNull JetType getType() {
+        @NotNull
+        JetType getType() {
             return type;
         }
 
@@ -238,7 +239,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 if (variance == Variance.IN_VARIANCE) {
                     types.addAll(TypeUtils.getAllSupertypes(type));
                 }
-            } else {
+            }
+            else {
                 assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
                 for (JetType type : guessTypesForExpression(expressionOfType, context)) {
                     types.add(type);
@@ -310,7 +312,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (cachedNameCandidatesFromExpression != null) return cachedNameCandidatesFromExpression;
             if (isType()) {
                 cachedNameCandidatesFromExpression = ArrayUtil.EMPTY_STRING_ARRAY;
-            } else {
+            }
+            else {
                 assert expressionOfType != null : "!isType() means type == null && expressionOfType != null";
                 JetNameValidator dummyValidator = JetNameValidator.getEmptyValidator(expressionOfType.getProject());
                 cachedNameCandidatesFromExpression = JetNameSuggester.suggestNamesForExpression(expressionOfType, dummyValidator);
@@ -531,8 +534,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             }
 
             return typeParameterNames.isEmpty()
-                    ? new TextResult("")
-                    : new TextResult(" <" + StringUtil.join(typeParameterNames, ", ") + ">");
+                   ? new TextResult("")
+                   : new TextResult(" <" + StringUtil.join(typeParameterNames, ", ") + ">");
         }
 
         @Nullable
@@ -618,7 +621,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         if (ownerTypeCandidates.size() == 1 || ApplicationManager.getApplication().isUnitTestMode()) {
             selectedReceiverType = ownerTypeCandidates.get(0);
             addFunctionToSelectedOwner();
-        } else {
+        }
+        else {
             // class selection
             List<ClassCandidate> options = new ArrayList<ClassCandidate>();
             for (TypeCandidate ownerTypeCandidate : ownerTypeCandidates) {
@@ -648,9 +652,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             };
 
             builder.setTitle(JetBundle.message("choose.target.class.or.trait.title"))
-                   .setItemChoosenCallback(runnable)
-                   .createPopup()
-                   .showInBestPositionFor(currentFileEditor);
+                    .setItemChoosenCallback(runnable)
+                    .createPopup()
+                    .showInBestPositionFor(currentFileEditor);
         }
     }
 
@@ -662,7 +666,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         if (classDeclaration instanceof JetClass) {
             ownerClass = (JetClass) classDeclaration;
             isExtension = !ownerClass.isWritable();
-        } else {
+        }
+        else {
             isExtension = true;
         }
         isUnit = returnType.isType() && KotlinBuiltIns.getInstance().isUnit(returnType.getType());
@@ -670,7 +675,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         JetScope scope;
         if (isExtension) {
             scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
-        } else {
+        }
+        else {
             scope = ((ClassDescriptorWithResolutionScopes) ownerClassDescriptor).getScopeForMemberDeclarationResolution();
         }
 
@@ -718,7 +724,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         for (int i = 0; i < parameterStrings.length; i++) {
             parameterStrings[i] = "p" + i + ": Any";
         }
-        String parametersString = StringUtil.join(parameterStrings,", ");
+        String parametersString = StringUtil.join(parameterStrings, ", ");
         String returnTypeString = isUnit ? "" : ": Any";
         if (isExtension) { // create as extension function
             String ownerTypeString = selectedReceiverType.getRenderedType();
@@ -727,7 +733,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             containingFile = currentFile;
             containingFileEditor = currentFileEditor;
             return (JetNamedFunction) currentFile.add(func);
-        } else { // create as regular function
+        }
+        else { // create as regular function
             String functionText = String.format("fun %s(%s)%s { }", functionName, parametersString, returnTypeString);
             func = JetPsiFactory.createFunction(project, functionText);
             PsiFile classContainingFile = ownerClass.getContainingFile();
@@ -897,7 +904,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         Properties properties = new Properties();
         if (isUnit) {
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, "Unit");
-        } else {
+        }
+        else {
             JetTypeReference returnTypeRef = func.getReturnTypeRef();
             assert returnTypeRef != null;
             properties.setProperty(FileTemplate.ATTRIBUTE_RETURN_TYPE, returnTypeRef.getText());
@@ -909,9 +917,11 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         @NonNls String bodyText;
         try {
             bodyText = fileTemplate.getText(properties);
-        } catch (ProcessCanceledException e) {
+        }
+        catch (ProcessCanceledException e) {
             throw e;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new IncorrectOperationException("Failed to parse file template", e);
         }
         JetExpression newBodyExpression = JetPsiFactory.createFunctionBody(func.getProject(), bodyText);
@@ -930,7 +940,10 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
     }
 
     @NotNull
-    private TypeParameterListExpression setupTypeParameterListTemplate(@NotNull TemplateBuilderImpl builder, @NotNull JetNamedFunction func) {
+    private TypeParameterListExpression setupTypeParameterListTemplate(
+            @NotNull TemplateBuilderImpl builder,
+            @NotNull JetNamedFunction func
+    ) {
         Map<String, String[]> typeParameterMap = new HashMap<String, String[]>();
         String[] receiverTypeParameterNames = selectedReceiverType.getTypeParameterNames();
 
@@ -974,7 +987,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 possibleNames = new String[possibleNamesFromExpression.length + 1];
                 possibleNames[0] = preferredName;
                 System.arraycopy(possibleNamesFromExpression, 0, possibleNames, 1, possibleNamesFromExpression.length);
-            } else {
+            }
+            else {
                 possibleNames = possibleNamesFromExpression;
             }
 
@@ -1059,12 +1073,17 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         if (declarationDescriptor instanceof TypeParameterDescriptor) {
             String replacement = typeParameterNameMap.get(declarationDescriptor);
             return replacement == null ? declarationDescriptor.getName().asString() : replacement;
-        } else {
+        }
+        else {
             return fq ? DescriptorUtils.getFqName(declarationDescriptor).asString() : declarationDescriptor.getName().asString();
         }
     }
 
-    private static String renderType(@NotNull JetType type, @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap, boolean fq) {
+    private static String renderType(
+            @NotNull JetType type,
+            @NotNull Map<TypeParameterDescriptor, String> typeParameterNameMap,
+            boolean fq
+    ) {
         List<TypeProjection> projections = type.getArguments();
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
         assert declarationDescriptor != null;
@@ -1113,7 +1132,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
             if (descriptor instanceof TypeParameterDescriptor) {
                 typeParameters.add((TypeParameterDescriptor) descriptor);
             }
-        } else {
+        }
+        else {
             for (TypeProjection projection : arguments) {
                 typeParameters.addAll(getTypeParametersInType(projection.getType()));
             }
@@ -1213,7 +1233,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         }
         if (expectedTypes.isEmpty()) {
             return new JetType[0]; // can't guess
-        } else {
+        }
+        else {
             for (JetType expectedType : expectedTypes) {
                 if (ErrorUtils.containsErrorType(expectedType)) {
                     return new JetType[0]; // guessing resulted in an error
@@ -1223,7 +1244,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         JetType type = TypeUtils.intersect(JetTypeChecker.INSTANCE, expectedTypes);
         if (type != null) {
             return new JetType[] {type};
-        } else { // intersection doesn't exist; let user make an imperfect choice
+        }
+        else { // intersection doesn't exist; let user make an imperfect choice
             return expectedTypes.toArray(new JetType[expectedTypes.size()]);
         }
     }
@@ -1279,7 +1301,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 TypeOrExpressionThereof valType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
                 parameters.add(new Parameter("value", valType));
 
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE);
+                TypeOrExpressionThereof returnType =
+                        new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getUnitType(), Variance.OUT_VARIANCE);
                 return new CreateFunctionFromUsageFix(accessExpr, arrayType, "set", returnType, parameters);
             }
         };
@@ -1300,7 +1323,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
                 JetForExpression forExpr = QuickFixUtil.getParentElementOfType(diagnostic, JetForExpression.class);
                 if (forExpr == null) return null;
-                TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE);
+                TypeOrExpressionThereof returnType =
+                        new TypeOrExpressionThereof(KotlinBuiltIns.getInstance().getBooleanType(), Variance.OUT_VARIANCE);
                 return new CreateFunctionFromUsageFix(forExpr, ownerType, "hasNext", returnType, new ArrayList<Parameter>());
             }
         };
@@ -1391,7 +1415,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                     multiDeclaration = forExpr.getMultiParameter();
                     assert multiDeclaration != null; // for-loop must have a multi-declaration, for same reason as above
                     ownerType = new TypeOrExpressionThereof(diagnosticWithParameters.getB(), Variance.IN_VARIANCE);
-                } else {
+                }
+                else {
                     JetExpression rhs = multiDeclaration.getInitializer();
                     if (rhs == null) return null;
                     ownerType = new TypeOrExpressionThereof(rhs, Variance.IN_VARIANCE);
@@ -1401,7 +1426,8 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
                 JetMultiDeclarationEntry entry = entries.get(componentNumber);
                 TypeOrExpressionThereof returnType = new TypeOrExpressionThereof(entry, Variance.OUT_VARIANCE);
 
-                return new CreateFunctionFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType, new ArrayList<Parameter>());
+                return new CreateFunctionFromUsageFix(multiDeclaration, ownerType, name.getIdentifier(), returnType,
+                                                      new ArrayList<Parameter>());
             }
         };
     }
