@@ -65,6 +65,7 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
 
     private fun doTest() {
         addModule("module", array<String>(getAbsolutePath("src")), null, null, addJdk("my jdk"))
+        AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
 
         buildGetLog()
 

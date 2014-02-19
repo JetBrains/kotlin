@@ -7,3 +7,6 @@ fun foo() {
 
 fun baz() {
 }
+
+val prop1 = ""
+val prop2 = prop1

@@ -17,10 +17,12 @@
 package org.jetbrains.jet.jps.build;
 
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.builders.JpsBuildTestCase;
 import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil;
+import org.jetbrains.jps.model.JpsProject;
 import org.jetbrains.jps.model.java.JpsAnnotationRootType;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaLibraryType;
@@ -76,11 +78,15 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
     }
 
     protected JpsLibrary addKotlinRuntimeDependency() {
-       return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, myProject.getModules(), false);
+       return addKotlinRuntimeDependency(myProject);
     }
 
-    protected JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
-        JpsLibrary library = myProject.addLibrary("kotlin-runtime", JpsJavaLibraryType.INSTANCE);
+    static JpsLibrary addKotlinRuntimeDependency(@NotNull JpsProject project) {
+       return addKotlinRuntimeDependency(JpsJavaDependencyScope.COMPILE, project.getModules(), false);
+    }
+
+    protected static JpsLibrary addKotlinRuntimeDependency(JpsJavaDependencyScope type, Collection<JpsModule> modules, boolean exported) {
+        JpsLibrary library = modules.iterator().next().getProject().addLibrary("kotlin-runtime", JpsJavaLibraryType.INSTANCE);
         File runtime = PathUtil.getKotlinPathsForDistDirectory().getRuntimePath();
         library.addRoot(runtime, JpsOrderRootType.COMPILED);
         for (JpsModule module : modules) {
