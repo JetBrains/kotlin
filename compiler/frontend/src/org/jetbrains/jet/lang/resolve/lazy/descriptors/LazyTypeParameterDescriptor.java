@@ -83,7 +83,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
-                if (jetTypeConstraint.isClassObjectContraint() != forClassObject) continue;
+                if (jetTypeConstraint.isClassObjectConstraint() != forClassObject) continue;
 
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
