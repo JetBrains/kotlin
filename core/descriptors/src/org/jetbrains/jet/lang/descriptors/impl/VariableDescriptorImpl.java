@@ -73,9 +73,8 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     public void setCompileTimeInitializer(@NotNull NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer) {
-        if (!isVar()) {
-            this.compileTimeInitializer = compileTimeInitializer;
-        }
+        assert !isVar() : "Compile-time value for property initializer should be recorded only for final variables " + getName();
+        this.compileTimeInitializer = compileTimeInitializer;
     }
 
     @Override

@@ -959,7 +959,7 @@ public class DescriptorResolver {
                                 @Override
                                 public JetType invoke() {
                                     JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
-                                    setConstantForVariable(variableDescriptor, initializer, initializerType, trace);
+                                    setConstantForVariableIfNeeded(variableDescriptor, initializer, initializerType, trace);
                                     return transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace);
                                 }
                             }
@@ -967,7 +967,7 @@ public class DescriptorResolver {
                 }
                 else {
                     JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
-                    setConstantForVariable(variableDescriptor, initializer, initializerType, trace);
+                    setConstantForVariableIfNeeded(variableDescriptor, initializer, initializerType, trace);
                     return initializerType;
                 }
             }
@@ -976,18 +976,20 @@ public class DescriptorResolver {
             JetType type = typeResolver.resolveType(scope, propertyTypeRef, trace, true);
             JetExpression initializer = variable.getInitializer();
             if (initializer != null) {
-                setConstantForVariable(variableDescriptor, initializer, type, trace);
+                setConstantForVariableIfNeeded(variableDescriptor, initializer, type, trace);
             }
             return type;
         }
     }
 
-    private void setConstantForVariable(
+    private void setConstantForVariableIfNeeded(
             @NotNull VariableDescriptorImpl variableDescriptor,
             @NotNull final JetExpression initializer,
             @NotNull final JetType initializerType,
             @NotNull final BindingTrace trace
     ) {
+        if (variableDescriptor.isVar()) return;
+
         variableDescriptor.setCompileTimeInitializer(storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
             @Nullable
             @Override

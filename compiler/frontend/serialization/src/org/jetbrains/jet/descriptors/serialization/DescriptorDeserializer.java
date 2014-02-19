@@ -194,17 +194,22 @@ public class DescriptorDeserializer {
             }
         }
 
-        property.setCompileTimeInitializer(
-                storageManager.createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
-                    @Nullable
-                    @Override
-                    public CompileTimeConstant<?> invoke() {
-                        return getPropertyConstant(
-                                containingDeclaration, proto, flags, AnnotatedCallableKind.PROPERTY,
-                                deserializers.getConstantDeserializer(), nameResolver);
-                    }
-                })
-        );
+        if (Flags.HAS_CONSTANT.get(flags)) {
+            property.setCompileTimeInitializer(
+                    storageManager.createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+                        @Nullable
+                        @Override
+                        public CompileTimeConstant<?> invoke() {
+                            assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
+                                    : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
+                            return deserializers.getConstantDeserializer().loadPropertyConstant(
+                                                            (ClassOrPackageFragmentDescriptor) containingDeclaration,
+                                                            proto, nameResolver,
+                                                            AnnotatedCallableKind.PROPERTY);
+                        }
+                    })
+            );
+        }
 
         property.initialize(getter, setter);
 
@@ -278,23 +283,6 @@ public class DescriptorDeserializer {
                ? annotationDeserializer
                        .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
                : Annotations.EMPTY;
-    }
-
-    @Nullable
-    public static CompileTimeConstant<?> getPropertyConstant(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Callable proto,
-            int flags,
-            @NotNull AnnotatedCallableKind kind,
-            @NotNull ConstantDeserializer constantDeserializer,
-            @NotNull NameResolver nameResolver
-    ) {
-        assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
-                : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-        return Flags.HAS_CONSTANT.get(flags)
-               ? constantDeserializer
-                       .loadPropertyConstant((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
-               : null;
     }
 
     public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {

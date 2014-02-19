@@ -196,7 +196,7 @@ public class DescriptorSerializer {
                 }
             }
 
-            hasConstant = propertyDescriptor.getCompileTimeInitializer() != null;
+            hasConstant = !propertyDescriptor.isVar() && propertyDescriptor.getCompileTimeInitializer() != null;
         }
 
         builder.setFlags(Flags.getCallableFlags(
