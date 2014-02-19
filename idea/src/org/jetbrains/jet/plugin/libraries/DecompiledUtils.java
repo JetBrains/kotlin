@@ -18,22 +18,55 @@ package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 public final class DecompiledUtils {
+    private static final String PACKAGE_FRAGMENT_SIGNATURE = PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-";
 
-    public static boolean isKotlinCompiledFile(@NotNull Project project, @NotNull VirtualFile file) {
+    public static boolean isKotlinCompiledFile(@NotNull VirtualFile file) {
         if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
             return false;
         }
-        //TODO: check index
-        KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(project).createKotlinClass(file);
-        KotlinClassHeader header = kotlinClass.getClassHeader();
+
+        return isKotlinInternalClass(file) || checkFile(file);
+    }
+
+    public static boolean isKotlinInternalClass(@NotNull VirtualFile file) {
+        // FIXME: not sure if this is a good heuristic
+        String name = file.getName();
+        int pos = name.indexOf('$');
+        if (pos > 0) {
+            name = name.substring(0, pos) + ".class";
+            VirtualFile supposedHost = file.getParent().findChild(name);
+            if (supposedHost != null) {
+                return checkFile(supposedHost);
+            }
+        }
+
+        if (name.contains(PACKAGE_FRAGMENT_SIGNATURE)) {
+            KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
+            if (header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean checkFile(@NotNull VirtualFile file) {
+        KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
         return header != null && header.getAnnotationData() != null;
+    }
+
+    public static CharSequence decompile(@NotNull VirtualFile file) {
+        Project project = ProjectManager.getInstance().getOpenProjects()[0];  // FIXME: get rid of project usage here
+        return JetDecompiledData.getDecompiledData(file, project).getFileText();
     }
 
     private DecompiledUtils() {
