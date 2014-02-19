@@ -19,9 +19,10 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.*;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -150,6 +151,11 @@ public class DescriptorDeserializersStorage {
         @NotNull
         public static MemberSignature fromMethodNameAndDesc(@NotNull Name name, @NotNull String desc) {
             return new MemberSignature(name.asString() + desc);
+        }
+
+        @NotNull
+        public static MemberSignature fromAsmMethod(@NotNull Method method) {
+            return new MemberSignature(method.toString());
         }
 
         @NotNull

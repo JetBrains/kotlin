@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -64,17 +63,17 @@ public abstract class BaseDescriptorDeserializer {
         switch (kind) {
             case FUNCTION:
                 if (proto.hasExtension(JavaProtoBuf.methodSignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature));
+                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature)));
                 }
                 break;
             case PROPERTY_GETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter());
+                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter()));
                 }
                 break;
             case PROPERTY_SETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter());
+                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter()));
                 }
                 break;
             case PROPERTY:
@@ -88,7 +87,7 @@ public abstract class BaseDescriptorDeserializer {
                         return MemberSignature.fromFieldNameAndDesc(name, type);
                     }
                     else if (propertySignature.hasSyntheticMethod()) {
-                        return deserializer.methodSignature(propertySignature.getSyntheticMethod());
+                        return MemberSignature.fromAsmMethod(deserializer.methodSignature(propertySignature.getSyntheticMethod()));
                     }
                 }
                 break;
@@ -155,60 +154,6 @@ public abstract class BaseDescriptorDeserializer {
         }
         else {
             throw new IllegalStateException("Unrecognized descriptor: " + descriptor);
-        }
-    }
-
-    protected static class SignatureDeserializer {
-        // These types are ordered according to their sorts, this is significant for deserialization
-        private static final char[] PRIMITIVE_TYPES = new char[] { 'V', 'Z', 'C', 'B', 'S', 'I', 'F', 'J', 'D' };
-
-        private final NameResolver nameResolver;
-
-        public SignatureDeserializer(@NotNull NameResolver nameResolver) {
-            this.nameResolver = nameResolver;
-        }
-
-        @NotNull
-        public MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
-            Name name = nameResolver.getName(signature.getName());
-
-            StringBuilder sb = new StringBuilder();
-            sb.append('(');
-            for (int i = 0, length = signature.getParameterTypeCount(); i < length; i++) {
-                typeDescriptor(signature.getParameterType(i), sb);
-            }
-            sb.append(')');
-            typeDescriptor(signature.getReturnType(), sb);
-
-            return MemberSignature.fromMethodNameAndDesc(name, sb.toString());
-        }
-
-        @NotNull
-        public String typeDescriptor(@NotNull JavaProtoBuf.JavaType type) {
-            return typeDescriptor(type, new StringBuilder()).toString();
-        }
-
-        @NotNull
-        private StringBuilder typeDescriptor(@NotNull JavaProtoBuf.JavaType type, @NotNull StringBuilder sb) {
-            for (int i = 0; i < type.getArrayDimension(); i++) {
-                sb.append('[');
-            }
-
-            if (type.hasPrimitiveType()) {
-                sb.append(PRIMITIVE_TYPES[type.getPrimitiveType().ordinal()]);
-            }
-            else {
-                sb.append("L");
-                sb.append(fqNameToInternalName(nameResolver.getFqName(type.getClassFqName())));
-                sb.append(";");
-            }
-
-            return sb;
-        }
-
-        @NotNull
-        private static String fqNameToInternalName(@NotNull FqName fqName) {
-            return fqName.asString().replace('.', '/');
         }
     }
 }
