@@ -38,11 +38,11 @@ public class CastDiagnosticsUtil {
     /**
      * Two types are related, roughly, when one is a subtype or supertype of the other.
      * <p/>
-     * Note that some types have platform-specific counterparts, i.e. jet.String is mapped to java.lang.String,
+     * Note that some types have platform-specific counterparts, i.e. kotlin.String is mapped to java.lang.String,
      * such types (and all their sub- and supertypes) are related too.
      * <p/>
      * Due to limitations in PlatformToKotlinClassMap, we only consider mapping of platform classes to Kotlin classed
-     * (i.e. java.lang.String -> jet.String) and ignore mappings that go the other way.
+     * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
      */
     private static boolean isRelated(@NotNull JetType a, @NotNull JetType b, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
         List<JetType> aTypes = mapToPlatformIndependentTypes(a, platformToKotlinClassMap);

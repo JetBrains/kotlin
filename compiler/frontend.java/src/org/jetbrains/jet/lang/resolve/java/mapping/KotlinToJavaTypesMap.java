@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
@@ -84,10 +83,10 @@ public class KotlinToJavaTypesMap extends JavaToKotlinClassMapBuilder {
 
     /**
      * E.g.
-     * jet.Throwable -> java.lang.Throwable
-     * jet.Deprecated -> java.lang.annotation.Deprecated
-     * jet.Int -> java.lang.Integer
-     * jet.IntArray -> null
+     * kotlin.Throwable -> java.lang.Throwable
+     * kotlin.deprecated -> java.lang.annotation.Deprecated
+     * kotlin.Int -> java.lang.Integer
+     * kotlin.IntArray -> null
      */
     @Nullable
     public FqName getKotlinToJavaFqName(@NotNull FqName fqName) {

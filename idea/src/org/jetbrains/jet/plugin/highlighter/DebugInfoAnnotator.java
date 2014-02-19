@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 /**
- * Quick showing possible problems with jet internals in IDEA with a tooltips
+ * Quick showing possible problems with Kotlin internals in IDEA with tooltips
  */
 public class DebugInfoAnnotator implements Annotator {
 
