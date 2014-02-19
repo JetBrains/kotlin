@@ -33,9 +33,7 @@ import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TopDownAnalysisContext implements BodiesResolveContext {
 
@@ -43,6 +41,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
     protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragments = Maps.newHashMap();
+    protected final Set<JetFile> files = new LinkedHashSet<JetFile>();
     private List<MutableClassDescriptorLite> classesTopologicalOrder = null;
 
     private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
@@ -136,7 +135,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @Override
     public Collection<JetFile> getFiles() {
-        return packageFragments.keySet();
+        return files;
+    }
+
+    public void addFile(@NotNull JetFile file) {
+        files.add(file);
     }
 
     @Override

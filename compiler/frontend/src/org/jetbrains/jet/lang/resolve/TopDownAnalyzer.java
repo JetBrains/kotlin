@@ -167,6 +167,9 @@ public class TopDownAnalyzer {
                                 else {
                                     JetPackageDirective packageDirective = file.getPackageDirective();
                                     assert packageDirective != null : "No package in a non-script file: " + file;
+
+                                    c.addFile(file);
+
                                     DescriptorResolver.resolvePackageHeader(packageDirective, moduleDescriptor, trace);
                                     registerDeclarations(file.getDeclarations());
                                 }

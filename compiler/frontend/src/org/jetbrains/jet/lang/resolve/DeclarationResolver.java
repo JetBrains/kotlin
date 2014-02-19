@@ -96,7 +96,7 @@ public class DeclarationResolver {
     }
 
     private void checkModifiersAndAnnotationsInPackageDirectives(@NotNull TopDownAnalysisContext c) {
-        for (JetFile file : c.getPackageFragments().keySet()) {
+        for (JetFile file : c.getFiles()) {
             JetPackageDirective packageDirective = file.getPackageDirective();
             if (packageDirective == null) continue;
 

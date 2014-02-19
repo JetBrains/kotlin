@@ -461,6 +461,7 @@ public class TypeHierarchyResolver {
         public void visitJetFile(@NotNull JetFile file) {
             MutablePackageFragmentDescriptor packageFragment = getOrCreatePackageFragmentForFile(file);
             c.getPackageFragments().put(file, packageFragment);
+            c.addFile(file);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
             ChainedScope rootPlusPackageScope = new ChainedScope(packageView, "Root scope for " + file, packageView.getMemberScope(), outerScope);
