@@ -19,15 +19,19 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightPackage;
+import org.jetbrains.jet.plugin.codeInsight.ReferenceBindRequest;
 
 public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpression> {
-
     public JetSimpleNameReference(@NotNull JetSimpleNameExpression jetSimpleNameExpression) {
         super(jetSimpleNameExpression);
     }
@@ -53,6 +57,35 @@ public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpr
             element = JetPsiFactory.createNameIdentifier(project, newElementName);
         }
         return getExpression().getReferencedNameElement().replace(element);
+    }
+
+    // By default reference binding is delayed
+    @NotNull
+    @Override
+    public PsiElement bindToElement(@NotNull PsiElement element) {
+        return bindToElement(element, false);
+    }
+
+    @NotNull
+    public PsiElement bindToElement(@NotNull PsiElement element, boolean bindImmediately) {
+        Project project = element.getProject();
+        JetSimpleNameExpression currentExpression = getExpression();
+
+        FqName fqName = PsiUtilPackage.getFqName(element);
+        if (fqName == null) return currentExpression;
+
+        ReferenceBindRequest bindRequest = new ReferenceBindRequest(
+                SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(getExpression()),
+                fqName
+        );
+
+        if (bindImmediately) {
+            JetSimpleNameExpression newExpression = bindRequest.process();
+            return (newExpression != null) ? newExpression : currentExpression;
+        }
+
+        CodeInsightPackage.addReferenceBindRequest(project, bindRequest);
+        return currentExpression;
     }
 
     @Override
