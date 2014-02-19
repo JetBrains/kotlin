@@ -21,11 +21,9 @@ import com.intellij.AppTopics;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerAdapter;
 import com.intellij.openapi.fileTypes.ContentBasedClassFileProcessor;
 import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.impl.PsiDocumentManagerBase;
@@ -67,32 +65,14 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
     }
 
     @Override
-    public boolean isApplicable(@Nullable final Project project, @NotNull final VirtualFile file) {
-        if (project == null) {
-            return false;
-        }
-
-        if (DumbService.isDumb(project)) {
-            DumbService.getInstance(project).runWhenSmart(new Runnable() {
-                @Override
-                public void run() {
-                    if (DecompiledUtils.isKotlinCompiledFile(project, file)) {
-                        FileDocumentManager docManager = FileDocumentManager.getInstance();
-                        docManager.getDocument(file); // force getting document because it can be collected
-                        docManager.reloadFiles(file);
-                    }
-                }
-            });
-            return false;
-        }
-
-        return DecompiledUtils.isKotlinCompiledFile(project, file);
+    public boolean isApplicable(@Nullable Project project, @NotNull VirtualFile file) {
+        return DecompiledUtils.isKotlinCompiledFile(file);
     }
 
     @NotNull
     @Override
     public String obtainFileText(Project project, VirtualFile file) {
-        if (file != null && DecompiledUtils.isKotlinCompiledFile(project, file)) {
+        if (file != null && DecompiledUtils.isKotlinCompiledFile(file)) {
             JetDecompiledData data = JetDecompiledData.getDecompiledData(file, project);
             deferredDocumentBinding.put(file, data.getFile());
 

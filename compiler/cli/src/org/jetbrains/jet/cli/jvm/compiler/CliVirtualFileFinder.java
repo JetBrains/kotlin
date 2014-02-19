@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.jvm.compiler;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClassFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -44,10 +45,10 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
         return null;
     }
 
-    private VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
+    private static VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
         VirtualFile vFile = findFileInRoot(className.asString(), root, '.');
         //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-        if (vFile != null && createKotlinClass(vFile).getClassHeader() != null) {
+        if (vFile != null && KotlinBinaryClassCache.getKotlinBinaryClass(vFile).getClassHeader() != null) {
             return vFile;
         }
         return null;

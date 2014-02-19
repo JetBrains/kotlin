@@ -18,22 +18,26 @@ package org.jetbrains.jet.plugin.libraries;
 
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 
 public final class DecompiledUtils {
 
-    public static boolean isKotlinCompiledFile(@NotNull Project project, @NotNull VirtualFile file) {
+    public static boolean isKotlinCompiledFile(@NotNull VirtualFile file) {
         if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
             return false;
         }
-        //TODO: check index
-        KotlinJvmBinaryClass kotlinClass = VirtualFileFinder.SERVICE.getInstance(project).createKotlinClass(file);
-        KotlinClassHeader header = kotlinClass.getClassHeader();
-        return header != null && header.getAnnotationData() != null;
+
+        KotlinClassHeader header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader();
+        return header != null;
+    }
+
+    public static boolean isKotlinInternalCompiledFile(@NotNull VirtualFile file) {
+        KotlinClassHeader header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader();
+        return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_PART;
     }
 
     private DecompiledUtils() {
