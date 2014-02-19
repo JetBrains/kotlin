@@ -21,47 +21,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 public final class DecompiledUtils {
-    private static final String PACKAGE_FRAGMENT_SIGNATURE = PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-";
 
     public static boolean isKotlinCompiledFile(@NotNull VirtualFile file) {
         if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
             return false;
         }
 
-        return isKotlinInternalClass(file) || checkFile(file);
+        KotlinClassHeader header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader();
+        return header != null;
     }
 
-    public static boolean isKotlinInternalClass(@NotNull VirtualFile file) {
-        // FIXME: not sure if this is a good heuristic
-        String name = file.getName();
-        int pos = name.indexOf('$');
-        if (pos > 0) {
-            name = name.substring(0, pos) + ".class";
-            VirtualFile supposedHost = file.getParent().findChild(name);
-            if (supposedHost != null) {
-                return checkFile(supposedHost);
-            }
-        }
-
-        if (name.contains(PACKAGE_FRAGMENT_SIGNATURE)) {
-            KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
-            if (header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean checkFile(@NotNull VirtualFile file) {
-        KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
-        return header != null && header.getAnnotationData() != null;
+    public static boolean isKotlinInternalCompiledFile(@NotNull VirtualFile file) {
+        KotlinClassHeader header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader();
+        return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT;
     }
 
     public static CharSequence decompile(@NotNull VirtualFile file) {

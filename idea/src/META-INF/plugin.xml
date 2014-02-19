@@ -105,6 +105,9 @@
     <applicationService serviceInterface="org.jetbrains.jet.OperationModeProvider"
                         serviceImplementation="org.jetbrains.jet.plugin.IdeModeProvider"/>
 
+    <applicationService serviceInterface="org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache"
+                        serviceImplementation="org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache"/>
+
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.java.JetFilesProvider"
                     serviceImplementation="org.jetbrains.jet.plugin.project.PluginJetFilesProvider"/>
 
