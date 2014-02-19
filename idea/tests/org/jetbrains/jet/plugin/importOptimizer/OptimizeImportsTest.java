@@ -73,6 +73,10 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testKt4451() throws Exception {
+        doTest();
+    }
+
     public void testSamConstructor() throws Exception {
         doTest();
     }
