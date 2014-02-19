@@ -43,7 +43,7 @@ public final class JetCompilerMessagingTest extends IDECompilerMessagingTest {
         doTest(new Function1<MessageChecker, Void>() {
             @Override
             public Void invoke(MessageChecker checker) {
-                checker.expect(warning().text("Unnecessary non-null assertion (!!) on a non-null receiver of type jet.String")
+                checker.expect(warning().text("Unnecessary non-null assertion (!!) on a non-null receiver of type kotlin.String")
                                        .at("test.kt", 4, 4));
                 return null;
             }

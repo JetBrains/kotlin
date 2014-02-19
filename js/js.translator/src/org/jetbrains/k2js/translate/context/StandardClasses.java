@@ -87,20 +87,20 @@ public final class StandardClasses {
     @NotNull
     public static StandardClasses bindImplementations(@NotNull JsScope kotlinObjectScope) {
         StandardClasses standardClasses = new StandardClasses(kotlinObjectScope);
-        declareJetObjects(standardClasses);
+        declareKotlinStandardClasses(standardClasses);
         return standardClasses;
     }
 
-    private static void declareJetObjects(@NotNull StandardClasses standardClasses) {
-        standardClasses.declare().forFQ("jet.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
+    private static void declareKotlinStandardClasses(@NotNull StandardClasses standardClasses) {
+        standardClasses.declare().forFQ("kotlin.Iterator").kotlinClass("Iterator").methods("next").properties("hasNext");
 
-        standardClasses.declare().forFQ("jet.IntRange").kotlinClass("NumberRange")
+        standardClasses.declare().forFQ("kotlin.IntRange").kotlinClass("NumberRange")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
-        standardClasses.declare().forFQ("jet.IntProgression").kotlinClass("NumberProgression")
+        standardClasses.declare().forFQ("kotlin.IntProgression").kotlinClass("NumberProgression")
                 .methods("iterator", "contains").properties("start", "end", "increment");
 
-        standardClasses.declare().forFQ("jet.Enum").kotlinClass("Enum");
+        standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");
     }
 
 

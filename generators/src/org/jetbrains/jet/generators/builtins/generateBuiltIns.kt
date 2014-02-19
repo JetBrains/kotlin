@@ -28,13 +28,13 @@ import java.io.File
 fun assertExists(file: File): Unit =
         if (!file.exists()) error("Output dir does not exist: ${file.getAbsolutePath()}")
 
-val BUILT_INS_DIR = File("core/builtins/src/jet/")
+val BUILT_INS_DIR = File("core/builtins/src/kotlin/")
 val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/kotlin/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
 
-    protected open fun getPackage(): String = "jet"
+    protected open fun getPackage(): String = "kotlin"
 
     final fun generate() {
         out.println(File("injector-generator/copyright.txt").readText())

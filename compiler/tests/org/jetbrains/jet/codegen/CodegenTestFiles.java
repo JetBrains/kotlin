@@ -126,20 +126,20 @@ public class CodegenTestFiles {
                 String valueString = scriptParametersMatcher.group(3);
                 Object value;
 
-                if (type.equals("jet.String")) {
+                if (type.equals("kotlin.String")) {
                     value = valueString;
                 }
-                else if (type.equals("jet.Long")) {
+                else if (type.equals("kotlin.Long")) {
                     value = Long.parseLong(valueString);
                 }
-                else if (type.equals("jet.Int")) {
+                else if (type.equals("kotlin.Int")) {
                     value = Integer.parseInt(valueString);
                 }
-                else if (type.equals("jet.Array<jet.String>")) {
+                else if (type.equals("kotlin.Array<kotlin.String>")) {
                     value = valueString.split(" ");
                 }
                 else {
-                    throw new AssertionError("TODO");
+                    throw new AssertionError("TODO: " + type);
                 }
 
                 scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), JetTypeName.parse(type)));

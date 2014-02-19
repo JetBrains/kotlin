@@ -154,9 +154,10 @@ public class KotlinRuntimeLibraryUtil {
 
         ImmutableList<String> candidateClassNames = ImmutableList.of(
                 kotlinPackageClassFqName,
-                "jet.Unit",
+                "kotlin.Unit",
                 // For older versions
-                "kotlin.namespace"
+                "kotlin.namespace",
+                "jet.Unit"
         );
 
         for (String className : candidateClassNames) {

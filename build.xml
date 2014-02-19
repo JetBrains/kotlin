@@ -317,7 +317,6 @@
               </zipfileset>
               <fileset dir="${output}/classes/compiler"/>
               <fileset dir="${output}/builtins">
-                <include name="jet/**"/>
                 <include name="kotlin/**"/>
                 <exclude name="kotlin/internal/**"/>
               </fileset>
