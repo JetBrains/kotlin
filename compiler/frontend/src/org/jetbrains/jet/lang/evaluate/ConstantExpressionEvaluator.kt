@@ -540,7 +540,7 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
 }
 
 private fun createCompileTimeConstant(value: Any?, c: EvaluatorContext, expectedType: JetType? = null): CompileTimeConstant<*>? {
-    return ConstantUtils.createCompileTimeConstant(value, c.canBeUsedInAnnotation, c.isPure, expectedType)
+    return createCompileTimeConstant(value, c.canBeUsedInAnnotation, c.isPure, expectedType)
 }
 
 fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int || value is Long

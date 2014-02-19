@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.ConstantUtils;
+import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator;
 
@@ -34,7 +34,7 @@ public class JavaPropertyInitializerEvaluatorImpl extends JavaPropertyInitialize
         PsiExpression initializer = ((JavaFieldImpl) field).getInitializer();
         Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
         if (evaluatedExpression != null) {
-            return ConstantUtils.createCompileTimeConstant(
+            return ConstantsPackage.createCompileTimeConstant(
                     evaluatedExpression,
                     DescriptorUtils.isPropertyCompileTimeConstant(descriptor),
                     false,

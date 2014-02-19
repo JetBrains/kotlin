@@ -88,7 +88,7 @@ public class DescriptorDeserializersStorage {
             public KotlinJvmBinaryClass.AnnotationVisitor visitField(@NotNull Name name, @NotNull String desc, @Nullable Object initializer) {
                 MemberSignature signature = MemberSignature.fromFieldNameAndDesc(name, desc);
                 if (initializer != null) {
-                    propertyConstants.put(signature, ConstantUtils.createCompileTimeConstant(
+                    propertyConstants.put(signature, ConstantsPackage.createCompileTimeConstant(
                             initializer, /* canBeUsedInAnnotation */ true, /* isPureIntConstant */ true, /* expectedType */ null));
                 }
                 return new MemberAnnotationVisitor(signature);
