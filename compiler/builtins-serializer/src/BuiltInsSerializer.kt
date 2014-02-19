@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.types.lang.BuiltInsPackageMigration
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -84,6 +85,24 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         }
 
         for (fqName in ContainerUtil.mapNotNull(files) { it?.getPackageName() }.toSet()) {
+            if (fqName == "kotlin") {
+                BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage = true
+                val provider = session.getDeclarationProviderFactory().getPackageMemberDeclarationProvider(FqName(fqName))!!
+
+                fun resolveClass(name: String): ClassDescriptor {
+                    val classes = provider.getClassOrObjectDeclarations(Name.identifier(name))
+                    assert(classes.size() == 1, "Class $name not found: " + classes)
+                    return session.getClassDescriptor(classes.iterator().next())
+                }
+                BuiltInsPackageMigration.anyType = resolveClass("Any").getDefaultType()
+                BuiltInsPackageMigration.stringType = resolveClass("String").getDefaultType()
+                BuiltInsPackageMigration.annotationType = resolveClass("Annotation").getDefaultType()
+                BuiltInsPackageMigration.arrayClass = resolveClass("Array")
+                BuiltInsPackageMigration.enumClass = resolveClass("Enum")
+            }
+            else {
+                BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage = false
+            }
             serializePackage(module, FqName(fqName), destDir)
         }
 

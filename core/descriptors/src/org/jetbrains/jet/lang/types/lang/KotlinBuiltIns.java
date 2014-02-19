@@ -291,6 +291,9 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getArray() {
+        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
+            return BuiltInsPackageMigration.arrayClass;
+        }
         return getBuiltInClassByName("Array");
     }
 
@@ -395,6 +398,9 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getEnum() {
+        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
+            return BuiltInsPackageMigration.enumClass;
+        }
         return getBuiltInClassByName("Enum");
     }
 
@@ -571,6 +577,9 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getAnyType() {
+        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
+            return BuiltInsPackageMigration.anyType;
+        }
         return getBuiltInTypeByClassName("Any");
     }
 
@@ -642,6 +651,9 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getStringType() {
+        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
+            return BuiltInsPackageMigration.stringType;
+        }
         return getBuiltInTypeByClassName("String");
     }
 
@@ -705,6 +717,9 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getAnnotationType() {
+        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
+            return BuiltInsPackageMigration.annotationType;
+        }
         return getBuiltInTypeByClassName("Annotation");
     }
 
