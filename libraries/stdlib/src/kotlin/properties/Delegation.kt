@@ -50,7 +50,7 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
     }
 }
 
-class ObservableProperty<T>(initialValue: T, val onChange: (name: jet.PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
+class ObservableProperty<T>(initialValue: T, val onChange: (name: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
     private var value = initialValue
 
     public override fun get(thisRef: Any?, desc: PropertyMetadata): T {

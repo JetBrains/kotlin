@@ -1,7 +1,6 @@
 package kotlin.jdbc
 
 import java.sql.*
-import java.util.ArrayList
 
 /**
  * Executes the specfied block with result set and then closes it
@@ -29,7 +28,7 @@ fun ResultSet.iterator() : Iterator<ResultSet> {
 /**
  * Returns iterable that calls to the specified mapper function for each row
  */
-fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
+fun <T> ResultSet.map(fn : (ResultSet) -> T) : Iterable<T> {
     val rs = this
 
     val iterator = object : Iterator<T>{
@@ -38,7 +37,7 @@ fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
         public override fun next() : T = fn(rs)
     }
 
-    return object : jet.Iterable<T> {
+    return object : Iterable<T> {
         public override fun iterator(): Iterator<T> = iterator
     }
 }
@@ -46,17 +45,17 @@ fun <T> ResultSet.map(fn : (ResultSet) -> T) : jet.Iterable<T> {
 /**
  * Returns array with column names
  */
-fun ResultSet.getColumnNames() : jet.Array<String> {
+fun ResultSet.getColumnNames() : Array<String> {
     val meta = getMetaData()
-    return jet.Array<String>(meta.getColumnCount(), {meta.getColumnName(it + 1) ?: it.toString()})
+    return Array<String>(meta.getColumnCount(), {meta.getColumnName(it + 1) ?: it.toString()})
 }
 
 /**
  * Return array filled with values from current row in the cursor. Values will have the same order as column's order
  * @columnNames you can specify column names to extract otherwise all columns will be extracted
  */
-fun ResultSet.getValues(columnNames : jet.Array<String> = getColumnNames()) : jet.Array<Any?> {
-    return jet.Array<Any?>(columnNames.size, {
+fun ResultSet.getValues(columnNames : Array<String> = getColumnNames()) : Array<Any?> {
+    return Array<Any?>(columnNames.size, {
         this[columnNames[it]]
     })
 }
@@ -65,7 +64,7 @@ fun ResultSet.getValues(columnNames : jet.Array<String> = getColumnNames()) : je
  * Return map filled with values from current row in the cursor. Uses column names as keys for result map.
  * @param columnNames you can specify column names to extract otherwise all columns will be extracted
  */
-fun ResultSet.getValuesAsMap(columnNames : jet.Array<String> = getColumnNames()) : Map<String, Any?> {
+fun ResultSet.getValuesAsMap(columnNames : Array<String> = getColumnNames()) : Map<String, Any?> {
     val result = java.util.HashMap<String, Any?>(columnNames.size)
 
     columnNames.forEach {
