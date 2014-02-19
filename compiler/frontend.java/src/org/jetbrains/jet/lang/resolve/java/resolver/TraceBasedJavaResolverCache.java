@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,18 +55,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     @Override
     public ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName) {
         return trace.get(FQNAME_TO_CLASS_DESCRIPTOR, fqName.toUnsafe());
-    }
-
-    @Nullable
-    @Override
-    public SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method) {
-        return trace.get(FUNCTION, ((JavaMethodImpl) method).getPsi());
-    }
-
-    @Nullable
-    @Override
-    public ConstructorDescriptor getConstructor(@NotNull JavaElement constructor) {
-        return trace.get(CONSTRUCTOR, ((JavaElementImpl) constructor).getPsi());
     }
 
     @Nullable

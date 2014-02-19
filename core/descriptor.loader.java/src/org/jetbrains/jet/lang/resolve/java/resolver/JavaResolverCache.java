@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public interface JavaResolverCache {
     @Nullable
     ClassDescriptor getClassResolvedFromSource(@NotNull FqName fqName);
-
-    @Nullable
-    SimpleFunctionDescriptor getMethod(@NotNull JavaMethod method);
-
-    @Nullable
-    ConstructorDescriptor getConstructor(@NotNull JavaElement constructor);
 
     @Nullable
     ClassDescriptor getClass(@NotNull JavaClass javaClass);
