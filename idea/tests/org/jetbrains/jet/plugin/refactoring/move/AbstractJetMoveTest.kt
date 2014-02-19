@@ -47,6 +47,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -219,6 +220,23 @@ enum class MoveAction {
                     passOuterClass = outerInstanceParameterName != null,
                     parameterName = outerInstanceParameterName,
                     targetContainer = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
+            ).run()
+        }
+    }
+
+    MOVE_FILES {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.getProject()
+            val targetPackage = config.getString("targetPackage")
+
+            MoveFilesOrDirectoriesProcessor(
+                    project = project,
+                    elements = array(mainFile),
+                    newParent = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
+                    searchInComments = false,
+                    searchInNonJavaFiles = true,
+                    moveCallback = null,
+                    prepareSuccessfulCallback = null
             ).run()
         }
     }
