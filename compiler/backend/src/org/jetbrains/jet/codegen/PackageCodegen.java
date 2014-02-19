@@ -65,7 +65,6 @@ import java.util.*;
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.codegen.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
@@ -167,9 +166,8 @@ public class PackageCodegen extends GenerationStateAware {
                                                            ) {
                                                                throw new IllegalStateException("shouldn't be called");
                                                            }
-                                                       });
-
-                        v.getClassBuilder().getSerializationBindings().put(METHOD_FOR_FUNCTION, function, signature.getAsmMethod());
+                                                       }
+                        );
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
                         PropertyCodegen propertyCodegen = new PropertyCodegen(

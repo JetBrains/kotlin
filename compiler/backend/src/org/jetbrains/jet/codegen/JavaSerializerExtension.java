@@ -23,6 +23,7 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.kotlin.SignatureDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -68,9 +69,18 @@ public class JavaSerializerExtension extends SerializerExtension {
     ) {
         SignatureSerializer signatureSerializer = new SignatureSerializer(nameTable);
         if (callable instanceof FunctionDescriptor) {
-            Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
-            if (method != null) {
-                proto.setExtension(JavaProtoBuf.methodSignature, signatureSerializer.methodSignature(method));
+            JavaProtoBuf.JavaMethodSignature signature;
+            if (callable instanceof DeserializedSimpleFunctionDescriptor) {
+                DeserializedSimpleFunctionDescriptor deserialized = (DeserializedSimpleFunctionDescriptor) callable;
+                signature = signatureSerializer.copyMethodSignature(
+                        deserialized.getProto().getExtension(JavaProtoBuf.methodSignature), deserialized.getNameResolver());
+            }
+            else {
+                Method method = bindings.get(METHOD_FOR_FUNCTION, (FunctionDescriptor) callable);
+                signature = method != null ? signatureSerializer.methodSignature(method) : null;
+            }
+            if (signature != null) {
+                proto.setExtension(JavaProtoBuf.methodSignature, signature);
             }
         }
         else if (callable instanceof PropertyDescriptor) {
@@ -131,6 +141,15 @@ public class JavaSerializerExtension extends SerializerExtension {
 
         public SignatureSerializer(@NotNull NameTable nameTable) {
             this.nameTable = nameTable;
+        }
+
+        @NotNull
+        public JavaProtoBuf.JavaMethodSignature copyMethodSignature(
+                @NotNull JavaProtoBuf.JavaMethodSignature signature,
+                @NotNull NameResolver nameResolver
+        ) {
+            Method method = new SignatureDeserializer(nameResolver).methodSignature(signature);
+            return methodSignature(method);
         }
 
         @NotNull
