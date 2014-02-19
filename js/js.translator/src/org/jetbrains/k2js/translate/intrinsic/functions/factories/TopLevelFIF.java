@@ -56,7 +56,7 @@ public final class TopLevelFIF extends CompositeFIF {
         public JsExpression apply(
                 @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
         ) {
-            assert arguments.size() == 1 : "Unexpected argument size for jet.identityEquals: " + arguments.size();
+            assert arguments.size() == 1 : "Unexpected argument size for kotlin.identityEquals: " + arguments.size();
             return new JsBinaryOperation(JsBinaryOperator.REF_EQ, receiver, arguments.get(0));
         }
     };

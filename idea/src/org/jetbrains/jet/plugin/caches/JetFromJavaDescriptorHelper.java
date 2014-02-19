@@ -38,16 +38,13 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Number of helper methods for searching jet element prototypes in java. Methods use java indices for search.
+ * Number of helper methods for searching kotlin element prototypes in java. Methods use java indices for search.
  */
 public class JetFromJavaDescriptorHelper {
 
     private JetFromJavaDescriptorHelper() {
     }
 
-    /**
-     * Get java equivalents for jet top level classes.
-     */
     static Collection<PsiClass> getClassesForKotlinPackages(Project project, GlobalSearchScope scope) {
         /* Will iterate through short name caches
            Kotlin packages from jar a class files will be collected from java cache

@@ -23,6 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.jetbrains.jet.codegen.CodegenTestUtil.assertIsCurrentTime;
 
@@ -194,37 +195,37 @@ public class PackageGenTest extends CodegenTestCase {
     public void testJavaEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 == s2");
         Method main = generateFunction();
-        assertEquals(Boolean.TRUE, main.invoke(null, new String("jet"), new String("jet")));
-        assertEquals(Boolean.FALSE, main.invoke(null, new String("jet"), new String("ceylon")));
+        assertEquals(Boolean.TRUE, main.invoke(null, new String("kotlin"), new String("kotlin")));
+        assertEquals(Boolean.FALSE, main.invoke(null, new String("kotlin"), new String("ceylon")));
     }
 
     public void testJavaNotEquals() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 != s2");
         Method main = generateFunction();
-        assertEquals(Boolean.FALSE, main.invoke(null, new String("jet"), new String("jet")));
-        assertEquals(Boolean.TRUE, main.invoke(null, new String("jet"), new String("ceylon")));
+        assertEquals(Boolean.FALSE, main.invoke(null, new String("kotlin"), new String("kotlin")));
+        assertEquals(Boolean.TRUE, main.invoke(null, new String("kotlin"), new String("ceylon")));
     }
 
     public void testJavaEqualsNull() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 == s2");
         Method main = generateFunction();
         assertEquals(Boolean.TRUE, main.invoke(null, null, null));
-        assertEquals(Boolean.FALSE, main.invoke(null, "jet", null));
-        assertEquals(Boolean.FALSE, main.invoke(null, null, "jet"));
+        assertEquals(Boolean.FALSE, main.invoke(null, "kotlin", null));
+        assertEquals(Boolean.FALSE, main.invoke(null, null, "kotlin"));
     }
 
     public void testEqualsNullLiteral() throws Exception {
         loadText("fun foo(s: String?) = s == null");
         Method main = generateFunction();
         assertEquals(Boolean.TRUE, main.invoke(null, new Object[] { null }));
-        assertEquals(Boolean.FALSE, main.invoke(null, "jet"));
+        assertEquals(Boolean.FALSE, main.invoke(null, "kotlin"));
     }
 
     public void testTripleEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 === s2");
         Method main = generateFunction();
-        String s1 = new String("jet");
-        String s2 = new String("jet");
+        String s1 = new String("kotlin");
+        String s2 = new String("kotlin");
         assertEquals(Boolean.TRUE, main.invoke(null, s1, s1));
         assertEquals(Boolean.FALSE, main.invoke(null, s1, s2));
     }
@@ -232,8 +233,8 @@ public class PackageGenTest extends CodegenTestCase {
     public void testTripleNotEq() throws Exception {
         loadText("fun foo(s1: String?, s2: String?) = s1 !== s2");
         Method main = generateFunction();
-        String s1 = new String("jet");
-        String s2 = new String("jet");
+        String s1 = new String("kotlin");
+        String s2 = new String("kotlin");
         assertEquals(Boolean.FALSE, main.invoke(null, s1, s1));
         assertEquals(Boolean.TRUE, main.invoke(null, s1, s2));
     }
@@ -247,7 +248,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testStringPlus() throws Exception {
         loadText("fun foo(s1: String, s2: String) = s1 + s2");
         Method main = generateFunction();
-        assertEquals("jetLang", main.invoke(null, "jet", "Lang"));
+        assertEquals("kotlinLang", main.invoke(null, "kotlin", "Lang"));
     }
 
     public void testStringPlusChained() throws Exception {
@@ -256,7 +257,7 @@ public class PackageGenTest extends CodegenTestCase {
         int firstStringBuilderCreation = text.indexOf("NEW java/lang/StringBuilder");
         assertEquals(-1, text.indexOf("NEW java/lang/StringBuilder", firstStringBuilderCreation + 1));
         Method main = generateFunction();
-        assertEquals("jet Lang", main.invoke(null, "jet", " ", "Lang"));
+        assertEquals("kotlin Lang", main.invoke(null, "kotlin", " ", "Lang"));
     }
 
     public void testStringPlusEq() throws Exception {
@@ -269,13 +270,13 @@ public class PackageGenTest extends CodegenTestCase {
         loadText("fun foo(s1: String, s2: String) = s1 < s2");
         Method main = generateFunction();
         assertEquals(Boolean.TRUE, main.invoke(null, "Ceylon", "Java"));
-        assertEquals(Boolean.FALSE, main.invoke(null, "Jet", "Java"));
+        assertEquals(Boolean.FALSE, main.invoke(null, "Kotlin", "Java"));
     }
 
     public void testElvis() throws Exception {
         loadText("fun foo(s: String?) = s ?: \"null\"");
         Method main = generateFunction();
-        assertEquals("jet", main.invoke(null, "jet"));
+        assertEquals("kotlin", main.invoke(null, "kotlin"));
         assertEquals("null", main.invoke(null, new Object[] { null }));
     }
 
@@ -289,7 +290,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testVarargs() throws Exception {
         loadText("fun foo() = java.util.Arrays.asList(\"IntelliJ\", \"IDEA\")");
         Method main = generateFunction();
-        java.util.List<?> list = (java.util.List<?>) main.invoke(null);
+        List<?> list = (List<?>) main.invoke(null);
         assertEquals(Arrays.asList("IntelliJ", "IDEA"), list);
     }
 
@@ -339,11 +340,11 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testArrayWrite() throws Exception {
-        loadText("fun foo(c: Array<String>) { c[0] = \"jet\"; }");
+        loadText("fun foo(c: Array<String>) { c[0] = \"kotlin\"; }");
         Method main = generateFunction();
         String[] array = new String[] { null };
         main.invoke(null, new Object[] { array });
-        assertEquals("jet", array[0]);
+        assertEquals("kotlin", array[0]);
     }
 
     public void testArrayAugAssign() throws Exception {
@@ -450,12 +451,12 @@ public class PackageGenTest extends CodegenTestCase {
     }
 
     public void testArrayAccessForArrayList() throws Exception {
-        loadText("import java.util.*; fun foo(l: ArrayList<String>) { l[0] = \"Jet\" + l[0]; }");
+        loadText("import java.util.*; fun foo(l: ArrayList<String>) { l[0] = \"Kotlin\" + l[0]; }");
         Method main = generateFunction();
         ArrayList<String> list = new ArrayList<String>();
         list.add("Language");
         main.invoke(null, list);
-        assertEquals("JetLanguage", list.get(0));
+        assertEquals("KotlinLanguage", list.get(0));
     }
 
     public void testEscapeSequence() throws Exception {

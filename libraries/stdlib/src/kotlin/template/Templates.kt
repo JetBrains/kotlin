@@ -9,7 +9,7 @@ import java.text.DateFormat
 import java.util.Date
 
 // TODO this class should move into the runtime
-// in jet.StringTemplate
+// in kotlin.StringTemplate
 class StringTemplate(val values : Array<Any?>) {
 
     /**
