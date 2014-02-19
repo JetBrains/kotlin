@@ -102,12 +102,20 @@ public class DeclarationsChecker {
         checkOpenMembers(classDescriptor);
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
+            checkConstructorInTrait(aClass);
         }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        }
+    }
+
+    private void checkConstructorInTrait(JetClass klass) {
+        JetParameterList primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+        if (primaryConstructorParameterList != null) {
+            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
         }
     }
 

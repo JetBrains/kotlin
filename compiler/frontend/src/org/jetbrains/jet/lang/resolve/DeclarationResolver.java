@@ -272,13 +272,6 @@ public class DeclarationResolver {
             @NotNull MutableClassDescriptor classDescriptor,
             @NotNull JetClass klass
     ) {
-        if (classDescriptor.getKind() == ClassKind.TRAIT) {
-            JetParameterList primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
-            if (primaryConstructorParameterList != null) {
-                trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
-            }
-        }
-
         boolean isAnnotationClass = DescriptorUtils.isAnnotationClass(classDescriptor);
 
         // TODO : not all the parameters are real properties
