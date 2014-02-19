@@ -548,17 +548,8 @@ public class TypeHierarchyResolver {
 
             MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(packageDirective.getFqName());
 
-            for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
-                FqName fqName = packageDirective.getFqName(nameExpression);
-
-                PackageViewDescriptor packageView = packageFragmentProvider.getModule().getPackage(fqName);
-                assert packageView != null : "package not found: " + fqName;
-                trace.record(REFERENCE_TARGET, nameExpression, packageView);
-
-                PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
-                assert parentPackageView != null : "package has no parent: " + packageView;
-                trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
-            }
+            ModuleDescriptor module = packageFragmentProvider.getModule();
+            DescriptorResolver.resolvePackageHeader(packageDirective, module, TypeHierarchyResolver.this.trace);
 
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
 

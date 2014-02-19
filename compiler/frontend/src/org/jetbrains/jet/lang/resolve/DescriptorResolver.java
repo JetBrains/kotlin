@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -54,6 +55,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
@@ -1406,6 +1409,24 @@ public class DescriptorResolver {
                 }
                 node = node.getTreeNext();
             }
+        }
+    }
+
+    public static void resolvePackageHeader(
+            @NotNull JetPackageDirective packageDirective,
+            @NotNull ModuleDescriptor module,
+            @NotNull BindingTrace trace
+    ) {
+        for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
+            FqName fqName = packageDirective.getFqName(nameExpression);
+
+            PackageViewDescriptor packageView = module.getPackage(fqName);
+            assert packageView != null : "package not found: " + fqName;
+            trace.record(REFERENCE_TARGET, nameExpression, packageView);
+
+            PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
+            assert parentPackageView != null : "package has no parent: " + packageView;
+            trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
         }
     }
 }

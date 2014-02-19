@@ -165,6 +165,9 @@ public class TopDownAnalyzer {
                                     scriptHeaderResolver.processScriptHierarchy(c, script, resolveSession.getScopeProvider().getFileScope(file));
                                 }
                                 else {
+                                    JetPackageDirective packageDirective = file.getPackageDirective();
+                                    assert packageDirective != null : "No package in a non-script file: " + file;
+                                    DescriptorResolver.resolvePackageHeader(packageDirective, moduleDescriptor, trace);
                                     registerDeclarations(file.getDeclarations());
                                 }
                             }
