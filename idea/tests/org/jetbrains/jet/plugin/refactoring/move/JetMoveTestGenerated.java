@@ -66,9 +66,39 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToTopLevelClassOfAnotherPackage/moveClassToTopLevelClassOfAnotherPackage.test");
     }
     
+    @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInAnotherPackage/moveNestedClassToTopLevelInAnotherPackage.test")
+    public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInAnotherPackage_MoveNestedClassToTopLevelInAnotherPackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInAnotherPackage/moveNestedClassToTopLevelInAnotherPackage.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackage/moveNestedClassToTopLevelInTheSamePackage.test")
+    public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackage_MoveNestedClassToTopLevelInTheSamePackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackage/moveNestedClassToTopLevelInTheSamePackage.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndRename/moveNestedClassToTopLevelInTheSamePackageAndRename.test")
+    public void testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndRename_MoveNestedClassToTopLevelInTheSamePackageAndRename() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveInnerToTop/moveNestedClassToTopLevelInTheSamePackageAndRename/moveNestedClassToTopLevelInTheSamePackageAndRename.test");
+    }
+    
     @TestMetadata("java/moveClass/moveTop/moveTopLevelClassToAnotherPackage/moveTopLevelClassToAnotherPackage.test")
     public void testJava_moveClass_moveTop_moveTopLevelClassToAnotherPackage_MoveTopLevelClassToAnotherPackage() throws Exception {
         doTest("idea/testData/refactoring/move/java/moveClass/moveTop/moveTopLevelClassToAnotherPackage/moveTopLevelClassToAnotherPackage.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveTopToInner/moveTopLevelClassToNestedClass/moveTopLevelClassToTopLevelClass.test")
+    public void testJava_moveClass_moveTopToInner_moveTopLevelClassToNestedClass_MoveTopLevelClassToTopLevelClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveTopToInner/moveTopLevelClassToNestedClass/moveTopLevelClassToTopLevelClass.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveTopToInner/moveTopLevelClassToTopLevelClass/moveTopLevelClassToTopLevelClass.test")
+    public void testJava_moveClass_moveTopToInner_moveTopLevelClassToTopLevelClass_MoveTopLevelClassToTopLevelClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveTopToInner/moveTopLevelClassToTopLevelClass/moveTopLevelClassToTopLevelClass.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveTopToInner/moveTopLevelClassToTopLevelClassOfAnotherPackage/moveTopLevelClassToTopLevelClassOfAnotherPackage.test")
+    public void testJava_moveClass_moveTopToInner_moveTopLevelClassToTopLevelClassOfAnotherPackage_MoveTopLevelClassToTopLevelClassOfAnotherPackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveTopToInner/moveTopLevelClassToTopLevelClassOfAnotherPackage/moveTopLevelClassToTopLevelClassOfAnotherPackage.test");
     }
     
     @TestMetadata("java/moveField/moveFieldToExternalNestedClass/moveFieldToExternalNestedClass.test")

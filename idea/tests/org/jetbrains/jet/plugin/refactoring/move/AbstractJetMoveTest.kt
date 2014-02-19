@@ -42,6 +42,9 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MultipleRootsMoveDest
 import com.intellij.refactoring.PackageWrapper
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
+import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProcessor
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 
@@ -178,6 +181,44 @@ enum class MoveAction {
                     searchInComments = false,
                     searchInNonJavaFiles = true,
                     moveCallback = null
+            ).run()
+        }
+    }
+
+    MOVE_TOP_LEVEL_CLASSES_TO_INNER {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.getProject()
+
+            val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
+            val targetClass = config.getString("targetClass")
+
+            MoveClassToInnerProcessor(
+                    project = project,
+                    classesToMove = array(classToMove),
+                    targetClass = JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
+                    searchInComments = false,
+                    searchInNonJavaFiles = true,
+                    moveCallback = null
+            ).run()
+        }
+    }
+
+    MOVE_INNER_CLASS {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.getProject()
+
+            val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
+            val newClassName = config.getNullableString("newClassName") ?: classToMove.getName()!!
+            val outerInstanceParameterName = config.getNullableString("outerInstanceParameterName")
+            val targetPackage = config.getString("targetPackage")
+
+            MoveInnerProcessor(
+                    project = project,
+                    innerClass = classToMove,
+                    name = newClassName,
+                    passOuterClass = outerInstanceParameterName != null,
+                    parameterName = outerInstanceParameterName,
+                    targetContainer = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
             ).run()
         }
     }
