@@ -1,12 +1,11 @@
 fun box(): String {
-    // byte char short int long float double
-    val b = 42.toByte()
-    val c = 'z'
-    val s = 239.toShort()
-    val i = -1
-    val j = -42L
-    val f = 3.14f
-    val d = -2.72
+    val b: Byte = 42
+    val c: Char = 'z'
+    val s: Short = 239
+    val i: Int = -1
+    val j: Long = -42L
+    val f: Float = 3.14f
+    val d: Double = -2.72
 
     b.rangeTo(b)
     b rangeTo b
