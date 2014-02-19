@@ -3,8 +3,8 @@ package test.kotlin.jtests;
 import static kotlin.KotlinPackage.*;
 import static kotlin.util.UtilPackage.*;
 
-import jet.Function1;
 import junit.framework.TestCase;
+import kotlin.Function1;
 
 import java.util.Collection;
 import java.util.List;

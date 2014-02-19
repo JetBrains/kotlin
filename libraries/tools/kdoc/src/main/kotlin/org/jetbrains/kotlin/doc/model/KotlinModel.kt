@@ -760,7 +760,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
                     for (prefix in arrayList("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
-                            "jet", "java.awt", "java.awt.event", "java.sql", "java.beans",
+                            "java.awt", "java.awt.event", "java.sql", "java.beans",
                             "javax.swing", "javax.swing.event",
                             "org.w3c.dom",
                             "kotlin.template")) {

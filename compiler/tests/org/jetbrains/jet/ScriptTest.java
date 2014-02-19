@@ -106,6 +106,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<AnalyzerScriptParameter> numIntParam() {
-        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("jet.Int")));
+        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("kotlin.Int")));
     }
 }

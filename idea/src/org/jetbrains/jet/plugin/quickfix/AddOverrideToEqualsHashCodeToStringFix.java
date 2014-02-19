@@ -73,7 +73,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
             List<JetParameter> parameters = function.getValueParameters();
             if (parameters.size() != 1) return false;
             JetTypeReference parameterType = parameters.iterator().next().getTypeReference();
-            return parameterType != null && ("Any?".equals(parameterType.getText()) || "jet.Any?".equals(parameterType.getText()));
+            return parameterType != null && ("Any?".equals(parameterType.getText()) || "kotlin.Any?".equals(parameterType.getText()));
         }
 
         if ("hashCode".equals(name) || "toString".equals(name)) {

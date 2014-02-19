@@ -33,7 +33,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.DECLARATION_CANT_BE_INLINED;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.renderer.DescriptorRenderer.SHORT_NAMES_IN_TYPES;
 
@@ -214,7 +213,7 @@ public class DefaultErrorMessages {
                 NAME, ELEMENT_TEXT);
         MAP.put(ASSIGN_OPERATOR_AMBIGUITY, "Assignment operators ambiguity: {0}", AMBIGUOUS_CALLS);
 
-        MAP.put(EQUALS_MISSING, "No method 'equals(jet.Any?) : jet.Boolean' available");
+        MAP.put(EQUALS_MISSING, "No method 'equals(kotlin.Any?): kotlin.Boolean' available");
         MAP.put(ASSIGNMENT_IN_EXPRESSION_CONTEXT, "Assignments are not expressions, and only expressions are allowed in this context");
         MAP.put(PACKAGE_IS_NOT_AN_EXPRESSION, "'package' is not an expression, it can only be used on the left-hand side of a dot ('.')");
         MAP.put(SUPER_IS_NOT_AN_EXPRESSION, "''{0}'' is not an expression, it can only be used on the left-hand side of a dot ('.')", TO_STRING);
@@ -244,8 +243,7 @@ public class DefaultErrorMessages {
         MAP.put(HAS_NEXT_MISSING, "hasNext() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_AMBIGUITY, "hasNext() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the hasNext() functions is applicable for iterator() of type ''{0}''", RENDER_TYPE);
-        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return jet.Boolean, but returns {0}",
-                RENDER_TYPE);
+        MAP.put(HAS_NEXT_FUNCTION_TYPE_MISMATCH, "The ''iterator().hasNext()'' function of the loop range must return kotlin.Boolean, but returns {0}", RENDER_TYPE);
 
         MAP.put(NEXT_MISSING, "next() cannot be called on iterator() of type ''{0}''", RENDER_TYPE);
         MAP.put(NEXT_AMBIGUITY, "next() is ambiguous for iterator() of type ''{0}''", RENDER_TYPE);
@@ -260,7 +258,7 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH, "The ''{0}'' function of property delegate is expected to return ''{1}'', but returns ''{2}''",
                 TO_STRING, RENDER_TYPE, RENDER_TYPE);
 
-        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return jet.Int, but returns {0}", RENDER_TYPE);
+        MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
         MAP.put(CALLEE_NOT_A_FUNCTION, "Expecting a function type, but found {0}", RENDER_TYPE);
 
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
@@ -359,9 +357,9 @@ public class DefaultErrorMessages {
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
-        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type jet.Boolean, but is of type {0}", RENDER_TYPE);
+        MAP.put(TYPE_MISMATCH_IN_CONDITION, "Condition must be of type kotlin.Boolean, but is of type {0}", RENDER_TYPE);
         MAP.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(EXPECTED_CONDITION, "Expected condition of jet.Boolean type");
+        MAP.put(EXPECTED_CONDITION, "Expected condition of type kotlin.Boolean");
 
         MAP.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE);
         MAP.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE);

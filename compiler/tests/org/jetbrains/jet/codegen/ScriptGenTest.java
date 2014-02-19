@@ -34,7 +34,7 @@ public class ScriptGenTest extends CodegenTestCase {
     protected Object scriptInstance;
 
     public static final JetScriptDefinition FIB_SCRIPT_DEFINITION =
-            new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num", "jet.Int"));
+            new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num", "kotlin.Int"));
 
     @Override
     protected void setUp() throws Exception {

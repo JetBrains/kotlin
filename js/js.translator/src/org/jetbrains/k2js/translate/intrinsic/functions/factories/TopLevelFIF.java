@@ -46,7 +46,7 @@ import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionInt
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {
-    public static final DescriptorPredicate EQUALS_IN_ANY = pattern("jet", "Any", "equals");
+    public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
     @NotNull
     public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
     @NotNull
@@ -143,14 +143,14 @@ public final class TopLevelFIF extends CompositeFIF {
         add(EQUALS_IN_ANY, KOTLIN_EQUALS);
         add(pattern("kotlin", "toString").receiverExists(), TO_STRING);
         add(pattern("kotlin", "equals").receiverExists(), KOTLIN_EQUALS);
-        add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
+        add(pattern("kotlin", "identityEquals").receiverExists(), IDENTITY_EQUALS);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
-        add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
-        add(pattern("jet", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
-        add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
+        add(pattern("kotlin", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
+        add(pattern("kotlin", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
+        add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
