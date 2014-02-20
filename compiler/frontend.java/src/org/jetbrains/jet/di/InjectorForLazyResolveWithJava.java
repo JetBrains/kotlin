@@ -217,8 +217,8 @@ public class InjectorForLazyResolveWithJava {
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
         deserializedDescriptorResolver.setStorageManager(lockBasedStorageManager);
 
+        annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
-        annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaClassFinder.initialize();
