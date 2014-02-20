@@ -20,7 +20,6 @@ import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.CallableMethod;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
@@ -69,7 +68,7 @@ public interface Inliner {
 
         @Override
         public boolean shouldPutValue(
-                Type type, StackValue stackValue, MethodContext context,
+                Type type, StackValue stackValue,
                 ValueParameterDescriptor descriptor
         ) {
             return true;
@@ -82,7 +81,7 @@ public interface Inliner {
 
     void putCapturedInLocal(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor, int index);
 
-    boolean shouldPutValue(Type type, StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor);
+    boolean shouldPutValue(Type type, StackValue stackValue, ValueParameterDescriptor descriptor);
 
     void putHiddenParams();
 

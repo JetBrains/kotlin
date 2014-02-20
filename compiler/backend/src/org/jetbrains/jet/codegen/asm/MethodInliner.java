@@ -36,6 +36,7 @@ public class MethodInliner {
     private final Type lambdaInfo;
 
     private final LambdaFieldRemapper lambdaFieldRemapper;
+
     private boolean isSameModule;
 
     private final JetTypeMapper typeMapper;
@@ -177,7 +178,7 @@ public class MethodInliner {
                             List<CapturedParamInfo> contextCaptured = MethodInliner.this.parameters.getCaptured();
                             CapturedParamInfo result = null;
                             for (CapturedParamInfo info : contextCaptured) {
-                                //TODO more sofisticated check
+                                //TODO more sophisticated check
                                 if (info.getFieldName().equals(capturedParamInfo.getFieldName())) {
                                     result = info;
                                 }

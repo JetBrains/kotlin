@@ -85,9 +85,10 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private LambdaInfo activeLambda;
 
-    protected final List<ParameterInfo> tempTypes = new ArrayList<ParameterInfo>();
+    protected final List<ParameterInfo> actualParameters = new ArrayList<ParameterInfo>();
 
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
+
     private SimpleFunctionDescriptor inlineFunctionDescriptor;
 
     public InlineCodegen(
@@ -188,7 +189,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     private void inlineCall(MethodNode node) {
         generateClosuresBodies();
 
-        List<ParameterInfo> realParams = new ArrayList<ParameterInfo>(tempTypes);
+        List<ParameterInfo> realParams = new ArrayList<ParameterInfo>(actualParameters);
 
         putClosureParametersOnStack();
 
@@ -254,7 +255,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     ) {
         if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
-            boolean couldBeRemapped = !shouldPutValue(type, stackValue, codegen.getContext(), valueParameterDescriptor);
+            boolean couldBeRemapped = !shouldPutValue(type, stackValue, valueParameterDescriptor);
             StackValue remappedIndex = couldBeRemapped ? stackValue : null;
 
             ParameterInfo info = new ParameterInfo(type, false, couldBeRemapped ? -1 : codegen.getFrameMap().enterTemp(type), remappedIndex);
@@ -269,7 +270,11 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     }
 
     @Override
-    public boolean shouldPutValue(@NotNull Type type, @Nullable StackValue stackValue, MethodContext context, ValueParameterDescriptor descriptor) {
+    public boolean shouldPutValue(
+            @NotNull Type type,
+            @Nullable StackValue stackValue,
+            ValueParameterDescriptor descriptor
+    ) {
         //boolean isInline = true/*context.isInlineFunction() || context.getParentContext() instanceof ClosureContext*/;
         //if (stackValue != null && isInline && stackValue instanceof StackValue.Local) {
         //    if (isInvokeOnInlinable(type.getClassName(), "invoke") && (descriptor == null || !InlineUtil.hasNoinlineAnnotation(descriptor))) {
@@ -278,37 +283,41 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
         //    }
         //}
 
+        if (stackValue == null) {
+            //default or vararg
+            return true;
+        }
+
         //remap only inline functions (and maybe non primitives)
         //TODO - clean asserion and remapping logic
-        if (stackValue == null || isPrimitive(type) ^ isPrimitive(stackValue.type)) {
+        if (isPrimitive(type) != isPrimitive(stackValue.type)) {
             //don't remap boxing/unboxing primitives - lost identity and perfomance
             return true;
         }
 
-        boolean shouldPut = !(stackValue != null && stackValue instanceof StackValue.Local);
-        if (shouldPut) {
-            //we could recapture field of anonymous objects cause they couldn't change
-            boolean isInlineClosure = codegen.getContext().isInlineClosure();
-            if (isInlineClosure && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
-                Type internalName = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) codegen.getContext().getContextDescriptor());
+        if (stackValue instanceof StackValue.Local) {
+            return false;
+        }
 
-                String owner = null;
-                if (stackValue instanceof StackValue.Field) {
-                    owner = ((StackValue.Field) stackValue).owner.getInternalName();
-                }
+        if (codegen.getContext().isInlineClosure() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+            Type internalName = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) codegen.getContext().getContextDescriptor());
 
-                if (stackValue instanceof StackValue.Composed) {
-                    //go through aload 0
-                    owner = internalName.getInternalName();
-                }
+            String owner = null;
+            if (stackValue instanceof StackValue.Field) {
+                owner = ((StackValue.Field) stackValue).owner.getInternalName();
+            }
 
-                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor) && internalName.getInternalName().equals(owner)) {
-                    //check type of context
-                    return false;
-                }
+            if (stackValue instanceof StackValue.Composed) {
+                //go through aload 0
+                owner = internalName.getInternalName();
+            }
+
+            if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor) && internalName.getInternalName().equals(owner)) {
+                //check type of context
+                return false;
             }
         }
-        return shouldPut;
+        return true;
     }
 
     private void doWithParameter(ParameterInfo info) {
@@ -318,9 +327,9 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private int recordParamInfo(ParameterInfo info, boolean addToFrame) {
         Type type = info.type;
-        tempTypes.add(info);
+        actualParameters.add(info);
         if (info.getType().getSize() == 2) {
-            tempTypes.add(ParameterInfo.STUB);
+            actualParameters.add(ParameterInfo.STUB);
         }
         if (addToFrame) {
             return originalFunctionFrame.enterTemp(type);
@@ -355,7 +364,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
             recordParamInfo(info, false);
         }
 
-        for (ListIterator<? extends ParameterInfo> iterator = tempTypes.listIterator(tempTypes.size()); iterator.hasPrevious(); ) {
+        for (ListIterator<? extends ParameterInfo> iterator = actualParameters.listIterator(actualParameters.size()); iterator.hasPrevious(); ) {
             ParameterInfo param = iterator.previous();
             putParameterOnStack(param);
         }
@@ -364,7 +373,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
     @Override
     public void leaveTemps() {
         FrameMap frameMap = codegen.getFrameMap();
-        for (ListIterator<? extends ParameterInfo> iterator = tempTypes.listIterator(tempTypes.size()); iterator.hasPrevious(); ) {
+        for (ListIterator<? extends ParameterInfo> iterator = actualParameters.listIterator(actualParameters.size()); iterator.hasPrevious(); ) {
             ParameterInfo param = iterator.previous();
             if (!param.isSkippedOrRemapped()) {
                 frameMap.leaveTemp(param.type);
@@ -374,6 +383,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     @Override
     public boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
+        //TODO deparenthisise
         return expression instanceof JetFunctionLiteralExpression &&
                !InlineUtil.hasNoinlineAnnotation(valueParameterDescriptora);
     }
@@ -391,7 +401,7 @@ public class InlineCodegen implements ParentCodegenAware, Inliner {
 
     private void putClosureParametersOnStack() {
         //TODO: SORT
-        int currentSize = tempTypes.size();
+        int currentSize = actualParameters.size();
         for (LambdaInfo next : expressionMap.values()) {
             if (next.closure != null) {
                 activeLambda = next;

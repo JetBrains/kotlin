@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.codegen.asm;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -28,8 +30,10 @@ class ParameterInfo {
 
     public final Type type;
 
+    //for skipped parameter: e.g. inlined lambda
     public final boolean isSkipped;
 
+    //in case when parameter could be extracted from outer context (e.g. from local var)
     private StackValue remapIndex;
 
     public LambdaInfo lambda;
@@ -53,6 +57,7 @@ class ParameterInfo {
         return remapIndex != null;
     }
 
+    @Nullable
     public StackValue getRemapIndex() {
         return remapIndex;
     }
@@ -65,21 +70,18 @@ class ParameterInfo {
         return isSkipped;
     }
 
+    @NotNull
     public Type getType() {
         return type;
     }
 
-
+    @Nullable
     public LambdaInfo getLambda() {
         return lambda;
     }
 
     public void setLambda(LambdaInfo lambda) {
         this.lambda = lambda;
-    }
-
-    public void setRemapIndex(int remapIndex) {
-        this.remapIndex = StackValue.local(remapIndex, type);
     }
 
     public void setRemapIndex(StackValue remapIndex) {
