@@ -284,6 +284,26 @@
         <arg value="core/builtins/native"/>
         <arg value="core/builtins/src"/>
       </java>
+
+      <if>
+        <isfalse value="${bootstrap.build.no.tests}"/>
+        <then>
+          <cleandir dir="${output}/renameImportJet"/>
+          <kotlinc output="${output}/renameImportJet">
+            <src path="renameImportJet.kt"/>
+            <classpath refid="classpath"/>
+          </kotlinc>
+          <java classname="_DefaultPackage" failonerror="true" fork="true">
+            <classpath>
+              <pathelement location="${output}/renameImportJet"/>
+              <path refid="classpath"/>
+            </classpath>
+            <assertions>
+              <enable/>
+            </assertions>
+          </java>
+        </then>
+      </if>
     </target>
 
     <macrodef name="pack_compiler">
