@@ -66,6 +66,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode: on/off (default is off)")
+    @Argument(value = "inline", description = "Inlining mode: on/off (default is on)")
     public String enableInline;
 }

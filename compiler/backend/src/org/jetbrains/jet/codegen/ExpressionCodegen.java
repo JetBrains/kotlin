@@ -2121,9 +2121,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
             @NotNull StackValue receiver
     ) {
-        boolean disable = false;
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        boolean isInline = call != null && descriptor instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+        boolean isInline = state.isInlineEnabled() &&
+                           call != null &&
+                           descriptor instanceof SimpleFunctionDescriptor &&
+                           ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+
         Inliner inliner = !isInline ? Inliner.NOT_INLINE :
                           new InlineCodegen(this, state, (SimpleFunctionDescriptor) unwrapFakeOverride(
                                   (CallableMemberDescriptor) descriptor.getOriginal()), call);

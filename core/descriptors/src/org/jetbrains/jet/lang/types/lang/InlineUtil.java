@@ -29,11 +29,11 @@ import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 
 public class InlineUtil {
 
-    public static boolean DEFAULT_INLINE_FLAG = false;
+    public static boolean DEFAULT_INLINE_FLAG = true;
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = false;
+    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = true;
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
 
