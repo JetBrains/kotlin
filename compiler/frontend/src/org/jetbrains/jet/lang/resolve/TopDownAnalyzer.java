@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -178,7 +179,9 @@ public class TopDownAnalyzer {
                             private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
                                 c.getClasses().put(
                                         classOrObject,
-                                        (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
+                                        ForceResolveUtil.forceResolveAllContents(
+                                                (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
+                                        )
                                 );
                                 registerDeclarations(classOrObject.getDeclarations());
                             }
@@ -212,7 +215,9 @@ public class TopDownAnalyzer {
                             public void visitNamedFunction(@NotNull JetNamedFunction function) {
                                 c.getFunctions().put(
                                         function,
-                                        (SimpleFunctionDescriptor) resolveSession.resolveToDescriptor(function)
+                                        ForceResolveUtil.forceResolveAllContents(
+                                                (SimpleFunctionDescriptor) resolveSession.resolveToDescriptor(function)
+                                        )
                                 );
                                 registerScope(function, function);
                             }
@@ -221,7 +226,9 @@ public class TopDownAnalyzer {
                             public void visitProperty(@NotNull JetProperty property) {
                                 c.getProperties().put(
                                         property,
-                                        (PropertyDescriptor) resolveSession.resolveToDescriptor(property)
+                                        ForceResolveUtil.forceResolveAllContents(
+                                                (PropertyDescriptor) resolveSession.resolveToDescriptor(property)
+                                        )
                                 );
                                 registerScope(property, property);
                                 registerScope(property.getGetter(), property);

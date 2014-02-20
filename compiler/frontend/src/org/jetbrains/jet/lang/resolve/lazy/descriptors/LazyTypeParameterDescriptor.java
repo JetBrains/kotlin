@@ -119,11 +119,11 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         getContainingDeclaration();
         getDefaultType();
         getIndex();
-        getLowerBounds();
+        ForceResolveUtil.forceResolveAllContents(getLowerBounds());
         getLowerBoundsAsType();
         getOriginal();
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
-        getUpperBounds();
+        ForceResolveUtil.forceResolveAllContents(getUpperBounds());
         getUpperBoundsAsType();
         getVariance();
     }
