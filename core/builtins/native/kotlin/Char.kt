@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 public class Char private () : Comparable<Char> {
     public fun compareTo(other : Double) : Int

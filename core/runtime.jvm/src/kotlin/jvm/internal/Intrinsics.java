@@ -16,8 +16,8 @@
 
 package kotlin.jvm.internal;
 
-import jet.Function0;
-import jet.IntRange;
+import kotlin.Function0;
+import kotlin.IntRange;
 import kotlin.KotlinNullPointerException;
 
 import java.util.ArrayList;

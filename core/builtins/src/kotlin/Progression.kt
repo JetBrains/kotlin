@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package jet
+package kotlin
 
-public trait Range<T : Comparable<T>> {
-    public val start: T
+public trait Progression<out N : Any> : Iterable<N> {
+    public val start: N
 
-    public val end: T
+    public val end: N
 
-    public fun contains(item: T): Boolean
-
-    override fun toString(): String = "$start..$end"
+    public val increment: Number
 }

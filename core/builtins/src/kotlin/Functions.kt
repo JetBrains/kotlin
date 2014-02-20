@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public trait Function0<out R> {
     public fun invoke(): R

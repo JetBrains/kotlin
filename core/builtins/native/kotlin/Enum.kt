@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 public abstract class Enum<E: Enum<E>>(name: String, ordinal: Int) {
   public final fun name()    : String

@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 public open class Any {
     public open fun equals(other: Any?): Boolean

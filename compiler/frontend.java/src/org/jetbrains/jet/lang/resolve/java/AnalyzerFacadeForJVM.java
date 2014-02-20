@@ -52,8 +52,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
             new ImportPath("java.lang.*"),
             new ImportPath("kotlin.*"),
-            new ImportPath("kotlin.io.*"),
-            new ImportPath("jet.*"));
+            new ImportPath("kotlin.io.*"));
 
     private AnalyzerFacadeForJVM() {
     }
