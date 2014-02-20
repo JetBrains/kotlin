@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 public abstract class Number {
   public abstract fun toDouble() : Double

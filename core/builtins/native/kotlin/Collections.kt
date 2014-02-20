@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 public trait Iterable<out T> {
     public fun iterator() : Iterator<T>

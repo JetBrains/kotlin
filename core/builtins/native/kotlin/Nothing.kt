@@ -1,4 +1,4 @@
-package jet
+package kotlin
 
 /**
  * Nothing has no instances

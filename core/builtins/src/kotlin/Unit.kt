@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package jet
+package kotlin
 
-public annotation class noinline
-public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
-public enum class InlineStrategy {
-    AS_FUNCTION
-    IN_PLACE
+public class Unit private() {
+    override fun toString(): String = "Unit.VALUE"
+
+    class object {
+        public val VALUE: Unit = Unit()
+    }
 }

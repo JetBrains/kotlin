@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public class ByteRange(public override val start: Byte, public override val end: Byte) : Range<Byte>, Progression<Byte> {
     override val increment: Int

@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public abstract class ByteIterator : Iterator<Byte> {
     override final fun next() = nextByte()

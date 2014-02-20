@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package jet
+package kotlin
 
 public trait PropertyMetadata {
     public val name: String

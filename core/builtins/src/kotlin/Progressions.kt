@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public class ByteProgression(
         public override val start: Byte,

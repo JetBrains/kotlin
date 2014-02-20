@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package jet
+package kotlin
 
 public trait ExtensionFunction0<in T, out R> {
     public fun T.invoke(): R
