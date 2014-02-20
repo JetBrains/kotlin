@@ -35,7 +35,7 @@ public fun FqName.withoutFirstSegment(): FqName {
     if (isRoot() || parent().isRoot()) return FqName.ROOT
 
     val fqNameStr = asString()
-    return FqName(fqNameStr.substring(fqNameStr.indexOf('.'), fqNameStr.length()))
+    return FqName(fqNameStr.substring(fqNameStr.indexOf('.') + 1, fqNameStr.length()))
 }
 
 public fun FqName.numberOfSegments(): Int {
