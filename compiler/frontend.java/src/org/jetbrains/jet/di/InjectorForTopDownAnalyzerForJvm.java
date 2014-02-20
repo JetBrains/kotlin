@@ -292,8 +292,8 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
         deserializedDescriptorResolver.setStorageManager(storageManager);
 
+        annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
-        annotationDescriptorDeserializer.setJavaDescriptorResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
 
         javaClassFinder.initialize();

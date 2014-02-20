@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -40,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.ResolverPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.StorageManager;
@@ -55,7 +55,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.ko
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
 public class AnnotationDescriptorDeserializer implements AnnotationDeserializer {
-    private JavaDescriptorResolver javaDescriptorResolver;
+    private DependencyClassByQualifiedNameResolver classResolver;
     private KotlinClassFinder kotlinClassFinder;
     private ErrorReporter errorReporter;
 
@@ -80,8 +80,8 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     @Inject
-    public void setJavaDescriptorResolver(JavaDescriptorResolver javaDescriptorResolver) {
-        this.javaDescriptorResolver = javaDescriptorResolver;
+    public void setClassResolver(DependencyClassByQualifiedNameResolver classResolver) {
+        this.classResolver = classResolver;
     }
 
     @Inject
@@ -214,7 +214,7 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
 
     @NotNull
     private ClassDescriptor resolveClass(@NotNull JvmClassName className) {
-        ClassDescriptor annotationClass = javaDescriptorResolver.resolveClass(className.getFqNameForClassNameWithoutDollars());
+        ClassDescriptor annotationClass = classResolver.resolveClass(className.getFqNameForClassNameWithoutDollars());
         return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
     }
 
