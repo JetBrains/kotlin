@@ -29,6 +29,7 @@ import com.intellij.ui.BooleanTableCellRenderer;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.table.JBTable;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.UsageViewPresentation;
 import com.intellij.usages.impl.UsagePreviewPanel;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
@@ -80,7 +81,7 @@ class KotlinOverridingDialog extends DialogWrapper {
         for (int i = 0; i < myMethodText.length; i++) {
             myMethodText[i] = formatElement(((KotlinSafeDeleteOverridingUsageInfo) myOverridingMethods.get(i)).getOverridingElement());
         }
-        myUsagePreviewPanel = new UsagePreviewPanel(project);
+        myUsagePreviewPanel = new UsagePreviewPanel(project, new UsageViewPresentation());
         setTitle(JetBundle.message("unused.overriding.methods.title"));
         init();
     }
