@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,9 +115,6 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
             RenameProcessor(context.project, substitution, newName, true, true).run()
-
-            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-            FileDocumentManager.getInstance()?.saveAllDocuments()
         }
     }
 
@@ -135,11 +132,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             if (method == null) throw IllegalStateException("Method with signature '$methodSignature' wasn't found in class $classFQN")
 
             val substitution = RenamePsiElementProcessor.forElement(method).substituteElementToRename(method, null)
-
             RenameProcessor(context.project, substitution, newName, false, false).run()
-
-            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-            FileDocumentManager.getInstance()?.saveAllDocuments()
         }
     }
 
@@ -185,9 +178,6 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val substitution = RenamePsiElementProcessor.forElement(psiElement).substituteElementToRename(psiElement, null)
 
             RenameProcessor(context.project, substitution, newName, true, true).run()
-
-            PsiDocumentManager.getInstance(context.project).commitAllDocuments()
-            FileDocumentManager.getInstance()?.saveAllDocuments()
         }
     }
 
@@ -197,7 +187,14 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
     }
 
     protected fun doTest(action : (VirtualFile, VirtualFile?) -> Unit) {
-        super.doTest(action, getTestDirName(true))
+        super.doTest(
+                { rootDir, rootAfter ->
+                    action(rootDir, rootAfter)
+
+                    PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
+                    FileDocumentManager.getInstance()?.saveAllDocuments()
+                },
+                getTestDirName(true))
     }
 
     protected override fun getTestRoot() : String {
