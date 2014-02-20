@@ -2,5 +2,5 @@ package test
 
 public final class FinalFieldAsVal : java.lang.Object {
     public constructor FinalFieldAsVal()
-    public final val f: kotlin.Int = 1.toInt()
+    public final val f: kotlin.Int = 1
 }

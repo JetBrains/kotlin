@@ -40,7 +40,7 @@ public class IntValue extends IntegerValueConstant<Integer> {
 
     @Override
     public String toString() {
-        return value + ".toInt()";
+        return value.toString();
     }
 
     @Override

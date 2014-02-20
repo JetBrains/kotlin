@@ -2,6 +2,6 @@ package test
 
 internal final class ClassVal {
     /*primary*/ public constructor ClassVal()
-    internal final val aa: kotlin.Int = 1.toInt()
+    internal final val aa: kotlin.Int = 1
         internal final fun <get-aa>(): kotlin.Int
 }

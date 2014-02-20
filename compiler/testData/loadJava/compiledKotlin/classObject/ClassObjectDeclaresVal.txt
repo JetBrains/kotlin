@@ -5,7 +5,7 @@ internal final class ClassObjectDeclaresProperty {
     
     internal class object <class-object-for-ClassObjectDeclaresProperty> {
         /*primary*/ private constructor <class-object-for-ClassObjectDeclaresProperty>()
-        internal final val i: kotlin.Int = 1.toInt()
+        internal final val i: kotlin.Int = 1
             internal final fun <get-i>(): kotlin.Int
     }
 }

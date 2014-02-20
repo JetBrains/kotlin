@@ -18,4 +18,4 @@ Ann(
     p6 = java.lang.Long.MAX_VALUE + 1
 ) class MyClass
 
-// EXPECTED: Ann(p1 = 128.toInt(): Int, p2 = 32768.toInt(): Int, p3 = -2147483648.toInt(): Int, p4 = -2147483648.toInt(): Int, p5 = 2147483648.toLong(): Long, p6 = -9223372036854775808.toLong(): Long)
+// EXPECTED: Ann(p1 = 128: Int, p2 = 32768: Int, p3 = -2147483648: Int, p4 = -2147483648: Int, p5 = 2147483648.toLong(): Long, p6 = -9223372036854775808.toLong(): Long)

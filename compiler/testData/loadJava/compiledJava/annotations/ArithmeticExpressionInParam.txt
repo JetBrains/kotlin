@@ -8,7 +8,7 @@ public open class ArithmeticExpressionInParam : java.lang.Object {
         public abstract fun value(): kotlin.Int
     }
     
-    test.ArithmeticExpressionInParam.Anno(value = 42.toInt(): kotlin.Int) public open class Class : java.lang.Object {
+    test.ArithmeticExpressionInParam.Anno(value = 42: kotlin.Int) public open class Class : java.lang.Object {
         public constructor Class()
     }
 }

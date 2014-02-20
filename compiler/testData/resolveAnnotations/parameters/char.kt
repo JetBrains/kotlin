@@ -13,4 +13,4 @@ annotation class Ann(
 
 Ann('c', 99.toChar(), 'c'.toInt(), 'c'.toLong(), 'c'.toByte(), 'c'.toShort(), 'c'.toDouble(), 'c'.toFloat()) class MyClass
 
-// EXPECTED: Ann(b1 = #99(c): Char, b2 = #99(c): Char, b3 = 99.toInt(): Int, b4 = 99.toLong(): Long, b5 = 99.toByte(): Byte, b6 = 99.toShort(): Short, b7 = 99.0.toDouble(): Double, b8 = 99.0.toFloat(): Float)
+// EXPECTED: Ann(b1 = #99(c): Char, b2 = #99(c): Char, b3 = 99: Int, b4 = 99.toLong(): Long, b5 = 99.toByte(): Byte, b6 = 99.toShort(): Short, b7 = 99.0.toDouble(): Double, b8 = 99.0.toFloat(): Float)

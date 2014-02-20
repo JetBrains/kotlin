@@ -12,7 +12,7 @@ val prop3 = 1 <= 2
 // val prop4: false
 val prop4 = 1 >= 2
 
-// val prop5: -1.toInt()
+// val prop5: -1
 val prop5 = 1.compareTo(2)
 
 // val prop6: false
