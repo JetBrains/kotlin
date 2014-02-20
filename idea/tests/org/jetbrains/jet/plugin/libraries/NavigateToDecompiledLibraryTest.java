@@ -36,8 +36,6 @@ import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor;
 
 import java.util.Map;
 
-import static org.jetbrains.jet.plugin.libraries.JetDecompiledData.getDecompiledData;
-
 public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTest {
     private VirtualFile classFile;
 
@@ -89,7 +87,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         classFile = getClassFile();
         JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData(classFile, getProject());
         Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(decompiledData.getFile(),
-                                                    getDecompiledData(classFile, getProject()) .getRenderedDescriptorsToRanges());
+                                                                              decompiledData.getRenderedDescriptorsToRanges());
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
         assertSameLinesWithFile(TEST_DATA_PATH + "/decompiled/" + getTestName(false) + ".kt", decompiledTextWithMarks);
