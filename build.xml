@@ -273,11 +273,10 @@
 
     <target name="builtins">
       <cleandir dir="${output}/builtins"/>
-      <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage" failonerror="true" fork="true">
-        <classpath>
-          <path refid="classpath"/>
-          <pathelement location="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"/>
-        </classpath>
+      <java classname="org.jetbrains.jet.utils.builtinsSerializer.BuiltinsSerializerPackage"
+            classpath="${bootstrap.compiler.home}/lib/kotlin-compiler.jar"
+            failonerror="true"
+            fork="true">
         <assertions>
           <enable/>
         </assertions>
