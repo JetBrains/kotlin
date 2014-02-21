@@ -95,6 +95,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTestWithStdLib
 import org.jetbrains.jet.plugin.codeInsight.AbstractInsertImportOnPasteTest
 import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTest
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
+import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -480,6 +481,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartSelectionTest>()) {
             model("smartSelection", testMethod = "doTestSmartSelection", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractExpressionSelectionTest>()) {
+            model("expressionSelection", testMethod = "doTestExpressionSelection", pattern = """^([^\.]+)\.kt$""")
         }
     }
 
