@@ -23,7 +23,7 @@ class C {
 }
 
 class D {
-    override fun equals(o: jet.Any?) = false
+    override fun equals(o: kotlin.Any?) = false
     override fun hashCode(): Int = 239
     override fun toString() = ""
 }

@@ -1,20 +1,20 @@
 package test
 
-test.DoubleAnno() internal val jet.Double.extension: jet.Int
-    internal fun jet.Double.<get-extension>(): jet.Int
-test.IntAnno() internal val jet.Int.extension: jet.Int
-    internal fun jet.Int.<get-extension>(): jet.Int
-test.StringAnno() internal val jet.String.extension: jet.String
-    internal fun jet.String.<get-extension>(): jet.String
+test.DoubleAnno() internal val kotlin.Double.extension: kotlin.Int
+    internal fun kotlin.Double.<get-extension>(): kotlin.Int
+test.IntAnno() internal val kotlin.Int.extension: kotlin.Int
+    internal fun kotlin.Int.<get-extension>(): kotlin.Int
+test.StringAnno() internal val kotlin.String.extension: kotlin.String
+    internal fun kotlin.String.<get-extension>(): kotlin.String
 
-internal final annotation class DoubleAnno : jet.Annotation {
+internal final annotation class DoubleAnno : kotlin.Annotation {
     /*primary*/ public constructor DoubleAnno()
 }
 
-internal final annotation class IntAnno : jet.Annotation {
+internal final annotation class IntAnno : kotlin.Annotation {
     /*primary*/ public constructor IntAnno()
 }
 
-internal final annotation class StringAnno : jet.Annotation {
+internal final annotation class StringAnno : kotlin.Annotation {
     /*primary*/ public constructor StringAnno()
 }

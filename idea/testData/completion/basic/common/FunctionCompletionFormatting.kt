@@ -4,4 +4,4 @@ fun some() {
     tes<caret>
 }
 
-// EXIST: { lookupString:"test", itemText:"test(a: jet.Int)" }
+// EXIST: { lookupString:"test", itemText:"test(a: kotlin.Int)" }

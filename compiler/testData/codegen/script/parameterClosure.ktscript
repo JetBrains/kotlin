@@ -1,4 +1,4 @@
-// param: x: jet.Int: 10
+// param: x: kotlin.Int: 10
 
 fun addX(y: Int) = x + y
 

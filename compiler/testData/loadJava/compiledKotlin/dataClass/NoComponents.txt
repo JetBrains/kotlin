@@ -1,5 +1,5 @@
 package test
 
-jet.data() internal final class DataClass {
+kotlin.data() internal final class DataClass {
     /*primary*/ public constructor DataClass()
 }

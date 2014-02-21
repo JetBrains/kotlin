@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1000)
 SUBTYPE T Byte
 
 type parameter bounds:
-T >: IntegerValueType(1000)(SPECIAL), <: jet.Byte(SPECIAL)
+T >: IntegerValueType(1000)(SPECIAL), <: kotlin.Byte(SPECIAL)
 status:
 -hasConflictingConstraints: true
 -hasContradiction: true

@@ -3,6 +3,6 @@ fun main() {
 }
 
 // MULTIRESOLVE
-// REF: (for jet.CharSequence in kotlin).iterator()
-// REF: (in jet.CharIterator).next()
-// REF: (in jet.Iterator).hasNext()
+// REF: (for kotlin.CharSequence in kotlin).iterator()
+// REF: (in kotlin.CharIterator).next()
+// REF: (in kotlin.Iterator).hasNext()

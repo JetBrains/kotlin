@@ -2,10 +2,10 @@ package test
 
 public open class JavaSubclass : test.KotlinClass {
     public constructor JavaSubclass()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }
 
 public open class KotlinClass {
     public constructor KotlinClass()
-    public open fun foo(): jet.String
+    public open fun foo(): kotlin.String
 }

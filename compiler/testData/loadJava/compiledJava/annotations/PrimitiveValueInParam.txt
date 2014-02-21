@@ -2,17 +2,17 @@ package test
 
 public trait PrimitiveValueInParam : java.lang.Object {
     
-    test.PrimitiveValueInParam.Ann(bool = true: jet.Boolean, d = 1.0.toDouble(): jet.Double, f = 1.0.toFloat(): jet.Float, i = 1.toInt(): jet.Int, l = 1.toLong(): jet.Long, str = "str": jet.String) public open class A : java.lang.Object {
+    test.PrimitiveValueInParam.Ann(bool = true: kotlin.Boolean, d = 1.0.toDouble(): kotlin.Double, f = 1.0.toFloat(): kotlin.Float, i = 1.toInt(): kotlin.Int, l = 1.toLong(): kotlin.Long, str = "str": kotlin.String) public open class A : java.lang.Object {
         public constructor A()
     }
     
-    public final annotation class Ann : jet.Annotation {
-        public constructor Ann(/*0*/ i: jet.Int, /*1*/ l: jet.Long, /*2*/ d: jet.Double, /*3*/ f: jet.Float, /*4*/ bool: jet.Boolean, /*5*/ str: jet.String)
-        public abstract fun bool(): jet.Boolean
-        public abstract fun d(): jet.Double
-        public abstract fun f(): jet.Float
-        public abstract fun i(): jet.Int
-        public abstract fun l(): jet.Long
-        public abstract fun str(): jet.String
+    public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ i: kotlin.Int, /*1*/ l: kotlin.Long, /*2*/ d: kotlin.Double, /*3*/ f: kotlin.Float, /*4*/ bool: kotlin.Boolean, /*5*/ str: kotlin.String)
+        public abstract fun bool(): kotlin.Boolean
+        public abstract fun d(): kotlin.Double
+        public abstract fun f(): kotlin.Float
+        public abstract fun i(): kotlin.Int
+        public abstract fun l(): kotlin.Long
+        public abstract fun str(): kotlin.String
     }
 }

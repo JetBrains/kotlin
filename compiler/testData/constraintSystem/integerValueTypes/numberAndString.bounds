@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1)
 SUPERTYPE T String
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), >: jet.String(SPECIAL)
+T >: IntegerValueType(1)(SPECIAL), >: kotlin.String(SPECIAL)
 status:
 -hasConflictingConstraints: false
 -hasContradiction: false
@@ -15,4 +15,4 @@ status:
 -isSuccessful: true
 
 result:
-T=jet.Comparable<out jet.Any?>
+T=kotlin.Comparable<out kotlin.Any?>

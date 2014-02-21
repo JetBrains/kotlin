@@ -3,8 +3,8 @@
 
 package testData.libraries
 
-[[public final enum class Color(rgb: jet.Int) : jet.Enum<testData.libraries.Color> {
-    [internal final val rgb: jet.Int] /* compiled code */
+[[public final enum class Color(rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
+    [internal final val rgb: kotlin.Int] /* compiled code */
 
     [[BLUE]]
 

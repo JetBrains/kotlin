@@ -1,2 +1,2 @@
 var x : <ref>Nothing
-//jet/Nothing.kt:Nothing
+//kotlin/Nothing.kt:Nothing

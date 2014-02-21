@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
@@ -8,7 +8,7 @@ internal trait Trait {
     
     internal class object <class-object-for-Trait> {
         /*primary*/ private constructor <class-object-for-Trait>()
-        test.Anno() internal final val property: jet.Int
-            internal final fun <get-property>(): jet.Int
+        test.Anno() internal final val property: kotlin.Int
+            internal final fun <get-property>(): kotlin.Int
     }
 }

@@ -3,9 +3,9 @@ package test
 public final class InheritMethodsDifferentReturnTypesGeneric : java.lang.Object {
     public constructor InheritMethodsDifferentReturnTypesGeneric()
     
-    public trait Sub : test.InheritMethodsDifferentReturnTypesGeneric.Super1<jet.String, jet.CharSequence>, test.InheritMethodsDifferentReturnTypesGeneric.Super2<jet.CharSequence, jet.String> {
-        public abstract override /*2*/ /*fake_override*/ fun bar(): jet.String?
-        public abstract override /*2*/ /*fake_override*/ fun foo(): jet.String?
+    public trait Sub : test.InheritMethodsDifferentReturnTypesGeneric.Super1<kotlin.String, kotlin.CharSequence>, test.InheritMethodsDifferentReturnTypesGeneric.Super2<kotlin.CharSequence, kotlin.String> {
+        public abstract override /*2*/ /*fake_override*/ fun bar(): kotlin.String?
+        public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String?
     }
     
     public trait Super1</*0*/ F, /*1*/ B> : java.lang.Object {

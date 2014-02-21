@@ -2,12 +2,12 @@ package test
 
 public open class Sub : test.Super {
     public constructor Sub()
-    public open override /*1*/ fun jet.String.bar(/*0*/ param: jet.String): jet.String
-    public final override /*1*/ /*fake_override*/ fun jet.String.foo(): jet.Unit
+    public open override /*1*/ fun kotlin.String.bar(/*0*/ param: kotlin.String): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun kotlin.String.foo(): kotlin.Unit
 }
 
 public open class Super {
     public constructor Super()
-    public abstract fun jet.String.bar(/*0*/ p: jet.String): jet.Unit
-    public final fun jet.String.foo(): jet.Unit
+    public abstract fun kotlin.String.bar(/*0*/ p: kotlin.String): kotlin.Unit
+    public final fun kotlin.String.foo(): kotlin.Unit
 }

@@ -1,17 +1,17 @@
 package test
 
-jet.deprecated(value = "Class": jet.String) internal final class Class {
+kotlin.deprecated(value = "Class": kotlin.String) internal final class Class {
     /*primary*/ public constructor Class()
     
-    jet.deprecated(value = "class object": jet.String) internal class object <class-object-for-Class> {
+    kotlin.deprecated(value = "class object": kotlin.String) internal class object <class-object-for-Class> {
         /*primary*/ private constructor <class-object-for-Class>()
     }
     
-    jet.deprecated(value = "Inner": jet.String) internal final inner class Inner {
+    kotlin.deprecated(value = "Inner": kotlin.String) internal final inner class Inner {
         /*primary*/ public constructor Inner()
     }
     
-    jet.deprecated(value = "Nested": jet.String) internal final class Nested {
+    kotlin.deprecated(value = "Nested": kotlin.String) internal final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

@@ -3,7 +3,7 @@ class Test {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"String", tailText:" (jet)" }
+// EXIST: { lookupString:"String", tailText:" (kotlin)" }
 // EXIST: IllegalStateException
 // EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer

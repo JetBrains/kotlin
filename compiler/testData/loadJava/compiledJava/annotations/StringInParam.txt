@@ -2,12 +2,12 @@ package test
 
 public trait StringInParam : java.lang.Object {
     
-    public final annotation class Anno : jet.Annotation {
-        public constructor Anno(/*0*/ value: jet.String)
-        public abstract fun value(): jet.String
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public abstract fun value(): kotlin.String
     }
     
-    test.StringInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
+    test.StringInParam.Anno(value = "hello": kotlin.String) public open class Class : java.lang.Object {
         public constructor Class()
     }
 }

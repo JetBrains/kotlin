@@ -2,16 +2,16 @@ package test
 
 public trait StringConstantInParam : java.lang.Object {
     
-    public final annotation class Anno : jet.Annotation {
-        public constructor Anno(/*0*/ value: jet.String)
-        public abstract fun value(): jet.String
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public abstract fun value(): kotlin.String
     }
     
-    test.StringConstantInParam.Anno(value = "hello": jet.String) public open class Class : java.lang.Object {
+    test.StringConstantInParam.Anno(value = "hello": kotlin.String) public open class Class : java.lang.Object {
         public constructor Class()
     }
 }
 
 package test.StringConstantInParam {
-    public val HEL: jet.String
+    public val HEL: kotlin.String
 }

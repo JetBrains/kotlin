@@ -9,6 +9,6 @@ public interface OverriddenAmbiguousAdapters {
     }
 
     public interface Sub extends Super {
-        void foo(jet.Function0<jet.Unit> r);
+        void foo(kotlin.Function0<kotlin.Unit> r);
     }
 }

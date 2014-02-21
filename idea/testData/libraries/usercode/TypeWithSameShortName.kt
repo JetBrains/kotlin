@@ -10,4 +10,4 @@ fun foo() {
 //
 //public fun <2>processDouble(d: Double) {}
 //
-//public fun <1>processDouble(d: jet.Double) {}
+//public fun <1>processDouble(d: kotlin.Double) {}

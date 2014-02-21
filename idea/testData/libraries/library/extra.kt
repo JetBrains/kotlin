@@ -1,6 +1,6 @@
 package testData.libraries
 
-import jet as gogland
+import kotlin as gogland
 
 public fun func(str : gogland.String) {
 }

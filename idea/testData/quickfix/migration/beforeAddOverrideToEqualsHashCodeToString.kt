@@ -23,7 +23,7 @@ class C {
 }
 
 class D {
-    public open fun equals(o: jet.Any?) = false
+    public open fun equals(o: kotlin.Any?) = false
     public open fun hashCode(): Int = 239
     public open fun toString() = ""
 }

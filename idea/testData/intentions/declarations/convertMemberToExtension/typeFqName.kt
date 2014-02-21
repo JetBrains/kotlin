@@ -1,3 +1,3 @@
 class Owner {
-    fun <caret>f(p: jet.Int): jet.String {}
+    fun <caret>f(p: kotlin.Int): kotlin.String {}
 }

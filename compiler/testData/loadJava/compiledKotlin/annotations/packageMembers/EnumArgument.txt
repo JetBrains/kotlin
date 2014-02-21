@@ -1,9 +1,9 @@
 package test
 
-test.Anno(t = ElementType.FIELD: java.lang.annotation.ElementType) internal val bar: jet.Int
-    internal fun <get-bar>(): jet.Int
-test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal fun foo(): jet.Unit
+test.Anno(t = ElementType.FIELD: java.lang.annotation.ElementType) internal val bar: kotlin.Int
+    internal fun <get-bar>(): kotlin.Int
+test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal fun foo(): kotlin.Unit
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ t: java.lang.annotation.ElementType)
 }

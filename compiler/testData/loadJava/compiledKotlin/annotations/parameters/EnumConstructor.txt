@@ -1,25 +1,25 @@
 package test
 
-internal final annotation class A : jet.Annotation {
+internal final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A()
 }
 
-internal final annotation class B : jet.Annotation {
+internal final annotation class B : kotlin.Annotation {
     /*primary*/ public constructor B()
 }
 
-internal final enum class E : jet.Enum<test.E> {
-    /*primary*/ private constructor E(/*0*/ test.A() x: jet.String, /*1*/ test.B() y: jet.Int)
-    test.A() internal final val x: jet.String
-        internal final fun <get-x>(): jet.String
-    test.B() internal final val y: jet.Int
-        internal final fun <get-y>(): jet.Int
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+internal final enum class E : kotlin.Enum<test.E> {
+    /*primary*/ private constructor E(/*0*/ test.A() x: kotlin.String, /*1*/ test.B() y: kotlin.Int)
+    test.A() internal final val x: kotlin.String
+        internal final fun <get-x>(): kotlin.String
+    test.B() internal final val y: kotlin.Int
+        internal final fun <get-y>(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public class object <class-object-for-E> {
         /*primary*/ private constructor <class-object-for-E>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.E
-        public final /*synthesized*/ fun values(): jet.Array<test.E>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
+        public final /*synthesized*/ fun values(): kotlin.Array<test.E>
     }
 }
