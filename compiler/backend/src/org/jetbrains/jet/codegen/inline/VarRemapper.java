@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

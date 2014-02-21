@@ -1,4 +1,4 @@
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
@@ -10,7 +10,6 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.commons.Remapper;
 import org.jetbrains.asm4.commons.RemappingMethodAdapter;
 import org.jetbrains.asm4.tree.*;
 import org.jetbrains.asm4.tree.analysis.*;
@@ -22,7 +21,7 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.asm.InlineCodegenUtil.*;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.*;
 
 public class MethodInliner {
 

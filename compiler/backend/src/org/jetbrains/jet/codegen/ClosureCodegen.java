@@ -25,7 +25,7 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.asm.Inliner;
+import org.jetbrains.jet.codegen.inline.Inliner;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.LocalLookup;

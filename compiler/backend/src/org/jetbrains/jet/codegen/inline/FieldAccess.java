@@ -14,27 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.commons.InstructionAdapter;
+public class FieldAccess {
 
-public class ShiftAdapter extends InstructionAdapter {
+    private final String name;
 
-    private int shift;
+    private final String type;
 
-    public ShiftAdapter(MethodVisitor mv, int shift) {
-        super(mv);
-        this.shift = shift;
+    private final FieldAccess owner;
+
+    private final boolean isThisAccess;
+
+    public FieldAccess(String name, String type, FieldAccess owner) {
+        this.name = name;
+        this.type = type;
+        this.owner = owner;
+        isThisAccess = false;
     }
 
-    @Override
-    public void visitIincInsn(int var, int increment) {
-        super.visitIincInsn(var + shift, increment);
+    public FieldAccess(String name, String type) {
+        this.name = "!this!" + name;
+        this.type = type;
+        isThisAccess = true;
+        owner = null;
     }
 
-    @Override
-    public void visitVarInsn(int opcode, int var) {
-        super.visitVarInsn(opcode, var + shift);
+
+    public boolean isThisAccess() {
+        return isThisAccess;
     }
 }

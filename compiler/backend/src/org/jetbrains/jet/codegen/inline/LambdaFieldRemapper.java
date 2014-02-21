@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
@@ -26,7 +26,7 @@ import org.jetbrains.asm4.tree.VarInsnNode;
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.asm.MethodInliner.getPreviousNoLabelNoLine;
+import static org.jetbrains.jet.codegen.inline.MethodInliner.getPreviousNoLabelNoLine;
 
 public class LambdaFieldRemapper {
 

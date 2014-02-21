@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import com.google.common.collect.Iterables;
 import org.jetbrains.annotations.NotNull;

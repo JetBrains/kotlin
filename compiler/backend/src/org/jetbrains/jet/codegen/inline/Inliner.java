@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.Type;

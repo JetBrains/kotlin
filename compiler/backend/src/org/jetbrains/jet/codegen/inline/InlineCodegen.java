@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.jetbrains.jet.codegen.asm;
+package org.jetbrains.jet.codegen.inline;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
