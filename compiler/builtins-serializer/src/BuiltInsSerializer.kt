@@ -19,7 +19,6 @@ package org.jetbrains.jet.utils.builtinsSerializer
 import java.io.File
 import java.io.PrintStream
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.config.CompilerConfiguration
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer
@@ -39,12 +38,12 @@ import org.jetbrains.jet.config.CommonConfigurationKeys
 import org.jetbrains.jet.cli.common.messages.MessageCollector
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.lang.BuiltInsPackageMigration
+import org.jetbrains.jet.utils.recursePostOrder
 
 public class BuiltInsSerializer(val out: PrintStream?) {
     private var totalSize = 0
@@ -76,9 +75,10 @@ public class BuiltInsSerializer(val out: PrintStream?) {
         val session = AnalyzerFacadeForJVM.createLazyResolveSession(project, files, BindingTraceContext(), false)
         val module = session.getModuleDescriptor()
 
-        if (!FileUtil.delete(destDir)) {
-            System.err.println("Could not delete: " + destDir)
-        }
+        // We don't use FileUtil because it spawns JNA initialization, which fails because we don't have (and don't want to have) its
+        // native libraries in the compiler jar (libjnidispatch.so / jnidispatch.dll / ...)
+        destDir.recursePostOrder { it.delete() }
+
         if (!destDir.mkdirs()) {
             System.err.println("Could not make directories: " + destDir)
         }
@@ -162,7 +162,9 @@ public class BuiltInsSerializer(val out: PrintStream?) {
     fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
         totalSize += stream.size()
         totalFiles++
-        FileUtil.writeToFile(File(destDir, fileName), stream.toByteArray())
+        val file = File(destDir, fileName)
+        file.getParentFile()?.mkdirs()
+        file.writeBytes(stream.toByteArray())
     }
 
     fun getFileName(classDescriptor: ClassDescriptor): String {
