@@ -11,16 +11,18 @@ import org.junit.Test
 import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import org.junit.Ignore
 
 class BasicKotlinGradleIT {
 
     var workingDir: File = File(".")
 
     Before fun setUp() {
-        workingDir = Files.createTempDir()
+        workingDir = Files.createTempDir()!!
         workingDir.mkdirs()
         copyRecursively(File("src/test/resources/testProject/alfa"), workingDir)
         copyRecursively(File("src/test/resources/testProject/beta"), workingDir)
+        copyRecursively(File("src/test/resources/testProject/gamma"), workingDir)
     }
 
 
@@ -118,6 +120,37 @@ class BasicKotlinGradleIT {
             println(buildOutput)
 
             assertEquals(result, 0)
+    }
+
+    Ignore fun testKotlinExtraJavaSrc() {
+        val projectDir = File(workingDir, "gamma")
+
+        val pathToKotlinPlugin = "-PpathToKotlinPlugin=${File("local-repo").getAbsolutePath()}"
+        val version = "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT"
+        val cmd = if (SystemInfo.isWindows)
+            listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, version, "--no-daemon", "--debug")
+        else
+            listOf("/bin/bash", "./gradlew", "build", pathToKotlinPlugin, version,  "--no-daemon", "--debug")
+
+        val builder = ProcessBuilder(cmd)
+        builder.directory(projectDir)
+        builder.redirectErrorStream(true)
+        val process = builder.start()
+
+        val s = Scanner(process.getInputStream()!!)
+        val text = StringBuilder()
+        while (s.hasNextLine()) {
+            text append s.nextLine()
+            text append "\n"
+        }
+        s.close()
+
+        val result = process.waitFor()
+        val buildOutput = text.toString()
+
+        println(buildOutput)
+
+        assertEquals(result, 0)
     }
 
 
