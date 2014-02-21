@@ -23,8 +23,10 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
 /*package*/ abstract class ExpressionTypingVisitor extends JetVisitor<JetTypeInfo, ExpressionTypingContext> {
 
     protected final ExpressionTypingInternals facade;
+    protected final ExpressionTypingComponents components;
 
     protected ExpressionTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         this.facade = facade;
+        this.components = facade.getComponents();
     }
 }

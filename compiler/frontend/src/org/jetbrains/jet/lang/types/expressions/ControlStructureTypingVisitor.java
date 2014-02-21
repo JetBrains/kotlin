@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory1;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -36,8 +34,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -46,7 +42,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -122,7 +117,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         Call callForIf = createCallForSpecialConstruction(ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
-        ResolvedCall<FunctionDescriptor> resolvedCall = resolveSpecialConstructionAsCall(
+        ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 callForIf, "If", Lists.newArrayList("thenBranch", "elseBranch"),
                 Lists.newArrayList(false, false),
                 contextWithExpectedType, dataFlowInfoForArguments);
@@ -158,7 +153,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static JetTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
+    private JetTypeInfo getTypeInfoWhenOnlyOneBranchIsPresent(
             @NotNull JetExpression presentBranch,
             @NotNull WritableScopeImpl presentScope,
             @NotNull DataFlowInfo presentInfo,
@@ -169,7 +164,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
     ) {
         ExpressionTypingContext newContext = context.replaceDataFlowInfo(presentInfo).replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT);
-        JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+        JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                 presentScope, Collections.singletonList(presentBranch), CoercionStrategy.NO_COERCION, newContext, context.trace);
         JetType type = typeInfo.getType();
         DataFlowInfo dataFlowInfo;
@@ -199,7 +194,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         if (body != null) {
             WritableScopeImpl scopeToExtend = newWritableScopeImpl(context, "Scope extended in while's condition");
             DataFlowInfo conditionInfo = DataFlowUtils.extractDataFlowInfoFromCondition(condition, true, context).and(dataFlowInfo);
-            context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     scopeToExtend, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(conditionInfo), context.trace);
         }
@@ -266,7 +261,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (!functionLiteral.hasParameterSpecification()) {
                 WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
                 conditionScope = writableScope;
-                context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
+                components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context, context.trace);
                 context.trace.record(BindingContext.BLOCK, function);
             }
             else {
@@ -284,7 +279,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             else {
                 block = Collections.<JetElement>singletonList(body);
             }
-            context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context, context.trace);
+            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(writableScope, block, CoercionStrategy.NO_COERCION, context, context.trace);
         }
         JetExpression condition = expression.getCondition();
         DataFlowInfo conditionDataFlowInfo = checkCondition(conditionScope, condition, context);
@@ -315,7 +310,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             ExpressionReceiver loopRangeReceiver = getExpressionReceiver(facade, loopRange, context.replaceScope(context.scope));
             dataFlowInfo = facade.getTypeInfo(loopRange, context).getDataFlowInfo();
             if (loopRangeReceiver != null) {
-                expectedParameterType = checkIterableConvention(loopRangeReceiver, context);
+                expectedParameterType = components.forLoopConventionsChecker.checkIterableConvention(loopRangeReceiver, context);
             }
         }
 
@@ -332,20 +327,21 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (multiParameter != null && loopRange != null) {
                 JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
-                ExpressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context);
+                components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(loopScope, multiParameter, iteratorNextAsReceiver,
+                                                                                          loopRange, context);
             }
         }
 
         JetExpression body = expression.getBody();
         if (body != null) {
-            context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
+            components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(loopScope, Collections.singletonList(body),
                     CoercionStrategy.NO_COERCION, context.replaceDataFlowInfo(dataFlowInfo), context.trace);
         }
 
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getUnitType(), expression, contextWithExpectedType, dataFlowInfo);
     }
 
-    private static VariableDescriptor createLoopParameterDescriptor(
+    private VariableDescriptor createLoopParameterDescriptor(
             JetParameter loopParameter,
             JetType expectedParameterType,
             ExpressionTypingContext context
@@ -355,7 +351,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference typeReference = loopParameter.getTypeReference();
         VariableDescriptor variableDescriptor;
         if (typeReference != null) {
-            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
+            variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(context.scope, loopParameter, context.trace);
             JetType actualParameterType = variableDescriptor.getType();
             if (expectedParameterType != null &&
                     !JetTypeChecker.INSTANCE.isSubtypeOf(expectedParameterType, actualParameterType)) {
@@ -366,7 +362,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (expectedParameterType == null) {
                 expectedParameterType = ErrorUtils.createErrorType("Error");
             }
-            variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
+            variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(loopParameter, expectedParameterType, context.trace, context.scope);
         }
 
         {
@@ -379,80 +375,6 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         return variableDescriptor;
-    }
-
-    @Nullable
-    /*package*/ static JetType checkIterableConvention(@NotNull ExpressionReceiver loopRange, ExpressionTypingContext context) {
-        JetExpression loopRangeExpression = loopRange.getExpression();
-
-        // Make a fake call loopRange.iterator(), and try to resolve it
-        Name iterator = Name.identifier("iterator");
-        Pair<Call, OverloadResolutionResults<FunctionDescriptor>> calls = makeAndResolveFakeCall(loopRange, context, Collections.<JetExpression>emptyList(), iterator);
-        Call iteratorCall = calls.getFirst();
-        OverloadResolutionResults<FunctionDescriptor> iteratorResolutionResults = calls.getSecond();
-
-        if (iteratorResolutionResults.isSuccess()) {
-            ResolvedCall<FunctionDescriptor> iteratorResolvedCall = iteratorResolutionResults.getResultingCall();
-            context.trace.record(LOOP_RANGE_ITERATOR_RESOLVED_CALL, loopRangeExpression, iteratorResolvedCall);
-            context.trace.record(LOOP_RANGE_ITERATOR_CALL, loopRangeExpression, iteratorCall);
-
-            FunctionDescriptor iteratorFunction = iteratorResolvedCall.getResultingDescriptor();
-            JetType iteratorType = iteratorFunction.getReturnType();
-            JetType hasNextType = checkConventionForIterator(context, loopRangeExpression, iteratorType, "hasNext",
-                                                             HAS_NEXT_FUNCTION_AMBIGUITY, HAS_NEXT_MISSING, HAS_NEXT_FUNCTION_NONE_APPLICABLE,
-                                                             LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
-            if (hasNextType != null && !isBoolean(hasNextType)) {
-                context.trace.report(HAS_NEXT_FUNCTION_TYPE_MISMATCH.on(loopRangeExpression, hasNextType));
-            }
-            return checkConventionForIterator(context, loopRangeExpression, iteratorType, "next",
-                                              NEXT_AMBIGUITY, NEXT_MISSING, NEXT_NONE_APPLICABLE,
-                                              LOOP_RANGE_NEXT_RESOLVED_CALL);
-        }
-        else {
-            if (iteratorResolutionResults.isAmbiguity()) {
-//                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
-//                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResultingCalls()) {
-//                        stringBuffer.append(DescriptorRendererImpl.TEXT.render(functionDescriptor)).append(" ");
-//                    }
-//                    errorMessage = stringBuffer.toString();
-                context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));
-            }
-            else {
-                context.trace.report(ITERATOR_MISSING.on(loopRangeExpression));
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    private static JetType checkConventionForIterator(
-            @NotNull ExpressionTypingContext context,
-            @NotNull JetExpression loopRangeExpression,
-            @NotNull JetType iteratorType,
-            @NotNull String name,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> ambiguity,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> missing,
-            @NotNull DiagnosticFactory1<JetExpression, JetType> noneApplicable,
-            @NotNull WritableSlice<JetExpression, ResolvedCall<FunctionDescriptor>> resolvedCallKey
-    ) {
-        OverloadResolutionResults<FunctionDescriptor> nextResolutionResults = resolveFakeCall(
-                context, new TransientReceiver(iteratorType), Name.identifier(name));
-        if (nextResolutionResults.isAmbiguity()) {
-            context.trace.report(ambiguity.on(loopRangeExpression, iteratorType));
-        }
-        else if (nextResolutionResults.isNothing()) {
-            context.trace.report(missing.on(loopRangeExpression, iteratorType));
-        }
-        else if (!nextResolutionResults.isSuccess()) {
-            context.trace.report(noneApplicable.on(loopRangeExpression, iteratorType));
-        }
-        else {
-            assert nextResolutionResults.isSuccess();
-            ResolvedCall<FunctionDescriptor> resolvedCall = nextResolutionResults.getResultingCall();
-            context.trace.record(resolvedCallKey, loopRangeExpression, resolvedCall);
-            return resolvedCall.getResultingDescriptor().getReturnType();
-        }
-        return null;
     }
 
     @Override
@@ -469,7 +391,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 DescriptorResolver.checkParameterHasNoValOrVar(context.trace, catchParameter, VAL_OR_VAR_ON_CATCH_PARAMETER);
                 DescriptorResolver.checkParameterHasNoModifier(context.trace, catchParameter);
 
-                VariableDescriptor variableDescriptor = context.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
+                VariableDescriptor variableDescriptor = components.expressionTypingServices.getDescriptorResolver().resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
                 JetType throwableType = KotlinBuiltIns.getInstance().getThrowable().getDefaultType();
                 DataFlowUtils.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
