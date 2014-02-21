@@ -5,6 +5,11 @@ import java.util.Collections
 import kotlin.test.assertTrue
 
 /**
+ * Returns the given iterator itself. This allows to use an instance of iterator in a ranged for-loop
+ */
+public fun <T> Iterator<T>.iterator(): Iterator<T> = this
+
+/**
  * Returns an iterator which invokes the function to calculate the next value on each iteration until the function returns *null*
  */
 public fun <T:Any> iterate(nextFunction: () -> T?) : Iterator<T> {

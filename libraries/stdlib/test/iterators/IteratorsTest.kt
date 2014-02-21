@@ -3,6 +3,7 @@ package iterators
 import kotlin.test.assertEquals
 import org.junit.Test as test
 import kotlin.test.fails
+import java.util.ArrayList
 
 fun fibonacci(): Iterator<Int> {
     // fibonacci terms
@@ -86,5 +87,26 @@ class IteratorsTest {
     test fun skippingIterator() {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().skip(7).makeString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().skip(3).skip(4).makeString(limit = 10))
+    }
+
+    test fun iterationOverIterator() {
+        val c = arrayList(0, 1, 2, 3, 4, 5)
+        var s = ""
+        for (i in c.iterator()) {
+            s = s + i.toString()
+        }
+        assertEquals("012345", s)
+    }
+
+    private fun <T, C : MutableCollection<in T>> Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean): C {
+        for (element in this) if (predicate(element)) result.add(element) else break
+        return result
+    }
+
+    test fun iterableExtension() {
+        val c = arrayList(0, 1, 2, 3, 4, 5)
+        val d = ArrayList<Int>()
+        c.iterator().takeWhileTo(d, {i -> i < 4 })
+        assertEquals(4, d.size())
     }
 }

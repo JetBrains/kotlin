@@ -122,7 +122,6 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("plus"), 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("iterator"), 0, new IteratorIterator());
 
         for (PrimitiveType type : PrimitiveType.values()) {
             declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
