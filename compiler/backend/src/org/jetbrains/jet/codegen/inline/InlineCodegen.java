@@ -57,7 +57,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
-public class InlineCodegen implements ParentCodegenAware, Inliner {
+public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
     private final JetTypeMapper typeMapper;
 

@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression;
 
-public interface Inliner {
+public interface CallGenerator {
 
-    Inliner NOT_INLINE = new Inliner() {
+    CallGenerator NOT_INLINE = new CallGenerator() {
         @Override
         public void inlineCall(
                 CallableMethod callableMethod, ClassVisitor visitor
