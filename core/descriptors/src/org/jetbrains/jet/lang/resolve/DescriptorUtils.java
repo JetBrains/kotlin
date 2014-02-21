@@ -495,4 +495,16 @@ public class DescriptorUtils {
         }
         return false;
     }
+
+    public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull JetType type) {
+        if (variable.isVar() || type.isError()) return false;
+
+        if (type instanceof LazyType || type.isNullable()) return true;
+
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        return builtIns.isPrimitiveType(type) ||
+               builtIns.getStringType().equals(type) ||
+               builtIns.getNumber().getDefaultType().equals(type) ||
+               builtIns.getAnyType().equals(type);
+    }
 }

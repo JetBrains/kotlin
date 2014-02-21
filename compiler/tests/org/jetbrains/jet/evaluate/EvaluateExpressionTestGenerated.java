@@ -48,6 +48,11 @@ public class EvaluateExpressionTestGenerated extends AbstractEvaluateExpressionT
             doConstantTest("compiler/testData/evaluate/constant/compareTo.kt");
         }
         
+        @TestMetadata("differentTypes.kt")
+        public void testDifferentTypes() throws Exception {
+            doConstantTest("compiler/testData/evaluate/constant/differentTypes.kt");
+        }
+        
         @TestMetadata("divideByZero.kt")
         public void testDivideByZero() throws Exception {
             doConstantTest("compiler/testData/evaluate/constant/divideByZero.kt");

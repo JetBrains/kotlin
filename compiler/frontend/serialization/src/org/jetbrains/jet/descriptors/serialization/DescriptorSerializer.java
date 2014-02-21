@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -196,7 +197,7 @@ public class DescriptorSerializer {
                 }
             }
 
-            hasConstant = !propertyDescriptor.isVar() && propertyDescriptor.getCompileTimeInitializer() != null;
+            hasConstant = propertyDescriptor.getCompileTimeInitializer() != null;
         }
 
         builder.setFlags(Flags.getCallableFlags(

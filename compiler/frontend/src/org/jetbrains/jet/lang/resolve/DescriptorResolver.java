@@ -959,7 +959,7 @@ public class DescriptorResolver {
                                 @Override
                                 public JetType invoke() {
                                     JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
-                                    setConstantForVariableIfNeeded(variableDescriptor, initializer, initializerType, trace);
+                                    setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, initializerType, trace);
                                     return transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace);
                                 }
                             }
@@ -967,40 +967,45 @@ public class DescriptorResolver {
                 }
                 else {
                     JetType initializerType = resolveInitializerType(scope, initializer, dataFlowInfo, trace);
-                    setConstantForVariableIfNeeded(variableDescriptor, initializer, initializerType, trace);
+                    setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, initializerType, trace);
                     return initializerType;
                 }
             }
         }
         else {
             JetType type = typeResolver.resolveType(scope, propertyTypeRef, trace, true);
-            JetExpression initializer = variable.getInitializer();
-            if (initializer != null) {
-                setConstantForVariableIfNeeded(variableDescriptor, initializer, type, trace);
-            }
+            setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, type, trace);
             return type;
         }
     }
 
     private void setConstantForVariableIfNeeded(
             @NotNull VariableDescriptorImpl variableDescriptor,
-            @NotNull final JetExpression initializer,
-            @NotNull final JetType initializerType,
+            @NotNull final JetScope scope,
+            @NotNull JetVariableDeclaration variable,
+            @NotNull final DataFlowInfo dataFlowInfo,
+            @NotNull final JetType variableType,
             @NotNull final BindingTrace trace
     ) {
-        if (variableDescriptor.isVar()) return;
+        if (!shouldRecordInitializerForProperty(variableDescriptor, variableType)) return;
 
-        variableDescriptor.setCompileTimeInitializer(storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
-            @Nullable
-            @Override
-            public CompileTimeConstant<?> invoke() {
-                CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
-                if ((constant instanceof IntegerValueTypeConstant)) {
-                    return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
+        final JetExpression initializer = variable.getInitializer();
+        if (initializer == null) return;
+
+        variableDescriptor.setCompileTimeInitializer(
+            storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+                @Nullable
+                @Override
+                public CompileTimeConstant<?> invoke() {
+                    JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
+                    CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
+                    if (constant instanceof IntegerValueTypeConstant) {
+                        return EvaluatePackage.createCompileTimeConstantWithType((IntegerValueTypeConstant) constant, initializerType);
+                    }
+                    return constant;
                 }
-                return constant;
-            }
-        }, null));
+            }, null)
+        );
     }
 
     @NotNull

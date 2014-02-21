@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.ResolutionResultsCacheImpl;
 import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -565,7 +566,10 @@ public class BodyResolver {
         JetScope propertyDeclarationInnerScope = JetScopeUtils.getPropertyDeclarationInnerScopeForInitializer(
                 scope, propertyDescriptor.getTypeParameters(), NO_RECEIVER_PARAMETER, trace);
         JetType expectedTypeForInitializer = property.getTypeRef() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
-        expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, c.getOuterDataFlowInfo(), trace);
+        CompileTimeConstant<?> compileTimeInitializer = propertyDescriptor.getCompileTimeInitializer();
+        if (compileTimeInitializer == null) {
+            expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer, c.getOuterDataFlowInfo(), trace);
+        }
     }
 
     @NotNull
