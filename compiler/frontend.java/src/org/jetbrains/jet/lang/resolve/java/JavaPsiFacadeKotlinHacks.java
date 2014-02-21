@@ -17,11 +17,12 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
-import com.intellij.core.CoreJavaFileManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElementFinder;
+import com.intellij.psi.PsiPackage;
 import com.intellij.psi.impl.JavaPsiFacadeImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -55,11 +56,6 @@ public class JavaPsiFacadeKotlinHacks {
     private static JavaFileManager findJavaFileManager(@NotNull Project project) {
         JavaFileManager javaFileManager = ServiceManager.getService(project, JavaFileManager.class);
         if (javaFileManager != null) {
-            return javaFileManager;
-        }
-        javaFileManager = ServiceManager.getService(project, CoreJavaFileManager.class);
-        if (javaFileManager != null) {
-            // TODO: why it is not found by JavaFileManager?
             return javaFileManager;
         }
         throw new IllegalStateException("JavaFileManager component is not found in project");
