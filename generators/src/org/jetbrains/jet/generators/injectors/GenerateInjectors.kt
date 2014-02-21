@@ -19,13 +19,11 @@ package org.jetbrains.jet.generators.injectors
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.context.GlobalContext
 import org.jetbrains.jet.context.GlobalContextImpl
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
-import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
@@ -33,7 +31,8 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
 import org.jetbrains.jet.di.*
-import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -168,6 +167,7 @@ private fun generatorForMacro() =
             parameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
             publicField(javaClass<ExpressionTypingServices>())
+            publicField(javaClass<ExpressionTypingComponents>())
 
             field(javaClass<GlobalContext>(), useAsContext = true,
                   init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))
@@ -181,6 +181,7 @@ private fun generatorForTests() =
             publicFields(
                     javaClass<DescriptorResolver>(),
                     javaClass<ExpressionTypingServices>(),
+                    javaClass<ExpressionTypingUtils>(),
                     javaClass<TypeResolver>()
             )
 

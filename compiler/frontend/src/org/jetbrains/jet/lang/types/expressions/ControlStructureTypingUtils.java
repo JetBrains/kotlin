@@ -55,10 +55,14 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class ControlStructureTypingUtils {
-    private ControlStructureTypingUtils() {
+
+    private final ExpressionTypingServices expressionTypingServices;
+
+    public ControlStructureTypingUtils(@NotNull ExpressionTypingServices expressionTypingServices) {
+        this.expressionTypingServices = expressionTypingServices;
     }
 
-    /*package*/ static ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
+    /*package*/ ResolvedCall<FunctionDescriptor> resolveSpecialConstructionAsCall(
             @NotNull Call call,
             @NotNull String constructionName,
             @NotNull List<String> argumentNames,
@@ -69,10 +73,10 @@ public class ControlStructureTypingUtils {
         SimpleFunctionDescriptorImpl function = createFunctionDescriptorForSpecialConstruction(
                 constructionName.toUpperCase(), argumentNames, isArgumentNullable);
         JetReferenceExpression reference = JetPsiFactory.createSimpleName(
-                context.expressionTypingServices.getProject(), "fake" + constructionName + "Call");
+                expressionTypingServices.getProject(), "fake" + constructionName + "Call");
         TracingStrategy tracing = createTracingForSpecialConstruction(call, constructionName);
         ResolutionCandidate<CallableDescriptor> resolutionCandidate = ResolutionCandidate.<CallableDescriptor>create(function, null);
-        CallResolver callResolver = context.expressionTypingServices.getCallResolver();
+        CallResolver callResolver = expressionTypingServices.getCallResolver();
         OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallWithKnownCandidate(
                 call, tracing, reference, context, resolutionCandidate, dataFlowInfoForArguments);
         assert results.isSingleResult() : "Not single result after resolving one known candidate";

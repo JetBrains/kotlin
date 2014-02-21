@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
@@ -29,6 +30,9 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -44,6 +48,7 @@ public class InjectorForTests {
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DescriptorResolver descriptorResolver;
     private final ExpressionTypingServices expressionTypingServices;
+    private final ExpressionTypingUtils expressionTypingUtils;
     private final TypeResolver typeResolver;
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
@@ -52,6 +57,9 @@ public class InjectorForTests {
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CandidateResolver candidateResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
+    private final ExpressionTypingComponents expressionTypingComponents;
+    private final ControlStructureTypingUtils controlStructureTypingUtils;
+    private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -64,15 +72,19 @@ public class InjectorForTests {
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.descriptorResolver = new DescriptorResolver();
-        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
-        this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
+        this.expressionTypingComponents = new ExpressionTypingComponents();
+        this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
+        this.callResolver = new CallResolver();
+        this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), callResolver);
         this.typeResolver = new TypeResolver();
+        this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
         this.annotationResolver = new AnnotationResolver();
-        this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
+        this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -108,7 +120,20 @@ public class InjectorForTests {
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
+        delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
+
+        expressionTypingComponents.setCallResolver(callResolver);
+        expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
+        expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
+        expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        expressionTypingComponents.setGlobalContext(globalContext);
+        expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
+
+        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
+        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
+        forLoopConventionsChecker.setProject(project);
 
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
@@ -124,6 +149,10 @@ public class InjectorForTests {
     
     public ExpressionTypingServices getExpressionTypingServices() {
         return this.expressionTypingServices;
+    }
+    
+    public ExpressionTypingUtils getExpressionTypingUtils() {
+        return this.expressionTypingUtils;
     }
     
     public TypeResolver getTypeResolver() {

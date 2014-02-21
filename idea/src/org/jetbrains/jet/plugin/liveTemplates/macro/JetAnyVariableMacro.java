@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class JetAnyVariableMacro extends BaseJetVariableMacro {
@@ -35,7 +35,7 @@ public class JetAnyVariableMacro extends BaseJetVariableMacro {
     }
 
     @Override
-    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, ExpressionTypingServices callResolverContext) {
+    protected boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, @NotNull ExpressionTypingComponents components) {
         return true;
     }
 }

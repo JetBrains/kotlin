@@ -28,4 +28,7 @@ import org.jetbrains.jet.lang.types.JetTypeInfo;
     JetTypeInfo checkInExpression(JetElement callElement, @NotNull JetSimpleNameExpression operationSign, @Nullable JetExpression left, @NotNull JetExpression right, ExpressionTypingContext context);
 
     void checkStatementType(@NotNull JetExpression expression, ExpressionTypingContext context);
+
+    @NotNull
+    ExpressionTypingComponents getComponents();
 }

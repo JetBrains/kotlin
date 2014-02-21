@@ -18,8 +18,6 @@ package org.jetbrains.jet.lang.types.expressions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -35,36 +33,43 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.TYPECHECKER_HAS_RUN_INTO
 public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, ExpressionTypingContext> implements ExpressionTypingInternals {
 
     @NotNull
-    public static ExpressionTypingFacade create(@NotNull GlobalContext globalContext, @NotNull PlatformToKotlinClassMap platformToKotlinClassMap) {
-        return new ExpressionTypingVisitorDispatcher(globalContext, platformToKotlinClassMap, null);
+    public static ExpressionTypingFacade create(@NotNull ExpressionTypingComponents components) {
+        return new ExpressionTypingVisitorDispatcher(components, null);
     }
 
     @NotNull
     public static ExpressionTypingInternals createForBlock(
-            @NotNull GlobalContext globalContext,
-            @NotNull PlatformToKotlinClassMap platformToKotlinClassMap,
+            @NotNull ExpressionTypingComponents components,
             @NotNull WritableScope writableScope
     ) {
-        return new ExpressionTypingVisitorDispatcher(globalContext, platformToKotlinClassMap, writableScope);
+        return new ExpressionTypingVisitorDispatcher(components, writableScope);
     }
 
-    private final GlobalContext globalContext;
+    private final ExpressionTypingComponents components;
     private final BasicExpressionTypingVisitor basic;
     private final ExpressionTypingVisitorForStatements statements;
     private final ClosureExpressionsTypingVisitor closures;
-    private final ControlStructureTypingVisitor controlStructures = new ControlStructureTypingVisitor(this);
-    private final PatternMatchingTypingVisitor patterns = new PatternMatchingTypingVisitor(this);
+    private final ControlStructureTypingVisitor controlStructures;
+    private final PatternMatchingTypingVisitor patterns;
 
-    private ExpressionTypingVisitorDispatcher(GlobalContext globalContext, PlatformToKotlinClassMap platformToKotlinClassMap, WritableScope writableScope) {
-        this.globalContext = globalContext;
-        this.basic = new BasicExpressionTypingVisitor(this, platformToKotlinClassMap);
+    private ExpressionTypingVisitorDispatcher(@NotNull ExpressionTypingComponents components, WritableScope writableScope) {
+        this.components = components;
+        this.basic = new BasicExpressionTypingVisitor(this);
+        controlStructures = new ControlStructureTypingVisitor(this);
+        patterns = new PatternMatchingTypingVisitor(this);
         if (writableScope != null) {
-            this.statements = new ExpressionTypingVisitorForStatements(globalContext, this, writableScope, basic, controlStructures, patterns);
+            this.statements = new ExpressionTypingVisitorForStatements(this, writableScope, basic, controlStructures, patterns);
         }
         else {
             this.statements = null;
         }
-        this.closures = new ClosureExpressionsTypingVisitor(globalContext, this);
+        this.closures = new ClosureExpressionsTypingVisitor(this);
+    }
+
+    @Override
+    @NotNull
+    public ExpressionTypingComponents getComponents() {
+        return components;
     }
 
     @NotNull
@@ -100,7 +105,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
     }
     
     private ExpressionTypingVisitorForStatements createStatementVisitor(ExpressionTypingContext context) {
-        return new ExpressionTypingVisitorForStatements(globalContext, this,
+        return new ExpressionTypingVisitorForStatements(this,
                                                         ExpressionTypingUtils.newWritableScopeImpl(context, "statement scope"),
                                                         basic, controlStructures, patterns);
     }

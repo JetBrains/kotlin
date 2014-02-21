@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -68,14 +68,14 @@ public abstract class BaseJetVariableMacro extends Macro {
             return null;
         }
 
-        ExpressionTypingServices callResolverContext =
-                new InjectorForMacros(project, resolveSession.getModuleDescriptor()).getExpressionTypingServices();
+        ExpressionTypingComponents components =
+                new InjectorForMacros(project, resolveSession.getModuleDescriptor()).getExpressionTypingComponents();
 
         List<VariableDescriptor> filteredDescriptors = new ArrayList<VariableDescriptor>();
         for (DeclarationDescriptor declarationDescriptor : scope.getAllDescriptors()) {
             if (declarationDescriptor instanceof VariableDescriptor) {
                 VariableDescriptor variableDescriptor = (VariableDescriptor) declarationDescriptor;
-                if (isSuitable(variableDescriptor, scope, project, callResolverContext)) {
+                if (isSuitable(variableDescriptor, scope, project, components)) {
                     filteredDescriptors.add(variableDescriptor);
                 }
             }
@@ -94,7 +94,12 @@ public abstract class BaseJetVariableMacro extends Macro {
         return declarations.toArray(new JetNamedDeclaration[declarations.size()]);
     }
 
-    protected abstract boolean isSuitable(@NotNull VariableDescriptor variableDescriptor, @NotNull JetScope scope, @NotNull Project project, ExpressionTypingServices callResolverContext);
+    protected abstract boolean isSuitable(
+            @NotNull VariableDescriptor variableDescriptor,
+            @NotNull JetScope scope,
+            @NotNull Project project,
+            @NotNull ExpressionTypingComponents components
+    );
 
     @Nullable
     private static JetExpression findContextExpression(PsiFile psiFile, int startOffset) {
