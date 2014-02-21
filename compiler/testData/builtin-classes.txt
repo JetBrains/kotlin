@@ -2,7 +2,6 @@ package-fragment jet
 
 public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
 public fun jet.Any?.identityEquals(/*0*/ other: jet.Any?): jet.Boolean
-public fun </*0*/ T> jet.Iterator<T>.iterator(): jet.Iterator<T>
 public fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
 
 public trait Annotation {

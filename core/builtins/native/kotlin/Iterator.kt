@@ -9,8 +9,6 @@ public trait MutableIterator<out T> : Iterator<T> {
     public fun remove(): Unit
 }
 
-public fun <T> Iterator<T>.iterator(): Iterator<T>
-
 public trait ListIterator<out T> : Iterator<T> {
     // Query Operations
     override fun next(): T
