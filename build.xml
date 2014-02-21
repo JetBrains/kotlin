@@ -535,27 +535,6 @@
       <copy file="dependencies/annotations/kotlin-android-sdk-annotations.jar" todir="${kotlin-home}/lib"/>
     </target>
 
-    <macrodef name="pack_annotations">
-        <attribute name="annotationsdir"/>
-        <attribute name="jarfile"/>
-        <attribute name="title"/>
-
-        <sequential>
-            <jar destfile="${kotlin-home}/lib/@{jarfile}">
-                <fileset dir="@{annotationsdir}"/>
-                <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-
-                <manifest>
-                  <attribute name="Built-By" value="${manifest.impl.vendor}"/>
-
-                  <attribute name="Implementation-Vendor" value="${manifest.impl.vendor}"/>
-                  <attribute name="Implementation-Title" value="@{title}"/>
-                  <attribute name="Implementation-Version" value="${build.number}"/>
-                </manifest>
-            </jar>
-        </sequential>
-    </macrodef>
-
     <target name="runtime">
         <macrodef name="new_kotlinc">
           <attribute name="src"/>
