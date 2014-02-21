@@ -104,17 +104,14 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return isInlineClosure;
     }
 
-    public StackValue isSpecialStackValue(StackValue stackValue) {
+    public boolean isSpecialStackValue(StackValue stackValue) {
         if (isInlineClosure && stackValue instanceof StackValue.Composed) {
             StackValue prefix = ((StackValue.Composed) stackValue).prefix;
             StackValue suffix = ((StackValue.Composed) stackValue).suffix;
             if (prefix instanceof StackValue.Local && ((StackValue.Local) prefix).index == 0) {
-                if (suffix instanceof StackValue.Field) {
-                    StackValue.Field field = (StackValue.Field) suffix;
-                    return StackValue.field(field.type, field.owner, field.name, true);
-                }
+                return suffix instanceof StackValue.Field;
             }
         }
-        return null;
+        return false;
     }
 }

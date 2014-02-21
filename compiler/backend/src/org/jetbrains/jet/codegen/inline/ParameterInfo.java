@@ -34,32 +34,32 @@ class ParameterInfo {
     public final boolean isSkipped;
 
     //in case when parameter could be extracted from outer context (e.g. from local var)
-    private StackValue remapIndex;
+    private StackValue remapValue;
 
     public LambdaInfo lambda;
 
-    ParameterInfo(Type type, boolean skipped, int index, int remapIndex) {
-        this(type, skipped, index, remapIndex == -1 ? null : StackValue.local(remapIndex, type));
+    ParameterInfo(Type type, boolean skipped, int index, int remapValue) {
+        this(type, skipped, index, remapValue == -1 ? null : StackValue.local(remapValue, type));
     }
 
     ParameterInfo(Type type, boolean skipped, int index, StackValue stackValue) {
         this.type = type;
         this.isSkipped = skipped;
-        this.remapIndex = stackValue;
+        this.remapValue = stackValue;
         this.index = index;
     }
 
     public boolean isSkippedOrRemapped() {
-        return isSkipped || remapIndex != null;
+        return isSkipped || remapValue != null;
     }
 
     public boolean isRemapped() {
-        return remapIndex != null;
+        return remapValue != null;
     }
 
     @Nullable
-    public StackValue getRemapIndex() {
-        return remapIndex;
+    public StackValue getRemapValue() {
+        return remapValue;
     }
 
     public int getIndex() {
@@ -84,7 +84,7 @@ class ParameterInfo {
         this.lambda = lambda;
     }
 
-    public void setRemapIndex(StackValue remapIndex) {
-        this.remapIndex = remapIndex;
+    public void setRemapValue(StackValue remapValue) {
+        this.remapValue = remapValue;
     }
 }

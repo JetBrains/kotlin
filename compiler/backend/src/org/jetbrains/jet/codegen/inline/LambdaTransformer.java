@@ -65,7 +65,7 @@ public class LambdaTransformer {
     private String signature;
     private String superName;
     private String[] interfaces;
-    private boolean isSameModule;
+    private final boolean isSameModule;
 
     public LambdaTransformer(String lambdaInternalName, InliningInfo info, boolean isSameModule, Type newLambdaType) {
         this.isSameModule = isSameModule;
@@ -189,7 +189,7 @@ public class LambdaTransformer {
     }
 
     private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, ConstructorInvocation invocation) {
-        Map<Integer, InlinableAccess> indexToLambda = invocation.getAccess();
+        Map<Integer, InvokeCall> indexToLambda = invocation.getAccess();
 
         AbstractInsnNode cur = constructor.instructions.getFirst();
         cur = cur.getNext(); //skip super call
@@ -202,9 +202,9 @@ public class LambdaTransformer {
                 paramMapping.put(fieldNode.name, varIndex);
 
                 CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null);
-                InlinableAccess access = indexToLambda.get(varIndex);
+                InvokeCall access = indexToLambda.get(varIndex);
                 if (access != null) {
-                    LambdaInfo accessInfo = access.getInfo();
+                    LambdaInfo accessInfo = access.lambdaInfo;
                     if (accessInfo != null) {
                         info.setLambda(accessInfo);
                         additionalCaptured.add(accessInfo);

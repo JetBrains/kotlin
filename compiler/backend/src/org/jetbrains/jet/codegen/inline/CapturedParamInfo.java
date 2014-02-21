@@ -62,20 +62,8 @@ public class CapturedParamInfo extends ParameterInfo {
         this.recapturedFrom = recapturedFrom;
     }
 
-
-    public CapturedParamInfo newRemapIndex(int newRamapIndex) {
-        return clone(index, newRamapIndex);
-    }
-
     public CapturedParamInfo newIndex(int newIndex) {
-        return clone(newIndex, getRemapIndex());
-    }
-
-    public CapturedParamInfo clone(int newIndex, int newRamapIndex) {
-        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(fieldName, type, isSkipped, newIndex, newRamapIndex);
-        capturedParamInfo.setLambda(lambda);
-        capturedParamInfo.setRecapturedFrom(recapturedFrom);
-        return capturedParamInfo;
+        return clone(newIndex, getRemapValue());
     }
 
     public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {

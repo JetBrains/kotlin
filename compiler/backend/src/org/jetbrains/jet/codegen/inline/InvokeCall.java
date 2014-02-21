@@ -18,38 +18,14 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-class InlinableAccess {
+class InvokeCall {
 
     public final int index;
 
-    public final boolean inlinable;
+    public final LambdaInfo lambdaInfo;
 
-    private final List<ParameterInfo> parameters;
-
-    private LambdaInfo info;
-
-    InlinableAccess(int index, boolean isInlinable, List<ParameterInfo> parameterInfos) {
+    InvokeCall(int index, @Nullable LambdaInfo lambdaInfo) {
         this.index = index;
-        inlinable = isInlinable;
-        this.parameters = parameterInfos;
-    }
-
-    public boolean isInlinable() {
-        return inlinable;
-    }
-
-    @Nullable
-    public LambdaInfo getInfo() {
-        return info;
-    }
-
-    public void setInfo(LambdaInfo info) {
-        this.info = info;
-    }
-
-    public List<ParameterInfo> getParameters() {
-        return parameters;
+        this.lambdaInfo = lambdaInfo;
     }
 }

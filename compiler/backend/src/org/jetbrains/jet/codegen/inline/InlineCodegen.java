@@ -89,8 +89,6 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
-    private SimpleFunctionDescriptor inlineFunctionDescriptor;
-
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
@@ -98,7 +96,6 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
             @NotNull Call call
     ) {
         assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
-        inlineFunctionDescriptor = functionDescriptor;
 
         this.state = state;
         this.typeMapper = state.getTypeMapper();
@@ -117,7 +114,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         this.asFunctionInline = false;
 
         isSameModule = !(functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) /*not compiled library*/ &&
-                       CodegenUtil.isCallInsideSameModuleAsDeclared(inlineFunctionDescriptor, codegen.getContext());
+                       CodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext());
     }
 
 
@@ -262,26 +259,21 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
             if (index >= 0 && couldBeRemapped) {
                 CapturedParamInfo capturedParamInfo = activeLambda.getCapturedVars().get(index);
-                capturedParamInfo.setRemapIndex(remappedIndex != null ? remappedIndex : StackValue.local(info.getIndex(), info.getType()));
+                capturedParamInfo.setRemapValue(remappedIndex != null ? remappedIndex : StackValue.local(info.getIndex(), info.getType()));
             }
 
             doWithParameter(info);
         }
     }
 
+
+    /*descriptor is null for captured vars*/
     @Override
     public boolean shouldPutValue(
             @NotNull Type type,
             @Nullable StackValue stackValue,
-            ValueParameterDescriptor descriptor
+            @Nullable ValueParameterDescriptor descriptor
     ) {
-        //boolean isInline = true/*context.isInlineFunction() || context.getParentContext() instanceof ClosureContext*/;
-        //if (stackValue != null && isInline && stackValue instanceof StackValue.Local) {
-        //    if (isInvokeOnInlinable(type.getClassName(), "invoke") && (descriptor == null || !InlineUtil.hasNoinlineAnnotation(descriptor))) {
-        //        //TODO remap only inlinable closure => otherwise we could get a lot of problem
-        //        return false;
-        //    }
-        //}
 
         if (stackValue == null) {
             //default or vararg
@@ -299,22 +291,13 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
             return false;
         }
 
-        if (codegen.getContext().isInlineClosure() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
-            Type internalName = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) codegen.getContext().getContextDescriptor());
-
-            String owner = null;
-            if (stackValue instanceof StackValue.Field) {
-                owner = ((StackValue.Field) stackValue).owner.getInternalName();
-            }
-
-            if (stackValue instanceof StackValue.Composed) {
-                //go through aload 0
-                owner = internalName.getInternalName();
-            }
-
-            if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor) && internalName.getInternalName().equals(owner)) {
-                //check type of context
-                return false;
+        if (stackValue instanceof StackValue.Composed) {
+            //see: Method.isSpecialStackValue: go through aload 0
+            if (codegen.getContext().isInlineClosure() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+                if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
+                    //TODO: check type of context
+                    return false;
+                }
             }
         }
         return true;

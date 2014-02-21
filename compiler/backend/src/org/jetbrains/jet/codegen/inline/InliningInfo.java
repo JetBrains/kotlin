@@ -29,7 +29,7 @@ public class InliningInfo {
 
     public final Map<Integer, LambdaInfo> expresssionMap;
 
-    public final List<InlinableAccess> inlinableAccesses;
+    public final List<InvokeCall> invokeCalls;
 
     public final List<ConstructorInvocation> constructorInvocation;
 
@@ -47,7 +47,7 @@ public class InliningInfo {
 
     public InliningInfo(
             Map<Integer, LambdaInfo> map,
-            List<InlinableAccess> accesses,
+            List<InvokeCall> accesses,
             List<ConstructorInvocation> invocation,
             VarRemapper remapper,
             GenerationState state,
@@ -57,7 +57,7 @@ public class InliningInfo {
             Map<String, String> typeMapping
     ) {
         expresssionMap = map;
-        inlinableAccesses = accesses;
+        invokeCalls = accesses;
         constructorInvocation = invocation;
         this.remapper = remapper;
         this.state = state;
@@ -74,7 +74,7 @@ public class InliningInfo {
     public InliningInfo subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
         HashMap<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
-        return new InliningInfo(expresssionMap, inlinableAccesses, constructorInvocation, remapper, state, generator, startContext, call,
+        return new InliningInfo(expresssionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
                                 newTypeMappings);
     }
 }

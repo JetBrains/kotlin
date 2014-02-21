@@ -27,8 +27,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.codegen.inline.MethodInliner.getPreviousNoLabelNoLine;
-
 public class InlineFieldRemapper extends LambdaFieldRemapper {
 
     private final String oldOwnerType;
@@ -50,18 +48,14 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
     public AbstractInsnNode doTransform(
             MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField
     ) {
-        boolean isRecaptured = isRecapruredLambdaType(fieldInsnNode.owner);
+        boolean isRecaptured = isRecapturedLambdaType(fieldInsnNode.owner);
 
         if (!isRecaptured && capturedField.getLambda() != null) {
             //strict inlining
             return super.doTransform(node, fieldInsnNode, capturedField);
         }
 
-        AbstractInsnNode prev = getPreviousNoLabelNoLine(fieldInsnNode);
-
-        assert prev.getType() == AbstractInsnNode.VAR_INSN || prev.getType() == AbstractInsnNode.FIELD_INSN;
-        AbstractInsnNode loadThis = prev;
-        assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */loadThis.getOpcode() == Opcodes.ALOAD || loadThis.getOpcode() == Opcodes.GETSTATIC;
+        AbstractInsnNode loadThis = getPreviousThis(fieldInsnNode);
 
         int opcode = Opcodes.GETSTATIC;
 
@@ -95,10 +89,10 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
 
     @Override
     public boolean canProcess(String owner, String currentLambdaType) {
-        return super.canProcess(owner, currentLambdaType) || isRecapruredLambdaType(owner);
+        return super.canProcess(owner, currentLambdaType) || isRecapturedLambdaType(owner);
     }
 
-    private boolean isRecapruredLambdaType(String owner) {
+    private boolean isRecapturedLambdaType(String owner) {
         return recapturedLambdas.containsKey(owner);
     }
 
@@ -106,7 +100,7 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
     @Nullable
     @Override
     public CapturedParamInfo findField(FieldInsnNode fieldInsnNode, Collection<CapturedParamInfo> captured) {
-        if (!isRecapruredLambdaType(fieldInsnNode.owner)) {
+        if (!isRecapturedLambdaType(fieldInsnNode.owner)) {
             return super.findField(fieldInsnNode, captured);
         } else {
             LambdaInfo info = recapturedLambdas.get(fieldInsnNode.owner);

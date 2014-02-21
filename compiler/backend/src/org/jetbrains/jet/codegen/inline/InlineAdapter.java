@@ -75,19 +75,17 @@ public class InlineAdapter extends InstructionAdapter {
     public void visitTryCatchBlock(Label start,
             Label end, Label handler, String type) {
         if(!isInlining) {
-            blocks.add(new CatchBlock(start, end,
-                                      handler, type));
-        } else {
-            super.visitTryCatchBlock(start, end,
-                                     handler, type);
+            blocks.add(new CatchBlock(start, end, handler, type));
+        }
+        else {
+            super.visitTryCatchBlock(start, end, handler, type);
         }
     }
 
     @Override
     public void visitMaxs(int stack, int locals) {
         for (CatchBlock b : blocks) {
-            super.visitTryCatchBlock(b.start, b.end,
-                                     b.handler, b.type);
+            super.visitTryCatchBlock(b.start, b.end, b.handler, b.type);
         }
         super.visitMaxs(stack, locals);
     }

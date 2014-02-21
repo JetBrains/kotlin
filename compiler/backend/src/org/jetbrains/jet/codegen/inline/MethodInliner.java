@@ -16,8 +16,7 @@ import org.jetbrains.asm4.tree.analysis.*;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -32,18 +31,18 @@ public class MethodInliner {
     private final InliningInfo parent;
 
     @Nullable
-    private final Type lambdaInfo;
+    private final Type lambdaType;
 
     private final LambdaFieldRemapper lambdaFieldRemapper;
 
-    private boolean isSameModule;
+    private final boolean isSameModule;
 
     private final JetTypeMapper typeMapper;
 
-    private final List<InlinableAccess> inlinableInvocation = new ArrayList<InlinableAccess>();
+    private final List<InvokeCall> invokeCalls = new ArrayList<InvokeCall>();
 
     //keeps order
-    private final List<ConstructorInvocation> constructorInvocationList = new ArrayList<ConstructorInvocation>();
+    private final List<ConstructorInvocation> constructorInvocations = new ArrayList<ConstructorInvocation>();
     //current state
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
@@ -52,20 +51,20 @@ public class MethodInliner {
      * @param node
      * @param parameters
      * @param parent
-     * @param lambdaInfo - in case on lambda 'invoke' inlining
+     * @param lambdaType - in case on lambda 'invoke' inlining
      */
     public MethodInliner(
             @NotNull MethodNode node,
-            Parameters parameters,
+            @NotNull Parameters parameters,
             @NotNull InliningInfo parent,
-            @Nullable Type lambdaInfo,
+            @Nullable Type lambdaType,
             LambdaFieldRemapper lambdaFieldRemapper,
             boolean isSameModule
     ) {
         this.node = node;
         this.parameters = parameters;
         this.parent = parent;
-        this.lambdaInfo = lambdaInfo;
+        this.lambdaType = lambdaType;
         this.lambdaFieldRemapper = lambdaFieldRemapper;
         this.isSameModule = isSameModule;
         this.typeMapper = parent.state.getTypeMapper();
@@ -87,7 +86,7 @@ public class MethodInliner {
             transformedNode = markPlacesForInlineAndRemoveInlinable(transformedNode);
         }
         catch (AnalyzerException e) {
-            throw new RuntimeException(e);
+            throw UtilsPackage.rethrow(e);
         }
 
         transformedNode = doInline(transformedNode, capturedRemapper);
@@ -103,11 +102,11 @@ public class MethodInliner {
 
     private MethodNode doInline(MethodNode node, final LambdaFieldRemapper capturedRemapper) {
 
-        final Deque<InlinableAccess> infos = new LinkedList<InlinableAccess>(inlinableInvocation);
+        final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
         MethodNode resultNode = new MethodNode(node.access, node.name, node.desc, node.signature, null);
 
-        final Iterator<ConstructorInvocation> iterator = constructorInvocationList.iterator();
+        final Iterator<ConstructorInvocation> iterator = constructorInvocations.iterator();
 
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
                                                                                    new TypeRemapper(currentTypeMapping, isSameModule));
@@ -137,35 +136,34 @@ public class MethodInliner {
 
             @Override
             public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-                if (/*INLINE_RUNTIME.equals(owner) &&*/ isInvokeOnInlinable(owner, name)) { //TODO add method
-                    assert !infos.isEmpty();
-                    InlinableAccess inlinableAccess = infos.remove();
+                if (/*INLINE_RUNTIME.equals(owner) &&*/ isInvokeOnLambda(owner, name)) { //TODO add method
+                    assert !currentInvokes.isEmpty();
+                    InvokeCall invokeCall = currentInvokes.remove();
+                    LambdaInfo info = invokeCall.lambdaInfo;
 
-                    if (!inlinableAccess.isInlinable()) {
-                        //noninlinable closure
+                    if (info == null) {
+                        //noninlinable lambda
                         super.visitMethodInsn(opcode, owner, name, desc);
                         return;
                     }
-                    LambdaInfo info = getLambda(inlinableAccess.index);
 
-                    int valueParamShift = getNextLocalIndex();
-
+                    int valueParamShift = getNextLocalIndex();//NB: don't inline cause it changes
                     putStackValuesIntoLocals(info.getParamsWithoutCapturedValOrVar(), valueParamShift, this, desc);
 
-                    List<ParameterInfo> lambdaParameters = inlinableAccess.getParameters();
+                    Parameters lambdaParameters = info.addAllParameters(capturedRemapper);
 
-                    Parameters params = new Parameters(lambdaParameters, Parameters.transformList(capturedRemapper.markRecaptured(info.getCapturedVars(), info), lambdaParameters.size()));
+                    setInlining(true);
+                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
+                                                              capturedRemapper, true /*cause all calls in same module as lambda*/);
 
-                    this.setInlining(true);
-                    MethodInliner inliner = new MethodInliner(info.getNode(), params, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
-                                                              capturedRemapper, true /*cause all call in same module as lambda*/);
-
-                    VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(params, valueParamShift);
+                    VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
                     inliner.doTransformAndMerge(this.mv, remapper); //TODO add skipped this and receiver
+
+                    //return value boxing/unboxing
                     Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
                     Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
-                    this.setInlining(true);
+                    setInlining(false);
                 }
                 else if (isLambdaConstructorCall(owner, name)) { //TODO add method
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
@@ -248,12 +246,12 @@ public class MethodInliner {
 
         node.accept(transformedNode);
 
-        if (lambdaInfo != null) {
-            transformCaptured(transformedNode, parameters, lambdaInfo, lambdaFieldRemapper);
-        }
+        transformCaptured(transformedNode);
+
         return transformedNode;
     }
 
+    @NotNull
     protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node) throws AnalyzerException {
         node = prepareNode(node);
 
@@ -275,10 +273,9 @@ public class MethodInliner {
                     String name = methodInsnNode.name;
                     //TODO check closure
                     int paramLength = Type.getArgumentTypes(desc).length + 1;//non static
-                    if (isInvokeOnInlinable(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
+                    if (isInvokeOnLambda(owner, name) /*&& methodInsnNode.owner.equals(INLINE_RUNTIME)*/) {
                         SourceValue sourceValue = frame.getStack(frame.getStackSize() - paramLength);
 
-                        boolean isInlinable = false;
                         LambdaInfo lambdaInfo = null;
                         int varIndex = -1;
 
@@ -288,19 +285,18 @@ public class MethodInliner {
                                 assert insnNode.getOpcode() == Opcodes.ALOAD : insnNode.toString();
                                 varIndex = ((VarInsnNode) insnNode).var;
                                 lambdaInfo = getLambda(varIndex);
-                                isInlinable = lambdaInfo != null;
 
-                                if (isInlinable) {
+                                if (lambdaInfo != null) {
                                     //remove inlinable access
                                     node.instructions.remove(insnNode);
                                 }
                             }
                         }
 
-                        inlinableInvocation.add(new InlinableAccess(varIndex, isInlinable, getParametersInfo(lambdaInfo, desc)));
+                        invokeCalls.add(new InvokeCall(varIndex, lambdaInfo));
                     }
                     else if (isLambdaConstructorCall(owner, name)) {
-                        Map<Integer, InlinableAccess> infos = new HashMap<Integer, InlinableAccess>();
+                        Map<Integer, InvokeCall> infos = new HashMap<Integer, InvokeCall>();
                         int paramStart = frame.getStackSize() - paramLength;
 
                         for (int i = 0; i < paramLength; i++) {
@@ -311,19 +307,14 @@ public class MethodInliner {
                                     int varIndex = ((VarInsnNode) insnNode).var;
                                     LambdaInfo lambdaInfo = getLambda(varIndex);
                                     if (lambdaInfo != null) {
-                                        InlinableAccess inlinableAccess = new InlinableAccess(varIndex, true, null);
-                                        inlinableAccess.setInfo(lambdaInfo);
-                                        infos.put(i, inlinableAccess);
-
-                                        //remove inlinable access
+                                        infos.put(i, new InvokeCall(varIndex, lambdaInfo));
                                         node.instructions.remove(insnNode);
                                     }
                                 }
                             }
                         }
 
-                        ConstructorInvocation invocation = new ConstructorInvocation(owner, infos, isSameModule);
-                        constructorInvocationList.add(invocation);
+                        constructorInvocations.add(new ConstructorInvocation(owner, infos, isSameModule));
                     }
                 }
             }
@@ -343,7 +334,7 @@ public class MethodInliner {
             }
         }
 
-        //clean dead try catch blocks
+        //clean dead try/catch blocks
         List<TryCatchBlockNode> blocks = node.tryCatchBlocks;
         for (Iterator<TryCatchBlockNode> iterator = blocks.iterator(); iterator.hasNext(); ) {
             TryCatchBlockNode block = iterator.next();
@@ -355,40 +346,7 @@ public class MethodInliner {
         return node;
     }
 
-    public List<ParameterInfo> getParametersInfo(LambdaInfo info, String desc) {
-        List<ParameterInfo> result = new ArrayList<ParameterInfo>();
-        Type[] types = Type.getArgumentTypes(desc);
-
-        //add skipped this cause closure doesn't have it
-        //result.add(ParameterInfo.STUB);
-        ParameterInfo thiz = new ParameterInfo(AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
-        thiz.setLambda(info);
-
-        result.add(thiz);
-        int index = 1;
-
-        if (info != null) {
-            List<ValueParameterDescriptor> valueParameters = info.getFunctionDescriptor().getValueParameters();
-            for (ValueParameterDescriptor parameter : valueParameters) {
-                Type type = typeMapper.mapType(parameter.getType());
-                int paramIndex = index++;
-                result.add(new ParameterInfo(type, false, paramIndex, -1));
-                if (type.getSize() == 2) {
-                    result.add(ParameterInfo.STUB);
-                }
-            }
-        } else {
-            for (Type type : types) {
-                int paramIndex = index++;
-                result.add(new ParameterInfo(type, false, paramIndex, -1));
-                if (type.getSize() == 2) {
-                    result.add(ParameterInfo.STUB);
-                }
-            }
-        }
-        return result;
-    }
-
+    @Nullable
     public LambdaInfo getLambda(int index) {
         if (index < parameters.totalSize()) {
             return parameters.get(index).getLambda();
@@ -433,13 +391,10 @@ public class MethodInliner {
         }
     }
 
-    static List<FieldAccess> transformCaptured(
-            @NotNull MethodNode node,
-            @NotNull Parameters paramsToSearch,
-            @NotNull Type lambdaClassType,
-            @NotNull LambdaFieldRemapper lambdaFieldRemapper
-    ) {
-        List<FieldAccess> capturedFields = new ArrayList<FieldAccess>();
+    private void transformCaptured(@NotNull MethodNode node) {
+        if (lambdaType == null) {
+            return;
+        }
 
         //remove all this and shift all variables to captured ones size
         AbstractInsnNode cur = node.instructions.getFirst();
@@ -447,53 +402,28 @@ public class MethodInliner {
             if (cur.getType() == AbstractInsnNode.FIELD_INSN) {
                 FieldInsnNode fieldInsnNode = (FieldInsnNode) cur;
                 //TODO check closure
-                String owner = fieldInsnNode.owner;
-                if (lambdaFieldRemapper.canProcess(fieldInsnNode.owner, lambdaClassType.getInternalName())) {
-                    String name = fieldInsnNode.name;
-                    String desc = fieldInsnNode.desc;
-
-                    Collection<CapturedParamInfo> vars = paramsToSearch.getCaptured();
-                    CapturedParamInfo result = lambdaFieldRemapper.findField(fieldInsnNode, paramsToSearch.getCaptured());
+                if (lambdaFieldRemapper.canProcess(fieldInsnNode.owner, lambdaType.getInternalName())) {
+                    CapturedParamInfo result = this.lambdaFieldRemapper.findField(fieldInsnNode, parameters.getCaptured());
 
                     if (result == null) {
                         throw new UnsupportedOperationException("Coudn't find field " +
-                                                                owner +
+                                                                fieldInsnNode.owner +
                                                                 "." +
-                                                                name +
+                                                                fieldInsnNode.name +
                                                                 " (" +
-                                                                desc +
-                                                                ") in captured vars of " + lambdaClassType);
+                                                                fieldInsnNode.desc +
+                                                                ") in captured vars of " + lambdaType);
                     }
 
                     if (result.isSkipped()) {
-                        //lambda class transformation skip this captured
+                        //lambda class transformation: skip captured this
                     } else {
-                        cur = lambdaFieldRemapper.doTransform(node, fieldInsnNode, result);
-
-                        //AbstractInsnNode prev = getPreviousNoLableNoLine(cur);
-                        //
-                        //assert prev.getType() == AbstractInsnNode.VAR_INSN;
-                        //VarInsnNode loadThis = (VarInsnNode) prev;
-                        //assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */loadThis.getOpcode() == Opcodes.ALOAD;
-                        //
-                        //int opcode = fieldInsnNode.getOpcode() == Opcodes.GETFIELD ? result.getType().getOpcode(Opcodes.ILOAD) : result.getType().getOpcode(Opcodes.ISTORE);
-                        //VarInsnNode insn = new VarInsnNode(opcode, result.getIndex());
-                        //
-                        //node.instructions.remove(prev); //remove aload this
-                        //node.instructions.insertBefore(cur, insn);
-                        //node.instructions.remove(cur); //remove aload field
-                        //
-                        //cur = insn;
-                        //
-                        //FieldAccess fieldAccess = new FieldAccess(fieldInsnNode.name, fieldInsnNode.desc, new FieldAccess("" + loadThis.var, lambdaClassType.getInternalName()));
-                        //capturedFields.add(fieldAccess);
+                        cur = this.lambdaFieldRemapper.doTransform(node, fieldInsnNode, result);
                     }
                 }
             }
             cur = cur.getNext();
         }
-
-        return capturedFields;
     }
 
     public static AbstractInsnNode getPreviousNoLabelNoLine(AbstractInsnNode cur) {
@@ -504,8 +434,8 @@ public class MethodInliner {
         return prev;
     }
 
-    public static void putStackValuesIntoLocals(List<Type> directOrder, int shift, InstructionAdapter mv, String descriptor) {
-        Type[] actualParams = Type.getArgumentTypes(descriptor); //last param is closure itself
+    public static void putStackValuesIntoLocals(List<Type> directOrder, int shift, InstructionAdapter iv, String descriptor) {
+        Type[] actualParams = Type.getArgumentTypes(descriptor);
         assert actualParams.length == directOrder.size() : "Number of expected and actual params should be equals!";
 
         int size = 0;
@@ -520,9 +450,9 @@ public class MethodInliner {
             shift -= next.getSize();
             Type typeOnStack = actualParams[--index];
             if (!typeOnStack.equals(next)) {
-                StackValue.onStack(typeOnStack).put(next, mv);
+                StackValue.onStack(typeOnStack).put(next, iv);
             }
-            mv.visitVarInsn(next.getOpcode(Opcodes.ISTORE), shift);
+            iv.store(shift, next);
         }
     }
 

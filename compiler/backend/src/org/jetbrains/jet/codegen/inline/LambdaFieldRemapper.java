@@ -31,21 +31,26 @@ import static org.jetbrains.jet.codegen.inline.MethodInliner.getPreviousNoLabelN
 public class LambdaFieldRemapper {
 
     public AbstractInsnNode doTransform(MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField) {
-        AbstractInsnNode prev = getPreviousNoLabelNoLine(fieldInsnNode);
-
-        assert prev.getType() == AbstractInsnNode.VAR_INSN || prev.getType() == AbstractInsnNode.FIELD_INSN;
-        AbstractInsnNode loadThis = prev;
-        int opcode1 = loadThis.getOpcode();
-        assert /*loadThis.var == info.getCapturedVarsSize() - 1 && */opcode1 == Opcodes.ALOAD || opcode1 == Opcodes.GETSTATIC;
+        AbstractInsnNode loadThis = getPreviousThis(fieldInsnNode);
 
         int opcode = fieldInsnNode.getOpcode() == Opcodes.GETFIELD ? capturedField.getType().getOpcode(Opcodes.ILOAD) : capturedField.getType().getOpcode(Opcodes.ISTORE);
-        VarInsnNode insn = new VarInsnNode(opcode, capturedField.getIndex());
+        VarInsnNode newInstruction = new VarInsnNode(opcode, capturedField.getIndex());
 
-        node.instructions.remove(prev); //remove aload this
-        node.instructions.insertBefore(fieldInsnNode, insn);
+        node.instructions.remove(loadThis); //remove aload this
+        node.instructions.insertBefore(fieldInsnNode, newInstruction);
         node.instructions.remove(fieldInsnNode); //remove aload field
 
-        return insn;
+        return newInstruction;
+    }
+
+    protected static AbstractInsnNode getPreviousThis(FieldInsnNode fieldInsnNode) {
+        AbstractInsnNode loadThis = getPreviousNoLabelNoLine(fieldInsnNode);
+
+        assert loadThis.getType() == AbstractInsnNode.VAR_INSN || loadThis.getType() == AbstractInsnNode.FIELD_INSN :
+                "Field access instruction should go after load this but goes after " + loadThis;
+        assert loadThis.getOpcode() == Opcodes.ALOAD || loadThis.getOpcode() == Opcodes.GETSTATIC :
+                "This should be loaded by ALOAD or GETSTATIC but " + loadThis.getOpcode();
+        return loadThis;
     }
 
     public List<CapturedParamInfo> markRecaptured(List<CapturedParamInfo> originalCaptured, LambdaInfo lambda) {
@@ -59,14 +64,11 @@ public class LambdaFieldRemapper {
 
     @Nullable
     public CapturedParamInfo findField(FieldInsnNode fieldInsnNode, Collection<CapturedParamInfo> captured) {
-        String name = fieldInsnNode.name;
-        CapturedParamInfo result = null;
         for (CapturedParamInfo valueDescriptor : captured) {
-            if (valueDescriptor.getFieldName().equals(name)) {
-                result = valueDescriptor;
-                break;
+            if (valueDescriptor.getFieldName().equals(fieldInsnNode.name)) {
+                return valueDescriptor;
             }
         }
-        return result;
+        return null;
     }
 }

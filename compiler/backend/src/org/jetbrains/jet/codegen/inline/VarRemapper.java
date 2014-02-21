@@ -32,9 +32,9 @@ public abstract class VarRemapper {
         private final Parameters params;
         private final int actualParamsSize;
 
-        private final StackValue [] remapIndex;
+        private final StackValue [] remapValues;
 
-        private int additionalShift;
+        private final int additionalShift;
 
         public ParamRemapper(Parameters params, int additionalShift) {
             this.additionalShift = additionalShift;
@@ -42,15 +42,15 @@ public abstract class VarRemapper {
             this.params = params;
 
             int realSize = 0;
-            remapIndex = new StackValue [params.totalSize()];
+            remapValues = new StackValue [params.totalSize()];
 
             int index = 0;
             for (ParameterInfo info : params) {
                 if (!info.isSkippedOrRemapped()) {
-                    remapIndex[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
+                    remapValues[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
                     realSize += info.getType().getSize();
                 } else {
-                    remapIndex[index] = info.isRemapped() ? info.getRemapIndex() : null;
+                    remapValues[index] = info.isRemapped() ? info.getRemapValue() : null;
                 }
                 index++;
             }
@@ -64,7 +64,7 @@ public abstract class VarRemapper {
 
             if (index < allParamsSize) {
                 ParameterInfo info = params.get(index);
-                StackValue remapped = remapIndex[index];
+                StackValue remapped = remapValues[index];
                 if (info.isSkipped || remapped == null) {
                     throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
                 }
@@ -100,9 +100,10 @@ public abstract class VarRemapper {
             }
             mv.visitVarInsn(opcode, ((StackValue.Local) value).index);
             if (remapInfo.parameterInfo != null) {
-                value.coerce(value.type, remapInfo.parameterInfo.type, mv);
+                StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv);
             }
         } else {
+            assert remapInfo.parameterInfo != null : "Non local value should have parameter info";
             value.put(remapInfo.parameterInfo.type, mv);
         }
     }

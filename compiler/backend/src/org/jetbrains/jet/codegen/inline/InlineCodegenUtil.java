@@ -189,7 +189,7 @@ public class InlineCodegenUtil {
     }
 
 
-    public static boolean isInvokeOnInlinable(String owner, String name) {
+    public static boolean isInvokeOnLambda(String owner, String name) {
         return INVOKE.equals(name) && /*TODO: check type*/owner.contains("Function");
     }
 

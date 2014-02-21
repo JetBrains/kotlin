@@ -60,20 +60,6 @@ public class Parameters implements Iterable<ParameterInfo> {
         return Iterables.concat(real, captured).iterator();
     }
 
-    public static List<CapturedParamInfo> transformList(List<CapturedParamInfo> capturedParams, int realSize) {
-        List<CapturedParamInfo> result = new ArrayList<CapturedParamInfo>();
-        for (CapturedParamInfo capturedParamInfo : capturedParams) {
-            CapturedParamInfo newInfo = capturedParamInfo.clone(result.size() + realSize, capturedParamInfo.getIndex());
-
-            result.add(newInfo);
-
-            if (capturedParamInfo.getType().getSize() == 2) {
-                result.add(CapturedParamInfo.STUB);
-            }
-        }
-        return result;
-    }
-
     public static List<CapturedParamInfo> addStubs(List<CapturedParamInfo> capturedParams, int realSize) {
         List<CapturedParamInfo> result = new ArrayList<CapturedParamInfo>();
         for (CapturedParamInfo capturedParamInfo : capturedParams) {

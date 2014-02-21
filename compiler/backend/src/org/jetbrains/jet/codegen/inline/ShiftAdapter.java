@@ -21,7 +21,7 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 
 public class ShiftAdapter extends InstructionAdapter {
 
-    private int shift;
+    private final int shift;
 
     public ShiftAdapter(MethodVisitor mv, int shift) {
         super(mv);

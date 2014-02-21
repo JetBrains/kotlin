@@ -1711,7 +1711,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         StackValue value = context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
         if (value != null) {
-            if (context.isSpecialStackValue(value) != null) {
+            if (context.isSpecialStackValue(value)) {
                 return value;
             }
 
@@ -2348,9 +2348,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 continue;
             }
 
-            boolean putInLocal = true;
-            StackValue valueIfPresent = null;
-
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
             Type parameterType = valueParameterTypes.get(valueParameter.getIndex());
             if (resolvedValueArgument instanceof ExpressionValueArgument) {
@@ -2362,7 +2359,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 //TODO deparenthisise
                 if (callGenerator.isInliningClosure(argumentExpression, valueParameter)) {
                     callGenerator.rememberClosure((JetFunctionLiteralExpression) argumentExpression, parameterType);
-                    putInLocal = false;
                 } else {
                     StackValue value = gen(argumentExpression);
                     if (callGenerator.shouldPutValue(parameterType, value, valueParameter)) {
@@ -2373,17 +2369,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             } else if (resolvedValueArgument instanceof DefaultValueArgument) {
                 pushDefaultValueOnStack(parameterType, v);
                 mask |= (1 << valueParameter.getIndex());
+                callGenerator.putInLocal(parameterType, null, valueParameter);
             }
             else if (resolvedValueArgument instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
                 genVarargs(valueParameter, valueArgument);
+                callGenerator.putInLocal(parameterType, null, valueParameter);
             }
             else {
                 throw new UnsupportedOperationException();
-            }
-
-            if (putInLocal) {
-                callGenerator.putInLocal(parameterType, valueIfPresent, valueParameter);
             }
         }
         return mask;
