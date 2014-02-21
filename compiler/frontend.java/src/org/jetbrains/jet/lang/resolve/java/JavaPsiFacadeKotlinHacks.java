@@ -18,20 +18,17 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.collect.Lists;
 import com.intellij.core.CoreJavaFileManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.JavaPsiFacadeImpl;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.HashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * TODO Temporary class until {@link JavaPsiFacadeImpl} hacked.
@@ -55,12 +52,12 @@ public class JavaPsiFacadeKotlinHacks {
     }
 
     @NotNull
-    private JavaFileManager findJavaFileManager(@NotNull Project project) {
-        JavaFileManager javaFileManager = project.getComponent(JavaFileManager.class);
+    private static JavaFileManager findJavaFileManager(@NotNull Project project) {
+        JavaFileManager javaFileManager = ServiceManager.getService(project, JavaFileManager.class);
         if (javaFileManager != null) {
             return javaFileManager;
         }
-        javaFileManager = project.getComponent(CoreJavaFileManager.class);
+        javaFileManager = ServiceManager.getService(project, CoreJavaFileManager.class);
         if (javaFileManager != null) {
             // TODO: why it is not found by JavaFileManager?
             return javaFileManager;
@@ -81,7 +78,7 @@ public class JavaPsiFacadeKotlinHacks {
                 return psiPackage;
             }
         }
-        return psiPackage;
+        return null;
     }
 
     public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
