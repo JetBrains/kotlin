@@ -16,14 +16,10 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
-import com.intellij.psi.PsiElement
-import jet.Function1
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.FoldableKind
-import org.jetbrains.jet.lang.psi.JetElement
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetIfExpression

@@ -19,13 +19,8 @@ package org.jetbrains.jet.plugin.intentions
 import com.intellij.codeInsight.intention.impl.BaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.IncorrectOperationException
-import jet.Function1
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypesAndPredicate
 

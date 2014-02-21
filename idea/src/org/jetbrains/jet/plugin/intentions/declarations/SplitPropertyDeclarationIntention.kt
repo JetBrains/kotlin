@@ -17,13 +17,8 @@
 package org.jetbrains.jet.plugin.intentions.declarations
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
-import jet.Function1
-import org.jetbrains.annotations.Nullable
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import org.jetbrains.jet.plugin.intentions.Transformer
 
 public class SplitPropertyDeclarationIntention : JetSelfTargetingIntention<JetProperty>("split.property.declaration", javaClass()) {
     override fun isApplicableTo(element: JetProperty): Boolean = DeclarationUtils.checkSplitProperty(element)

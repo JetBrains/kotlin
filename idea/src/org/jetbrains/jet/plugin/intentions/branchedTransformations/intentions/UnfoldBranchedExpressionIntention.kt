@@ -16,9 +16,6 @@
 
 package org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions
 
-import com.intellij.psi.PsiElement
-import jet.Function1
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.*
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention

@@ -22,7 +22,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.usages.UsageTarget
 import com.intellij.usages.impl.rules.UsageType
 import com.intellij.usages.impl.rules.UsageTypeProviderEx
-import jet.Function1
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
