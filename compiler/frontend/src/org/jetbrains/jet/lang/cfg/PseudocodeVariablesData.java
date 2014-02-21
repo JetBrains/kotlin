@@ -147,7 +147,7 @@ public class PseudocodeVariablesData {
                     }
                 };
 
-        return PseudocodeTraverser.collectData(
+        return new PseudocodeVariableDataCollector(bindingContext).collectData(
                 pseudocode, FORWARD, ANALYSE_LOCAL_DECLARATIONS,
                 initialMap, initialMap, instructionDataMergeStrategy);
     }
@@ -273,7 +273,7 @@ public class PseudocodeVariablesData {
                         return Edges.create(enterResult, exitResult);
                     }
                 };
-        return PseudocodeTraverser.collectData(
+        return new PseudocodeVariableDataCollector(bindingContext).collectData(
                 pseudocode, BACKWARD, ANALYSE_LOCAL_DECLARATIONS, Collections.<VariableDescriptor, VariableUseState>emptyMap(),
                 sinkInstructionData, collectVariableUseStatusStrategy);
     }
