@@ -400,6 +400,10 @@ fun main(args: Array<String>) {
             model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
         }
 
+        testClass(javaClass<AbstractJetInspectionTest>()) {
+            model("intentions/operatorToFunction", testMethod = "doTestOperatorToFunction")
+        }
+
         testClass(javaClass<AbstractHierarchyTest>()) {
             model("hierarchy/class/type", extension = null, recursive = false, testMethod = "doTypeClassHierarchyTest")
             model("hierarchy/class/super", extension = null, recursive = false, testMethod = "doSuperClassHierarchyTest")
