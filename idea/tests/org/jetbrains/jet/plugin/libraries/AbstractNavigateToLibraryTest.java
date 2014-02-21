@@ -21,5 +21,5 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 public abstract class AbstractNavigateToLibraryTest extends LightCodeInsightFixtureTestCase {
     protected static final String PACKAGE = "testData.libraries";
-    protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries";
+    protected static final String TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/navigation";
 }
