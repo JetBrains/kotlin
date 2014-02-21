@@ -1,5 +1,5 @@
 // expected: rv: sky color is blue
-// param: what: jet.String: sky
-// param: color: jet.String: blue
+// param: what: kotlin.String: sky
+// param: color: kotlin.String: blue
 
 "$what color is $color"

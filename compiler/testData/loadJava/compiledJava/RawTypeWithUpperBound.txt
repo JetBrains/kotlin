@@ -3,13 +3,13 @@ package test
 public trait RawTypeWithUpperBound : java.lang.Object {
     
     public trait Bar : java.lang.Object {
-        public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<out jet.CharSequence?>?): jet.Unit
+        public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence?>?): kotlin.Unit
     }
     
-    public trait Foo</*0*/ T : jet.CharSequence?> : java.lang.Object {
+    public trait Foo</*0*/ T : kotlin.CharSequence?> : java.lang.Object {
     }
 }
 
 package test.RawTypeWithUpperBound {
-    public /*synthesized*/ fun Bar(/*0*/ function: (test.RawTypeWithUpperBound.Foo<out jet.CharSequence?>?) -> jet.Unit): test.RawTypeWithUpperBound.Bar
+    public /*synthesized*/ fun Bar(/*0*/ function: (test.RawTypeWithUpperBound.Foo<out kotlin.CharSequence?>?) -> kotlin.Unit): test.RawTypeWithUpperBound.Bar
 }

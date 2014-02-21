@@ -1,2 +1,2 @@
 val ia = <ref>IntArray(4)
-//jet/Arrays.kt:IntArray
+//kotlin/Arrays.kt:IntArray

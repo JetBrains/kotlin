@@ -3,16 +3,16 @@ package test
 public trait AdapterDoesntOverrideDeclaration : java.lang.Object {
     
     public trait Sub : test.AdapterDoesntOverrideDeclaration.Super {
-        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
-        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
-        public abstract fun foo(/*0*/ p0: java.lang.Runnable?): jet.Unit
+        public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: java.lang.Runnable?): kotlin.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun foo(/*0*/ p0: (() -> jet.Unit)?): jet.Unit
+        public abstract fun foo(/*0*/ p0: (() -> kotlin.Unit)?): kotlin.Unit
     }
 }
 
 package test.AdapterDoesntOverrideDeclaration {
-    public /*synthesized*/ fun Super(/*0*/ function: ((() -> jet.Unit)?) -> jet.Unit): test.AdapterDoesntOverrideDeclaration.Super
+    public /*synthesized*/ fun Super(/*0*/ function: ((() -> kotlin.Unit)?) -> kotlin.Unit): test.AdapterDoesntOverrideDeclaration.Super
 }

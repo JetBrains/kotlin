@@ -5,5 +5,5 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 0
-// EXIST: { lookupString:"Int", tailText:" (jet)" }
+// EXIST: { lookupString:"Int", tailText:" (kotlin)" }
 // ABSENT: { lookupString:"IntRef", tailText:" (kotlin.internal.Ref)" }

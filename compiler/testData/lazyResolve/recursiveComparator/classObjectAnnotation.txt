@@ -6,7 +6,7 @@ internal final class Some {
     test.Some.TestAnnotation() internal class object <class-object-for-Some> {
         /*primary*/ private constructor <class-object-for-Some>()
         
-        internal final annotation class TestAnnotation : jet.Annotation {
+        internal final annotation class TestAnnotation : kotlin.Annotation {
             /*primary*/ public constructor TestAnnotation()
         }
     }

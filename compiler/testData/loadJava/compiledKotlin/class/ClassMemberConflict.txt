@@ -2,13 +2,13 @@ package test
 
 internal final class ConstructorTypeParamClassObjectConflict</*0*/ test> {
     /*primary*/ public constructor ConstructorTypeParamClassObjectConflict</*0*/ test>()
-    internal final val some: jet.Int
-        internal final fun <get-some>(): jet.Int
+    internal final val some: kotlin.Int
+        internal final fun <get-some>(): kotlin.Int
     
     internal class object <class-object-for-ConstructorTypeParamClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-ConstructorTypeParamClassObjectConflict>()
-        internal final val test: jet.Int
-            internal final fun <get-test>(): jet.Int
+        internal final val test: kotlin.Int
+            internal final fun <get-test>(): kotlin.Int
     }
 }
 
@@ -27,40 +27,40 @@ internal final class ConstructorTypeParamClassObjectTypeConflict</*0*/ test> {
 
 internal final class TestClassObjectAndClassConflict {
     /*primary*/ public constructor TestClassObjectAndClassConflict()
-    internal final val bla: jet.String
-        internal final fun <get-bla>(): jet.String
-    internal final val some: jet.String
-        internal final fun <get-some>(): jet.String
+    internal final val bla: kotlin.String
+        internal final fun <get-bla>(): kotlin.String
+    internal final val some: kotlin.String
+        internal final fun <get-some>(): kotlin.String
     
     internal class object <class-object-for-TestClassObjectAndClassConflict> {
         /*primary*/ private constructor <class-object-for-TestClassObjectAndClassConflict>()
-        internal final val bla: jet.Int
-            internal final fun <get-bla>(): jet.Int
+        internal final val bla: kotlin.Int
+            internal final fun <get-bla>(): kotlin.Int
     }
 }
 
 internal final class TestConstructorParamClassObjectConflict {
-    /*primary*/ public constructor TestConstructorParamClassObjectConflict(/*0*/ test: jet.String)
-    internal final val some: jet.String
-        internal final fun <get-some>(): jet.String
+    /*primary*/ public constructor TestConstructorParamClassObjectConflict(/*0*/ test: kotlin.String)
+    internal final val some: kotlin.String
+        internal final fun <get-some>(): kotlin.String
     
     internal class object <class-object-for-TestConstructorParamClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-TestConstructorParamClassObjectConflict>()
-        internal final val test: jet.Int
-            internal final fun <get-test>(): jet.Int
+        internal final val test: kotlin.Int
+            internal final fun <get-test>(): kotlin.Int
     }
 }
 
 internal final class TestConstructorValClassObjectConflict {
-    /*primary*/ public constructor TestConstructorValClassObjectConflict(/*0*/ test: jet.String)
-    internal final val some: jet.String
-        internal final fun <get-some>(): jet.String
-    internal final val test: jet.String
-        internal final fun <get-test>(): jet.String
+    /*primary*/ public constructor TestConstructorValClassObjectConflict(/*0*/ test: kotlin.String)
+    internal final val some: kotlin.String
+        internal final fun <get-some>(): kotlin.String
+    internal final val test: kotlin.String
+        internal final fun <get-test>(): kotlin.String
     
     internal class object <class-object-for-TestConstructorValClassObjectConflict> {
         /*primary*/ private constructor <class-object-for-TestConstructorValClassObjectConflict>()
-        internal final val test: jet.Int
-            internal final fun <get-test>(): jet.Int
+        internal final val test: kotlin.Int
+            internal final fun <get-test>(): kotlin.Int
     }
 }

@@ -4,4 +4,4 @@ class Foo {
     val s: <caret>String = ""
 }
 
-// REF: (jet).String
+// REF: (kotlin).String

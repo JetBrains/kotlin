@@ -2,4 +2,4 @@ fun String.foo(){
     val s : String = <caret>
 }
 
-// EXIST: { lookupString:"this", typeText:"jet.String" }
+// EXIST: { lookupString:"this", typeText:"kotlin.String" }

@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
 
 // INVOCATION_COUNT: 2
 // WITH_ORDER: 1
-// EXIST: { lookupString:"Array", tailText:" (jet)" }
+// EXIST: { lookupString:"Array", tailText:" (kotlin)" }
 // EXIST_JAVA_ONLY: { lookupString:"Array", tailText:" (java.sql)" }
 // EXIST_JAVA_ONLY: { lookupString:"ArrayList", tailText:"<E> (java.util)" }
 // EXIST_JS_ONLY: { lookupString:"ArrayList", tailText:" (java.util)" }

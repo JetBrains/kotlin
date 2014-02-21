@@ -2,5 +2,5 @@ package test
 
 public open class NotNullIntArray : java.lang.Object {
     public constructor NotNullIntArray()
-    public open fun hi(): jet.IntArray
+    public open fun hi(): kotlin.IntArray
 }

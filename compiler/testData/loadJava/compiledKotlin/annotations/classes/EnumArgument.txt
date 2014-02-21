@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ t: java.lang.annotation.ElementType)
 }
 

@@ -1,4 +1,4 @@
-// "Change all usages of 'java.lang.Comparable<T>' in this file to 'jet.Comparable<T>'" "true"
+// "Change all usages of 'java.lang.Comparable<T>' in this file to 'kotlin.Comparable<T>'" "true"
 import java.lang.*
 import java.lang
 import java.lang as jl

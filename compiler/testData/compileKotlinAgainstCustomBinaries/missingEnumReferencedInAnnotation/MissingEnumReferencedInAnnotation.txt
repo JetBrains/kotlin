@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     public constructor Anno(/*0*/ e: [ERROR : test.E])
     internal final val e: [ERROR : test.E]
 }

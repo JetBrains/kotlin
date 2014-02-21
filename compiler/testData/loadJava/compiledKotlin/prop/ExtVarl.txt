@@ -1,7 +1,7 @@
 package test
 
-internal var jet.Int.junk: jet.Short
-    internal fun jet.Int.<get-junk>(): jet.Short
-    internal fun jet.Int.<set-junk>(/*0*/ p: jet.Short): jet.Unit
-internal val jet.String.junk: jet.Int
-    internal fun jet.String.<get-junk>(): jet.Int
+internal var kotlin.Int.junk: kotlin.Short
+    internal fun kotlin.Int.<get-junk>(): kotlin.Short
+    internal fun kotlin.Int.<set-junk>(/*0*/ p: kotlin.Short): kotlin.Unit
+internal val kotlin.String.junk: kotlin.Int
+    internal fun kotlin.String.<get-junk>(): kotlin.Int

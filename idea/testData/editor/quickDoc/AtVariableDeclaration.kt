@@ -5,4 +5,4 @@ fun test() {
 }
 
 
-//INFO: <b>val</b> test: jet.String? <i>defined in</i> test
+//INFO: <b>val</b> test: kotlin.String? <i>defined in</i> test

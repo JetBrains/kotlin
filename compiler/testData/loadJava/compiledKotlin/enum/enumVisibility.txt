@@ -1,73 +1,73 @@
 package test
 
-internal final enum class In : jet.Enum<test.In> {
+internal final enum class In : kotlin.Enum<test.In> {
     /*primary*/ private constructor In()
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public class object <class-object-for-In> {
         /*primary*/ private constructor <class-object-for-In>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.In
-        public final /*synthesized*/ fun values(): jet.Array<test.In>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.In
+        public final /*synthesized*/ fun values(): kotlin.Array<test.In>
     }
     
     public enum entry A : test.In {
         /*primary*/ private constructor A()
-        public final override /*1*/ /*fake_override*/ fun name(): jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.In.A {
             /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
 }
 
-private final enum class Pr : jet.Enum<test.Pr> {
+private final enum class Pr : kotlin.Enum<test.Pr> {
     /*primary*/ private constructor Pr()
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public class object <class-object-for-Pr> {
         /*primary*/ private constructor <class-object-for-Pr>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Pr
-        public final /*synthesized*/ fun values(): jet.Array<test.Pr>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pr
+        public final /*synthesized*/ fun values(): kotlin.Array<test.Pr>
     }
     
     public enum entry A : test.Pr {
         /*primary*/ private constructor A()
-        public final override /*1*/ /*fake_override*/ fun name(): jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.Pr.A {
             /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
 }
 
-public final enum class Pu : jet.Enum<test.Pu> {
+public final enum class Pu : kotlin.Enum<test.Pu> {
     /*primary*/ private constructor Pu()
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public class object <class-object-for-Pu> {
         /*primary*/ private constructor <class-object-for-Pu>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): test.Pu
-        public final /*synthesized*/ fun values(): jet.Array<test.Pu>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Pu
+        public final /*synthesized*/ fun values(): kotlin.Array<test.Pu>
     }
     
     public enum entry A : test.Pu {
         /*primary*/ private constructor A()
-        public final override /*1*/ /*fake_override*/ fun name(): jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
         public class object <class-object-for-A> : test.Pu.A {
             /*primary*/ private constructor <class-object-for-A>()
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
 }

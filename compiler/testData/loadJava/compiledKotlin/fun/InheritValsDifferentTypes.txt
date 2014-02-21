@@ -1,22 +1,22 @@
 package test
 
 public trait Sub : test.Super1, test.Super2 {
-    internal abstract override /*2*/ /*fake_override*/ val x: jet.String
-        internal abstract override /*2*/ /*fake_override*/ fun <get-x>(): jet.String
-    internal abstract override /*2*/ /*fake_override*/ val y: jet.String
-        internal abstract override /*2*/ /*fake_override*/ fun <get-y>(): jet.String
+    internal abstract override /*2*/ /*fake_override*/ val x: kotlin.String
+        internal abstract override /*2*/ /*fake_override*/ fun <get-x>(): kotlin.String
+    internal abstract override /*2*/ /*fake_override*/ val y: kotlin.String
+        internal abstract override /*2*/ /*fake_override*/ fun <get-y>(): kotlin.String
 }
 
 public trait Super1 {
-    internal abstract val x: jet.String
-        internal abstract fun <get-x>(): jet.String
-    internal abstract val y: jet.CharSequence
-        internal abstract fun <get-y>(): jet.CharSequence
+    internal abstract val x: kotlin.String
+        internal abstract fun <get-x>(): kotlin.String
+    internal abstract val y: kotlin.CharSequence
+        internal abstract fun <get-y>(): kotlin.CharSequence
 }
 
 public trait Super2 {
-    internal abstract val x: jet.CharSequence
-        internal abstract fun <get-x>(): jet.CharSequence
-    internal abstract val y: jet.String
-        internal abstract fun <get-y>(): jet.String
+    internal abstract val x: kotlin.CharSequence
+        internal abstract fun <get-x>(): kotlin.CharSequence
+    internal abstract val y: kotlin.String
+        internal abstract fun <get-y>(): kotlin.String
 }

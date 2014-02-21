@@ -2,30 +2,30 @@ package test
 
 public open class A {
     public constructor A()
-    public open fun foo(): jet.String
+    public open fun foo(): kotlin.String
 }
 
 public open class B : test.A {
     public constructor B()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }
 
 public open class C : test.B {
     public constructor C()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }
 
 public open class D : test.C {
     public constructor D()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }
 
 public open class E : test.D {
     public constructor E()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }
 
 public open class F : test.E {
     public constructor F()
-    public open override /*1*/ fun foo(): jet.String
+    public open override /*1*/ fun foo(): kotlin.String
 }

@@ -3,8 +3,8 @@ VARIABLES T P
 SUBTYPE T Int
 
 type parameter bounds:
-T <: jet.Int(SPECIAL)
-P <: ???(TYPE_BOUND_POSITION(1)), <: jet.Int(COMPOUND_CONSTRAINT_POSITION)
+T <: kotlin.Int(SPECIAL)
+P <: ???(TYPE_BOUND_POSITION(1)), <: kotlin.Int(COMPOUND_CONSTRAINT_POSITION)
 status:
 -hasConflictingConstraints: false
 -hasContradiction: false
@@ -15,6 +15,6 @@ status:
 -isSuccessful: true
 
 result:
-T=jet.Int
-P=jet.Int
+T=kotlin.Int
+P=kotlin.Int
 

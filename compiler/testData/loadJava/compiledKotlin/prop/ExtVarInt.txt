@@ -1,5 +1,5 @@
 package test
 
-internal var jet.Int.ggg: jet.Int
-    internal fun jet.Int.<get-ggg>(): jet.Int
-    internal fun jet.Int.<set-ggg>(/*0*/ p: jet.Int): jet.Unit
+internal var kotlin.Int.ggg: kotlin.Int
+    internal fun kotlin.Int.<get-ggg>(): kotlin.Int
+    internal fun kotlin.Int.<set-ggg>(/*0*/ p: kotlin.Int): kotlin.Unit

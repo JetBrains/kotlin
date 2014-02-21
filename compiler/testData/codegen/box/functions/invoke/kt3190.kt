@@ -5,7 +5,7 @@ fun box(): String {
     return if (test(1) == 3) "OK" else "fail"
 }
 
-class Cached<K, V>(private val generate: (K)->V): jet.Function1<K, V> {
+class Cached<K, V>(private val generate: (K)->V): Function1<K, V> {
     val store = java.util.HashMap<K, V>()
 
     // Everything works just fine if 'invoke' method is renamed to, for example, 'get'

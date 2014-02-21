@@ -1,1 +1,1 @@
-val x: <selection>jet.Map.Entry<jet.Array<jet.String>, java.sql.Array></selection>
+val x: <selection>kotlin.Map.Entry<kotlin.Array<kotlin.String>, java.sql.Array></selection>

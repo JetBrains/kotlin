@@ -7,7 +7,7 @@ class SomeClass {
 // INVOCATION_COUNT: 2
 // EXIST: SomeClass
 // EXIST: SomeInternal
-// EXIST: { lookupString:"String", tailText:" (jet)" }
+// EXIST: { lookupString:"String", tailText:" (kotlin)" }
 // EXIST: IllegalStateException
 // EXIST: StringBuilder
 // EXIST_JAVA_ONLY: StringBuffer

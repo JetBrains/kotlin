@@ -4,7 +4,7 @@ SUBTYPE T Int
 SUBTYPE T String weak
 
 type parameter bounds:
-T <: jet.Int(SPECIAL), <: jet.String(TYPE_BOUND_POSITION(0))
+T <: kotlin.Int(SPECIAL), <: kotlin.String(TYPE_BOUND_POSITION(0))
 status:
 -hasConflictingConstraints: true
 -hasContradiction: true

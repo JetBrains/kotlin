@@ -111,7 +111,7 @@ public class Double
 
 public fun processDouble(d: Double) {}
 
-public fun processDouble(d: jet.Double) {}
+public fun processDouble(d: kotlin.Double) {}
 
 
 public fun <T: CharSequence> funWithTypeParam(t: T) {

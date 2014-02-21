@@ -6,4 +6,4 @@ class Foo{
     }
 }
 
-// EXIST: { lookupString:"this@foo", typeText:"jet.String" }
+// EXIST: { lookupString:"this@foo", typeText:"kotlin.String" }

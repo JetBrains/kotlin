@@ -1,6 +1,10 @@
 var index = 0
 
-val iterator = object : Iterator<Int> {
+trait IterableIterator : Iterator<Int> {
+    fun iterator(): Iterator<Int> = this
+}
+
+val iterator = object : IterableIterator {
     override fun hasNext() = index < 5
     override fun next() = index++
 }

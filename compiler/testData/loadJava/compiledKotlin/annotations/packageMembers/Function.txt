@@ -1,7 +1,7 @@
 package test
 
-test.Anno() internal fun function(): jet.Unit
+test.Anno() internal fun function(): kotlin.Unit
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
