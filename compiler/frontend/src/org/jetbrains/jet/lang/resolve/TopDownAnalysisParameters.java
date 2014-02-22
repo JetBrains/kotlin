@@ -55,13 +55,11 @@ public class TopDownAnalysisParameters {
         this.scriptParameters = scriptParameters;
     }
 
-    //@Override
     @NotNull
     public StorageManager getStorageManager() {
         return storageManager;
     }
 
-    //@Override
     @NotNull
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;
