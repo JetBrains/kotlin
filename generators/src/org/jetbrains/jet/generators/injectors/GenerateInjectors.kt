@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
 import org.jetbrains.jet.di.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
+import org.jetbrains.jet.context.SimpleGlobalContext
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -194,10 +195,10 @@ private fun generatorForBodyResolve() =
             parameter(javaClass<Project>())
             parameter(javaClass<TopDownAnalysisParameters>(), useAsContext = true)
             parameter(javaClass<BindingTrace>())
-            parameter(javaClass<BodiesResolveContext>())
             parameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
             publicField(javaClass<BodyResolver>())
+            field(javaClass<SimpleGlobalContext>())
         }
 
 private fun generatorForLazyResolve() =
