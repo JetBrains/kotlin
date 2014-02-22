@@ -101,6 +101,7 @@ public class PseudocodeTraverser {
     }
 
     public interface InstructionDataMergeStrategy<D> {
+        @NotNull
         Edges<D> execute(@NotNull Instruction instruction, @NotNull Collection<D> incomingEdgesData);
     }
 
@@ -113,7 +114,9 @@ public class PseudocodeTraverser {
     }
 
     public static class Edges<T> {
+        @NotNull
         public final T in;
+        @NotNull
         public final T out;
 
         Edges(@NotNull T in, @NotNull T out) {
@@ -121,6 +124,7 @@ public class PseudocodeTraverser {
             this.out = out;
         }
 
+        @NotNull
         public static <T> Edges<T> create(@NotNull T in, @NotNull T out) {
             return new Edges<T>(in, out);
         }

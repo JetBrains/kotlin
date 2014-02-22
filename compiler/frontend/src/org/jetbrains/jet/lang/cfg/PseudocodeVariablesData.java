@@ -135,9 +135,10 @@ public class PseudocodeVariablesData {
 
         final Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, true);
 
-        return new PseudocodeVariableDataCollector(bindingContext).collectData(
+        return new PseudocodeVariableDataCollector(bindingContext).collectDataJ(
                 pseudocode, FORWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
+                    @NotNull
                     @Override
                     public Edges<Map<VariableDescriptor, VariableInitState>> execute(
                             @NotNull Instruction instruction,
@@ -150,7 +151,8 @@ public class PseudocodeVariablesData {
                                 addVariableInitStateFromCurrentInstructionIfAny(instruction, enterInstructionData, declaredVariables);
                         return Edges.create(enterInstructionData, exitInstructionData);
                     }
-                });
+                }
+        );
     }
 
     public static VariableInitState getDefaultValueForInitializers(
@@ -229,9 +231,10 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        return new PseudocodeVariableDataCollector(bindingContext).collectData(
+        return new PseudocodeVariableDataCollector(bindingContext).collectDataJ(
                 pseudocode, BACKWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
+                    @NotNull
                     @Override
                     public Edges<Map<VariableDescriptor, VariableUseState>> execute(
                             @NotNull Instruction instruction,
