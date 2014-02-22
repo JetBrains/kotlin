@@ -25,10 +25,17 @@ trait GlobalContext {
     val exceptionTracker: ExceptionTracker
 }
 
-open class GlobalContextImpl(
-        override val storageManager: LockBasedStorageManager,
+open class SimpleGlobalContext(
+        override val storageManager: StorageManager,
         override val exceptionTracker: ExceptionTracker
 ) : GlobalContext
+
+open class GlobalContextImpl(
+        storageManager: LockBasedStorageManager,
+        exceptionTracker: ExceptionTracker
+) : SimpleGlobalContext(storageManager, exceptionTracker) {
+    override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
+}
 
 fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()

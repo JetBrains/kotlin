@@ -202,7 +202,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
-        bodyResolver.setContext(topDownAnalysisContext);
         bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         bodyResolver.setDeclarationsChecker(declarationsChecker);
         bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);

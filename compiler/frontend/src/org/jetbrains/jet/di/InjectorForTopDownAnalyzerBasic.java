@@ -157,7 +157,6 @@ public class InjectorForTopDownAnalyzerBasic {
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
-        bodyResolver.setContext(topDownAnalysisContext);
         bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         bodyResolver.setDeclarationsChecker(declarationsChecker);
         bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
