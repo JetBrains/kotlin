@@ -26,7 +26,6 @@ import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzer;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -49,7 +48,7 @@ public class LazyResolveTestUtil {
     private LazyResolveTestUtil() {
     }
 
-    public static InjectorForTopDownAnalyzer createInjectorForTDA(JetCoreEnvironment environment) {
+    public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
         JetTestUtils.newTrace(environment);
 
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
@@ -62,12 +61,7 @@ public class LazyResolveTestUtil {
         InjectorForTopDownAnalyzerForJvm injector =
                 new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
         sharedModule.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-        return injector;
-    }
-
-    public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
-        InjectorForTopDownAnalyzer injector = createInjectorForTDA(environment);
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
+        injector.getTopDownAnalyzer().analyzeFiles(params, files, Collections.<AnalyzerScriptParameter>emptyList());
         return injector.getModuleDescriptor();
     }
 

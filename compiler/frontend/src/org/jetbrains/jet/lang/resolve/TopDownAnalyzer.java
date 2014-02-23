@@ -53,8 +53,6 @@ public class TopDownAnalyzer {
     @NotNull
     private OverloadResolver overloadResolver;
     @NotNull
-    private TopDownAnalysisParameters topDownAnalysisParameters;
-    @NotNull
     private BindingTrace trace;
     @NotNull
     private ModuleDescriptor moduleDescriptor;
@@ -81,11 +79,6 @@ public class TopDownAnalyzer {
     @Inject
     public void setOverloadResolver(@NotNull OverloadResolver overloadResolver) {
         this.overloadResolver = overloadResolver;
-    }
-
-    @Inject
-    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
     @Inject
@@ -125,7 +118,7 @@ public class TopDownAnalyzer {
 
         overloadResolver.process(c);
 
-        if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
+        if (!c.getTopDownAnalysisParameters().isAnalyzingBootstrapLibrary()) {
             bodyResolver.resolveBodies(c);
         }
 
@@ -218,6 +211,7 @@ public class TopDownAnalyzer {
 
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
+            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
