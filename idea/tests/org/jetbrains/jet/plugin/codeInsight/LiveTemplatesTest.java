@@ -267,14 +267,6 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
 
     private void typeAndNextTab(String s) {
         type(s);
-        nextTab();
-    }
-
-    private void type(String s) {
-        myFixture.type(s);
-    }
-
-    private void nextTab() {
         UIUtil.invokeAndWaitIfNeeded(new Runnable() {
             @Override
             public void run() {
@@ -284,13 +276,21 @@ public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
                         ApplicationManager.getApplication().runWriteAction(new Runnable() {
                             @Override
                             public void run() {
-                                getTemplateState().nextTab();
+                                nextTab();
                             }
                         });
                     }
                 }, "nextTab", null);
             }
         });
+    }
+
+    private void type(String s) {
+        myFixture.type(s);
+    }
+
+    private void nextTab() {
+        getTemplateState().nextTab();
     }
 
     private void nextTab(int times) {

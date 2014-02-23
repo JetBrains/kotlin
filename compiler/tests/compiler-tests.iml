@@ -20,7 +20,6 @@
     <orderEntry type="module" module-name="descriptor.loader.java" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="builtins-serializer" />
-    <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
   </component>
 </module>
 

@@ -19,7 +19,10 @@ package org.jetbrains.jet.plugin.liveTemplates;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.template.TemplateContextType;
-import com.intellij.codeInsight.template.impl.*;
+import com.intellij.codeInsight.template.impl.LiveTemplateLookupElement;
+import com.intellij.codeInsight.template.impl.TemplateImpl;
+import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.impl.TemplateSettings;
 import com.intellij.openapi.util.Ref;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.patterns.PlatformPatterns;
@@ -83,7 +86,7 @@ public class JetLiveTemplateCompletionContributor extends CompletionContributor 
         if (!templatesShown.get()) {
             templatesShown.set(true);
             for (TemplateImpl possible : templates) {
-                result.addElement(new LiveTemplateLookupElementImpl(possible, false));
+                result.addElement(new LiveTemplateLookupElement(possible, false));
             }
         }
     }

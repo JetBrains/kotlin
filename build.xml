@@ -422,7 +422,6 @@
                     -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 
                     -libraryjars '${rtjar}'
-                    -libraryjars '${jssejar}'
                     -libraryjars '${bootstrap.runtime}'
 
                     -target 1.6

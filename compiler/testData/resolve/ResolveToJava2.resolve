@@ -8,7 +8,7 @@ import java.`java::java.util`util.*
 fun <T> t(t : T) : T {
   `c`c(java.lang.Integer(1))
   System.out.`java::java.io.PrintStream.print(Object)`print(t)
-  System.out.`java::java.io.PrintStream.print(char[])`print(null : CharArray)
+  System.out.`java::java.io.PrintStream.print(char[])`print(null : CharArray?)
   System.out.`java::java.io.PrintStream.print(Object)`print(null : Object?)
   System.out.`java::java.io.PrintStream.print(Int)`print(1)
   System.out.`java::java.io.PrintStream.print(Double)`print(1.0)

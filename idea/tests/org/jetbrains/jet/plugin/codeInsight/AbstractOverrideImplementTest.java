@@ -186,7 +186,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
     }
 
     private void generateImplementation(@NotNull final PsiMethod method) {
-        WriteCommandAction.runWriteCommandAction(getProject(), new Runnable() {
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
                 PsiClass aClass = ((PsiClassOwner) myFixture.getFile()).getClasses()[0];

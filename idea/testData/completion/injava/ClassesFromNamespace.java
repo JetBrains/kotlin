@@ -11,3 +11,4 @@ public class Testing {
 // EXIST: LibEnum
 // EXIST: LibObject
 // EXIST: FooPackage
+// NUMBER: 5

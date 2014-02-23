@@ -130,8 +130,8 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         val lookup = (fixture.getLookup() as LookupImpl)
         lookup.setCurrentItem(item)
         if (LookupEvent.isSpecialCompletionChar(completionChar)) {
-            (object : WriteCommandAction.Simple<Any>(getProject()) {
-                protected override fun run(result: Result<Any>) {
+            (object : WriteCommandAction.Simple(getProject()) {
+                protected override fun run(result: Result<Any?>?) {
                     run()
                 }
                 protected override fun run() {

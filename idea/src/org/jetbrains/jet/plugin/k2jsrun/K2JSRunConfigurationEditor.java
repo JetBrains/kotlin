@@ -17,8 +17,6 @@
 package org.jetbrains.jet.plugin.k2jsrun;
 
 import com.intellij.ide.browsers.BrowsersConfiguration;
-import com.intellij.ide.browsers.WebBrowser;
-import com.intellij.ide.browsers.WebBrowserManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -139,8 +137,8 @@ public final class K2JSRunConfigurationEditor extends SettingsEditor<K2JSRunConf
     }
 
     private void setUpBrowserCombobox() {
-        for (WebBrowser browser : WebBrowserManager.getInstance().getActiveBrowsers()) {
-            browserComboBox.addItem(browser.getFamily());
+        for (BrowsersConfiguration.BrowserFamily family : BrowsersConfiguration.getInstance().getActiveBrowsers()) {
+            browserComboBox.addItem(family);
         }
         browserComboBox.setRenderer(new ListCellRendererWrapper<BrowsersConfiguration.BrowserFamily>() {
             @Override
