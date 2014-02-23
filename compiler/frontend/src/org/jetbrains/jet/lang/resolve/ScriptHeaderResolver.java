@@ -56,8 +56,6 @@ public class ScriptHeaderResolver {
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
     private BindingTrace trace;
-    @NotNull
-    private TopDownAnalysisParameters topDownAnalysisParameters;
 
     @Inject
     public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
@@ -74,9 +72,7 @@ public class ScriptHeaderResolver {
         this.trace = trace;
     }
 
-    @Inject
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
 
@@ -152,7 +148,7 @@ public class ScriptHeaderResolver {
             int index = 0;
             List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
                                                        ? scriptDefinition.getScriptParameters()
-                                                       : topDownAnalysisParameters.getScriptParameters();
+                                                       : c.getTopDownAnalysisParameters().getScriptParameters();
 
             for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
                 ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, descriptor);
