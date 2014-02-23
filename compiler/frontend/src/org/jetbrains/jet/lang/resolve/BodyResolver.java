@@ -54,8 +54,6 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
     @NotNull
-    private TopDownAnalysisParameters topDownAnalysisParameters;
-    @NotNull
     private ScriptBodyResolver scriptBodyResolverResolver;
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
@@ -73,11 +71,6 @@ public class BodyResolver {
     private DelegatedPropertyResolver delegatedPropertyResolver;
     @NotNull
     private FunctionAnalyzerExtension functionAnalyzerExtension;
-
-    @Inject
-    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-    }
 
     @Inject
     public void setScriptBodyResolverResolver(@NotNull ScriptBodyResolver scriptBodyResolverResolver) {
@@ -136,7 +129,7 @@ public class BodyResolver {
 
         scriptBodyResolverResolver.resolveScriptBodies(c);
 
-        if (!topDownAnalysisParameters.isDeclaredLocally()) {
+        if (!c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             computeDeferredTypes();
         }
     }

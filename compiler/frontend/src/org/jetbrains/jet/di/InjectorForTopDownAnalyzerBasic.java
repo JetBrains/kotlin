@@ -156,7 +156,6 @@ public class InjectorForTopDownAnalyzerBasic {
         bodyResolver.setExpressionTypingServices(expressionTypingServices);
         bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
-        bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         bodyResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);

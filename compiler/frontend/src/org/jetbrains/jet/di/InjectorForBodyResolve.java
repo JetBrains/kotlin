@@ -117,7 +117,6 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setExpressionTypingServices(expressionTypingServices);
         this.bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         this.bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
-        this.bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.bodyResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
