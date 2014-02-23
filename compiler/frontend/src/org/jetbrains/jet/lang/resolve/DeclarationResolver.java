@@ -90,7 +90,7 @@ public class DeclarationResolver {
         resolveAnnotationStubsOnClassesAndConstructors(c);
         resolveFunctionAndPropertyHeaders(c);
         createFunctionsForDataClasses(c);
-        importsResolver.processMembersImports();
+        importsResolver.processMembersImports(c);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
     }
