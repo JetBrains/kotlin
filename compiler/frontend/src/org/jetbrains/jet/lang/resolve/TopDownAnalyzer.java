@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class TopDownAnalyzer {
@@ -209,8 +208,8 @@ public class TopDownAnalyzer {
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
-            @NotNull Collection<JetFile> files,
-            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
+            @NotNull Collection<JetFile> files
+    ) {
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
 
         // "depend on" builtins module
@@ -220,8 +219,7 @@ public class TopDownAnalyzer {
         // packages added to module explicitly in
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
-        doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor),
-                  new PackageLikeBuilderDummy(), files);
+        doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
         return c;
     }
 

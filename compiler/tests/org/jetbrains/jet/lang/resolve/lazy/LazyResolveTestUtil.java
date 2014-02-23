@@ -78,7 +78,7 @@ public class LazyResolveTestUtil {
         InjectorForTopDownAnalyzerForJvm injector =
                 new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
         sharedModule.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-        injector.getTopDownAnalyzer().analyzeFiles(params, files, Collections.<AnalyzerScriptParameter>emptyList());
+        injector.getTopDownAnalyzer().analyzeFiles(params, files);
         return injector.getModuleDescriptor();
     }
 

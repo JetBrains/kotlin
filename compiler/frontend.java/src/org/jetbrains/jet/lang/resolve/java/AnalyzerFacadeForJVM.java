@@ -229,7 +229,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-            TopDownAnalysisContext topDownAnalysisContext = injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files, scriptParameters);
+            TopDownAnalysisContext topDownAnalysisContext = injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(topDownAnalysisContext) :
                                                         null;
