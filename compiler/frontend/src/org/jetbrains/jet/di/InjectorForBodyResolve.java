@@ -17,7 +17,7 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
@@ -50,7 +50,7 @@ import javax.annotation.PreDestroy;
 public class InjectorForBodyResolve {
     
     private final Project project;
-    private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
@@ -78,13 +78,13 @@ public class InjectorForBodyResolve {
     
     public InjectorForBodyResolve(
         @NotNull Project project,
-        @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+        @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.project = project;
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.storageManager = topDownAnalysisParameters.getStorageManager();
+        this.globalContext = globalContext;
+        this.storageManager = globalContext.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
@@ -143,7 +143,7 @@ public class InjectorForBodyResolve {
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
-        expressionTypingComponents.setGlobalContext(topDownAnalysisParameters);
+        expressionTypingComponents.setGlobalContext(globalContext);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
