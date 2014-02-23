@@ -19,15 +19,21 @@ package org.jetbrains.jet.plugin.caches;
 import com.intellij.navigation.GotoClassContributor;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetClass;
+import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.stubindex.JetShortClassNameIndex;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 public class JetGotoClassContributor implements GotoClassContributor {
@@ -65,9 +71,24 @@ public class JetGotoClassContributor implements GotoClassContributor {
             return NavigationItem.EMPTY_NAVIGATION_ITEM_ARRAY;
         }
 
+        PsiClass[] classes = PsiShortNamesCache.getInstance(project).getClassesByName(name, scope);
+        Collection<String> javaQualifiedNames = new HashSet<String>();
+        for (PsiClass aClass : classes) {
+            String qualifiedName = aClass.getQualifiedName();
+            if (qualifiedName != null) {
+                javaQualifiedNames.add(qualifiedName);
+            }
+        }
+
         List<NavigationItem> items = new ArrayList<NavigationItem>();
         for (JetClassOrObject classOrObject : classesOrObjects) {
-            if (classOrObject != null && !(classOrObject instanceof JetEnumEntry)) {
+            FqName fqName = JetPsiUtil.getFQName(classOrObject);
+            if (fqName == null || javaQualifiedNames.contains(fqName.toString())) {
+                // Elements will be added by Java class contributor
+                continue;
+            }
+
+            if (classOrObject instanceof JetClass) {
                 items.add(classOrObject);
             }
         }
