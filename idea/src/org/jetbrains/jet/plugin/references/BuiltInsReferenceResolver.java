@@ -97,7 +97,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                         myProject, topDownAnalysisParameters, trace, module);
 
                 TopDownAnalyzer analyzer = injector.getTopDownAnalyzer();
-                analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles, Collections.<AnalyzerScriptParameter>emptyList());
+                analyzer.analyzeFiles(topDownAnalysisParameters, jetBuiltInsFiles);
 
                 builtinsPackageFragment = analyzer.getPackageFragmentProvider().getOrCreateFragment(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);

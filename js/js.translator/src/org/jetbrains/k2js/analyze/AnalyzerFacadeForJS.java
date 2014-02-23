@@ -109,7 +109,7 @@ public final class AnalyzerFacadeForJS {
                                            files :
                                            Config.withJsLibAdded(files, config);
             TopDownAnalysisContext topDownAnalysisContext =
-                    injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles, Collections.<AnalyzerScriptParameter>emptyList());
+                    injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(topDownAnalysisContext) :
                                                         null;

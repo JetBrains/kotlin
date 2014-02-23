@@ -156,7 +156,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         module.addFragmentProvider(DependencyKind.BINARIES, injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(parameters, environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
+        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(parameters, environment.getSourceFiles());
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test package not found";
