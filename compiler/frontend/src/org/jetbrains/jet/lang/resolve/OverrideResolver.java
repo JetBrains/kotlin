@@ -48,13 +48,7 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilit
 
 public class OverrideResolver {
 
-    private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;
-
-    @Inject
-    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-    }
 
     @Inject
     public void setTrace(BindingTrace trace) {
@@ -211,12 +205,12 @@ public class OverrideResolver {
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
-            checkOverridesInAClass((MutableClassDescriptor) entry.getValue(), entry.getKey());
+            checkOverridesInAClass(c, (MutableClassDescriptor) entry.getValue(), entry.getKey());
         }
     }
 
-    private void checkOverridesInAClass(@NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
-        if (topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) return;
+    private void checkOverridesInAClass(@NotNull TopDownAnalysisContext c, @NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
+        if (c.getTopDownAnalysisParameters().isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
