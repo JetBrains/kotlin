@@ -165,8 +165,8 @@ public class TopDownAnalyzer {
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
-                moduleDescriptor);
+                object.getProject(), topDownAnalysisParameters, context.trace, moduleDescriptor
+        );
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
         c.setOuterDataFlowInfo(context.dataFlowInfo);
