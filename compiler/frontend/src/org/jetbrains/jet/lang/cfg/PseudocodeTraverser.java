@@ -70,9 +70,13 @@ public class PseudocodeTraverser {
     }
 
     public static <D> Map<Instruction, Edges<D>> collectData(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder, LookInsideStrategy lookInside,
-            @NotNull D initialDataValue, @NotNull D initialDataValueForEnterInstruction,
-            @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy) {
+            @NotNull Pseudocode pseudocode,
+            @NotNull TraversalOrder traversalOrder,
+            @NotNull LookInsideStrategy lookInside,
+            @NotNull D initialDataValue,
+            @NotNull D initialDataValueForEnterInstruction,
+            @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy
+    ) {
 
         Map<Instruction, Edges<D>> edgesMap = Maps.newLinkedHashMap();
         initializeEdgesMap(pseudocode, lookInside, edgesMap, initialDataValue);
@@ -103,13 +107,15 @@ public class PseudocodeTraverser {
     }
 
     private static <D> void collectDataFromSubgraph(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
-            LookInsideStrategy lookInside,
+            @NotNull Pseudocode pseudocode,
+            @NotNull TraversalOrder traversalOrder,
+            @NotNull LookInsideStrategy lookInside,
             @NotNull Map<Instruction, Edges<D>> edgesMap,
             @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
-            boolean[] changed, boolean isLocal) {
-
+            boolean[] changed,
+            boolean isLocal
+    ) {
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         Instruction startInstruction = getStartInstruction(pseudocode, traversalOrder);
 
@@ -131,8 +137,7 @@ public class PseudocodeTraverser {
             if (shouldLookInside(instruction, lookInside)) {
                 Pseudocode subroutinePseudocode = ((LocalFunctionDeclarationInstruction) instruction).getBody();
                 collectDataFromSubgraph(subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
-                                        previousInstructions,
-                                        changed, true);
+                                        previousInstructions, changed, true);
                 Instruction lastInstruction = getLastInstruction(subroutinePseudocode, traversalOrder);
                 Edges<D> previousValue = edgesMap.get(instruction);
                 Edges<D> newValue = edgesMap.get(lastInstruction);
@@ -161,9 +166,10 @@ public class PseudocodeTraverser {
     }
 
     public static void traverse(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
-            InstructionAnalyzeStrategy instructionAnalyzeStrategy) {
-
+            @NotNull Pseudocode pseudocode,
+            @NotNull TraversalOrder traversalOrder,
+            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy
+    ) {
         List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
         for (Instruction instruction : instructions) {
             if (instruction instanceof LocalFunctionDeclarationInstruction) {
