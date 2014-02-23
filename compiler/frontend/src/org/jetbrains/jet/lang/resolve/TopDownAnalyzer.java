@@ -55,8 +55,6 @@ public class TopDownAnalyzer {
     @NotNull
     private TopDownAnalysisParameters topDownAnalysisParameters;
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private BindingTrace trace;
     @NotNull
     private ModuleDescriptor moduleDescriptor;
@@ -96,11 +94,6 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
-
-    @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
     }
@@ -115,37 +108,37 @@ public class TopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
-
-
     public void doProcess(
-            JetScope outerScope,
-            PackageLikeBuilder owner,
-            Collection<? extends PsiElement> declarations) {
-//        context.enableDebugOutput();
-        context.debug("Enter");
+            @NotNull TopDownAnalysisContext c,
+            @NotNull JetScope outerScope,
+            @NotNull PackageLikeBuilder owner,
+            @NotNull Collection<? extends PsiElement> declarations
+    ) {
+//        c.enableDebugOutput();
+        c.debug("Enter");
 
         typeHierarchyResolver.process(outerScope, owner, declarations);
         declarationResolver.process(outerScope);
         overrideResolver.process();
 
-        lockScopes();
+        lockScopes(c);
 
         overloadResolver.process();
 
         if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
-            bodyResolver.resolveBodies(context);
+            bodyResolver.resolveBodies(c);
         }
 
-        context.debug("Exit");
-        context.printDebugOutput(System.out);
+        c.debug("Exit");
+        c.printDebugOutput(System.out);
     }
 
-    private void lockScopes() {
-        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : context.getClasses().values()) {
+    private void lockScopes(@NotNull TopDownAnalysisContext c) {
+        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : c.getClasses().values()) {
             ((MutableClassDescriptor) mutableClassDescriptor).lockScopes();
         }
         Set<FqName> scriptFqNames = Sets.newHashSet();
-        for (JetFile file : context.getFileScopes().keySet()) {
+        for (JetFile file : c.getFileScopes().keySet()) {
             if (file.isScript()) {
                 scriptFqNames.add(JetPsiUtil.getFQName(file));
             }
@@ -183,38 +176,44 @@ public class TopDownAnalyzer {
                 object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
                 moduleDescriptor);
 
-        injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        c.setOuterDataFlowInfo(context.dataFlowInfo);
 
-        injector.getTopDownAnalyzer().doProcess(context.scope, new PackageLikeBuilder() {
+        injector.getTopDownAnalyzer().doProcess(
+               c,
+               context.scope,
+               new PackageLikeBuilder() {
 
-            @NotNull
-            @Override
-            public DeclarationDescriptor getOwnerForChildren() {
-                return containingDeclaration;
-            }
+                   @NotNull
+                   @Override
+                   public DeclarationDescriptor getOwnerForChildren() {
+                       return containingDeclaration;
+                   }
 
-            @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                if (scope != null) {
-                    scope.addClassifierDescriptor(classDescriptor);
-                }
-            }
+                   @Override
+                   public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                       if (scope != null) {
+                           scope.addClassifierDescriptor(classDescriptor);
+                       }
+                   }
 
-            @Override
-            public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                throw new UnsupportedOperationException();
-            }
+                   @Override
+                   public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                       throw new UnsupportedOperationException();
+                   }
 
-            @Override
-            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                   @Override
+                   public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
 
-            }
+                   }
 
-            @Override
-            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                return ClassObjectStatus.NOT_ALLOWED;
-            }
-        }, Collections.<PsiElement>singletonList(object));
+                   @Override
+                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                       return ClassObjectStatus.NOT_ALLOWED;
+                   }
+               },
+               Collections.<PsiElement>singletonList(object)
+        );
     }
 
     public void analyzeFiles(
@@ -227,13 +226,15 @@ public class TopDownAnalyzer {
 
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
-        doProcess(JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
+
+        doProcess(new TopDownAnalysisContext(topDownAnalysisParameters), JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor),
+                  new PackageLikeBuilderDummy(), files);
     }
 
 
-    public void prepareForTheNextReplLine() {
-        context.getScriptScopes().clear();
-        context.getScripts().clear();
+    public void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
+        c.getScriptScopes().clear();
+        c.getScripts().clear();
     }
 
 

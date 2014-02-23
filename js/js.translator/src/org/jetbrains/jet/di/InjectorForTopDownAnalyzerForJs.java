@@ -111,7 +111,7 @@ public class InjectorForTopDownAnalyzerForJs {
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.topDownAnalysisContext = new TopDownAnalysisContext();
+        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.bodyResolver = new BodyResolver();
@@ -143,7 +143,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.typeHierarchyResolver = new TypeHierarchyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
-        this.topDownAnalyzer.setContext(topDownAnalysisContext);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
@@ -152,8 +151,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-
-        this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);

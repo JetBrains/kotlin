@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
-import javax.inject.Inject;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
@@ -64,17 +63,19 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private StringBuilder debugOutput;
 
-
     private TopDownAnalysisParameters topDownAnalysisParameters;
 
-    @Override
-    @Inject
-    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
+    public TopDownAnalysisContext(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
     public TopDownAnalysisParameters getTopDownAnalysisParameters() {
         return topDownAnalysisParameters;
+    }
+
+    @Override
+    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
+        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
     public void debug(Object message) {
