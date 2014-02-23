@@ -267,7 +267,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         scriptBodyResolver.setTrace(bindingTrace);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
         declarationResolver.setImportsResolver(importsResolver);
         declarationResolver.setScriptHeaderResolver(scriptHeaderResolver);
