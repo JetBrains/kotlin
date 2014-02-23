@@ -19,3 +19,7 @@ class InClassObject {
 // REF: (test.InClassObject).ClassObjectObject
 // REF: (test.InClassObject).ClassObjectTrait
 // REF: (test.InClassObject).ClassObjectTraitWithImpl
+// REF: (test.InClassObject.object).ClassObjectClass in object in InClassObject
+// REF: (test.InClassObject.object).ClassObjectObject in object in InClassObject
+// REF: (test.InClassObject.object).ClassObjectTrait in object in InClassObject
+// REF: (test.InClassObject.object).ClassObjectTraitWithImpl in object in InClassObject
