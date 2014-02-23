@@ -23,7 +23,6 @@ import com.intellij.util.containers.ContainerUtil;
 import jet.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
@@ -51,14 +50,9 @@ import static org.jetbrains.jet.lang.types.TypeUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION_TO_UNIT;
 
 public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
-    private final GlobalContext globalContext;
 
-    protected ClosureExpressionsTypingVisitor(
-            @NotNull GlobalContext globalContext,
-            @NotNull ExpressionTypingInternals facade
-    ) {
+    protected ClosureExpressionsTypingVisitor(@NotNull ExpressionTypingInternals facade) {
         super(facade);
-        this.globalContext = globalContext;
     }
 
     @Override
@@ -76,7 +70,8 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             @Override
             public void handleRecord(WritableSlice<PsiElement, ClassDescriptor> slice, PsiElement declaration, final ClassDescriptor descriptor) {
                 if (slice == CLASS && declaration == expression.getObjectDeclaration()) {
-                    JetType defaultType = DeferredType.createRecursionIntolerant(globalContext.getStorageManager(), context.trace,
+                    JetType defaultType = DeferredType.createRecursionIntolerant(components.globalContext.getStorageManager(),
+                                                                                 context.trace,
                                                                                  new Function0<JetType>() {
                                                                                      @Override
                                                                                      public JetType invoke() {
@@ -93,7 +88,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         };
         ObservableBindingTrace traceAdapter = new ObservableBindingTrace(temporaryTrace);
         traceAdapter.addHandler(CLASS, handler);
-        TopDownAnalyzer.processClassOrObject(globalContext,
+        TopDownAnalyzer.processClassOrObject(components.globalContext,
                                              null, // don't need to add classifier of object literal to any scope
                                              context.replaceBindingTrace(traceAdapter).replaceContextDependency(INDEPENDENT),
                                              context.scope.getContainingDeclaration(),
@@ -177,7 +172,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static AnonymousFunctionDescriptor createFunctionDescriptor(
+    private AnonymousFunctionDescriptor createFunctionDescriptor(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull ExpressionTypingContext context,
             boolean functionTypeExpected
@@ -200,7 +195,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            effectiveReceiverType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
+            effectiveReceiverType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, receiverTypeRef, context.trace, true);
         }
         functionDescriptor.initialize(effectiveReceiverType,
                                       ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
@@ -215,7 +210,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static List<ValueParameterDescriptor> createValueParameterDescriptors(
+    private List<ValueParameterDescriptor> createValueParameterDescriptors(
             @NotNull ExpressionTypingContext context,
             @NotNull JetFunctionLiteral functionLiteral,
             @NotNull FunctionDescriptorImpl functionDescriptor,
@@ -254,7 +249,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @NotNull
-    private static ValueParameterDescriptor createValueParameterDescriptor(
+    private ValueParameterDescriptor createValueParameterDescriptor(
             @NotNull ExpressionTypingContext context,
             @NotNull FunctionDescriptorImpl functionDescriptor,
             @NotNull List<JetParameter> declaredValueParameters,
@@ -273,7 +268,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         }
         JetType type;
         if (typeReference != null) {
-            type = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
+            type = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, typeReference, context.trace, true);
             if (expectedType != null) {
                 if (!JetTypeChecker.INSTANCE.isSubtypeOf(expectedType, type)) {
                     context.trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(declaredParameter, expectedType));
@@ -291,12 +286,12 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                 type = CANT_INFER_LAMBDA_PARAM_TYPE;
             }
         }
-        return context.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptorWithAnnotationArguments(
+        return components.expressionTypingServices.getDescriptorResolver().resolveValueParameterDescriptorWithAnnotationArguments(
                 context.scope, functionDescriptor, declaredParameter, index, type, context.trace);
     }
 
     @NotNull
-    private static JetType computeReturnType(
+    private JetType computeReturnType(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
@@ -314,7 +309,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Nullable
-    private static JetType computeUnsafeReturnType(
+    private JetType computeUnsafeReturnType(
             @NotNull JetFunctionLiteralExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull SimpleFunctionDescriptorImpl functionDescriptor,
@@ -328,7 +323,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetTypeReference returnTypeRef = functionLiteral.getReturnTypeRef();
         JetType declaredReturnType = null;
         if (returnTypeRef != null) {
-            declaredReturnType = context.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
+            declaredReturnType = components.expressionTypingServices.getTypeResolver().resolveType(context.scope, returnTypeRef, context.trace, true);
             // This is needed for ControlStructureTypingVisitor#visitReturnExpression() to properly type-check returned expressions
             functionDescriptor.setReturnType(declaredReturnType);
             if (expectedReturnType != null) {
@@ -344,7 +339,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
                                      ? declaredReturnType
                                      : (expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE));
 
-        JetType typeOfBodyExpression = context.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
+        JetType typeOfBodyExpression = components.expressionTypingServices.getBlockReturnedType(bodyExpression, COERCION_TO_UNIT, newContext).getType();
 
         List<JetType> returnedExpressionTypes = Lists.newArrayList(getTypesOfLocallyReturnedExpressions(
                 functionLiteral, context.trace, collectReturns(bodyExpression)));

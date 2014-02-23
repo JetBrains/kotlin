@@ -46,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.intellij.testFramework.UsefulTestCase.assertInstanceOf;
-import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.resolveFakeCall;
 
 public class JetExpectedResolveDataUtil {
     private JetExpectedResolveDataUtil() {
@@ -131,13 +130,14 @@ public class JetExpectedResolveDataUtil {
             JetType... parameterTypes
     ) {
         ModuleDescriptor emptyModule = JetTestUtils.createEmptyModule();
-        ExpressionTypingServices expressionTypingServices = new InjectorForTests(project, emptyModule).getExpressionTypingServices();
+        InjectorForTests injector = new InjectorForTests(project, emptyModule);
+        ExpressionTypingServices expressionTypingServices = injector.getExpressionTypingServices();
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        OverloadResolutionResults<FunctionDescriptor> functions = resolveFakeCall(
+        OverloadResolutionResults<FunctionDescriptor> functions = injector.getExpressionTypingUtils().resolveFakeCall(
                 context, ReceiverValue.NO_RECEIVER, Name.identifier(name), parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {

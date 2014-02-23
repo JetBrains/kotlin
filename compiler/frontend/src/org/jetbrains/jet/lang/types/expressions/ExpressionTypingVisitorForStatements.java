@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -55,21 +54,18 @@ import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
 @SuppressWarnings("SuspiciousMethodCalls")
 public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisitor {
-    private final GlobalContext globalContext;
     private final WritableScope scope;
     private final BasicExpressionTypingVisitor basic;
     private final ControlStructureTypingVisitor controlStructures;
     private final PatternMatchingTypingVisitor patterns;
 
     public ExpressionTypingVisitorForStatements(
-            @NotNull GlobalContext globalContext,
             @NotNull ExpressionTypingInternals facade,
             @NotNull WritableScope scope,
             BasicExpressionTypingVisitor basic,
             @NotNull ControlStructureTypingVisitor controlStructures,
             @NotNull PatternMatchingTypingVisitor patterns) {
         super(facade);
-        this.globalContext = globalContext;
         this.scope = scope;
         this.basic = basic;
         this.controlStructures = controlStructures;
@@ -93,7 +89,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                globalContext,
+                components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), declaration);
         return DataFlowUtils.checkStatementType(declaration, context, context.dataFlowInfo);
     }
@@ -118,7 +114,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         JetExpression delegateExpression = property.getDelegateExpression();
         if (delegateExpression != null) {
-            context.expressionTypingServices.getTypeInfo(delegateExpression, context);
+            components.expressionTypingServices.getTypeInfo(delegateExpression, context);
             context.trace.report(LOCAL_VARIABLE_WITH_DELEGATE.on(property.getDelegate()));
         }
 
@@ -126,7 +122,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, context.trace);
         }
 
-        VariableDescriptor propertyDescriptor = context.expressionTypingServices.getDescriptorResolver().
+        VariableDescriptor propertyDescriptor = components.expressionTypingServices.getDescriptorResolver().
                 resolveLocalVariableDescriptor(scope, property, context.dataFlowInfo, context.trace);
         JetExpression initializer = property.getInitializer();
         DataFlowInfo dataFlowInfo = context.dataFlowInfo;
@@ -150,7 +146,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration, ExpressionTypingContext context) {
-        context.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
+        components.expressionTypingServices.getAnnotationResolver().resolveAnnotationsWithArguments(
                 scope, multiDeclaration.getModifierList(), context.trace);
 
         JetExpression initializer = multiDeclaration.getInitializer();
@@ -164,21 +160,21 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (expressionReceiver == null) {
             return JetTypeInfo.create(null, dataFlowInfo);
         }
-        ExpressionTypingUtils.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
+        components.expressionTypingUtils.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
         return DataFlowUtils.checkStatementType(multiDeclaration, context, dataFlowInfo);
     }
 
     @Override
     public JetTypeInfo visitNamedFunction(@NotNull JetNamedFunction function, ExpressionTypingContext context) {
-        SimpleFunctionDescriptor functionDescriptor = context.expressionTypingServices.getDescriptorResolver().
+        SimpleFunctionDescriptor functionDescriptor = components.expressionTypingServices.getDescriptorResolver().
                 resolveFunctionDescriptorWithAnnotationArguments(
                         scope.getContainingDeclaration(), scope, function, context.trace, context.dataFlowInfo);
 
         scope.addFunctionDescriptor(functionDescriptor);
         JetScope functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace);
-        context.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
+        components.expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, context.dataFlowInfo, null, context.trace);
 
-        context.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
+        components.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
                                                                 scope, context.dataFlowInfo, context.trace, /* needCompleteAnalysis = */ true);
 
         ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function);
@@ -188,7 +184,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     @Override
     public JetTypeInfo visitClass(@NotNull JetClass klass, ExpressionTypingContext context) {
         TopDownAnalyzer.processClassOrObject(
-                globalContext,
+                components.globalContext,
                 scope, context.replaceScope(scope).replaceContextDependency(INDEPENDENT), scope.getContainingDeclaration(), klass);
         return DataFlowUtils.checkStatementType(klass, context, context.dataFlowInfo);
     }
@@ -255,8 +251,11 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         Name name = OperatorConventions.ASSIGNMENT_OPERATIONS.get(operationType);
         TemporaryTraceAndCache temporaryForAssignmentOperation = TemporaryTraceAndCache.create(
                 context, "trace to check assignment operation like '+=' for", expression);
-        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
-                scope, name, context.replaceTraceAndCache(temporaryForAssignmentOperation), expression, receiver);
+        OverloadResolutionResults<FunctionDescriptor> assignmentOperationDescriptors =
+                components.callResolver.resolveBinaryCall(
+                        context.replaceTraceAndCache(temporaryForAssignmentOperation).replaceScope(scope),
+                        receiver, expression, name
+                );
         JetType assignmentOperationType = OverloadResolutionResultsUtil.getResultingType(assignmentOperationDescriptors,
                                                                                          context.contextDependency);
 
@@ -264,8 +263,10 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         Name counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.get(operationType));
         TemporaryTraceAndCache temporaryForBinaryOperation = TemporaryTraceAndCache.create(
                 context, "trace to check binary operation like '+' for", expression);
-        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = BasicExpressionTypingVisitor.getResolutionResultsForBinaryCall(
-                scope, counterpartName, context.replaceTraceAndCache(temporaryForBinaryOperation), expression, receiver);
+        OverloadResolutionResults<FunctionDescriptor> binaryOperationDescriptors = components.callResolver.resolveBinaryCall(
+                context.replaceTraceAndCache(temporaryForBinaryOperation).replaceScope(scope),
+                receiver, expression, counterpartName
+        );
         JetType binaryOperationType = OverloadResolutionResultsUtil.getResultingType(binaryOperationDescriptors, context.contextDependency);
 
         JetType type = assignmentOperationType != null ? assignmentOperationType : binaryOperationType;
@@ -308,7 +309,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         JetExpression leftOperand = expression.getLeft();
-        JetExpression left = context.expressionTypingServices.deparenthesizeWithTypeResolution(leftOperand, context);
+        JetExpression left = components.expressionTypingServices.deparenthesizeWithTypeResolution(leftOperand, context);
         JetExpression right = expression.getRight();
         if (left instanceof JetArrayAccessExpression) {
             JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) left;
@@ -377,7 +378,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public JetTypeInfo visitBlockExpression(@NotNull JetBlockExpression expression, ExpressionTypingContext context) {
-        return BasicExpressionTypingVisitor.visitBlockExpression(expression, context, true);
+        return components.expressionTypingServices.getBlockReturnedType(expression, context, true);
     }
 
     @Override

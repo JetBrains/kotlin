@@ -140,22 +140,23 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         BindingTrace trace = support.getTrace();
         ModuleDescriptorImpl module = support.getModule();
 
+        TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
+                new LockBasedStorageManager(),
+                new ExceptionTracker(), // dummy
+                Predicates.<PsiFile>alwaysFalse(),
+                false,
+                false,
+                Collections.<AnalyzerScriptParameter>emptyList()
+        );
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),
-                new TopDownAnalysisParameters(
-                        new LockBasedStorageManager(),
-                        new ExceptionTracker(), // dummy
-                        Predicates.<PsiFile>alwaysFalse(),
-                        false,
-                        false,
-                        Collections.<AnalyzerScriptParameter>emptyList()
-                ),
+                parameters,
                 trace,
                 module);
 
         module.addFragmentProvider(DependencyKind.BINARIES, injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(environment.getSourceFiles(), Collections.<AnalyzerScriptParameter>emptyList());
+        injectorForAnalyzer.getTopDownAnalyzer().analyzeFiles(parameters, environment.getSourceFiles());
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test package not found";

@@ -36,6 +36,10 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
@@ -76,6 +80,10 @@ public class InjectorForLazyResolveWithJava {
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final ExpressionTypingServices expressionTypingServices;
+    private final ExpressionTypingComponents expressionTypingComponents;
+    private final ControlStructureTypingUtils controlStructureTypingUtils;
+    private final ExpressionTypingUtils expressionTypingUtils;
+    private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
@@ -118,7 +126,11 @@ public class InjectorForLazyResolveWithJava {
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(globalContext, platformToKotlinClassMap);
+        this.expressionTypingComponents = new ExpressionTypingComponents();
+        this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
+        this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver);
+        this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -168,6 +180,18 @@ public class InjectorForLazyResolveWithJava {
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
+        expressionTypingComponents.setCallResolver(callResolver);
+        expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
+        expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
+        expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        expressionTypingComponents.setGlobalContext(globalContext);
+        expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
+
+        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
+        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
+        forLoopConventionsChecker.setProject(project);
+
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -176,6 +200,7 @@ public class InjectorForLazyResolveWithJava {
         descriptorResolver.setStorageManager(lockBasedStorageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
+        delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         typeResolver.setAnnotationResolver(annotationResolver);

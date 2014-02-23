@@ -25,9 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
@@ -109,9 +108,10 @@ public final class AnalyzerFacadeForJS {
             Collection<JetFile> allFiles = libraryModule != null ?
                                            files :
                                            Config.withJsLibAdded(files, config);
-            injector.getTopDownAnalyzer().analyzeFiles(allFiles, Collections.<AnalyzerScriptParameter>emptyList());
+            TopDownAnalysisContext topDownAnalysisContext =
+                    injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, allFiles);
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
-                                                        new CachedBodiesResolveContext(injector.getTopDownAnalysisContext()) :
+                                                        new CachedBodiesResolveContext(topDownAnalysisContext) :
                                                         null;
             return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
         }

@@ -142,7 +142,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 ExpressionTypingContext newContext = contextWithExpectedType
                         .replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
-                JetTypeInfo typeInfo = context.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
+                JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
                 JetType type = typeInfo.getType();
                 if (type != null) {
@@ -278,7 +278,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return result;
     }
 
-    private static DataFlowInfos checkTypeForIs(
+    private DataFlowInfos checkTypeForIs(
             ExpressionTypingContext context,
             JetType subjectType,
             JetTypeReference typeReferenceAfterIs,
@@ -288,7 +288,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             return noChange(context);
         }
         TypeResolutionContext typeResolutionContext = new TypeResolutionContext(context.scope, context.trace, true, /*allowBareTypes=*/ true);
-        PossiblyBareType possiblyBareTarget = context.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
+        PossiblyBareType possiblyBareTarget = components.expressionTypingServices.getTypeResolver().resolvePossiblyBareType(typeResolutionContext, typeReferenceAfterIs);
         JetType type = TypeReconstructionUtil.reconstructBareType(typeReferenceAfterIs, possiblyBareTarget, subjectType, context.trace);
         if (!subjectType.isNullable() && type.isNullable()) {
             JetTypeElement element = typeReferenceAfterIs.getTypeElement();

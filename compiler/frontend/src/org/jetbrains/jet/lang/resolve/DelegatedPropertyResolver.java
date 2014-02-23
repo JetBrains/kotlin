@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
@@ -58,9 +59,17 @@ public class DelegatedPropertyResolver {
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
 
+    @NotNull
+    private CallResolver callResolver;
+
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
+    }
+
+    @Inject
+    public void setCallResolver(@NotNull CallResolver callResolver) {
+        this.callResolver = callResolver;
     }
 
     @Nullable
@@ -164,7 +173,7 @@ public class DelegatedPropertyResolver {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 expressionTypingServices, trace, scope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
-        Project project = context.expressionTypingServices.getProject();
+        Project project = expressionTypingServices.getProject();
 
         boolean hasThis = propertyDescriptor.getReceiverParameter() != null || propertyDescriptor.getExpectedThisObject() != null;
 
@@ -174,7 +183,7 @@ public class DelegatedPropertyResolver {
         arguments.add(createExpression(project, KotlinBuiltIns.getInstance().getPropertyMetadataImpl().getName().asString() + "(\"" + propertyDescriptor.getName().asString() + "\")"));
 
         if (!isGet) {
-            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(context.expressionTypingServices.getProject(), trace,
+            JetReferenceExpression fakeArgument = (JetReferenceExpression) createFakeExpressionOfType(expressionTypingServices.getProject(), trace,
                                                                              "fakeArgument" + arguments.size(),
                                                                              propertyDescriptor.getType());
             arguments.add(fakeArgument);
@@ -189,7 +198,7 @@ public class DelegatedPropertyResolver {
         Call call = CallMaker.makeCallWithExpressions(fakeCalleeExpression, receiver, null, fakeCalleeExpression, arguments, Call.CallType.DEFAULT);
         trace.record(BindingContext.DELEGATED_PROPERTY_CALL, accessor, call);
 
-        return context.resolveCallWithGivenName(call, fakeCalleeExpression, functionName);
+        return callResolver.resolveCallWithGivenName(context, call, fakeCalleeExpression, functionName);
     }
 
     private String renderCall(@NotNull Call call, @NotNull BindingContext context) {

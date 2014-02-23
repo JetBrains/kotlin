@@ -64,11 +64,13 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         topDownAnalysisParameters = context.getTopDownAnalysisParameters();
     }
 
+    @NotNull
     @Override
     public StorageManager getStorageManager() {
         return topDownAnalysisParameters.getStorageManager();
     }
 
+    @NotNull
     @Override
     public ExceptionTracker getExceptionTracker() {
         return topDownAnalysisParameters.getExceptionTracker();
@@ -112,6 +114,12 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public DataFlowInfo getOuterDataFlowInfo() {
         return outerDataFlowInfo;
+    }
+
+    @NotNull
+    @Override
+    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
+        return topDownAnalysisParameters;
     }
 
     @Override
