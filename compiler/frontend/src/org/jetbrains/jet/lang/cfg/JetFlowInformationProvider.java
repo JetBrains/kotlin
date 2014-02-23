@@ -268,7 +268,7 @@ public class JetFlowInformationProvider {
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
                     @Nullable Map<VariableDescriptor, VariableInitState> out) {
                 assert in != null && out != null;
-                VariableInitContext ctxt = new VariableInitContext(instruction, reportedDiagnosticMap, in, out);
+                VariableInitContext ctxt = new VariableInitContext(instruction, reportedDiagnosticMap, in, out, declaredVariables);
                 if (ctxt.variableDescriptor == null) return;
                 if (instruction instanceof ReadValueInstruction) {
                     JetElement element = ((ReadValueInstruction) instruction).getElement();
@@ -843,11 +843,23 @@ public class JetFlowInformationProvider {
                 @NotNull Instruction instruction,
                 @NotNull Map<Instruction, DiagnosticFactory> map,
                 @NotNull Map<VariableDescriptor, VariableInitState> in,
-                @NotNull Map<VariableDescriptor, VariableInitState> out
+                @NotNull Map<VariableDescriptor, VariableInitState> out,
+                @NotNull Set<VariableDescriptor> declaredVariables
         ) {
             super(instruction, map);
-            enterInitState = variableDescriptor != null ? in.get(variableDescriptor) : null;
-            exitInitState = variableDescriptor != null ? out.get(variableDescriptor) : null;
+            enterInitState = initialize(variableDescriptor, declaredVariables, in);
+            exitInitState = initialize(variableDescriptor, declaredVariables, out);
+        }
+
+        private VariableInitState initialize(
+                VariableDescriptor variableDescriptor,
+                Set<VariableDescriptor> declaredVariables,
+                Map<VariableDescriptor, VariableInitState> map
+        ) {
+            if (variableDescriptor == null) return null;
+            VariableInitState state = map.get(variableDescriptor);
+            if (state != null) return state;
+            return PseudocodeVariablesData.getDefaultValueForInitializers(declaredVariables, variableDescriptor);
         }
     }
 
