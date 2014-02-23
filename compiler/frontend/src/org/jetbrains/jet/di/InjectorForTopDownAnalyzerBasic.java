@@ -218,7 +218,6 @@ public class InjectorForTopDownAnalyzerBasic {
 
         functionAnalyzerExtension.setTrace(bindingTrace);
 
-        scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
 
