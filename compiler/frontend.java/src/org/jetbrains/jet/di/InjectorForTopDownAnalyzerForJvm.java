@@ -284,7 +284,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         scriptHeaderResolver.setTrace(bindingTrace);
 
-        overloadResolver.setContext(topDownAnalysisContext);
         overloadResolver.setTrace(bindingTrace);
 
         overrideResolver.setContext(topDownAnalysisContext);
