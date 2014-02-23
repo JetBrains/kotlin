@@ -244,7 +244,6 @@ public class InjectorForTopDownAnalyzerBasic {
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         overrideResolver.setTrace(bindingTrace);
 
-        typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
         typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
