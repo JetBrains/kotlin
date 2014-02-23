@@ -31,72 +31,66 @@ import java.util.Map;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ControlFlowAnalyzer {
-    private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;
-
-    @Inject
-    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-    }
 
     @Inject
     public void setTrace(BindingTrace trace) {
         this.trace = trace;
     }
 
-    public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        for (JetFile file : bodiesResolveContext.getFiles()) {
-            if (!bodiesResolveContext.completeAnalysisNeeded(file)) continue;
-            checkDeclarationContainer(file);
+    public void process(@NotNull BodiesResolveContext c) {
+        for (JetFile file : c.getFiles()) {
+            if (!c.completeAnalysisNeeded(file)) continue;
+            checkDeclarationContainer(c, file);
         }
-        for (JetClassOrObject aClass : bodiesResolveContext.getClasses().keySet()) {
-            if (!bodiesResolveContext.completeAnalysisNeeded(aClass)) continue;
-            checkDeclarationContainer(aClass);
+        for (JetClassOrObject aClass : c.getClasses().keySet()) {
+            if (!c.completeAnalysisNeeded(aClass)) continue;
+            checkDeclarationContainer(c, aClass);
         }
-        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : bodiesResolveContext.getFunctions().entrySet()) {
+        for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             JetNamedFunction function = entry.getKey();
             SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-            if (!bodiesResolveContext.completeAnalysisNeeded(function)) continue;
+            if (!c.completeAnalysisNeeded(function)) continue;
             JetType expectedReturnType = !function.hasBlockBody() && !function.hasDeclaredReturnType()
                                                ? NO_EXPECTED_TYPE
                                                : functionDescriptor.getReturnType();
-            checkFunction(function, expectedReturnType);
+            checkFunction(c, function, expectedReturnType);
         }
-        for (Map.Entry<JetProperty, PropertyDescriptor> entry : bodiesResolveContext.getProperties().entrySet()) {
+        for (Map.Entry<JetProperty, PropertyDescriptor> entry : c.getProperties().entrySet()) {
             JetProperty property = entry.getKey();
-            if (!bodiesResolveContext.completeAnalysisNeeded(property)) continue;
+            if (!c.completeAnalysisNeeded(property)) continue;
             PropertyDescriptor propertyDescriptor = entry.getValue();
-            checkProperty(property, propertyDescriptor);
+            checkProperty(c, property, propertyDescriptor);
         }
     }
 
-    private void checkDeclarationContainer(JetDeclarationContainer declarationContainer) {
+    private void checkDeclarationContainer(@NotNull BodiesResolveContext c, JetDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
-        if (topDownAnalysisParameters.isDeclaredLocally()) {
+        if (c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }
         flowInformationProvider.checkDeclaration();
     }
 
-    private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
+    private void checkProperty(@NotNull BodiesResolveContext c, JetProperty property, PropertyDescriptor propertyDescriptor) {
         for (JetPropertyAccessor accessor : property.getAccessors()) {
             PropertyAccessorDescriptor accessorDescriptor = accessor.isGetter()
                                                             ? propertyDescriptor.getGetter()
                                                             : propertyDescriptor.getSetter();
             assert accessorDescriptor != null : "no property accessor descriptor " + accessor.getText();
             JetType returnType = accessorDescriptor.getReturnType();
-            checkFunction(accessor, returnType);
+            checkFunction(c, accessor, returnType);
         }
     }
 
-    private void checkFunction(@NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
+    private void checkFunction(@NotNull BodiesResolveContext c, @NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
         JetExpression bodyExpression = function.getBodyExpression();
         if (bodyExpression == null) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
-        if (topDownAnalysisParameters.isDeclaredLocally()) {
+        if (c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }
