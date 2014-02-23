@@ -69,8 +69,7 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
     publicParameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
 
     publicFields(
-            javaClass<TopDownAnalyzer>(),
-            javaClass<TopDownAnalysisContext>()
+            javaClass<TopDownAnalyzer>()
     )
 
     field(javaClass<MutablePackageFragmentProvider>())
@@ -198,7 +197,6 @@ private fun generatorForBodyResolve() =
             parameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
             publicField(javaClass<BodyResolver>())
-            field(javaClass<SimpleGlobalContext>())
         }
 
 private fun generatorForLazyResolve() =

@@ -176,10 +176,11 @@ public class TopDownAnalyzer {
                 object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
                 moduleDescriptor);
 
-        injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        c.setOuterDataFlowInfo(context.dataFlowInfo);
 
         injector.getTopDownAnalyzer()
-                .doProcess(new TopDownAnalysisContext(topDownAnalysisParameters), context.scope,
+                .doProcess(c, context.scope,
                            new PackageLikeBuilder() {
 
                                @NotNull
@@ -212,7 +213,8 @@ public class TopDownAnalyzer {
                            }, Collections.<PsiElement>singletonList(object));
     }
 
-    public void analyzeFiles(
+    @NotNull
+    public TopDownAnalysisContext analyzeFiles(
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters) {
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
@@ -223,8 +225,10 @@ public class TopDownAnalyzer {
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
 
-        doProcess(new TopDownAnalysisContext(topDownAnalysisParameters), JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor),
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor),
                   new PackageLikeBuilderDummy(), files);
+        return c;
     }
 
 

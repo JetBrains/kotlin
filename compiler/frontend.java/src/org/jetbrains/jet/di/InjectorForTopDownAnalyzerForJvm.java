@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
@@ -78,7 +77,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final ModuleDescriptorImpl moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final TopDownAnalyzer topDownAnalyzer;
-    private final TopDownAnalysisContext topDownAnalysisContext;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JavaClassFinderImpl javaClassFinder;
@@ -133,7 +131,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
@@ -232,7 +229,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
-        expressionTypingComponents.setGlobalContext(topDownAnalysisContext);
+        expressionTypingComponents.setGlobalContext(topDownAnalysisParameters);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -319,10 +316,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     public TopDownAnalyzer getTopDownAnalyzer() {
         return this.topDownAnalyzer;
-    }
-    
-    public TopDownAnalysisContext getTopDownAnalysisContext() {
-        return this.topDownAnalysisContext;
     }
     
     public JavaDescriptorResolver getJavaDescriptorResolver() {
