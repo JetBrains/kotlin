@@ -227,7 +227,6 @@ public class InjectorForTopDownAnalyzerBasic {
         declarationResolver.setScriptHeaderResolver(scriptHeaderResolver);
         declarationResolver.setTrace(bindingTrace);
 
-        importsResolver.setContext(topDownAnalysisContext);
         importsResolver.setImportsFactory(jetImportsFactory);
         importsResolver.setModuleDescriptor(moduleDescriptor);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);

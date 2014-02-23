@@ -128,7 +128,7 @@ public class TypeHierarchyResolver {
             }
         }
 
-        importsResolver.processTypeImports();
+        importsResolver.processTypeImports(context);
 
         createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
         resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)

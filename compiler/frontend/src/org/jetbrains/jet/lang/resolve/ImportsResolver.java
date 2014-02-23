@@ -36,8 +36,6 @@ import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupM
 
 public class ImportsResolver {
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private ModuleDescriptor moduleDescriptor;
     @NotNull
     private QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -45,11 +43,6 @@ public class ImportsResolver {
     private BindingTrace trace;
     @NotNull
     private JetImportsFactory importsFactory;
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
@@ -71,21 +64,21 @@ public class ImportsResolver {
         this.importsFactory = importsFactory;
     }
 
-    public void processTypeImports() {
-        processImports(LookupMode.ONLY_CLASSES);
+    public void processTypeImports(@NotNull TopDownAnalysisContext c) {
+        processImports(c, LookupMode.ONLY_CLASSES);
     }
 
-    public void processMembersImports() {
-        processImports(LookupMode.EVERYTHING);
+    public void processMembersImports(@NotNull TopDownAnalysisContext c) {
+        processImports(c, LookupMode.EVERYTHING);
     }
 
-    private void processImports(@NotNull LookupMode lookupMode) {
-        for (JetFile file : context.getPackageFragments().keySet()) {
-            WritableScope fileScope = context.getFileScopes().get(file);
+    private void processImports(@NotNull TopDownAnalysisContext c, @NotNull LookupMode lookupMode) {
+        for (JetFile file : c.getPackageFragments().keySet()) {
+            WritableScope fileScope = c.getFileScopes().get(file);
             processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
         }
-        for (JetScript script : context.getScripts().keySet()) {
-            WritableScope scriptScope = context.getScriptScopes().get(script);
+        for (JetScript script : c.getScripts().keySet()) {
+            WritableScope scriptScope = c.getScriptScopes().get(script);
             processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), true);
         }
     }
