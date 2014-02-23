@@ -116,6 +116,12 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         return outerDataFlowInfo;
     }
 
+    @NotNull
+    @Override
+    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
+        return topDownAnalysisParameters;
+    }
+
     @Override
     public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters parameters) {
         topDownAnalysisParameters = parameters;

@@ -56,11 +56,13 @@ public class TopDownAnalysisParameters implements GlobalContext {
         this.scriptParameters = scriptParameters;
     }
 
+    @Override
     @NotNull
     public StorageManager getStorageManager() {
         return storageManager;
     }
 
+    @Override
     @NotNull
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;
