@@ -123,7 +123,7 @@ public class TopDownAnalyzer {
 
         lockScopes(c);
 
-        overloadResolver.process();
+        overloadResolver.process(c);
 
         if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
             bodyResolver.resolveBodies(c);

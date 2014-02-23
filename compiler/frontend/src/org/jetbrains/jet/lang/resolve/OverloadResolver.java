@@ -36,14 +36,7 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
-    private TopDownAnalysisContext context;
     private BindingTrace trace;
-
-
-    @Inject
-    public void setContext(TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setTrace(BindingTrace trace) {
@@ -52,26 +45,27 @@ public class OverloadResolver {
 
 
 
-    public void process() {
-        checkOverloads();
+    public void process(@NotNull BodiesResolveContext c) {
+        checkOverloads(c);
     }
 
-    private void checkOverloads() {
+    private void checkOverloads(@NotNull BodiesResolveContext c) {
         MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses = MultiMap.create();
         MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
-        fillGroupedConstructors(inClasses, inPackages);
+        fillGroupedConstructors(c, inClasses, inPackages);
 
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
-        checkOverloadsInPackages(inPackages);
+        checkOverloadsInPackages(c, inPackages);
     }
 
     private void fillGroupedConstructors(
+            @NotNull BodiesResolveContext c,
             @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
-        for (ClassDescriptorWithResolutionScopes klass : context.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes klass : c.getClasses().values()) {
             if (klass.getKind().isSingleton()) {
                 // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;
@@ -90,17 +84,20 @@ public class OverloadResolver {
         }
     }
 
-    private void checkOverloadsInPackages(MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages) {
+    private void checkOverloadsInPackages(
+            @NotNull BodiesResolveContext c,
+            @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
+    ) {
 
         MultiMap<FqNameUnsafe, CallableMemberDescriptor> functionsByName = MultiMap.create();
 
-        for (SimpleFunctionDescriptor function : context.getFunctions().values()) {
+        for (SimpleFunctionDescriptor function : c.getFunctions().values()) {
             if (function.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
                 functionsByName.putValue(getFqName(function), function);
             }
         }
         
-        for (PropertyDescriptor property : context.getProperties().values()) {
+        for (PropertyDescriptor property : c.getProperties().values()) {
             if (property.getContainingDeclaration() instanceof PackageFragmentDescriptor) {
                 functionsByName.putValue(getFqName(property), property);
             }
