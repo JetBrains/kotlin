@@ -66,8 +66,19 @@ public class LazyResolveTestUtil {
     }
 
     public static ModuleDescriptor resolveEagerly(List<JetFile> files, JetCoreEnvironment environment) {
-        InjectorForTopDownAnalyzer injector = createInjectorForTDA(environment);
-        injector.getTopDownAnalyzer().analyzeFiles(files, Collections.<AnalyzerScriptParameter>emptyList());
+        JetTestUtils.newTrace(environment);
+
+        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+        TopDownAnalysisParameters params = new TopDownAnalysisParameters(
+                globalContext.getStorageManager(), globalContext.getExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false, Collections.<AnalyzerScriptParameter>emptyList());
+        CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
+        BindingTrace sharedTrace = support.getTrace();
+        ModuleDescriptorImpl sharedModule = support.getModule();
+
+        InjectorForTopDownAnalyzerForJvm injector =
+                new InjectorForTopDownAnalyzerForJvm(environment.getProject(), params, sharedTrace, sharedModule);
+        sharedModule.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+        injector.getTopDownAnalyzer().analyzeFiles(params, files, Collections.<AnalyzerScriptParameter>emptyList());
         return injector.getModuleDescriptor();
     }
 
