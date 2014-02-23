@@ -55,8 +55,6 @@ public class ScriptHeaderResolver {
     @NotNull
     private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private BindingTrace trace;
     @NotNull
     private TopDownAnalysisParameters topDownAnalysisParameters;
@@ -69,11 +67,6 @@ public class ScriptHeaderResolver {
     @Inject
     public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver) {
         this.dependencyClassByQualifiedNameResolver = dependencyClassByQualifiedNameResolver;
-    }
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
     }
 
     @Inject
@@ -116,7 +109,7 @@ public class ScriptHeaderResolver {
         return new ValueParameterDescriptorImpl(script, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
     }
 
-    public void processScriptHierarchy(@NotNull JetScript script, @NotNull JetScope outerScope) {
+    public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull JetScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
         JetPackageDirective packageDirective = file.getPackageDirective();
         FqName fqName = packageDirective != null ? new FqName(packageDirective.getQualifiedName()) : FqName.ROOT;
@@ -135,19 +128,19 @@ public class ScriptHeaderResolver {
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        context.getScriptScopes().put(script, scriptScope);
-        context.getScripts().put(script, scriptDescriptor);
+        c.getScriptScopes().put(script, scriptScope);
+        c.getScripts().put(script, scriptDescriptor);
 
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
 
         ((WritableScope)outerScope).addClassifierDescriptor(scriptDescriptor.getClassDescriptor());
     }
 
-    public void resolveScriptDeclarations() {
-        for (Map.Entry<JetScript, ScriptDescriptor> e : context.getScripts().entrySet()) {
+    public void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
+        for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptor descriptor = e.getValue();
-            WritableScope scope = context.getScriptScopes().get(declaration);
+            WritableScope scope = c.getScriptScopes().get(declaration);
 
             List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
 

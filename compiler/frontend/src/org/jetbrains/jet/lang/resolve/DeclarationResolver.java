@@ -177,7 +177,7 @@ public class DeclarationResolver {
                     classDescriptor.getBuilder());
         }
 
-        scriptHeaderResolver.resolveScriptDeclarations();
+        scriptHeaderResolver.resolveScriptDeclarations(c);
 
         // TODO : Extensions
     }

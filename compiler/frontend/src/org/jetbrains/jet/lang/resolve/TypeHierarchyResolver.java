@@ -468,7 +468,7 @@ public class TypeHierarchyResolver {
             context.getFileScopes().put(file, packageScope);
 
             if (file.isScript()) {
-                scriptHeaderResolver.processScriptHierarchy(file.getScript(), packageScope);
+                scriptHeaderResolver.processScriptHierarchy(context, file.getScript(), packageScope);
             }
 
             prepareForDeferredCall(packageScope, packageFragment, file);
