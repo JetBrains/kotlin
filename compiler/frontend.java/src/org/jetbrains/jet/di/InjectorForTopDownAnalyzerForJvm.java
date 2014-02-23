@@ -286,7 +286,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         overloadResolver.setTrace(bindingTrace);
 
-        overrideResolver.setContext(topDownAnalysisContext);
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         overrideResolver.setTrace(bindingTrace);
 
