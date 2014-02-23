@@ -117,7 +117,7 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        typeHierarchyResolver.process(outerScope, owner, declarations);
+        typeHierarchyResolver.process(c, outerScope, owner, declarations);
         declarationResolver.process(c);
         overrideResolver.process(c);
 
