@@ -48,15 +48,8 @@ import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilit
 
 public class OverrideResolver {
 
-    private TopDownAnalysisContext context;
     private TopDownAnalysisParameters topDownAnalysisParameters;
     private BindingTrace trace;
-
-
-    @Inject
-    public void setContext(TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
@@ -70,23 +63,23 @@ public class OverrideResolver {
 
 
 
-    public void process() {
+    public void process(@NotNull TopDownAnalysisContext c) {
         //all created fake descriptors are stored to resolve visibility on them later
-        generateOverridesAndDelegation();
+        generateOverridesAndDelegation(c);
 
-        checkVisibility();
-        checkOverrides();
-        checkParameterOverridesForAllClasses();
+        checkVisibility(c);
+        checkOverrides(c);
+        checkParameterOverridesForAllClasses(c);
     }
 
     /**
      * Generate fake overrides and add overridden descriptors to existing descriptors.
      */
-    private void generateOverridesAndDelegation() {
-        Set<ClassDescriptorWithResolutionScopes> ourClasses = new HashSet<ClassDescriptorWithResolutionScopes>(context.getClasses().values());
+    private void generateOverridesAndDelegation(@NotNull TopDownAnalysisContext c) {
+        Set<ClassDescriptorWithResolutionScopes> ourClasses = new HashSet<ClassDescriptorWithResolutionScopes>(c.getClasses().values());
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
-        for (MutableClassDescriptorLite klass : ContainerUtil.reverse(context.getClassesTopologicalOrder())) {
+        for (MutableClassDescriptorLite klass : ContainerUtil.reverse(c.getClassesTopologicalOrder())) {
             if (klass instanceof MutableClassDescriptor && ourClasses.contains(klass)) {
                 generateOverridesAndDelegationInAClass((MutableClassDescriptor) klass, processed, ourClasses);
 
@@ -216,8 +209,8 @@ public class OverrideResolver {
         return r;
     }
 
-    private void checkOverrides() {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+    private void checkOverrides(@NotNull TopDownAnalysisContext c) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
             checkOverridesInAClass((MutableClassDescriptor) entry.getValue(), entry.getKey());
         }
     }
@@ -651,8 +644,8 @@ public class OverrideResolver {
         return invisibleOverride;
     }
 
-    private void checkParameterOverridesForAllClasses() {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : context.getClasses().values()) {
+    private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
+        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getClasses().values()) {
             for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (member instanceof CallableMemberDescriptor) {
                     checkOverridesForParameters((CallableMemberDescriptor) member);
@@ -726,8 +719,8 @@ public class OverrideResolver {
         return false;
     }
 
-    private void checkVisibility() {
-        for (Map.Entry<JetDeclaration, CallableMemberDescriptor> entry : context.getMembers().entrySet()) {
+    private void checkVisibility(@NotNull TopDownAnalysisContext c) {
+        for (Map.Entry<JetDeclaration, CallableMemberDescriptor> entry : c.getMembers().entrySet()) {
             checkVisibilityForMember(entry.getKey(), entry.getValue());
         }
     }

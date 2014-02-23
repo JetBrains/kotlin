@@ -241,7 +241,6 @@ public class InjectorForTopDownAnalyzerForJs {
 
         overloadResolver.setTrace(bindingTrace);
 
-        overrideResolver.setContext(topDownAnalysisContext);
         overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         overrideResolver.setTrace(bindingTrace);
 
