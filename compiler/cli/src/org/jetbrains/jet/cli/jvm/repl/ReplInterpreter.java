@@ -91,6 +91,8 @@ public class ReplInterpreter {
     @NotNull
     private final InjectorForTopDownAnalyzerForJvm injector;
     @NotNull
+    private final TopDownAnalysisContext topDownAnalysisContext;
+    @NotNull
     private final JetCoreEnvironment jetCoreEnvironment;
     @NotNull
     private final BindingTraceContext trace;
@@ -110,6 +112,7 @@ public class ReplInterpreter {
                 true,
                 Collections.<AnalyzerScriptParameter>emptyList());
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
+        topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());
         module.addFragmentProvider(BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         module.addFragmentProvider(BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
@@ -227,7 +230,7 @@ public class ReplInterpreter {
             return LineResult.error(errorCollector.getString());
         }
 
-        injector.getTopDownAnalyzer().prepareForTheNextReplLine();
+        injector.getTopDownAnalyzer().prepareForTheNextReplLine(topDownAnalysisContext);
         trace.clearDiagnostics();
 
         psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);
@@ -307,7 +310,8 @@ public class ReplInterpreter {
 
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
-        injector.getTopDownAnalyzer().doProcess(scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
+        injector.getTopDownAnalyzer().doProcess(topDownAnalysisContext,
+                                                scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
 
         boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext(), messageCollector);
         if (hasErrors) {

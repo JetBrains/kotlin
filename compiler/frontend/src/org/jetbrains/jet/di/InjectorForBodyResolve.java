@@ -116,7 +116,7 @@ public class InjectorForBodyResolve {
         this.declarationsChecker = new DeclarationsChecker();
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
-        this.topDownAnalysisContext = new TopDownAnalysisContext();
+        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
 
         this.bodyResolver.setAnnotationResolver(annotationResolver);
         this.bodyResolver.setCallResolver(callResolver);
@@ -187,8 +187,6 @@ public class InjectorForBodyResolve {
         scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
-
-        topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
     }
     
