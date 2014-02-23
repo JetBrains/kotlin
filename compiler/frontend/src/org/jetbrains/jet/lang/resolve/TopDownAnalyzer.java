@@ -52,8 +52,6 @@ public class TopDownAnalyzer {
     @NotNull
     private OverloadResolver overloadResolver;
     @NotNull
-    private BindingTrace trace;
-    @NotNull
     private ModuleDescriptor moduleDescriptor;
     @NotNull
     private MutablePackageFragmentProvider packageFragmentProvider;
@@ -78,11 +76,6 @@ public class TopDownAnalyzer {
     @Inject
     public void setOverloadResolver(@NotNull OverloadResolver overloadResolver) {
         this.overloadResolver = overloadResolver;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
     }
 
     @Inject
