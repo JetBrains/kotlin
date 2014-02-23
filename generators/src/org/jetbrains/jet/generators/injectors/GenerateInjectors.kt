@@ -64,7 +64,7 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
 
 private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
     parameter(javaClass<Project>())
-    parameter(javaClass<TopDownAnalysisParameters>(), useAsContext = true)
+    parameter(javaClass<GlobalContext>(), useAsContext = true)
     parameter(javaClass<BindingTrace>())
     publicParameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
 
@@ -192,7 +192,7 @@ private fun generatorForTests() =
 private fun generatorForBodyResolve() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForBodyResolve") {
             parameter(javaClass<Project>())
-            parameter(javaClass<TopDownAnalysisParameters>(), useAsContext = true)
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
             parameter(javaClass<BindingTrace>())
             parameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
