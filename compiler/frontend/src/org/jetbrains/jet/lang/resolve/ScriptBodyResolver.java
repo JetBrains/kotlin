@@ -43,15 +43,11 @@ import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 public class ScriptBodyResolver {
 
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private ExpressionTypingServices expressionTypingServices;
     @NotNull
     private BindingTrace trace;
 
-    @Inject
     public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
     }
 
     @Inject
@@ -66,11 +62,11 @@ public class ScriptBodyResolver {
 
 
 
-    public void resolveScriptBodies() {
-        for (Map.Entry<JetScript, ScriptDescriptor> e : context.getScripts().entrySet()) {
+    public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
+        for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptor descriptor = e.getValue();
-            WritableScope scope = context.getScriptScopes().get(declaration);
+            WritableScope scope = c.getScriptScopes().get(declaration);
 
             // TODO: lock in resolveScriptDeclarations
             scope.changeLockLevel(WritableScope.LockLevel.READING);

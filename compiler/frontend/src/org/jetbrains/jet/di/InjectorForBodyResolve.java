@@ -44,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.ControlFlowAnalyzer;
 import org.jetbrains.jet.lang.resolve.DeclarationsChecker;
 import org.jetbrains.jet.lang.resolve.FunctionAnalyzerExtension;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -80,7 +79,6 @@ public class InjectorForBodyResolve {
     private final DeclarationsChecker declarationsChecker;
     private final FunctionAnalyzerExtension functionAnalyzerExtension;
     private final ScriptBodyResolver scriptBodyResolver;
-    private final TopDownAnalysisContext topDownAnalysisContext;
     
     public InjectorForBodyResolve(
         @NotNull Project project,
@@ -116,7 +114,6 @@ public class InjectorForBodyResolve {
         this.declarationsChecker = new DeclarationsChecker();
         this.functionAnalyzerExtension = new FunctionAnalyzerExtension();
         this.scriptBodyResolver = new ScriptBodyResolver();
-        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
 
         this.bodyResolver.setAnnotationResolver(annotationResolver);
         this.bodyResolver.setCallResolver(callResolver);
@@ -184,7 +181,6 @@ public class InjectorForBodyResolve {
 
         functionAnalyzerExtension.setTrace(bindingTrace);
 
-        scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
 
