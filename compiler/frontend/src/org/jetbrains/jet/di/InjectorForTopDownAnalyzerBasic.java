@@ -206,7 +206,6 @@ public class InjectorForTopDownAnalyzerBasic {
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
-        controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);
 
         declarationsChecker.setTrace(bindingTrace);
