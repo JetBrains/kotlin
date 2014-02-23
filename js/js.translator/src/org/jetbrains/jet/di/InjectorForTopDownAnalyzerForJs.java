@@ -230,7 +230,6 @@ public class InjectorForTopDownAnalyzerForJs {
 
         scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
         scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         scriptHeaderResolver.setTrace(bindingTrace);
 
         overloadResolver.setTrace(bindingTrace);
