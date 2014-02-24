@@ -34,6 +34,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.UsageInfo2UsageAdapter;
+import com.intellij.usages.UsageViewPresentation;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.usages.rules.UsageFilteringRule;
@@ -57,6 +58,9 @@ import java.util.Collection;
 import java.util.List;
 
 public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureTestCase {
+
+    public static final UsageViewPresentation USAGE_VIEW_PRESENTATION = new UsageViewPresentation();
+
     protected static enum OptionsParser {
         CLASS {
             @NotNull
@@ -307,8 +311,11 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
             @Override
             public String apply(@Nullable UsageInfo2UsageAdapter usageAdapter) {
                 assert usageAdapter != null;
-                return getUsageType(usageAdapter.getElement())
-                       + " " + Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
+
+                UsageType usageType = getUsageType(usageAdapter.getElement());
+                String usageTypeAsString = usageType == null ? "null" : usageType.toString(USAGE_VIEW_PRESENTATION);
+
+                return usageTypeAsString + " " + Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
             }
         };
 
@@ -361,7 +368,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
     }
 
     @Nullable
-    private static UsageType getUsageType(PsiElement element) {
+    private static UsageType getUsageType(@Nullable PsiElement element) {
         if (element == null) return null;
 
         if (PsiTreeUtil.getParentOfType(element, PsiComment.class, false) != null) {
