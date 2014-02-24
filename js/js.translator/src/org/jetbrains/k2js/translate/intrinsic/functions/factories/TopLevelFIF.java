@@ -19,7 +19,9 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -29,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.Namer;
@@ -39,7 +42,9 @@ import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
@@ -77,8 +82,8 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final FunctionIntrinsic NATIVE_MAP_GET = new NativeMapGetSet() {
         @NotNull
         @Override
-        protected String operation() {
-            return "get_s9cetl$";
+        protected String operationName() {
+            return "get";
         }
 
         @Nullable
@@ -101,8 +106,8 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final FunctionIntrinsic NATIVE_MAP_SET = new NativeMapGetSet() {
         @NotNull
         @Override
-        protected String operation() {
-            return "put_5yfy9u$";
+        protected String operationName() {
+            return "put";
         }
 
         @Nullable
@@ -121,6 +126,13 @@ public final class TopLevelFIF extends CompositeFIF {
             return ArrayFIF.SET_INTRINSIC.apply(receiver, arguments, context);
         }
     };
+
+    @NotNull
+    private static String getStableMangledBuiltInName(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
+        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
+        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
+        return TranslationUtils.getMangledName(functions.iterator().next());
+    }
 
     private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
         @NotNull
@@ -162,7 +174,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
         @NotNull
-        protected abstract String operation();
+        protected abstract String operationName();
 
         @Nullable
         protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
@@ -201,7 +213,9 @@ public final class TopLevelFIF extends CompositeFIF {
                 }
             }
 
-            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
+            String mangledName = getStableMangledBuiltInName(KotlinBuiltIns.getInstance().getMutableMap(), operationName());
+
+            return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
         }
     }
 
