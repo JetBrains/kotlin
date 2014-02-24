@@ -76,7 +76,16 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
     }
 
+    public void invoke(@NotNull final Project project, final Editor editor, JetExpression expression, List<JetExpression> otherOccurences) {
+        doRefactoring(project, editor, expression, otherOccurences);
+    }
+
     private static void doRefactoring(@NotNull final Project project, final Editor editor, @Nullable JetExpression _expression) {
+        doRefactoring(project, editor, _expression, null);
+    }
+
+    private static void doRefactoring(@NotNull final Project project, final Editor editor, @Nullable JetExpression _expression,
+                                     @Nullable List<JetExpression> otherOccurences) {
         if (_expression == null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
@@ -155,7 +164,13 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         final boolean isInplaceAvailableOnDataContext =
             editor.getSettings().isVariableInplaceRenameEnabled() &&
             !ApplicationManager.getApplication().isUnitTestMode();
-        final List<JetExpression> allOccurrences = findOccurrences(occurrenceContainer, expression);
+        final List<JetExpression> allOccurrences;
+        if (otherOccurences == null) {
+            allOccurrences = findOccurrences(occurrenceContainer, expression);
+        } else {
+            allOccurrences = otherOccurences;
+            allOccurrences.add(expression);
+        }
         final boolean finalNoTypeInference = noTypeInference;
         final boolean finalNeedParentheses = needParentheses;
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
@@ -212,7 +227,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 }, INTRODUCE_VARIABLE, null);
             }
         };
-        if (isInplaceAvailableOnDataContext) {
+        if (isInplaceAvailableOnDataContext && otherOccurences == null) {
             OccurrencesChooser.<JetExpression>simpleChooser(editor).
                 showChooser(expression, allOccurrences, callback);
         }

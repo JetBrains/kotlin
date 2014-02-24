@@ -1,0 +1,3 @@
+val result = if (maybeSomething != null){
+  maybeSomething.do(something)
+} else null
