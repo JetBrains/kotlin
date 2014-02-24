@@ -21,13 +21,9 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
@@ -50,7 +46,7 @@ public final class DecompiledDataFactory {
     @NotNull
     private final Map<String, TextRange> renderedDescriptorsToRange = new HashMap<String, TextRange>();
     @NotNull
-    private final JavaDescriptorResolver javaDescriptorResolver;
+    private final ResolverForDecompiler resolver;
     @NotNull
     private final KotlinClassHeader classFileHeader;
     @NotNull
@@ -60,11 +56,9 @@ public final class DecompiledDataFactory {
     @NotNull
     private final Project project;
 
-    private DecompiledDataFactory(@NotNull VirtualFile classFile, @NotNull Project project) {
+    private DecompiledDataFactory(@NotNull VirtualFile classFile, @NotNull Project project, @NotNull ResolverForDecompiler resolver) {
         this.classFile = classFile;
         this.project = project;
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, new BindingTraceContext());
-        this.javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
         KotlinJvmBinaryClass kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile);
         this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars();
@@ -72,11 +66,12 @@ public final class DecompiledDataFactory {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         assert header != null : "Decompiled data factory shouldn't be called on an unsupported file: " + classFile;
         this.classFileHeader = header;
+        this.resolver = resolver;
     }
 
     @NotNull
     static JetDecompiledData createDecompiledData(@NotNull VirtualFile virtualFile, @NotNull Project project) {
-        return new DecompiledDataFactory(virtualFile, project).build();
+        return new DecompiledDataFactory(virtualFile, project, new ProjectBasedResolverForDecompiler(project)).build();
     }
 
     private JetDecompiledData build() {
@@ -84,18 +79,15 @@ public final class DecompiledDataFactory {
         appendDecompiledTextAndPackageName(packageFqName);
         KotlinClassHeader.Kind kind = classFileHeader.getKind();
         if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-            PackageFragmentDescriptor pf = javaDescriptorResolver.getPackageFragment(packageFqName);
-            if (pf != null) {
-                for (DeclarationDescriptor member : sortDeclarations(pf.getMemberScope().getAllDescriptors())) {
-                    if (!(member instanceof ClassDescriptor)) {
-                        appendDescriptor(member, "");
-                        builder.append("\n");
-                    }
+            for (DeclarationDescriptor member : sortDeclarations(resolver.resolveDeclarationsInPackage(packageFqName))) {
+                if (!(member instanceof ClassDescriptor)) {
+                    appendDescriptor(member, "");
+                    builder.append("\n");
                 }
             }
         }
         else if (kind == KotlinClassHeader.Kind.CLASS) {
-            ClassDescriptor cd = javaDescriptorResolver.resolveClass(classFqName);
+            ClassDescriptor cd = resolver.resolveClass(classFqName);
             if (cd != null) {
                 appendDescriptor(cd, "");
             }
