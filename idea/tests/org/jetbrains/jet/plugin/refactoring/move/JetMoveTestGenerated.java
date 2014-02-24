@@ -36,4 +36,94 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/move"), Pattern.compile("^(.+)\\.test$"));
     }
     
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToExternalNestedClass/moveClassToExternalNestedClass.test")
+    public void testJava_moveClass_moveAsMember_moveClassToExternalNestedClass_MoveClassToExternalNestedClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToExternalNestedClass/moveClassToExternalNestedClass.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToNestedSiblingClass/moveClassToNestedSiblingClass.test")
+    public void testJava_moveClass_moveAsMember_moveClassToNestedSiblingClass_MoveClassToNestedSiblingClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToNestedSiblingClass/moveClassToNestedSiblingClass.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToTopLevelClass/moveClassToTopLevelClass.test")
+    public void testJava_moveClass_moveAsMember_moveClassToTopLevelClass_MoveClassToTopLevelClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToTopLevelClass/moveClassToTopLevelClass.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToTopLevelClassAndMakePackageLocal/moveClassToTopLevelClassAndMakePackageLocal.test")
+    public void testJava_moveClass_moveAsMember_moveClassToTopLevelClassAndMakePackageLocal_MoveClassToTopLevelClassAndMakePackageLocal() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToTopLevelClassAndMakePackageLocal/moveClassToTopLevelClassAndMakePackageLocal.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToTopLevelClassAndMakePrivate/moveClassToTopLevelClassAndMakePrivate.test")
+    public void testJava_moveClass_moveAsMember_moveClassToTopLevelClassAndMakePrivate_MoveClassToTopLevelClassAndMakePrivate() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToTopLevelClassAndMakePrivate/moveClassToTopLevelClassAndMakePrivate.test");
+    }
+    
+    @TestMetadata("java/moveClass/moveAsMember/moveClassToTopLevelClassOfAnotherPackage/moveClassToTopLevelClassOfAnotherPackage.test")
+    public void testJava_moveClass_moveAsMember_moveClassToTopLevelClassOfAnotherPackage_MoveClassToTopLevelClassOfAnotherPackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveClass/moveAsMember/moveClassToTopLevelClassOfAnotherPackage/moveClassToTopLevelClassOfAnotherPackage.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToExternalNestedClass/moveFieldToExternalNestedClass.test")
+    public void testJava_moveField_moveFieldToExternalNestedClass_MoveFieldToExternalNestedClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToExternalNestedClass/moveFieldToExternalNestedClass.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToNestedSiblingClass/moveFieldToNestedSiblingClass.test")
+    public void testJava_moveField_moveFieldToNestedSiblingClass_MoveFieldToNestedSiblingClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToNestedSiblingClass/moveFieldToNestedSiblingClass.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToTopLevelClass/moveFieldToTopLevelClass.test")
+    public void testJava_moveField_moveFieldToTopLevelClass_MoveFieldToTopLevelClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToTopLevelClass/moveFieldToTopLevelClass.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToTopLevelClassAndMakePackageLocal/moveFieldToTopLevelClassAndMakePackageLocal.test")
+    public void testJava_moveField_moveFieldToTopLevelClassAndMakePackageLocal_MoveFieldToTopLevelClassAndMakePackageLocal() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToTopLevelClassAndMakePackageLocal/moveFieldToTopLevelClassAndMakePackageLocal.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToTopLevelClassAndMakePrivate/moveFieldToTopLevelClassAndMakePrivate.test")
+    public void testJava_moveField_moveFieldToTopLevelClassAndMakePrivate_MoveFieldToTopLevelClassAndMakePrivate() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToTopLevelClassAndMakePrivate/moveFieldToTopLevelClassAndMakePrivate.test");
+    }
+    
+    @TestMetadata("java/moveField/moveFieldToTopLevelClassOfAnotherPackage/moveFieldToTopLevelClassOfAnotherPackage.test")
+    public void testJava_moveField_moveFieldToTopLevelClassOfAnotherPackage_MoveFieldToTopLevelClassOfAnotherPackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveField/moveFieldToTopLevelClassOfAnotherPackage/moveFieldToTopLevelClassOfAnotherPackage.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToExternalNestedClass/moveMethodToExternalNestedClass.test")
+    public void testJava_moveMethod_moveMethodToExternalNestedClass_MoveMethodToExternalNestedClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToExternalNestedClass/moveMethodToExternalNestedClass.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToNestedSiblingClass/moveMethodToNestedSiblingClass.test")
+    public void testJava_moveMethod_moveMethodToNestedSiblingClass_MoveMethodToNestedSiblingClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToNestedSiblingClass/moveMethodToNestedSiblingClass.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToTopLevelClass/moveMethodToTopLevelClass.test")
+    public void testJava_moveMethod_moveMethodToTopLevelClass_MoveMethodToTopLevelClass() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToTopLevelClass/moveMethodToTopLevelClass.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToTopLevelClassAndMakePackageLocal/moveMethodToTopLevelClassAndMakePackageLocal.test")
+    public void testJava_moveMethod_moveMethodToTopLevelClassAndMakePackageLocal_MoveMethodToTopLevelClassAndMakePackageLocal() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToTopLevelClassAndMakePackageLocal/moveMethodToTopLevelClassAndMakePackageLocal.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToTopLevelClassAndMakePrivate/moveMethodToTopLevelClassAndMakePrivate.test")
+    public void testJava_moveMethod_moveMethodToTopLevelClassAndMakePrivate_MoveMethodToTopLevelClassAndMakePrivate() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToTopLevelClassAndMakePrivate/moveMethodToTopLevelClassAndMakePrivate.test");
+    }
+    
+    @TestMetadata("java/moveMethod/moveMethodToTopLevelClassOfAnotherPackage/moveMethodToTopLevelClassOfAnotherPackage.test")
+    public void testJava_moveMethod_moveMethodToTopLevelClassOfAnotherPackage_MoveMethodToTopLevelClassOfAnotherPackage() throws Exception {
+        doTest("idea/testData/refactoring/move/java/moveMethod/moveMethodToTopLevelClassOfAnotherPackage/moveMethodToTopLevelClassOfAnotherPackage.test");
+    }
+    
 }

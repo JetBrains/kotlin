@@ -20,6 +20,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import java.io.File
+import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
+import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import com.intellij.psi.PsiMember
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.google.gson.JsonObject
 import com.intellij.refactoring.MultiFileTestCase
@@ -125,5 +129,20 @@ fun JsonObject.getString(name: String): String {
 fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
 
 enum class MoveAction {
+    MOVE_MEMBERS {
+        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val member = elementAtCaret!!.getParentByType(javaClass<PsiMember>())!!
+            val targetClassName = config.getString("targetClass")
+            val visibility = config.getNullableString("visibility")
+
+            val options = MockMoveMembersOptions(targetClassName, array(member))
+            if (visibility != null) {
+                options.setMemberVisibility(visibility)
+            }
+
+            MoveMembersProcessor(mainFile.getProject(), options).run()
+        }
+    }
+
     abstract fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject)
 }

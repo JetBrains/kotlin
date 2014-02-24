@@ -1,0 +1,3 @@
+Field A.X is private and will not be accessible from file noImports.kt.
+Field A.X is private and will not be accessible from file onDemandImport.kt.
+Field A.X is private and will not be accessible from file specificImport.kt.
