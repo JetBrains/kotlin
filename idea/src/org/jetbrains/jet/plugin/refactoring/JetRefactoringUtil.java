@@ -405,7 +405,11 @@ public class JetRefactoringUtil {
                && !(element instanceof JetClassBody)) {
             if (element instanceof JetExpression && !(element instanceof JetStatementExpression)) {
                 boolean addExpression = true;
-                if (element.getParent() instanceof JetQualifiedExpression) {
+
+                if (JetPsiUtil.isLabelIdentifierExpression(element)) {
+                    addExpression = false;
+                }
+                else if (element.getParent() instanceof JetQualifiedExpression) {
                     JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) element.getParent();
                     if (qualifiedExpression.getReceiverExpression() != element) {
                         addExpression = false;
