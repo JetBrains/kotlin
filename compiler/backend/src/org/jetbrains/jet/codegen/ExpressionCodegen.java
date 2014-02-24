@@ -2325,7 +2325,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return false;
     }
 
-    private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, CallGenerator callGenerator) {
+    public int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, CallGenerator callGenerator) {
         return pushMethodArguments(resolvedCall, valueParameterTypes, false, callGenerator);
     }
 
@@ -2457,22 +2457,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 gen(arguments.get(i).getArgumentExpression(), elementType);
                 StackValue.arrayElement(elementType, false).store(elementType, v);
             }
-        }
-    }
-
-    public int pushMethodArguments(JetCallElement expression, List<Type> valueParameterTypes) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-        if (resolvedCall != null) {
-            return pushMethodArguments(resolvedCall, valueParameterTypes, null);
-        }
-        else {
-            List<? extends ValueArgument> args = expression.getValueArguments();
-            for (int i = 0, argsSize = args.size(); i < argsSize; i++) {
-                ValueArgument arg = args.get(i);
-                gen(arg.getArgumentExpression(), valueParameterTypes.get(i));
-            }
-            return 0;
         }
     }
 

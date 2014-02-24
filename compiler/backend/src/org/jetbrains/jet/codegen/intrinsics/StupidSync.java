@@ -23,8 +23,11 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +46,13 @@ public class StupidSync extends IntrinsicMethod {
             @Nullable List<JetExpression> arguments,
             StackValue receiver
     ) {
-        codegen.pushMethodArguments((JetCallExpression) element, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE));
+        assert element != null : "Element should not be null";
+        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, ((JetCallExpression) element).getCalleeExpression());
+
+        assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";
+
+        codegen.pushMethodArguments(resolvedCall, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE), null);
         v.invokestatic("kotlin/jvm/internal/Intrinsics", "stupidSync", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, FUNCTION0_TYPE));
         return OBJECT_TYPE;
     }
