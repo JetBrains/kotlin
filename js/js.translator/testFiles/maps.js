@@ -160,9 +160,9 @@
             }
         },
 
-        containsKey_s9cetl$: createBucketSearcher(EXISTENCE),
+        containsKey_za3rmp$: createBucketSearcher(EXISTENCE),
 
-        containsValue_s9cetl$: function (value) {
+        containsValue_za3rmp$: function (value) {
             var i = this.entries.length;
             while (i--) {
                 if (value === this.entries[i][1]) {
@@ -205,7 +205,7 @@
         var hashingFunction = (typeof hashingFunctionParam == FUNCTION) ? hashingFunctionParam : hashObject;
         var equalityFunction = (typeof equalityFunctionParam == FUNCTION) ? equalityFunctionParam : null;
 
-        this.put_5yfy9u$ = function (key, value) {
+        this.put_wn2jw4$ = function (key, value) {
             checkKey(key);
             checkValue(value);
             var hash = hashingFunction(key), bucket, bucketEntry, oldValue = null;
@@ -234,7 +234,7 @@
             return oldValue;
         };
 
-        this.get_s9cetl$ = function (key) {
+        this.get_za3rmp$ = function (key) {
             checkKey(key);
 
             var hash = hashingFunction(key);
@@ -252,21 +252,21 @@
             return null;
         };
 
-        this.containsKey_s9cetl$ = function (key) {
+        this.containsKey_za3rmp$ = function (key) {
             checkKey(key);
             var bucketKey = hashingFunction(key);
 
             // Check if a bucket exists for the bucket key
             var bucket = getBucketForHash(bucketsByHash, bucketKey);
 
-            return bucket ? bucket.containsKey_s9cetl$(key) : false;
+            return bucket ? bucket.containsKey_za3rmp$(key) : false;
         };
 
-        this.containsValue_s9cetl$ = function (value) {
+        this.containsValue_za3rmp$ = function (value) {
             checkValue(value);
             var i = buckets.length;
             while (i--) {
-                if (buckets[i].containsValue_s9cetl$(value)) {
+                if (buckets[i].containsValue_za3rmp$(value)) {
                     return true;
                 }
             }
@@ -301,12 +301,12 @@
             var i = values.length;
             var result = new Kotlin.ArrayList();
             while (i--) {
-                result.add_s9cetl$(values[i]);
+                result.add_za3rmp$(values[i]);
             }
             return result;
         };
 
-        this.remove_s9cetl$ = function (key) {
+        this.remove_za3rmp$ = function (key) {
             checkKey(key);
 
             var hash = hashingFunction(key), bucketIndex, oldValue = null;
@@ -347,7 +347,7 @@
         };
 
 
-        this.putAll_s9c68p$ = function (hashtable, conflictCallback) {
+        this.putAll_za3j1t$ = function (hashtable, conflictCallback) {
             var entries = hashtable._entries();
             var entry, key, value, thisValue, i = entries.length;
             var hasConflictCallback = (typeof conflictCallback == FUNCTION);
@@ -360,13 +360,13 @@
                 if (hasConflictCallback && (thisValue = that.get(key))) {
                     value = conflictCallback(key, thisValue, value);
                 }
-                that.put_5yfy9u$(key, value);
+                that.put_wn2jw4$(key, value);
             }
         };
 
         this.clone = function () {
             var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-            clone.putAll_s9c68p$(that);
+            clone.putAll_za3j1t$(that);
             return clone;
         };
 
@@ -375,7 +375,7 @@
             var keys = this._keys();
             var i = keys.length;
             while (i--) {
-                res.add_s9cetl$(keys[i]);
+                res.add_za3rmp$(keys[i]);
             }
             return res;
         };
@@ -422,7 +422,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                 return this.map.$size === 0;
             },
             contains: function (o) {
-                return this.map.containsValue_s9cetl$(o);
+                return this.map.containsValue_za3rmp$(o);
             }
     });
 
@@ -437,10 +437,10 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             isEmpty: function () {
                 return this.$size === 0;
             },
-            containsKey_s9cetl$: function (key) {
+            containsKey_za3rmp$: function (key) {
                 return this.map[key] !== undefined;
             },
-            containsValue_s9cetl$: function (value) {
+            containsValue_za3rmp$: function (value) {
                 var map = this.map;
                 for (var key in map) {
                     if (map.hasOwnProperty(key) && map[key] === value) {
@@ -450,10 +450,10 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
 
                 return false;
             },
-            get_s9cetl$: function (key) {
+            get_za3rmp$: function (key) {
                 return this.map[key];
             },
-            put_5yfy9u$: function (key, value) {
+            put_wn2jw4$: function (key, value) {
                 var prevValue = this.map[key];
                 this.map[key] = value === undefined ? null : value;
                 if (prevValue === undefined) {
@@ -461,7 +461,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                 }
                 return prevValue;
             },
-            remove_s9cetl$: function (key) {
+            remove_za3rmp$: function (key) {
                 var prevValue = this.map[key];
                 if (prevValue !== undefined) {
                     delete this.map[key];
@@ -473,7 +473,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                 this.$size = 0;
                 this.map = {};
             },
-            putAll_s9c68p$: function (fromMap) {
+            putAll_za3j1t$: function (fromMap) {
                 var map = fromMap.map;
                 for (var key in map) {
                     if (map.hasOwnProperty(key)) {
@@ -487,7 +487,7 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                 var map = this.map;
                 for (var key in map) {
                     if (map.hasOwnProperty(key)) {
-                        result.add_s9cetl$(key);
+                        result.add_za3rmp$(key);
                     }
                 }
 
@@ -517,7 +517,7 @@ var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
             return this.index < this.keys.length;
         },
         remove: function() {
-            this.set.remove_s9cetl$(this.keys[this.index - 1]);
+            this.set.remove_za3rmp$(this.keys[this.index - 1]);
         }
 });
 
@@ -526,13 +526,13 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
         this.$size = 0;
         this.map = {};
     }, {
-        contains_s9cetl$: function (key) {
+        contains_za3rmp$: function (key) {
             return this.map[key] === true;
         },
         iterator: function() {
             return new SetIterator(this);
         },
-        add_s9cetl$: function (element) {
+        add_za3rmp$: function (element) {
             var prevElement = this.map[element];
             this.map[element] = true;
             if (prevElement === true) {
@@ -543,7 +543,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
                 return true;
             }
         },
-        remove_s9cetl$: function (element) {
+        remove_za3rmp$: function (element) {
             if (this.map[element] === true) {
                 delete this.map[element];
                 this.$size--;
@@ -566,13 +566,13 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
-        this.addAll_5ib00d$ = Kotlin.AbstractCollection.prototype.addAll_5ib00d$;
-        this.removeAll_5ib00d$ = Kotlin.AbstractCollection.prototype.removeAll_5ib00d$;
-        this.retainAll_5ib00d$ = Kotlin.AbstractCollection.prototype.retainAll_5ib00d$;
-        this.containsAll_5ib00d$ = Kotlin.AbstractCollection.prototype.containsAll_5ib00d$;
+        this.addAll_xeylzf$ = Kotlin.AbstractCollection.prototype.addAll_xeylzf$;
+        this.removeAll_xeylzf$ = Kotlin.AbstractCollection.prototype.removeAll_xeylzf$;
+        this.retainAll_xeylzf$ = Kotlin.AbstractCollection.prototype.retainAll_xeylzf$;
+        this.containsAll_xeylzf$ = Kotlin.AbstractCollection.prototype.containsAll_xeylzf$;
 
-        this.add_s9cetl$ = function (o) {
-            return !hashTable.put_5yfy9u$(o, true);
+        this.add_za3rmp$ = function (o) {
+            return !hashTable.put_wn2jw4$(o, true);
         };
 
         this.toArray = function () {
@@ -583,12 +583,12 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             return new SetIterator(this);
         };
 
-        this.remove_s9cetl$ = function (o) {
-            return hashTable.remove_s9cetl$(o) != null;
+        this.remove_za3rmp$ = function (o) {
+            return hashTable.remove_za3rmp$(o) != null;
         };
 
-        this.contains_s9cetl$ = function (o) {
-            return hashTable.containsKey_s9cetl$(o);
+        this.contains_za3rmp$ = function (o) {
+            return hashTable.containsKey_za3rmp$(o);
         };
 
         this.clear = function () {
@@ -605,7 +605,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
-            h.addAll_5ib00d$(hashTable.keys());
+            h.addAll_xeylzf$(hashTable.keys());
             return h;
         };
 
@@ -650,8 +650,8 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             var values = hashSet.values(), i = values.length, val;
             while (i--) {
                 val = values[i];
-                if (hashTable.containsKey_s9cetl$(val)) {
-                    intersection.add_s9cetl$(val);
+                if (hashTable.containsKey_za3rmp$(val)) {
+                    intersection.add_za3rmp$(val);
                 }
             }
             return intersection;
@@ -662,8 +662,8 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             var values = hashSet.values(), i = values.length, val;
             while (i--) {
                 val = values[i];
-                if (!hashTable.containsKey_s9cetl$(val)) {
-                    union.add_s9cetl$(val);
+                if (!hashTable.containsKey_za3rmp$(val)) {
+                    union.add_za3rmp$(val);
                 }
             }
             return union;
@@ -672,7 +672,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
         this.isSubsetOf = function (hashSet) {
             var values = hashTable.keys(), i = values.length;
             while (i--) {
-                if (!hashSet.contains_s9cetl$(values[i])) {
+                if (!hashSet.contains_za3rmp$(values[i])) {
                     return false;
                 }
             }
