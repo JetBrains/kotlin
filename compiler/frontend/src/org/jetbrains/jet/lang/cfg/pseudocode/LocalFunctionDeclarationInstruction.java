@@ -28,11 +28,12 @@ public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
     private final Pseudocode body;
     private Instruction sink;
 
-    public LocalFunctionDeclarationInstruction(@NotNull JetElement element, Pseudocode body) {
+    public LocalFunctionDeclarationInstruction(@NotNull JetElement element, @NotNull Pseudocode body) {
         super(element);
         this.body = body;
     }
 
+    @NotNull
     public Pseudocode getBody() {
         return body;
     }
