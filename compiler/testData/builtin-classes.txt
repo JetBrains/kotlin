@@ -1,10 +1,10 @@
-package-fragment jet
+package-fragment kotlin
 
-public fun </*0*/ T> arrayOfNulls(/*0*/ size: jet.Int): jet.Array<T?>
-public fun jet.Any?.equals(/*0*/ other: jet.Any?): jet.Boolean
-public fun jet.Any?.identityEquals(/*0*/ other: jet.Any?): jet.Boolean
-public fun jet.String?.plus(/*0*/ other: jet.Any?): jet.String
-public fun jet.Any?.toString(): jet.String
+public fun </*0*/ T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
+public fun kotlin.Any?.equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+public fun kotlin.Any?.identityEquals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+public fun kotlin.String?.plus(/*0*/ other: kotlin.Any?): kotlin.String
+public fun kotlin.Any?.toString(): kotlin.String
 
 public trait Annotation {
 }
@@ -14,435 +14,435 @@ public open class Any {
 }
 
 public final class Array</*0*/ reified T> {
-    /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: jet.Int, /*1*/ init: jet.Function1<jet.Int, T>)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): T
-    public final fun iterator(): jet.Iterator<T>
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: T): jet.Unit
+    /*primary*/ public constructor Array</*0*/ reified T>(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): T
+    public final fun iterator(): kotlin.Iterator<T>
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
 }
 
-public final class Boolean : jet.Comparable<jet.Boolean> {
+public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
     /*primary*/ private constructor Boolean()
-    public final fun and(/*0*/ other: jet.Boolean): jet.Boolean
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Boolean): jet.Int
-    public final fun not(): jet.Boolean
-    public final fun or(/*0*/ other: jet.Boolean): jet.Boolean
-    public final fun xor(/*0*/ other: jet.Boolean): jet.Boolean
+    public final fun and(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Boolean): kotlin.Int
+    public final fun not(): kotlin.Boolean
+    public final fun or(/*0*/ other: kotlin.Boolean): kotlin.Boolean
+    public final fun xor(/*0*/ other: kotlin.Boolean): kotlin.Boolean
 }
 
 public final class BooleanArray {
-    /*primary*/ public constructor BooleanArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Boolean
-    public final fun iterator(): jet.BooleanIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Boolean): jet.Unit
+    /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
+    public final fun iterator(): kotlin.BooleanIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
 }
 
-public abstract class BooleanIterator : jet.Iterator<jet.Boolean> {
+public abstract class BooleanIterator : kotlin.Iterator<kotlin.Boolean> {
     /*primary*/ public constructor BooleanIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Boolean
-    public abstract fun nextBoolean(): jet.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Boolean
+    public abstract fun nextBoolean(): kotlin.Boolean
 }
 
-public final class Byte : jet.Number, jet.Comparable<jet.Byte> {
+public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     /*primary*/ private constructor Byte()
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Byte
-    public final fun div(/*0*/ other: jet.Byte): jet.Int
-    public final fun div(/*0*/ other: jet.Char): jet.Int
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Int
-    public final fun div(/*0*/ other: jet.Long): jet.Long
-    public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun inc(): jet.Byte
-    public final fun minus(): jet.Int
-    public final fun minus(/*0*/ other: jet.Byte): jet.Int
-    public final fun minus(/*0*/ other: jet.Char): jet.Int
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Int
-    public final fun minus(/*0*/ other: jet.Long): jet.Long
-    public final fun minus(/*0*/ other: jet.Short): jet.Int
-    public final fun mod(/*0*/ other: jet.Byte): jet.Int
-    public final fun mod(/*0*/ other: jet.Char): jet.Int
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Int
-    public final fun mod(/*0*/ other: jet.Long): jet.Long
-    public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun plus(): jet.Int
-    public final fun plus(/*0*/ other: jet.Byte): jet.Int
-    public final fun plus(/*0*/ other: jet.Char): jet.Int
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Int
-    public final fun plus(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(/*0*/ other: jet.Short): jet.Int
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.ByteRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.CharRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.ShortRange
-    public final fun times(/*0*/ other: jet.Byte): jet.Int
-    public final fun times(/*0*/ other: jet.Char): jet.Int
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Int
-    public final fun times(/*0*/ other: jet.Long): jet.Long
-    public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Byte
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun inc(): kotlin.Byte
+    public final fun minus(): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun plus(): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ByteRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
 }
 
 public final class ByteArray {
-    /*primary*/ public constructor ByteArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Byte
-    public final fun iterator(): jet.ByteIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Byte): jet.Unit
+    /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Byte
+    public final fun iterator(): kotlin.ByteIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
 }
 
-public abstract class ByteIterator : jet.Iterator<jet.Byte> {
+public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
     /*primary*/ public constructor ByteIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Byte
-    public abstract fun nextByte(): jet.Byte
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Byte
+    public abstract fun nextByte(): kotlin.Byte
 }
 
-public final class ByteProgression : jet.Progression<jet.Byte> {
-    /*primary*/ public constructor ByteProgression(/*0*/ start: jet.Byte, /*1*/ end: jet.Byte, /*2*/ increment: jet.Int)
-    public open override /*1*/ val end: jet.Byte
-        public open override /*1*/ fun <get-end>(): jet.Byte
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*1*/ val start: jet.Byte
-        public open override /*1*/ fun <get-start>(): jet.Byte
-    public open override /*1*/ fun iterator(): jet.ByteIterator
+public final class ByteProgression : kotlin.Progression<kotlin.Byte> {
+    /*primary*/ public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte, /*2*/ increment: kotlin.Int)
+    public open override /*1*/ val end: kotlin.Byte
+        public open override /*1*/ fun <get-end>(): kotlin.Byte
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val start: kotlin.Byte
+        public open override /*1*/ fun <get-start>(): kotlin.Byte
+    public open override /*1*/ fun iterator(): kotlin.ByteIterator
 }
 
-internal final class ByteProgressionIterator : jet.ByteIterator {
-    /*primary*/ public constructor ByteProgressionIterator(/*0*/ start: jet.Byte, /*1*/ end: jet.Byte, /*2*/ increment: jet.Int)
-    private final val finalElement: jet.Byte
-        private final fun <get-finalElement>(): jet.Byte
-    private final var hasNext: jet.Boolean
-        private final fun <get-hasNext>(): jet.Boolean
-        private final fun <set-hasNext>(/*0*/ <set-?>: jet.Boolean): jet.Unit
-    internal final val increment: jet.Int
-        internal final fun <get-increment>(): jet.Int
-    private final var next: jet.Int
-        private final fun <get-next>(): jet.Int
-        private final fun <set-next>(/*0*/ <set-?>: jet.Int): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Byte
-    public open override /*1*/ fun nextByte(): jet.Byte
+internal final class ByteProgressionIterator : kotlin.ByteIterator {
+    /*primary*/ public constructor ByteProgressionIterator(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte, /*2*/ increment: kotlin.Int)
+    private final val finalElement: kotlin.Byte
+        private final fun <get-finalElement>(): kotlin.Byte
+    private final var hasNext: kotlin.Boolean
+        private final fun <get-hasNext>(): kotlin.Boolean
+        private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
+    internal final val increment: kotlin.Int
+        internal final fun <get-increment>(): kotlin.Int
+    private final var next: kotlin.Int
+        private final fun <get-next>(): kotlin.Int
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Byte
+    public open override /*1*/ fun nextByte(): kotlin.Byte
 }
 
-public final class ByteRange : jet.Range<jet.Byte>, jet.Progression<jet.Byte> {
-    /*primary*/ public constructor ByteRange(/*0*/ start: jet.Byte, /*1*/ end: jet.Byte)
-    public open override /*2*/ val end: jet.Byte
-        public open override /*2*/ fun <get-end>(): jet.Byte
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*2*/ val start: jet.Byte
-        public open override /*2*/ fun <get-start>(): jet.Byte
-    public open override /*1*/ fun contains(/*0*/ item: jet.Byte): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.ByteIterator
+public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kotlin.Byte> {
+    /*primary*/ public constructor ByteRange(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte)
+    public open override /*2*/ val end: kotlin.Byte
+        public open override /*2*/ fun <get-end>(): kotlin.Byte
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*2*/ val start: kotlin.Byte
+        public open override /*2*/ fun <get-start>(): kotlin.Byte
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Byte): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.ByteIterator
     
     public class object <class-object-for-ByteRange> {
         /*primary*/ private constructor <class-object-for-ByteRange>()
-        public final val EMPTY: jet.ByteRange
-            public final fun <get-EMPTY>(): jet.ByteRange
+        public final val EMPTY: kotlin.ByteRange
+            public final fun <get-EMPTY>(): kotlin.ByteRange
     }
 }
 
-public final class Char : jet.Comparable<jet.Char> {
+public final class Char : kotlin.Comparable<kotlin.Char> {
     /*primary*/ private constructor Char()
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Char
-    public final fun div(/*0*/ other: jet.Byte): jet.Int
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Int
-    public final fun div(/*0*/ other: jet.Long): jet.Long
-    public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun inc(): jet.Char
-    public final fun minus(): jet.Int
-    public final fun minus(/*0*/ other: jet.Byte): jet.Int
-    public final fun minus(/*0*/ other: jet.Char): jet.Int
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Int
-    public final fun minus(/*0*/ other: jet.Long): jet.Long
-    public final fun minus(/*0*/ other: jet.Short): jet.Int
-    public final fun mod(/*0*/ other: jet.Byte): jet.Int
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Int
-    public final fun mod(/*0*/ other: jet.Long): jet.Long
-    public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun plus(): jet.Int
-    public final fun plus(/*0*/ other: jet.Byte): jet.Int
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Int
-    public final fun plus(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(/*0*/ other: jet.Short): jet.Int
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.CharRange
-    public final fun times(/*0*/ other: jet.Byte): jet.Int
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Int
-    public final fun times(/*0*/ other: jet.Long): jet.Long
-    public final fun times(/*0*/ other: jet.Short): jet.Int
-    public final fun toByte(): jet.Byte
-    public final fun toChar(): jet.Char
-    public final fun toDouble(): jet.Double
-    public final fun toFloat(): jet.Float
-    public final fun toInt(): jet.Int
-    public final fun toLong(): jet.Long
-    public final fun toShort(): jet.Short
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Char
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun inc(): kotlin.Char
+    public final fun minus(): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun plus(): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun toByte(): kotlin.Byte
+    public final fun toChar(): kotlin.Char
+    public final fun toDouble(): kotlin.Double
+    public final fun toFloat(): kotlin.Float
+    public final fun toInt(): kotlin.Int
+    public final fun toLong(): kotlin.Long
+    public final fun toShort(): kotlin.Short
 }
 
 public final class CharArray {
-    /*primary*/ public constructor CharArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Char
-    public final fun iterator(): jet.CharIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Char): jet.Unit
+    /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public final fun iterator(): kotlin.CharIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
 }
 
-public abstract class CharIterator : jet.Iterator<jet.Char> {
+public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
     /*primary*/ public constructor CharIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Char
-    public abstract fun nextChar(): jet.Char
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Char
+    public abstract fun nextChar(): kotlin.Char
 }
 
-public final class CharProgression : jet.Progression<jet.Char> {
-    /*primary*/ public constructor CharProgression(/*0*/ start: jet.Char, /*1*/ end: jet.Char, /*2*/ increment: jet.Int)
-    public open override /*1*/ val end: jet.Char
-        public open override /*1*/ fun <get-end>(): jet.Char
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*1*/ val start: jet.Char
-        public open override /*1*/ fun <get-start>(): jet.Char
-    public open override /*1*/ fun iterator(): jet.CharIterator
+public final class CharProgression : kotlin.Progression<kotlin.Char> {
+    /*primary*/ public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char, /*2*/ increment: kotlin.Int)
+    public open override /*1*/ val end: kotlin.Char
+        public open override /*1*/ fun <get-end>(): kotlin.Char
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val start: kotlin.Char
+        public open override /*1*/ fun <get-start>(): kotlin.Char
+    public open override /*1*/ fun iterator(): kotlin.CharIterator
 }
 
-internal final class CharProgressionIterator : jet.CharIterator {
-    /*primary*/ public constructor CharProgressionIterator(/*0*/ start: jet.Char, /*1*/ end: jet.Char, /*2*/ increment: jet.Int)
-    private final val finalElement: jet.Char
-        private final fun <get-finalElement>(): jet.Char
-    private final var hasNext: jet.Boolean
-        private final fun <get-hasNext>(): jet.Boolean
-        private final fun <set-hasNext>(/*0*/ <set-?>: jet.Boolean): jet.Unit
-    internal final val increment: jet.Int
-        internal final fun <get-increment>(): jet.Int
-    private final var next: jet.Int
-        private final fun <get-next>(): jet.Int
-        private final fun <set-next>(/*0*/ <set-?>: jet.Int): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Char
-    public open override /*1*/ fun nextChar(): jet.Char
+internal final class CharProgressionIterator : kotlin.CharIterator {
+    /*primary*/ public constructor CharProgressionIterator(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char, /*2*/ increment: kotlin.Int)
+    private final val finalElement: kotlin.Char
+        private final fun <get-finalElement>(): kotlin.Char
+    private final var hasNext: kotlin.Boolean
+        private final fun <get-hasNext>(): kotlin.Boolean
+        private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
+    internal final val increment: kotlin.Int
+        internal final fun <get-increment>(): kotlin.Int
+    private final var next: kotlin.Int
+        private final fun <get-next>(): kotlin.Int
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Char
+    public open override /*1*/ fun nextChar(): kotlin.Char
 }
 
-public final class CharRange : jet.Range<jet.Char>, jet.Progression<jet.Char> {
-    /*primary*/ public constructor CharRange(/*0*/ start: jet.Char, /*1*/ end: jet.Char)
-    public open override /*2*/ val end: jet.Char
-        public open override /*2*/ fun <get-end>(): jet.Char
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*2*/ val start: jet.Char
-        public open override /*2*/ fun <get-start>(): jet.Char
-    public open override /*1*/ fun contains(/*0*/ item: jet.Char): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.CharIterator
+public final class CharRange : kotlin.Range<kotlin.Char>, kotlin.Progression<kotlin.Char> {
+    /*primary*/ public constructor CharRange(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char)
+    public open override /*2*/ val end: kotlin.Char
+        public open override /*2*/ fun <get-end>(): kotlin.Char
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*2*/ val start: kotlin.Char
+        public open override /*2*/ fun <get-start>(): kotlin.Char
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Char): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.CharIterator
     
     public class object <class-object-for-CharRange> {
         /*primary*/ private constructor <class-object-for-CharRange>()
-        public final val EMPTY: jet.CharRange
-            public final fun <get-EMPTY>(): jet.CharRange
+        public final val EMPTY: kotlin.CharRange
+            public final fun <get-EMPTY>(): kotlin.CharRange
     }
 }
 
 public trait CharSequence {
-    public abstract val length: jet.Int
-        public abstract fun <get-length>(): jet.Int
-    public abstract fun get(/*0*/ index: jet.Int): jet.Char
+    public abstract val length: kotlin.Int
+        public abstract fun <get-length>(): kotlin.Int
+    public abstract fun get(/*0*/ index: kotlin.Int): kotlin.Char
 }
 
-public trait Collection</*0*/ out E> : jet.Iterable<E> {
-    public abstract fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract fun isEmpty(): jet.Boolean
-    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
-    public abstract fun size(): jet.Int
+public trait Collection</*0*/ out E> : kotlin.Iterable<E> {
+    public abstract fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
+    public abstract fun size(): kotlin.Int
 }
 
 public trait Comparable</*0*/ in T> {
-    public abstract fun compareTo(/*0*/ other: T): jet.Int
+    public abstract fun compareTo(/*0*/ other: T): kotlin.Int
 }
 
-public final class Double : jet.Number, jet.Comparable<jet.Double> {
+public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     /*primary*/ private constructor Double()
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Double
-    public final fun div(/*0*/ other: jet.Byte): jet.Double
-    public final fun div(/*0*/ other: jet.Char): jet.Double
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Double
-    public final fun div(/*0*/ other: jet.Int): jet.Double
-    public final fun div(/*0*/ other: jet.Long): jet.Double
-    public final fun div(/*0*/ other: jet.Short): jet.Double
-    public final fun inc(): jet.Double
-    public final fun minus(): jet.Double
-    public final fun minus(/*0*/ other: jet.Byte): jet.Double
-    public final fun minus(/*0*/ other: jet.Char): jet.Double
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Double
-    public final fun minus(/*0*/ other: jet.Int): jet.Double
-    public final fun minus(/*0*/ other: jet.Long): jet.Double
-    public final fun minus(/*0*/ other: jet.Short): jet.Double
-    public final fun mod(/*0*/ other: jet.Byte): jet.Double
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Double
-    public final fun mod(/*0*/ other: jet.Int): jet.Double
-    public final fun mod(/*0*/ other: jet.Long): jet.Double
-    public final fun mod(/*0*/ other: jet.Short): jet.Double
-    public final fun plus(): jet.Double
-    public final fun plus(/*0*/ other: jet.Byte): jet.Double
-    public final fun plus(/*0*/ other: jet.Char): jet.Double
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Double
-    public final fun plus(/*0*/ other: jet.Int): jet.Double
-    public final fun plus(/*0*/ other: jet.Long): jet.Double
-    public final fun plus(/*0*/ other: jet.Short): jet.Double
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.DoubleRange
-    public final fun times(/*0*/ other: jet.Byte): jet.Double
-    public final fun times(/*0*/ other: jet.Char): jet.Double
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Double
-    public final fun times(/*0*/ other: jet.Int): jet.Double
-    public final fun times(/*0*/ other: jet.Long): jet.Double
-    public final fun times(/*0*/ other: jet.Short): jet.Double
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Double
+    public final fun inc(): kotlin.Double
+    public final fun minus(): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Double
+    public final fun plus(): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Double
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.DoubleRange
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Double
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
 }
 
 public final class DoubleArray {
-    /*primary*/ public constructor DoubleArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Double
-    public final fun iterator(): jet.DoubleIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Double): jet.Unit
+    /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Double
+    public final fun iterator(): kotlin.DoubleIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
 }
 
-public abstract class DoubleIterator : jet.Iterator<jet.Double> {
+public abstract class DoubleIterator : kotlin.Iterator<kotlin.Double> {
     /*primary*/ public constructor DoubleIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Double
-    public abstract fun nextDouble(): jet.Double
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Double
+    public abstract fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleProgression : jet.Progression<jet.Double> {
-    /*primary*/ public constructor DoubleProgression(/*0*/ start: jet.Double, /*1*/ end: jet.Double, /*2*/ increment: jet.Double)
-    public open override /*1*/ val end: jet.Double
-        public open override /*1*/ fun <get-end>(): jet.Double
-    public open override /*1*/ val increment: jet.Double
-        public open override /*1*/ fun <get-increment>(): jet.Double
-    public open override /*1*/ val start: jet.Double
-        public open override /*1*/ fun <get-start>(): jet.Double
-    public open override /*1*/ fun iterator(): jet.DoubleIterator
+public final class DoubleProgression : kotlin.Progression<kotlin.Double> {
+    /*primary*/ public constructor DoubleProgression(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
+    public open override /*1*/ val end: kotlin.Double
+        public open override /*1*/ fun <get-end>(): kotlin.Double
+    public open override /*1*/ val increment: kotlin.Double
+        public open override /*1*/ fun <get-increment>(): kotlin.Double
+    public open override /*1*/ val start: kotlin.Double
+        public open override /*1*/ fun <get-start>(): kotlin.Double
+    public open override /*1*/ fun iterator(): kotlin.DoubleIterator
 }
 
-internal final class DoubleProgressionIterator : jet.DoubleIterator {
-    /*primary*/ public constructor DoubleProgressionIterator(/*0*/ start: jet.Double, /*1*/ end: jet.Double, /*2*/ increment: jet.Double)
-    internal final val end: jet.Double
-        internal final fun <get-end>(): jet.Double
-    internal final val increment: jet.Double
-        internal final fun <get-increment>(): jet.Double
-    private final var next: jet.Double
-        private final fun <get-next>(): jet.Double
-        private final fun <set-next>(/*0*/ <set-?>: jet.Double): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Double
-    public open override /*1*/ fun nextDouble(): jet.Double
+internal final class DoubleProgressionIterator : kotlin.DoubleIterator {
+    /*primary*/ public constructor DoubleProgressionIterator(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double, /*2*/ increment: kotlin.Double)
+    internal final val end: kotlin.Double
+        internal final fun <get-end>(): kotlin.Double
+    internal final val increment: kotlin.Double
+        internal final fun <get-increment>(): kotlin.Double
+    private final var next: kotlin.Double
+        private final fun <get-next>(): kotlin.Double
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Double): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Double
+    public open override /*1*/ fun nextDouble(): kotlin.Double
 }
 
-public final class DoubleRange : jet.Range<jet.Double>, jet.Progression<jet.Double> {
-    /*primary*/ public constructor DoubleRange(/*0*/ start: jet.Double, /*1*/ end: jet.Double)
-    public open override /*2*/ val end: jet.Double
-        public open override /*2*/ fun <get-end>(): jet.Double
-    public open override /*1*/ val increment: jet.Double
-        public open override /*1*/ fun <get-increment>(): jet.Double
-    public open override /*2*/ val start: jet.Double
-        public open override /*2*/ fun <get-start>(): jet.Double
-    public open override /*1*/ fun contains(/*0*/ item: jet.Double): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.DoubleIterator
+public final class DoubleRange : kotlin.Range<kotlin.Double>, kotlin.Progression<kotlin.Double> {
+    /*primary*/ public constructor DoubleRange(/*0*/ start: kotlin.Double, /*1*/ end: kotlin.Double)
+    public open override /*2*/ val end: kotlin.Double
+        public open override /*2*/ fun <get-end>(): kotlin.Double
+    public open override /*1*/ val increment: kotlin.Double
+        public open override /*1*/ fun <get-increment>(): kotlin.Double
+    public open override /*2*/ val start: kotlin.Double
+        public open override /*2*/ fun <get-start>(): kotlin.Double
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Double): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.DoubleIterator
     
     public class object <class-object-for-DoubleRange> {
         /*primary*/ private constructor <class-object-for-DoubleRange>()
-        public final val EMPTY: jet.DoubleRange
-            public final fun <get-EMPTY>(): jet.DoubleRange
+        public final val EMPTY: kotlin.DoubleRange
+            public final fun <get-EMPTY>(): kotlin.DoubleRange
     }
 }
 
-public abstract class Enum</*0*/ E : jet.Enum<E>> {
-    /*primary*/ public constructor Enum</*0*/ E : jet.Enum<E>>(/*0*/ name: jet.String, /*1*/ ordinal: jet.Int)
-    public final fun name(): jet.String
-    public final fun ordinal(): jet.Int
+public abstract class Enum</*0*/ E : kotlin.Enum<E>> {
+    /*primary*/ public constructor Enum</*0*/ E : kotlin.Enum<E>>(/*0*/ name: kotlin.String, /*1*/ ordinal: kotlin.Int)
+    public final fun name(): kotlin.String
+    public final fun ordinal(): kotlin.Int
 }
 
 public trait ExtensionFunction0</*0*/ in T, /*1*/ out R> {
@@ -537,128 +537,128 @@ public trait ExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P
     public abstract fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public final class Float : jet.Number, jet.Comparable<jet.Float> {
+public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Float
-    public final fun div(/*0*/ other: jet.Byte): jet.Float
-    public final fun div(/*0*/ other: jet.Char): jet.Float
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Float
-    public final fun div(/*0*/ other: jet.Long): jet.Float
-    public final fun div(/*0*/ other: jet.Short): jet.Float
-    public final fun inc(): jet.Float
-    public final fun minus(): jet.Float
-    public final fun minus(/*0*/ other: jet.Byte): jet.Float
-    public final fun minus(/*0*/ other: jet.Char): jet.Float
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Float
-    public final fun minus(/*0*/ other: jet.Long): jet.Float
-    public final fun minus(/*0*/ other: jet.Short): jet.Float
-    public final fun mod(/*0*/ other: jet.Byte): jet.Float
-    public final fun mod(/*0*/ other: jet.Char): jet.Float
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Float
-    public final fun mod(/*0*/ other: jet.Long): jet.Float
-    public final fun mod(/*0*/ other: jet.Short): jet.Float
-    public final fun plus(): jet.Float
-    public final fun plus(/*0*/ other: jet.Byte): jet.Float
-    public final fun plus(/*0*/ other: jet.Char): jet.Float
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Float
-    public final fun plus(/*0*/ other: jet.Long): jet.Float
-    public final fun plus(/*0*/ other: jet.Short): jet.Float
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.FloatRange
-    public final fun times(/*0*/ other: jet.Byte): jet.Float
-    public final fun times(/*0*/ other: jet.Char): jet.Float
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Float
-    public final fun times(/*0*/ other: jet.Long): jet.Float
-    public final fun times(/*0*/ other: jet.Short): jet.Float
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Float
+    public final fun inc(): kotlin.Float
+    public final fun minus(): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Float
+    public final fun plus(): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Float
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.FloatRange
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Float
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
 }
 
 public final class FloatArray {
-    /*primary*/ public constructor FloatArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Float
-    public final fun iterator(): jet.FloatIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Float): jet.Unit
+    /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Float
+    public final fun iterator(): kotlin.FloatIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
 }
 
-public abstract class FloatIterator : jet.Iterator<jet.Float> {
+public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
     /*primary*/ public constructor FloatIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Float
-    public abstract fun nextFloat(): jet.Float
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Float
+    public abstract fun nextFloat(): kotlin.Float
 }
 
-public final class FloatProgression : jet.Progression<jet.Float> {
-    /*primary*/ public constructor FloatProgression(/*0*/ start: jet.Float, /*1*/ end: jet.Float, /*2*/ increment: jet.Float)
-    public open override /*1*/ val end: jet.Float
-        public open override /*1*/ fun <get-end>(): jet.Float
-    public open override /*1*/ val increment: jet.Float
-        public open override /*1*/ fun <get-increment>(): jet.Float
-    public open override /*1*/ val start: jet.Float
-        public open override /*1*/ fun <get-start>(): jet.Float
-    public open override /*1*/ fun iterator(): jet.FloatIterator
+public final class FloatProgression : kotlin.Progression<kotlin.Float> {
+    /*primary*/ public constructor FloatProgression(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
+    public open override /*1*/ val end: kotlin.Float
+        public open override /*1*/ fun <get-end>(): kotlin.Float
+    public open override /*1*/ val increment: kotlin.Float
+        public open override /*1*/ fun <get-increment>(): kotlin.Float
+    public open override /*1*/ val start: kotlin.Float
+        public open override /*1*/ fun <get-start>(): kotlin.Float
+    public open override /*1*/ fun iterator(): kotlin.FloatIterator
 }
 
-internal final class FloatProgressionIterator : jet.FloatIterator {
-    /*primary*/ public constructor FloatProgressionIterator(/*0*/ start: jet.Float, /*1*/ end: jet.Float, /*2*/ increment: jet.Float)
-    internal final val end: jet.Float
-        internal final fun <get-end>(): jet.Float
-    internal final val increment: jet.Float
-        internal final fun <get-increment>(): jet.Float
-    private final var next: jet.Float
-        private final fun <get-next>(): jet.Float
-        private final fun <set-next>(/*0*/ <set-?>: jet.Float): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Float
-    public open override /*1*/ fun nextFloat(): jet.Float
+internal final class FloatProgressionIterator : kotlin.FloatIterator {
+    /*primary*/ public constructor FloatProgressionIterator(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float, /*2*/ increment: kotlin.Float)
+    internal final val end: kotlin.Float
+        internal final fun <get-end>(): kotlin.Float
+    internal final val increment: kotlin.Float
+        internal final fun <get-increment>(): kotlin.Float
+    private final var next: kotlin.Float
+        private final fun <get-next>(): kotlin.Float
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Float): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Float
+    public open override /*1*/ fun nextFloat(): kotlin.Float
 }
 
-public final class FloatRange : jet.Range<jet.Float>, jet.Progression<jet.Float> {
-    /*primary*/ public constructor FloatRange(/*0*/ start: jet.Float, /*1*/ end: jet.Float)
-    public open override /*2*/ val end: jet.Float
-        public open override /*2*/ fun <get-end>(): jet.Float
-    public open override /*1*/ val increment: jet.Float
-        public open override /*1*/ fun <get-increment>(): jet.Float
-    public open override /*2*/ val start: jet.Float
-        public open override /*2*/ fun <get-start>(): jet.Float
-    public open override /*1*/ fun contains(/*0*/ item: jet.Float): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.FloatIterator
+public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<kotlin.Float> {
+    /*primary*/ public constructor FloatRange(/*0*/ start: kotlin.Float, /*1*/ end: kotlin.Float)
+    public open override /*2*/ val end: kotlin.Float
+        public open override /*2*/ fun <get-end>(): kotlin.Float
+    public open override /*1*/ val increment: kotlin.Float
+        public open override /*1*/ fun <get-increment>(): kotlin.Float
+    public open override /*2*/ val start: kotlin.Float
+        public open override /*2*/ fun <get-start>(): kotlin.Float
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Float): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.FloatIterator
     
     public class object <class-object-for-FloatRange> {
         /*primary*/ private constructor <class-object-for-FloatRange>()
-        public final val EMPTY: jet.FloatRange
-            public final fun <get-EMPTY>(): jet.FloatRange
+        public final val EMPTY: kotlin.FloatRange
+            public final fun <get-EMPTY>(): kotlin.FloatRange
     }
 }
 
@@ -754,629 +754,629 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public final enum class InlineStrategy : jet.Enum<jet.InlineStrategy> {
+public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
-    public final override /*1*/ /*fake_override*/ fun name(): jet.String
-    public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
     
     public class object <class-object-for-InlineStrategy> {
         /*primary*/ private constructor <class-object-for-InlineStrategy>()
-        public final /*synthesized*/ fun valueOf(/*0*/ value: jet.String): jet.InlineStrategy
-        public final /*synthesized*/ fun values(): jet.Array<jet.InlineStrategy>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineStrategy
+        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineStrategy>
     }
     
-    public enum entry AS_FUNCTION : jet.InlineStrategy {
+    public enum entry AS_FUNCTION : kotlin.InlineStrategy {
         /*primary*/ private constructor AS_FUNCTION()
-        public final override /*1*/ /*fake_override*/ fun name(): jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
-        public class object <class-object-for-AS_FUNCTION> : jet.InlineStrategy.AS_FUNCTION {
+        public class object <class-object-for-AS_FUNCTION> : kotlin.InlineStrategy.AS_FUNCTION {
             /*primary*/ private constructor <class-object-for-AS_FUNCTION>()
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
     
-    public enum entry IN_PLACE : jet.InlineStrategy {
+    public enum entry IN_PLACE : kotlin.InlineStrategy {
         /*primary*/ private constructor IN_PLACE()
-        public final override /*1*/ /*fake_override*/ fun name(): jet.String
-        public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         
-        public class object <class-object-for-IN_PLACE> : jet.InlineStrategy.IN_PLACE {
+        public class object <class-object-for-IN_PLACE> : kotlin.InlineStrategy.IN_PLACE {
             /*primary*/ private constructor <class-object-for-IN_PLACE>()
-            public final override /*1*/ /*fake_override*/ fun name(): jet.String
-            public final override /*1*/ /*fake_override*/ fun ordinal(): jet.Int
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         }
     }
 }
 
-public final class Int : jet.Number, jet.Comparable<jet.Int> {
+public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
-    public final fun and(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Int
-    public final fun div(/*0*/ other: jet.Byte): jet.Int
-    public final fun div(/*0*/ other: jet.Char): jet.Int
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Int
-    public final fun div(/*0*/ other: jet.Long): jet.Long
-    public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun inc(): jet.Int
-    public final fun inv(): jet.Int
-    public final fun minus(): jet.Int
-    public final fun minus(/*0*/ other: jet.Byte): jet.Int
-    public final fun minus(/*0*/ other: jet.Char): jet.Int
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Int
-    public final fun minus(/*0*/ other: jet.Long): jet.Long
-    public final fun minus(/*0*/ other: jet.Short): jet.Int
-    public final fun mod(/*0*/ other: jet.Byte): jet.Int
-    public final fun mod(/*0*/ other: jet.Char): jet.Int
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Int
-    public final fun mod(/*0*/ other: jet.Long): jet.Long
-    public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun or(/*0*/ other: jet.Int): jet.Int
-    public final fun plus(): jet.Int
-    public final fun plus(/*0*/ other: jet.Byte): jet.Int
-    public final fun plus(/*0*/ other: jet.Char): jet.Int
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Int
-    public final fun plus(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(/*0*/ other: jet.Short): jet.Int
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.IntRange
-    public final fun shl(/*0*/ bits: jet.Int): jet.Int
-    public final fun shr(/*0*/ bits: jet.Int): jet.Int
-    public final fun times(/*0*/ other: jet.Byte): jet.Int
-    public final fun times(/*0*/ other: jet.Char): jet.Int
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Int
-    public final fun times(/*0*/ other: jet.Long): jet.Long
-    public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
-    public final fun ushr(/*0*/ bits: jet.Int): jet.Int
-    public final fun xor(/*0*/ other: jet.Int): jet.Int
+    public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun inc(): kotlin.Int
+    public final fun inv(): kotlin.Int
+    public final fun minus(): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun or(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun plus(): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.IntRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.IntRange
+    public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
+    public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
+    public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 }
 
 public final class IntArray {
-    /*primary*/ public constructor IntArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Int
-    public final fun iterator(): jet.IntIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Int): jet.Unit
+    /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Int
+    public final fun iterator(): kotlin.IntIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
 }
 
-public abstract class IntIterator : jet.Iterator<jet.Int> {
+public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
     /*primary*/ public constructor IntIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Int
-    public abstract fun nextInt(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Int
+    public abstract fun nextInt(): kotlin.Int
 }
 
-public final class IntProgression : jet.Progression<jet.Int> {
-    /*primary*/ public constructor IntProgression(/*0*/ start: jet.Int, /*1*/ end: jet.Int, /*2*/ increment: jet.Int)
-    public open override /*1*/ val end: jet.Int
-        public open override /*1*/ fun <get-end>(): jet.Int
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*1*/ val start: jet.Int
-        public open override /*1*/ fun <get-start>(): jet.Int
-    public open override /*1*/ fun iterator(): jet.IntIterator
+public final class IntProgression : kotlin.Progression<kotlin.Int> {
+    /*primary*/ public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int, /*2*/ increment: kotlin.Int)
+    public open override /*1*/ val end: kotlin.Int
+        public open override /*1*/ fun <get-end>(): kotlin.Int
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val start: kotlin.Int
+        public open override /*1*/ fun <get-start>(): kotlin.Int
+    public open override /*1*/ fun iterator(): kotlin.IntIterator
 }
 
-internal final class IntProgressionIterator : jet.IntIterator {
-    /*primary*/ public constructor IntProgressionIterator(/*0*/ start: jet.Int, /*1*/ end: jet.Int, /*2*/ increment: jet.Int)
-    private final val finalElement: jet.Int
-        private final fun <get-finalElement>(): jet.Int
-    private final var hasNext: jet.Boolean
-        private final fun <get-hasNext>(): jet.Boolean
-        private final fun <set-hasNext>(/*0*/ <set-?>: jet.Boolean): jet.Unit
-    internal final val increment: jet.Int
-        internal final fun <get-increment>(): jet.Int
-    private final var next: jet.Int
-        private final fun <get-next>(): jet.Int
-        private final fun <set-next>(/*0*/ <set-?>: jet.Int): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Int
-    public open override /*1*/ fun nextInt(): jet.Int
+internal final class IntProgressionIterator : kotlin.IntIterator {
+    /*primary*/ public constructor IntProgressionIterator(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int, /*2*/ increment: kotlin.Int)
+    private final val finalElement: kotlin.Int
+        private final fun <get-finalElement>(): kotlin.Int
+    private final var hasNext: kotlin.Boolean
+        private final fun <get-hasNext>(): kotlin.Boolean
+        private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
+    internal final val increment: kotlin.Int
+        internal final fun <get-increment>(): kotlin.Int
+    private final var next: kotlin.Int
+        private final fun <get-next>(): kotlin.Int
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Int
+    public open override /*1*/ fun nextInt(): kotlin.Int
 }
 
-public final class IntRange : jet.Range<jet.Int>, jet.Progression<jet.Int> {
-    /*primary*/ public constructor IntRange(/*0*/ start: jet.Int, /*1*/ end: jet.Int)
-    public open override /*2*/ val end: jet.Int
-        public open override /*2*/ fun <get-end>(): jet.Int
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*2*/ val start: jet.Int
-        public open override /*2*/ fun <get-start>(): jet.Int
-    public open override /*1*/ fun contains(/*0*/ item: jet.Int): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.IntIterator
+public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotlin.Int> {
+    /*primary*/ public constructor IntRange(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int)
+    public open override /*2*/ val end: kotlin.Int
+        public open override /*2*/ fun <get-end>(): kotlin.Int
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*2*/ val start: kotlin.Int
+        public open override /*2*/ fun <get-start>(): kotlin.Int
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.IntIterator
     
     public class object <class-object-for-IntRange> {
         /*primary*/ private constructor <class-object-for-IntRange>()
-        public final val EMPTY: jet.IntRange
-            public final fun <get-EMPTY>(): jet.IntRange
+        public final val EMPTY: kotlin.IntRange
+            public final fun <get-EMPTY>(): kotlin.IntRange
     }
 }
 
 public trait Iterable</*0*/ out T> {
-    public abstract fun iterator(): jet.Iterator<T>
+    public abstract fun iterator(): kotlin.Iterator<T>
 }
 
 public trait Iterator</*0*/ out T> {
-    public abstract fun hasNext(): jet.Boolean
+    public abstract fun hasNext(): kotlin.Boolean
     public abstract fun next(): T
 }
 
-public trait KExtensionFunction0</*0*/ in T, /*1*/ out R> : jet.ExtensionFunction0<T, R> {
+public trait KExtensionFunction0</*0*/ in T, /*1*/ out R> : kotlin.ExtensionFunction0<T, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
-public trait KExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : jet.ExtensionFunction1<T, P1, R> {
+public trait KExtensionFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : kotlin.ExtensionFunction1<T, P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
-public trait KExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : jet.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
+public trait KExtensionFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : kotlin.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : jet.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
+public trait KExtensionFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : kotlin.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : jet.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
+public trait KExtensionFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : kotlin.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : jet.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
+public trait KExtensionFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : kotlin.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : jet.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
+public trait KExtensionFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : kotlin.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : jet.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
+public trait KExtensionFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : kotlin.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : jet.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
+public trait KExtensionFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : kotlin.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : jet.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
+public trait KExtensionFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : kotlin.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : jet.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
+public trait KExtensionFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : kotlin.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : jet.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
+public trait KExtensionFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : kotlin.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : jet.ExtensionFunction2<T, P1, P2, R> {
+public trait KExtensionFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : kotlin.ExtensionFunction2<T, P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : jet.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
+public trait KExtensionFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : kotlin.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : jet.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
+public trait KExtensionFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : kotlin.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : jet.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
+public trait KExtensionFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : kotlin.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : jet.ExtensionFunction3<T, P1, P2, P3, R> {
+public trait KExtensionFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : kotlin.ExtensionFunction3<T, P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : jet.ExtensionFunction4<T, P1, P2, P3, P4, R> {
+public trait KExtensionFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : kotlin.ExtensionFunction4<T, P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : jet.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
+public trait KExtensionFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : kotlin.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : jet.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
+public trait KExtensionFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : kotlin.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : jet.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
+public trait KExtensionFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : kotlin.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : jet.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
+public trait KExtensionFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : kotlin.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : jet.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
+public trait KExtensionFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : kotlin.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait KFunction0</*0*/ out R> : jet.Function0<R> {
+public trait KFunction0</*0*/ out R> : kotlin.Function0<R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(): R
 }
 
-public trait KFunction1</*0*/ in P1, /*1*/ out R> : jet.Function1<P1, R> {
+public trait KFunction1</*0*/ in P1, /*1*/ out R> : kotlin.Function1<P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1): R
 }
 
-public trait KFunction10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> : jet.Function10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
+public trait KFunction10</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ out R> : kotlin.Function10<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KFunction11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> : jet.Function11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
+public trait KFunction11</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ out R> : kotlin.Function11<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KFunction12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> : jet.Function12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
+public trait KFunction12</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ out R> : kotlin.Function12<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KFunction13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> : jet.Function13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
+public trait KFunction13</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ out R> : kotlin.Function13<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KFunction14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> : jet.Function14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
+public trait KFunction14</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ out R> : kotlin.Function14<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KFunction15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> : jet.Function15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
+public trait KFunction15</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ out R> : kotlin.Function15<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KFunction16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> : jet.Function16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
+public trait KFunction16</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ out R> : kotlin.Function16<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KFunction17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> : jet.Function17<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
+public trait KFunction17</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ out R> : kotlin.Function17<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KFunction18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> : jet.Function18<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
+public trait KFunction18</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ out R> : kotlin.Function18<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KFunction19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> : jet.Function19<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
+public trait KFunction19</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ out R> : kotlin.Function19<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KFunction2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> : jet.Function2<P1, P2, R> {
+public trait KFunction2</*0*/ in P1, /*1*/ in P2, /*2*/ out R> : kotlin.Function2<P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KFunction20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> : jet.Function20<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
+public trait KFunction20</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ out R> : kotlin.Function20<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KFunction21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> : jet.Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
+public trait KFunction21</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ out R> : kotlin.Function21<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KFunction22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> : jet.Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
+public trait KFunction22</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ in P10, /*10*/ in P11, /*11*/ in P12, /*12*/ in P13, /*13*/ in P14, /*14*/ in P15, /*15*/ in P16, /*16*/ in P17, /*17*/ in P18, /*18*/ in P19, /*19*/ in P20, /*20*/ in P21, /*21*/ in P22, /*22*/ out R> : kotlin.Function22<P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KFunction3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> : jet.Function3<P1, P2, P3, R> {
+public trait KFunction3</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ out R> : kotlin.Function3<P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KFunction4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> : jet.Function4<P1, P2, P3, P4, R> {
+public trait KFunction4</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ out R> : kotlin.Function4<P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KFunction5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> : jet.Function5<P1, P2, P3, P4, P5, R> {
+public trait KFunction5</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ out R> : kotlin.Function5<P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KFunction6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> : jet.Function6<P1, P2, P3, P4, P5, P6, R> {
+public trait KFunction6</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ out R> : kotlin.Function6<P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KFunction7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> : jet.Function7<P1, P2, P3, P4, P5, P6, P7, R> {
+public trait KFunction7</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ out R> : kotlin.Function7<P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KFunction8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> : jet.Function8<P1, P2, P3, P4, P5, P6, P7, P8, R> {
+public trait KFunction8</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ out R> : kotlin.Function8<P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KFunction9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> : jet.Function9<P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
+public trait KFunction9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/ in P5, /*5*/ in P6, /*6*/ in P7, /*7*/ in P8, /*8*/ in P9, /*9*/ out R> : kotlin.Function9<P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait KMemberFunction0</*0*/ in T, /*1*/ out R> : jet.ExtensionFunction0<T, R> {
+public trait KMemberFunction0</*0*/ in T, /*1*/ out R> : kotlin.ExtensionFunction0<T, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(): R
 }
 
-public trait KMemberFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : jet.ExtensionFunction1<T, P1, R> {
+public trait KMemberFunction1</*0*/ in T, /*1*/ in P1, /*2*/ out R> : kotlin.ExtensionFunction1<T, P1, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1): R
 }
 
-public trait KMemberFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : jet.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
+public trait KMemberFunction10</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ out R> : kotlin.ExtensionFunction10<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10): R
 }
 
-public trait KMemberFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : jet.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
+public trait KMemberFunction11</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ out R> : kotlin.ExtensionFunction11<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11): R
 }
 
-public trait KMemberFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : jet.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
+public trait KMemberFunction12</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ out R> : kotlin.ExtensionFunction12<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12): R
 }
 
-public trait KMemberFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : jet.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
+public trait KMemberFunction13</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ out R> : kotlin.ExtensionFunction13<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13): R
 }
 
-public trait KMemberFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : jet.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
+public trait KMemberFunction14</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ out R> : kotlin.ExtensionFunction14<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14): R
 }
 
-public trait KMemberFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : jet.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
+public trait KMemberFunction15</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ out R> : kotlin.ExtensionFunction15<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15): R
 }
 
-public trait KMemberFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : jet.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
+public trait KMemberFunction16</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ out R> : kotlin.ExtensionFunction16<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16): R
 }
 
-public trait KMemberFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : jet.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
+public trait KMemberFunction17</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ out R> : kotlin.ExtensionFunction17<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17): R
 }
 
-public trait KMemberFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : jet.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
+public trait KMemberFunction18</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ out R> : kotlin.ExtensionFunction18<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18): R
 }
 
-public trait KMemberFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : jet.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
+public trait KMemberFunction19</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ out R> : kotlin.ExtensionFunction19<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19): R
 }
 
-public trait KMemberFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : jet.ExtensionFunction2<T, P1, P2, R> {
+public trait KMemberFunction2</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ out R> : kotlin.ExtensionFunction2<T, P1, P2, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2): R
 }
 
-public trait KMemberFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : jet.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
+public trait KMemberFunction20</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ out R> : kotlin.ExtensionFunction20<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20): R
 }
 
-public trait KMemberFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : jet.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
+public trait KMemberFunction21</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ out R> : kotlin.ExtensionFunction21<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21): R
 }
 
-public trait KMemberFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : jet.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
+public trait KMemberFunction22</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ in P10, /*11*/ in P11, /*12*/ in P12, /*13*/ in P13, /*14*/ in P14, /*15*/ in P15, /*16*/ in P16, /*17*/ in P17, /*18*/ in P18, /*19*/ in P19, /*20*/ in P20, /*21*/ in P21, /*22*/ in P22, /*23*/ out R> : kotlin.ExtensionFunction22<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, P10, P11, P12, P13, P14, P15, P16, P17, P18, P19, P20, P21, P22, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9, /*9*/ p10: P10, /*10*/ p11: P11, /*11*/ p12: P12, /*12*/ p13: P13, /*13*/ p14: P14, /*14*/ p15: P15, /*15*/ p16: P16, /*16*/ p17: P17, /*17*/ p18: P18, /*18*/ p19: P19, /*19*/ p20: P20, /*20*/ p21: P21, /*21*/ p22: P22): R
 }
 
-public trait KMemberFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : jet.ExtensionFunction3<T, P1, P2, P3, R> {
+public trait KMemberFunction3</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ out R> : kotlin.ExtensionFunction3<T, P1, P2, P3, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3): R
 }
 
-public trait KMemberFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : jet.ExtensionFunction4<T, P1, P2, P3, P4, R> {
+public trait KMemberFunction4</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ out R> : kotlin.ExtensionFunction4<T, P1, P2, P3, P4, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4): R
 }
 
-public trait KMemberFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : jet.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
+public trait KMemberFunction5</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ out R> : kotlin.ExtensionFunction5<T, P1, P2, P3, P4, P5, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5): R
 }
 
-public trait KMemberFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : jet.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
+public trait KMemberFunction6</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ out R> : kotlin.ExtensionFunction6<T, P1, P2, P3, P4, P5, P6, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6): R
 }
 
-public trait KMemberFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : jet.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
+public trait KMemberFunction7</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ out R> : kotlin.ExtensionFunction7<T, P1, P2, P3, P4, P5, P6, P7, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7): R
 }
 
-public trait KMemberFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : jet.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
+public trait KMemberFunction8</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ out R> : kotlin.ExtensionFunction8<T, P1, P2, P3, P4, P5, P6, P7, P8, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8): R
 }
 
-public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : jet.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
+public trait KMemberFunction9</*0*/ in T, /*1*/ in P1, /*2*/ in P2, /*3*/ in P3, /*4*/ in P4, /*5*/ in P5, /*6*/ in P6, /*7*/ in P7, /*8*/ in P8, /*9*/ in P9, /*10*/ out R> : kotlin.ExtensionFunction9<T, P1, P2, P3, P4, P5, P6, P7, P8, P9, R> {
     public abstract override /*1*/ /*fake_override*/ fun T.invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
-public trait List</*0*/ out E> : jet.Collection<E> {
-    public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract fun get(/*0*/ index: jet.Int): E
-    public abstract fun indexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*1*/ fun isEmpty(): jet.Boolean
-    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
-    public abstract fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract fun listIterator(): jet.ListIterator<E>
-    public abstract fun listIterator(/*0*/ index: jet.Int): jet.ListIterator<E>
-    public abstract override /*1*/ fun size(): jet.Int
-    public abstract fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.List<E>
+public trait List</*0*/ out E> : kotlin.Collection<E> {
+    public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract fun get(/*0*/ index: kotlin.Int): E
+    public abstract fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
+    public abstract fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract fun listIterator(): kotlin.ListIterator<E>
+    public abstract fun listIterator(/*0*/ index: kotlin.Int): kotlin.ListIterator<E>
+    public abstract override /*1*/ fun size(): kotlin.Int
+    public abstract fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.List<E>
 }
 
-public trait ListIterator</*0*/ out T> : jet.Iterator<T> {
-    public abstract override /*1*/ fun hasNext(): jet.Boolean
-    public abstract fun hasPrevious(): jet.Boolean
+public trait ListIterator</*0*/ out T> : kotlin.Iterator<T> {
+    public abstract override /*1*/ fun hasNext(): kotlin.Boolean
+    public abstract fun hasPrevious(): kotlin.Boolean
     public abstract override /*1*/ fun next(): T
-    public abstract fun nextIndex(): jet.Int
+    public abstract fun nextIndex(): kotlin.Int
     public abstract fun previous(): T
-    public abstract fun previousIndex(): jet.Int
+    public abstract fun previousIndex(): kotlin.Int
 }
 
-public final class Long : jet.Number, jet.Comparable<jet.Long> {
+public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     /*primary*/ private constructor Long()
-    public final fun and(/*0*/ other: jet.Long): jet.Long
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Long
-    public final fun div(/*0*/ other: jet.Byte): jet.Long
-    public final fun div(/*0*/ other: jet.Char): jet.Long
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Long
-    public final fun div(/*0*/ other: jet.Long): jet.Long
-    public final fun div(/*0*/ other: jet.Short): jet.Long
-    public final fun inc(): jet.Long
-    public final fun inv(): jet.Long
-    public final fun minus(): jet.Long
-    public final fun minus(/*0*/ other: jet.Byte): jet.Long
-    public final fun minus(/*0*/ other: jet.Char): jet.Long
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Long
-    public final fun minus(/*0*/ other: jet.Long): jet.Long
-    public final fun minus(/*0*/ other: jet.Short): jet.Long
-    public final fun mod(/*0*/ other: jet.Byte): jet.Long
-    public final fun mod(/*0*/ other: jet.Char): jet.Long
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Long
-    public final fun mod(/*0*/ other: jet.Long): jet.Long
-    public final fun mod(/*0*/ other: jet.Short): jet.Long
-    public final fun or(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(): jet.Long
-    public final fun plus(/*0*/ other: jet.Byte): jet.Long
-    public final fun plus(/*0*/ other: jet.Char): jet.Long
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Long
-    public final fun plus(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(/*0*/ other: jet.Short): jet.Long
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.LongRange
-    public final fun shl(/*0*/ bits: jet.Int): jet.Long
-    public final fun shr(/*0*/ bits: jet.Int): jet.Long
-    public final fun times(/*0*/ other: jet.Byte): jet.Long
-    public final fun times(/*0*/ other: jet.Char): jet.Long
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Long
-    public final fun times(/*0*/ other: jet.Long): jet.Long
-    public final fun times(/*0*/ other: jet.Short): jet.Long
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
-    public final fun ushr(/*0*/ bits: jet.Int): jet.Long
-    public final fun xor(/*0*/ other: jet.Long): jet.Long
+    public final fun and(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Long
+    public final fun inc(): kotlin.Long
+    public final fun inv(): kotlin.Long
+    public final fun minus(): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Long
+    public final fun or(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Long
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.LongRange
+    public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Long
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
+    public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
+    public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 }
 
 public final class LongArray {
-    /*primary*/ public constructor LongArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Long
-    public final fun iterator(): jet.LongIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Long): jet.Unit
+    /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Long
+    public final fun iterator(): kotlin.LongIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
 }
 
-public abstract class LongIterator : jet.Iterator<jet.Long> {
+public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
     /*primary*/ public constructor LongIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Long
-    public abstract fun nextLong(): jet.Long
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Long
+    public abstract fun nextLong(): kotlin.Long
 }
 
-public final class LongProgression : jet.Progression<jet.Long> {
-    /*primary*/ public constructor LongProgression(/*0*/ start: jet.Long, /*1*/ end: jet.Long, /*2*/ increment: jet.Long)
-    public open override /*1*/ val end: jet.Long
-        public open override /*1*/ fun <get-end>(): jet.Long
-    public open override /*1*/ val increment: jet.Long
-        public open override /*1*/ fun <get-increment>(): jet.Long
-    public open override /*1*/ val start: jet.Long
-        public open override /*1*/ fun <get-start>(): jet.Long
-    public open override /*1*/ fun iterator(): jet.LongIterator
+public final class LongProgression : kotlin.Progression<kotlin.Long> {
+    /*primary*/ public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long, /*2*/ increment: kotlin.Long)
+    public open override /*1*/ val end: kotlin.Long
+        public open override /*1*/ fun <get-end>(): kotlin.Long
+    public open override /*1*/ val increment: kotlin.Long
+        public open override /*1*/ fun <get-increment>(): kotlin.Long
+    public open override /*1*/ val start: kotlin.Long
+        public open override /*1*/ fun <get-start>(): kotlin.Long
+    public open override /*1*/ fun iterator(): kotlin.LongIterator
 }
 
-internal final class LongProgressionIterator : jet.LongIterator {
-    /*primary*/ public constructor LongProgressionIterator(/*0*/ start: jet.Long, /*1*/ end: jet.Long, /*2*/ increment: jet.Long)
-    private final val finalElement: jet.Long
-        private final fun <get-finalElement>(): jet.Long
-    private final var hasNext: jet.Boolean
-        private final fun <get-hasNext>(): jet.Boolean
-        private final fun <set-hasNext>(/*0*/ <set-?>: jet.Boolean): jet.Unit
-    internal final val increment: jet.Long
-        internal final fun <get-increment>(): jet.Long
-    private final var next: jet.Long
-        private final fun <get-next>(): jet.Long
-        private final fun <set-next>(/*0*/ <set-?>: jet.Long): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Long
-    public open override /*1*/ fun nextLong(): jet.Long
+internal final class LongProgressionIterator : kotlin.LongIterator {
+    /*primary*/ public constructor LongProgressionIterator(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long, /*2*/ increment: kotlin.Long)
+    private final val finalElement: kotlin.Long
+        private final fun <get-finalElement>(): kotlin.Long
+    private final var hasNext: kotlin.Boolean
+        private final fun <get-hasNext>(): kotlin.Boolean
+        private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
+    internal final val increment: kotlin.Long
+        internal final fun <get-increment>(): kotlin.Long
+    private final var next: kotlin.Long
+        private final fun <get-next>(): kotlin.Long
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Long): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Long
+    public open override /*1*/ fun nextLong(): kotlin.Long
 }
 
-public final class LongRange : jet.Range<jet.Long>, jet.Progression<jet.Long> {
-    /*primary*/ public constructor LongRange(/*0*/ start: jet.Long, /*1*/ end: jet.Long)
-    public open override /*2*/ val end: jet.Long
-        public open override /*2*/ fun <get-end>(): jet.Long
-    public open override /*1*/ val increment: jet.Long
-        public open override /*1*/ fun <get-increment>(): jet.Long
-    public open override /*2*/ val start: jet.Long
-        public open override /*2*/ fun <get-start>(): jet.Long
-    public open override /*1*/ fun contains(/*0*/ item: jet.Long): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.LongIterator
+public final class LongRange : kotlin.Range<kotlin.Long>, kotlin.Progression<kotlin.Long> {
+    /*primary*/ public constructor LongRange(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long)
+    public open override /*2*/ val end: kotlin.Long
+        public open override /*2*/ fun <get-end>(): kotlin.Long
+    public open override /*1*/ val increment: kotlin.Long
+        public open override /*1*/ fun <get-increment>(): kotlin.Long
+    public open override /*2*/ val start: kotlin.Long
+        public open override /*2*/ fun <get-start>(): kotlin.Long
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.LongIterator
     
     public class object <class-object-for-LongRange> {
         /*primary*/ private constructor <class-object-for-LongRange>()
-        public final val EMPTY: jet.LongRange
-            public final fun <get-EMPTY>(): jet.LongRange
+        public final val EMPTY: kotlin.LongRange
+            public final fun <get-EMPTY>(): kotlin.LongRange
     }
 }
 
 public trait Map</*0*/ K, /*1*/ out V> {
-    public abstract fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
-    public abstract fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
-    public abstract fun entrySet(): jet.Set<jet.Map.Entry<K, V>>
-    public abstract fun get(/*0*/ key: jet.Any?): V?
-    public abstract fun isEmpty(): jet.Boolean
-    public abstract fun keySet(): jet.Set<K>
-    public abstract fun size(): jet.Int
-    public abstract fun values(): jet.Collection<V>
+    public abstract fun containsKey(/*0*/ key: kotlin.Any?): kotlin.Boolean
+    public abstract fun containsValue(/*0*/ value: kotlin.Any?): kotlin.Boolean
+    public abstract fun entrySet(): kotlin.Set<kotlin.Map.Entry<K, V>>
+    public abstract fun get(/*0*/ key: kotlin.Any?): V?
+    public abstract fun isEmpty(): kotlin.Boolean
+    public abstract fun keySet(): kotlin.Set<K>
+    public abstract fun size(): kotlin.Int
+    public abstract fun values(): kotlin.Collection<V>
     
     public trait Entry</*0*/ out K, /*1*/ out V> {
         public abstract fun getKey(): K
@@ -1384,99 +1384,99 @@ public trait Map</*0*/ K, /*1*/ out V> {
     }
 }
 
-public trait MutableCollection</*0*/ E> : jet.Collection<E>, jet.MutableIterable<E> {
-    public abstract fun add(/*0*/ e: E): jet.Boolean
-    public abstract fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
-    public abstract fun clear(): jet.Unit
-    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
-    public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
-    public abstract fun remove(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
+public trait MutableCollection</*0*/ E> : kotlin.Collection<E>, kotlin.MutableIterable<E> {
+    public abstract fun add(/*0*/ e: E): kotlin.Boolean
+    public abstract fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
+    public abstract fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
 }
 
-public trait MutableIterable</*0*/ out T> : jet.Iterable<T> {
-    public abstract override /*1*/ fun iterator(): jet.MutableIterator<T>
+public trait MutableIterable</*0*/ out T> : kotlin.Iterable<T> {
+    public abstract override /*1*/ fun iterator(): kotlin.MutableIterator<T>
 }
 
-public trait MutableIterator</*0*/ out T> : jet.Iterator<T> {
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
+public trait MutableIterator</*0*/ out T> : kotlin.Iterator<T> {
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun next(): T
-    public abstract fun remove(): jet.Unit
+    public abstract fun remove(): kotlin.Unit
 }
 
-public trait MutableList</*0*/ E> : jet.List<E>, jet.MutableCollection<E> {
-    public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
-    public abstract fun add(/*0*/ index: jet.Int, /*1*/ element: E): jet.Unit
-    public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
-    public abstract fun addAll(/*0*/ index: jet.Int, /*1*/ c: jet.Collection<E>): jet.Boolean
-    public abstract override /*1*/ fun clear(): jet.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: jet.Int): E
-    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun iterator(): jet.MutableIterator<E>
-    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: jet.Any?): jet.Int
-    public abstract override /*1*/ fun listIterator(): jet.MutableListIterator<E>
-    public abstract override /*1*/ fun listIterator(/*0*/ index: jet.Int): jet.MutableListIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract fun remove(/*0*/ index: jet.Int): E
-    public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract fun set(/*0*/ index: jet.Int, /*1*/ element: E): E
-    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ fun subList(/*0*/ fromIndex: jet.Int, /*1*/ toIndex: jet.Int): jet.MutableList<E>
+public trait MutableList</*0*/ E> : kotlin.List<E>, kotlin.MutableCollection<E> {
+    public abstract override /*1*/ fun add(/*0*/ e: E): kotlin.Boolean
+    public abstract fun add(/*0*/ index: kotlin.Int, /*1*/ element: E): kotlin.Unit
+    public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun clear(): kotlin.Unit
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): E
+    public abstract override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<E>
+    public abstract override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.Any?): kotlin.Int
+    public abstract override /*1*/ fun listIterator(): kotlin.MutableListIterator<E>
+    public abstract override /*1*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<E>
+    public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract fun remove(/*0*/ index: kotlin.Int): E
+    public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract fun set(/*0*/ index: kotlin.Int, /*1*/ element: E): E
+    public abstract override /*2*/ /*fake_override*/ fun size(): kotlin.Int
+    public abstract override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<E>
 }
 
-public trait MutableListIterator</*0*/ T> : jet.ListIterator<T>, jet.MutableIterator<T> {
-    public abstract fun add(/*0*/ e: T): jet.Unit
-    public abstract override /*2*/ fun hasNext(): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): jet.Boolean
+public trait MutableListIterator</*0*/ T> : kotlin.ListIterator<T>, kotlin.MutableIterator<T> {
+    public abstract fun add(/*0*/ e: T): kotlin.Unit
+    public abstract override /*2*/ fun hasNext(): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun hasPrevious(): kotlin.Boolean
     public abstract override /*2*/ fun next(): T
-    public abstract override /*1*/ /*fake_override*/ fun nextIndex(): jet.Int
+    public abstract override /*1*/ /*fake_override*/ fun nextIndex(): kotlin.Int
     public abstract override /*1*/ /*fake_override*/ fun previous(): T
-    public abstract override /*1*/ /*fake_override*/ fun previousIndex(): jet.Int
-    public abstract override /*1*/ fun remove(): jet.Unit
-    public abstract fun set(/*0*/ e: T): jet.Unit
+    public abstract override /*1*/ /*fake_override*/ fun previousIndex(): kotlin.Int
+    public abstract override /*1*/ fun remove(): kotlin.Unit
+    public abstract fun set(/*0*/ e: T): kotlin.Unit
 }
 
-public trait MutableMap</*0*/ K, /*1*/ V> : jet.Map<K, V> {
-    public abstract fun clear(): jet.Unit
-    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: jet.Any?): jet.Boolean
-    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun entrySet(): jet.MutableSet<jet.MutableMap.MutableEntry<K, V>>
-    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: jet.Any?): V?
-    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): jet.Boolean
-    public abstract override /*1*/ fun keySet(): jet.MutableSet<K>
+public trait MutableMap</*0*/ K, /*1*/ V> : kotlin.Map<K, V> {
+    public abstract fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun entrySet(): kotlin.MutableSet<kotlin.MutableMap.MutableEntry<K, V>>
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Any?): V?
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ fun keySet(): kotlin.MutableSet<K>
     public abstract fun put(/*0*/ key: K, /*1*/ value: V): V?
-    public abstract fun putAll(/*0*/ m: jet.Map<out K, V>): jet.Unit
-    public abstract fun remove(/*0*/ key: jet.Any?): V?
-    public abstract override /*1*/ /*fake_override*/ fun size(): jet.Int
-    public abstract override /*1*/ fun values(): jet.MutableCollection<V>
+    public abstract fun putAll(/*0*/ m: kotlin.Map<out K, V>): kotlin.Unit
+    public abstract fun remove(/*0*/ key: kotlin.Any?): V?
+    public abstract override /*1*/ /*fake_override*/ fun size(): kotlin.Int
+    public abstract override /*1*/ fun values(): kotlin.MutableCollection<V>
     
-    public trait MutableEntry</*0*/ K, /*1*/ V> : jet.Map.Entry<K, V> {
+    public trait MutableEntry</*0*/ K, /*1*/ V> : kotlin.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ fun getKey(): K
         public abstract override /*1*/ /*fake_override*/ fun getValue(): V
         public abstract fun setValue(/*0*/ value: V): V
     }
 }
 
-public trait MutableSet</*0*/ E> : jet.Set<E>, jet.MutableCollection<E> {
-    public abstract override /*1*/ fun add(/*0*/ e: E): jet.Boolean
-    public abstract override /*1*/ fun addAll(/*0*/ c: jet.Collection<E>): jet.Boolean
-    public abstract override /*1*/ fun clear(): jet.Unit
-    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): jet.Boolean
-    public abstract override /*2*/ fun iterator(): jet.MutableIterator<E>
-    public abstract override /*1*/ fun remove(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun removeAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun retainAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun size(): jet.Int
+public trait MutableSet</*0*/ E> : kotlin.Set<E>, kotlin.MutableCollection<E> {
+    public abstract override /*1*/ fun add(/*0*/ e: E): kotlin.Boolean
+    public abstract override /*1*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
+    public abstract override /*1*/ fun clear(): kotlin.Unit
+    public abstract override /*2*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*2*/ fun iterator(): kotlin.MutableIterator<E>
+    public abstract override /*1*/ fun remove(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun size(): kotlin.Int
 }
 
 public final class Nothing {
@@ -1485,194 +1485,194 @@ public final class Nothing {
 
 public abstract class Number {
     /*primary*/ public constructor Number()
-    public abstract fun toByte(): jet.Byte
-    public abstract fun toChar(): jet.Char
-    public abstract fun toDouble(): jet.Double
-    public abstract fun toFloat(): jet.Float
-    public abstract fun toInt(): jet.Int
-    public abstract fun toLong(): jet.Long
-    public abstract fun toShort(): jet.Short
+    public abstract fun toByte(): kotlin.Byte
+    public abstract fun toChar(): kotlin.Char
+    public abstract fun toDouble(): kotlin.Double
+    public abstract fun toFloat(): kotlin.Float
+    public abstract fun toInt(): kotlin.Int
+    public abstract fun toLong(): kotlin.Long
+    public abstract fun toShort(): kotlin.Short
 }
 
-public trait Progression</*0*/ out N : jet.Any> : jet.Iterable<N> {
+public trait Progression</*0*/ out N : kotlin.Any> : kotlin.Iterable<N> {
     public abstract val end: N
         public abstract fun <get-end>(): N
-    public abstract val increment: jet.Number
-        public abstract fun <get-increment>(): jet.Number
+    public abstract val increment: kotlin.Number
+        public abstract fun <get-increment>(): kotlin.Number
     public abstract val start: N
         public abstract fun <get-start>(): N
-    public abstract override /*1*/ /*fake_override*/ fun iterator(): jet.Iterator<N>
+    public abstract override /*1*/ /*fake_override*/ fun iterator(): kotlin.Iterator<N>
 }
 
 public trait PropertyMetadata {
-    public abstract val name: jet.String
-        public abstract fun <get-name>(): jet.String
+    public abstract val name: kotlin.String
+        public abstract fun <get-name>(): kotlin.String
 }
 
-public final class PropertyMetadataImpl : jet.PropertyMetadata {
-    /*primary*/ public constructor PropertyMetadataImpl(/*0*/ name: jet.String)
-    public open override /*1*/ val name: jet.String
-        public open override /*1*/ fun <get-name>(): jet.String
+public final class PropertyMetadataImpl : kotlin.PropertyMetadata {
+    /*primary*/ public constructor PropertyMetadataImpl(/*0*/ name: kotlin.String)
+    public open override /*1*/ val name: kotlin.String
+        public open override /*1*/ fun <get-name>(): kotlin.String
 }
 
-public trait Range</*0*/ T : jet.Comparable<T>> {
+public trait Range</*0*/ T : kotlin.Comparable<T>> {
     public abstract val end: T
         public abstract fun <get-end>(): T
     public abstract val start: T
         public abstract fun <get-start>(): T
-    public abstract fun contains(/*0*/ item: T): jet.Boolean
+    public abstract fun contains(/*0*/ item: T): kotlin.Boolean
 }
 
-public trait Set</*0*/ out E> : jet.Collection<E> {
-    public abstract override /*1*/ fun contains(/*0*/ o: jet.Any?): jet.Boolean
-    public abstract override /*1*/ fun containsAll(/*0*/ c: jet.Collection<jet.Any?>): jet.Boolean
-    public abstract override /*1*/ fun isEmpty(): jet.Boolean
-    public abstract override /*1*/ fun iterator(): jet.Iterator<E>
-    public abstract override /*1*/ fun size(): jet.Int
+public trait Set</*0*/ out E> : kotlin.Collection<E> {
+    public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
+    public abstract override /*1*/ fun isEmpty(): kotlin.Boolean
+    public abstract override /*1*/ fun iterator(): kotlin.Iterator<E>
+    public abstract override /*1*/ fun size(): kotlin.Int
 }
 
-public final class Short : jet.Number, jet.Comparable<jet.Short> {
+public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     /*primary*/ private constructor Short()
-    public final fun compareTo(/*0*/ other: jet.Byte): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Char): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Double): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Float): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Int): jet.Int
-    public final fun compareTo(/*0*/ other: jet.Long): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ other: jet.Short): jet.Int
-    public final fun dec(): jet.Short
-    public final fun div(/*0*/ other: jet.Byte): jet.Int
-    public final fun div(/*0*/ other: jet.Char): jet.Int
-    public final fun div(/*0*/ other: jet.Double): jet.Double
-    public final fun div(/*0*/ other: jet.Float): jet.Float
-    public final fun div(/*0*/ other: jet.Int): jet.Int
-    public final fun div(/*0*/ other: jet.Long): jet.Long
-    public final fun div(/*0*/ other: jet.Short): jet.Int
-    public final fun inc(): jet.Short
-    public final fun minus(): jet.Int
-    public final fun minus(/*0*/ other: jet.Byte): jet.Int
-    public final fun minus(/*0*/ other: jet.Char): jet.Int
-    public final fun minus(/*0*/ other: jet.Double): jet.Double
-    public final fun minus(/*0*/ other: jet.Float): jet.Float
-    public final fun minus(/*0*/ other: jet.Int): jet.Int
-    public final fun minus(/*0*/ other: jet.Long): jet.Long
-    public final fun minus(/*0*/ other: jet.Short): jet.Int
-    public final fun mod(/*0*/ other: jet.Byte): jet.Int
-    public final fun mod(/*0*/ other: jet.Char): jet.Int
-    public final fun mod(/*0*/ other: jet.Double): jet.Double
-    public final fun mod(/*0*/ other: jet.Float): jet.Float
-    public final fun mod(/*0*/ other: jet.Int): jet.Int
-    public final fun mod(/*0*/ other: jet.Long): jet.Long
-    public final fun mod(/*0*/ other: jet.Short): jet.Int
-    public final fun plus(): jet.Int
-    public final fun plus(/*0*/ other: jet.Byte): jet.Int
-    public final fun plus(/*0*/ other: jet.Char): jet.Int
-    public final fun plus(/*0*/ other: jet.Double): jet.Double
-    public final fun plus(/*0*/ other: jet.Float): jet.Float
-    public final fun plus(/*0*/ other: jet.Int): jet.Int
-    public final fun plus(/*0*/ other: jet.Long): jet.Long
-    public final fun plus(/*0*/ other: jet.Short): jet.Int
-    public final fun rangeTo(/*0*/ other: jet.Byte): jet.ShortRange
-    public final fun rangeTo(/*0*/ other: jet.Char): jet.ShortRange
-    public final fun rangeTo(/*0*/ other: jet.Double): jet.DoubleRange
-    public final fun rangeTo(/*0*/ other: jet.Float): jet.FloatRange
-    public final fun rangeTo(/*0*/ other: jet.Int): jet.IntRange
-    public final fun rangeTo(/*0*/ other: jet.Long): jet.LongRange
-    public final fun rangeTo(/*0*/ other: jet.Short): jet.ShortRange
-    public final fun times(/*0*/ other: jet.Byte): jet.Int
-    public final fun times(/*0*/ other: jet.Char): jet.Int
-    public final fun times(/*0*/ other: jet.Double): jet.Double
-    public final fun times(/*0*/ other: jet.Float): jet.Float
-    public final fun times(/*0*/ other: jet.Int): jet.Int
-    public final fun times(/*0*/ other: jet.Long): jet.Long
-    public final fun times(/*0*/ other: jet.Short): jet.Int
-    public open override /*1*/ fun toByte(): jet.Byte
-    public open override /*1*/ fun toChar(): jet.Char
-    public open override /*1*/ fun toDouble(): jet.Double
-    public open override /*1*/ fun toFloat(): jet.Float
-    public open override /*1*/ fun toInt(): jet.Int
-    public open override /*1*/ fun toLong(): jet.Long
-    public open override /*1*/ fun toShort(): jet.Short
+    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun dec(): kotlin.Short
+    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun inc(): kotlin.Short
+    public final fun minus(): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun plus(): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ShortRange
+    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.ShortRange
+    public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
+    public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
+    public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
+    public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
+    public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
+    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    public open override /*1*/ fun toByte(): kotlin.Byte
+    public open override /*1*/ fun toChar(): kotlin.Char
+    public open override /*1*/ fun toDouble(): kotlin.Double
+    public open override /*1*/ fun toFloat(): kotlin.Float
+    public open override /*1*/ fun toInt(): kotlin.Int
+    public open override /*1*/ fun toLong(): kotlin.Long
+    public open override /*1*/ fun toShort(): kotlin.Short
 }
 
 public final class ShortArray {
-    /*primary*/ public constructor ShortArray(/*0*/ size: jet.Int)
-    public final val indices: jet.IntRange
-        public final fun <get-indices>(): jet.IntRange
-    public final val size: jet.Int
-        public final fun <get-size>(): jet.Int
-    public final fun get(/*0*/ index: jet.Int): jet.Short
-    public final fun iterator(): jet.ShortIterator
-    public final fun set(/*0*/ index: jet.Int, /*1*/ value: jet.Short): jet.Unit
+    /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
+    public final val indices: kotlin.IntRange
+        public final fun <get-indices>(): kotlin.IntRange
+    public final val size: kotlin.Int
+        public final fun <get-size>(): kotlin.Int
+    public final fun get(/*0*/ index: kotlin.Int): kotlin.Short
+    public final fun iterator(): kotlin.ShortIterator
+    public final fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
 }
 
-public abstract class ShortIterator : jet.Iterator<jet.Short> {
+public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
     /*primary*/ public constructor ShortIterator()
-    public abstract override /*1*/ /*fake_override*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ fun next(): jet.Short
-    public abstract fun nextShort(): jet.Short
+    public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ fun next(): kotlin.Short
+    public abstract fun nextShort(): kotlin.Short
 }
 
-public final class ShortProgression : jet.Progression<jet.Short> {
-    /*primary*/ public constructor ShortProgression(/*0*/ start: jet.Short, /*1*/ end: jet.Short, /*2*/ increment: jet.Int)
-    public open override /*1*/ val end: jet.Short
-        public open override /*1*/ fun <get-end>(): jet.Short
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*1*/ val start: jet.Short
-        public open override /*1*/ fun <get-start>(): jet.Short
-    public open override /*1*/ fun iterator(): jet.ShortIterator
+public final class ShortProgression : kotlin.Progression<kotlin.Short> {
+    /*primary*/ public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short, /*2*/ increment: kotlin.Int)
+    public open override /*1*/ val end: kotlin.Short
+        public open override /*1*/ fun <get-end>(): kotlin.Short
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*1*/ val start: kotlin.Short
+        public open override /*1*/ fun <get-start>(): kotlin.Short
+    public open override /*1*/ fun iterator(): kotlin.ShortIterator
 }
 
-internal final class ShortProgressionIterator : jet.ShortIterator {
-    /*primary*/ public constructor ShortProgressionIterator(/*0*/ start: jet.Short, /*1*/ end: jet.Short, /*2*/ increment: jet.Int)
-    private final val finalElement: jet.Short
-        private final fun <get-finalElement>(): jet.Short
-    private final var hasNext: jet.Boolean
-        private final fun <get-hasNext>(): jet.Boolean
-        private final fun <set-hasNext>(/*0*/ <set-?>: jet.Boolean): jet.Unit
-    internal final val increment: jet.Int
-        internal final fun <get-increment>(): jet.Int
-    private final var next: jet.Int
-        private final fun <get-next>(): jet.Int
-        private final fun <set-next>(/*0*/ <set-?>: jet.Int): jet.Unit
-    public open override /*1*/ fun hasNext(): jet.Boolean
-    public final override /*1*/ /*fake_override*/ fun next(): jet.Short
-    public open override /*1*/ fun nextShort(): jet.Short
+internal final class ShortProgressionIterator : kotlin.ShortIterator {
+    /*primary*/ public constructor ShortProgressionIterator(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short, /*2*/ increment: kotlin.Int)
+    private final val finalElement: kotlin.Short
+        private final fun <get-finalElement>(): kotlin.Short
+    private final var hasNext: kotlin.Boolean
+        private final fun <get-hasNext>(): kotlin.Boolean
+        private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
+    internal final val increment: kotlin.Int
+        internal final fun <get-increment>(): kotlin.Int
+    private final var next: kotlin.Int
+        private final fun <get-next>(): kotlin.Int
+        private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public open override /*1*/ fun hasNext(): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun next(): kotlin.Short
+    public open override /*1*/ fun nextShort(): kotlin.Short
 }
 
-public final class ShortRange : jet.Range<jet.Short>, jet.Progression<jet.Short> {
-    /*primary*/ public constructor ShortRange(/*0*/ start: jet.Short, /*1*/ end: jet.Short)
-    public open override /*2*/ val end: jet.Short
-        public open override /*2*/ fun <get-end>(): jet.Short
-    public open override /*1*/ val increment: jet.Int
-        public open override /*1*/ fun <get-increment>(): jet.Int
-    public open override /*2*/ val start: jet.Short
-        public open override /*2*/ fun <get-start>(): jet.Short
-    public open override /*1*/ fun contains(/*0*/ item: jet.Short): jet.Boolean
-    public open override /*1*/ fun iterator(): jet.ShortIterator
+public final class ShortRange : kotlin.Range<kotlin.Short>, kotlin.Progression<kotlin.Short> {
+    /*primary*/ public constructor ShortRange(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short)
+    public open override /*2*/ val end: kotlin.Short
+        public open override /*2*/ fun <get-end>(): kotlin.Short
+    public open override /*1*/ val increment: kotlin.Int
+        public open override /*1*/ fun <get-increment>(): kotlin.Int
+    public open override /*2*/ val start: kotlin.Short
+        public open override /*2*/ fun <get-start>(): kotlin.Short
+    public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
+    public open override /*1*/ fun iterator(): kotlin.ShortIterator
     
     public class object <class-object-for-ShortRange> {
         /*primary*/ private constructor <class-object-for-ShortRange>()
-        public final val EMPTY: jet.ShortRange
-            public final fun <get-EMPTY>(): jet.ShortRange
+        public final val EMPTY: kotlin.ShortRange
+            public final fun <get-EMPTY>(): kotlin.ShortRange
     }
 }
 
-public final class String : jet.Comparable<jet.String>, jet.CharSequence {
+public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
     /*primary*/ public constructor String()
-    public open override /*1*/ val length: jet.Int
-        public open override /*1*/ fun <get-length>(): jet.Int
-    public open override /*1*/ fun compareTo(/*0*/ that: jet.String): jet.Int
-    public open override /*1*/ fun get(/*0*/ index: jet.Int): jet.Char
-    public final fun plus(/*0*/ other: jet.Any?): jet.String
+    public open override /*1*/ val length: kotlin.Int
+        public open override /*1*/ fun <get-length>(): kotlin.Int
+    public open override /*1*/ fun compareTo(/*0*/ that: kotlin.String): kotlin.Int
+    public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
+    public final fun plus(/*0*/ other: kotlin.Any?): kotlin.String
 }
 
 public open class Throwable {
-    /*primary*/ public constructor Throwable(/*0*/ message: jet.String? = ..., /*1*/ cause: jet.Throwable? = ...)
-    public final fun getCause(): jet.Throwable?
-    public final fun getMessage(): jet.String?
-    public final fun printStackTrace(): jet.Unit
+    /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String? = ..., /*1*/ cause: kotlin.Throwable? = ...)
+    public final fun getCause(): kotlin.Throwable?
+    public final fun getMessage(): kotlin.String?
+    public final fun printStackTrace(): kotlin.Unit
 }
 
 public final class Unit {
@@ -1680,37 +1680,37 @@ public final class Unit {
     
     public class object <class-object-for-Unit> {
         /*primary*/ private constructor <class-object-for-Unit>()
-        public final val VALUE: jet.Unit
-            public final fun <get-VALUE>(): jet.Unit
+        public final val VALUE: kotlin.Unit
+            public final fun <get-VALUE>(): kotlin.Unit
     }
 }
 
-public final annotation class data : jet.Annotation {
+public final annotation class data : kotlin.Annotation {
     /*primary*/ public constructor data()
 }
 
-public final annotation class deprecated : jet.Annotation {
-    /*primary*/ public constructor deprecated(/*0*/ value: jet.String)
-    internal final val value: jet.String
-        internal final fun <get-value>(): jet.String
+public final annotation class deprecated : kotlin.Annotation {
+    /*primary*/ public constructor deprecated(/*0*/ value: kotlin.String)
+    internal final val value: kotlin.String
+        internal final fun <get-value>(): kotlin.String
 }
 
-public final annotation class inline : jet.Annotation {
-    /*primary*/ public constructor inline(/*0*/ strategy: jet.InlineStrategy = ...)
-    public final val strategy: jet.InlineStrategy
-        public final fun <get-strategy>(): jet.InlineStrategy
+public final annotation class inline : kotlin.Annotation {
+    /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
+    public final val strategy: kotlin.InlineStrategy
+        public final fun <get-strategy>(): kotlin.InlineStrategy
 }
 
-public final annotation class noinline : jet.Annotation {
+public final annotation class noinline : kotlin.Annotation {
     /*primary*/ public constructor noinline()
 }
 
-public final annotation class suppress : jet.Annotation {
-    /*primary*/ public constructor suppress(/*0*/ vararg names: jet.String /*jet.Array<jet.String>*/)
-    internal final val names: jet.Array<jet.String>
-        internal final fun <get-names>(): jet.Array<jet.String>
+public final annotation class suppress : kotlin.Annotation {
+    /*primary*/ public constructor suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<kotlin.String>*/)
+    internal final val names: kotlin.Array<kotlin.String>
+        internal final fun <get-names>(): kotlin.Array<kotlin.String>
 }
 
-public final annotation class tailRecursive : jet.Annotation {
+public final annotation class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
 }
