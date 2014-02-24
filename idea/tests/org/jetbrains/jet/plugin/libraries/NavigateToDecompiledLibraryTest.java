@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.libraries;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.LibraryOrderEntry;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderEntry;
@@ -84,7 +85,7 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
     }
 
     private void doTest() {
-        classFile = getClassFile();
+        classFile = getClassFile(PACKAGE, getTestName(false), myModule);
         JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData(classFile, getProject());
         Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(decompiledData.getFile(),
                                                                               decompiledData.getRenderedDescriptorsToRanges());
@@ -121,27 +122,6 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         return document.getText();
     }
 
-    @Nullable
-    private LibraryOrderEntry findOurTestLibrary() {
-        for (OrderEntry orderEntry : ModuleRootManager.getInstance(myModule).getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry) {
-                return (LibraryOrderEntry) orderEntry;
-            }
-        }
-        return null;
-    }
-
-    private VirtualFile getClassFile() {
-        LibraryOrderEntry library = findOurTestLibrary();
-        assertNotNull(library);
-
-        VirtualFile packageDir = library.getFiles(OrderRootType.CLASSES)[0].findFileByRelativePath(PACKAGE.replace(".", "/"));
-        assertNotNull(packageDir);
-        VirtualFile classFile = packageDir.findChild(getTestName(false) + ".class");
-        assertNotNull(classFile);
-        return classFile;
-    }
-
     @NotNull
     private static Map<String, JetDeclaration> getRenderedDescriptorToKotlinPsiMap(
             @NotNull JetFile file, @NotNull Map<String, TextRange> renderedDescriptorsToRanges
@@ -163,5 +143,31 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/library", false);
+    }
+
+    @Nullable
+    private static LibraryOrderEntry findOurTestLibrary(@NotNull Module module) {
+        for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry) {
+                return (LibraryOrderEntry) orderEntry;
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    /*package*/ static VirtualFile getClassFile(
+            @NotNull String packageName,
+            @NotNull String className,
+            @NotNull Module module
+    ) {
+        LibraryOrderEntry library = findOurTestLibrary(module);
+        assertNotNull(library);
+
+        VirtualFile packageDir = library.getFiles(OrderRootType.CLASSES)[0].findFileByRelativePath(packageName.replace(".", "/"));
+        assertNotNull(packageDir);
+        VirtualFile classFile = packageDir.findChild(className + ".class");
+        assertNotNull(classFile);
+        return classFile;
     }
 }
