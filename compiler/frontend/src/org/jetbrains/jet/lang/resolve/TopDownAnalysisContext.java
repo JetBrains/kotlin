@@ -69,6 +69,8 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
+    @Override
+    @NotNull
     public TopDownAnalysisParameters getTopDownAnalysisParameters() {
         return topDownAnalysisParameters;
     }

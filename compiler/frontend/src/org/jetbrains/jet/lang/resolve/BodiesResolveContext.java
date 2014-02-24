@@ -60,6 +60,8 @@ public interface BodiesResolveContext extends GlobalContext {
     Map<JetScript, WritableScope> getScriptScopes();
     DataFlowInfo getOuterDataFlowInfo();
 
+    @NotNull
+    TopDownAnalysisParameters getTopDownAnalysisParameters();
     void setTopDownAnalysisParameters(TopDownAnalysisParameters parameters);
 
     boolean completeAnalysisNeeded(@NotNull PsiElement element);

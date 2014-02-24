@@ -236,7 +236,7 @@ public class ResolveElementCache {
         // Activate resolving of supertypes
         descriptor.getTypeConstructor().getSupertypes();
 
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(resolveSession, trace, file);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveDelegationSpecifierList(createEmptyContext(resolveSession), classOrObject, descriptor,
                                                     descriptor.getUnsubstitutedPrimaryConstructor(),
                                                     descriptor.getScopeForClassHeaderResolution(),
@@ -247,8 +247,7 @@ public class ResolveElementCache {
         final JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
 
         BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(
-                resolveSession.getStorageManager(),
-                resolveSession.getExceptionTracker(),
+                createParameters(resolveSession),
                 new Function<JetDeclaration, JetScope>() {
                     @Override
                     public JetScope apply(JetDeclaration declaration) {
@@ -257,7 +256,7 @@ public class ResolveElementCache {
                         return propertyResolutionScope;
                     }
                 });
-        BodyResolver bodyResolver = createBodyResolver(trace, file, bodyResolveContext, resolveSession.getModuleDescriptor());
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         PropertyDescriptor descriptor = (PropertyDescriptor) resolveSession.resolveToDescriptor(jetProperty);
 
         JetExpression propertyInitializer = jetProperty.getInitializer();
@@ -282,7 +281,7 @@ public class ResolveElementCache {
         JetScope scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(namedFunction);
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) resolveSession.resolveToDescriptor(namedFunction);
 
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(resolveSession, trace, file);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveFunctionBody(createEmptyContext(resolveSession), trace, namedFunction, functionDescriptor, scope);
     }
 
@@ -298,8 +297,9 @@ public class ResolveElementCache {
         ConstructorDescriptor constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor();
         assert constructorDescriptor != null;
 
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(resolveSession, trace, file);
-        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass, constructorDescriptor, scope);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
+        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass,
+                                                                            constructorDescriptor, scope);
     }
 
     private static boolean initializerAdditionalResolve(
@@ -311,7 +311,7 @@ public class ResolveElementCache {
         JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(classInitializer, JetClassOrObject.class);
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
 
-        BodyResolver bodyResolver = createBodyResolverWithEmptyContext(resolveSession, trace, file);
+        BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
         bodyResolver.resolveAnonymousInitializers(createEmptyContext(resolveSession), classOrObject,
                                                   classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
                                                   classOrObjectDescriptor.getScopeForInitializerResolution());
@@ -319,32 +319,25 @@ public class ResolveElementCache {
         return true;
     }
 
-    private static BodyResolver createBodyResolver(BindingTrace trace, JetFile file, BodyResolveContextForLazy bodyResolveContext,
-            ModuleDescriptor module) {
-        TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
-                bodyResolveContext.getStorageManager(),
-                bodyResolveContext.getExceptionTracker(),
-                Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
-        InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(file.getProject(), parameters, trace, module);
+    private static BodyResolver createBodyResolver(ResolveSession resolveSession, BindingTrace trace, JetFile file) {
+        InjectorForBodyResolve bodyResolve = new InjectorForBodyResolve(
+                file.getProject(),
+                createParameters(resolveSession),
+                trace,
+                resolveSession.getModuleDescriptor()
+        );
         return bodyResolve.getBodyResolver();
     }
 
-    private static BodyResolver createBodyResolverWithEmptyContext(
-            ResolveSession resolveSession,
-            BindingTrace trace,
-            JetFile file
-    ) {
-        return createBodyResolver(trace, file,
-                                  createEmptyContext(resolveSession),
-                                  resolveSession.getModuleDescriptor());
+    private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession) {
+        return new TopDownAnalysisParameters(
+                    resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
+                    Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
     }
 
     @NotNull
     private static BodyResolveContextForLazy createEmptyContext(@NotNull ResolveSession resolveSession) {
-        return new BodyResolveContextForLazy(
-                resolveSession.getStorageManager(),
-                resolveSession.getExceptionTracker(),
-                Functions.<JetScope>constant(null));
+        return new BodyResolveContextForLazy(createParameters(resolveSession), Functions.<JetScope>constant(null));
     }
 
     private static JetScope getExpressionResolutionScope(@NotNull ResolveSession resolveSession, @NotNull JetExpression expression) {
@@ -433,29 +426,27 @@ public class ResolveElementCache {
 
     private static class BodyResolveContextForLazy implements BodiesResolveContext {
 
-        private final StorageManager storageManager;
-        private final ExceptionTracker exceptionTracker;
         private final Function<? super JetDeclaration, JetScope> declaringScopes;
+        private final TopDownAnalysisParameters topDownAnalysisParameters;
 
         private BodyResolveContextForLazy(
-                @NotNull StorageManager storageManager,
-                @NotNull ExceptionTracker exceptionTracker,
-                @NotNull Function<? super JetDeclaration, JetScope> declaringScopes) {
-            this.storageManager = storageManager;
-            this.exceptionTracker = exceptionTracker;
+                @NotNull TopDownAnalysisParameters parameters,
+                @NotNull Function<? super JetDeclaration, JetScope> declaringScopes
+        ) {
+            this.topDownAnalysisParameters = parameters;
             this.declaringScopes = declaringScopes;
         }
 
         @NotNull
         @Override
         public StorageManager getStorageManager() {
-            return storageManager;
+            return topDownAnalysisParameters.getStorageManager();
         }
 
         @NotNull
         @Override
         public ExceptionTracker getExceptionTracker() {
-            return exceptionTracker;
+            return topDownAnalysisParameters.getExceptionTracker();
         }
 
         @Override
@@ -497,6 +488,12 @@ public class ResolveElementCache {
         @Override
         public DataFlowInfo getOuterDataFlowInfo() {
             return DataFlowInfo.EMPTY;
+        }
+
+        @NotNull
+        @Override
+        public TopDownAnalysisParameters getTopDownAnalysisParameters() {
+            return topDownAnalysisParameters;
         }
 
         @Override
