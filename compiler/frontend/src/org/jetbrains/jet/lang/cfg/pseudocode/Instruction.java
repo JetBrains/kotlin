@@ -37,4 +37,7 @@ public interface Instruction {
 
     @NotNull
     Collection<Instruction> getCopies();
+
+    @NotNull
+    LexicalScope getLexicalScope();
 }

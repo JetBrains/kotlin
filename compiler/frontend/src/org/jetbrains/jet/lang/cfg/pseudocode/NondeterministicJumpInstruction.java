@@ -28,13 +28,14 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     private final List<Label> targetLabels;
     private final Map<Label, Instruction> resolvedTargets;
 
-    public NondeterministicJumpInstruction(List<Label> targetLabels) {
+    public NondeterministicJumpInstruction(List<Label> targetLabels, LexicalScope lexicalScope) {
+        super(lexicalScope);
         this.targetLabels = Lists.newArrayList(targetLabels);
         resolvedTargets = Maps.newLinkedHashMap();
     }
 
-    public NondeterministicJumpInstruction(Label targetLabel) {
-        this(Lists.newArrayList(targetLabel));
+    public NondeterministicJumpInstruction(Label targetLabel, LexicalScope lexicalScope) {
+        this(Lists.newArrayList(targetLabel), lexicalScope);
     }
 
     public List<Label> getTargetLabels() {
@@ -102,6 +103,6 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     }
 
     private Instruction createCopy(@NotNull List<Label> newTargetLabels) {
-        return new NondeterministicJumpInstruction(newTargetLabels);
+        return new NondeterministicJumpInstruction(newTargetLabels, lexicalScope);
     }
 }

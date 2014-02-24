@@ -24,8 +24,8 @@ public class WriteValueInstruction extends InstructionWithNext {
     @NotNull
     private final JetElement lValue;
 
-    public WriteValueInstruction(@NotNull JetElement assignment, @NotNull JetElement lValue) {
-        super(assignment);
+    public WriteValueInstruction(@NotNull JetElement assignment, @NotNull JetElement lValue, @NotNull LexicalScope lexicalScope) {
+        super(assignment, lexicalScope);
         this.lValue = lValue;
     }
 
@@ -56,6 +56,6 @@ public class WriteValueInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new WriteValueInstruction(element, lValue);
+        return new WriteValueInstruction(element, lValue, lexicalScope);
     }
 }

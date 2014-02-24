@@ -36,6 +36,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private JetControlFlowBuilder builder = null;
 
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
+    private final Stack<LexicalScope> lexicalScopes = new Stack<LexicalScope>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
     private int labelCount = 0;
     private int allowDeadLabelCount = 0;
@@ -76,6 +77,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pushBuilder(subroutine, subroutine);
         }
         assert builder != null;
+        builder.enterLexicalScope(subroutine);
         builder.enterSubroutine(subroutine);
     }
 
@@ -83,6 +85,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     @Override
     public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
         super.exitSubroutine(subroutine);
+        builder.exitLexicalScope(subroutine);
         JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
             JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
@@ -163,7 +166,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             elementToBlockInfo.put(subroutine, blockInfo);
             allBlocks.push(blockInfo);
             bindLabel(entryPoint);
-            add(new SubroutineEnterInstruction(subroutine));
+            add(new SubroutineEnterInstruction(subroutine, getCurrentScope()));
         }
 
         @NotNull
@@ -191,7 +194,28 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             return blockInfo.getExitPoint();
         }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        @NotNull
+        private LexicalScope getCurrentScope() {
+            return lexicalScopes.peek();
+        }
+
+        @Override
+        public void enterLexicalScope(@NotNull JetElement element) {
+            LexicalScope current = lexicalScopes.isEmpty() ? null : getCurrentScope();
+            LexicalScope scope = new LexicalScope(current, element);
+            lexicalScopes.push(scope);
+        }
+
+        @Override
+        public void exitLexicalScope(@NotNull JetElement element) {
+            LexicalScope currentScope = getCurrentScope();
+            assert currentScope.getElement() == element : "Exit from not the current lexical scope.\n" +
+                    "Current scope is for: " + currentScope.getElement() + ".\n" +
+                    "Exit from the scope for: " + element.getText();
+            lexicalScopes.pop();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private void handleJumpInsideTryFinally(Label jumpTarget) {
             List<TryFinallyBlockInfo> finallyBlocks = new ArrayList<TryFinallyBlockInfo>();
@@ -219,11 +243,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public Pseudocode exitSubroutine(@NotNull JetElement subroutine) {
             bindLabel(getExitPoint(subroutine));
-            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, false));
+            pseudocode.addExitInstruction(new SubroutineExitInstruction(subroutine, getCurrentScope(), false));
             bindLabel(error);
-            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, true));
+            pseudocode.addErrorInstruction(new SubroutineExitInstruction(subroutine, getCurrentScope(), true));
             bindLabel(sink);
-            pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, "<SINK>"));
+            pseudocode.addSinkInstruction(new SubroutineSinkInstruction(subroutine, getCurrentScope(), "<SINK>"));
             elementToBlockInfo.remove(subroutine);
             allBlocks.pop();
             return pseudocode;
@@ -231,64 +255,64 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void mark(@NotNull JetElement element) {
-            add(new MarkInstruction(element));
+            add(new MarkInstruction(element, getCurrentScope()));
         }
 
         @Override
         public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
             handleJumpInsideTryFinally(exitPoint);
-            add(new ReturnValueInstruction(returnExpression, exitPoint));
+            add(new ReturnValueInstruction(returnExpression, getCurrentScope(), exitPoint));
         }
 
         @Override
         public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
             handleJumpInsideTryFinally(exitPoint);
-            add(new ReturnNoValueInstruction(returnExpression, exitPoint));
+            add(new ReturnNoValueInstruction(returnExpression, getCurrentScope(), exitPoint));
         }
 
         @Override
         public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
-            add(new WriteValueInstruction(assignment, lValue));
+            add(new WriteValueInstruction(assignment, lValue, getCurrentScope()));
         }
 
         @Override
         public void declareParameter(@NotNull JetParameter parameter) {
-            add(new VariableDeclarationInstruction(parameter));
+            add(new VariableDeclarationInstruction(parameter, getCurrentScope()));
         }
 
         @Override
         public void declareVariable(@NotNull JetVariableDeclaration property) {
-            add(new VariableDeclarationInstruction(property));
+            add(new VariableDeclarationInstruction(property, getCurrentScope()));
         }
 
         @Override
         public void declareFunction(@NotNull JetElement subroutine, @NotNull Pseudocode pseudocode) {
-            add(new LocalFunctionDeclarationInstruction(subroutine, pseudocode));
+            add(new LocalFunctionDeclarationInstruction(subroutine, pseudocode, getCurrentScope()));
         }
 
         @Override
         public void loadUnit(@NotNull JetExpression expression) {
-            add(new LoadUnitValueInstruction(expression));
+            add(new LoadUnitValueInstruction(expression, getCurrentScope()));
         }
 
         @Override
         public void jump(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
-            add(new UnconditionalJumpInstruction(label));
+            add(new UnconditionalJumpInstruction(label, getCurrentScope()));
         }
 
         @Override
         public void jumpOnFalse(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(false, label));
+            add(new ConditionalJumpInstruction(false, getCurrentScope(), label));
         }
 
         @Override
         public void jumpOnTrue(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(true, label));
+            add(new ConditionalJumpInstruction(true, getCurrentScope(), label));
         }
 
         @Override
@@ -299,20 +323,20 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void nondeterministicJump(@NotNull Label label) {
             handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(label));
+            add(new NondeterministicJumpInstruction(label, getCurrentScope()));
         }
 
         @Override
         public void nondeterministicJump(@NotNull List<Label> labels) {
             //todo
             //handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(labels));
+            add(new NondeterministicJumpInstruction(labels, getCurrentScope()));
         }
 
         @Override
         public void jumpToError() {
             handleJumpInsideTryFinally(error);
-            add(new UnconditionalJumpInstruction(error));
+            add(new UnconditionalJumpInstruction(error, getCurrentScope()));
         }
 
         @Override
@@ -323,7 +347,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void throwException(@NotNull JetThrowExpression expression) {
             handleJumpInsideTryFinally(error);
-            add(new ThrowExceptionInstruction(expression, error));
+            add(new ThrowExceptionInstruction(expression, getCurrentScope(), error));
         }
 
         public void exitTryFinally() {
@@ -333,7 +357,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void unsupported(JetElement element) {
-            add(new UnsupportedElementInstruction(element));
+            add(new UnsupportedElementInstruction(element, getCurrentScope()));
         }
 
         @Override
@@ -373,7 +397,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
-            add(new CallInstruction(expression, resolvedCall));
+            add(new CallInstruction(expression, getCurrentScope(), resolvedCall));
         }
 
         @Override
@@ -383,11 +407,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @Override
         public void compilationError(@NotNull JetElement element, @NotNull String message) {
-            add(new CompilationErrorInstruction(element, message));
+            add(new CompilationErrorInstruction(element, getCurrentScope(), message));
         }
 
         private void read(@NotNull JetElement element) {
-            add(new ReadValueInstruction(element));
+            add(new ReadValueInstruction(element, getCurrentScope()));
         }
     }
 

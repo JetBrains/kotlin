@@ -28,8 +28,8 @@ public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
     private final Pseudocode body;
     private Instruction sink;
 
-    public LocalFunctionDeclarationInstruction(@NotNull JetElement element, @NotNull Pseudocode body) {
-        super(element);
+    public LocalFunctionDeclarationInstruction(@NotNull JetElement element, @NotNull Pseudocode body, LexicalScope lexicalScope) {
+        super(element, lexicalScope);
         this.body = body;
     }
 
@@ -71,6 +71,6 @@ public class LocalFunctionDeclarationInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new LocalFunctionDeclarationInstruction(element, body);
+        return new LocalFunctionDeclarationInstruction(element, body, lexicalScope);
     }
 }

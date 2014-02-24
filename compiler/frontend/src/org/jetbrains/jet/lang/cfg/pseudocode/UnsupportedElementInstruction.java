@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.psi.JetElement;
 
 public class UnsupportedElementInstruction extends InstructionWithNext {
 
-    protected UnsupportedElementInstruction(@NotNull JetElement element) {
-        super(element);
+    protected UnsupportedElementInstruction(@NotNull JetElement element, @NotNull LexicalScope lexicalScope) {
+        super(element, lexicalScope);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class UnsupportedElementInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new UnsupportedElementInstruction(element);
+        return new UnsupportedElementInstruction(element, lexicalScope);
     }
 }

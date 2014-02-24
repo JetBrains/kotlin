@@ -26,7 +26,8 @@ public class SubroutineSinkInstruction extends InstructionImpl {
     private final JetElement subroutine;
     private final String debugLabel;
 
-    public SubroutineSinkInstruction(@NotNull JetElement subroutine, @NotNull String debugLabel) {
+    public SubroutineSinkInstruction(@NotNull JetElement subroutine, @NotNull LexicalScope lexicalScope, @NotNull String debugLabel) {
+        super(lexicalScope);
         this.subroutine = subroutine;
         this.debugLabel = debugLabel;
     }
@@ -59,6 +60,6 @@ public class SubroutineSinkInstruction extends InstructionImpl {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new SubroutineSinkInstruction(subroutine, debugLabel);
+        return new SubroutineSinkInstruction(subroutine, lexicalScope, debugLabel);
     }
 }

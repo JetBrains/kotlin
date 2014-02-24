@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 public class LoadUnitValueInstruction extends InstructionWithNext {
 
-    public LoadUnitValueInstruction(@NotNull JetExpression expression) {
-        super(expression);
+    public LoadUnitValueInstruction(@NotNull JetExpression expression, LexicalScope lexicalScope) {
+        super(expression, lexicalScope);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class LoadUnitValueInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new LoadUnitValueInstruction((JetExpression) element);
+        return new LoadUnitValueInstruction((JetExpression) element, lexicalScope);
     }
 }

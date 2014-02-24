@@ -27,7 +27,8 @@ public class SubroutineExitInstruction extends InstructionImpl {
     private final boolean isError;
     private SubroutineSinkInstruction sinkInstruction;
 
-    public SubroutineExitInstruction(@NotNull JetElement subroutine, boolean isError) {
+    public SubroutineExitInstruction(@NotNull JetElement subroutine, @NotNull LexicalScope lexicalScope, boolean isError) {
+        super(lexicalScope);
         this.subroutine = subroutine;
         this.isError = isError;
     }
@@ -69,6 +70,6 @@ public class SubroutineExitInstruction extends InstructionImpl {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new SubroutineExitInstruction(subroutine, isError);
+        return new SubroutineExitInstruction(subroutine, lexicalScope, isError);
     }
 }

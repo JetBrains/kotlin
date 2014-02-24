@@ -507,6 +507,7 @@ public class JetControlFlowProcessor {
                 }
                 boolean isFirst = true;
                 for (JetCatchClause catchClause : catchClauses) {
+                    builder.enterLexicalScope(catchClause);
                     if (!isFirst) {
                         builder.bindLabel(catchLabels.remove());
                     }
@@ -523,6 +524,7 @@ public class JetControlFlowProcessor {
                         generateInstructions(catchBody, NOT_IN_CONDITION);
                     }
                     builder.jump(afterCatches);
+                    builder.exitLexicalScope(catchClause);
                 }
 
                 builder.bindLabel(afterCatches);
@@ -578,6 +580,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitDoWhileExpressionVoid(@NotNull JetDoWhileExpression expression, CFPContext context) {
+            builder.enterLexicalScope(expression);
             mark(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
@@ -594,10 +597,12 @@ public class JetControlFlowProcessor {
             builder.jumpOnTrue(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.loadUnit(expression);
+            builder.exitLexicalScope(expression);
         }
 
         @Override
         public void visitForExpressionVoid(@NotNull JetForExpression expression, CFPContext context) {
+            builder.enterLexicalScope(expression);
             mark(expression);
             JetExpression loopRange = expression.getLoopRange();
             if (loopRange != null) {
@@ -630,6 +635,7 @@ public class JetControlFlowProcessor {
             builder.nondeterministicJump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.loadUnit(expression);
+            builder.exitLexicalScope(expression);
         }
 
         @Override
@@ -731,6 +737,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBlockExpressionVoid(@NotNull JetBlockExpression expression, CFPContext context) {
+            boolean declareLexicalScope = !isBlockInDoWhile(expression);
+            if (declareLexicalScope) {
+                builder.enterLexicalScope(expression);
+            }
             mark(expression);
             List<JetElement> statements = expression.getStatements();
             for (JetElement statement : statements) {
@@ -739,6 +749,15 @@ public class JetControlFlowProcessor {
             if (statements.isEmpty()) {
                 builder.loadUnit(expression);
             }
+            if (declareLexicalScope) {
+                builder.exitLexicalScope(expression);
+            }
+        }
+
+        private boolean isBlockInDoWhile(@NotNull JetBlockExpression expression) {
+            PsiElement parent = expression.getParent();
+            if (parent == null) return false;
+            return parent.getParent() instanceof JetDoWhileExpression;
         }
 
         @Override

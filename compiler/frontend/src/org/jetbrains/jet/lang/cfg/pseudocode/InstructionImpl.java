@@ -27,10 +27,13 @@ public abstract class InstructionImpl implements Instruction {
     private Pseudocode owner;
     private final Collection<Instruction> previousInstructions = new LinkedHashSet<Instruction>();
     private final Collection<Instruction> copies = Sets.newHashSet();
+    @NotNull
+    protected final LexicalScope lexicalScope;
     private Instruction original;
     protected boolean isDead = false;
 
-    protected InstructionImpl() {
+    protected InstructionImpl(@NotNull LexicalScope lexicalScope) {
+        this.lexicalScope = lexicalScope;
     }
 
     @Override
@@ -94,6 +97,12 @@ public abstract class InstructionImpl implements Instruction {
         assert this.original == null :
                 "Instruction can't have two originals: this.original = " + this.original + "; new original = " + original;
         this.original = original;
+    }
+
+    @NotNull
+    @Override
+    public LexicalScope getLexicalScope() {
+        return lexicalScope;
     }
 
     protected Instruction updateCopyInfo(@NotNull Instruction instruction) {

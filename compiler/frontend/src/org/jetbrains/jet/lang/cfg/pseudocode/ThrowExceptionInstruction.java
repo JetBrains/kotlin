@@ -24,8 +24,8 @@ import org.jetbrains.jet.lang.psi.JetThrowExpression;
 public class ThrowExceptionInstruction extends AbstractJumpInstruction implements JetElementInstruction {
     private final JetThrowExpression expression;
 
-    public ThrowExceptionInstruction(@NotNull JetThrowExpression expression, @NotNull Label errorLabel) {
-        super(errorLabel);
+    public ThrowExceptionInstruction(@NotNull JetThrowExpression expression, @NotNull LexicalScope lexicalScope, @NotNull Label errorLabel) {
+        super(errorLabel, lexicalScope);
         this.expression = expression;
     }
 
@@ -51,7 +51,7 @@ public class ThrowExceptionInstruction extends AbstractJumpInstruction implement
     }
 
     @Override
-    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
-        return new ThrowExceptionInstruction(expression, newLabel);
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
+        return new ThrowExceptionInstruction(expression, lexicalScope, newLabel);
     }
 }

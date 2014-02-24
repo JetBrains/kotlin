@@ -25,8 +25,8 @@ public class ReturnValueInstruction extends AbstractJumpInstruction implements R
 
     private final JetElement element;
 
-    public ReturnValueInstruction(@NotNull JetExpression returnExpression, @NotNull Label targetLabel) {
-        super(targetLabel);
+    public ReturnValueInstruction(@NotNull JetExpression returnExpression, @NotNull LexicalScope lexicalScope, @NotNull Label targetLabel) {
+        super(targetLabel, lexicalScope);
         this.element = returnExpression;
     }
 
@@ -52,7 +52,7 @@ public class ReturnValueInstruction extends AbstractJumpInstruction implements R
     }
 
     @Override
-    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
-        return new ReturnValueInstruction((JetExpression) element, newLabel);
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
+        return new ReturnValueInstruction((JetExpression) element, lexicalScope, newLabel);
     }
 }

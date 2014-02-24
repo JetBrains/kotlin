@@ -24,8 +24,8 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction implements
 
     private final JetElement element;
 
-    public ReturnNoValueInstruction(@NotNull JetElement element, Label targetLabel) {
-        super(targetLabel);
+    public ReturnNoValueInstruction(@NotNull JetElement element, LexicalScope lexicalScope, Label targetLabel) {
+        super(targetLabel, lexicalScope);
         this.element = element;
     }
 
@@ -51,7 +51,7 @@ public class ReturnNoValueInstruction extends AbstractJumpInstruction implements
     }
 
     @Override
-    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
-        return new ReturnNoValueInstruction(element, newLabel);
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
+        return new ReturnNoValueInstruction(element, lexicalScope, newLabel);
     }
 }
