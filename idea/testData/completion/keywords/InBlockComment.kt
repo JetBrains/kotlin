@@ -1,7 +1,6 @@
 class TestClass {
     /* <caret> */
     fun test() {
-        '<caret>'
     }
 }
 
