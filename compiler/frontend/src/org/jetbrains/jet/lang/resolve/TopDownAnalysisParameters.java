@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * Various junk that cannot be placed into context (yet).
  */
-public class TopDownAnalysisParameters {
+public class TopDownAnalysisParameters implements GlobalContext {
     @NotNull
     private final StorageManager storageManager;
     @NotNull
@@ -55,13 +56,13 @@ public class TopDownAnalysisParameters {
         this.scriptParameters = scriptParameters;
     }
 
-    //@Override
+    @Override
     @NotNull
     public StorageManager getStorageManager() {
         return storageManager;
     }
 
-    //@Override
+    @Override
     @NotNull
     public ExceptionTracker getExceptionTracker() {
         return exceptionTracker;

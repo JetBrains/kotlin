@@ -18,13 +18,11 @@ package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
-import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
-import org.jetbrains.jet.context.SimpleGlobalContext;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
@@ -53,13 +51,11 @@ public class InjectorForBodyResolve {
     
     private final Project project;
     private final TopDownAnalysisParameters topDownAnalysisParameters;
-    private final ExceptionTracker exceptionTracker;
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptor moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final BodyResolver bodyResolver;
-    private final SimpleGlobalContext simpleGlobalContext;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
@@ -88,13 +84,11 @@ public class InjectorForBodyResolve {
     ) {
         this.project = project;
         this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.exceptionTracker = topDownAnalysisParameters.getExceptionTracker();
         this.storageManager = topDownAnalysisParameters.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.bodyResolver = new BodyResolver();
-        this.simpleGlobalContext = new SimpleGlobalContext(storageManager, exceptionTracker);
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
@@ -150,7 +144,7 @@ public class InjectorForBodyResolve {
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
-        expressionTypingComponents.setGlobalContext(simpleGlobalContext);
+        expressionTypingComponents.setGlobalContext(topDownAnalysisParameters);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);

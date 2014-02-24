@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
@@ -67,7 +66,6 @@ public class InjectorForTopDownAnalyzerForJs {
     private final ModuleDescriptorImpl moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final TopDownAnalyzer topDownAnalyzer;
-    private final TopDownAnalysisContext topDownAnalysisContext;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
     private final BodyResolver bodyResolver;
@@ -111,7 +109,6 @@ public class InjectorForTopDownAnalyzerForJs {
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.bodyResolver = new BodyResolver();
@@ -187,7 +184,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
-        expressionTypingComponents.setGlobalContext(topDownAnalysisContext);
+        expressionTypingComponents.setGlobalContext(topDownAnalysisParameters);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
@@ -262,10 +259,6 @@ public class InjectorForTopDownAnalyzerForJs {
     
     public TopDownAnalyzer getTopDownAnalyzer() {
         return this.topDownAnalyzer;
-    }
-    
-    public TopDownAnalysisContext getTopDownAnalysisContext() {
-        return this.topDownAnalysisContext;
     }
     
 }

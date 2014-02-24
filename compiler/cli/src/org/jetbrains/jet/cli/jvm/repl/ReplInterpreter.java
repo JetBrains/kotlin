@@ -318,7 +318,7 @@ public class ReplInterpreter {
             return null;
         }
 
-        ScriptDescriptor scriptDescriptor = injector.getTopDownAnalysisContext().getScripts().get(psiFile.getScript());
+        ScriptDescriptor scriptDescriptor = topDownAnalysisContext.getScripts().get(psiFile.getScript());
         lastLineScope = trace.get(BindingContext.SCRIPT_SCOPE, scriptDescriptor);
         if (lastLineScope == null) {
             throw new IllegalStateException("last line scope is not initialized");
