@@ -236,6 +236,11 @@ public class BindingContextUtils {
         return descriptor;
     }
 
+    public static FunctionDescriptor getEnclosingFunctionDescriptor(@NotNull BindingContext context, @NotNull JetElement element) {
+        JetFunction function = PsiTreeUtil.getParentOfType(element, JetFunction.class);
+        return (FunctionDescriptor)context.get(DECLARATION_TO_DESCRIPTOR, function);
+    }
+
     public static void reportAmbiguousLabel(
             @NotNull BindingTrace trace,
             @NotNull JetSimpleNameExpression targetLabel,

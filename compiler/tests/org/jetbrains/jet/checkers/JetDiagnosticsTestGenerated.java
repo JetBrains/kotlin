@@ -1745,6 +1745,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlStructures/ForbidStatementAsDirectFunctionBody.kt");
             }
             
+            @TestMetadata("jumpAcrossFunctionBoundary.kt")
+            public void testJumpAcrossFunctionBoundary() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlStructures/jumpAcrossFunctionBoundary.kt");
+            }
+            
             @TestMetadata("kt1075.kt")
             public void testKt1075() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlStructures/kt1075.kt");
