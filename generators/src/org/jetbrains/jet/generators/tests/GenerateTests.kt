@@ -97,6 +97,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTe
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -506,6 +507,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractExpressionSelectionTest>()) {
             model("expressionSelection", testMethod = "doTestExpressionSelection", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractDecompiledTextTest>()) {
+            model("libraries/decompiledText", pattern = """^([^\.]+)$""")
         }
     }
 

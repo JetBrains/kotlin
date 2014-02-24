@@ -46,7 +46,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     }
 
     protected LightProjectDescriptor getProjectDescriptorFromFileDirective() {
-        if (!getTestName(false).startsWith("AllFilesPresentIn")) {
+        if (!isAllFilesPresentInTest()) {
             try {
                 String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
 
@@ -67,6 +67,10 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         }
 
         return JetLightProjectDescriptor.INSTANCE;
+    }
+
+    protected boolean isAllFilesPresentInTest() {
+        return getTestName(false).startsWith("AllFilesPresentIn");
     }
 
     protected String fileName() {
