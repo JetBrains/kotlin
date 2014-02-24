@@ -20,16 +20,21 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.*;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionAnalyzeStrategy;
+import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionDataMergeStrategy;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS;
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 
@@ -129,9 +134,9 @@ public class PseudocodeVariablesData {
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers(@NotNull Pseudocode pseudocode) {
 
         final Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, true);
-        Map<VariableDescriptor, VariableInitState> initialMap = Collections.emptyMap();
 
-        InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>> instructionDataMergeStrategy =
+        return new PseudocodeVariableDataCollector(bindingContext).collectData(
+                pseudocode, FORWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
                     @Override
                     public Edges<Map<VariableDescriptor, VariableInitState>> execute(
@@ -145,11 +150,7 @@ public class PseudocodeVariablesData {
                                 addVariableInitStateFromCurrentInstructionIfAny(instruction, enterInstructionData, declaredVariables);
                         return Edges.create(enterInstructionData, exitInstructionData);
                     }
-                };
-
-        return new PseudocodeVariableDataCollector(bindingContext).collectData(
-                pseudocode, FORWARD, ANALYSE_LOCAL_DECLARATIONS,
-                initialMap, initialMap, instructionDataMergeStrategy);
+                });
     }
 
     public static VariableInitState getDefaultValueForInitializers(
@@ -228,8 +229,8 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        Map<VariableDescriptor, VariableUseState> sinkInstructionData = Maps.newHashMap();
-        InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>> collectVariableUseStatusStrategy =
+        return new PseudocodeVariableDataCollector(bindingContext).collectData(
+                pseudocode, BACKWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @Override
                     public Edges<Map<VariableDescriptor, VariableUseState>> execute(
@@ -272,10 +273,7 @@ public class PseudocodeVariablesData {
                         }
                         return Edges.create(enterResult, exitResult);
                     }
-                };
-        return new PseudocodeVariableDataCollector(bindingContext).collectData(
-                pseudocode, BACKWARD, ANALYSE_LOCAL_DECLARATIONS, Collections.<VariableDescriptor, VariableUseState>emptyMap(),
-                sinkInstructionData, collectVariableUseStatusStrategy);
+                });
     }
 
     public static class VariableInitState {

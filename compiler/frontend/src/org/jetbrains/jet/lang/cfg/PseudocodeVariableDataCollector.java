@@ -23,12 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PseudocodeVariableDataCollector extends PseudocodeTraverser {
     private final BindingContext bindingContext;
@@ -37,39 +35,37 @@ public class PseudocodeVariableDataCollector extends PseudocodeTraverser {
         bindingContext = context;
     }
 
-    public <D> Map<Instruction, Edges<D>> collectData(
+    public <D> Map<Instruction, Edges<Map<VariableDescriptor, D>>> collectData(
             @NotNull Pseudocode pseudocode,
             @NotNull TraversalOrder traversalOrder,
-            @NotNull LookInsideStrategy lookInside,
-            @NotNull D initialDataValue,
-            @NotNull D initialDataValueForEnterInstruction,
-            @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy
+            @NotNull InstructionDataMergeStrategy<Map<VariableDescriptor, D>> instructionDataMergeStrategy
     ) {
-
-        Map<Instruction, Edges<D>> edgesMap = Maps.newLinkedHashMap();
-        initializeEdgesMap(pseudocode, lookInside, edgesMap, initialDataValue);
-        edgesMap.put(getStartInstruction(pseudocode, traversalOrder), Edges.create(initialDataValueForEnterInstruction, initialDataValueForEnterInstruction));
+        Map<VariableDescriptor, D> initialDataValue = Collections.emptyMap();
+        Map<Instruction, Edges<Map<VariableDescriptor, D>>> edgesMap = Maps.newLinkedHashMap();
+        initializeEdgesMap(pseudocode, edgesMap, initialDataValue);
+        edgesMap.put(getStartInstruction(pseudocode, traversalOrder), Edges.create(initialDataValue, initialDataValue));
 
         boolean[] changed = new boolean[1];
         changed[0] = true;
         while (changed[0]) {
             changed[0] = false;
-            collectDataFromSubgraph(pseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
-                                    Collections.<Instruction>emptyList(), changed, false);
+            collectDataFromSubgraph(pseudocode, traversalOrder, LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS, edgesMap,
+                                    instructionDataMergeStrategy, Collections.<Instruction>emptyList(), changed, false);
         }
         return edgesMap;
     }
 
-    private <D> void initializeEdgesMap(
-            @NotNull Pseudocode pseudocode, LookInsideStrategy lookInside,
-            @NotNull Map<Instruction, Edges<D>> edgesMap,
-            @NotNull D initialDataValue) {
+    private static <M> void initializeEdgesMap(
+            @NotNull Pseudocode pseudocode,
+            @NotNull Map<Instruction, Edges<M>> edgesMap,
+            @NotNull M initialDataValue
+    ) {
         List<Instruction> instructions = pseudocode.getInstructions();
-        Edges<D> initialEdge = Edges.create(initialDataValue, initialDataValue);
+        Edges<M> initialEdge = Edges.create(initialDataValue, initialDataValue);
         for (Instruction instruction : instructions) {
             edgesMap.put(instruction, initialEdge);
-            if (shouldLookInside(instruction, lookInside)) {
-                initializeEdgesMap(((LocalFunctionDeclarationInstruction) instruction).getBody(), lookInside, edgesMap, initialDataValue);
+            if (shouldLookInside(instruction, LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS)) {
+                initializeEdgesMap(((LocalFunctionDeclarationInstruction) instruction).getBody(), edgesMap, initialDataValue);
             }
         }
     }
@@ -78,8 +74,8 @@ public class PseudocodeVariableDataCollector extends PseudocodeTraverser {
             @NotNull Pseudocode pseudocode,
             @NotNull TraversalOrder traversalOrder,
             @NotNull LookInsideStrategy lookInside,
-            @NotNull Map<Instruction, Edges<D>> edgesMap,
-            @NotNull InstructionDataMergeStrategy<D> instructionDataMergeStrategy,
+            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, D>>> edgesMap,
+            @NotNull InstructionDataMergeStrategy<Map<VariableDescriptor, D>> instructionDataMergeStrategy,
             @NotNull Collection<Instruction> previousSubGraphInstructions,
             boolean[] changed,
             boolean isLocal
@@ -109,25 +105,25 @@ public class PseudocodeVariableDataCollector extends PseudocodeTraverser {
                                         previousInstructions,
                                         changed, true);
                 Instruction lastInstruction = getLastInstruction(subroutinePseudocode, traversalOrder);
-                Edges<D> previousValue = edgesMap.get(instruction);
-                Edges<D> newValue = edgesMap.get(lastInstruction);
+                Edges<Map<VariableDescriptor, D>> previousValue = edgesMap.get(instruction);
+                Edges<Map<VariableDescriptor, D>> newValue = edgesMap.get(lastInstruction);
                 if (!previousValue.equals(newValue)) {
                     changed[0] = true;
                     edgesMap.put(instruction, newValue);
                 }
                 continue;
             }
-            Edges<D> previousDataValue = edgesMap.get(instruction);
+            Edges<Map<VariableDescriptor, D>> previousDataValue = edgesMap.get(instruction);
 
-            Collection<D> incomingEdgesData = Sets.newHashSet();
+            Collection<Map<VariableDescriptor, D>> incomingEdgesData = Sets.newHashSet();
 
             for (Instruction previousInstruction : allPreviousInstructions) {
-                Edges<D> previousData = edgesMap.get(previousInstruction);
+                Edges<Map<VariableDescriptor, D>> previousData = edgesMap.get(previousInstruction);
                 if (previousData != null) {
                     incomingEdgesData.add(previousData.out);
                 }
             }
-            Edges<D> mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData);
+            Edges<Map<VariableDescriptor, D>> mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData);
             if (!mergedData.equals(previousDataValue)) {
                 changed[0] = true;
                 edgesMap.put(instruction, mergedData);
