@@ -186,6 +186,7 @@ class JetDummyClassFileViewProvider extends UserDataHolderBase implements FileVi
         return psi;
     }
 
+    @NotNull
     public static JetFile createJetFile(PsiManager psiManager, VirtualFile file, String text) {
         return new JetDummyClassFileViewProvider(psiManager, file, text).getPsi(JetLanguage.INSTANCE);
     }
