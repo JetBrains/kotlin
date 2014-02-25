@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
@@ -35,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.inject.Inject;
@@ -84,7 +82,6 @@ public class DeclarationResolver {
 
 
     public void process(@NotNull TopDownAnalysisContext c) {
-        checkModifiersAndAnnotationsInPackageDirectives(c);
         resolveAnnotationConstructors(c);
         resolveConstructorHeaders(c);
         resolveAnnotationStubsOnClassesAndConstructors(c);
@@ -93,31 +90,6 @@ public class DeclarationResolver {
         importsResolver.processMembersImports(c);
         checkRedeclarationsInPackages(c);
         checkRedeclarationsInInnerClassNames(c);
-    }
-
-    private void checkModifiersAndAnnotationsInPackageDirectives(@NotNull TopDownAnalysisContext c) {
-        for (JetFile file : c.getFiles()) {
-            JetPackageDirective packageDirective = file.getPackageDirective();
-            if (packageDirective == null) continue;
-
-            PsiElement firstChild = packageDirective.getFirstChild();
-            if (!(firstChild instanceof JetModifierList)) continue;
-            JetModifierList modifierList = (JetModifierList) firstChild;
-
-            for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-                JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
-                if (calleeExpression != null) {
-                    JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
-                    if (reference != null) {
-                        trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
-                    }
-                }
-            }
-
-            for (ASTNode node : modifierList.getModifierNodes()) {
-                trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
-            }
-        }
     }
 
     private void resolveAnnotationConstructors(@NotNull TopDownAnalysisContext c) {

@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -47,6 +48,10 @@ public class DeclarationsChecker {
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
+        for (JetFile file : bodiesResolveContext.getFiles()) {
+            checkModifiersAndAnnotationsInPackageDirective(file);
+        }
+
         Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getClasses();
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
@@ -93,6 +98,29 @@ public class DeclarationsChecker {
         }
         if (declaration.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
             trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
+        }
+    }
+
+    private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
+        JetPackageDirective packageDirective = file.getPackageDirective();
+        if (packageDirective == null) return;
+
+        PsiElement firstChild = packageDirective.getFirstChild();
+        if (!(firstChild instanceof JetModifierList)) return;
+        JetModifierList modifierList = (JetModifierList) firstChild;
+
+        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+            JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+            if (calleeExpression != null) {
+                JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
+                if (reference != null) {
+                    trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+                }
+            }
+        }
+
+        for (ASTNode node : modifierList.getModifierNodes()) {
+            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
         }
     }
 
