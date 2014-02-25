@@ -20,7 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.ClassVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
@@ -119,7 +119,9 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
 
     @Override
-    public void inlineCall(CallableMethod callableMethod, ClassVisitor visitor) {
+    public void genCall(CallableMethod callableMethod, ResolvedCall<?> resolvedCall, int mask, ExpressionCodegen codegen) {
+        assert mask == 0 : "Default method invocation couldn't be inlined " + resolvedCall;
+
         MethodNode node = null;
 
         try {
@@ -131,13 +133,15 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         }
         catch (Exception e) {
             String text = getNodeText(node);
-            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, codegen.getContext().getContextDescriptor());
+            PsiElement element = BindingContextUtils.descriptorToDeclaration(bindingContext, this.codegen.getContext().getContextDescriptor());
             throw new CompilationException("Couldn't inline method call '" +
                                        functionDescriptor.getName() +
-                                       "' into \n" + (element != null ? element.getText() : "null psi element " + codegen.getContext().getContextDescriptor()) +
+                                       "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
                                        "\ncause: " +
                                        text, e, call.getCallElement());
         }
+
+        leaveTemps();
     }
 
     @NotNull
@@ -203,7 +207,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
-        inliner.doTransformAndMerge(codegen.getInstructionAdapter(), remapper);
+        inliner.doTransformAndMerge(codegen.v, remapper);
     }
 
 
@@ -242,13 +246,12 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
 
     @Override
-    public void putInLocal(@NotNull Type type, @Nullable StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
+    public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
         putCapturedInLocal(type, stackValue, valueParameterDescriptor, -1);
     }
 
-    @Override
     public void putCapturedInLocal(
-            @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int index
+            @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int capturedParamIndex
     ) {
         if (!asFunctionInline && Type.VOID_TYPE != type) {
             //TODO remap only inlinable closure => otherwise we could get a lot of problem
@@ -257,8 +260,8 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
             ParameterInfo info = new ParameterInfo(type, false, couldBeRemapped ? -1 : codegen.getFrameMap().enterTemp(type), remappedIndex);
 
-            if (index >= 0 && couldBeRemapped) {
-                CapturedParamInfo capturedParamInfo = activeLambda.getCapturedVars().get(index);
+            if (capturedParamIndex >= 0 && couldBeRemapped) {
+                CapturedParamInfo capturedParamInfo = activeLambda.getCapturedVars().get(capturedParamIndex);
                 capturedParamInfo.setRemapValue(remappedIndex != null ? remappedIndex : StackValue.local(info.getIndex(), info.getType()));
             }
 
@@ -266,9 +269,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         }
     }
 
-
     /*descriptor is null for captured vars*/
-    @Override
     public boolean shouldPutValue(
             @NotNull Type type,
             @Nullable StackValue stackValue,
@@ -324,7 +325,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         if (!info.isSkippedOrRemapped()) {
             int index = info.getIndex();
             Type type = info.type;
-            StackValue.local(index, type).store(type, codegen.getInstructionAdapter());
+            StackValue.local(index, type).store(type, codegen.v);
         }
     }
 
@@ -353,7 +354,6 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         }
     }
 
-    @Override
     public void leaveTemps() {
         FrameMap frameMap = codegen.getFrameMap();
         for (ListIterator<? extends ParameterInfo> iterator = actualParameters.listIterator(actualParameters.size()); iterator.hasPrevious(); ) {
@@ -364,14 +364,12 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         }
     }
 
-    @Override
-    public boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
+    public static boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
         //TODO deparenthisise
         return expression instanceof JetFunctionLiteralExpression &&
                !InlineUtil.hasNoinlineAnnotation(valueParameterDescriptora);
     }
 
-    @Override
     public void rememberClosure(JetFunctionLiteralExpression expression, Type type) {
         ParameterInfo closureInfo = new ParameterInfo(type, true, -1, -1);
         int index = recordParamInfo(closureInfo, true);
@@ -449,5 +447,33 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
     private static String descriptorName(DeclarationDescriptor descriptor) {
         return DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
+    }
+
+    @Override
+    public void genValueAndPut(
+            @NotNull ValueParameterDescriptor valueParameterDescriptor,
+            @NotNull JetExpression argumentExpression,
+            @NotNull Type parameterType
+    ) {
+        //TODO deparenthisise
+        if (isInliningClosure(argumentExpression, valueParameterDescriptor)) {
+            rememberClosure((JetFunctionLiteralExpression) argumentExpression, parameterType);
+        } else {
+            StackValue value = codegen.gen(argumentExpression);
+            if (shouldPutValue(parameterType, value, valueParameterDescriptor)) {
+                value.put(parameterType, codegen.v);
+            }
+            afterParameterPut(parameterType, value, valueParameterDescriptor);
+        }
+    }
+
+    @Override
+    public void putCapturedValueOnStack(
+            @NotNull StackValue stackValue, @NotNull Type valueType, int paramIndex
+    ) {
+        if (shouldPutValue(stackValue.type, stackValue, null)) {
+            stackValue.put(stackValue.type, codegen.v);
+        }
+        putCapturedInLocal(stackValue.type, stackValue, null, paramIndex);
     }
 }

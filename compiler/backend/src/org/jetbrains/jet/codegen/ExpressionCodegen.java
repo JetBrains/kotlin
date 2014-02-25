@@ -33,7 +33,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.codegen.inline.InlineCodegen;
-import org.jetbrains.jet.codegen.inline.CallGenerator;
 import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
@@ -84,7 +83,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private int myLastLineNumber = -1;
 
-    InstructionAdapter v;
+    public final InstructionAdapter v;
     final MethodVisitor methodVisitor;
     final FrameMap myFrameMap;
     final JetTypeMapper typeMapper;
@@ -108,6 +107,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
     @NotNull
     private final TailRecursionCodegen tailRecursionCodegen;
+
+    public final CallGenerator defaulCallGenerator;
 
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
@@ -178,6 +179,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.context = context;
         this.statementVisitor = new CodegenStatementVisitor(this);
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
+        this.defaulCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     }
 
     public GenerationState getState() {
@@ -1334,7 +1336,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.anew(type);
         v.dup();
 
-        pushClosureOnStack(closure, false, CallGenerator.NOT_INLINE);
+        pushClosureOnStack(closure, false, defaulCallGenerator);
 
         JetDelegatorToSuperCall superCall = closure.getSuperCall();
         if (superCall != null) {
@@ -1355,7 +1357,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return StackValue.onStack(type);
     }
 
-    public void pushClosureOnStack(CalculatedClosure closure, boolean ignoreThisAndReceiver, CallGenerator callGenerator) {
+    public void pushClosureOnStack(@Nullable CalculatedClosure closure, boolean ignoreThisAndReceiver, @NotNull CallGenerator callGenerator) {
         if (closure != null) {
             int paramIndex = 0;
             if (!ignoreThisAndReceiver) {
@@ -1364,20 +1366,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     StackValue thisOrOuter = generateThisOrOuter(captureThis, false);
 
                     assert !isPrimitive(thisOrOuter.type) : "This or outer should be non primitive: " + thisOrOuter.type;
-                    if (callGenerator.shouldPutValue(thisOrOuter.type, thisOrOuter, null)) {
-                        thisOrOuter.put(thisOrOuter.type, v);
-                    }
-                    callGenerator.putCapturedInLocal(thisOrOuter.type, thisOrOuter, null, paramIndex++);
+                    callGenerator.putCapturedValueOnStack(thisOrOuter, thisOrOuter.type, paramIndex++);
                 }
 
                 JetType captureReceiver = closure.getCaptureReceiverType();
                 if (captureReceiver != null) {
                     Type asmType = typeMapper.mapType(captureReceiver);
                     StackValue.Local capturedReceiver = StackValue.local(context.isStatic() ? 0 : 1, asmType);
-                    if (callGenerator.shouldPutValue(asmType, capturedReceiver, null)) {
-                        capturedReceiver.put(asmType, v);
-                    }
-                    callGenerator.putCapturedInLocal(asmType, capturedReceiver, null, paramIndex++);
+                    callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
                 }
             }
 
@@ -1387,10 +1383,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     sharedVarType = typeMapper.mapType((VariableDescriptor) entry.getKey());
                 }
                 StackValue capturedVar = entry.getValue().getOuterValue(this);
-                if (callGenerator.shouldPutValue(sharedVarType, capturedVar, null)) {
-                    capturedVar.put(sharedVarType, v);
-                }
-                callGenerator.putCapturedInLocal(sharedVarType, capturedVar, null, paramIndex++);
+                callGenerator.putCapturedValueOnStack(capturedVar, sharedVarType, paramIndex++);
             }
         }
     }
@@ -2123,7 +2116,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
 
-        CallGenerator callGenerator = !isInline ? CallGenerator.NOT_INLINE :
+        CallGenerator callGenerator = !isInline ? defaulCallGenerator :
                           new InlineCodegen(this, state, (SimpleFunctionDescriptor) unwrapFakeOverride(
                                   (CallableMemberDescriptor) descriptor.getOriginal()), call);
 
@@ -2136,7 +2129,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             receiver.put(receiver.type, v);
         }
 
-        assert callGenerator == CallGenerator.NOT_INLINE || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
+        assert callGenerator == defaulCallGenerator || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Method with defaults or tail recursive couldn't be inlined " + descriptor;
 
         pushArgumentsAndInvoke(resolvedCall, callableMethod, callGenerator);
@@ -2152,18 +2145,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return;
         }
 
-        if (mask == 0) {
-            if (callGenerator != CallGenerator.NOT_INLINE) {
-                callGenerator.inlineCall(callable, getParentCodegen().getBuilder().getVisitor());
-            } else {
-                callable.invokeWithNotNullAssertion(v, state, resolvedCall);
-            }
-        }
-        else {
-            callable.invokeDefaultWithNotNullAssertion(v, state, resolvedCall, mask);
-        }
-
-        callGenerator.leaveTemps();
+        callGenerator.genCall(callable, resolvedCall, mask, this);
     }
 
     private void genThisAndReceiverFromResolvedCall(
@@ -2339,7 +2321,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new IllegalStateException();
         }
 
-        callGenerator = callGenerator != null ? callGenerator : CallGenerator.NOT_INLINE;
+        callGenerator = callGenerator != null ? callGenerator : defaulCallGenerator;
         int mask = 0;
 
         for (Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
@@ -2356,25 +2338,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 JetExpression argumentExpression = valueArgument.getArgumentExpression();
                 assert argumentExpression != null : valueArgument.asElement().getText();
 
-                //TODO deparenthisise
-                if (callGenerator.isInliningClosure(argumentExpression, valueParameter)) {
-                    callGenerator.rememberClosure((JetFunctionLiteralExpression) argumentExpression, parameterType);
-                } else {
-                    StackValue value = gen(argumentExpression);
-                    if (callGenerator.shouldPutValue(parameterType, value, valueParameter)) {
-                        value.put(parameterType, v);
-                    }
-                    callGenerator.putInLocal(parameterType, value, valueParameter);
-                }
+                callGenerator.genValueAndPut(valueParameter, argumentExpression, parameterType);
             } else if (resolvedValueArgument instanceof DefaultValueArgument) {
                 pushDefaultValueOnStack(parameterType, v);
                 mask |= (1 << valueParameter.getIndex());
-                callGenerator.putInLocal(parameterType, null, valueParameter);
+                callGenerator.afterParameterPut(parameterType, null, valueParameter);
             }
             else if (resolvedValueArgument instanceof VarargValueArgument) {
                 VarargValueArgument valueArgument = (VarargValueArgument) resolvedValueArgument;
                 genVarargs(valueParameter, valueArgument);
-                callGenerator.putInLocal(parameterType, null, valueParameter);
+                callGenerator.afterParameterPut(parameterType, null, valueParameter);
             }
             else {
                 throw new UnsupportedOperationException();
@@ -3319,7 +3292,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
         //so we need generate closure on stack
         //See StackValue.receiver for more info
-        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists(), CallGenerator.NOT_INLINE);
+        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists(), defaulCallGenerator);
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructorDescriptor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
@@ -3872,11 +3845,6 @@ The "returned" value of try expression with no finally is either the last expres
             codegen = codegen.getParentCodegen();
         }
         throw new IllegalStateException("Script codegen should be present in codegen tree");
-    }
-
-    @NotNull
-    public InstructionAdapter getInstructionAdapter() {
-        return v;
     }
 
     @NotNull

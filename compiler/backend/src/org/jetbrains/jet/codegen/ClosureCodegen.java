@@ -25,7 +25,6 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.inline.CallGenerator;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.LocalLookup;
@@ -154,7 +153,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             v.anew(asmType);
             v.dup();
 
-            codegen.pushClosureOnStack(closure, false, CallGenerator.NOT_INLINE);
+            codegen.pushClosureOnStack(closure, false, codegen.defaulCallGenerator);
             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor());
         }
         return StackValue.onStack(asmType);
