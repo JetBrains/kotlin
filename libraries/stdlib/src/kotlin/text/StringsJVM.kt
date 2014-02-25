@@ -5,6 +5,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
 import java.util.LinkedList
+import java.util.Locale
 import java.nio.charset.Charset
 
 public inline fun String.lastIndexOf(str: String) : Int = (this as java.lang.String).lastIndexOf(str)
@@ -38,6 +39,8 @@ public inline fun String.toCharArray() : CharArray = (this as java.lang.String).
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 public inline fun String.format(vararg args : Any?) : String = java.lang.String.format(this, *args)
+
+public inline fun String.format(locale: Locale, vararg args : Any?) : String = java.lang.String.format(locale, this, *args)
 
 public inline fun String.split(regex : String) : Array<String> = (this as java.lang.String).split(regex)
 
