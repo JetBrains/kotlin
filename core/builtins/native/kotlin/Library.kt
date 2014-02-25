@@ -8,3 +8,5 @@ public fun Any?.equals(other: Any?): Boolean
 public fun Any?.toString(): String
 
 public fun String?.plus(other: Any?): String
+
+public fun arrayOfNulls<T>(size: Int): Array<T?>

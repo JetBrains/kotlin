@@ -14,20 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.generators.builtins.iterators
+package org.jetbrains.jet.generators.builtins.arrays
 
 import org.jetbrains.jet.generators.builtins.PrimitiveType
 import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 import java.io.PrintWriter
 
-class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin"
+
     override fun generateBody() {
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
-            out.println("public abstract class ${s}Iterator : Iterator<$s> {")
-            out.println("    override final fun next() = next$s()")
+            out.println("public class ${s}Array(public val size: Int) {")
+            out.println("    public fun get(index: Int): $s")
+            out.println("    public fun set(index: Int, value: $s): Unit")
             out.println()
-            out.println("    public abstract fun next$s(): $s")
+            out.println("    public fun iterator(): ${s}Iterator")
+            out.println()
+            out.println("    public val indices: IntRange")
             out.println("}")
             out.println()
         }
