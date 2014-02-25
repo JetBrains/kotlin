@@ -35,7 +35,7 @@ class JavaToKotlinMethodMapGenerated {
         );
         
         put(b, "java.lang.String", "String",
-            pair("compareTo(java.lang.String)", "fun compareTo(that: kotlin.String): kotlin.Int"),            
+            pair("compareTo(java.lang.String)", "fun compareTo(other: kotlin.String): kotlin.Int"),            
             pair("equals(java.lang.Object)", "fun equals(other: kotlin.Any?): kotlin.Boolean"),            
             pair("hashCode()", "fun hashCode(): kotlin.Int"),            
             pair("toString()", "fun toString(): kotlin.String")            
