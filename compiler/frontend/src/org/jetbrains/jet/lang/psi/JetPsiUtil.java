@@ -445,17 +445,6 @@ public class JetPsiUtil {
         return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
 
-    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(@Nullable JetExpression expression) {
-        if (!(expression instanceof JetFunctionLiteralExpression)) return false;
-        JetFunctionLiteralExpression functionLiteral = (JetFunctionLiteralExpression) expression;
-        for (JetParameter parameter : functionLiteral.getValueParameters()) {
-            if (parameter.getTypeReference() != null) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static boolean isScriptDeclaration(@NotNull JetDeclaration namedDeclaration) {
         return getScript(namedDeclaration) != null;
     }
