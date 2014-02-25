@@ -102,7 +102,7 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
-    public DescriptorRendererBuilder setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy) {
+    public DescriptorRendererBuilder setOverrideRenderingPolicy(@NotNull DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy) {
         this.overrideRenderingPolicy = overrideRenderingPolicy;
         return this;
     }

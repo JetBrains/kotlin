@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameBase;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
@@ -54,6 +55,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean normalizedVisibilities;
     private final boolean showInternalKeyword;
     private final boolean prettyFunctionTypes;
+
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
     @NotNull
@@ -66,7 +68,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     /* package */ DescriptorRendererImpl(
             boolean shortNames,
             boolean withDefinedIn,
-            Set<DescriptorRenderer.Modifier> modifiers,
+            Set<Modifier> modifiers,
             boolean startFromName,
             boolean debugMode,
             boolean classWithPrimaryConstructor,
@@ -179,6 +181,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     @NotNull
     private String renderClassName(@NotNull ClassDescriptor klass) {
+        if (klass instanceof MissingDependencyErrorClass) {
+            return ((MissingDependencyErrorClass) klass).getFullFqName().asString();
+        }
         if (ErrorUtils.isError(klass)) {
             return klass.getTypeConstructor().toString();
         }
