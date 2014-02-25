@@ -16,20 +16,20 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
@@ -59,6 +59,8 @@ public class DeclarationsChecker {
             else if (classOrObject instanceof JetObjectDeclaration) {
                 checkObject((JetObjectDeclaration) classOrObject);
             }
+
+            checkSupertypesForConsistency(classDescriptor);
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
@@ -93,7 +95,83 @@ public class DeclarationsChecker {
             trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
         }
     }
-    
+
+    private void checkSupertypesForConsistency(@NotNull ClassDescriptor classDescriptor) {
+        Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
+                .buildDeepSubstitutionMultimap(classDescriptor.getDefaultType());
+        for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
+            Collection<TypeProjection> projections = entry.getValue();
+            if (projections.size() > 1) {
+                TypeConstructor typeConstructor = entry.getKey();
+                DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
+                assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
+                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
+
+                // Immediate arguments of supertypes cannot be projected
+                Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
+                for (TypeProjection projection : projections) {
+                    conflictingTypes.add(projection.getType());
+                }
+                switch (typeParameterDescriptor.getVariance()) {
+                    case INVARIANT:
+                        // Leave conflicting types as is
+                        break;
+                    case IN_VARIANCE:
+                        // Filter out those who have supertypes in this set (common supertype)
+                        Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
+                        break;
+                    case OUT_VARIANCE:
+                        // Filter out those who have subtypes in this set (common subtype)
+                        Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
+                        break;
+                }
+
+                if (conflictingTypes.size() > 1) {
+                    DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
+                    assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
+                    JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils
+                            .classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+                    JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
+                    assert delegationSpecifierList != null;
+                    //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                    trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
+                                         .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
+                                             conflictingTypes));
+                }
+            }
+        }
+    }
+
+    private enum Filter {
+        REMOVE_IF_SUBTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
+            }
+        },
+        REMOVE_IF_SUPERTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
+            }
+        };
+
+        private void proceed(Set<JetType> conflictingTypes) {
+            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+                JetType type = iterator.next();
+                for (JetType otherType : conflictingTypes) {
+                    boolean subtypeOf = removeNeeded(type, otherType);
+                    if (type != otherType && subtypeOf) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public abstract boolean removeNeeded(JetType subject, JetType other);
+    }
+
     private void checkObject(JetObjectDeclaration declaration) {
         reportErrorIfHasIllegalModifier(declaration);
     }

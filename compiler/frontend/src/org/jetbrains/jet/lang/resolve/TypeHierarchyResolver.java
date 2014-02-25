@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -29,9 +28,11 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
@@ -136,9 +137,6 @@ public class TypeHierarchyResolver {
         detectAndDisconnectLoops(c);
 
         // At this point, there are no loops in the type hierarchy
-
-        checkSupertypesForConsistency(c);
-        //        computeSuperclasses();
 
         checkTypesInClassHeaders(c); // Check bounds in the types used in generic bounds and supertype lists
     }
@@ -331,84 +329,6 @@ public class TypeHierarchyResolver {
                 break;
             }
         }
-    }
-
-    private void checkSupertypesForConsistency(@NotNull TopDownAnalysisContext c) {
-        for (MutableClassDescriptorLite mutableClassDescriptor : c.getClassesTopologicalOrder()) {
-            Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
-                    .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
-            for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
-                Collection<TypeProjection> projections = entry.getValue();
-                if (projections.size() > 1) {
-                    TypeConstructor typeConstructor = entry.getKey();
-                    DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
-                    TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
-
-                    // Immediate arguments of supertypes cannot be projected
-                    Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
-                    for (TypeProjection projection : projections) {
-                        conflictingTypes.add(projection.getType());
-                    }
-                    switch (typeParameterDescriptor.getVariance()) {
-                        case INVARIANT:
-                            // Leave conflicting types as is
-                            break;
-                        case IN_VARIANCE:
-                            // Filter out those who have supertypes in this set (common supertype)
-                            Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
-                            break;
-                        case OUT_VARIANCE:
-                            // Filter out those who have subtypes in this set (common subtype)
-                            Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
-                            break;
-                    }
-
-                    if (conflictingTypes.size() > 1) {
-                        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-                        assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                        JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils
-                                .classDescriptorToDeclaration(trace.getBindingContext(), mutableClassDescriptor);
-                        JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
-                        assert delegationSpecifierList != null;
-                        //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
-                                             .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
-                                                 conflictingTypes));
-                    }
-                }
-            }
-        }
-    }
-
-    private enum Filter {
-        REMOVE_IF_SUBTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
-            }
-        },
-        REMOVE_IF_SUPERTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
-            }
-        };
-
-        private void proceed(Set<JetType> conflictingTypes) {
-            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-                JetType type = iterator.next();
-                for (JetType otherType : conflictingTypes) {
-                    boolean subtypeOf = removeNeeded(type, otherType);
-                    if (type != otherType && subtypeOf) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-        }
-
-        public abstract boolean removeNeeded(JetType subject, JetType other);
     }
 
     private void checkTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
