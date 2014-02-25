@@ -19,17 +19,12 @@ package org.jetbrains.jet.codegen.intrinsics;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.RangeCodegenUtil;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import javax.annotation.PostConstruct;
@@ -131,36 +126,10 @@ public class IntrinsicMethods {
         declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
         declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
 
-        registerStaticField(getFqNameSafe(KotlinBuiltIns.getInstance().getUnit()), Name.identifier("VALUE"));
-
-        for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            FqName rangeClassFqName = RangeCodegenUtil.getRangeClassFqName(type);
-            FqName progressionClassFqName = RangeCodegenUtil.getProgressionClassFqName(type);
-
-            registerStaticField(rangeClassFqName, Name.identifier("EMPTY"));
-
-            registerRangeOrProgressionProperty(rangeClassFqName, Name.identifier("start"));
-            registerRangeOrProgressionProperty(rangeClassFqName, Name.identifier("end"));
-
-            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("start"));
-            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("end"));
-            registerRangeOrProgressionProperty(progressionClassFqName, Name.identifier("increment"));
-        }
-
         declareArrayMethods();
     }
 
-    private void registerStaticField(@NotNull FqName classFqName, @NotNull Name propertyName) {
-        FqNameUnsafe classObjectFqName = classFqName.toUnsafe().child(SpecialNames.getClassObjectName(classFqName.shortName()));
-        intrinsicsMap.registerIntrinsic(classObjectFqName, propertyName, -1, new StaticField(classFqName, propertyName));
-    }
-
-    private void registerRangeOrProgressionProperty(@NotNull FqName ownerClass, @NotNull Name propertyName) {
-        intrinsicsMap.registerIntrinsic(ownerClass, propertyName, -1, new PropertyOfProgressionOrRange(ownerClass, propertyName));
-    }
-
     private void declareArrayMethods() {
-
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             declareArrayMethodsForPrimitive(jvmPrimitiveType);
         }

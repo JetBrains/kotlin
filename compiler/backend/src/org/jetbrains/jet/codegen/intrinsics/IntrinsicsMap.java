@@ -29,8 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Map;
 
 class IntrinsicsMap {
-
-
     private static final class Key {
         @NotNull
         private final FqNameUnsafe owner;
@@ -82,15 +80,8 @@ class IntrinsicsMap {
     /**
      * @param valueParameterCount -1 for property
      */
-    public void registerIntrinsic(@NotNull FqNameUnsafe owner, @NotNull Name name, int valueParameterCount, @NotNull IntrinsicMethod impl) {
-        intrinsicsMap.put(new Key(owner, name, valueParameterCount), impl);
-    }
-
-    /**
-     * @param valueParameterCount -1 for property
-     */
     public void registerIntrinsic(@NotNull FqName owner, @NotNull Name name, int valueParameterCount, @NotNull IntrinsicMethod impl) {
-        registerIntrinsic(owner.toUnsafe(), name, valueParameterCount, impl);
+        intrinsicsMap.put(new Key(owner.toUnsafe(), name, valueParameterCount), impl);
     }
 
 

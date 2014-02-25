@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitiveNumberClassDescriptor;
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 
 public class RangeCodegenUtil {
     private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
@@ -41,8 +42,10 @@ public class RangeCodegenUtil {
         ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<FqName, PrimitiveType> progressionBuilder = ImmutableMap.builder();
         for (PrimitiveType primitiveType : PrimitiveType.values()) {
-            rangeBuilder.put(getRangeClassFqName(primitiveType), primitiveType);
-            progressionBuilder.put(getProgressionClassFqName(primitiveType), primitiveType);
+            FqName rangeClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Range"));
+            FqName progressionClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Progression"));
+            rangeBuilder.put(rangeClassFqName, primitiveType);
+            progressionBuilder.put(progressionClassFqName, primitiveType);
         }
         RANGE_TO_ELEMENT_TYPE = rangeBuilder.build();
         PROGRESSION_TO_ELEMENT_TYPE = progressionBuilder.build();
@@ -119,16 +122,6 @@ public class RangeCodegenUtil {
             }
         }
         return false;
-    }
-
-    @NotNull
-    public static FqName getRangeClassFqName(@NotNull PrimitiveType type) {
-        return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(type.getTypeName() + "Range"));
-    }
-
-    @NotNull
-    public static FqName getProgressionClassFqName(@NotNull PrimitiveType type) {
-        return KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(type.getTypeName() + "Progression"));
     }
 
     public static class BinaryCall {
