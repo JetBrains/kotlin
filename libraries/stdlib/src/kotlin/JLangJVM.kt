@@ -1,6 +1,7 @@
 package kotlin
 
-import java.lang.annotation.*
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
 import kotlin.jvm.internal.Intrinsic
 
 /**
@@ -27,3 +28,6 @@ Retention(RetentionPolicy.SOURCE)
 public annotation class volatile
 
 [Intrinsic("kotlin.synchronized")] public fun <R> synchronized(lock: Any, block: () -> R): R = block()
+
+public fun <T : Annotation> T.annotationType() : Class<out T> =
+    (this as java.lang.annotation.Annotation).annotationType() as Class<out T>
