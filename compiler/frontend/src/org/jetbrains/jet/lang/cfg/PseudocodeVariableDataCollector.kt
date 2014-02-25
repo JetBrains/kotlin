@@ -28,23 +28,23 @@ import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.*
 
 import java.util.*
 
-public class PseudocodeVariableDataCollector(private val bindingContext: BindingContext) : PseudocodeTraverser() {
+public class PseudocodeVariableDataCollector(
+        private val bindingContext: BindingContext,
+        private val pseudocode: Pseudocode
+) : PseudocodeTraverser() {
 
     suppress("UNCHECKED_CAST")
     public fun <D> collectDataJ(
-            pseudocode: Pseudocode,
             traversalOrder: TraversalOrder,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<MutableMap<VariableDescriptor, D>>
     ): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>> {
         //see KT-4605
         return collectData(
-                pseudocode, traversalOrder,
-                instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
+                traversalOrder, instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
         ) as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>
     }
 
     public fun <D> collectData(
-            pseudocode: Pseudocode,
             traversalOrder: TraversalOrder,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
     ): Map<Instruction, Edges<Map<VariableDescriptor, D>>> {

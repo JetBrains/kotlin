@@ -41,6 +41,7 @@ import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORW
 public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
     private final BindingContext bindingContext;
+    private final PseudocodeVariableDataCollector pseudocodeVariableDataCollector;
 
     private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
     private final Map<Pseudocode, Set<VariableDescriptor>> usedVariablesForDeclaration = Maps.newHashMap();
@@ -50,6 +51,7 @@ public class PseudocodeVariablesData {
     public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
         this.pseudocode = pseudocode;
         this.bindingContext = bindingContext;
+        this.pseudocodeVariableDataCollector = new PseudocodeVariableDataCollector(bindingContext, pseudocode);
     }
 
     @NotNull
@@ -124,19 +126,19 @@ public class PseudocodeVariablesData {
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers() {
         if (variableInitializers == null) {
-            variableInitializers = getVariableInitializers(pseudocode);
+            variableInitializers = computeVariableInitializers();
         }
 
         return variableInitializers;
     }
 
     @NotNull
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> getVariableInitializers(@NotNull Pseudocode pseudocode) {
+    private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> computeVariableInitializers() {
 
         final Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, true);
 
-        return new PseudocodeVariableDataCollector(bindingContext).collectDataJ(
-                pseudocode, FORWARD,
+        return pseudocodeVariableDataCollector.collectDataJ(
+                FORWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
                     @NotNull
                     @Override
@@ -231,8 +233,8 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        return new PseudocodeVariableDataCollector(bindingContext).collectDataJ(
-                pseudocode, BACKWARD,
+        return pseudocodeVariableDataCollector.collectDataJ(
+                BACKWARD,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @NotNull
                     @Override
