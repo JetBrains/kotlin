@@ -30,6 +30,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 
 import java.util.Map;
 
+import static org.jetbrains.jet.plugin.libraries.LibrariesPackage.buildDecompiledData;
+
 @SuppressWarnings("FieldAccessedSynchronizedAndUnsynchronized")
 public class JetDecompiledData {
 
@@ -57,7 +59,7 @@ public class JetDecompiledData {
             JetDecompiledData cachedData = virtualFile.getUserData(USER_DATA_KEY);
             //TODO: use cached value that keeps modification tracking for this virtual file
             if (cachedData == null || cachedData.getProject() != project) {
-                virtualFile.putUserData(USER_DATA_KEY, DecompiledDataFactory.createDecompiledData(virtualFile, project));
+                virtualFile.putUserData(USER_DATA_KEY, buildDecompiledData(virtualFile, project));
             }
             JetDecompiledData decompiledData = virtualFile.getUserData(USER_DATA_KEY);
             assert decompiledData != null;
@@ -84,7 +86,7 @@ public class JetDecompiledData {
     //TODO: should use more accurate way to identify descriptors
     @NotNull
     static String descriptorToKey(@NotNull DeclarationDescriptor descriptor) {
-        return DecompiledDataFactory.DESCRIPTOR_RENDERER.render(descriptor);
+        return LibrariesPackage.getDescriptorRendererForDecompiler().render(descriptor);
     }
 
     @NotNull

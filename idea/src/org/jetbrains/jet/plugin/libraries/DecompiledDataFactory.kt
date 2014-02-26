@@ -34,59 +34,64 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey
 
-public class DecompiledDataFactory(val classFile: VirtualFile, val project: Project, val resolver: ResolverForDecompiler) {
+public fun buildDecompiledData(classFile: VirtualFile, project: Project): JetDecompiledData {
+    return buildDecompiledData(classFile, project, ProjectBasedResolverForDecompiler(project))
+}
 
-    private val classFqName: FqName
-    private val classFileHeader: KotlinClassHeader
-
-    {
-        val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-        this.classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
-        val header = kotlinClass.getClassHeader()
-        assert(header != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-        this.classFileHeader = header!!
+public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolver: ResolverForDecompiler): JetDecompiledData {
+    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
+    val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
+    val classFileHeader = kotlinClass.getClassHeader()
+    assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val kind = classFileHeader!!.getKind()
+    val packageFqName = classFqName.parent()
+    val (text, renderedDescriptorsToRange) =
+    if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
+        buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
+    }
+    else if (kind == KotlinClassHeader.Kind.CLASS) {
+        buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
+    }
+    else {
+        // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
+        throw UnsupportedOperationException("Unknown header kind: " + kind)
     }
 
-    private val renderedDescriptorsToRange = HashMap<String, TextRange>()
-    private val builder = StringBuilder()
+    val jetFile = JetDummyClassFileViewProvider.createJetFile(PsiManager.getInstance(project), classFile, text)
+    return JetDecompiledData(jetFile, renderedDescriptorsToRange)
+}
 
-    fun build(): JetDecompiledData {
-        val packageFqName = classFqName.parent()
-        appendDecompiledTextAndPackageName(packageFqName)
-        val kind = classFileHeader.getKind()
-        if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-            for (member in sortDeclarations(resolver.resolveDeclarationsInPackage(packageFqName))) {
-                if (member !is ClassDescriptor) {
-                    appendDescriptor(member, "")
-                    builder.append("\n")
-                }
-            }
-        }
-        else
-            if (kind == KotlinClassHeader.Kind.CLASS) {
-                val cd = resolver.resolveClass(classFqName)
-                if (cd != null) {
-                    appendDescriptor(cd, "")
-                }
-            }
-            else {
-                // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
-                throw UnsupportedOperationException("Unknown header kind: " + kind)
-            }
+private val DECOMPILED_COMMENT: String = "/* compiled code */"
+public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
+        .setWithDefinedIn(false)
+        .setClassWithPrimaryConstructor(true)
+        .build()
 
-        val jetFile = JetDummyClassFileViewProvider.createJetFile(PsiManager.getInstance(project), classFile, builder.toString())
-        return JetDecompiledData(jetFile, renderedDescriptorsToRange)
-    }
+private data class DecompiledText(val text: String, val renderedDescriptorsToRange: Map<String, TextRange>)
 
-    private fun appendDecompiledTextAndPackageName(packageName: FqName) {
+private fun buildDecompiledText(packageFqName: FqName, descriptors: List<DeclarationDescriptor>): DecompiledText {
+    val builder = StringBuilder()
+    val renderedDescriptorsToRange = HashMap<String, TextRange>()
+
+    fun appendDecompiledTextAndPackageName() {
         builder.append("// IntelliJ API Decompiler stub source generated from a class file\n" + "// Implementation of methods is not available")
         builder.append("\n\n")
-        if (!packageName.isRoot()) {
-            builder.append("package ").append(packageName).append("\n\n")
+        if (!packageFqName.isRoot()) {
+            builder.append("package ").append(packageFqName).append("\n\n")
         }
     }
 
-    private fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String) {
+    fun sortDeclarations(input: Collection<DeclarationDescriptor>): List<DeclarationDescriptor> {
+        val r = ArrayList<DeclarationDescriptor>(input)
+        Collections.sort(r, MemberComparator.INSTANCE)
+        return r
+    }
+
+    fun saveDescriptorToRange(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
+        renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
+    }
+
+    fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String) {
         val startOffset = builder.length()
         val header = if (isEnumEntry(descriptor))
             descriptor.getName().asString()
@@ -150,24 +155,11 @@ public class DecompiledDataFactory(val classFile: VirtualFile, val project: Proj
         }
     }
 
-    private fun saveDescriptorToRange(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
-        renderedDescriptorsToRange[descriptorToKey(descriptor)] = TextRange(startOffset, endOffset)
+    appendDecompiledTextAndPackageName()
+    for (member in sortDeclarations(descriptors)) {
+        appendDescriptor(member, "")
+        builder.append("\n")
     }
 
-    private fun sortDeclarations(input: Collection<DeclarationDescriptor>): List<DeclarationDescriptor> {
-        val r = ArrayList<DeclarationDescriptor>(input)
-        Collections.sort(r, MemberComparator.INSTANCE)
-        return r
-    }
-
-}
-private val DECOMPILED_COMMENT: String = "/* compiled code */"
-
-public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
-        .setWithDefinedIn(false)
-        .setClassWithPrimaryConstructor(true)
-        .build()
-
-fun createDecompiledData(virtualFile: VirtualFile, project: Project): JetDecompiledData {
-    return DecompiledDataFactory(virtualFile, project, ProjectBasedResolverForDecompiler(project)).build()
+    return DecompiledText(builder.toString(), renderedDescriptorsToRange)
 }
