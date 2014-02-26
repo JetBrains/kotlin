@@ -21,10 +21,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 
+import java.util.List;
 import java.util.Map;
 
 class IntrinsicsMap {
@@ -84,6 +86,16 @@ class IntrinsicsMap {
 
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor.getName().asString().equals("plus")) {
+            List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
+            if (valueParameters.size() == 1) {
+                ValueParameterDescriptor parameter = valueParameters.iterator().next();
+                if (!parameter.getName().asString().equals("other")) {
+                    return null;
+                }
+            }
+        }
+
         Key key = new Key(
                 DescriptorUtils.getFqName(descriptor.getContainingDeclaration()),
                 descriptor.getName().asString(),
