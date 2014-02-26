@@ -46,6 +46,8 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import javax.inject.Inject;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
+
 public class TopDownAnalyzer {
 
     public static boolean LAZY;
@@ -191,6 +193,22 @@ public class TopDownAnalyzer {
                                         )
                                 );
                                 registerDeclarations(classOrObject.getDeclarations());
+
+                                checkManyClassObjects(classOrObject);
+                            }
+
+                            private void checkManyClassObjects(JetClassOrObject classOrObject) {
+                                boolean classObjectAlreadyFound = false;
+                                for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
+                                    jetDeclaration.accept(this);
+
+                                    if (jetDeclaration instanceof JetClassObject) {
+                                        if (classObjectAlreadyFound) {
+                                            trace.report(MANY_CLASS_OBJECTS.on((JetClassObject) jetDeclaration));
+                                        }
+                                        classObjectAlreadyFound = true;
+                                    }
+                                }
                             }
 
                             @Override
