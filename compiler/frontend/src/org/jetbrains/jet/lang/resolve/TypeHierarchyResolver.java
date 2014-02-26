@@ -524,7 +524,7 @@ public class TypeHierarchyResolver {
                     createClassDescriptorForSingleton(objectDeclaration, getClassObjectName(container.getName()), ClassKind.CLASS_OBJECT);
 
             PackageLikeBuilder.ClassObjectStatus status =
-                    isEnumEntry(container) || isObject(container) ?
+                    isEnumEntry(container) || isObject(container) || c.getTopDownAnalysisParameters().isDeclaredLocally() ?
                     PackageLikeBuilder.ClassObjectStatus.NOT_ALLOWED :
                     owner.setClassObjectDescriptor(classObjectDescriptor);
 

@@ -1439,6 +1439,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/classObjects/ClassObjectCannotAccessClassFields.kt");
             }
             
+            @TestMetadata("classObjectInLocalClass.kt")
+            public void testClassObjectInLocalClass() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/classObjects/classObjectInLocalClass.kt");
+            }
+            
             @TestMetadata("ClassObjectVisibility.kt")
             public void testClassObjectVisibility() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/classObjects/ClassObjectVisibility.kt");
