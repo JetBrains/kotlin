@@ -25,7 +25,7 @@ public class ConstructorInvocation {
 
     private final String ownerInternalName;
 
-    private final Map<Integer, InvokeCall> access;
+    private final Map<Integer, LambdaInfo> lambdasToInline;
 
     private final boolean isSameModule;
 
@@ -37,9 +37,9 @@ public class ConstructorInvocation {
 
     private Map<String, LambdaInfo> recapturedLambdas;
 
-    ConstructorInvocation(String ownerInternalName, Map<Integer, InvokeCall> access, boolean isSameModule) {
+    ConstructorInvocation(String ownerInternalName, Map<Integer, LambdaInfo> lambdasToInline, boolean isSameModule) {
         this.ownerInternalName = ownerInternalName;
-        this.access = access;
+        this.lambdasToInline = lambdasToInline;
         this.isSameModule = isSameModule;
     }
 
@@ -47,12 +47,12 @@ public class ConstructorInvocation {
         return ownerInternalName;
     }
 
-    public boolean isInlinable() {
-        return !access.isEmpty() || !isSameModule;
+    public boolean shouldRegenerate() {
+        return !lambdasToInline.isEmpty() || !isSameModule;
     }
 
-    public Map<Integer, InvokeCall> getAccess() {
-        return access;
+    public Map<Integer, LambdaInfo> getLambdasToInline() {
+        return lambdasToInline;
     }
 
 

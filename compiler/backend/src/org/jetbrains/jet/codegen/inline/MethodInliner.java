@@ -119,19 +119,20 @@ public class MethodInliner {
                 if (isLambdaConstructorCall(type.getInternalName(), "<init>")) {
                     invocation = iterator.next();
 
-                    if (invocation.isInlinable()) {
+                    if (invocation.shouldRegenerate()) {
                         //TODO: need poping of type but what to do with local funs???
                         Type newLambdaType = Type.getObjectType(parent.nameGenerator.genLambdaClassName());
                         currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
-                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(), parent.subInline(parent.nameGenerator, currentTypeMapping),
+                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(),
+                                                                              parent.subInline(parent.nameGenerator, currentTypeMapping),
                                                                               isSameModule, newLambdaType);
 
                         transformer.doTransform(invocation);
                     }
-                    super.anew(type);
-                } else {
-                    super.anew(type);
                 }
+
+                //in case of regenerated invocation type would be remapped to new one via remappingMethodAdapter
+                super.anew(type);
             }
 
             @Override
@@ -167,12 +168,11 @@ public class MethodInliner {
                 }
                 else if (isLambdaConstructorCall(owner, name)) { //TODO add method
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
-                    if (invocation.isInlinable()) {
+                    if (invocation.shouldRegenerate()) {
                         //put additional captured parameters on stack
                         List<CapturedParamInfo> recaptured = invocation.getRecaptured();
+                        List<CapturedParamInfo> contextCaptured = MethodInliner.this.parameters.getCaptured();
                         for (CapturedParamInfo capturedParamInfo : recaptured) {
-                            Type type = capturedParamInfo.getType();
-                            List<CapturedParamInfo> contextCaptured = MethodInliner.this.parameters.getCaptured();
                             CapturedParamInfo result = null;
                             for (CapturedParamInfo info : contextCaptured) {
                                 //TODO more sophisticated check
@@ -180,7 +180,12 @@ public class MethodInliner {
                                     result = info;
                                 }
                             }
-                            super.visitVarInsn(type.getOpcode(Opcodes.ILOAD), result.getIndex());
+                            if (result == null) {
+                                throw new UnsupportedOperationException(
+                                        "Unsupported operation: could not transform non-inline lambda inside inlined one: " +
+                                        owner + "." + name);
+                            }
+                            super.visitVarInsn(capturedParamInfo.getType().getOpcode(Opcodes.ILOAD), result.getIndex());
                         }
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
                         invocation = null;
@@ -296,25 +301,25 @@ public class MethodInliner {
                         invokeCalls.add(new InvokeCall(varIndex, lambdaInfo));
                     }
                     else if (isLambdaConstructorCall(owner, name)) {
-                        Map<Integer, InvokeCall> infos = new HashMap<Integer, InvokeCall>();
+                        Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
                         int paramStart = frame.getStackSize() - paramLength;
 
                         for (int i = 0; i < paramLength; i++) {
                             SourceValue sourceValue = frame.getStack(paramStart + i);
                             if (sourceValue.insns.size() == 1) {
                                 AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
-                                if (insnNode.getType() == AbstractInsnNode.VAR_INSN && insnNode.getOpcode() == Opcodes.ALOAD) {
+                                if (insnNode.getOpcode() == Opcodes.ALOAD) {
                                     int varIndex = ((VarInsnNode) insnNode).var;
                                     LambdaInfo lambdaInfo = getLambda(varIndex);
                                     if (lambdaInfo != null) {
-                                        infos.put(i, new InvokeCall(varIndex, lambdaInfo));
+                                        lambdaMapping.put(i, lambdaInfo);
                                         node.instructions.remove(insnNode);
                                     }
                                 }
                             }
                         }
 
-                        constructorInvocations.add(new ConstructorInvocation(owner, infos, isSameModule));
+                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule));
                     }
                 }
             }
@@ -456,6 +461,9 @@ public class MethodInliner {
         }
     }
 
+    //TODO: check annotation on class - it's package part
+    //TODO: check it's external module
+    //TODO?: assert method exists in facade?
     public String changeOwnerForExternalPackage(String type, int opcode) {
         if (isSameModule || (opcode & Opcodes.INVOKESTATIC) == 0) {
             return type;

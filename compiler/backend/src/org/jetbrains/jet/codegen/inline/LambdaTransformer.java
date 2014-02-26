@@ -189,7 +189,7 @@ public class LambdaTransformer {
     }
 
     private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, ConstructorInvocation invocation) {
-        Map<Integer, InvokeCall> indexToLambda = invocation.getAccess();
+        Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
 
         AbstractInsnNode cur = constructor.instructions.getFirst();
         cur = cur.getNext(); //skip super call
@@ -202,13 +202,10 @@ public class LambdaTransformer {
                 paramMapping.put(fieldNode.name, varIndex);
 
                 CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null);
-                InvokeCall access = indexToLambda.get(varIndex);
-                if (access != null) {
-                    LambdaInfo accessInfo = access.lambdaInfo;
-                    if (accessInfo != null) {
-                        info.setLambda(accessInfo);
-                        additionalCaptured.add(accessInfo);
-                    }
+                LambdaInfo LambdaInfo = indexToLambda.get(varIndex);
+                if (LambdaInfo != null) {
+                    info.setLambda(LambdaInfo);
+                    additionalCaptured.add(LambdaInfo);
                 }
             }
             cur = cur.getNext();
