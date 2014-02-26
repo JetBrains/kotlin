@@ -36,13 +36,15 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.util.JetFakeReference;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
@@ -62,7 +64,6 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults.Code.*;
-import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
 @SuppressWarnings("RedundantTypeArguments")
@@ -118,6 +119,20 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
+            @NotNull ExpressionTypingContext context,
+            @NotNull Call call,
+            @NotNull JetReferenceExpression functionReference,
+            @NotNull Name name
+    ) {
+        return resolveCallWithGivenName(
+                BasicCallResolutionContext.create(context, call, CheckValueArgumentsMode.ENABLED),
+                functionReference,
+                name
+        );
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveCallWithGivenName(
             @NotNull BasicCallResolutionContext context,
             @NotNull JetReferenceExpression functionReference,
             @NotNull Name name) {
@@ -138,6 +153,21 @@ public class CallResolver {
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, collectors);
         return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE,
                                                context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
+    }
+
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveBinaryCall(
+            ExpressionTypingContext context,
+            ExpressionReceiver receiver,
+            JetBinaryExpression binaryExpression,
+            Name name
+    ) {
+        return resolveCallWithGivenName(
+                context,
+                CallMaker.makeCall(receiver, binaryExpression),
+                binaryExpression.getOperationReference(),
+                name
+        );
     }
 
     @NotNull

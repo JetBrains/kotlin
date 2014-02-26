@@ -39,7 +39,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 public class TopDownAnalyzer {
@@ -52,12 +51,6 @@ public class TopDownAnalyzer {
     private OverrideResolver overrideResolver;
     @NotNull
     private OverloadResolver overloadResolver;
-    @NotNull
-    private TopDownAnalysisParameters topDownAnalysisParameters;
-    @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
-    private BindingTrace trace;
     @NotNull
     private ModuleDescriptor moduleDescriptor;
     @NotNull
@@ -86,21 +79,6 @@ public class TopDownAnalyzer {
     }
 
     @Inject
-    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-    }
-
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
-
-    @Inject
     public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
         this.moduleDescriptor = moduleDescriptor;
     }
@@ -115,37 +93,37 @@ public class TopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
-
-
     public void doProcess(
-            JetScope outerScope,
-            PackageLikeBuilder owner,
-            Collection<? extends PsiElement> declarations) {
-//        context.enableDebugOutput();
-        context.debug("Enter");
+            @NotNull TopDownAnalysisContext c,
+            @NotNull JetScope outerScope,
+            @NotNull PackageLikeBuilder owner,
+            @NotNull Collection<? extends PsiElement> declarations
+    ) {
+//        c.enableDebugOutput();
+        c.debug("Enter");
 
-        typeHierarchyResolver.process(outerScope, owner, declarations);
-        declarationResolver.process(outerScope);
-        overrideResolver.process();
+        typeHierarchyResolver.process(c, outerScope, owner, declarations);
+        declarationResolver.process(c);
+        overrideResolver.process(c);
 
-        lockScopes();
+        lockScopes(c);
 
-        overloadResolver.process();
+        overloadResolver.process(c);
 
-        if (!topDownAnalysisParameters.isAnalyzingBootstrapLibrary()) {
-            bodyResolver.resolveBodies();
+        if (!c.getTopDownAnalysisParameters().isAnalyzingBootstrapLibrary()) {
+            bodyResolver.resolveBodies(c);
         }
 
-        context.debug("Exit");
-        context.printDebugOutput(System.out);
+        c.debug("Exit");
+        c.printDebugOutput(System.out);
     }
 
-    private void lockScopes() {
-        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : context.getClasses().values()) {
+    private void lockScopes(@NotNull TopDownAnalysisContext c) {
+        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : c.getClasses().values()) {
             ((MutableClassDescriptor) mutableClassDescriptor).lockScopes();
         }
         Set<FqName> scriptFqNames = Sets.newHashSet();
-        for (JetFile file : context.getFileScopes().keySet()) {
+        for (JetFile file : c.getFileScopes().keySet()) {
             if (file.isScript()) {
                 scriptFqNames.add(JetPsiUtil.getFQName(file));
             }
@@ -180,46 +158,54 @@ public class TopDownAnalyzer {
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(), topDownAnalysisParameters, new ObservableBindingTrace(context.trace),
-                moduleDescriptor);
+                object.getProject(), topDownAnalysisParameters, context.trace, moduleDescriptor
+        );
 
-        injector.getTopDownAnalysisContext().setOuterDataFlowInfo(context.dataFlowInfo);
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        c.setOuterDataFlowInfo(context.dataFlowInfo);
 
-        injector.getTopDownAnalyzer().doProcess(context.scope, new PackageLikeBuilder() {
+        injector.getTopDownAnalyzer().doProcess(
+               c,
+               context.scope,
+               new PackageLikeBuilder() {
 
-            @NotNull
-            @Override
-            public DeclarationDescriptor getOwnerForChildren() {
-                return containingDeclaration;
-            }
+                   @NotNull
+                   @Override
+                   public DeclarationDescriptor getOwnerForChildren() {
+                       return containingDeclaration;
+                   }
 
-            @Override
-            public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
-                if (scope != null) {
-                    scope.addClassifierDescriptor(classDescriptor);
-                }
-            }
+                   @Override
+                   public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                       if (scope != null) {
+                           scope.addClassifierDescriptor(classDescriptor);
+                       }
+                   }
 
-            @Override
-            public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
-                throw new UnsupportedOperationException();
-            }
+                   @Override
+                   public void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor) {
+                       throw new UnsupportedOperationException();
+                   }
 
-            @Override
-            public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
+                   @Override
+                   public void addPropertyDescriptor(@NotNull PropertyDescriptor propertyDescriptor) {
 
-            }
+                   }
 
-            @Override
-            public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
-                return ClassObjectStatus.NOT_ALLOWED;
-            }
-        }, Collections.<PsiElement>singletonList(object));
+                   @Override
+                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                       return ClassObjectStatus.NOT_ALLOWED;
+                   }
+               },
+               Collections.<PsiElement>singletonList(object)
+        );
     }
 
-    public void analyzeFiles(
-            @NotNull Collection<JetFile> files,
-            @NotNull List<AnalyzerScriptParameter> scriptParameters) {
+    @NotNull
+    public TopDownAnalysisContext analyzeFiles(
+            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull Collection<JetFile> files
+    ) {
         ((ModuleDescriptorImpl) moduleDescriptor).addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider);
 
         // "depend on" builtins module
@@ -227,13 +213,16 @@ public class TopDownAnalyzer {
 
         // dummy builder is used because "root" is module descriptor,
         // packages added to module explicitly in
-        doProcess(JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
+
+        TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);
+        doProcess(c, JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor), new PackageLikeBuilderDummy(), files);
+        return c;
     }
 
 
-    public void prepareForTheNextReplLine() {
-        context.getScriptScopes().clear();
-        context.getScripts().clear();
+    public void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
+        c.getScriptScopes().clear();
+        c.getScripts().clear();
     }
 
 

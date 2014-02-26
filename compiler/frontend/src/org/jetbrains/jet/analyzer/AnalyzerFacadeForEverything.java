@@ -51,10 +51,10 @@ public class AnalyzerFacadeForEverything {
         InjectorForBodyResolve injector = new InjectorForBodyResolve(
                 project, topDownAnalysisParameters,
                 new ObservableBindingTrace(traceContext),
-                bodiesResolveContext, module);
+                module);
 
         try {
-            injector.getBodyResolver().resolveBodies();
+            injector.getBodyResolver().resolveBodies(bodiesResolveContext);
             return AnalyzeExhaust.success(traceContext.getBindingContext(), module);
         } finally {
             injector.destroy();

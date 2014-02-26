@@ -636,6 +636,7 @@ public class JetControlFlowProcessor {
         public void visitBreakExpressionVoid(@NotNull JetBreakExpression expression, CFPContext context) {
             JetElement loop = getCorrespondingLoop(expression);
             if (loop != null) {
+                checkJumpDoesNotCrossFunctionBoundary(expression, loop);
                 builder.jump(builder.getExitPoint(loop));
             }
         }
@@ -644,6 +645,7 @@ public class JetControlFlowProcessor {
         public void visitContinueExpressionVoid(@NotNull JetContinueExpression expression, CFPContext context) {
             JetElement loop = getCorrespondingLoop(expression);
             if (loop != null) {
+                checkJumpDoesNotCrossFunctionBoundary(expression, loop);
                 builder.jump(builder.getEntryPoint(loop));
             }
         }
@@ -670,6 +672,16 @@ public class JetControlFlowProcessor {
                 }
             }
             return loop;
+        }
+
+        private void checkJumpDoesNotCrossFunctionBoundary(@NotNull JetLabelQualifiedExpression jumpExpression, @NotNull JetElement jumpTarget) {
+            BindingContext bindingContext = trace.getBindingContext();
+
+            FunctionDescriptor labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression);
+            FunctionDescriptor labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget);
+            if (labelExprEnclosingFunc != labelTargetEnclosingFunc) {
+                trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression));
+            }
         }
 
         @Override

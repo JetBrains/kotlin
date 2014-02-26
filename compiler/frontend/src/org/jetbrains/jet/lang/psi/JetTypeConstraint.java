@@ -33,7 +33,7 @@ public class JetTypeConstraint extends JetElementImpl {
         return visitor.visitTypeConstraint(this, data);
     }
 
-    public boolean isClassObjectContraint() {
+    public boolean isClassObjectConstraint() {
         return findChildByType(JetTokens.CLASS_KEYWORD) != null &&
                 findChildByType(JetTokens.OBJECT_KEYWORD) != null;
     }

@@ -26,7 +26,7 @@ import junit.framework.AssertionFailedError
 
 public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCodeInsightFixtureTestCase() {
     class object {
-        val CARET_MARKER = "<caret>"
+        private val REF_CARET_MARKER = "<ref-caret>"
     }
 
     fun doTest(path: String) {
@@ -47,10 +47,10 @@ public abstract class AbstractReferenceResolveInLibrarySourcesTest : JetLightCod
             throw AssertionFailedError("'CONTEXT: ' directive is expected to set up position in library file: ${testedElementFile.getName()}")
         }
 
-        val inContextOffset = lineContext.indexOf(CARET_MARKER)
-        if (inContextOffset == -1) throw IllegalStateException("No '$CARET_MARKER' marker found in 'CONTEXT: $lineContext'")
+        val inContextOffset = lineContext.indexOf(REF_CARET_MARKER)
+        if (inContextOffset == -1) throw IllegalStateException("No '$REF_CARET_MARKER' marker found in 'CONTEXT: $lineContext'")
 
-        val contextStr = lineContext.replace(CARET_MARKER, "")
+        val contextStr = lineContext.replace(REF_CARET_MARKER, "")
         val offsetInFile = testedElementFile.getText()!!.indexOf(contextStr)
         if (offsetInFile == -1) throw IllegalStateException("Context '$contextStr' wasn't found in file ${testedElementFile.getName()}")
 

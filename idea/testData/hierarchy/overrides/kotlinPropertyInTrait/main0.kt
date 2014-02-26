@@ -3,19 +3,19 @@ trait T {
 }
 
 open class X: T {
-    override var <caret>foo: String
+    override var foo: String
         get() = ""
         set(value: String) {}
 }
 
 open trait Y: T {
-    override var <caret>foo: String
+    override var foo: String
         get() = ""
         set(value: String) {}
 }
 
 open class Z: Y {
-    override var <caret>foo: String
+    override var foo: String
         get() = ""
         set(value: String) {}
 }

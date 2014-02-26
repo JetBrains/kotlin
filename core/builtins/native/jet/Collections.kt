@@ -31,7 +31,7 @@ public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
     public fun addAll(c : Collection<E>) : Boolean
     public fun removeAll(c : Collection<Any?>) : Boolean
     public fun retainAll(c : Collection<Any?>) : Boolean
-    public fun clear()
+    public fun clear() : Unit
 }
 
 public trait List<out E> : Collection<E> {
@@ -69,11 +69,11 @@ public trait MutableList<E> : List<E>, MutableCollection<E> {
     public fun addAll(index : Int, c : Collection<E>) : Boolean
     override fun removeAll(c : Collection<Any?>) : Boolean
     override fun retainAll(c : Collection<Any?>) : Boolean
-    override fun clear()
+    override fun clear() : Unit
 
     // Positional Access Operations
     public fun set(index : Int, element : E) : E
-    public fun add(index : Int, element : E)
+    public fun add(index : Int, element : E) : Unit
     public fun remove(index : Int) : E
 
     // List Iterators
@@ -107,7 +107,7 @@ public trait MutableSet<E> : Set<E>, MutableCollection<E> {
     override fun addAll(c : Collection<E>) : Boolean
     override fun removeAll(c : Collection<Any?>) : Boolean
     override fun retainAll(c : Collection<Any?>) : Boolean
-    override fun clear()
+    override fun clear() : Unit
 }
 
 public trait Map<K, out V> {
@@ -135,8 +135,8 @@ public trait MutableMap<K, V> : Map<K, V> {
     public fun remove(key : Any?) : V?
 
     // Bulk Modification Operations
-    public fun putAll(m : Map<out K, V>)
-    public fun clear()
+    public fun putAll(m : Map<out K, V>) : Unit
+    public fun clear() : Unit
 
     // Views
     override fun keySet() : MutableSet<K>

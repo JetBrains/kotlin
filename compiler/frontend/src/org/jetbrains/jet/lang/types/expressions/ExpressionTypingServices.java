@@ -21,8 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.context.GlobalContext;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -57,7 +55,10 @@ import static org.jetbrains.jet.lang.types.expressions.CoercionStrategy.COERCION
 public class ExpressionTypingServices {
 
     @NotNull
-    private ExpressionTypingFacade expressionTypingFacade;
+    private final ExpressionTypingFacade expressionTypingFacade;
+    @NotNull
+    private final ExpressionTypingComponents expressionTypingComponents;
+
     @NotNull
     private Project project;
     @NotNull
@@ -71,11 +72,7 @@ public class ExpressionTypingServices {
     @NotNull
     private AnnotationResolver annotationResolver;
     @NotNull
-    private PlatformToKotlinClassMap platformToKotlinClassMap;
-    @NotNull
     private CallResolverExtensionProvider extensionProvider;
-    @NotNull
-    private GlobalContext globalContext;
 
     @NotNull
     public Project getProject() {
@@ -137,23 +134,14 @@ public class ExpressionTypingServices {
         this.annotationResolver = annotationResolver;
     }
 
-    @NotNull
-    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return platformToKotlinClassMap;
-    }
-
     @Inject
     public void setExtensionProvider(@NotNull CallResolverExtensionProvider extensionProvider) {
         this.extensionProvider = extensionProvider;
     }
 
-    public ExpressionTypingServices(
-            @NotNull GlobalContext globalContext,
-            @NotNull PlatformToKotlinClassMap platformToKotlinClassMap
-    ) {
-        this.globalContext = globalContext;
-        this.platformToKotlinClassMap = platformToKotlinClassMap;
-        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(globalContext, platformToKotlinClassMap);
+    public ExpressionTypingServices(@NotNull ExpressionTypingComponents components) {
+        this.expressionTypingComponents = components;
+        this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(components);
     }
 
     @NotNull
@@ -173,7 +161,7 @@ public class ExpressionTypingServices {
 
     @NotNull
     public JetTypeInfo getTypeInfo(@NotNull JetExpression expression, @NotNull ResolutionContext resolutionContext) {
-        return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(this, resolutionContext));
+        return expressionTypingFacade.getTypeInfo(expression, ExpressionTypingContext.newContext(resolutionContext));
     }
 
     @Nullable
@@ -206,6 +194,11 @@ public class ExpressionTypingServices {
                 : context;
 
         expressionTypingFacade.getTypeInfo(bodyExpression, newContext, blockBody);
+    }
+
+    @NotNull
+    public JetTypeInfo getBlockReturnedType(JetBlockExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        return getBlockReturnedType(expression, isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION, context);
     }
 
     @NotNull
@@ -282,7 +275,7 @@ public class ExpressionTypingServices {
             return JetTypeInfo.create(KotlinBuiltIns.getInstance().getUnitType(), context.dataFlowInfo);
         }
 
-        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(globalContext, platformToKotlinClassMap, scope);
+        ExpressionTypingInternals blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         ExpressionTypingContext newContext = createContext(context, trace, scope, context.dataFlowInfo, NO_EXPECTED_TYPE);
 
         JetTypeInfo result = JetTypeInfo.create(null, context.dataFlowInfo);
@@ -306,7 +299,7 @@ public class ExpressionTypingServices {
             if (newDataFlowInfo != context.dataFlowInfo) {
                 newContext = newContext.replaceDataFlowInfo(newDataFlowInfo);
             }
-            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(globalContext, platformToKotlinClassMap, scope);
+            blockLevelVisitor = ExpressionTypingVisitorDispatcher.createForBlock(expressionTypingComponents, scope);
         }
         return result;
     }
@@ -353,7 +346,7 @@ public class ExpressionTypingServices {
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(this, trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency,
+        return ExpressionTypingContext.newContext(trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency,
                                                   oldContext.resolutionResultsCache, oldContext.labelResolver,
                                                   oldContext.callResolverExtension, oldContext.isAnnotationContext);
     }

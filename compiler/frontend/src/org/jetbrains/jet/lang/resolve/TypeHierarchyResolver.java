@@ -48,8 +48,6 @@ import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectNam
 
 public class TypeHierarchyResolver {
     @NotNull
-    private TopDownAnalysisContext context;
-    @NotNull
     private ImportsResolver importsResolver;
     @NotNull
     private DescriptorResolver descriptorResolver;
@@ -59,11 +57,6 @@ public class TypeHierarchyResolver {
     private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private BindingTrace trace;
-
-    @Inject
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-        this.context = context;
-    }
 
     @Inject
     public void setImportsResolver(@NotNull ImportsResolver importsResolver) {
@@ -91,26 +84,29 @@ public class TypeHierarchyResolver {
     }
 
     public void process(
-            @NotNull JetScope outerScope, @NotNull PackageLikeBuilder owner,
+            @NotNull TopDownAnalysisContext c,
+            @NotNull JetScope outerScope,
+            @NotNull PackageLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
 
         {
             // TODO: Very temp code - main goal is to remove recursion from collectPackageFragmentsAndClassifiers
             Queue<JetDeclarationContainer> forDeferredResolve = new LinkedList<JetDeclarationContainer>();
-            forDeferredResolve.addAll(collectPackageFragmentsAndClassifiers(outerScope, owner, declarations));
+            forDeferredResolve.addAll(collectPackageFragmentsAndClassifiers(c, outerScope, owner, declarations));
 
             while (!forDeferredResolve.isEmpty()) {
                 JetDeclarationContainer declarationContainer = forDeferredResolve.poll();
                 assert declarationContainer != null;
 
-                DeclarationDescriptor descriptorForDeferredResolve = context.forDeferredResolver.get(declarationContainer);
-                JetScope scope = context.normalScope.get(declarationContainer);
+                DeclarationDescriptor descriptorForDeferredResolve = c.forDeferredResolver.get(declarationContainer);
+                JetScope scope = c.normalScope.get(declarationContainer);
 
                 // Even more temp code
                 if (descriptorForDeferredResolve instanceof MutableClassDescriptorLite) {
                     forDeferredResolve.addAll(
                             collectPackageFragmentsAndClassifiers(
+                                    c,
                                     scope,
                                     ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
@@ -118,6 +114,7 @@ public class TypeHierarchyResolver {
                 else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
                     forDeferredResolve.addAll(
                             collectPackageFragmentsAndClassifiers(
+                                    c,
                                     scope,
                                     ((MutablePackageFragmentDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
@@ -128,33 +125,34 @@ public class TypeHierarchyResolver {
             }
         }
 
-        importsResolver.processTypeImports();
+        importsResolver.processTypeImports(c);
 
-        createTypeConstructors(); // create type constructors for classes and generic parameters, supertypes are not filled in
-        resolveTypesInClassHeaders(); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
+        createTypeConstructors(c); // create type constructors for classes and generic parameters, supertypes are not filled in
+        resolveTypesInClassHeaders(c); // Generic bounds and types in supertype lists (no expressions or constructor resolution)
 
-        context.setClassesTopologicalOrder(topologicallySortClassesAndObjects());
+        c.setClassesTopologicalOrder(topologicallySortClassesAndObjects(c));
 
         // Detect and disconnect all loops in the hierarchy
-        detectAndDisconnectLoops();
+        detectAndDisconnectLoops(c);
 
         // At this point, there are no loops in the type hierarchy
 
-        checkSupertypesForConsistency();
+        checkSupertypesForConsistency(c);
         //        computeSuperclasses();
 
-        checkTypesInClassHeaders(); // Check bounds in the types used in generic bounds and supertype lists
+        checkTypesInClassHeaders(c); // Check bounds in the types used in generic bounds and supertype lists
     }
 
     @NotNull
     private Collection<JetDeclarationContainer> collectPackageFragmentsAndClassifiers(
+            @NotNull TopDownAnalysisContext c,
             @NotNull JetScope outerScope,
             @NotNull PackageLikeBuilder owner,
             @NotNull Iterable<? extends PsiElement> declarations
     ) {
         Collection<JetDeclarationContainer> forDeferredResolve = new ArrayList<JetDeclarationContainer>();
 
-        ClassifierCollector collector = new ClassifierCollector(outerScope, owner, forDeferredResolve);
+        ClassifierCollector collector = new ClassifierCollector(c, outerScope, owner, forDeferredResolve);
 
         for (PsiElement declaration : declarations) {
             declaration.accept(collector);
@@ -172,8 +170,8 @@ public class TypeHierarchyResolver {
         return ClassKind.CLASS;
     }
 
-    private void createTypeConstructors() {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+    private void createTypeConstructors(@NotNull TopDownAnalysisContext c) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = (MutableClassDescriptor) entry.getValue();
             if (classOrObject instanceof JetClass) {
@@ -209,8 +207,8 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private void resolveTypesInClassHeaders() {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+    private void resolveTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             if (classOrObject instanceof JetClass) {
                 ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
@@ -220,17 +218,17 @@ public class TypeHierarchyResolver {
             }
         }
 
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : context.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
             descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), (MutableClassDescriptor) entry.getValue(), trace);
         }
     }
 
-    private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects() {
+    private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects(@NotNull TopDownAnalysisContext c) {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
         //noinspection unchecked
         return DFS.topologicalOrder(
-                (Iterable) context.getClasses().values(),
+                (Iterable) c.getClasses().values(),
                 new DFS.Neighbors<MutableClassDescriptorLite>() {
                     @NotNull
                     @Override
@@ -249,12 +247,12 @@ public class TypeHierarchyResolver {
 
     }
 
-    private void detectAndDisconnectLoops() {
+    private void detectAndDisconnectLoops(@NotNull TopDownAnalysisContext c) {
         // Loop detection and disconnection
         Set<ClassDescriptor> visited = Sets.newHashSet();
         Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
         List<ClassDescriptor> currentPath = Lists.newArrayList();
-        for (MutableClassDescriptorLite klass : context.getClassesTopologicalOrder()) {
+        for (MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
             traverseTypeHierarchy(klass, visited, beingProcessed, currentPath);
         }
     }
@@ -335,8 +333,8 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private void checkSupertypesForConsistency() {
-        for (MutableClassDescriptorLite mutableClassDescriptor : context.getClassesTopologicalOrder()) {
+    private void checkSupertypesForConsistency(@NotNull TopDownAnalysisContext c) {
+        for (MutableClassDescriptorLite mutableClassDescriptor : c.getClassesTopologicalOrder()) {
             Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
                     .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
             for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
@@ -413,8 +411,8 @@ public class TypeHierarchyResolver {
         public abstract boolean removeNeeded(JetType subject, JetType other);
     }
 
-    private void checkTypesInClassHeaders() {
-        for (JetClassOrObject classOrObject : context.getClasses().keySet()) {
+    private void checkTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
+        for (JetClassOrObject classOrObject : c.getClasses().keySet()) {
             for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
                 checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
             }
@@ -442,14 +440,18 @@ public class TypeHierarchyResolver {
     }
 
     private class ClassifierCollector extends JetVisitorVoid {
+        private final TopDownAnalysisContext c;
         private final JetScope outerScope;
         private final PackageLikeBuilder owner;
         private final Collection<JetDeclarationContainer> forDeferredResolve;
 
-        public ClassifierCollector(@NotNull JetScope outerScope,
+        public ClassifierCollector(
+                @NotNull TopDownAnalysisContext c,
+                @NotNull JetScope outerScope,
                 @NotNull PackageLikeBuilder owner,
                 @NotNull Collection<JetDeclarationContainer> forDeferredResolve
         ) {
+            this.c = c;
             this.outerScope = outerScope;
             this.owner = owner;
             this.forDeferredResolve = forDeferredResolve;
@@ -458,17 +460,17 @@ public class TypeHierarchyResolver {
         @Override
         public void visitJetFile(@NotNull JetFile file) {
             MutablePackageFragmentDescriptor packageFragment = getOrCreatePackageFragmentForFile(file);
-            context.getPackageFragments().put(file, packageFragment);
+            c.getPackageFragments().put(file, packageFragment);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
             ChainedScope rootPlusPackageScope = new ChainedScope(packageView, "Root scope for " + file, packageView.getMemberScope(), outerScope);
             WriteThroughScope packageScope = new WriteThroughScope(rootPlusPackageScope, packageFragment.getMemberScope(),
                                                                      new TraceBasedRedeclarationHandler(trace), "package in file " + file.getName());
             packageScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-            context.getFileScopes().put(file, packageScope);
+            c.getFileScopes().put(file, packageScope);
 
             if (file.isScript()) {
-                scriptHeaderResolver.processScriptHierarchy(file.getScript(), packageScope);
+                scriptHeaderResolver.processScriptHierarchy(c, file.getScript(), packageScope);
             }
 
             prepareForDeferredCall(packageScope, packageFragment, file);
@@ -605,7 +607,7 @@ public class TypeHierarchyResolver {
             boolean isInner = kind == ClassKind.CLASS && klass.isInner();
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
                     containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
-            context.getClasses().put(klass, mutableClassDescriptor);
+            c.getClasses().put(klass, mutableClassDescriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetPsiUtil.getUnsafeFQName(klass), mutableClassDescriptor);
 
             createClassObjectForEnumClass(mutableClassDescriptor);
@@ -630,7 +632,7 @@ public class TypeHierarchyResolver {
             createPrimaryConstructorForObject(declaration, descriptor);
             trace.record(BindingContext.CLASS, declaration, descriptor);
 
-            context.getClasses().put(declaration, descriptor);
+            c.getClasses().put(declaration, descriptor);
 
             return descriptor;
         }
@@ -652,8 +654,8 @@ public class TypeHierarchyResolver {
                 @NotNull JetDeclarationContainer container
         ) {
             forDeferredResolve.add(container);
-            context.normalScope.put(container, outerScope);
-            context.forDeferredResolver.put(container, descriptorForDeferredResolve);
+            c.normalScope.put(container, outerScope);
+            c.forDeferredResolver.put(container, descriptorForDeferredResolve);
         }
     }
 }

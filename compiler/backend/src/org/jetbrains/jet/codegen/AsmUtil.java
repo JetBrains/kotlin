@@ -292,20 +292,13 @@ public class AsmUtil {
                    : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
     }
 
-    public static void genThrow(MethodVisitor mv, String exception, String message) {
+    public static void genThrow(@NotNull MethodVisitor mv, @NotNull String exception, @NotNull String message) {
         InstructionAdapter iv = new InstructionAdapter(mv);
         iv.anew(Type.getObjectType(exception));
         iv.dup();
         iv.aconst(message);
         iv.invokespecial(exception, "<init>", "(Ljava/lang/String;)V");
         iv.athrow();
-    }
-
-    public static void genMethodThrow(MethodVisitor mv, String exception, String message) {
-        mv.visitCode();
-        genThrow(mv, exception, message);
-        mv.visitMaxs(-1, -1);
-        mv.visitEnd();
     }
 
     public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {

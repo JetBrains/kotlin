@@ -17,13 +17,12 @@
 package org.jetbrains.jet.di;
 
 import com.intellij.openapi.project.Project;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisContext;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
@@ -38,6 +37,10 @@ import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
+import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
@@ -68,13 +71,12 @@ import javax.annotation.PreDestroy;
 public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnalyzer {
     
     private final Project project;
-    private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
     private final ModuleDescriptorImpl moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final TopDownAnalyzer topDownAnalyzer;
-    private final TopDownAnalysisContext topDownAnalysisContext;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final JavaClassFinderImpl javaClassFinder;
@@ -89,6 +91,10 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final CallResolver callResolver;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final ExpressionTypingServices expressionTypingServices;
+    private final ExpressionTypingComponents expressionTypingComponents;
+    private final ControlStructureTypingUtils controlStructureTypingUtils;
+    private final ExpressionTypingUtils expressionTypingUtils;
+    private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
@@ -114,18 +120,17 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     public InjectorForTopDownAnalyzerForJvm(
         @NotNull Project project,
-        @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+        @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
         @NotNull ModuleDescriptorImpl moduleDescriptor
     ) {
         this.project = project;
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
-        this.storageManager = topDownAnalysisParameters.getStorageManager();
+        this.globalContext = globalContext;
+        this.storageManager = globalContext.getStorageManager();
         this.bindingTrace = bindingTrace;
         this.moduleDescriptor = moduleDescriptor;
         this.platformToKotlinClassMap = moduleDescriptor.getPlatformToKotlinClassMap();
         this.topDownAnalyzer = new TopDownAnalyzer();
-        this.topDownAnalysisContext = new TopDownAnalysisContext();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
@@ -142,7 +147,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
         this.argumentTypeResolver = new ArgumentTypeResolver();
-        this.expressionTypingServices = new ExpressionTypingServices(getTopDownAnalysisContext(), platformToKotlinClassMap);
+        this.expressionTypingComponents = new ExpressionTypingComponents();
+        this.expressionTypingServices = new ExpressionTypingServices(expressionTypingComponents);
+        this.controlStructureTypingUtils = new ControlStructureTypingUtils(expressionTypingServices);
+        this.expressionTypingUtils = new ExpressionTypingUtils(expressionTypingServices, callResolver);
+        this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
@@ -164,17 +173,12 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer(storageManager);
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
-        this.topDownAnalyzer.setContext(topDownAnalysisContext);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        this.topDownAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
-        this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
-
-        this.topDownAnalysisContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
 
         javaClassFinder.setProject(project);
 
@@ -190,14 +194,12 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         bodyResolver.setAnnotationResolver(annotationResolver);
         bodyResolver.setCallResolver(callResolver);
-        bodyResolver.setContext(topDownAnalysisContext);
         bodyResolver.setControlFlowAnalyzer(controlFlowAnalyzer);
         bodyResolver.setDeclarationsChecker(declarationsChecker);
         bodyResolver.setDelegatedPropertyResolver(delegatedPropertyResolver);
         bodyResolver.setExpressionTypingServices(expressionTypingServices);
         bodyResolver.setFunctionAnalyzerExtension(functionAnalyzerExtension);
         bodyResolver.setScriptBodyResolverResolver(scriptBodyResolver);
-        bodyResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         bodyResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
@@ -219,6 +221,18 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         expressionTypingServices.setProject(project);
         expressionTypingServices.setTypeResolver(typeResolver);
 
+        expressionTypingComponents.setCallResolver(callResolver);
+        expressionTypingComponents.setControlStructureTypingUtils(controlStructureTypingUtils);
+        expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
+        expressionTypingComponents.setExpressionTypingUtils(expressionTypingUtils);
+        expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
+        expressionTypingComponents.setGlobalContext(globalContext);
+        expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
+
+        forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
+        forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
+        forLoopConventionsChecker.setProject(project);
+
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -227,6 +241,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         descriptorResolver.setStorageManager(storageManager);
         descriptorResolver.setTypeResolver(typeResolver);
 
+        delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
 
         typeResolver.setAnnotationResolver(annotationResolver);
@@ -235,25 +250,21 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         candidateResolver.setArgumentTypeResolver(argumentTypeResolver);
 
-        controlFlowAnalyzer.setTopDownAnalysisParameters(topDownAnalysisParameters);
         controlFlowAnalyzer.setTrace(bindingTrace);
 
         declarationsChecker.setTrace(bindingTrace);
 
         functionAnalyzerExtension.setTrace(bindingTrace);
 
-        scriptBodyResolver.setContext(topDownAnalysisContext);
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
         scriptBodyResolver.setTrace(bindingTrace);
 
         declarationResolver.setAnnotationResolver(annotationResolver);
-        declarationResolver.setContext(topDownAnalysisContext);
         declarationResolver.setDescriptorResolver(descriptorResolver);
         declarationResolver.setImportsResolver(importsResolver);
         declarationResolver.setScriptHeaderResolver(scriptHeaderResolver);
         declarationResolver.setTrace(bindingTrace);
 
-        importsResolver.setContext(topDownAnalysisContext);
         importsResolver.setImportsFactory(jetImportsFactory);
         importsResolver.setModuleDescriptor(moduleDescriptor);
         importsResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
@@ -261,20 +272,14 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         jetImportsFactory.setProject(project);
 
-        scriptHeaderResolver.setContext(topDownAnalysisContext);
         scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
         scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         scriptHeaderResolver.setTrace(bindingTrace);
 
-        overloadResolver.setContext(topDownAnalysisContext);
         overloadResolver.setTrace(bindingTrace);
 
-        overrideResolver.setContext(topDownAnalysisContext);
-        overrideResolver.setTopDownAnalysisParameters(topDownAnalysisParameters);
         overrideResolver.setTrace(bindingTrace);
 
-        typeHierarchyResolver.setContext(topDownAnalysisContext);
         typeHierarchyResolver.setDescriptorResolver(descriptorResolver);
         typeHierarchyResolver.setImportsResolver(importsResolver);
         typeHierarchyResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
@@ -305,10 +310,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     
     public TopDownAnalyzer getTopDownAnalyzer() {
         return this.topDownAnalyzer;
-    }
-    
-    public TopDownAnalysisContext getTopDownAnalysisContext() {
-        return this.topDownAnalysisContext;
     }
     
     public JavaDescriptorResolver getJavaDescriptorResolver() {

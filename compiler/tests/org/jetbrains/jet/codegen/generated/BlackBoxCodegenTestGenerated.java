@@ -477,6 +477,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/builtinStubMethods/Collection.kt");
         }
         
+        @TestMetadata("dontGenerateBodyInTrait.kt")
+        public void testDontGenerateBodyInTrait() throws Exception {
+            doTest("compiler/testData/codegen/box/builtinStubMethods/dontGenerateBodyInTrait.kt");
+        }
+        
         @TestMetadata("Iterator.kt")
         public void testIterator() throws Exception {
             doTest("compiler/testData/codegen/box/builtinStubMethods/Iterator.kt");

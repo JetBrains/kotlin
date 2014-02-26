@@ -641,7 +641,7 @@ public class DescriptorResolver {
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
-            if (constraint.isClassObjectContraint()) {
+            if (constraint.isClassObjectConstraint()) {
                 trace.report(UNSUPPORTED.on(constraint, "Class objects constraints are not supported yet"));
             }
 
@@ -656,7 +656,7 @@ public class DescriptorResolver {
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
                 deferredUpperBoundCheckerTasks
-                        .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectContraint()));
+                        .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectConstraint()));
             }
 
             if (typeParameterDescriptor == null) {
@@ -673,7 +673,7 @@ public class DescriptorResolver {
             else {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
-                    if (constraint.isClassObjectContraint()) {
+                    if (constraint.isClassObjectConstraint()) {
                         typeParameterDescriptor.addClassObjectBound(bound);
                     }
                     else {

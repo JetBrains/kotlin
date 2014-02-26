@@ -489,11 +489,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateToArray() {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        if (isSubclass(descriptor, builtIns.getCollection())) {
-            if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
-                MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toArray", "()[Ljava/lang/Object;", null, null);
-                InstructionAdapter iv = new InstructionAdapter(mv);
+        if (!isSubclass(descriptor, builtIns.getCollection())) return;
 
+        int access = descriptor.getKind() == ClassKind.TRAIT ?
+                     ACC_PUBLIC | ACC_ABSTRACT :
+                     ACC_PUBLIC;
+        if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
+            MethodVisitor mv = v.getVisitor().visitMethod(access, "toArray", "()[Ljava/lang/Object;", null, null);
+
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                InstructionAdapter iv = new InstructionAdapter(mv);
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
@@ -502,11 +507,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
             }
+        }
 
-            if (!isGenericToArrayPresent()) {
-                MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+        if (!isGenericToArrayPresent()) {
+            MethodVisitor mv = v.getVisitor().visitMethod(access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+
+            if (descriptor.getKind() != ClassKind.TRAIT) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
-
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
@@ -528,8 +535,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         if (CodegenUtil.getDeclaredFunctionByRawSignature(
                 descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, name, desc, null, null);
-            AsmUtil.genMethodThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+            int access = descriptor.getKind() == ClassKind.TRAIT ?
+                         ACC_PUBLIC | ACC_ABSTRACT :
+                         ACC_PUBLIC;
+            MethodVisitor mv = v.getVisitor().visitMethod(access, name, desc, null, null);
+            if (descriptor.getKind() != ClassKind.TRAIT) {
+                mv.visitCode();
+                genThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
+                FunctionCodegen.endVisit(mv, "built-in stub for " + name + desc, null);
+            }
         }
     }
 

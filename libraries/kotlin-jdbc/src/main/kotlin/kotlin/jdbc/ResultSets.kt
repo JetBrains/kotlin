@@ -2,6 +2,9 @@ package kotlin.jdbc
 
 import java.sql.*
 
+// Workaround for an import clash
+import jet.Array
+
 /**
  * Executes the specfied block with result set and then closes it
  */
