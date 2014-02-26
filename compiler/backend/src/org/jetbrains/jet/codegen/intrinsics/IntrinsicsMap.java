@@ -24,19 +24,16 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Map;
 
 class IntrinsicsMap {
     private static final class Key {
-        @NotNull
         private final FqNameUnsafe owner;
-        @NotNull
-        private final Name name;
+        private final String name;
         private final int valueParameterCount;
 
-        private Key(@NotNull FqNameUnsafe owner, @NotNull Name name, int valueParameterCount) {
+        private Key(@NotNull FqNameUnsafe owner, @NotNull String name, int valueParameterCount) {
             this.owner = owner;
             this.name = name;
             this.valueParameterCount = valueParameterCount;
@@ -80,7 +77,7 @@ class IntrinsicsMap {
     /**
      * @param valueParameterCount -1 for property
      */
-    public void registerIntrinsic(@NotNull FqName owner, @NotNull Name name, int valueParameterCount, @NotNull IntrinsicMethod impl) {
+    public void registerIntrinsic(@NotNull FqName owner, @NotNull String name, int valueParameterCount, @NotNull IntrinsicMethod impl) {
         intrinsicsMap.put(new Key(owner.toUnsafe(), name, valueParameterCount), impl);
     }
 
@@ -89,8 +86,9 @@ class IntrinsicsMap {
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
         Key key = new Key(
                 DescriptorUtils.getFqName(descriptor.getContainingDeclaration()),
-                descriptor.getName(),
-                valueParameterCountForKey(descriptor));
+                descriptor.getName().asString(),
+                valueParameterCountForKey(descriptor)
+        );
         return intrinsicsMap.get(key);
     }
 }

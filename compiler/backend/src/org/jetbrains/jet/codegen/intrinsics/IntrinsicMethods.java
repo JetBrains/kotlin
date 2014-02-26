@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,8 +60,7 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-    @PostConstruct
-    public void init() {
+    public IntrinsicMethods() {
         namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
         namedMethods.put("kotlin.arrays.array", new JavaClassArray());
@@ -71,60 +69,62 @@ public class IntrinsicMethods {
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
-            declareIntrinsicFunction(Name.identifier("Number"), method, 0, NUMBER_CAST);
+            String methodName = method.asString();
+            declareIntrinsicFunction("Number", methodName, 0, NUMBER_CAST);
             for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-                declareIntrinsicFunction(type.getTypeName(), method, 0, NUMBER_CAST);
+                declareIntrinsicFunction(type.getTypeName().asString(), methodName, 0, NUMBER_CAST);
             }
         }
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            Name typeName = type.getTypeName();
-            declareIntrinsicFunction(typeName, Name.identifier("plus"), 0, UNARY_PLUS);
-            declareIntrinsicFunction(typeName, Name.identifier("minus"), 0, UNARY_MINUS);
-            declareIntrinsicFunction(typeName, Name.identifier("inv"), 0, INV);
-            declareIntrinsicFunction(typeName, Name.identifier("rangeTo"), 1, RANGE_TO);
-            declareIntrinsicFunction(typeName, Name.identifier("inc"), 0, INC);
-            declareIntrinsicFunction(typeName, Name.identifier("dec"), 0, DEC);
+            String typeName = type.getTypeName().asString();
+            declareIntrinsicFunction(typeName, "plus", 0, UNARY_PLUS);
+            declareIntrinsicFunction(typeName, "minus", 0, UNARY_MINUS);
+            declareIntrinsicFunction(typeName, "inv", 0, INV);
+            declareIntrinsicFunction(typeName, "rangeTo", 1, RANGE_TO);
+            declareIntrinsicFunction(typeName, "inc", 0, INC);
+            declareIntrinsicFunction(typeName, "dec", 0, DEC);
         }
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            Name typeName = type.getTypeName();
-            declareIntrinsicFunction(typeName, Name.identifier("equals"), 1, EQUALS);
-            declareIntrinsicFunction(typeName, Name.identifier("hashCode"), 0, HASH_CODE);
-            declareIntrinsicFunction(typeName, Name.identifier("toString"), 0, TO_STRING);
+            String typeName = type.getTypeName().asString();
+            declareIntrinsicFunction(typeName, "equals", 1, EQUALS);
+            declareIntrinsicFunction(typeName, "hashCode", 0, HASH_CODE);
+            declareIntrinsicFunction(typeName, "toString", 0, TO_STRING);
         }
 
-        declareBinaryOp(Name.identifier("plus"), IADD);
-        declareBinaryOp(Name.identifier("minus"), ISUB);
-        declareBinaryOp(Name.identifier("times"), IMUL);
-        declareBinaryOp(Name.identifier("div"), IDIV);
-        declareBinaryOp(Name.identifier("mod"), IREM);
-        declareBinaryOp(Name.identifier("shl"), ISHL);
-        declareBinaryOp(Name.identifier("shr"), ISHR);
-        declareBinaryOp(Name.identifier("ushr"), IUSHR);
-        declareBinaryOp(Name.identifier("and"), IAND);
-        declareBinaryOp(Name.identifier("or"), IOR);
-        declareBinaryOp(Name.identifier("xor"), IXOR);
+        declareBinaryOp("plus", IADD);
+        declareBinaryOp("minus", ISUB);
+        declareBinaryOp("times", IMUL);
+        declareBinaryOp("div", IDIV);
+        declareBinaryOp("mod", IREM);
+        declareBinaryOp("shl", ISHL);
+        declareBinaryOp("shr", ISHR);
+        declareBinaryOp("ushr", IUSHR);
+        declareBinaryOp("and", IAND);
+        declareBinaryOp("or", IOR);
+        declareBinaryOp("xor", IXOR);
 
-        declareIntrinsicFunction(Name.identifier("Boolean"), Name.identifier("not"), 0, new Not());
+        declareIntrinsicFunction("Boolean", "not", 0, new Not());
 
-        declareIntrinsicFunction(Name.identifier("String"), Name.identifier("plus"), 1, new Concat());
-        declareIntrinsicFunction(Name.identifier("CharSequence"), Name.identifier("get"), 1, new StringGetChar());
-        declareIntrinsicFunction(Name.identifier("String"), Name.identifier("get"), 1, new StringGetChar());
+        declareIntrinsicFunction("String", "plus", 1, new Concat());
+        declareIntrinsicFunction("CharSequence", "get", 1, new StringGetChar());
+        declareIntrinsicFunction("String", "get", 1, new StringGetChar());
 
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toString"), 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("equals"), 1, EQUALS);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("identityEquals"), 1, IDENTITY_EQUALS);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("plus"), 1, STRING_PLUS);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("arrayOfNulls"), 1, new NewArray());
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, "toString", 0, TO_STRING);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, "equals", 1, EQUALS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, "identityEquals", 1, IDENTITY_EQUALS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, "plus", 1, STRING_PLUS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            declareIntrinsicFunction(type.getTypeName(), Name.identifier("compareTo"), 1, new CompareTo());
-            declareIntrinsicFunction(Name.identifier(type.getTypeName() + "Iterator"), Name.identifier("next"), 0, ITERATOR_NEXT);
+            String typeName = type.getTypeName().asString();
+            declareIntrinsicFunction(typeName, "compareTo", 1, new CompareTo());
+            declareIntrinsicFunction(typeName + "Iterator", "next", 0, ITERATOR_NEXT);
         }
 
-        declareIntrinsicProperty(Name.identifier("CharSequence"), Name.identifier("length"), new StringLength());
-        declareIntrinsicProperty(Name.identifier("String"), Name.identifier("length"), new StringLength());
+        declareIntrinsicProperty("CharSequence", "length", new StringLength());
+        declareIntrinsicProperty("String", "length", new StringLength());
 
         declareArrayMethods();
     }
@@ -134,39 +134,44 @@ public class IntrinsicMethods {
             declareArrayMethodsForPrimitive(jvmPrimitiveType);
         }
 
-        declareIntrinsicProperty(Name.identifier("Array"), Name.identifier("size"), ARRAY_SIZE);
-        declareIntrinsicProperty(Name.identifier("Array"), Name.identifier("indices"), ARRAY_INDICES);
-        declareIntrinsicFunction(Name.identifier("Array"), Name.identifier("set"), 2, ARRAY_SET);
-        declareIntrinsicFunction(Name.identifier("Array"), Name.identifier("get"), 1, ARRAY_GET);
-        declareIterator(Name.identifier("Array"));
+        declareIntrinsicProperty("Array", "size", ARRAY_SIZE);
+        declareIntrinsicProperty("Array", "indices", ARRAY_INDICES);
+        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
+        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
+        declareIterator("Array");
     }
 
-    private void declareArrayMethodsForPrimitive(JvmPrimitiveType jvmPrimitiveType) {
-        PrimitiveType primitiveType = jvmPrimitiveType.getPrimitiveType();
-        declareIntrinsicProperty(primitiveType.getArrayTypeName(), Name.identifier("size"), ARRAY_SIZE);
-        declareIntrinsicProperty(primitiveType.getArrayTypeName(), Name.identifier("indices"), ARRAY_INDICES);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), Name.identifier("set"), 2, ARRAY_SET);
-        declareIntrinsicFunction(primitiveType.getArrayTypeName(), Name.identifier("get"), 1, ARRAY_GET);
-        declareIterator(primitiveType.getArrayTypeName());
+    private void declareArrayMethodsForPrimitive(@NotNull JvmPrimitiveType jvmPrimitiveType) {
+        String arrayTypeName = jvmPrimitiveType.getPrimitiveType().getArrayTypeName().asString();
+        declareIntrinsicProperty(arrayTypeName, "size", ARRAY_SIZE);
+        declareIntrinsicProperty(arrayTypeName, "indices", ARRAY_INDICES);
+        declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
+        declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);
+        declareIterator(arrayTypeName);
     }
 
-    private void declareIterator(@NotNull Name arrayClassName) {
-        declareIntrinsicFunction(arrayClassName, Name.identifier("iterator"), 0, ARRAY_ITERATOR);
+    private void declareIterator(@NotNull String arrayClassName) {
+        declareIntrinsicFunction(arrayClassName, "iterator", 0, ARRAY_ITERATOR);
     }
 
-    private void declareBinaryOp(Name methodName, int opcode) {
+    private void declareBinaryOp(@NotNull String methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
         for (PrimitiveType type : PrimitiveType.values()) {
-            declareIntrinsicFunction(type.getTypeName(), methodName, 1, op);
+            declareIntrinsicFunction(type.getTypeName().asString(), methodName, 1, op);
         }
     }
 
-    private void declareIntrinsicProperty(Name className, Name methodName, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(className), methodName, -1, implementation);
+    private void declareIntrinsicProperty(@NotNull String className, @NotNull String methodName, @NotNull IntrinsicMethod implementation) {
+        declareIntrinsicFunction(className, methodName, -1, implementation);
     }
 
-    private void declareIntrinsicFunction(Name className, Name functionName, int arity, IntrinsicMethod implementation) {
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(className), functionName, arity, implementation);
+    private void declareIntrinsicFunction(
+            @NotNull String className,
+            @NotNull String methodName,
+            int arity,
+            @NotNull IntrinsicMethod implementation
+    ) {
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(className)), methodName, arity, implementation);
     }
 
     @Nullable
