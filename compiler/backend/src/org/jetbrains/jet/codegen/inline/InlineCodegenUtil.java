@@ -87,7 +87,7 @@ public class InlineCodegenUtil {
                 FqName namespaceFqName =
                         PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) parentDeclatation).getFqName()).parent().child(
                                 name);
-                file = findVirtualFile(state.getProject(), namespaceFqName, true);
+                file = findVirtualFileWithHeader(state.getProject(), namespaceFqName);
             } else {
                 assert false : "Function in namespace should have implClassName property in proto: " + deserializedDescriptor;
             }
@@ -103,13 +103,15 @@ public class InlineCodegenUtil {
     }
 
     @Nullable
-    public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull FqName containerFqName, boolean onlyKotlin) {
+    public static VirtualFile findVirtualFileWithHeader(@NotNull Project project, @NotNull FqName containerFqName) {
         VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
-        if (onlyKotlin) {
-            return fileFinder.findVirtualFileWithHeader(containerFqName);
-        } else {
-            return fileFinder.findVirtualFile(containerFqName.asString().replace('.', '/'));
-        }
+        return fileFinder.findVirtualFileWithHeader(containerFqName);
+    }
+
+    @Nullable
+    public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalName) {
+        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        return fileFinder.findVirtualFile(internalName);
     }
 
     //TODO: navigate to inner classes
@@ -185,7 +187,7 @@ public class InlineCodegenUtil {
         if (containerFqName == null) {
             return null;
         }
-        return findVirtualFile(project, containerFqName, true);
+        return findVirtualFileWithHeader(project, containerFqName);
     }
 
 

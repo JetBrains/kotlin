@@ -92,4 +92,10 @@ public class RemapVisitor extends InstructionAdapter {
             super.visitFieldInsn(opcode, owner, name, desc);
         }
     }
+
+    //TODO not skip for lambdas
+    @Override
+    public void visitLineNumber(int line, Label start) {
+
+    }
 }

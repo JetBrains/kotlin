@@ -33,9 +33,9 @@ public class ConstructorInvocation {
 
     private String newConstructorDescriptor;
 
-    private List<CapturedParamInfo> recaptured;
+    private List<CapturedParamInfo> allRecapturedParameters;
 
-    private Map<String, LambdaInfo> recapturedLambdas;
+    private Map<String, LambdaInfo> capturedLambdasToInline;
 
     ConstructorInvocation(String ownerInternalName, Map<Integer, LambdaInfo> lambdasToInline, boolean isSameModule) {
         this.ownerInternalName = ownerInternalName;
@@ -55,7 +55,6 @@ public class ConstructorInvocation {
         return lambdasToInline;
     }
 
-
     public Type getNewLambdaType() {
         return newLambdaType;
     }
@@ -72,19 +71,19 @@ public class ConstructorInvocation {
         this.newConstructorDescriptor = newConstructorDescriptor;
     }
 
-    public List<CapturedParamInfo> getRecaptured() {
-        return recaptured;
+    public List<CapturedParamInfo> getAllRecapturedParameters() {
+        return allRecapturedParameters;
     }
 
-    public void setRecaptured(List<CapturedParamInfo> recaptured) {
-        this.recaptured = recaptured;
+    public void setAllRecapturedParameters(List<CapturedParamInfo> allRecapturedParameters) {
+        this.allRecapturedParameters = allRecapturedParameters;
     }
 
-    public Map<String, LambdaInfo> getRecapturedLambdas() {
-        return recapturedLambdas;
+    public Map<String, LambdaInfo> getCapturedLambdasToInline() {
+        return capturedLambdasToInline;
     }
 
-    public void setRecapturedLambdas(Map<String, LambdaInfo> recapturedLambdas) {
-        this.recapturedLambdas = recapturedLambdas;
+    public void setCapturedLambdasToInline(Map<String, LambdaInfo> capturedLambdasToInline) {
+        this.capturedLambdasToInline = capturedLambdasToInline;
     }
 }

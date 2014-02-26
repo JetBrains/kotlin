@@ -207,7 +207,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
-        inliner.doTransformAndMerge(codegen.v, remapper);
+        inliner.doInline(codegen.v, remapper);
     }
 
 

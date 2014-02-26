@@ -71,11 +71,11 @@ public class MethodInliner {
     }
 
 
-    public void doTransformAndMerge(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
-        doTransformAndMerge(adapter, remapper, new LambdaFieldRemapper(), true);
+    public void doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
+        doInline(adapter, remapper, new LambdaFieldRemapper(), true);
     }
 
-    public void doTransformAndMerge(
+    public void doInline(
             MethodVisitor adapter,
             VarRemapper.ParamRemapper remapper,
             LambdaFieldRemapper capturedRemapper, boolean remapReturn
@@ -158,7 +158,7 @@ public class MethodInliner {
                                                               capturedRemapper, true /*cause all calls in same module as lambda*/);
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
-                    inliner.doTransformAndMerge(this.mv, remapper); //TODO add skipped this and receiver
+                    inliner.doInline(this.mv, remapper); //TODO add skipped this and receiver
 
                     //return value boxing/unboxing
                     Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
@@ -170,7 +170,7 @@ public class MethodInliner {
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
                     if (invocation.shouldRegenerate()) {
                         //put additional captured parameters on stack
-                        List<CapturedParamInfo> recaptured = invocation.getRecaptured();
+                        List<CapturedParamInfo> recaptured = invocation.getAllRecapturedParameters();
                         List<CapturedParamInfo> contextCaptured = MethodInliner.this.parameters.getCaptured();
                         for (CapturedParamInfo capturedParamInfo : recaptured) {
                             CapturedParamInfo result = null;
