@@ -98,7 +98,7 @@ public class InlineCodegenUtil {
     @Nullable
     private static VirtualFile findVirtualFile(@NotNull Project project, @NotNull FqName containerFqName) {
         VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
-        VirtualFile virtualFile = fileFinder.find(containerFqName);
+        VirtualFile virtualFile = fileFinder.findVirtualFile(containerFqName);
         if (virtualFile == null) {
             return null;
         }

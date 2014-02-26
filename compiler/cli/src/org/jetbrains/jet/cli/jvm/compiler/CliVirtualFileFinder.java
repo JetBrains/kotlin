@@ -36,7 +36,26 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
     @Override
     public VirtualFile findVirtualFile(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
-            VirtualFile fileInRoot = findFileInRoot(className.asString(), root);
+            VirtualFile fileInRoot = findKotlinFile(className, root);
+            if (fileInRoot != null) {
+                return fileInRoot;
+            }
+        }
+        return null;
+    }
+
+    private VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
+        VirtualFile vFile = findFileInRoot(className.asString(), root, '.');
+        if (vFile != null && createKotlinClass(vFile).getClassHeader() != null) {
+            return vFile;
+        }
+        return null;
+    }
+
+    @Override
+    public VirtualFile findVirtualFile(@NotNull String internalName) {
+        for (VirtualFile root : classPath) {
+            VirtualFile fileInRoot = findFileInRoot(internalName, root, '/');
             if (fileInRoot != null) {
                 return fileInRoot;
             }
@@ -46,12 +65,12 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
 
     //NOTE: copied with some changes from CoreJavaFileManager
     @Nullable
-    private VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root) {
+    private static VirtualFile findFileInRoot(@NotNull String qName, @NotNull VirtualFile root, char separator) {
         String pathRest = qName;
         VirtualFile cur = root;
 
         while (true) {
-            int dot = pathRest.indexOf('.');
+            int dot = pathRest.indexOf(separator);
             if (dot < 0) break;
 
             String pathComponent = pathRest.substring(0, dot);
@@ -69,11 +88,9 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
                 //TODO: log
                 return null;
             }
-            //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-            if (createKotlinClass(vFile).getClassHeader() != null) {
-                return vFile;
-            }
+            return vFile;
         }
         return null;
     }
+
 }
