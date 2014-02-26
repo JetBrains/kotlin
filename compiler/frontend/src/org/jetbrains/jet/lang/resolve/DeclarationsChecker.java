@@ -212,6 +212,7 @@ public class DeclarationsChecker {
         }
         else if (aClass.isAnnotation()) {
             checkAnnotationClassWithBody(aClass);
+            checkValOnAnnotationParameter(aClass);
         }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
@@ -246,6 +247,14 @@ public class DeclarationsChecker {
     private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
         if (classOrObject.getBody() != null) {
             trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
+        }
+    }
+
+    private void checkValOnAnnotationParameter(JetClass aClass) {
+        for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
+            if (parameter.getValOrVarNode() == null) {
+                trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
+            }
         }
     }
 

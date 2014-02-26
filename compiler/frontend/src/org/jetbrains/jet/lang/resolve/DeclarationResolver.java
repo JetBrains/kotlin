@@ -239,8 +239,6 @@ public class DeclarationResolver {
             @NotNull MutableClassDescriptor classDescriptor,
             @NotNull JetClass klass
     ) {
-        boolean isAnnotationClass = DescriptorUtils.isAnnotationClass(classDescriptor);
-
         // TODO : not all the parameters are real properties
         JetScope memberScope = classDescriptor.getScopeForClassHeaderResolution();
         ConstructorDescriptor constructorDescriptor = descriptorResolver.resolvePrimaryConstructorDescriptor(memberScope, classDescriptor, klass, trace);
@@ -262,9 +260,6 @@ public class DeclarationResolver {
                     c.getPrimaryConstructorParameterProperties().put(parameter, propertyDescriptor);
                 }
                 else {
-                    if (isAnnotationClass) {
-                        trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
-                    }
                     notProperties.add(valueParameterDescriptor);
                 }
             }
