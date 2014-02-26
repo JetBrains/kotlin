@@ -345,8 +345,8 @@ public class AnnotationResolver {
         return new AnnotationsImpl(result);
     }
 
-    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetModifierListOwner modifierListOwner, BindingTrace trace) {
-        JetModifierList modifierList = modifierListOwner.getModifierList();
+    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetTypeParameter jetTypeParameter, @NotNull BindingTrace trace) {
+        JetModifierList modifierList = jetTypeParameter.getModifierList();
         if (modifierList == null) return;
 
         for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {

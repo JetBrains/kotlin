@@ -206,6 +206,9 @@ public class DeclarationsChecker {
 
     private void checkClass(JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
+        if (TopDownAnalyzer.LAZY) {
+            checkTypeParameters(aClass);
+        }
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
@@ -219,6 +222,13 @@ public class DeclarationsChecker {
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        }
+    }
+
+    private void checkTypeParameters(JetTypeParameterListOwner typeParameterListOwner) {
+        // TODO: Support annotation for type parameters
+        for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
+            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
         }
     }
 

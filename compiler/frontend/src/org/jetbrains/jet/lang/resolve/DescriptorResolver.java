@@ -111,8 +111,10 @@ public class DescriptorResolver {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
-            // TODO: Support
-            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+            if (!TopDownAnalyzer.LAZY) {
+                // TODO: Support
+                AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+            }
 
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
