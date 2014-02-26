@@ -125,11 +125,8 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors);
             }
 
-            JetExpression importedReference = importDirective.getImportedReference();
-            if (lookupMode != LookupMode.ONLY_CLASSES && importedReference != null) {
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
-                }
+            if (lookupMode != LookupMode.ONLY_CLASSES) {
+                checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }
         delayedImporter.processImports();
@@ -137,6 +134,20 @@ public class ImportsResolver {
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
                 reportUselessImport(importDirective, fileScope, resolvedDirectives, trace);
+            }
+        }
+    }
+
+    public static void checkPlatformTypesMappedToKotlin(
+            @NotNull ModuleDescriptor module,
+            @NotNull BindingTrace trace,
+            @NotNull JetImportDirective importDirective,
+            @NotNull Collection<? extends DeclarationDescriptor> descriptors
+    ) {
+        JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference != null) {
+            for (DeclarationDescriptor descriptor : descriptors) {
+                reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
             }
         }
     }

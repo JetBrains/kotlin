@@ -94,14 +94,23 @@ public class LazyImportScope implements JetScope, LazyEntity {
                     directiveUnderResolve = directive;
 
                     try {
-                        resolveSession.getQualifiedExpressionResolver().processImportReference(
-                                directive,
-                                rootScope,
-                                packageDescriptor.getMemberScope(),
-                                importer,
-                                traceForImportResolve,
-                                resolveSession.getModuleDescriptor(),
-                                mode);
+                        Collection<? extends DeclarationDescriptor> descriptors =
+                                resolveSession.getQualifiedExpressionResolver().processImportReference(
+                                        directive,
+                                        rootScope,
+                                        packageDescriptor.getMemberScope(),
+                                        importer,
+                                        traceForImportResolve,
+                                        resolveSession.getModuleDescriptor(),
+                                        mode);
+                        if (mode == LookupMode.EVERYTHING) {
+                            ImportsResolver.checkPlatformTypesMappedToKotlin(
+                                    packageDescriptor.getModule(),
+                                    traceForImportResolve,
+                                    directive,
+                                    descriptors
+                            );
+                        }
                     }
                     finally {
                         directiveUnderResolve = null;

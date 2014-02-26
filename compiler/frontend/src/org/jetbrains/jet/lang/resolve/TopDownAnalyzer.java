@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -174,7 +175,13 @@ public class TopDownAnalyzer {
                                     DescriptorResolver.resolvePackageHeader(packageDirective, moduleDescriptor, trace);
                                     registerDeclarations(file.getDeclarations());
                                 }
+                                resolveAndCheckImports(file, resolveSession);
                             }
+
+                            private void resolveAndCheckImports(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
+                               LazyImportScope fileScope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(file);
+                               fileScope.forceResolveAllContents();
+                           }
 
                             private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
                                 c.getClasses().put(
