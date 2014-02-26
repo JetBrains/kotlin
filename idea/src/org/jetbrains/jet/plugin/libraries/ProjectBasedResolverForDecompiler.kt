@@ -36,6 +36,6 @@ public class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDe
         if (packageFragment == null) {
             return Collections.emptyList()
         }
-        return packageFragment.getMemberScope().getAllDescriptors()
+        return packageFragment.getMemberScope().getAllDescriptors() filter { it !is ClassDescriptor }
     }
 }
