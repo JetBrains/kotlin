@@ -20,11 +20,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
@@ -41,11 +42,29 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getReceiverParameter()),
                    descriptor instanceof ConstructorDescriptor ? NO_RECEIVER_PARAMETER : descriptor.getExpectedThisObject(),
-                   Collections.<TypeParameterDescriptor>emptyList(),
+                   copyTypeParameters(descriptor),
                    copyValueParameters(descriptor),
                    descriptor.getReturnType(),
                    Modality.FINAL,
                    Visibilities.INTERNAL);
+    }
+
+    @NotNull
+    private List<TypeParameterDescriptor> copyTypeParameters(@NotNull FunctionDescriptor descriptor) {
+        List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
+        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+        for (TypeParameterDescriptor typeParameter : typeParameters) {
+            TypeParameterDescriptorImpl copy = TypeParameterDescriptorImpl.createForFurtherModification(
+                    this, typeParameter.getAnnotations(), typeParameter.isReified(),
+                    typeParameter.getVariance(), typeParameter.getName(), typeParameter.getIndex()
+            );
+            for (JetType upperBound : typeParameter.getUpperBounds()) {
+                copy.addUpperBound(upperBound);
+            }
+            copy.setInitialized();
+            result.add(copy);
+        }
+        return result;
     }
 
     @NotNull
