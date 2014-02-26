@@ -131,7 +131,7 @@ public class ExpressionTypingVisitorDispatcher extends JetVisitor<JetTypeInfo, E
             }
 
             if (result.getType() instanceof DeferredType) {
-                result = JetTypeInfo.create(((DeferredType) result.getType()).getActualType(), result.getDataFlowInfo());
+                result = JetTypeInfo.create(((DeferredType) result.getType()).getDelegate(), result.getDataFlowInfo());
             }
             if (result.getType() != null) {
                 context.trace.record(BindingContext.EXPRESSION_TYPE, expression, result.getType());

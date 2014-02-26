@@ -64,7 +64,7 @@ public class QuickFixUtil {
         if (!(descriptor instanceof CallableDescriptor)) return null;
         JetType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
-            type = ((DeferredType) type).getActualType();
+            type = ((DeferredType) type).getDelegate();
         }
         return type;
     }

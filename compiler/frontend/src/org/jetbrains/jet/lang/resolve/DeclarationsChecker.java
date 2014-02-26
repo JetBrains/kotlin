@@ -198,7 +198,7 @@ public class DeclarationsChecker {
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             JetType returnType = propertyDescriptor.getReturnType();
             if (returnType instanceof DeferredType) {
-                returnType = ((DeferredType) returnType).getActualType();
+                returnType = ((DeferredType) returnType).getDelegate();
             }
 
             JetExpression initializer = property.getInitializer();
