@@ -87,6 +87,9 @@ public class FunctionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testExpressionAsExtFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
 
     public void testVararg() throws Exception {
         checkFooBoxIsOk();
