@@ -19,6 +19,8 @@ package org.jetbrains.jet.plugin.libraries;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -57,8 +59,11 @@ public final class DecompiledNavigationUtils {
 
         if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(virtualFile)) return null;
 
-        JetDecompiledData data = JetDecompiledData.getDecompiledData(virtualFile, project);
-        JetDeclaration jetDeclaration = data.getDeclarationForDescriptor(effectiveReferencedDescriptor);
+        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
+        if (!(psiFile instanceof JetClsFile)) {
+            return null;
+        }
+        JetDeclaration jetDeclaration = ((JetClsFile) psiFile).getDeclarationForDescriptor(effectiveReferencedDescriptor);
         if (jetDeclaration != null) {
             return jetDeclaration;
         }

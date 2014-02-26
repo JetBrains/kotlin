@@ -43,9 +43,9 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
         val kotlinPackageClass = myFixture!!.getJavaFacade()!!.findClass(packageClassFqName.asString())!!
         val kotlinPackageFile = kotlinPackageClass.getContainingFile()!!.getVirtualFile()!!
         val project = getProject()!!
-        val projectBasedText = buildDecompiledData(kotlinPackageFile, project, ProjectBasedResolverForDecompiler(project)).getFileText()
+        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(project)).text
         val deserializerForDecompiler = DeserializerForDecompiler(kotlinPackageFile.getParent()!!, STANDARD_LIBRARY_FQNAME)
-        val deserializedText = buildDecompiledData(kotlinPackageFile, project, deserializerForDecompiler).getFileText()
+        val deserializedText = buildDecompiledText(kotlinPackageFile, deserializerForDecompiler).text
         Assert.assertEquals(projectBasedText, deserializedText)
         // sanity checks
         Assert.assertTrue(projectBasedText.contains("linkedListOf"))

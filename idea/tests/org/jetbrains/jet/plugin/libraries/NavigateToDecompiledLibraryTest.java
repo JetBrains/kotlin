@@ -27,6 +27,9 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
@@ -86,9 +89,15 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
 
     private void doTest() {
         classFile = getClassFile(PACKAGE, getTestName(false), myModule);
-        JetDecompiledData decompiledData = JetDecompiledData.getDecompiledData(classFile, getProject());
-        Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(decompiledData.getFile(),
-                                                                              decompiledData.getRenderedDescriptorsToRanges());
+        PsiFile clsFileForClassFile = PsiManager.getInstance(getProject()).findFile(classFile);
+        assertNotNull(clsFileForClassFile);
+        assertTrue("Expecting kotlin class file, was: " + clsFileForClassFile.getClass(), clsFileForClassFile instanceof JetClsFile);
+        PsiFile decompiledPsiFile = ((ClsFileImpl) clsFileForClassFile).getDecompiledPsiFile();
+        assertNotNull(decompiledPsiFile);
+        assertTrue("Expecting decompiled Kotlin file, was: " + decompiledPsiFile.getClass(), decompiledPsiFile instanceof JetFile);
+        Map<String, JetDeclaration> map = getRenderedDescriptorToKotlinPsiMap(
+                (JetFile) decompiledPsiFile, ((JetClsFile) clsFileForClassFile).getRenderedDescriptorsToRange()
+        );
         String decompiledTextWithMarks = getDecompiledTextWithMarks(map);
 
         assertSameLinesWithFile(TEST_DATA_PATH + "/decompiled/" + getTestName(false) + ".kt", decompiledTextWithMarks);

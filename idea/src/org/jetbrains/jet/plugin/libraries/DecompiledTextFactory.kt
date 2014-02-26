@@ -16,15 +16,11 @@
 
 package org.jetbrains.jet.plugin.libraries
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
 import org.jetbrains.jet.lang.descriptors.*
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.MemberComparator
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.renderer.DescriptorRenderer
@@ -32,21 +28,19 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder
 import java.util.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
-import org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey
 
-public fun buildDecompiledData(classFile: VirtualFile, project: Project): JetDecompiledData {
-    return buildDecompiledData(classFile, project, DeserializerForDecompiler(classFile))
-}
-
-public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolver: ResolverForDecompiler): JetDecompiledData {
+public fun buildDecompiledText(
+        classFile: VirtualFile,
+        resolver: ResolverForDecompiler = DeserializerForDecompiler(classFile)
+): DecompiledText {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
     val classFileHeader = kotlinClass.getClassHeader()
     assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
     val kind = classFileHeader!!.getKind()
     val packageFqName = classFqName.parent()
-    val (text, renderedDescriptorsToRange) =
-    if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
+
+    return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
         buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
     }
     else if (kind == KotlinClassHeader.Kind.CLASS) {
@@ -56,16 +50,18 @@ public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolve
         // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
         throw UnsupportedOperationException("Unknown header kind: " + kind)
     }
-
-    val jetFile = JetDummyClassFileViewProvider.createJetFile(PsiManager.getInstance(project), classFile, text)
-    return JetDecompiledData(jetFile, renderedDescriptorsToRange)
 }
 
-private val DECOMPILED_COMMENT: String = "/* compiled code */"
+private val DECOMPILED_COMMENT = "/* compiled code */"
 public val descriptorRendererForDecompiler: DescriptorRenderer = DescriptorRendererBuilder()
         .setWithDefinedIn(false)
         .setClassWithPrimaryConstructor(true)
         .build()
+
+//TODO: should use more accurate way to identify descriptors
+public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
+    return descriptorRendererForDecompiler.render(descriptor)
+}
 
 private data class DecompiledText(val text: String, val renderedDescriptorsToRange: Map<String, TextRange>)
 

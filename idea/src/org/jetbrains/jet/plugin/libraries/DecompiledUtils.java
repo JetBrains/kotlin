@@ -40,11 +40,6 @@ public final class DecompiledUtils {
         return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_FRAGMENT;
     }
 
-    public static CharSequence decompile(@NotNull VirtualFile file) {
-        Project project = ProjectManager.getInstance().getOpenProjects()[0];  // FIXME: get rid of project usage here
-        return JetDecompiledData.getDecompiledData(file, project).getFileText();
-    }
-
     private DecompiledUtils() {
     }
 }
