@@ -210,6 +210,9 @@ public class DeclarationsChecker {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }
+        else if (aClass.isAnnotation()) {
+            checkAnnotationClassWithBody(aClass);
+        }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
         }
@@ -240,6 +243,11 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
+        if (classOrObject.getBody() != null) {
+            trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
+        }
+    }
 
     private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
