@@ -47,7 +47,7 @@ public class ScopeProvider {
     public ScopeProvider(@NotNull ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
 
-        this.fileScopes = resolveSession.getStorageManager().createWeaklyRetainedMemoizedFunction(new Function1<JetFile, JetScope>() {
+        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, JetScope>() {
             @Override
             public JetScope invoke(@NotNull JetFile file) {
                 return createFileScope(file);
