@@ -34,7 +34,7 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
 
     @Nullable
     @Override
-    public VirtualFile findVirtualFile(@NotNull FqName className) {
+    public VirtualFile findVirtualFileWithHeader(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
             VirtualFile fileInRoot = findKotlinFile(className, root);
             if (fileInRoot != null) {
@@ -46,6 +46,7 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
 
     private VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
         VirtualFile vFile = findFileInRoot(className.asString(), root, '.');
+        //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
         if (vFile != null && createKotlinClass(vFile).getClassHeader() != null) {
             return vFile;
         }

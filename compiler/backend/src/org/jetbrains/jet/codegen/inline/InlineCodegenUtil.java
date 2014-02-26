@@ -106,7 +106,7 @@ public class InlineCodegenUtil {
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull FqName containerFqName, boolean onlyKotlin) {
         VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
         if (onlyKotlin) {
-            return fileFinder.findVirtualFile(containerFqName);
+            return fileFinder.findVirtualFileWithHeader(containerFqName);
         } else {
             return fileFinder.findVirtualFile(containerFqName.asString().replace('.', '/'));
         }

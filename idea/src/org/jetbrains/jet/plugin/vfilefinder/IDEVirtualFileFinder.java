@@ -44,7 +44,7 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
 
     @Nullable
     @Override
-    public VirtualFile findVirtualFile(@NotNull FqName className) {
+    public VirtualFile findVirtualFileWithHeader(@NotNull FqName className) {
         Collection<VirtualFile> files =
                 FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, className, GlobalSearchScope.allScope(project));
         if (files.isEmpty()) {
