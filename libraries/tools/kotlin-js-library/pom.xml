@@ -84,11 +84,11 @@
                                     </fileset>
                                 </copy>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-maps.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/maps.js"/>
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/maps.js"/>
                                 <copy tofile="${basedir}/target/generated-js-library/kotlin-lib.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib.js"/>
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/kotlin_lib.js"/>
                                <copy tofile="${basedir}/target/generated-js-library/kotlin-lib-ecma5.js"
-                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testFiles/kotlin_lib_ecma5.js"/>
+                                      file="${kotlin-js-lib-srcdir}/../../js.translator/testData/kotlin_lib_ecma5.js"/>
                             </target>
                         </configuration>
                         <goals>
