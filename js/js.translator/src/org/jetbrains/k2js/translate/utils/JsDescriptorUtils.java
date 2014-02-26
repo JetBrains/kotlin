@@ -120,7 +120,8 @@ public final class JsDescriptorUtils {
             declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
         }
         else {
-            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter);
+            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter.getClass() +
+                                                    ", receiverParameter = " + receiverParameter);
         }
 
         return declarationDescriptor.getOriginal();
