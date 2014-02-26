@@ -359,7 +359,7 @@ public class MethodInliner {
         return null;
     }
 
-    private void removeClosureAssertions(MethodNode node) {
+    private static void removeClosureAssertions(MethodNode node) {
         AbstractInsnNode cur = node.instructions.getFirst();
         while (cur != null && cur.getNext() != null) {
             AbstractInsnNode next = cur.getNext();
@@ -367,29 +367,15 @@ public class MethodInliner {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) next;
                 if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals("jet/runtime/Intrinsics")) {
                     AbstractInsnNode prev = cur.getPrevious();
-                    boolean delete = false;
-                    if (prev.getOpcode() == Opcodes.INVOKESTATIC) {
-                        //parameter boxing
-                        AbstractInsnNode prePrevious = cur.getPrevious();
-                        if (prePrevious.getType() == AbstractInsnNode.VAR_INSN &&
-                            prePrevious.getOpcode() < Opcodes.ALOAD &&
-                            prePrevious.getOpcode() >= Opcodes.ILOAD) {
-                            delete = true;
-                            node.instructions.remove(prePrevious);
-                        }
-                    } else {
-                        assert prev.getType() == AbstractInsnNode.VAR_INSN && prev.getOpcode() == Opcodes.ALOAD;
-                        int varIndex = ((VarInsnNode) prev).var;
-                        LambdaInfo closure = getLambda(varIndex);
-                        delete = closure != null;
-                    }
-                    if (delete) {
-                        node.instructions.remove(prev);
-                        node.instructions.remove(cur);
-                        cur = next.getNext();
-                        node.instructions.remove(next);
-                        next = cur;
-                    }
+
+                    assert cur.getOpcode() == Opcodes.LDC : "checkParameterIsNotNull should go after LDC but " + cur;
+                    assert prev.getOpcode() == Opcodes.ALOAD : "checkParameterIsNotNull should be invoked on local var but " + prev;
+
+                    node.instructions.remove(prev);
+                    node.instructions.remove(cur);
+                    cur = next.getNext();
+                    node.instructions.remove(next);
+                    next = cur;
                 }
             }
             cur = next;
