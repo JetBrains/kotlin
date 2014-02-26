@@ -40,17 +40,17 @@ import java.util.List;
 public class ScopeProvider {
     private final ResolveSession resolveSession;
 
-    private final MemoizedFunctionToNotNull<JetFile, JetScope> fileScopes;
+    private final MemoizedFunctionToNotNull<JetFile, LazyImportScope> explicitImportScopes;
 
     private final NotNullLazyValue<JetScope> defaultImportsScope;
 
     public ScopeProvider(@NotNull ResolveSession resolveSession) {
         this.resolveSession = resolveSession;
 
-        this.fileScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, JetScope>() {
+        this.explicitImportScopes = resolveSession.getStorageManager().createMemoizedFunction(new Function1<JetFile, LazyImportScope>() {
             @Override
-            public JetScope invoke(@NotNull JetFile file) {
-                return createFileScope(file);
+            public LazyImportScope invoke(@NotNull JetFile file) {
+                return createExplicitImportScope(file);
             }
         });
 
@@ -62,28 +62,28 @@ public class ScopeProvider {
         });
     }
 
-    @NotNull
-    public JetScope getFileScope(JetFile file) {
-        return fileScopes.invoke(file);
-    }
-
-    @NotNull
-    private JetScope createFileScope(@NotNull JetFile file) {
-        PackageViewDescriptor packageDescriptor = getFilePackageDescriptor(file);
-
-        JetScope importsScope = LazyImportScope.createImportScopeForFile(
+    private LazyImportScope createExplicitImportScope(@NotNull JetFile file) {
+        return LazyImportScope.createImportScopeForFile(
                 resolveSession,
-                packageDescriptor,
+                getFilePackageDescriptor(file),
                 file,
                 resolveSession.getTrace(),
                 "Lazy Imports Scope for file " + file.getName());
+    }
 
+    @NotNull
+    public JetScope getFileScope(@NotNull JetFile file) {
         return new ChainedScope(resolveSession.getPackageFragment(JetPsiUtil.getFQName(file)),
                                 "File scope: " + file.getName(),
-                                packageDescriptor.getMemberScope(),
+                                getFilePackageDescriptor(file).getMemberScope(),
                                 JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()),
-                                importsScope,
+                                explicitImportScopes.invoke(file),
                                 defaultImportsScope.invoke());
+    }
+
+    @NotNull
+    public LazyImportScope getExplicitImportsScopeForFile(@NotNull JetFile file) {
+        return explicitImportScopes.invoke(file);
     }
 
     private JetScope createScopeWithDefaultImports() {

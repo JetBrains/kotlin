@@ -145,10 +145,8 @@ public class ResolveElementCache {
         }
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
-            JetScope scope = resolveSession.getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
-
-            // Get all descriptors to force resolving all imports
-            scope.getAllDescriptors();
+            LazyImportScope scope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile((JetFile) importDirective.getContainingFile());
+            scope.forceResolveAllContents();
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
             annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);
