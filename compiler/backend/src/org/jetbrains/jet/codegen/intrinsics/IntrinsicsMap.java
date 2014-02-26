@@ -20,7 +20,9 @@ import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -30,11 +32,13 @@ import java.util.Map;
 class IntrinsicsMap {
     private static final class Key {
         private final FqNameUnsafe owner;
+        private final FqName receiverParameter;
         private final String name;
         private final int valueParameterCount;
 
-        private Key(@NotNull FqNameUnsafe owner, @NotNull String name, int valueParameterCount) {
+        private Key(@NotNull FqNameUnsafe owner, @Nullable FqName receiverParameter, @NotNull String name, int valueParameterCount) {
             this.owner = owner;
+            this.receiverParameter = receiverParameter;
             this.name = name;
             this.valueParameterCount = valueParameterCount;
         }
@@ -49,6 +53,7 @@ class IntrinsicsMap {
             if (valueParameterCount != key.valueParameterCount) return false;
             if (!name.equals(key.name)) return false;
             if (!owner.equals(key.owner)) return false;
+            if (receiverParameter == null ? key.receiverParameter != null : !receiverParameter.equals(key.receiverParameter)) return false;
 
             return true;
         }
@@ -58,6 +63,7 @@ class IntrinsicsMap {
             int result = owner.hashCode();
             result = 31 * result + name.hashCode();
             result = 31 * result + valueParameterCount;
+            result = 31 * result + (receiverParameter != null ? receiverParameter.hashCode() : 0);
             return result;
         }
     }
@@ -77,18 +83,35 @@ class IntrinsicsMap {
     /**
      * @param valueParameterCount -1 for property
      */
-    public void registerIntrinsic(@NotNull FqName owner, @NotNull String name, int valueParameterCount, @NotNull IntrinsicMethod impl) {
-        intrinsicsMap.put(new Key(owner.toUnsafe(), name, valueParameterCount), impl);
+    public void registerIntrinsic(
+            @NotNull FqName owner,
+            @Nullable FqName receiverParameter,
+            @NotNull String name,
+            int valueParameterCount,
+            @NotNull IntrinsicMethod impl
+    ) {
+        intrinsicsMap.put(new Key(owner.toUnsafe(), receiverParameter, name, valueParameterCount), impl);
     }
-
 
     @Nullable
     public IntrinsicMethod getIntrinsic(@NotNull CallableMemberDescriptor descriptor) {
         Key key = new Key(
                 DescriptorUtils.getFqName(descriptor.getContainingDeclaration()),
+                getReceiverParameterFqName(descriptor),
                 descriptor.getName().asString(),
                 valueParameterCountForKey(descriptor)
         );
         return intrinsicsMap.get(key);
+    }
+
+    @Nullable
+    private static FqName getReceiverParameterFqName(@NotNull CallableMemberDescriptor descriptor) {
+        ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+        if (receiverParameter == null) return null;
+
+        ClassifierDescriptor classifier = receiverParameter.getType().getConstructor().getDeclarationDescriptor();
+        if (classifier == null) return null;
+
+        return DescriptorUtils.getFqNameSafe(classifier);
     }
 }

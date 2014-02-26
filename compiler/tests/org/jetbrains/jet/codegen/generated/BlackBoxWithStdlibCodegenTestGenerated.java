@@ -1041,6 +1041,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/strings/forInString.kt");
         }
         
+        @TestMetadata("stringPlusOnlyWorksOnString.kt")
+        public void testStringPlusOnlyWorksOnString() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/strings/stringPlusOnlyWorksOnString.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/toArray")
