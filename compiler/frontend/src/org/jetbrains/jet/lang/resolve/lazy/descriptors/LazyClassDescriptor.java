@@ -53,6 +53,7 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
@@ -288,6 +289,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     @Nullable
     public JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
         if (classObject != null) {
+            if (getKind() != ClassKind.CLASS && getKind() != ClassKind.TRAIT && getKind() != ClassKind.ANNOTATION_CLASS || isInner()) {
+                resolveSession.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+            }
+
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
         }
