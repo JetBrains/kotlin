@@ -27,6 +27,12 @@ import org.jetbrains.jet.plugin.JetLightProjectDescriptor
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
+import com.intellij.openapi.project.Project
+import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
+import org.jetbrains.jet.lang.resolve.BindingTraceContext
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import java.util.Collections
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -48,5 +54,21 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 
     override fun getProjectDescriptor() = object : JetWithJdkAndRuntimeLightProjectDescriptor() {
         override fun getSdk() = PluginTestCaseBase.fullJdk()
+    }
+}
+
+class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
+    val javaDescriptorResolver = InjectorForJavaDescriptorResolverUtil.create(project, BindingTraceContext()).getJavaDescriptorResolver()!!
+
+    override fun resolveClass(classFqName: FqName): ClassDescriptor? {
+        return javaDescriptorResolver.resolveClass(classFqName)
+    }
+
+    override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
+        val packageFragment = javaDescriptorResolver.getPackageFragment(packageFqName)
+        if (packageFragment == null) {
+            return Collections.emptyList()
+        }
+        return packageFragment.getMemberScope().getAllDescriptors() filter { it !is ClassDescriptor }
     }
 }

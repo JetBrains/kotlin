@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey
 
 public fun buildDecompiledData(classFile: VirtualFile, project: Project): JetDecompiledData {
-    return buildDecompiledData(classFile, project, ProjectBasedResolverForDecompiler(project))
+    return buildDecompiledData(classFile, project, DeserializerForDecompiler(classFile))
 }
 
 public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolver: ResolverForDecompiler): JetDecompiledData {
