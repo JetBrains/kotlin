@@ -52,7 +52,15 @@ public final class ClosureTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-    public void testSimpleRecursion() throws Exception {
+    public void testRecursiveFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testRecursiveFunctionWithSameNameDeclaration() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testRecursiveExtFunction() throws Exception {
         checkFooBoxIsOk();
     }
 
@@ -64,8 +72,7 @@ public final class ClosureTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    // TODO: fix
-    public void igonre_testClosureLocalFunctionByInnerFunctionInConstrunctor() throws Exception {
+    public void testClosureLocalFunctionByInnerFunctionInConstructor() throws Exception {
         checkFooBoxIsOk();
     }
 
@@ -82,6 +89,58 @@ public final class ClosureTest extends SingleFileTranslationTest {
     }
 
     public void testClosureLocalLiteralFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInLocalFunction() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureValToScopeWithSameNameDeclaration() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureVarToScopeWithSameNameDeclaration() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureLocalInNestedObject() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisAndReceiver() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureGenericTypeValue() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInObject() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWithManyClosuresInNestedFunctionsAndObjects() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureReceiverInLocalExtFunByLocalExtFun() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureArrayListInstance() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisByUsingMethodFromParentClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInFunctionWhichNamedSameAsParentClass() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInFewFunctionWithDifferentName() throws Exception {
         checkFooBoxIsOk();
     }
 }
