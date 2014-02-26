@@ -22,6 +22,12 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class ClassId {
+
+    @NotNull
+    public static ClassId topLevel(@NotNull FqName topLevelFqName) {
+        return new ClassId(topLevelFqName.parent(), FqNameUnsafe.topLevel(topLevelFqName.shortName()));
+    }
+
     private final FqName packageFqName;
     private final FqNameUnsafe relativeClassName;
 
@@ -55,6 +61,7 @@ public final class ClassId {
         return relativeClassName.parent().isRoot();
     }
 
+    @NotNull
     public FqNameUnsafe asSingleFqName() {
         if (packageFqName.isRoot()) return relativeClassName;
         return new FqNameUnsafe(packageFqName.asString() + "." + relativeClassName.asString());
