@@ -170,6 +170,12 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
                 "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
                 isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile()));
 
+        String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// INTENTION_TEXT: ");
+
+        if (intentionTextString != null) {
+            assertEquals("Intention text mismatch.", intentionTextString, intentionAction.getText());
+        }
+
         String shouldFailString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
 
         try {
