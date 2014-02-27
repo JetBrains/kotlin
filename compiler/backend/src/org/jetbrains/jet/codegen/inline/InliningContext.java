@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InliningInfo {
+public class InliningContext {
 
     public final Map<Integer, LambdaInfo> expresssionMap;
 
@@ -45,7 +45,7 @@ public class InliningInfo {
 
     public final Map<String, String> typeMapping;
 
-    public InliningInfo(
+    public InliningContext(
             Map<Integer, LambdaInfo> map,
             List<InvokeCall> accesses,
             List<ConstructorInvocation> invocation,
@@ -67,14 +67,14 @@ public class InliningInfo {
         this.typeMapping = typeMapping;
     }
 
-    public InliningInfo subInline(NameGenerator generator) {
+    public InliningContext subInline(NameGenerator generator) {
         return subInline(generator, Collections.<String, String>emptyMap());
     }
 
-    public InliningInfo subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
+    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
         HashMap<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
-        return new InliningInfo(expresssionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
+        return new InliningContext(expresssionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
                                 newTypeMappings);
     }
 }

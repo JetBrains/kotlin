@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class InlineFieldRemapper extends LambdaFieldRemapper {
+public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
 
     private final String oldOwnerType;
 
@@ -37,7 +37,12 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
 
     private final Map<String, LambdaInfo> recapturedLambdas;
 
-    public InlineFieldRemapper(String oldOwnerType, String newOwnerType, Parameters parameters, Map<String, LambdaInfo> recapturedLambdas) {
+    public RegeneratedLambdaFieldRemapper(
+            String oldOwnerType,
+            String newOwnerType,
+            Parameters parameters,
+            Map<String, LambdaInfo> recapturedLambdas
+    ) {
         this.oldOwnerType = oldOwnerType;
         this.newOwnerType = newOwnerType;
         this.parameters = parameters;
@@ -61,6 +66,7 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
 
         String descriptor = Type.getObjectType(newOwnerType).getDescriptor();
 
+        //HACK: it would be reverted again to ALOAD 0 later
         FieldInsnNode thisStub = new FieldInsnNode(opcode, newOwnerType, "$$$this", descriptor);
 
         node.instructions.insertBefore(loadThis, thisStub);
@@ -96,15 +102,15 @@ public class InlineFieldRemapper extends LambdaFieldRemapper {
         return recapturedLambdas.containsKey(owner);
     }
 
-
     @Nullable
     @Override
     public CapturedParamInfo findField(FieldInsnNode fieldInsnNode, Collection<CapturedParamInfo> captured) {
-        if (!isRecapturedLambdaType(fieldInsnNode.owner)) {
-            return super.findField(fieldInsnNode, captured);
-        } else {
+        if (isRecapturedLambdaType(fieldInsnNode.owner)) {
             LambdaInfo info = recapturedLambdas.get(fieldInsnNode.owner);
             return super.findField(fieldInsnNode, info.getCapturedVars());
+        }
+        else {
+            return super.findField(fieldInsnNode, captured);
         }
     }
 }

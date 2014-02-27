@@ -28,7 +28,7 @@ public class MethodInliner {
 
     private final Parameters parameters;
 
-    private final InliningInfo parent;
+    private final InliningContext parent;
 
     @Nullable
     private final Type lambdaType;
@@ -56,7 +56,7 @@ public class MethodInliner {
     public MethodInliner(
             @NotNull MethodNode node,
             @NotNull Parameters parameters,
-            @NotNull InliningInfo parent,
+            @NotNull InliningContext parent,
             @Nullable Type lambdaType,
             LambdaFieldRemapper lambdaFieldRemapper,
             boolean isSameModule
@@ -109,7 +109,7 @@ public class MethodInliner {
         final Iterator<ConstructorInvocation> iterator = constructorInvocations.iterator();
 
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
-                                                                                   new TypeRemapper(currentTypeMapping, isSameModule));
+                                                                                   new TypeRemapper(currentTypeMapping));
 
         InlineAdapter inliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize()) {
 

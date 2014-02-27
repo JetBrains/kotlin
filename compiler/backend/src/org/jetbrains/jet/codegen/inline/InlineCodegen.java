@@ -196,10 +196,10 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         List<CapturedParamInfo> captured = getAllCaptured();
 
-        Parameters parameters = new Parameters(realParams, Parameters.addStubs(captured, realParams.size()));
+        Parameters parameters = new Parameters(realParams, Parameters.shiftAndAddStubs(captured, realParams.size()));
 
-        InliningInfo info =
-                new InliningInfo(expressionMap, null, null, null, state,
+        InliningContext info =
+                new InliningContext(expressionMap, null, null, null, state,
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
                                  codegen.getContext(), call, Collections.<String, String>emptyMap());
 

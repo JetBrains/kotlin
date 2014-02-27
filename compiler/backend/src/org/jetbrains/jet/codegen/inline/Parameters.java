@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+//All parameters with gaps
 public class Parameters implements Iterable<ParameterInfo> {
 
     private final List<ParameterInfo> real;
@@ -60,7 +61,7 @@ public class Parameters implements Iterable<ParameterInfo> {
         return Iterables.concat(real, captured).iterator();
     }
 
-    public static List<CapturedParamInfo> addStubs(List<CapturedParamInfo> capturedParams, int realSize) {
+    public static List<CapturedParamInfo> shiftAndAddStubs(List<CapturedParamInfo> capturedParams, int realSize) {
         List<CapturedParamInfo> result = new ArrayList<CapturedParamInfo>();
         for (CapturedParamInfo capturedParamInfo : capturedParams) {
             CapturedParamInfo newInfo = capturedParamInfo.newIndex(result.size() + realSize);

@@ -38,12 +38,14 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 
@@ -78,25 +80,24 @@ public class InlineCodegenUtil {
 
     @NotNull
     public static VirtualFile getVirtualFileForCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor, GenerationState state) {
-        VirtualFile file = null;
-        DeclarationDescriptor parentDeclatation = deserializedDescriptor.getContainingDeclaration();
-        if (parentDeclatation instanceof PackageFragmentDescriptor) {
+        VirtualFile file;
+        DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
+        if (parentDeclaration instanceof PackageFragmentDescriptor) {
             ProtoBuf.Callable proto = deserializedDescriptor.getFunctionProto();
-            if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-                Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JavaProtoBuf.implClassName));
-                FqName namespaceFqName =
-                        PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) parentDeclatation).getFqName()).parent().child(
-                                name);
-                file = findVirtualFileWithHeader(state.getProject(), namespaceFqName);
-            } else {
-                assert false : "Function in namespace should have implClassName property in proto: " + deserializedDescriptor;
+            if (!proto.hasExtension(JavaProtoBuf.implClassName)) {
+                throw new IllegalStateException("Function in namespace should have implClassName property in proto: " + deserializedDescriptor);
             }
+            Name name = deserializedDescriptor.getNameResolver().getName(proto.getExtension(JavaProtoBuf.implClassName));
+            FqName packagePartFqName =
+                    PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) parentDeclaration).getFqName()).parent().child(
+                            name);
+            file = findVirtualFileWithHeader(state.getProject(), packagePartFqName);
         } else {
             file = findVirtualFileContainingDescriptor(state.getProject(), deserializedDescriptor);
         }
 
         if (file == null) {
-            throw new RuntimeException("Couldn't find declaration file for " + deserializedDescriptor.getName());
+            throw new IllegalStateException("Couldn't find declaration file for " + deserializedDescriptor.getName());
         }
 
         return file;
@@ -123,11 +124,7 @@ public class InlineCodegenUtil {
             return PackageClassUtils.getPackageClassFqName(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            ClassKind classKind = ((ClassDescriptor) containerDescriptor).getKind();
-            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY) {
-                return getContainerFqName(containerDescriptor.getContainingDeclaration());
-            }
-            return getFqName(containerDescriptor).toSafe();
+            return DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor));
         }
         return null;
     }
@@ -137,9 +134,8 @@ public class InlineCodegenUtil {
     }
 
     private static String getInlineName(@NotNull CodegenContext codegenContext, @NotNull DeclarationDescriptor currentDescriptor, @NotNull JetTypeMapper typeMapper) {
-        PsiFile file;
         if (currentDescriptor instanceof PackageFragmentDescriptor) {
-            file = getContainingFile(codegenContext, typeMapper);
+            PsiFile file = getContainingFile(codegenContext, typeMapper);
 
             Type packagePartType;
             if (file == null) {
@@ -158,7 +154,7 @@ public class InlineCodegenUtil {
                 throw new RuntimeException("Couldn't find declaration for " + contextDescriptor.getContainingDeclaration().getName() + "." + contextDescriptor.getName() );
             }
 
-            return packagePartType.getInternalName().replace('.', '/');
+            return packagePartType.getInternalName();
         }
         else if (currentDescriptor instanceof ClassifierDescriptor) {
             Type type = typeMapper.mapType((ClassifierDescriptor) currentDescriptor);
@@ -172,6 +168,7 @@ public class InlineCodegenUtil {
             }
         }
 
+        //TODO: add suffix for special case
         String suffix = currentDescriptor.getName().isSpecial() ? "" : currentDescriptor.getName().asString();
 
         //noinspection ConstantConditions
@@ -192,15 +189,23 @@ public class InlineCodegenUtil {
 
 
     public static boolean isInvokeOnLambda(String owner, String name) {
-        return INVOKE.equals(name) && /*TODO: check type*/owner.contains("Function");
-    }
-
-    public static boolean isLambdaConstructorCall(@NotNull String internalName, @NotNull String name) {
-        if (!"<init>".equals(name)) {
+        if (!INVOKE.equals(name)) {
             return false;
         }
 
-        return isLambdaClass(internalName);
+        for (String prefix : Arrays.asList("jet/Function", "jet/ExtensionFunction")) {
+            if (owner.startsWith(prefix)) {
+                String suffix = owner.substring(prefix.length());
+                if (isInteger(suffix)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean isLambdaConstructorCall(@NotNull String internalName, @NotNull String methodName) {
+        return "<init>".equals(methodName) && isLambdaClass(internalName);
     }
 
     public static boolean isLambdaClass(String internalName) {
@@ -212,10 +217,7 @@ public class InlineCodegenUtil {
         }
 
         String suffix = shortName.substring(index + 1);
-        for (char c : suffix.toCharArray()) {
-            if (!Character.isDigit(c)) return false;
-        }
-        return true;
+        return isInteger(suffix);
     }
 
     @NotNull
@@ -224,19 +226,10 @@ public class InlineCodegenUtil {
         return index < 0 ? internalName : internalName.substring(index + 1);
     }
 
-    public static boolean isInitCallOfFunction(String owner, String name) {
-        return "<init>".equals(name);
-    }
-
     @Nullable
     public static PsiFile getContainingFile(CodegenContext codegenContext, JetTypeMapper typeMapper) {
         DeclarationDescriptor contextDescriptor = codegenContext.getContextDescriptor();
         PsiElement psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), contextDescriptor);
-        if (psiElement == null) {
-            //in case of synthetic
-            psiElement = BindingContextUtils.descriptorToDeclaration(typeMapper.getBindingContext(), contextDescriptor);
-        }
-
         if (psiElement != null) {
             return psiElement.getContainingFile();
         }
@@ -246,5 +239,19 @@ public class InlineCodegenUtil {
     @NotNull
     public static MaxCalcNode wrapWithMaxLocalCalc(@NotNull MethodNode methodNode) {
         return new MaxCalcNode(methodNode);
+    }
+
+    private static boolean isInteger(@NotNull String string) {
+        if (string.isEmpty()) {
+            return false;
+        }
+
+        for (int i = 0; i < string.length(); i++) {
+             if (!Character.isDigit(string.charAt(i))) {
+                 return false;
+             }
+        }
+
+        return true;
     }
 }

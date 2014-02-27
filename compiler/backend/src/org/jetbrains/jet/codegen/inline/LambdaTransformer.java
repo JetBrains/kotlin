@@ -55,7 +55,7 @@ public class LambdaTransformer {
 
     private final MethodNode bridge;
 
-    private final InliningInfo info;
+    private final InliningContext info;
 
     private final Type oldLambdaType;
 
@@ -67,7 +67,7 @@ public class LambdaTransformer {
     private String[] interfaces;
     private final boolean isSameModule;
 
-    public LambdaTransformer(String lambdaInternalName, InliningInfo info, boolean isSameModule, Type newLambdaType) {
+    public LambdaTransformer(String lambdaInternalName, InliningContext info, boolean isSameModule, Type newLambdaType) {
         this.isSameModule = isSameModule;
         this.state = info.state;
         this.typeMapper = state.getTypeMapper();
@@ -124,7 +124,8 @@ public class LambdaTransformer {
         Parameters parameters = getLambdaParameters(builder, invocation);
 
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
-        InlineFieldRemapper remapper = new InlineFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline());
+        RegeneratedLambdaFieldRemapper
+                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline());
         MethodInliner inliner = new MethodInliner(invoke, parameters, info.subInline(info.nameGenerator.subGenerator("lambda")), oldLambdaType,
                                                   remapper, isSameModule);
         inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
@@ -177,7 +178,7 @@ public class LambdaTransformer {
 
     private ClassBuilder createClassBuilder() {
         return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, info.call.getCallElement().getContainingFile()),
-                     new TypeRemapper(info.typeMapping, isSameModule));
+                     new TypeRemapper(info.typeMapping));
     }
 
     private static MethodVisitor newMethod(ClassBuilder builder, MethodNode original) {
@@ -196,7 +197,7 @@ public class LambdaTransformer {
 
         AbstractInsnNode cur = constructor.instructions.getFirst();
         cur = cur.getNext(); //skip super call
-        List<LambdaInfo> additionalCaptured = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
+        List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
         while (cur != null) {
             if (cur.getType() == AbstractInsnNode.FIELD_INSN) {
                 FieldInsnNode fieldNode = (FieldInsnNode) cur;
@@ -208,7 +209,7 @@ public class LambdaTransformer {
                 LambdaInfo lambdaInfo = indexToLambda.get(varIndex);
                 if (lambdaInfo != null) {
                     info.setLambda(lambdaInfo);
-                    additionalCaptured.add(lambdaInfo);
+                    capturedLambdas.add(lambdaInfo);
                 }
             }
             cur = cur.getNext();
@@ -218,7 +219,7 @@ public class LambdaTransformer {
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamInfo> allRecapturedParameters = new ArrayList<CapturedParamInfo>();
-        for (LambdaInfo info : additionalCaptured) {
+        for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamInfo var : info.getCapturedVars()) {
                 CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(getNewFieldName(var.getFieldName()), var.getType(), true, var);
                 recapturedParamInfo.setRecapturedFrom(info);

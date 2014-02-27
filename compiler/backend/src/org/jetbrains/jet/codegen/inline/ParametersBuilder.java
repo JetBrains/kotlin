@@ -51,13 +51,6 @@ public class  ParametersBuilder {
                                                           original != null ? original.getIndex() : -1));
     }
 
-    //public CapturedParamInfo addAdditionalCapturedParam(String fieldName, Type type, boolean skipped, @Nullable ParameterInfo original) {
-    //    CapturedParamInfo capturedParamInfo =
-    //            new CapturedParamInfo(fieldName, type, skipped, original != null ? original.getIndex() : -1, nextCaptured);
-    //    additionalCapturedParams.add(capturedParamInfo);
-    //    return capturedParamInfo;
-    //}
-
     private void addParameter(ParameterInfo info) {
         params.add(info);
         nextIndex += info.getType().getSize();
@@ -82,7 +75,7 @@ public class  ParametersBuilder {
     }
 
     public List<CapturedParamInfo> buildCapturedWithStubs() {
-        return Parameters.addStubs(buildCaptured(), nextIndex);
+        return Parameters.shiftAndAddStubs(buildCaptured(), nextIndex);
     }
 
     public Parameters buildParameters() {

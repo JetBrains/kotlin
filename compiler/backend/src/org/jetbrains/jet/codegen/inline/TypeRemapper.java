@@ -26,12 +26,9 @@ public class TypeRemapper extends Remapper {
     @NotNull
     private final Map<String, String> typeMapping;
 
-    private final boolean isSameModule;
-
     //typeMapping could be changed outside through method processing
-    public TypeRemapper(@NotNull Map<String, String> typeMapping, boolean isSameModule) {
+    public TypeRemapper(@NotNull Map<String, String> typeMapping) {
         this.typeMapping = typeMapping;
-        this.isSameModule = isSameModule;
     }
 
     @Override
@@ -40,13 +37,6 @@ public class TypeRemapper extends Remapper {
         if (newType != null) {
             return newType;
         }
-
-        /*if (!isSameModule) {
-            int indexOfMinus = type.indexOf("-");
-            if (indexOfMinus > 0) {
-                //type.substring(0, indexOfMinus)
-            }
-        }*/
 
         return type;
     }
