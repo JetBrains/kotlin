@@ -225,7 +225,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
         //noinspection unchecked
         return (Collection) KotlinPackage.filter(
-                unsubstitutedMemberScope.getDescriptorsFromDeclaredElements(),
+                unsubstitutedMemberScope.getAllDescriptors(),
                 new Function1<DeclarationDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(DeclarationDescriptor descriptor) {

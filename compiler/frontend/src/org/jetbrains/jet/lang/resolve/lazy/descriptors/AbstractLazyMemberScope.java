@@ -206,14 +206,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getAllDescriptors() {
-        Collection<DeclarationDescriptor> result = new LinkedHashSet<DeclarationDescriptor>(getDescriptorsFromDeclaredElements());
+        Collection<DeclarationDescriptor> result = new LinkedHashSet<DeclarationDescriptor>(descriptorsFromDeclaredElements.invoke());
         result.addAll(extraDescriptors.invoke());
         return result;
-    }
-
-    @NotNull
-    /*package*/ Collection<DeclarationDescriptor> getDescriptorsFromDeclaredElements() {
-        return descriptorsFromDeclaredElements.invoke();
     }
 
     @NotNull
