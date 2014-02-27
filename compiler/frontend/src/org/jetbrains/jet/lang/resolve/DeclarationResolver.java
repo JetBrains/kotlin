@@ -22,14 +22,19 @@ import com.google.common.collect.*;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
@@ -39,7 +44,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import javax.inject.Inject;
 import java.util.*;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.REDECLARATION;
 
 public class DeclarationResolver {
     @NotNull
@@ -328,17 +333,16 @@ public class DeclarationResolver {
         return declarations;
     }
 
-    private void checkRedeclarationsInInnerClassNames(@NotNull TopDownAnalysisContext c) {
+    public void checkRedeclarationsInInnerClassNames(@NotNull TopDownAnalysisContext c) {
         for (ClassDescriptorWithResolutionScopes classDescriptor : c.getClasses().values()) {
-            MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) classDescriptor;
             if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 // Class objects should be considered during analysing redeclarations in classes
                 continue;
             }
 
-            Collection<DeclarationDescriptor> allDescriptors = mutableClassDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
+            Collection<DeclarationDescriptor> allDescriptors = classDescriptor.getScopeForMemberLookup().getOwnDeclaredDescriptors();
 
-            MutableClassDescriptorLite classObj = mutableClassDescriptor.getClassObjectDescriptor();
+            ClassDescriptorWithResolutionScopes classObj = classDescriptor.getClassObjectDescriptor();
             if (classObj != null) {
                 Collection<DeclarationDescriptor> classObjDescriptors = classObj.getScopeForMemberLookup().getOwnDeclaredDescriptors();
                 if (!classObjDescriptors.isEmpty()) {
@@ -387,6 +391,54 @@ public class DeclarationResolver {
         for (Pair<PsiElement, Name> redeclaration : redeclarations) {
             trace.report(REDECLARATION.on(redeclaration.getFirst(), redeclaration.getSecond().asString()));
         }
+    }
+
+    public void checkRedeclarationsInPackages(@NotNull ResolveSession resolveSession, @NotNull Multimap<FqName, JetElement> topLevelFqNames) {
+        for (Map.Entry<FqName, Collection<JetElement>> entry : topLevelFqNames.asMap().entrySet()) {
+            FqName fqName = entry.getKey();
+            Collection<JetElement> declarationsOrPackageDirectives = entry.getValue();
+
+            if (fqName.isRoot()) continue;
+
+            Set<DeclarationDescriptor> descriptors = getTopLevelDescriptorsByFqName(resolveSession, fqName);
+
+            if (descriptors.size() > 1) {
+                for (JetElement declarationOrPackageDirective : declarationsOrPackageDirectives) {
+                    PsiElement reportAt = declarationOrPackageDirective instanceof JetNamedDeclaration
+                                          ? declarationOrPackageDirective
+                                          : ((JetPackageDirective) declarationOrPackageDirective).getNameIdentifier();
+                    trace.report(Errors.REDECLARATION.on(reportAt, fqName.shortName().asString()));
+                }
+            }
+        }
+    }
+
+    @NotNull
+    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(@NotNull ResolveSession resolveSession, @NotNull FqName fqName) {
+        FqName parentFqName = fqName.parent();
+
+        Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
+
+        LazyPackageDescriptor parentFragment = resolveSession.getPackageFragment(parentFqName);
+        if (parentFragment != null) {
+            // Filter out extension properties
+            descriptors.addAll(
+                    KotlinPackage.filter(
+                            parentFragment.getMemberScope().getProperties(fqName.shortName()),
+                            new Function1<VariableDescriptor, Boolean>() {
+                                @Override
+                                public Boolean invoke(VariableDescriptor descriptor) {
+                                    return descriptor.getReceiverParameter() == null;
+                                }
+                            }
+                    )
+            );
+        }
+
+        ContainerUtil.addIfNotNull(descriptors, resolveSession.getPackageFragment(fqName));
+
+        descriptors.addAll(resolveSession.getTopLevelClassDescriptors(fqName));
+        return descriptors;
     }
 
 

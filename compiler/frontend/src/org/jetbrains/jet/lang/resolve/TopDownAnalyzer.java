@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicates;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import kotlin.Function1;
@@ -138,6 +140,8 @@ public class TopDownAnalyzer {
                     trace
             ).getResolveSession();
 
+            final Multimap<FqName, JetElement> topLevelFqNames = HashMultimap.create();
+
             // fill in the context
             for (PsiElement declaration : declarations) {
                 declaration.accept(
@@ -145,6 +149,15 @@ public class TopDownAnalyzer {
                             private void registerDeclarations(@NotNull List<JetDeclaration> declarations) {
                                 for (JetDeclaration jetDeclaration : declarations) {
                                     jetDeclaration.accept(this);
+                                }
+                            }
+
+                            private void registerTopLevelFqName(@NotNull JetNamedDeclaration declaration, @NotNull DeclarationDescriptor descriptor) {
+                                if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
+                                    FqName fqName = JetPsiUtil.getFQName(declaration);
+                                    if (fqName != null) {
+                                        topLevelFqNames.put(fqName, declaration);
+                                    }
                                 }
                             }
 
@@ -176,6 +189,8 @@ public class TopDownAnalyzer {
 
                                     DescriptorResolver.resolvePackageHeader(packageDirective, moduleDescriptor, trace);
                                     registerDeclarations(file.getDeclarations());
+
+                                    topLevelFqNames.put(JetPsiUtil.getFQName(file), packageDirective);
                                 }
                                 resolveAndCheckImports(file, resolveSession);
                             }
@@ -186,13 +201,13 @@ public class TopDownAnalyzer {
                            }
 
                             private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
-                                c.getClasses().put(
-                                        classOrObject,
-                                        ForceResolveUtil.forceResolveAllContents(
-                                                (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
-                                        )
+                                ClassDescriptorWithResolutionScopes descriptor = ForceResolveUtil.forceResolveAllContents(
+                                        (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
                                 );
+
+                                c.getClasses().put(classOrObject, descriptor);
                                 registerDeclarations(classOrObject.getDeclarations());
+                                registerTopLevelFqName(classOrObject, descriptor);
 
                                 checkManyClassObjects(classOrObject);
                             }
@@ -249,12 +264,13 @@ public class TopDownAnalyzer {
 
                             @Override
                             public void visitProperty(@NotNull JetProperty property) {
-                                c.getProperties().put(
-                                        property,
-                                        ForceResolveUtil.forceResolveAllContents(
-                                                (PropertyDescriptor) resolveSession.resolveToDescriptor(property)
-                                        )
+                                PropertyDescriptor descriptor = ForceResolveUtil.forceResolveAllContents(
+                                        (PropertyDescriptor) resolveSession.resolveToDescriptor(property)
                                 );
+
+                                c.getProperties().put(property, descriptor);
+                                registerTopLevelFqName(property, descriptor);
+
                                 registerScope(property, property);
                                 registerScope(property.getGetter(), property);
                                 registerScope(property.getSetter(), property);
@@ -262,6 +278,9 @@ public class TopDownAnalyzer {
                         }
                 );
             }
+
+            declarationResolver.checkRedeclarationsInPackages(resolveSession, topLevelFqNames);
+            declarationResolver.checkRedeclarationsInInnerClassNames(c);
             overrideResolver.check(c);
         }
         else {

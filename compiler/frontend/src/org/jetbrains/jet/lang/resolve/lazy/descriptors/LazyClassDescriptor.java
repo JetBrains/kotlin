@@ -165,7 +165,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
     @NotNull
     @Override
-    protected JetScope getScopeForMemberLookup() {
+    public JetScope getScopeForMemberLookup() {
         return unsubstitutedMemberScope;
     }
 
