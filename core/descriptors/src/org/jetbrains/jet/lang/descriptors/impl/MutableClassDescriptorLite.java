@@ -56,8 +56,6 @@ public abstract class MutableClassDescriptorLite extends ClassDescriptorBase {
 
     private JetScope scopeForMemberLookup;
 
-    private ReceiverParameterDescriptor implicitReceiver;
-
     public MutableClassDescriptorLite(@NotNull DeclarationDescriptor containingDeclaration,
                                       @NotNull Name name,
                                       @NotNull ClassKind kind,
