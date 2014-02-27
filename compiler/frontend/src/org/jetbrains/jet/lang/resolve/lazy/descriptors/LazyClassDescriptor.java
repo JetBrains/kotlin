@@ -77,7 +77,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     private final boolean isInner;
 
     private final NotNullLazyValue<Annotations> annotations;
-    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
+    private final NullableLazyValue<ClassDescriptorWithResolutionScopes> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
 
@@ -130,9 +130,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                 return resolveAnnotations();
             }
         });
-        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptor>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptorWithResolutionScopes>() {
             @Override
-            public ClassDescriptor invoke() {
+            public ClassDescriptorWithResolutionScopes invoke() {
                 return computeClassObjectDescriptor();
             }
         });
@@ -271,12 +271,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     }
 
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
+    public ClassDescriptorWithResolutionScopes getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
     }
 
     @Nullable
-    private ClassDescriptor computeClassObjectDescriptor() {
+    private ClassDescriptorWithResolutionScopes computeClassObjectDescriptor() {
         JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
 
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);

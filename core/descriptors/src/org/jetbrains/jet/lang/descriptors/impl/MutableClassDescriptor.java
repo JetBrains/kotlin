@@ -61,7 +61,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
         scopeForMemberResolution.addLabeledDeclaration(this);
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Nullable
+    @Override
+    public MutableClassDescriptor getClassObjectDescriptor() {
+        return (MutableClassDescriptor) super.getClassObjectDescriptor();
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
