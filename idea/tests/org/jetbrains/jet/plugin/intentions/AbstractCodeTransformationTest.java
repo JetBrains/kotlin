@@ -159,6 +159,26 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new AddBracesIntention());
     }
 
+    public void doTestReplaceGetIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceGetIntention());
+    }
+
+    public void doTestReplaceContainsIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceContainsIntention());
+    }
+
+    public void doTestReplaceBinaryInfixIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceBinaryInfixIntention());
+    }
+
+    public void doTestReplaceUnaryPrefixIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceUnaryPrefixIntention());
+    }
+
+    public void doTestReplaceInvokeIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceInvokeIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 

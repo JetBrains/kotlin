@@ -400,6 +400,31 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceGetIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceContainsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceInvokeIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceBinaryInfixIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
       <category>Kotlin</category>
     </intentionAction>

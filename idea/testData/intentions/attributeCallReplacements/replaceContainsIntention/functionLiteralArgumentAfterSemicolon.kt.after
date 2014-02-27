@@ -1,0 +1,9 @@
+fun test() {
+    class Test{
+        fun contains(fn: () -> Boolean) : Boolean = true
+    }
+    val test = Test();
+    {
+        true
+    } in test
+}
