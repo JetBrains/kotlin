@@ -39,23 +39,23 @@ class ModuleTypeCacheManager private (project: Project) {
             val connection = project.getMessageBus().connect();
             connection.subscribe(VirtualFileManager.VFS_CHANGES, BulkVirtualFileListenerAdapter(
                     object : VirtualFileAdapter() {
-                        override fun propertyChanged(event: VirtualFilePropertyEvent?) {
+                        override fun propertyChanged(event: VirtualFilePropertyEvent) {
                             incModificationCount()
                         }
 
-                        override fun fileCreated(event: VirtualFileEvent?) {
+                        override fun fileCreated(event: VirtualFileEvent) {
                             incModificationCount()
                         }
 
-                        override fun fileDeleted(event: VirtualFileEvent?) {
+                        override fun fileDeleted(event: VirtualFileEvent) {
                             incModificationCount()
                         }
 
-                        override fun fileMoved(event: VirtualFileMoveEvent?) {
+                        override fun fileMoved(event: VirtualFileMoveEvent) {
                             incModificationCount()
                         }
 
-                        override fun fileCopied(event: VirtualFileCopyEvent?) {
+                        override fun fileCopied(event: VirtualFileCopyEvent) {
                             incModificationCount()
                         }
                     }

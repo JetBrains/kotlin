@@ -83,7 +83,7 @@ public final class K2JSRunnerUtils {
         String filePath = configurationSettings.getPageToOpenFilePath();
         String url = VirtualFileManager.constructUrl(LocalFileSystem.PROTOCOL, filePath);
 
-        WebBrowser browser = WebBrowserManager.getInstance().findBrowser(configurationSettings.getBrowserFamily());
+        WebBrowser browser = WebBrowserManager.getInstance().findBrowserById(configurationSettings.getBrowserFamily().getName());
         BrowserLauncher.getInstance().browse(url, browser);
     }
 
