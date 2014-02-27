@@ -17,6 +17,7 @@
 package org.jetbrains.k2js.translate.reference;
 
 import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -29,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
@@ -51,15 +53,24 @@ public final class ReferenceTranslator {
     }
 
     @NotNull
-    public static JsExpression translateAsLocalNameReference(@NotNull DeclarationDescriptor descriptor,
-            @NotNull TranslationContext context) {
+    public static JsExpression translateAsLocalNameReference(
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression result = null;
         if (descriptor instanceof FunctionDescriptor || descriptor instanceof VariableDescriptor) {
-            JsExpression alias = context.getAliasForDescriptor(descriptor);
-            if (alias != null) {
-                return alias;
-            }
+            result = context.getAliasForDescriptor(descriptor);
         }
-        return context.getNameForDescriptor(descriptor).makeRef();
+
+        if (result == null) {
+            result = context.getNameForDescriptor(descriptor).makeRef();
+        }
+
+        if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
+            result =  new JsNameRef("v", result);
+        }
+
+        return result;
     }
 
     @NotNull
