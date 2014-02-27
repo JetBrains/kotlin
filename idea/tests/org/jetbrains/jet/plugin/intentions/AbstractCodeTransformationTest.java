@@ -170,9 +170,19 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
                 "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
                 isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile()));
 
-        if (isApplicableExpected) {
-            intentionAction.invoke(getProject(), getEditor(), getFile());
-            checkResultByFile(path + ".after");
+        String shouldFailString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
+
+        try {
+            if (isApplicableExpected) {
+                intentionAction.invoke(getProject(), getEditor(), getFile());
+                // Don't bother checking if it should have failed.
+                if (shouldFailString == null) {
+                    checkResultByFile(path + ".after");
+                }
+            }
+            assertNull("Expected test to fail.", shouldFailString);
+        } catch (IntentionTestException e) {
+            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
     }
 
