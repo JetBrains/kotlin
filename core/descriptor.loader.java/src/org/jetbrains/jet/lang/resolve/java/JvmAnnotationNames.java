@@ -26,7 +26,8 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_PACKAGE_PART = new FqName("kotlin.jvm.internal.KotlinPackagePart");
     public static final FqName KOTLIN_TRAIT_IMPL = new FqName("kotlin.jvm.internal.KotlinTraitImpl");
 
-    public static final FqName KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
+    public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
+    public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
 
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
     public static final String DATA_FIELD_NAME = "data";
@@ -55,6 +56,7 @@ public final class JvmAnnotationNames {
     @SuppressWarnings("deprecation")
     public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
         return fqName.asString().startsWith("jet.runtime.typeinfo.")
+               || fqName.equals(KOTLIN_SIGNATURE)
                || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
                || fqName.equals(OLD_KOTLIN_CLASS)
                || fqName.equals(OLD_KOTLIN_PACKAGE)

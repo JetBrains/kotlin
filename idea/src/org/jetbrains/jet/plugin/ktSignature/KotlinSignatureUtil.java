@@ -29,10 +29,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
 
 class KotlinSignatureUtil {
-    static final String KOTLIN_SIGNATURE_ANNOTATION = KOTLIN_SIGNATURE.asString();
-
     private KotlinSignatureUtil() {
     }
 
@@ -73,7 +72,7 @@ class KotlinSignatureUtil {
     @NotNull
     static PsiNameValuePair[] signatureToNameValuePairs(@NotNull Project project, @NotNull String signature) {
         return JavaPsiFacade.getElementFactory(project).createAnnotationFromText(
-                "@" + KOTLIN_SIGNATURE_ANNOTATION + "(value=\"" + StringUtil.escapeStringCharacters(signature) + "\")", null)
+                "@" + KOTLIN_SIGNATURE + "(value=\"" + StringUtil.escapeStringCharacters(signature) + "\")", null)
                 .getParameterList().getAttributes();
     }
 
@@ -82,10 +81,18 @@ class KotlinSignatureUtil {
         if (!(element instanceof PsiModifierListOwner)) return null;
         PsiModifierListOwner annotationOwner = getAnnotationOwner(element);
         PsiModifierList list = annotationOwner.getModifierList();
-        PsiAnnotation ownAnnotation = list == null ? null : list.findAnnotation(KOTLIN_SIGNATURE.asString());
-        PsiAnnotation annotation = ownAnnotation != null
-                                 ? ownAnnotation
-                                 : PsiBasedExternalAnnotationResolver.findExternalAnnotation(annotationOwner, KOTLIN_SIGNATURE);
+
+        PsiAnnotation annotation = list == null ? null : list.findAnnotation(KOTLIN_SIGNATURE.asString());
+        if (annotation == null) {
+            annotation = PsiBasedExternalAnnotationResolver.findExternalAnnotation(annotationOwner, KOTLIN_SIGNATURE);
+            if (annotation == null) {
+                annotation = list == null ? null : list.findAnnotation(OLD_KOTLIN_SIGNATURE.asString());
+                if (annotation == null) {
+                    annotation = PsiBasedExternalAnnotationResolver.findExternalAnnotation(annotationOwner, OLD_KOTLIN_SIGNATURE);
+                }
+            }
+        }
+
         if (annotation == null) return null;
         if (annotation.getParameterList().getAttributes().length == 0) return null;
         return annotation;
@@ -103,7 +110,8 @@ class KotlinSignatureUtil {
             return annotation.isWritable();
         } else {
             ExternalAnnotationsManager annotationsManager = ExternalAnnotationsManager.getInstance(element.getProject());
-            return annotationsManager.isExternalAnnotationWritable(annotationOwner, KOTLIN_SIGNATURE_ANNOTATION);
+            //noinspection ConstantConditions
+            return annotationsManager.isExternalAnnotationWritable(annotationOwner, annotation.getQualifiedName());
         }
     }
 }

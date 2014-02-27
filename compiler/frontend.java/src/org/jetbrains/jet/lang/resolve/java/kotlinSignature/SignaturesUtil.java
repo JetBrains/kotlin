@@ -23,8 +23,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 
 public class SignaturesUtil {
     private SignaturesUtil() {
@@ -32,18 +31,24 @@ public class SignaturesUtil {
 
     @Nullable
     public static String getKotlinSignature(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaMember member) {
-        JavaAnnotation annotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
+        JavaAnnotation newAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
+        if (newAnnotation != null) return extractKotlinSignatureArgument(newAnnotation);
 
-        if (annotation != null) {
-            JavaAnnotationArgument argument = annotation.findArgument(DEFAULT_ANNOTATION_MEMBER_NAME);
-            if (argument instanceof JavaLiteralAnnotationArgument) {
-                Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
-                if (value instanceof String) {
-                    return StringUtil.unescapeStringCharacters((String) value);
-                }
+        JavaAnnotation oldAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, OLD_KOTLIN_SIGNATURE);
+        if (oldAnnotation != null) return extractKotlinSignatureArgument(oldAnnotation);
+
+        return null;
+    }
+
+    @Nullable
+    private static String extractKotlinSignatureArgument(@NotNull JavaAnnotation annotation) {
+        JavaAnnotationArgument argument = annotation.findArgument(DEFAULT_ANNOTATION_MEMBER_NAME);
+        if (argument instanceof JavaLiteralAnnotationArgument) {
+            Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
+            if (value instanceof String) {
+                return StringUtil.unescapeStringCharacters((String) value);
             }
         }
-
         return null;
     }
 

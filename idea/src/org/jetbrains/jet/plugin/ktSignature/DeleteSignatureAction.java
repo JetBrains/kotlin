@@ -26,6 +26,9 @@ import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiModifierListOwner;
 import org.jetbrains.annotations.NotNull;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_KOTLIN_SIGNATURE;
+
 public class DeleteSignatureAction extends AnAction {
     private final PsiModifierListOwner annotationOwner;
 
@@ -47,15 +50,16 @@ public class DeleteSignatureAction extends AnAction {
             // external annotation
             new WriteCommandAction(project) {
                 @Override
-                protected void run(Result result) throws Throwable {
-                    ExternalAnnotationsManager.getInstance(project).deannotate(annotationOwner, KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION);
+                protected void run(@NotNull Result result) throws Throwable {
+                    ExternalAnnotationsManager.getInstance(project).deannotate(annotationOwner, KOTLIN_SIGNATURE.asString());
+                    ExternalAnnotationsManager.getInstance(project).deannotate(annotationOwner, OLD_KOTLIN_SIGNATURE.asString());
                 }
             }.execute();
         }
         else {
             new WriteCommandAction(project) {
                 @Override
-                protected void run(Result result) throws Throwable {
+                protected void run(@NotNull Result result) throws Throwable {
                     annotation.delete();
                 }
             }.execute();

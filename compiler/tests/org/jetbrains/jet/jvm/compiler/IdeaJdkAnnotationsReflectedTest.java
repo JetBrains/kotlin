@@ -166,9 +166,9 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
     }
 
     private enum AnnotationsKind {
-        KOTLIN_SIGNATURE(JvmAnnotationNames.KOTLIN_SIGNATURE.asString()),
+        KOTLIN_SIGNATURE(JvmAnnotationNames.KOTLIN_SIGNATURE.asString(), JvmAnnotationNames.OLD_KOTLIN_SIGNATURE.asString()),
         NOT_NULL(AnnotationUtil.NOT_NULL),
-        ANY(AnnotationUtil.NOT_NULL, JvmAnnotationNames.KOTLIN_SIGNATURE.asString());
+        ANY(AnnotationUtil.NOT_NULL, JvmAnnotationNames.KOTLIN_SIGNATURE.asString(), JvmAnnotationNames.OLD_KOTLIN_SIGNATURE.asString());
 
         public final String[] annotationNames;
 
