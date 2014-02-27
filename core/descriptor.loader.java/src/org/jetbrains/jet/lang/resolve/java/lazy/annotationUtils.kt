@@ -22,13 +22,13 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaAnnotationDescriptor
-import org.jetbrains.jet.lang.resolve.java.AnnotationLoadingUtil
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 
 class LazyJavaAnnotations(c: LazyJavaResolverContextWithTypes, val annotationOwner: JavaAnnotationOwner) : Annotations {
     private val annotationDescriptors = c.storageManager.createMemoizedFunctionWithNullableValues {
         (jAnnotation: JavaAnnotation) ->
         val fqName = jAnnotation.getFqName()
-        if (fqName == null || AnnotationLoadingUtil.isSpecialAnnotation(fqName)) {
+        if (fqName == null || JvmAnnotationNames.isSpecialAnnotation(fqName)) {
             null
         }
         else LazyJavaAnnotationDescriptor(c, jAnnotation)
@@ -54,6 +54,6 @@ fun LazyJavaResolverContextWithTypes.resolveAnnotations(annotationsOwner: JavaAn
 private fun GlobalJavaResolverContext.hasAnnotation(owner: JavaAnnotationOwner, annotationFqName: FqName): Boolean
         = owner.findAnnotation(annotationFqName) != null || externalAnnotationResolver.findExternalAnnotation(owner, annotationFqName) != null
 
-fun GlobalJavaResolverContext.hasMutableAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, AnnotationLoadingUtil.JETBRAINS_MUTABLE_ANNOTATION)
-fun GlobalJavaResolverContext.hasReadOnlyAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, AnnotationLoadingUtil.JETBRAINS_READONLY_ANNOTATION)
-fun GlobalJavaResolverContext.hasNotNullAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, AnnotationLoadingUtil.JETBRAINS_NOT_NULL_ANNOTATION)
+fun GlobalJavaResolverContext.hasMutableAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION)
+fun GlobalJavaResolverContext.hasReadOnlyAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION)
+fun GlobalJavaResolverContext.hasNotNullAnnotation(owner: JavaAnnotationOwner): Boolean = hasAnnotation(owner, JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION)

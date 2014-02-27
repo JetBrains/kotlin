@@ -28,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
 
-import static org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil.KOTLIN_SIGNATURE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
 
 class KotlinSignatureUtil {
     static final String KOTLIN_SIGNATURE_ANNOTATION = KOTLIN_SIGNATURE.asString();

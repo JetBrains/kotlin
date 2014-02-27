@@ -17,20 +17,16 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.util.text.StringUtil;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
 
 public class SignaturesUtil {
-    public static final FqName KOTLIN_SIGNATURE = fqNameByClass(KotlinSignature.class);
-    public static final Name KOTLIN_SIGNATURE_VALUE_FIELD_NAME = Name.identifier("value");
-
     private SignaturesUtil() {
     }
 
@@ -39,7 +35,7 @@ public class SignaturesUtil {
         JavaAnnotation annotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
 
         if (annotation != null) {
-            JavaAnnotationArgument argument = annotation.findArgument(KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
+            JavaAnnotationArgument argument = annotation.findArgument(DEFAULT_ANNOTATION_MEMBER_NAME);
             if (argument instanceof JavaLiteralAnnotationArgument) {
                 Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
                 if (value instanceof String) {

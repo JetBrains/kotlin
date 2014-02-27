@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
@@ -24,13 +26,23 @@ public final class JvmAnnotationNames {
     public static final FqName KOTLIN_PACKAGE_PART = new FqName("kotlin.jvm.internal.KotlinPackagePart");
     public static final FqName KOTLIN_TRAIT_IMPL = new FqName("kotlin.jvm.internal.KotlinTraitImpl");
 
+    public static final FqName KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
+
     public static final String ABI_VERSION_FIELD_NAME = "abiVersion";
     public static final String DATA_FIELD_NAME = "data";
+    public static final Name DEFAULT_ANNOTATION_MEMBER_NAME = Name.identifier("value");
+
+    public static final FqName JETBRAINS_NOT_NULL_ANNOTATION = new FqName("org.jetbrains.annotations.NotNull");
+    public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
+    public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
+    public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
 
     @Deprecated
     public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");
     @Deprecated
     public static final FqName OLD_JET_PACKAGE_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetPackageClass");
+    @Deprecated
+    public static final FqName OLD_JET_VALUE_PARAMETER_ANNOTATION = new FqName("jet.runtime.typeinfo.JetValueParameter");
     @Deprecated
     public static final FqName OLD_KOTLIN_CLASS = new FqName("jet.KotlinClass");
     @Deprecated
@@ -39,6 +51,16 @@ public final class JvmAnnotationNames {
     public static final FqName OLD_KOTLIN_PACKAGE_FRAGMENT = new FqName("jet.KotlinPackageFragment");
     @Deprecated
     public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
+
+    @SuppressWarnings("deprecation")
+    public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
+        return fqName.asString().startsWith("jet.runtime.typeinfo.")
+               || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
+               || fqName.equals(OLD_KOTLIN_CLASS)
+               || fqName.equals(OLD_KOTLIN_PACKAGE)
+               || fqName.equals(KOTLIN_CLASS)
+               || fqName.equals(KOTLIN_PACKAGE);
+    }
 
     private JvmAnnotationNames() {
     }

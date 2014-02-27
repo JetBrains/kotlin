@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import jet.runtime.typeinfo.JetValueParameter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
@@ -56,7 +55,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescrip
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
 
 public class FunctionCodegen extends ParentCodegenAwareImpl {
     private final CodegenContext owner;
@@ -213,7 +212,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             }
 
             AnnotationVisitor av =
-                    mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(fqNameByClass(JetValueParameter.class)), true);
+                    mv.visitParameterAnnotation(i, asmDescByFqNameWithoutInnerClasses(OLD_JET_VALUE_PARAMETER_ANNOTATION), true);
             if (av != null) {
                 av.visit("name", name);
                 if (nullableType) {
