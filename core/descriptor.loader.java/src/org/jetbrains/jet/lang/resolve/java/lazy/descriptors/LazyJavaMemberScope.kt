@@ -40,7 +40,7 @@ public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
         private val _containingDeclaration: DeclarationDescriptor
 ) : JetScope {
-    private val allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
+    private val _allDescriptors = c.storageManager.createRecursionTolerantLazyValue<Collection<DeclarationDescriptor>>(
             {computeAllDescriptors()},
             // This is to avoid the following recursive case:
             //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
@@ -309,7 +309,7 @@ public abstract class LazyJavaMemberScope(
     override fun getDeclarationsByLabel(labelName: LabelName) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
-    override fun getAllDescriptors() = allDescriptors()
+    override fun getAllDescriptors() = _allDescriptors()
 
     private fun computeAllDescriptors(): MutableCollection<DeclarationDescriptor> {
         val result = LinkedHashSet<DeclarationDescriptor>()
