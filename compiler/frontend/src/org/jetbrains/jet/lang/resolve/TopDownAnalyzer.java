@@ -229,6 +229,19 @@ public class TopDownAnalyzer {
                             @Override
                             public void visitClass(@NotNull JetClass klass) {
                                 visitClassOrObject(klass);
+
+                                registerPrimaryConstructorParameters(klass);
+                            }
+
+                            private void registerPrimaryConstructorParameters(@NotNull JetClass klass) {
+                                for (JetParameter jetParameter : klass.getPrimaryConstructorParameters()) {
+                                    if (jetParameter.getValOrVarNode() != null) {
+                                        c.getPrimaryConstructorParameterProperties().put(
+                                                jetParameter,
+                                                (PropertyDescriptor) resolveSession.resolveToDescriptor(jetParameter)
+                                        );
+                                    }
+                                }
                             }
 
                             @Override
