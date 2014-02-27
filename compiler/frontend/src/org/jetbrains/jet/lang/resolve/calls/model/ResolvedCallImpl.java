@@ -229,7 +229,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return valueArguments;
     }
 
-    @NotNull
+    @Nullable
     @Override
     public List<ResolvedValueArgument> getValueArgumentsByIndex() {
         List<ResolvedValueArgument> arguments = new ArrayList<ResolvedValueArgument>(candidateDescriptor.getValueParameters().size());
@@ -242,16 +242,14 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
             ResolvedValueArgument value = entry.getValue();
             ResolvedValueArgument oldValue = arguments.set(parameterDescriptor.getIndex(), value);
             if (oldValue != null) {
-                throw new IllegalStateException("Argument set twice for " + parameterDescriptor + "\n" +
-                                                "old value: " + oldValue + "\n" +
-                                                "new value: " + value);
+                return null;
             }
         }
 
         for (int i = 0; i < arguments.size(); i++) {
             Object o = arguments.get(i);
             if (o == null) {
-                throw new IllegalStateException("No argument for " + getCandidateDescriptor().getValueParameters().get(i));
+                return null;
             }
         }
         

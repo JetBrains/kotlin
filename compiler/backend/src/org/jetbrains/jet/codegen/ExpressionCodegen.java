@@ -1927,7 +1927,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
             JavaClassDescriptor samInterface
     ) {
-        ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
+        List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
+        if (arguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
+        ResolvedValueArgument argument = arguments.get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
             throw new IllegalStateException(
                     "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
@@ -2321,6 +2325,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
         @SuppressWarnings("unchecked")
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        if (valueArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         List<ValueParameterDescriptor> valueParameters = fd.getValueParameters();
 

@@ -159,6 +159,9 @@ public class CallArgumentTranslator extends AbstractTranslator {
 
         List<JsExpression> result = new ArrayList<JsExpression>(valueParameters.size());
         List<ResolvedValueArgument> valueArgumentsByIndex = resolvedCall.getValueArgumentsByIndex();
+        if (valueArgumentsByIndex == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
         List<JsExpression> argsBeforeVararg = null;
         for (ValueParameterDescriptor parameterDescriptor : valueParameters) {
             ResolvedValueArgument actualArgument = valueArgumentsByIndex.get(parameterDescriptor.getIndex());

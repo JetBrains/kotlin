@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -86,7 +87,7 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
         return functionCall.getValueArguments();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public List<ResolvedValueArgument> getValueArgumentsByIndex() {
         return functionCall.getValueArgumentsByIndex();
