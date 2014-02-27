@@ -2,6 +2,9 @@
   <item name='com.intellij.util.EmptyQuery com.intellij.util.Query&lt;T&gt; getEmptyQuery()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.util.PathsList java.util.List&lt;com.intellij.openapi.vfs.VirtualFile&gt; getRootDirs()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.util.QueryFactory com.intellij.util.Query&lt;Result&gt; createUniqueResultsQuery(Parameters)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
