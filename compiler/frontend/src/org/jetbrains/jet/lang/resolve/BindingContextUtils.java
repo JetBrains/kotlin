@@ -40,6 +40,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
 import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
 
 public class BindingContextUtils {
@@ -362,5 +363,11 @@ public class BindingContextUtils {
             result.addAll(getAllOverriddenDeclarations((T) overriddenDeclaration));
         }
         return result;
+    }
+
+    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
+        VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
+        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
     }
 }

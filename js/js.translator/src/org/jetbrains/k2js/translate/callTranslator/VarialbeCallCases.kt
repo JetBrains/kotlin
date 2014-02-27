@@ -19,14 +19,12 @@ package org.jetbrains.k2js.translate.callTranslator
 import com.google.dart.compiler.backend.js.ast.JsExpression
 import com.google.dart.compiler.backend.js.ast.JsNameRef
 import com.google.dart.compiler.backend.js.ast.JsLiteral
-import org.jetbrains.k2js.translate.utils.JsAstUtils
 import com.google.dart.compiler.backend.js.ast.JsInvocation
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import java.util.Collections
-import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.jet.lang.resolve.DescriptorFactory
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure
+import org.jetbrains.k2js.translate.context.Namer.getCapturedVarAccessor
 
 
 object NativeVariableAccessCase : VariableAccessCase {
@@ -39,7 +37,7 @@ object NativeVariableAccessCase : VariableAccessCase {
     }
 
     override fun VariableAccessInfo.noReceivers(): JsExpression {
-        return constructAccessExpression(variableName.makeRef()!!)
+        return constructAccessExpression(variableName.makeRef())
     }
 }
 
@@ -48,7 +46,15 @@ object DefaultVariableAccessCase : VariableAccessCase {
         val functionRef = context.aliasOrValue(callableDescriptor) {
             context.getQualifiedReference(variableDescriptor)
         }
-        return constructAccessExpression(functionRef)
+
+        val ref =
+                if (isVarCapturedInClosure(context.bindingContext(), callableDescriptor)) {
+                    getCapturedVarAccessor(functionRef)
+                } else {
+                    functionRef
+                }
+
+        return constructAccessExpression(ref)
     }
 
     override fun VariableAccessInfo.thisObject(): JsExpression {

@@ -21,6 +21,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -37,7 +38,10 @@ import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.general.TranslatorVisitor;
 import org.jetbrains.k2js.translate.operation.BinaryOperationTranslator;
 import org.jetbrains.k2js.translate.operation.UnaryOperationTranslator;
-import org.jetbrains.k2js.translate.reference.*;
+import org.jetbrains.k2js.translate.reference.AccessTranslationUtils;
+import org.jetbrains.k2js.translate.reference.CallExpressionTranslator;
+import org.jetbrains.k2js.translate.reference.QualifiedExpressionTranslator;
+import org.jetbrains.k2js.translate.reference.ReferenceTranslator;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
@@ -45,6 +49,8 @@ import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
 
 import java.util.List;
 
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.k2js.translate.context.Namer.getCapturedVarAccessor;
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
@@ -121,7 +127,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Override
-    public JsNode visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration, @NotNull  TranslationContext context) {
+    public JsNode visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration, @NotNull TranslationContext context) {
         JetExpression jetInitializer = multiDeclaration.getInitializer();
         assert jetInitializer != null : "Initializer for multi declaration must be not null";
         JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
@@ -164,11 +170,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         VariableDescriptor descriptor = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.VARIABLE, expression);
         JsExpression initializer = translateInitializerForProperty(expression, context);
         JsName name = context.getNameForDescriptor(descriptor);
-        if (descriptor.isVar() && context.bindingContext().get(BindingContext.CAPTURED_IN_CLOSURE, descriptor) != null) {
-            // well, wrap it
-            JsNameRef alias = new JsNameRef("v", new JsNameRef(name));
+        if (isVarCapturedInClosure(context.bindingContext(), descriptor)) {
+            JsNameRef alias = getCapturedVarAccessor(name.makeRef());
             initializer = JsAstUtils.wrapValue(alias, initializer == null ? JsLiteral.NULL : initializer);
-            context.aliasingContext().registerAlias(descriptor, alias);
         }
 
         return newVar(name, initializer).source(expression);

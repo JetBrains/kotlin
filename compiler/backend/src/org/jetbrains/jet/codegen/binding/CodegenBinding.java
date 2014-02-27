@@ -319,12 +319,6 @@ public class CodegenBinding {
         return containerInternalName + "$" + klass.getName().getIdentifier();
     }
 
-    public static boolean isVarCapturedInClosure(BindingContext bindingContext, DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof VariableDescriptor) || descriptor instanceof PropertyDescriptor) return false;
-        VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
-        return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
-    }
-
     public static boolean hasThis0(BindingContext bindingContext, ClassDescriptor classDescriptor) {
         //noinspection SuspiciousMethodCalls
         CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);

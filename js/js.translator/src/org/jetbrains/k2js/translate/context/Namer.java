@@ -52,6 +52,7 @@ public final class Namer {
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
+    public static final String CAPTURED_VAR_FIELD = "v";
 
 
     private static final String DELEGATE_POSTFIX = "$delegate";
@@ -142,6 +143,11 @@ public final class Namer {
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
         return new JsNameRef(APPLY_FUNCTION, functionExpression);
+    }
+
+    @NotNull
+    public static JsNameRef getCapturedVarAccessor(@NotNull JsExpression ref) {
+        return new JsNameRef(CAPTURED_VAR_FIELD, ref);
     }
 
     @NotNull
