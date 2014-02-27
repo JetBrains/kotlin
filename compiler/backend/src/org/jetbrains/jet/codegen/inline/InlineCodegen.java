@@ -213,18 +213,17 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
     private void generateClosuresBodies() {
         for (LambdaInfo info : expressionMap.values()) {
-            info.setNode(generateClosureBody(info));
+            info.setNode(generateLambdaBody(info));
         }
     }
 
-    private MethodNode generateClosureBody(LambdaInfo info) {
+    private MethodNode generateLambdaBody(LambdaInfo info) {
         JetFunctionLiteral declaration = info.getFunctionLiteral();
         FunctionDescriptor descriptor = info.getFunctionDescriptor();
 
         MethodContext parentContext = codegen.getContext();
 
-        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoFunction(descriptor);
-        context.setInlineClosure(true);
+        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor);
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
@@ -294,7 +293,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         if (stackValue instanceof StackValue.Composed) {
             //see: Method.isSpecialStackValue: go through aload 0
-            if (codegen.getContext().isInlineClosure() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
+            if (codegen.getContext().isInliningLambda() && codegen.getContext().getContextDescriptor() instanceof AnonymousFunctionDescriptor) {
                 if (descriptor != null && !InlineUtil.hasNoinlineAnnotation(descriptor)) {
                     //TODO: check type of context
                     return false;
@@ -425,11 +424,11 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
             return parent.intoFunction((FunctionDescriptor) descriptor);
         }
 
-        throw new IllegalStateException("Coudn't build context for " + descriptorName(descriptor));
+        throw new IllegalStateException("Couldn't build context for " + descriptorName(descriptor));
     }
 
     private static boolean isStaticMethod(FunctionDescriptor functionDescriptor, MethodContext context) {
-        return (getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) == Opcodes.ACC_STATIC;
+        return (getMethodAsmFlags(functionDescriptor, context.getContextKind()) & Opcodes.ACC_STATIC) != 0;
     }
 
     @NotNull

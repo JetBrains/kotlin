@@ -180,7 +180,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this, null);
+        return new MethodContext(descriptor, getContextKind(), this, null, false);
+    }
+
+    public MethodContext intoInlinedLambda(FunctionDescriptor descriptor) {
+        return new MethodContext(descriptor, getContextKind(), this, null, true);
     }
 
     @NotNull

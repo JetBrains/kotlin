@@ -30,26 +30,20 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
 
     private Label methodStartLabel;
 
-    private boolean isInlineClosure;
-    
-    public MethodContext(
-            @NotNull FunctionDescriptor contextType,
-            @NotNull OwnerKind contextKind,
-            @NotNull CodegenContext parentContext
-    ) {
-        this(contextType, contextKind, parentContext, null);
-    }
+    private final boolean isInliningLambda;
 
     protected MethodContext(
             @NotNull FunctionDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
-            @Nullable MutableClosure closure
+            @Nullable MutableClosure closure,
+            boolean isInliningLambda
     ) {
         super(contextDescriptor instanceof PropertyAccessorDescriptor
               ? ((PropertyAccessorDescriptor) contextDescriptor).getCorrespondingProperty()
               : contextDescriptor, contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
+        this.isInliningLambda = isInliningLambda;
     }
 
     @Override
@@ -96,16 +90,12 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return false;
     }
 
-    public void setInlineClosure(boolean isInlineClosure) {
-        this.isInlineClosure = isInlineClosure;
-    }
-
-    public boolean isInlineClosure() {
-        return isInlineClosure;
+    public boolean isInliningLambda() {
+        return isInliningLambda;
     }
 
     public boolean isSpecialStackValue(StackValue stackValue) {
-        if (isInlineClosure && stackValue instanceof StackValue.Composed) {
+        if (isInliningLambda && stackValue instanceof StackValue.Composed) {
             StackValue prefix = ((StackValue.Composed) stackValue).prefix;
             StackValue suffix = ((StackValue.Composed) stackValue).suffix;
             if (prefix instanceof StackValue.Local && ((StackValue.Local) prefix).index == 0) {

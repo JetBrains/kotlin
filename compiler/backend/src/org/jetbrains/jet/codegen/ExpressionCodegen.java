@@ -1350,7 +1350,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
-            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), null);
+            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), defaulCallGenerator);
         }
 
         v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
@@ -1984,7 +1984,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     public StackValue invokeFunction(
-            @NotNull Call call,
+            Call call,
             StackValue receiver,
             ResolvedCall<? extends CallableDescriptor> resolvedCall
     ) {
@@ -2307,11 +2307,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return false;
     }
 
-    public int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, CallGenerator callGenerator) {
+    public int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, @NotNull CallGenerator callGenerator) {
         return pushMethodArguments(resolvedCall, valueParameterTypes, false, callGenerator);
     }
 
-    private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast, CallGenerator callGenerator) {
+    private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
         @SuppressWarnings("unchecked")
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
@@ -2321,7 +2321,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             throw new IllegalStateException();
         }
 
-        callGenerator = callGenerator != null ? callGenerator : defaulCallGenerator;
         int mask = 0;
 
         for (Iterator<ValueParameterDescriptor> iterator = valueParameters.iterator(); iterator.hasNext(); ) {
@@ -3409,7 +3408,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (callable instanceof CallableMethod) {
                 genThisAndReceiverFromResolvedCall(receiver, resolvedCall, (CallableMethod) callable);
                 boolean skipLast = !isGetter;
-                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), skipLast, null);
+                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), skipLast, defaulCallGenerator);
             }
             else {
                 gen(array, arrayType); // intrinsic method

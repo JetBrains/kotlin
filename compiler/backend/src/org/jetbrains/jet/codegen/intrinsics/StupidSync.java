@@ -52,7 +52,7 @@ public class StupidSync extends IntrinsicMethod {
 
         assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";
 
-        codegen.pushMethodArguments(resolvedCall, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE), null);
+        codegen.pushMethodArguments(resolvedCall, Arrays.asList(OBJECT_TYPE, FUNCTION0_TYPE), codegen.defaulCallGenerator);
         v.invokestatic("kotlin/jvm/internal/Intrinsics", "stupidSync", Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, FUNCTION0_TYPE));
         return OBJECT_TYPE;
     }

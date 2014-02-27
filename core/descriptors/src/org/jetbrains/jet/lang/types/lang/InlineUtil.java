@@ -37,11 +37,6 @@ public class InlineUtil {
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
 
-    @NotNull
-    public static InlineStrategy getInlineType(@NotNull Annotated annotated) {
-        return getInlineType(annotated.getAnnotations());
-    }
-
     public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         return KotlinBuiltIns.containsAnnotation(valueParameterDescriptor, builtIns.getNoinlineClassAnnotation());
@@ -62,6 +57,7 @@ public class InlineUtil {
             else {
                 assert argument instanceof EnumValue : "Inline annotation parameter should be inline entry but was: " + argument + "!";
                 ClassDescriptor value = ((EnumValue) argument).getValue();
+                assert value != null : "Value for enum value should be not null " + argument;
                 String name = value.getName().asString();
                 return name.equals(InlineStrategy.IN_PLACE.name()) ? InlineStrategy.IN_PLACE : InlineStrategy.AS_FUNCTION;
             }
