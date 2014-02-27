@@ -25,10 +25,7 @@ import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.scopes.JetScopeSelectorUtil.*;
 
@@ -94,11 +91,12 @@ public class ChainedScope implements JetScope {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
+        ArrayList<DeclarationDescriptor> result = new ArrayList<DeclarationDescriptor>();
         for (JetScope jetScope : scopeChain) {
-            Collection<DeclarationDescriptor> declarationsByLabel = jetScope.getDeclarationsByLabel(labelName);
-            if (!declarationsByLabel.isEmpty()) return declarationsByLabel; // TODO : merge?
+            result.addAll(jetScope.getDeclarationsByLabel(labelName));
         }
-        return Collections.emptyList();
+        result.trimToSize();
+        return result;
     }
 
     @NotNull
