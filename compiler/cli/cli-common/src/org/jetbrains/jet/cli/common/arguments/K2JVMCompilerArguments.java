@@ -48,7 +48,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
 
-    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invokation of method returning not-null")
+    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invocation of method returning not-null")
     public boolean notNullAssertions;
 
     @Argument(value = "notNullParamAssertions", description = "generate not-null assertions on parameters of methods accessible from Java")
