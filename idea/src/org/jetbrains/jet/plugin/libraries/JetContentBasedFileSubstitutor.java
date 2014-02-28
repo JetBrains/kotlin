@@ -66,13 +66,13 @@ public final class JetContentBasedFileSubstitutor implements ContentBasedClassFi
 
     @Override
     public boolean isApplicable(@Nullable Project project, @NotNull VirtualFile file) {
-        return DecompiledUtils.isKotlinCompiledFile(file);
+        return LibrariesPackage.isKotlinCompiledFile(file);
     }
 
     @NotNull
     @Override
     public String obtainFileText(Project project, VirtualFile file) {
-        if (file != null && DecompiledUtils.isKotlinCompiledFile(file)) {
+        if (file != null && LibrariesPackage.isKotlinCompiledFile(file)) {
             JetDecompiledData data = JetDecompiledData.getDecompiledData(file, project);
             deferredDocumentBinding.put(file, data.getFile());
 

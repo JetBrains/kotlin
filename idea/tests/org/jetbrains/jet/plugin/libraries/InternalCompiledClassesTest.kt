@@ -41,7 +41,7 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
     }
 
     fun testInnerClassIsInvisible() = doTestNoPsiFilesAreBuiltFor("inner or nested class") {
-        ClassFileViewProvider.isInnerClass(this)
+        ClassFileViewProvider.isInnerOrAnonymousClass(this)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
