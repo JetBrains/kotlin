@@ -25,12 +25,9 @@ import com.intellij.testFramework.MapDataContext
 import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.PsiLocation
 import com.intellij.execution.Location
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.actionSystem.LangDataKeys
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.RunProfileState
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.RunProfile
@@ -43,80 +40,106 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
+import java.io.File
+import com.intellij.openapi.roots.ModuleRootModificationUtil
 
 class RunConfigurationTest: CodeInsightTestCase() {
     private val project: Project get() = myProject!!
     private val module: Module get() = myModule!!
 
     fun testMainInTest() {
-        val outDirs = configureModule(getTestDataPath() + getTestName(false) + "/module")
+        val createResult = configureModule(moduleDirPath("module"), project.getBaseDir()!!)
 
-        val runConfiguration = createRunConfiguration("some.main")
+        val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
 
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(outDirs.src))
-        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(outDirs.test))
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.src))
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(createResult.test))
     }
 
-    private fun createRunConfiguration(mainFqn: String): RunConfiguration {
+    fun testDependencyModuleClasspath() {
+        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), project.getBaseDir()!!).src
+
+        val moduleWithDependencyDir = ApplicationManager.getApplication()!!.runWriteAction(Computable<VirtualFile> {
+            project.getBaseDir()!!.createChildDirectory(this, "moduleWithDependency")
+        })!!
+
+        val moduleWithDependency = createModule("moduleWithDependency")
+        ModuleRootModificationUtil.setModuleSdk(moduleWithDependency, getTestProjectJdk())
+
+        val moduleWithDependencySrcDir = configureModule(
+                moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).src
+
+        ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
+
+        val jetRunConfiguration = createConfigurationFromMain("some.test.main")
+        jetRunConfiguration.setModule(moduleWithDependency)
+
+        val javaParameters = getJavaRunParameters(jetRunConfiguration)
+
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(dependencyModuleSrcDir))
+        Assert.assertTrue(javaParameters.getClassPath().getRootDirs().contains(moduleWithDependencySrcDir))
+    }
+
+    private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
         val mainFunction = JetTopLevelFunctionsFqnNameIndex.getInstance()!!.get(
-                mainFqn, project, GlobalSearchScope.allScope(project))!!.first();
+                mainFqn, project, GlobalSearchScope.allScope(project))!!.first()
 
         val dataContext = MapDataContext()
-        dataContext.put(CommonDataKeys.PROJECT, project)
-        dataContext.put(LangDataKeys.MODULE, module)
         dataContext.put(Location.DATA_KEY, PsiLocation(project, mainFunction))
 
-        return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration()!!
+        return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration() as JetRunConfiguration
     }
 
-    private fun configureModule(moduleDir: String): ModuleOutputDirs {
+    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        PsiTestUtil.createTestProjectStructure(project, module, srcPath, PlatformTestCase.myFilesToDelete, true)
+        PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
-        val testDir = PsiTestUtil.createTestProjectStructure(project, module, testPath, PlatformTestCase.myFilesToDelete, false)
-        PsiTestUtil.addSourceRoot(getModule(), testDir, true)
+        if (File(testPath).exists()) {
+            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, PlatformTestCase.myFilesToDelete, false)
+            PsiTestUtil.addSourceRoot(getModule(), testDir, true)
+        }
 
-        val outDirs = ApplicationManager.getApplication()!!.runWriteAction(Computable<ModuleOutputDirs> {
-            val outDir = project.getBaseDir()!!.createChildDirectory(this, "out")
+        val (srcOutDir, testOutDir) = ApplicationManager.getApplication()!!.runWriteAction(Computable<Pair<VirtualFile, VirtualFile>> {
+            val outDir = outputParentDir.createChildDirectory(this, "out")
             val srcOutDir = outDir.createChildDirectory(this, "production")
             val testOutDir = outDir.createChildDirectory(this, "test")
 
-            PsiTestUtil.setCompilerOutputPath(module, srcOutDir.getUrl(), false)
-            PsiTestUtil.setCompilerOutputPath(module, testOutDir.getUrl(), true)
+            PsiTestUtil.setCompilerOutputPath(configModule, srcOutDir.getUrl(), false)
+            PsiTestUtil.setCompilerOutputPath(configModule, testOutDir.getUrl(), true)
 
-            ModuleOutputDirs(srcOutDir, testOutDir)
+            Pair(srcOutDir, testOutDir)
         })!!
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
 
-        return outDirs
+        return CreateModuleResult(configModule, srcOutDir, testOutDir)
     }
 
+    private fun moduleDirPath(moduleName: String) = "${getTestDataPath()}${getTestName(false)}/$moduleName"
+
     private fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
-        val state = configuration.getState(MOCK_EXECUTOR, ExecutionEnvironment(MockProfile(), MOCK_EXECUTOR, myProject!!, null))
+        val state = configuration.getState(MockExecutor, ExecutionEnvironment(MockProfile, MockExecutor, myProject!!, null))
 
         Assert.assertNotNull(state)
         Assert.assertTrue(state is JavaCommandLine)
 
         configuration.checkConfiguration()
-        return ((state as JavaCommandLine)).getJavaParameters()!!
+        return (state as JavaCommandLine).getJavaParameters()!!
     }
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
     override fun getTestProjectJdk() = PluginTestCaseBase.jdkFromIdeaHome()
 
-    private data class ModuleOutputDirs(val src: VirtualFile, val test: VirtualFile)
+    private class CreateModuleResult(val module: Module, val src: VirtualFile, val test: VirtualFile)
 
-    private val MOCK_EXECUTOR: Executor = object : DefaultRunExecutor() {
-        override fun getId(): String {
-            return "mock"
-        }
+    private object MockExecutor : DefaultRunExecutor() {
+        override fun getId() = "mock"
     }
 
-    private class MockProfile() : RunProfile {
-        override fun getState(executor: Executor, env: ExecutionEnvironment): RunProfileState? = null
+    private object MockProfile : RunProfile {
+        override fun getState(executor: Executor, env: ExecutionEnvironment) = null
         override fun getIcon() = null
         override fun getName() = null
     }
