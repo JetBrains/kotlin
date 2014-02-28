@@ -2,11 +2,12 @@ JetFile: RootPackage.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('bar')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('bar')
     PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n\n')
   CLASS

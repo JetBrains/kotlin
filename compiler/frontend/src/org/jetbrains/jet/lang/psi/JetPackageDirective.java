@@ -18,13 +18,15 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
+import java.util.Collections;
 import java.util.List;
 
 public class JetPackageDirective extends JetReferenceExpression {
@@ -34,17 +36,36 @@ public class JetPackageDirective extends JetReferenceExpression {
         super(node);
     }
 
+    // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression
+    @Nullable
+    public JetExpression getPackageNameExpression() {
+        return findChildByClass(JetExpression.class);
+    }
+
     @NotNull
     public List<JetSimpleNameExpression> getPackageNames() {
-        return findChildrenByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        JetExpression nameExpression = getPackageNameExpression();
+        if (nameExpression == null) return Collections.emptyList();
+
+        List<JetSimpleNameExpression> packageNames = ContainerUtil.newArrayList();
+        while (nameExpression instanceof JetQualifiedExpression) {
+            JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) nameExpression;
+            packageNames.add((JetSimpleNameExpression) qualifiedExpression.getSelectorExpression());
+            nameExpression = qualifiedExpression.getReceiverExpression();
+        }
+        packageNames.add((JetSimpleNameExpression) nameExpression);
+        Collections.reverse(packageNames);
+
+        return packageNames;
     }
 
     @Nullable
     public PsiElement getNameIdentifier() {
-        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)findLastChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
-        if (lastPart == null) {
-            return null;
-        }
+        JetExpression nameExpression = getPackageNameExpression();
+        if (nameExpression == null) return null;
+
+        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)PsiUtilPackage.getQualifiedElementSelector(nameExpression);
+        if (lastPart == null) return null;
 
         return lastPart.getIdentifier();
     }
@@ -89,15 +110,13 @@ public class JetPackageDirective extends JetReferenceExpression {
     @NotNull
     private String getQualifiedNameOf(@Nullable JetSimpleNameExpression nameExpression) {
         StringBuilder builder = new StringBuilder();
-        for (JetSimpleNameExpression e : findChildrenByClass(JetSimpleNameExpression.class)) {
+        for (JetSimpleNameExpression e : getPackageNames()) {
             if (builder.length() > 0) {
                 builder.append(".");
             }
             builder.append(e.getReferencedName());
 
-            if (e == nameExpression) {
-                break;
-            }
+            if (e == nameExpression) break;
         }
         return builder.toString();
     }

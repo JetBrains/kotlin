@@ -185,6 +185,8 @@ public class JetParsing extends AbstractJetParsing {
 
     /* SimpleName{"."} */
     private void parsePackageName() {
+        PsiBuilder.Marker qualifiedExpression = mark();
+        boolean simpleName = true;
         while (true) {
             if (myBuilder.newlineBeforeCurrentToken()) {
                 errorWithRecovery("Package name must be a '.'-separated identifier list placed on a single line", PACKAGE_NAME_RECOVERY_SET);
@@ -199,13 +201,21 @@ public class JetParsing extends AbstractJetParsing {
                 nsName.drop();
             }
 
+            if (!simpleName) {
+                PsiBuilder.Marker precedingMarker = qualifiedExpression.precede();
+                qualifiedExpression.done(DOT_QUALIFIED_EXPRESSION);
+                qualifiedExpression = precedingMarker;
+            }
+
             if (at(DOT)) {
+                simpleName = false;
                 advance(); // DOT
             }
             else {
                 break;
             }
         }
+        qualifiedExpression.drop();
     }
 
     /*

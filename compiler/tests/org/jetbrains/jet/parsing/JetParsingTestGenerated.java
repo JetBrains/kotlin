@@ -257,6 +257,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         doParsingTest("compiler/testData/psi/LocalDeclarations.kt");
     }
     
+    @TestMetadata("LongPackageName.kt")
+    public void testLongPackageName() throws Exception {
+        doParsingTest("compiler/testData/psi/LongPackageName.kt");
+    }
+    
     @TestMetadata("ModifierAsSelector.kt")
     public void testModifierAsSelector() throws Exception {
         doParsingTest("compiler/testData/psi/ModifierAsSelector.kt");
@@ -896,6 +901,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
         @TestMetadata("MissingCommaInValueParameterList.kt")
         public void testMissingCommaInValueParameterList() throws Exception {
             doParsingTest("compiler/testData/psi/recovery/MissingCommaInValueParameterList.kt");
+        }
+        
+        @TestMetadata("PackageNewLineRecovery.kt")
+        public void testPackageNewLineRecovery() throws Exception {
+            doParsingTest("compiler/testData/psi/recovery/PackageNewLineRecovery.kt");
         }
         
         @TestMetadata("PackageRecovery.kt")

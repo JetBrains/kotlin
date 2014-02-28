@@ -2,14 +2,16 @@ JetFile: Attributes.kt
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('foo')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('bar')
-    PsiElement(DOT)('.')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('goo')
+    DOT_QUALIFIED_EXPRESSION
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('goo')
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST
