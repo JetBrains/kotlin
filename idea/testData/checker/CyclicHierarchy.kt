@@ -2,10 +2,10 @@ trait A {
     fun foo() {}
 }
 trait B : A, <error>E</error> {}
-trait C : B {}
+trait C : <error>B</error> {}
 trait D : <error>B</error> {}
 trait E : <error>F</error> {}
-trait F : <error>D</error>, C {}
+trait F : <error>D</error>, <error>C</error> {}
 trait G : F {}
 trait H : F {}
 
@@ -21,10 +21,10 @@ val h : H? = null
 fun test() {
     a?.foo()
     b?.foo()
-    c?.foo()
-    d?.foo()
+    c?.<error>foo</error>()
+    d?.<error>foo</error>()
     e?.<error>foo</error>()
-    f?.foo()
-    g?.foo()
-    h?.foo()
+    f?.<error>foo</error>()
+    g?.<error>foo</error>()
+    h?.<error>foo</error>()
 }

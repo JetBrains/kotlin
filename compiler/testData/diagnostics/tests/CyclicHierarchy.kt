@@ -2,10 +2,10 @@ trait A {
     fun foo() {}
 }
 trait B : A, <!CYCLIC_INHERITANCE_HIERARCHY!>E<!> {}
-trait C : B {}
+trait C : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
 trait D : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
 trait E : <!CYCLIC_INHERITANCE_HIERARCHY!>F<!> {}
-trait F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, C {}
+trait F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, <!CYCLIC_INHERITANCE_HIERARCHY!>C<!> {}
 trait G : F {}
 trait H : F {}
 
@@ -21,10 +21,10 @@ val h : H? = null
 fun test() {
     a?.foo()
     b?.foo()
-    c?.foo()
-    d?.foo()
+    c?.<!UNRESOLVED_REFERENCE!>foo<!>()
+    d?.<!UNRESOLVED_REFERENCE!>foo<!>()
     e?.<!UNRESOLVED_REFERENCE!>foo<!>()
-    f?.foo()
-    g?.foo()
-    h?.foo()
+    f?.<!UNRESOLVED_REFERENCE!>foo<!>()
+    g?.<!UNRESOLVED_REFERENCE!>foo<!>()
+    h?.<!UNRESOLVED_REFERENCE!>foo<!>()
 }

@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
@@ -247,87 +248,74 @@ public class TypeHierarchyResolver {
 
     private void detectAndDisconnectLoops(@NotNull TopDownAnalysisContext c) {
         // Loop detection and disconnection
-        Set<ClassDescriptor> visited = Sets.newHashSet();
-        Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
-        List<ClassDescriptor> currentPath = Lists.newArrayList();
-        for (MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
-            traverseTypeHierarchy(klass, visited, beingProcessed, currentPath);
+        List<Runnable> tasks = new ArrayList<Runnable>();
+        for (final MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
+            for (final JetType supertype : klass.getSupertypes()) {
+                ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                if (supertypeDescriptor instanceof MutableClassDescriptorLite) {
+                    MutableClassDescriptorLite superclass = (MutableClassDescriptorLite) supertypeDescriptor;
+                    if (isReachable(superclass, klass, new HashSet<ClassDescriptor>())) {
+                        tasks.add(new Runnable() {
+                            @Override
+                            public void run() {
+                                klass.getSupertypes().remove(supertype);
+                            }
+                        });
+                        reportCyclicInheritanceHierarchyError(trace, klass, superclass);
+                    }
+                }
+            }
+        }
+
+        for (Runnable task : tasks) {
+            task.run();
         }
     }
 
-    private void traverseTypeHierarchy(
-            MutableClassDescriptorLite currentClass,
-            Set<ClassDescriptor> visited,
-            Set<ClassDescriptor> beingProcessed,
-            List<ClassDescriptor> currentPath
+    // Temporary. Duplicates logic from LazyClassTypeConstructor.isReachable
+    private static boolean isReachable(MutableClassDescriptorLite from, MutableClassDescriptorLite to, Set<ClassDescriptor> visited) {
+        if (!visited.add(from)) return false;
+        for (JetType supertype : from.getSupertypes()) {
+            TypeConstructor supertypeConstructor = supertype.getConstructor();
+            if (supertypeConstructor.getDeclarationDescriptor() == to) {
+                return true;
+            }
+            ClassifierDescriptor superclass = supertypeConstructor.getDeclarationDescriptor();
+            if (superclass instanceof MutableClassDescriptorLite && isReachable((MutableClassDescriptorLite) superclass, to, visited)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void reportCyclicInheritanceHierarchyError(
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull ClassDescriptor superclass
     ) {
-        if (!visited.add(currentClass)) {
-            if (beingProcessed.contains(currentClass)) {
-                markCycleErrors(currentPath, currentClass);
-                assert !currentPath.isEmpty() : "Cycle cannot be found on an empty currentPath";
-                ClassDescriptor subclassOfCurrent = currentPath.get(currentPath.size() - 1);
-                assert subclassOfCurrent instanceof MutableClassDescriptor;
-                // Disconnect the loop
-                for (Iterator<JetType> iterator = ((MutableClassDescriptor) subclassOfCurrent).getSupertypes().iterator();
-                     iterator.hasNext(); ) {
-                    JetType type = iterator.next();
-                    if (type.getConstructor() == currentClass.getTypeConstructor()) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-            return;
-        }
+        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
 
-        beingProcessed.add(currentClass);
-        currentPath.add(currentClass);
-        for (JetType supertype : Lists.newArrayList(currentClass.getSupertypes())) {
-            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-            if (declarationDescriptor instanceof MutableClassDescriptor) {
-                MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) declarationDescriptor;
-                traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
+        PsiElement elementToMark = null;
+        if (psiElement instanceof JetClassOrObject) {
+            JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
+            for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                if (typeReference == null) continue;
+                JetType supertype = trace.get(TYPE, typeReference);
+                if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
+                    elementToMark = typeReference;
+                }
             }
         }
-        beingProcessed.remove(currentClass);
-        currentPath.remove(currentPath.size() - 1);
-    }
-
-    private void markCycleErrors(List<ClassDescriptor> currentPath, @NotNull ClassDescriptor current) {
-        int size = currentPath.size();
-        for (int i = size - 1; i >= 0; i--) {
-            ClassDescriptor classDescriptor = currentPath.get(i);
-
-            ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
-            PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-
-            PsiElement elementToMark = null;
-            if (psiElement instanceof JetClassOrObject) {
-                JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
-                for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-                    JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-                    if (typeReference == null) continue;
-                    JetType supertype = trace.get(TYPE, typeReference);
-                    if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
-                        elementToMark = typeReference;
-                    }
-                }
+        if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
+            PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
+            PsiElement nameIdentifier = namedElement.getNameIdentifier();
+            if (nameIdentifier != null) {
+                elementToMark = nameIdentifier;
             }
-            if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
-                PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
-                PsiElement nameIdentifier = namedElement.getNameIdentifier();
-                if (nameIdentifier != null) {
-                    elementToMark = nameIdentifier;
-                }
-            }
-            if (elementToMark != null) {
-                trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
-            }
-
-            if (classDescriptor == current) {
-                // Beginning of cycle is found
-                break;
-            }
+        }
+        if (elementToMark != null) {
+            trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
         }
     }
 
