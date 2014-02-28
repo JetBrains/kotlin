@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -267,6 +267,10 @@ public class JetTestUtils {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
+    public static File findAndroidApiJar() {
+        return new File(JetTestCaseBuilder.getHomeDirectory(), "dependencies/android.jar");
+    }
+
     public static File getAnnotationsJar() {
         return new File(JetTestCaseBuilder.getHomeDirectory(), "compiler/testData/mockJDK/jre/lib/annotations.jar");
     }
@@ -278,6 +282,15 @@ public class JetTestUtils {
             throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
         }
         return jdkAnnotations;
+    }
+
+    @NotNull
+    public static File getAndroidSdkAnnotationsJar() {
+        File androidSdkAnnotations = new File("dependencies/annotations/kotlin-android-sdk-annotations.jar");
+        if (!androidSdkAnnotations.exists()) {
+            throw new RuntimeException("Kotlin Android SDK annotations jar not found; please run 'ant dist' to build it");
+        }
+        return androidSdkAnnotations;
     }
 
     public static void mkdirs(File file) throws IOException {
@@ -369,6 +382,9 @@ public class JetTestUtils {
         if (jdkKind == TestJdkKind.MOCK_JDK) {
             configuration.add(CLASSPATH_KEY, findMockJdkRtJar());
         }
+        else if (jdkKind == TestJdkKind.ANDROID_API) {
+            configuration.add(CLASSPATH_KEY, findAndroidApiJar());
+        }
         else {
             configuration.addAll(CLASSPATH_KEY, PathUtil.getJdkClassesRoots());
         }
@@ -378,7 +394,11 @@ public class JetTestUtils {
         configuration.addAll(CLASSPATH_KEY, extraClasspath);
 
         if (configurationKind == ALL || configurationKind == JDK_AND_ANNOTATIONS) {
-            configuration.add(ANNOTATIONS_PATH_KEY, getJdkAnnotationsJar());
+            if (jdkKind == TestJdkKind.ANDROID_API) {
+                configuration.add(ANNOTATIONS_PATH_KEY, getAndroidSdkAnnotationsJar());
+            } else {
+                configuration.add(ANNOTATIONS_PATH_KEY, getJdkAnnotationsJar());
+            }
         }
 
         return configuration;
