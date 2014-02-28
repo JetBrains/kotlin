@@ -8,7 +8,7 @@ Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -noJdk [flag] don't include Java runtime into classpath
   -noStdlib [flag] don't include Kotlin runtime into classpath
   -noJdkAnnotations [flag] don't include JDK external annotations into classpath
-  -notNullAssertions [flag] generate not-null assertion after each invokation of method returning not-null
+  -notNullAssertions [flag] generate not-null assertion after each invocation of method returning not-null
   -notNullParamAssertions [flag] generate not-null assertions on parameters of methods accessible from Java
   -output [String] output directory
   -module [String] module to compile
