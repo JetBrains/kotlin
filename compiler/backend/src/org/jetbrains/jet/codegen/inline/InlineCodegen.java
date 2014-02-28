@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
@@ -55,7 +56,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
 public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
@@ -150,8 +150,12 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         MethodNode node;
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor, state);
-            node = InlineCodegenUtil.getMethodNode(file.getInputStream(), functionDescriptor.getName().asString(),
-                                                   callableMethod.getAsmMethod().getDescriptor());
+            String methodDesc = callableMethod.getAsmMethod().getDescriptor();
+            DeclarationDescriptor parentDescriptor = functionDescriptor.getContainingDeclaration();
+            if (DescriptorUtils.isTrait(parentDescriptor)) {
+                methodDesc = "(" + typeMapper.mapType((ClassDescriptor) parentDescriptor).getDescriptor() + methodDesc.substring(1);
+            }
+            node = InlineCodegenUtil.getMethodNode(file.getInputStream(), functionDescriptor.getName().asString(), methodDesc);
 
             if (node == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -418,7 +422,8 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state);
 
         if (descriptor instanceof ClassDescriptor) {
-            return parent.intoClass((ClassDescriptor) descriptor, OwnerKind.IMPLEMENTATION, state);
+            OwnerKind kind = DescriptorUtils.isTrait(descriptor) ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
+            return parent.intoClass((ClassDescriptor) descriptor, kind, state);
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return parent.intoFunction((FunctionDescriptor) descriptor);

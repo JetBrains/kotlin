@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
 
@@ -79,7 +80,7 @@ public class InlineCodegenUtil {
 
 
     @NotNull
-    public static VirtualFile getVirtualFileForCallable(DeserializedSimpleFunctionDescriptor deserializedDescriptor, GenerationState state) {
+    public static VirtualFile getVirtualFileForCallable(@NotNull DeserializedSimpleFunctionDescriptor deserializedDescriptor, @NotNull GenerationState state) {
         VirtualFile file;
         DeclarationDescriptor parentDeclaration = deserializedDescriptor.getContainingDeclaration();
         if (parentDeclaration instanceof PackageFragmentDescriptor) {
@@ -124,7 +125,7 @@ public class InlineCodegenUtil {
             return PackageClassUtils.getPackageClassFqName(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            return DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor));
+            return DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor), isTrait(containerDescriptor));
         }
         return null;
     }
