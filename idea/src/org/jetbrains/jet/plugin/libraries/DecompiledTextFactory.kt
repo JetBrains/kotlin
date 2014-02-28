@@ -28,6 +28,7 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder
 import java.util.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
+import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClass
 
 public fun buildDecompiledText(
         classFile: VirtualFile,
@@ -88,6 +89,9 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
     }
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String) {
+        if (descriptor is MissingDependencyErrorClass) {
+            throw IllegalStateException("${descriptor.getClass().getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
+        }
         val startOffset = builder.length()
         val header = if (isEnumEntry(descriptor))
             descriptor.getName().asString()
