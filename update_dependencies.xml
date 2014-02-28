@@ -187,6 +187,16 @@
             <mapper type="merge" to="closure-compiler.jar"/>
         </unzip>
 
+        <delete file="dependencies/android.jar" failonerror="false"/>
+        <get src="http://dl-ssl.google.com/android/repository/android-19_r02.zip"
+             dest="dependencies/download/android-sdk.zip" usetimestamp="true"/>
+        <unzip src="dependencies/download/android-sdk.zip" dest="dependencies">
+          <patternset>
+            <include name="**/android.jar"/>
+          </patternset>
+          <mapper type="flatten"/>
+        </unzip>
+
         <!-- Bootstrap compiler -->
         <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt345/bootstrap.tcbuildtag/kotlin-plugin-{build.number}.zip"
              dest="dependencies/download/bootstrap-compiler.zip" usetimestamp="true"/>
