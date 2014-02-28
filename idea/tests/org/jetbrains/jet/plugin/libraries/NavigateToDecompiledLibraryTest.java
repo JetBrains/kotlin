@@ -145,29 +145,33 @@ public class NavigateToDecompiledLibraryTest extends AbstractNavigateToLibraryTe
         return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/library", false);
     }
 
-    @Nullable
-    private static LibraryOrderEntry findOurTestLibrary(@NotNull Module module) {
-        for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
-            if (orderEntry instanceof LibraryOrderEntry) {
-                return (LibraryOrderEntry) orderEntry;
-            }
-        }
-        return null;
-    }
-
     @NotNull
     /*package*/ static VirtualFile getClassFile(
             @NotNull String packageName,
             @NotNull String className,
             @NotNull Module module
     ) {
-        LibraryOrderEntry library = findOurTestLibrary(module);
-        assertNotNull(library);
-
-        VirtualFile packageDir = library.getFiles(OrderRootType.CLASSES)[0].findFileByRelativePath(packageName.replace(".", "/"));
+        VirtualFile root = findTestLibraryRoot(module);
+        assertNotNull(root);
+        VirtualFile packageDir = root.findFileByRelativePath(packageName.replace(".", "/"));
         assertNotNull(packageDir);
         VirtualFile classFile = packageDir.findChild(className + ".class");
         assertNotNull(classFile);
         return classFile;
+    }
+
+    @Nullable
+    /*package*/ static VirtualFile findTestLibraryRoot(@NotNull Module module) {
+        for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {
+            if (orderEntry instanceof LibraryOrderEntry) {
+                return findTestLibraryRoot((LibraryOrderEntry) orderEntry);
+            }
+        }
+        return null;
+    }
+
+    @NotNull
+    private static VirtualFile findTestLibraryRoot(@NotNull LibraryOrderEntry library) {
+        return library.getFiles(OrderRootType.CLASSES)[0];
     }
 }
