@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.AnnotationVisitor;
+import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -26,7 +27,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 
 public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
@@ -54,9 +56,11 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        AnnotationVisitor av =
-                v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_TRAIT_IMPL), true);
+        Type type = asmTypeByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS);
+        AnnotationVisitor av = v.getVisitor().visitAnnotation(type.getDescriptor(), true);
+        if (av == null) return;
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnum("kind", "L" + type.getInternalName() + "$Kind;", "TRAIT_IMPL");
         av.visitEnd();
     }
 }

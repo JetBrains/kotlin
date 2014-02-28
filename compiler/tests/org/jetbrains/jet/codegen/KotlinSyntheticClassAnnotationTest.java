@@ -20,14 +20,15 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.lang.annotation.Annotation;
 
-public class KotlinPackagePartAnnotationTest extends CodegenTestCase {
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
+
+public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override
@@ -36,35 +37,38 @@ public class KotlinPackagePartAnnotationTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKotlinPackagePartAnnotationIsWritten() throws Exception {
+    public void testAnnotationIsWrittenOnPackagePart() throws Exception {
         loadText("package " + PACKAGE_NAME + "\n\nfun foo() = 42\n");
         String facadeFileName = JvmClassName.byFqNameWithoutInnerClasses(PackageClassUtils.getPackageClassFqName(PACKAGE_NAME)).getInternalName() + ".class";
 
         OutputFileCollection outputFiles = generateClassesInFile();
         for (OutputFile outputFile : outputFiles.asList()) {
+            // The file which is not a facade is a package part
             String filePath = outputFile.getRelativePath();
+            if (filePath.equals(facadeFileName)) continue;
 
-            if (!filePath.equals(facadeFileName)) {
-                // The file which is not a facade is a package part
-                String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
-                Class<?> aClass = generateClass(fqName);
+            String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
+            Class<?> aClass = generateClass(fqName);
 
-                Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(JvmAnnotationNames.KOTLIN_PACKAGE_PART.asString());
+            Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(KOTLIN_SYNTHETIC_CLASS.asString());
+            assertTrue("No KotlinSyntheticClass annotation found on a package part", aClass.isAnnotationPresent(annotationClass));
 
-                assertTrue("No KotlinPackagePart annotation on a package part",
-                           aClass.isAnnotationPresent(annotationClass));
+            Annotation annotation = aClass.getAnnotation(annotationClass);
 
-                Annotation kotlinPackagePart = aClass.getAnnotation(annotationClass);
+            Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, "abiVersion");
+            assertNotNull(version);
+            assertTrue("KotlinSyntheticClass annotation is written with an unsupported format",
+                       AbiVersionUtil.isAbiVersionCompatible(version));
 
-                Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(kotlinPackagePart, "abiVersion");
-                assertNotNull(version);
-                assertTrue("KotlinPackagePart annotation is written with an unsupported format",
-                           AbiVersionUtil.isAbiVersionCompatible(version));
+            Object kind = CodegenTestUtil.getAnnotationAttribute(annotation, "kind");
+            assertNotNull(kind);
+            assertEquals("KotlinSyntheticClass annotation has the wrong kind", "PACKAGE_PART", kind.toString());
 
-                return;
-            }
+            return;
         }
 
         fail("No package part was found: " + outputFiles.asList());
     }
+
+    // TODO: test that annotation is written on TImpl
 }

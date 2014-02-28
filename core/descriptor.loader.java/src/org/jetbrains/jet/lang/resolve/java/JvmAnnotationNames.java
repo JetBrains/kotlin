@@ -23,8 +23,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
-    public static final FqName KOTLIN_PACKAGE_PART = new FqName("kotlin.jvm.internal.KotlinPackagePart");
-    public static final FqName KOTLIN_TRAIT_IMPL = new FqName("kotlin.jvm.internal.KotlinTraitImpl");
+    public static final FqName KOTLIN_SYNTHETIC_CLASS = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
 
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");

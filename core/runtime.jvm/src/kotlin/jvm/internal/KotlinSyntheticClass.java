@@ -20,6 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface KotlinTraitImpl {
+public @interface KotlinSyntheticClass {
     int abiVersion();
+
+    Kind kind();
+
+    public static enum Kind {
+        PACKAGE_PART,
+        TRAIT_IMPL
+    }
 }

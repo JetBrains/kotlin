@@ -39,8 +39,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     static {
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS), CLASS);
         HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE), PACKAGE_FACADE);
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE_PART), PACKAGE_PART);
-        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_TRAIT_IMPL), TRAIT_IMPL);
+        HEADER_KINDS.put(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS), SYNTHETIC_CLASS);
 
         @SuppressWarnings("deprecation")
         List<FqName> incompatible = Arrays.asList(OLD_JET_CLASS_ANNOTATION, OLD_JET_PACKAGE_CLASS_ANNOTATION, OLD_KOTLIN_CLASS,
@@ -100,8 +99,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         if (newKind == CLASS || newKind == PACKAGE_FACADE) {
             return kotlinClassOrPackageVisitor(annotationClassName);
         }
-        else if (newKind == PACKAGE_PART || newKind == TRAIT_IMPL) {
-            return annotationWithAbiVersionVisitor(annotationClassName);
+        else if (newKind == SYNTHETIC_CLASS) {
+            return syntheticClassAnnotationVisitor(annotationClassName);
         }
 
         return null;
@@ -175,7 +174,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     }
 
     @NotNull
-    private AnnotationArgumentVisitor annotationWithAbiVersionVisitor(@NotNull final JvmClassName annotationClassName) {
+    private AnnotationArgumentVisitor syntheticClassAnnotationVisitor(@NotNull final JvmClassName annotationClassName) {
         return new AnnotationArgumentVisitor() {
             @Override
             public void visit(@Nullable Name name, @Nullable Object value) {
@@ -184,7 +183,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             @Override
             public void visitEnum(@NotNull Name name, @NotNull JvmClassName enumClassName, @NotNull Name enumEntryName) {
-                unexpectedArgument(name, annotationClassName);
+                // TODO: save kind to somewhere
             }
 
             @Nullable
