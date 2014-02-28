@@ -22,7 +22,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.plugin.JetLanguage
 import kotlin.properties.Delegates
 
@@ -41,7 +40,10 @@ public class JetClassFileViewProvider(
     }
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
-        return if (isInternal) null else JetClsFile(this)
+        //TODO: check index that file is library file, as in ClassFileViewProvider
+        if (isInternal) return null
+
+        return JetClsFile(this)
     }
 
     override fun createCopy(copy: VirtualFile): SingleRootFileViewProvider {

@@ -37,7 +37,7 @@ public class JetClsStubBuilder extends ClsStubBuilder {
     public PsiFileStub<?> buildFileStub(@NotNull FileContent content) throws ClsFormatException {
         VirtualFile file = content.getFile();
 
-        if (DecompiledUtils.isKotlinInternalCompiledFile(file)) {
+        if (LibrariesPackage.isKotlinInternalCompiledFile(file)) {
             return null;
         }
 

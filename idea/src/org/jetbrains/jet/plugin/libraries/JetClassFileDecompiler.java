@@ -28,7 +28,7 @@ public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
-        return DecompiledUtils.isKotlinCompiledFile(file);
+        return LibrariesPackage.isKotlinCompiledFile(file);
     }
 
     @NotNull
@@ -40,6 +40,6 @@ public class JetClassFileDecompiler extends ClassFileDecompilers.Full {
     @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new JetClassFileViewProvider(manager, file, physical, DecompiledUtils.isKotlinInternalCompiledFile(file));
+        return new JetClassFileViewProvider(manager, file, physical, LibrariesPackage.isKotlinInternalCompiledFile(file));
     }
 }

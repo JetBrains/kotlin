@@ -57,7 +57,7 @@ public final class DecompiledNavigationUtils {
         DeclarationDescriptor effectiveReferencedDescriptor = getEffectiveReferencedDescriptor(referencedDescriptor);
         VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, effectiveReferencedDescriptor);
 
-        if (virtualFile == null || !DecompiledUtils.isKotlinCompiledFile(virtualFile)) return null;
+        if (virtualFile == null || !LibrariesPackage.isKotlinCompiledFile(virtualFile)) return null;
 
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
         if (!(psiFile instanceof JetClsFile)) {
@@ -112,8 +112,7 @@ public final class DecompiledNavigationUtils {
             return PackageClassUtils.getPackageClassFqName(((PackageFragmentDescriptor) containerDescriptor).getFqName());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            ClassKind classKind = ((ClassDescriptor) containerDescriptor).getKind();
-            if (classKind == ClassKind.CLASS_OBJECT || classKind == ClassKind.ENUM_ENTRY
+            if (containerDescriptor.getContainingDeclaration() instanceof ClassDescriptor
                 || DescriptorUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
                 return getContainerFqName(containerDescriptor.getContainingDeclaration());
             }

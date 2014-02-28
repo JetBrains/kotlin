@@ -82,7 +82,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
             val segments = DeserializedResolverUtils.kotlinFqNameToJavaFqName(classId.getRelativeClassName()).pathSegments()
             val targetName = segments.makeString("$", postfix = ".class")
             val virtualFile = packageDirectory.findChild(targetName)
-            if (virtualFile != null && DecompiledUtils.isKotlinCompiledFile(virtualFile)) {
+            if (virtualFile != null && isKotlinCompiledFile(virtualFile)) {
                 return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
             }
             return null
