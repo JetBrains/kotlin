@@ -26,6 +26,10 @@ import com.intellij.psi.PsiManager
 import junit.framework.Assert
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.psi.impl.compiled.ClsFileImpl
+import com.intellij.psi.PsiCompiledFile
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiJavaFile
 
 //TODO: test for local functions and classes
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
@@ -44,20 +48,45 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
         ClassFileViewProvider.isInnerOrAnonymousClass(this)
     }
 
+    fun testTraitImplClassIsVisibleAsJavaClass() {
+        val project = getProject()!!
+        doTest("trait impl", { getNameWithoutExtension().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) }) {
+            val psiFile = PsiManager.getInstance(project).findFile(this)
+            Assert.assertTrue("Should not be kotlin file",
+                              psiFile !is JetClsFile)
+            Assert.assertTrue("Should be java file, was ${psiFile!!.getClass().getSimpleName()}",
+                              psiFile is ClsFileImpl)
+
+            val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()!!
+            Assert.assertTrue("Should be java decompiled file, was ${decompiledPsiFile.getClass().getSimpleName()}",
+                              decompiledPsiFile is PsiJavaFile)
+            val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
+            Assert.assertTrue("Should have some decompiled text",
+                              classes.size == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
+        }
+    }
+
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, withSources = false)
     }
 
-    private fun doTestNoPsiFilesAreBuiltFor(fileKind: String, condition: VirtualFile.() -> Boolean) {
-        val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!
+    private fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
         val project = getProject()!!
+        doTest(fileKind, acceptFile) {
+            val psiFile = PsiManager.getInstance(project).findFile(this)
+            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.getPresentableName()}",
+                              psiFile)
+
+        }
+    }
+
+    private fun doTest(fileKind: String, acceptFile: VirtualFile.() -> Boolean, performTest: VirtualFile.() -> Unit) {
+        val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!
         var foundAtLeastOneFile = false
         root.checkRecursively {
-            if (condition()) {
+            if (acceptFile()) {
                 foundAtLeastOneFile = true
-                val psiFile = PsiManager.getInstance(project).findFile(this)
-                Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.getPresentableName()}",
-                                  psiFile)
+                performTest()
             }
         }
         Assert.assertTrue("Should find at least one file of kind ($fileKind). This assertion can fail in following scenarios:\n" +

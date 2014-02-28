@@ -44,7 +44,7 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
         return true
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header != null
+    return header != null && header.getKind() != KotlinClassHeader.Kind.TRAIT_IMPL
 }
 
 public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
