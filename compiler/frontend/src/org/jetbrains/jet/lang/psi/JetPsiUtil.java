@@ -650,6 +650,8 @@ public class JetPsiUtil {
             return false;
         }
 
+        if (parentExpression instanceof JetPackageDirective) return false;
+
         if (parentExpression instanceof JetWhenExpression || innerExpression instanceof JetWhenExpression) {
             return false;
         }
