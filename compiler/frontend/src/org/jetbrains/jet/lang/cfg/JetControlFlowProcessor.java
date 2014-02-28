@@ -72,9 +72,6 @@ public class JetControlFlowProcessor {
     public Pseudocode generatePseudocode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl) pseudocode).postProcess();
-        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            ((PseudocodeImpl) localFunctionDeclarationInstruction.getBody()).postProcess();
-        }
         return pseudocode;
     }
 
