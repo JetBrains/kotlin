@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
-import jet.Function0;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.ClassReader;

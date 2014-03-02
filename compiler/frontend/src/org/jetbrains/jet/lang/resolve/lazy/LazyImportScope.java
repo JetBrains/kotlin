@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import jet.Function0;
-import jet.Function1;
+import kotlin.Function0;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;

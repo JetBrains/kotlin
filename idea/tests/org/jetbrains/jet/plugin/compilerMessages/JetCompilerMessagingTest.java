@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.compilerMessages;
 
-import jet.Function1;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.compiler.K2JvmTranslatingCompiler;

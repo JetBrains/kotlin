@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
-import jet.Function1;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;

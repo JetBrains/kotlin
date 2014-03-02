@@ -21,7 +21,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiFile;
-import jet.Function0;
+import kotlin.Function0;
 import kotlin.modules.AllModules;
 import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;

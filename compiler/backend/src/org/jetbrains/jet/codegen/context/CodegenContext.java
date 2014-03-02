@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import jet.Function0;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;

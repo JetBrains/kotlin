@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
-import jet.Function0;
-import jet.Function1;
+import kotlin.Function0;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer;

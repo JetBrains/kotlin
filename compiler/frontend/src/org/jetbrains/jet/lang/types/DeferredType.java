@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.types;
 
-import jet.Function0;
-import jet.Function1;
+import kotlin.Function0;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.BindingTrace;

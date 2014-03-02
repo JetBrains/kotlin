@@ -27,7 +27,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
-import jet.Function1;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.jet.JetTestUtils;

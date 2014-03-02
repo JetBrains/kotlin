@@ -25,7 +25,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PlatformTestCase;
-import jet.Function1;
+import kotlin.Function1;
 import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 

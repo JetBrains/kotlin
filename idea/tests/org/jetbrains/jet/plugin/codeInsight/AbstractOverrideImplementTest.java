@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.SmartList;
-import jet.Function1;
+import kotlin.Function1;
 import junit.framework.Assert;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;

@@ -20,7 +20,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import jet.Function0;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;

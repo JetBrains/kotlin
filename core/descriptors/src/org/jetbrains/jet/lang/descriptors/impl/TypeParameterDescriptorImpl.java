@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import com.google.common.collect.Sets;
-import jet.Function0;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.intellij.psi.NavigatablePsiElement;
-import jet.Function0;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
