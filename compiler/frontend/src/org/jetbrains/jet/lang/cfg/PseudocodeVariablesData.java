@@ -38,7 +38,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD;
 import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
-import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage.createEdges;
 
 public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
@@ -159,7 +158,7 @@ public class PseudocodeVariablesData {
                                 mergeIncomingEdgesDataForInitializers(incomingEdgesData);
                         Map<VariableDescriptor, VariableInitState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
                                 instruction, enterInstructionData, lexicalScopeVariableInfo);
-                        return createEdges(enterInstructionData, exitInstructionData);
+                        return new Edges<Map<VariableDescriptor, VariableInitState>>(enterInstructionData, exitInstructionData);
                     }
                 }
         );
@@ -267,7 +266,7 @@ public class PseudocodeVariablesData {
                                 instruction, true, bindingContext);
                         if (variableDescriptor == null ||
                             (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
-                            return createEdges(enterResult, enterResult);
+                            return new Edges<Map<VariableDescriptor, VariableUseState>>(enterResult, enterResult);
                         }
                         Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
                         if (instruction instanceof ReadValueInstruction) {
@@ -288,7 +287,7 @@ public class PseudocodeVariablesData {
                                     exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ);
                             }
                         }
-                        return createEdges(enterResult, exitResult);
+                        return new Edges<Map<VariableDescriptor, VariableUseState>>(enterResult, exitResult);
                     }
                 }
         );

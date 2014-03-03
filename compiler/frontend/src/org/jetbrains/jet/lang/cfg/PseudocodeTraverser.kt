@@ -186,7 +186,6 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
 }
 
 data class Edges<T>(val `in`: T, val out: T)
-fun <T> createEdges(`in`: T, out: T) = Edges(`in`, out)
 
 
 // returns false when interrupted by handler
