@@ -35,6 +35,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ElvisToIfThenIntention());
     }
 
+    public void doTestIfThenToElvis(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToElvisIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }
