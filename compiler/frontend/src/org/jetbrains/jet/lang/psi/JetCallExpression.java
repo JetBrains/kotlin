@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.SmartList;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -86,7 +85,6 @@ public class JetCallExpression extends JetReferenceExpression implements JetCall
         return result;
     }
 
-    @KotlinSignature("fun getValueArguments(): MutableList<out ValueArgument>")
     @Override
     @NotNull
     public List<? extends ValueArgument> getValueArguments() {
