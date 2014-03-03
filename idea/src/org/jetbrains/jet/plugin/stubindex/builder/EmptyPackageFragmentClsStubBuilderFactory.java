@@ -46,7 +46,7 @@ public class EmptyPackageFragmentClsStubBuilderFactory extends ClsStubBuilderFac
         if (file.getName().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") &&
             StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
             KotlinClassHeader header = new VirtualFileKotlinClass(LockBasedStorageManager.NO_LOCKS, file).getClassHeader();
-            return header != null && header.getKind() == KotlinClassHeader.Kind.SYNTHETIC_CLASS;
+            return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_PART;
         }
         return false;
     }

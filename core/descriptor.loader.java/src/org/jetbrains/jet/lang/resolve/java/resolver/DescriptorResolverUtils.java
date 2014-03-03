@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -35,6 +34,9 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
+
 public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
@@ -42,22 +44,11 @@ public final class DescriptorResolverUtils {
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null
-                   || javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS) != null;
-        }
-        return false;
+        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_PACKAGE) != null;
     }
 
     public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS) != null;
-        }
-        return false;
-    }
-
-    private static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
-        return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
+        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_CLASS) != null;
     }
 
     @NotNull
@@ -262,11 +253,7 @@ public final class DescriptorResolverUtils {
         return TypeSubstitutor.create(typeSubstitutionContext);
     }
 
-    public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {
-        return !isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
-    }
-
-    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
+    public static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
         for (JavaMethod method : javaClass.getMethods()) {
             if (method.isStatic() && !shouldBeInEnumClassObject(method)) {
                 return true;

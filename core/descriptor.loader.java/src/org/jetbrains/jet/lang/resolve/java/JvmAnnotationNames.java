@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
-    public static final FqName KOTLIN_SYNTHETIC_CLASS = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
 
     public static final FqName KOTLIN_SIGNATURE = new FqName("kotlin.jvm.KotlinSignature");
     public static final FqName OLD_KOTLIN_SIGNATURE = new FqName("jet.runtime.typeinfo.KotlinSignature");
@@ -36,6 +35,26 @@ public final class JvmAnnotationNames {
     public static final FqName JETBRAINS_NULLABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Nullable");
     public static final FqName JETBRAINS_MUTABLE_ANNOTATION = new FqName("org.jetbrains.annotations.Mutable");
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
+
+    public static class KotlinSyntheticClass {
+        public static final FqName FQ_NAME = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
+        public static final String INTERNAL_NAME = JvmClassName.byFqNameWithoutInnerClasses(FQ_NAME).getInternalName();
+        public static final String KIND_INTERNAL_NAME = "kotlin/jvm/internal/KotlinSyntheticClass$Kind";
+
+        public static final Name KIND_FIELD_NAME = Name.identifier("kind");
+
+        /**
+         * This enum duplicates {@link kotlin.jvm.internal.KotlinSyntheticClass.Kind}, because this code can't depend on "runtime.jvm".
+         * Both places should be updated simultaneously
+         */
+        public enum Kind {
+            PACKAGE_PART,
+            TRAIT_IMPL
+        }
+
+        private KotlinSyntheticClass() {
+        }
+    }
 
     @Deprecated
     public static final FqName OLD_JET_CLASS_ANNOTATION = new FqName("jet.runtime.typeinfo.JetClass");

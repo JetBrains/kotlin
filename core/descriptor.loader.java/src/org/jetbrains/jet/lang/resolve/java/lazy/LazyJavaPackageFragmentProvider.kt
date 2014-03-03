@@ -42,7 +42,7 @@ public class LazyJavaPackageFragmentProvider(
         }
         else {
             val jClass = c.findJavaClass(fqName)
-            if (jClass != null && DescriptorResolverUtils.isJavaClassVisibleAsPackage(jClass)) {
+            if (jClass != null && DescriptorResolverUtils.hasStaticMembers(jClass)) {
                 val correspondingClass = c.javaClassResolver.resolveClass(jClass)
                 if (correspondingClass != null) LazyPackageFragmentForJavaClass(c, _module, jClass) else null
             }

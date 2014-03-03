@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.lang.annotation.Annotation;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public static final FqName PACKAGE_NAME = new FqName("test");
@@ -50,7 +50,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
             String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
             Class<?> aClass = generateClass(fqName);
 
-            Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(KOTLIN_SYNTHETIC_CLASS.asString());
+            Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(KotlinSyntheticClass.FQ_NAME.asString());
             assertTrue("No KotlinSyntheticClass annotation found on a package part", aClass.isAnnotationPresent(annotationClass));
 
             Annotation annotation = aClass.getAnnotation(annotationClass);
