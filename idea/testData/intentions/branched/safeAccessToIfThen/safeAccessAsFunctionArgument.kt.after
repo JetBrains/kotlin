@@ -1,0 +1,8 @@
+fun f(s: Int?) {
+    println(s)
+}
+
+fun main(args: Array<String>) {
+    val x: String? = "foo"
+    f(if (x != null) x.length else null)
+}
