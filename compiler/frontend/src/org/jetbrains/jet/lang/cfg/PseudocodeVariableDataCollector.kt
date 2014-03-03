@@ -38,124 +38,18 @@ public class PseudocodeVariableDataCollector(
     val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
 
     suppress("UNCHECKED_CAST")
-    public fun <D> collectDataJ(
+    public fun <D> collectData(
             traversalOrder: TraversalOrder,
             mergeDataWithLocalDeclarations: Boolean,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<MutableMap<VariableDescriptor, D>>
     ): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>> {
-        //see KT-4605
-        return collectData(
+        val result = pseudocode.collectData(
                 traversalOrder, mergeDataWithLocalDeclarations,
-                instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
-        ) as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>
-    }
-
-    public fun <D> collectData(
-            traversalOrder: TraversalOrder,
-            mergeDataWithLocalDeclarations: Boolean,
-            instructionDataMergeStrategy: InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
-    ): Map<Instruction, Edges<Map<VariableDescriptor, D>>> {
-        val initialDataValue : Map<VariableDescriptor, D> = Collections.emptyMap<VariableDescriptor, D>()
-        val edgesMap = LinkedHashMap<Instruction, Edges<Map<VariableDescriptor, D>>>()
-        initializeEdgesMap(pseudocode, edgesMap, initialDataValue)
-        edgesMap.put(pseudocode.getStartInstruction(traversalOrder), Edges(initialDataValue, initialDataValue))
-
-        val changed = BooleanArray(1)
-        changed[0] = true
-        while (changed[0]) {
-            changed[0] = false
-            collectDataFromSubgraph(
-                    pseudocode, traversalOrder, mergeDataWithLocalDeclarations, edgesMap,
-                    instructionDataMergeStrategy, Collections.emptyList<Instruction>(), changed, false)
-        }
-        return edgesMap
-    }
-
-    private fun <M> initializeEdgesMap(
-            pseudocode: Pseudocode,
-            edgesMap: MutableMap<Instruction, Edges<M>>,
-            initialDataValue: M
-    ) {
-        val instructions = pseudocode.getInstructions()
-        val initialEdge = Edges(initialDataValue, initialDataValue)
-        for (instruction in instructions) {
-            edgesMap.put(instruction, initialEdge)
-            if (instruction is LocalFunctionDeclarationInstruction) {
-                initializeEdgesMap(instruction.getBody(), edgesMap, initialDataValue)
-            }
-        }
-    }
-
-    private fun <D> collectDataFromSubgraph(
-            pseudocode: Pseudocode,
-            traversalOrder: TraversalOrder,
-            mergeDataWithLocalDeclarations: Boolean,
-            edgesMap: MutableMap<Instruction, Edges<Map<VariableDescriptor, D>>>,
-            instructionDataMergeStrategy: InstructionDataMergeStrategy<Map<VariableDescriptor, D>>,
-            previousSubGraphInstructions: Collection<Instruction>,
-            changed: BooleanArray,
-            isLocal: Boolean
-    ) {
-        val instructions = pseudocode.getInstructions(traversalOrder)
-        val startInstruction = pseudocode.getStartInstruction(traversalOrder)
-
-        for (instruction in instructions) {
-            val isStart = instruction.isStartInstruction(traversalOrder)
-            if (!isLocal && isStart)
-                continue
-
-            fun getPreviousIncludingSubGraphInstructions(): Collection<Instruction> {
-                val previous = instruction.getPreviousInstructions(traversalOrder)
-                if (instruction != startInstruction || previousSubGraphInstructions.isEmpty()) {
-                    return previous
-                }
-                val result = ArrayList(previous)
-                result.addAll(previousSubGraphInstructions)
-                return result
-            }
-            val previousInstructions = getPreviousIncludingSubGraphInstructions()
-
-            fun updateEdgeDataForInstruction(
-                    previousValue: Edges<Map<VariableDescriptor, D>>?,
-                    newValue: Edges<Map<VariableDescriptor, D>>?
-            ) {
-                if (previousValue != newValue && newValue != null) {
-                    changed[0] = true
-                    edgesMap.put(instruction, newValue)
-                }
-            }
-
-            if (instruction is LocalFunctionDeclarationInstruction) {
-                val subroutinePseudocode = instruction.getBody()
-                val previous = if (mergeDataWithLocalDeclarations) previousInstructions else Collections.emptyList()
-                collectDataFromSubgraph(
-                        subroutinePseudocode, traversalOrder, mergeDataWithLocalDeclarations,
-                        edgesMap, instructionDataMergeStrategy, previous, changed, true)
-                if (mergeDataWithLocalDeclarations) {
-                    val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
-                    val previousValue = edgesMap.get(instruction)
-                    val newValue = edgesMap.get(lastInstruction)
-                    val updatedValue = if (newValue == null) null else
-                        Edges(filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.`in`),
-                              filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.out))
-                    updateEdgeDataForInstruction(previousValue, updatedValue)
-                    continue
-                }
-            }
-            val previousDataValue = edgesMap.get(instruction)
-
-            val incomingEdgesData = HashSet<Map<VariableDescriptor, D>>()
-
-            for (previousInstruction in previousInstructions) {
-                val previousData = edgesMap.get(previousInstruction)
-                if (previousData != null) {
-                    incomingEdgesData.add(filterOutVariablesOutOfScope(
-                            previousInstruction, instruction, previousData.out))
-                }
-            }
-            val mergedData = instructionDataMergeStrategy(instruction, incomingEdgesData)
-            updateEdgeDataForInstruction(previousDataValue, mergedData)
-        }
+                instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>,
+                { (from, to, data) -> filterOutVariablesOutOfScope(from, to, data)},
+                Collections.emptyMap<VariableDescriptor, D>())
+        //see KT-4605
+        return result as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>
     }
 
     private fun <D> filterOutVariablesOutOfScope(

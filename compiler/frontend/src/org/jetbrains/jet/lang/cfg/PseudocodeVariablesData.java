@@ -146,7 +146,7 @@ public class PseudocodeVariablesData {
 
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
 
-        return pseudocodeVariableDataCollector.collectDataJ(
+        return pseudocodeVariableDataCollector.collectData(
                 FORWARD, /*mergeDataWithLocalDeclarations=*/ false,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
                     @NotNull
@@ -159,7 +159,7 @@ public class PseudocodeVariablesData {
                         Map<VariableDescriptor, VariableInitState> enterInstructionData =
                                 mergeIncomingEdgesDataForInitializers(incomingEdgesData);
                         Map<VariableDescriptor, VariableInitState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
-                                        instruction, enterInstructionData, lexicalScopeVariableInfo);
+                                instruction, enterInstructionData, lexicalScopeVariableInfo);
                         return createEdges(enterInstructionData, exitInstructionData);
                     }
                 }
@@ -246,7 +246,7 @@ public class PseudocodeVariablesData {
 
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        return pseudocodeVariableDataCollector.collectDataJ(
+        return pseudocodeVariableDataCollector.collectData(
                 BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @NotNull
