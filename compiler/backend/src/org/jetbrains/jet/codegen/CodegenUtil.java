@@ -38,7 +38,9 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -105,15 +107,6 @@ public class CodegenUtil {
             }
         }
         return KotlinBuiltIns.getInstance().getAnyType();
-    }
-
-    @NotNull
-    public static <T extends CallableMemberDescriptor> T unwrapFakeOverride(T member) {
-        while (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            //noinspection unchecked
-            member = (T) member.getOverriddenDescriptors().iterator().next();
-        }
-        return member;
     }
 
     @Nullable

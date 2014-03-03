@@ -469,4 +469,19 @@ public class DescriptorUtils {
         return isTopLevelDeclaration(descriptor) ||
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
     }
+
+    // This method works correctly because every fake override has a declaration among its ancestors, and no fake override is allowed
+    // to have two different declarations among its ancestors, none of which is an ancestor of the other
+    @NotNull
+    public static <D extends CallableMemberDescriptor> D unwrapFakeOverride(@NotNull D descriptor) {
+        while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            Set<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            if (overridden.isEmpty()) {
+                throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
+            }
+            //noinspection unchecked
+            descriptor = (D) overridden.iterator().next();
+        }
+        return descriptor;
+    }
 }
