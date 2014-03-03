@@ -399,14 +399,8 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetSimpleNameExpression getLastReference(@NotNull JetExpression importedReference) {
-        if (importedReference instanceof JetDotQualifiedExpression) {
-            JetExpression selectorExpression = ((JetDotQualifiedExpression) importedReference).getSelectorExpression();
-            return (selectorExpression instanceof JetSimpleNameExpression) ? (JetSimpleNameExpression) selectorExpression : null;
-        }
-        if (importedReference instanceof JetSimpleNameExpression) {
-            return (JetSimpleNameExpression) importedReference;
-        }
-        return null;
+        JetElement selector = PsiUtilPackage.getQualifiedElementSelector(importedReference);
+        return selector instanceof JetSimpleNameExpression ? (JetSimpleNameExpression) selector : null;
     }
 
     public static boolean isSelectorInQualified(@NotNull JetSimpleNameExpression nameExpression) {

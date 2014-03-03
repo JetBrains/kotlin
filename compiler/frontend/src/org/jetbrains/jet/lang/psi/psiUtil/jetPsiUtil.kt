@@ -242,7 +242,7 @@ fun JetElement.getQualifiedElementSelector(): JetElement? {
             if (selector is JetCallExpression) selector.getCalleeExpression() else selector
         }
         is JetUserType -> getReferenceExpression()
-        else -> this
+        else -> null
     }
 }
 
