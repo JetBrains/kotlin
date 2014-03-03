@@ -43,8 +43,19 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
     if (isAnonymousFunction(file)) {
         return true
     }
+    if (isKotlinCompiledFileWithIncompatibleAbiVersion(file)) {
+        return false
+    }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
     return header != null && header.getKind() != KotlinClassHeader.Kind.TRAIT_IMPL
+}
+
+public fun isKotlinCompiledFileWithIncompatibleAbiVersion(file: VirtualFile): Boolean {
+    if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
+        return false
+    }
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
+    return header?.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION
 }
 
 public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
@@ -58,5 +69,5 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
         return true
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_PART
+    return header?.getKind() == KotlinClassHeader.Kind.PACKAGE_PART
 }

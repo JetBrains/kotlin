@@ -48,7 +48,6 @@ public fun buildDecompiledText(
         buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
     }
     else {
-        // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
         throw UnsupportedOperationException("Unknown header kind: " + kind)
     }
 }
