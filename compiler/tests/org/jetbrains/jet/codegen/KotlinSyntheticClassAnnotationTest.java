@@ -16,16 +16,19 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.lang.annotation.Annotation;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
@@ -50,25 +53,33 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
             String fqName = filePath.substring(0, filePath.length() - ".class".length()).replace('/', '.');
             Class<?> aClass = generateClass(fqName);
 
-            Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(KotlinSyntheticClass.FQ_NAME.asString());
-            assertTrue("No KotlinSyntheticClass annotation found on a package part", aClass.isAnnotationPresent(annotationClass));
-
-            Annotation annotation = aClass.getAnnotation(annotationClass);
-
-            Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, "abiVersion");
-            assertNotNull(version);
-            assertTrue("KotlinSyntheticClass annotation is written with an unsupported format",
-                       AbiVersionUtil.isAbiVersionCompatible(version));
-
-            Object kind = CodegenTestUtil.getAnnotationAttribute(annotation, "kind");
-            assertNotNull(kind);
-            assertEquals("KotlinSyntheticClass annotation has the wrong kind", "PACKAGE_PART", kind.toString());
-
+            assertAnnotatedWithKind(aClass, "PACKAGE_PART");
             return;
         }
 
         fail("No package part was found: " + outputFiles.asList());
     }
 
-    // TODO: test that annotation is written on TImpl
+    public void testAnnotationIsWrittenOnTraitImpl() throws Exception {
+        loadText("package " + PACKAGE_NAME + "\n\ntrait A { fun foo() = 42 }\n");
+
+        Class<?> aClass = generateClass(PACKAGE_NAME + ".A" + JvmAbi.TRAIT_IMPL_SUFFIX);
+        assertNotNull("TImpl is not generated", aClass);
+        assertAnnotatedWithKind(aClass, "TRAIT_IMPL");
+    }
+
+    private void assertAnnotatedWithKind(@NotNull Class<?> aClass, @NotNull String expectedKind) {
+        Class<? extends Annotation> annotationClass = loadAnnotationClassQuietly(KotlinSyntheticClass.FQ_NAME.asString());
+        assertTrue("No KotlinSyntheticClass annotation found", aClass.isAnnotationPresent(annotationClass));
+
+        Annotation annotation = aClass.getAnnotation(annotationClass);
+
+        Integer version = (Integer) CodegenTestUtil.getAnnotationAttribute(annotation, ABI_VERSION_FIELD_NAME);
+        assertNotNull(version);
+        assertTrue("KotlinSyntheticClass annotation is written with an unsupported format", AbiVersionUtil.isAbiVersionCompatible(version));
+
+        Object actualKind = CodegenTestUtil.getAnnotationAttribute(annotation, KotlinSyntheticClass.KIND_FIELD_NAME.asString());
+        assertNotNull(actualKind);
+        assertEquals("KotlinSyntheticClass annotation has the wrong kind", expectedKind, actualKind.toString());
+    }
 }
