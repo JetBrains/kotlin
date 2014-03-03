@@ -350,6 +350,7 @@ fun main(args: Array<String>) {
             model("intentions/branched/elvisToIfThen", testMethod = "doTestElvisToIfThen")
             model("intentions/branched/ifThenToElvis", testMethod = "doTestIfThenToElvis")
             model("intentions/branched/safeAccessToIfThen", testMethod = "doTestSafeAccessToIfThen")
+            model("intentions/branched/ifThenToSafeAccess", testMethod = "doTestIfThenToSafeAccess")
             model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
             model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
             model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
