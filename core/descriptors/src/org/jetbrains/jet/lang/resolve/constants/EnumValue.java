@@ -36,6 +36,14 @@ public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
         return type;
     }
 
+    @NotNull
+    @Override
+    public ClassDescriptor getValue() {
+        ClassDescriptor value = super.getValue();
+        assert value != null : "Guaranteed by constructor";
+        return value;
+    }
+
     @Override
     public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
         return visitor.visitEnumValue(this, data);
