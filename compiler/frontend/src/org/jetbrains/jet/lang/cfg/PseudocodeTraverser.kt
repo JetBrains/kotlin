@@ -20,30 +20,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.*
 import java.util.*
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
 
-
-enum class TraversalOrder {
-    FORWARD
-    BACKWARD
-}
-
-fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
-    if (traversalOrder == FORWARD) getEnterInstruction() else getSinkInstruction()
-
-fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
-    if (traversalOrder == FORWARD) getSinkInstruction() else getEnterInstruction()
-
-fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
-    if (traversalOrder == FORWARD) getInstructions() else getReversedInstructions()
-
-fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
-    if (traversalOrder == FORWARD) getNextInstructions() else getPreviousInstructions()
-
-fun Instruction.getPreviousInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
-    if (traversalOrder == FORWARD) getPreviousInstructions() else getNextInstructions()
-
-fun Instruction.isStartInstruction(traversalOrder: TraversalOrder): Boolean =
-    if (traversalOrder == FORWARD) this is SubroutineEnterInstruction else this is SubroutineSinkInstruction
-
 fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         analyzeInstruction: (Instruction) -> Unit
@@ -216,3 +192,26 @@ fun traverseFollowingInstructions(
     }
     return true
 }
+
+enum class TraversalOrder {
+    FORWARD
+    BACKWARD
+}
+
+fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
+        if (traversalOrder == FORWARD) getEnterInstruction() else getSinkInstruction()
+
+fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
+        if (traversalOrder == FORWARD) getSinkInstruction() else getEnterInstruction()
+
+fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
+        if (traversalOrder == FORWARD) getInstructions() else getReversedInstructions()
+
+fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
+        if (traversalOrder == FORWARD) getNextInstructions() else getPreviousInstructions()
+
+fun Instruction.getPreviousInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
+        if (traversalOrder == FORWARD) getPreviousInstructions() else getNextInstructions()
+
+fun Instruction.isStartInstruction(traversalOrder: TraversalOrder): Boolean =
+        if (traversalOrder == FORWARD) this is SubroutineEnterInstruction else this is SubroutineSinkInstruction
