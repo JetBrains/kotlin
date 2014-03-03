@@ -41,11 +41,13 @@ public class PseudocodeVariableDataCollector(
     public fun <D> collectData(
             traversalOrder: TraversalOrder,
             mergeDataWithLocalDeclarations: Boolean,
-            instructionDataMergeStrategy: InstructionDataMergeStrategy<MutableMap<VariableDescriptor, D>>
+            instructionDataMergeStrategy: InstructionDataMergeStrategy<D>
     ): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>> {
         val result = pseudocode.collectData(
                 traversalOrder, mergeDataWithLocalDeclarations,
-                instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>,
+                //see KT-4605
+                instructionDataMergeStrategy as
+                    (Instruction, Collection<Map<VariableDescriptor, D>>) -> Edges<Map<VariableDescriptor, D>>,
                 { (from, to, data) -> filterOutVariablesOutOfScope(from, to, data)},
                 Collections.emptyMap<VariableDescriptor, D>())
         //see KT-4605
@@ -87,6 +89,10 @@ public class PseudocodeVariableDataCollector(
         return lexicalScopeVariableInfo
     }
 }
+
+//todo may be a type alias
+trait InstructionDataMergeStrategy<D> :
+  (Instruction, Collection<MutableMap<VariableDescriptor, D>>) -> Edges<MutableMap<VariableDescriptor, D>>
 
 public trait LexicalScopeVariableInfo {
     val declaredIn : Map<VariableDescriptor, LexicalScope>

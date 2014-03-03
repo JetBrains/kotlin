@@ -60,16 +60,16 @@ fun Pseudocode.traverse(
 fun <D> Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         edgesMap: Map<Instruction, Edges<D>>,
-        instructionDataAnalyzeStrategy: InstructionDataAnalyzeStrategy<D>
+        analyzeInstruction: (Instruction, D, D) -> Unit
 ) {
     val instructions = getInstructions(traversalOrder)
     for (instruction in instructions) {
         if (instruction is LocalFunctionDeclarationInstruction) {
-            instruction.getBody().traverse(traversalOrder, edgesMap, instructionDataAnalyzeStrategy)
+            instruction.getBody().traverse(traversalOrder, edgesMap, analyzeInstruction)
         }
         val edges = edgesMap.get(instruction)
         if (edges != null) {
-            instructionDataAnalyzeStrategy(instruction, edges.`in`, edges.out)
+            analyzeInstruction(instruction, edges.`in`, edges.out)
         }
     }
 }
@@ -184,9 +184,6 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
         updateEdgeDataForInstruction(previousDataValue, mergedData)
     }
 }
-
-trait InstructionDataMergeStrategy<D> : (Instruction, Collection<D>) -> Edges<D>
-trait InstructionDataAnalyzeStrategy<D> : (Instruction, D, D) -> Unit
 
 data class Edges<T>(val `in`: T, val out: T)
 fun <T> createEdges(`in`: T, out: T) = Edges(`in`, out)

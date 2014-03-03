@@ -23,7 +23,6 @@ import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.InstructionDataMergeStrategy;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -148,7 +147,7 @@ public class PseudocodeVariablesData {
 
         return pseudocodeVariableDataCollector.collectData(
                 FORWARD, /*mergeDataWithLocalDeclarations=*/ false,
-                new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
+                new InstructionDataMergeStrategy<VariableInitState>() {
                     @NotNull
                     @Override
                     public Edges<Map<VariableDescriptor, VariableInitState>> invoke(
@@ -248,7 +247,7 @@ public class PseudocodeVariablesData {
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
         return pseudocodeVariableDataCollector.collectData(
                 BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
-                new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
+                new InstructionDataMergeStrategy<VariableUseState>() {
                     @NotNull
                     @Override
                     public Edges<Map<VariableDescriptor, VariableUseState>> invoke(

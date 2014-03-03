@@ -23,11 +23,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.Function1;
+import kotlin.Function3;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.InstructionDataAnalyzeStrategy;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
@@ -267,7 +267,7 @@ public class JetFlowInformationProvider {
 
         PseudocodeTraverserPackage.traverse(
                 pseudocode, FORWARD, initializers,
-                new InstructionDataAnalyzeStrategyJ<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
+                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableInitState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
@@ -517,7 +517,7 @@ public class JetFlowInformationProvider {
         Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
-                new InstructionDataAnalyzeStrategyJ<Map<VariableDescriptor, PseudocodeVariablesData.VariableUseState>>() {
+                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableUseState> in,
@@ -885,7 +885,7 @@ public class JetFlowInformationProvider {
     }
 
     //TODO after KT-4621 rewrite to Kotlin
-    public abstract static class InstructionDataAnalyzeStrategyJ<D> implements InstructionDataAnalyzeStrategy<D> {
+    public abstract static class InstructionDataAnalyzeStrategy<D> implements Function3<Instruction, D, D, Unit> {
         @Override
         public Unit invoke(Instruction instruction, D enterData, D exitData) {
             execute(instruction, enterData, exitData);
