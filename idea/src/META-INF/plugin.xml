@@ -480,6 +480,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToElvisIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfToWhenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
