@@ -1,0 +1,7 @@
+val a: String?
+    get() = ""
+
+fun main(args: Array<String>) {
+    val s = a
+    if (s != null) s else "bar"
+}
