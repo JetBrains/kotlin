@@ -49,7 +49,6 @@ public final class AnalyzerFacadeForJS {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
             new ImportPath("js.*"),
             new ImportPath("java.lang.*"),
-            new ImportPath("jet.*"),
             new ImportPath("kotlin.*"));
 
     private AnalyzerFacadeForJS() {
