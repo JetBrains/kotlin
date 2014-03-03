@@ -34,20 +34,12 @@ public class DeserializedResolverUtils {
     private DeserializedResolverUtils() {
     }
 
-    public static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName) {
-        return kotlinFqNameToJavaFqName(kotlinFqName, false);
-    }
-
     @NotNull
-    public static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName, boolean addTraitImplSuffix) {
+    public static FqName kotlinFqNameToJavaFqName(@NotNull FqNameUnsafe kotlinFqName) {
         List<Name> segments = kotlinFqName.pathSegments();
         List<String> correctedSegments = new ArrayList<String>(segments.size());
         for (Name segment : segments) {
             correctedSegments.add(isClassObjectName(segment) ? JvmAbi.CLASS_OBJECT_CLASS_NAME : segment.getIdentifier());
-        }
-        if (addTraitImplSuffix) {
-            int lastIndex = correctedSegments.size() - 1;
-            correctedSegments.set(lastIndex, correctedSegments.get(lastIndex) + JvmAbi.TRAIT_IMPL_SUFFIX);
         }
         return FqName.fromSegments(correctedSegments);
     }

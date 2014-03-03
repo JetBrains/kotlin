@@ -37,6 +37,7 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpl
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
@@ -125,7 +126,11 @@ public class InlineCodegenUtil {
             return PackageClassUtils.getPackageClassFqName(getFqName(containerDescriptor).toSafe());
         }
         if (containerDescriptor instanceof ClassDescriptor) {
-            return DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor), isTrait(containerDescriptor));
+            FqName fqName = DeserializedResolverUtils.kotlinFqNameToJavaFqName(getFqName(containerDescriptor));
+            if (isTrait(containerDescriptor)) {
+                return fqName.parent().child(Name.identifier(fqName.shortName() + JvmAbi.TRAIT_IMPL_SUFFIX));
+            }
+            return fqName;
         }
         return null;
     }
