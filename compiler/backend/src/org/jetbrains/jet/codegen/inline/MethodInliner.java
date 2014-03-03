@@ -365,7 +365,7 @@ public class MethodInliner {
             AbstractInsnNode next = cur.getNext();
             if (next.getType() == AbstractInsnNode.METHOD_INSN) {
                 MethodInsnNode methodInsnNode = (MethodInsnNode) next;
-                if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals("jet/runtime/Intrinsics")) {
+                if (methodInsnNode.name.equals("checkParameterIsNotNull") && methodInsnNode.owner.equals("kotlin/jvm/internal/Intrinsics")) {
                     AbstractInsnNode prev = cur.getPrevious();
 
                     assert cur.getOpcode() == Opcodes.LDC : "checkParameterIsNotNull should go after LDC but " + cur;

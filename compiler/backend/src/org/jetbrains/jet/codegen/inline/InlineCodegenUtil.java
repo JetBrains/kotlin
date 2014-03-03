@@ -194,7 +194,7 @@ public class InlineCodegenUtil {
             return false;
         }
 
-        for (String prefix : Arrays.asList("jet/Function", "jet/ExtensionFunction")) {
+        for (String prefix : Arrays.asList("kotlin/Function", "kotlin/ExtensionFunction")) {
             if (owner.startsWith(prefix)) {
                 String suffix = owner.substring(prefix.length());
                 if (isInteger(suffix)) {
