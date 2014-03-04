@@ -274,6 +274,10 @@ fun main(args: Array<String>) {
             model("intentions/convertToExpressionBody", pattern = "^before(\\w+)\\.kt$")
         }
 
+        testClass(javaClass<AbstractIntentionTest>(), "ConvertToBlockBodyTestGenerated") {
+            model("intentions/convertToBlockBody", pattern = "^before(\\w+)\\.kt$")
+        }
+
         testClass(javaClass<AbstractJSBasicCompletionTest>()) {
             model("completion/basic/common")
             model("completion/basic/js")
