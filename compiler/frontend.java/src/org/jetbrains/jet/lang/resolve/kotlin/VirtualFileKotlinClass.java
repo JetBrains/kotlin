@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.Function0;
@@ -34,12 +35,12 @@ import org.jetbrains.jet.storage.NullableLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.UtilsPackage;
 
-import java.io.IOException;
-
 import static org.jetbrains.asm4.ClassReader.*;
 import static org.jetbrains.asm4.Opcodes.ASM4;
 
 public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
+    private final static Logger LOG = Logger.getInstance(VirtualFileKotlinClass.class);
+
     private final VirtualFile file;
     private final NotNullLazyValue<JvmClassName> className;
     private final NullableLazyValue<KotlinClassHeader> classHeader;
@@ -80,7 +81,8 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
                 }
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
-        catch (IOException e) {
+        catch (Throwable e) {
+            logFileReadingError(e);
             throw UtilsPackage.rethrow(e);
         }
         return classNameRef.get();
@@ -112,7 +114,8 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
                 }
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
-        catch (IOException e) {
+        catch (Throwable e) {
+            logFileReadingError(e);
             throw UtilsPackage.rethrow(e);
         }
     }
@@ -196,7 +199,8 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
                 }
             }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
         }
-        catch (IOException e) {
+        catch (Throwable e) {
+            logFileReadingError(e);
             throw UtilsPackage.rethrow(e);
         }
     }
@@ -220,5 +224,14 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public String toString() {
         return getClass().getSimpleName() + ": " + file.toString();
+    }
+
+    private void logFileReadingError(@NotNull Throwable e) {
+        LOG.error(
+                "Could not read file: " + file.getPath() + "\n"
+                + "Size in bytes: " + file.getLength() + "\n"
+                + "File type: " + file.getFileType().getName(),
+                e
+        );
     }
 }
