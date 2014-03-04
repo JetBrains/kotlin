@@ -211,7 +211,6 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         List<Instruction> instructions = pseudocode.getAllInstructions();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
-        List<PseudocodeImpl> locals = new ArrayList<PseudocodeImpl>();
         int maxLength = 0;
         int maxNextLength = 0;
         for (Instruction instruction : instructions) {
@@ -238,10 +237,6 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         }
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
-            if (instruction instanceof LocalFunctionDeclarationInstruction) {
-                LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction = (LocalFunctionDeclarationInstruction) instruction;
-                locals.add((PseudocodeImpl) localFunctionDeclarationInstruction.getBody());
-            }
             for (PseudocodeImpl.PseudocodeLabel label: labels) {
                 if (label.getTargetInstructionIndex() == i) {
                     out.append(label.getName()).append(":\n");
@@ -266,9 +261,6 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
             }
             out.append(StringUtil.trimTrailing(line.toString()));
             out.append("\n");
-        }
-        for (PseudocodeImpl local : locals) {
-            dumpInstructions(local, out);
         }
     }
 

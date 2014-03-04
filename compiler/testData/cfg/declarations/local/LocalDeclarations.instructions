@@ -149,17 +149,6 @@ error:
     <ERROR>                                                                PREV:[]
 sink:
     <SINK>                                                                 PREV:[<ERROR>, <END>, d(fun inner_bar() { y = 10 })]
-L3:
-    <START>
-    mark({ y = 10 })
-    r(10)
-    w(y)
-L4:
-    <END>               NEXT:[<SINK>]
-error:
-    <ERROR>             PREV:[]
-sink:
-    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == inner_bar ==
 fun inner_bar() {
@@ -213,17 +202,6 @@ error:
     <ERROR>                                                                                 PREV:[]
 sink:
     <SINK>                                                                                  PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
-L3:
-    <START>
-    mark({ y = 10 })
-    r(10)
-    w(y)
-L4:
-    <END>               NEXT:[<SINK>]
-error:
-    <ERROR>             PREV:[]
-sink:
-    <SINK>              PREV:[<ERROR>, <END>]
 =====================
 == ggg ==
 fun ggg() {
@@ -283,28 +261,6 @@ error:
     <ERROR>                                                                                      PREV:[]
 sink:
     <SINK>                                                                                       PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
-L3:
-    <START>
-    mark({ x = 3 })
-    r(3)
-    w(x)
-L4:
-    <END>              NEXT:[<SINK>]
-error:
-    <ERROR>            PREV:[]
-sink:
-    <SINK>             PREV:[<ERROR>, <END>]
-L6:
-    <START>
-    mark({ x = 4 })
-    r(4)
-    w(x)
-L7:
-    <END>              NEXT:[<SINK>]
-error:
-    <ERROR>            PREV:[]
-sink:
-    <SINK>             PREV:[<ERROR>, <END>]
 =====================
 == foo ==
 fun foo() {
