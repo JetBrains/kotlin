@@ -49,6 +49,8 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.MoveHandler
+import org.jetbrains.jet.getString
+import org.jetbrains.jet.getNullableString
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -126,17 +128,6 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
         return PluginTestCaseBase.getTestDataPathBase()
     }
 }
-
-fun JsonObject.getString(name: String): String {
-    val member = getNullableString(name)
-    if (member == null) {
-        throw IllegalStateException("Member with name '$name' is expected in '$this'")
-    }
-
-    return member
-}
-
-fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
 
 enum class MoveAction {
     MOVE_MEMBERS {
