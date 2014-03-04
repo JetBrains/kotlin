@@ -492,6 +492,16 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.MoveLambdaInsideParenthesesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.MoveLambdaOutsideParenthesesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+    
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention</className>
       <category>Kotlin</category>
     </intentionAction>
