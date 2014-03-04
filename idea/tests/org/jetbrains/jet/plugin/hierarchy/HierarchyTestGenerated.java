@@ -297,6 +297,21 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageProperty");
         }
         
+        @TestMetadata("kotlinPrivateClass")
+        public void testKotlinPrivateClass() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateClass");
+        }
+        
+        @TestMetadata("kotlinPrivateFunction")
+        public void testKotlinPrivateFunction() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateFunction");
+        }
+        
+        @TestMetadata("kotlinPrivateProperty")
+        public void testKotlinPrivateProperty() throws Exception {
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateProperty");
+        }
+        
         @TestMetadata("kotlinProperty")
         public void testKotlinProperty() throws Exception {
             doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinProperty");
