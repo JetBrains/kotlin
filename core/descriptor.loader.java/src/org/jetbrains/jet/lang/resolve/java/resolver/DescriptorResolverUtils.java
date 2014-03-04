@@ -34,21 +34,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
-
 public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     private DescriptorResolverUtils() {
-    }
-
-    public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_PACKAGE) != null;
-    }
-
-    public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_CLASS) != null;
     }
 
     @NotNull
