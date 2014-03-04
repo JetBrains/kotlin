@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
+
 /**
  * Number of helper methods for searching kotlin element prototypes in java. Methods use java indices for search.
  */
@@ -49,7 +52,7 @@ public class JetFromJavaDescriptorHelper {
         /* Will iterate through short name caches
            Kotlin packages from jar a class files will be collected from java cache
            Kotlin package classes from sources will be collected with JetShortNamesCache.getClassesByName */
-        return getClassesByAnnotation("KotlinPackage", project, scope);
+        return getClassesByAnnotation(KOTLIN_PACKAGE.shortName().asString(), project, scope);
     }
 
     /**
@@ -72,7 +75,7 @@ public class JetFromJavaDescriptorHelper {
     static Collection<PsiClass> getCompiledClassesForTopLevelObjects(Project project, GlobalSearchScope scope) {
         Set<PsiClass> jetObjectClasses = Sets.newHashSet();
 
-        Collection<PsiClass> classesByAnnotation = getClassesByAnnotation("KotlinClass", project, scope);
+        Collection<PsiClass> classesByAnnotation = getClassesByAnnotation(KOTLIN_CLASS.shortName().asString(), project, scope);
 
         for (PsiClass psiClass : classesByAnnotation) {
             ClassKind kind = getCompiledClassKind(psiClass);
@@ -166,7 +169,7 @@ public class JetFromJavaDescriptorHelper {
             boolean shouldBeExtension
     ) {
         Collection<FqName> result = Sets.newHashSet();
-        Collection<PsiClass> packageClasses = getClassesByAnnotation("KotlinPackage", project, scope);
+        Collection<PsiClass> packageClasses = getClassesByAnnotation(KOTLIN_PACKAGE.shortName().asString(), project, scope);
         for (PsiClass psiClass : packageClasses) {
             String qualifiedName = psiClass.getQualifiedName();
             if (qualifiedName == null) {
