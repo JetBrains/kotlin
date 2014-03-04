@@ -6,12 +6,12 @@ class T4(
   val c3: Boolean,
   val c4: String
 ) {
-  fun equals(o: Any?): Boolean {
-    if (o !is T4) return false;
-    return c1 == o.c1 &&
-      c2 == o.c2 &&
-      c3 == o.c3 &&
-      c4 == o.c4
+  override fun equals(other: Any?): Boolean {
+    if (other !is T4) return false;
+    return c1 == other.c1 &&
+      c2 == other.c2 &&
+      c3 == other.c3 &&
+      c4 == other.c4
   }
 }
 

@@ -30,7 +30,7 @@ import java.util.List;
 public final class PatternBuilder {
 
     @NotNull
-    private static final NamePredicate JET = new NamePredicate("jet");
+    private static final NamePredicate KOTLIN_NAME_PREDICATE = new NamePredicate("kotlin");
 
     @NotNull
     private static final Name KOTLIN_NAME = Name.identifier(Namer.KOTLIN_LOWER_NAME);
@@ -74,7 +74,7 @@ public final class PatternBuilder {
         assert !checkers.isEmpty();
         final List<NamePredicate> checkersWithPrefixChecker = Lists.newArrayList();
         if (!checkers.get(0).apply(KOTLIN_NAME)) {
-            checkersWithPrefixChecker.add(JET);
+            checkersWithPrefixChecker.add(KOTLIN_NAME_PREDICATE);
         }
 
         checkersWithPrefixChecker.addAll(checkers);

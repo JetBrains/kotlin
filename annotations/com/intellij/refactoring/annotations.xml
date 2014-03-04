@@ -1,6 +1,13 @@
 <root>
   <item
+      name='com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException java.util.Collection&lt;java.lang.String&gt; getMessages()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
       name='com.intellij.refactoring.MultiFileTestCase.PerformAction void performAction(com.intellij.openapi.vfs.VirtualFile, com.intellij.openapi.vfs.VirtualFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.refactoring.RefactoringHelper void performOperation(com.intellij.openapi.project.Project, T) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>

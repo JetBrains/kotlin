@@ -42,7 +42,6 @@ class KDocTest {
         val ignorePackages = config.ignorePackages
         ignorePackages.add("org.jetbrains.kotlin")
         ignorePackages.add("java")
-        ignorePackages.add("jet")
         ignorePackages.add("junit")
         ignorePackages.add("sun")
         ignorePackages.add("org")

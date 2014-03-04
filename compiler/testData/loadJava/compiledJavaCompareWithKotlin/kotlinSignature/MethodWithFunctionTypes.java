@@ -4,7 +4,7 @@ import java.lang.String;
 import java.lang.UnsupportedOperationException;
 import java.util.*;
 import jet.runtime.typeinfo.KotlinSignature;
-import jet.*;
+import kotlin.*;
 
 public class MethodWithFunctionTypes {
     @KotlinSignature("fun foo(f : (String?) -> String) : (String.() -> String?)?")

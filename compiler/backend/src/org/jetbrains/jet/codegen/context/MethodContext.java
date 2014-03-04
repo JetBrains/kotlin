@@ -23,26 +23,27 @@ import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyAccessorDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
 
     private Label methodStartLabel;
 
+    private final boolean isInliningLambda;
+
     protected MethodContext(
             @NotNull FunctionDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
-            @Nullable MutableClosure closure
+            @Nullable MutableClosure closure,
+            boolean isInliningLambda
     ) {
         super(contextDescriptor instanceof PropertyAccessorDescriptor
               ? ((PropertyAccessorDescriptor) contextDescriptor).getCorrespondingProperty()
               : contextDescriptor, contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
+        this.isInliningLambda = isInliningLambda;
     }
 
     @Override
@@ -81,4 +82,26 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return "Method: " + getContextDescriptor();
     }
 
+    public boolean isInlineFunction() {
+        DeclarationDescriptor descriptor = getContextDescriptor();
+        if (descriptor instanceof SimpleFunctionDescriptor) {
+            return ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+        }
+        return false;
+    }
+
+    public boolean isInliningLambda() {
+        return isInliningLambda;
+    }
+
+    public boolean isSpecialStackValue(StackValue stackValue) {
+        if (isInliningLambda && stackValue instanceof StackValue.Composed) {
+            StackValue prefix = ((StackValue.Composed) stackValue).prefix;
+            StackValue suffix = ((StackValue.Composed) stackValue).suffix;
+            if (prefix instanceof StackValue.Local && ((StackValue.Local) prefix).index == 0) {
+                return suffix instanceof StackValue.Field;
+            }
+        }
+        return false;
+    }
 }

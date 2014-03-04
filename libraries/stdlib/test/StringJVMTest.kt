@@ -324,8 +324,8 @@ class StringJVMTest {
     test fun toByteArrayEncodings() {
         val s = "hello"
         val defaultCharset = java.nio.charset.Charset.defaultCharset()!!
-        assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset).toString())
-        assertEquals(s.toByteArray().toString(), s.toByteArray(defaultCharset.name()).toString())
+        assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset)))
+        assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset.name())))
     }
 
     test fun testReplaceAllClosure() {

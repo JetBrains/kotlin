@@ -34,10 +34,12 @@ enum class FunctionKind(
     K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", true, "ExtensionFunction")
 
     fun getFileName() = classNamePrefix + "s.kt"
-    fun getImplFileName() = classNamePrefix + "sImpl.kt"
+    fun getImplFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "sImpl.kt"
     fun getClassName(i: Int) = classNamePrefix + i
     fun getImplClassName(i: Int) = classNamePrefix + "Impl" + i
     fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
+
+    private fun isReflection() = superClassNamePrefix != null
 }
 
 abstract class GenerateFunctionsBase(out: PrintWriter, val kind: FunctionKind): BuiltInsSourceGenerator(out) {
@@ -85,9 +87,6 @@ class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunction
         K_FUNCTION, K_MEMBER_FUNCTION, K_EXTENSION_FUNCTION -> {
             out.println()
         }
-        else -> {
-            throw IllegalStateException("Unknown kind: " + kind)
-        }
     }
 
     fun generateInvokeSignature(i: Int) {
@@ -103,14 +102,21 @@ class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunction
 }
 
 class GenerateFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
+    override fun getPackage() = when (kind) {
+        FUNCTION, EXTENSION_FUNCTION -> "kotlin"
+        K_FUNCTION, K_MEMBER_FUNCTION, K_EXTENSION_FUNCTION -> "kotlin.reflect"
+    }
+
     override fun generateBody() {
+        out.println("import java.io.Serializable")
+        out.println()
         for (i in 0..MAX_PARAM_COUNT) {
             out.print("public abstract class " + kind.getImplClassName(i))
             generateTypeParameters(i, true)
             out.print(" : ")
             out.print(kind.getClassName(i))
             generateTypeParameters(i, false)
-            out.println(", DefaultJetObject() {")
+            out.println(", Serializable {")
             generateToStringForFunctionImpl()
             out.println("}")
         }

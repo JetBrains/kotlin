@@ -37,7 +37,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
 
 public class PackagePartCodegen extends MemberCodegen {
 
@@ -58,7 +59,7 @@ public class PackagePartCodegen extends MemberCodegen {
             @NotNull FieldOwnerContext context,
             @NotNull GenerationState state
     ) {
-        super(state, null);
+        super(state, null, context, v);
         this.v = v;
         this.jetFile = jetFile;
         this.packagePartName = packagePartName;
@@ -77,7 +78,7 @@ public class PackagePartCodegen extends MemberCodegen {
         );
         v.visitSource(jetFile.getName(), null);
 
-        writeKotlinPackageFragmentAnnotation();
+        writeKotlinAnnotation();
 
         for (JetDeclaration declaration : jetFile.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -90,9 +91,11 @@ public class PackagePartCodegen extends MemberCodegen {
         v.done();
     }
 
-    private void writeKotlinPackageFragmentAnnotation() {
-        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE_FRAGMENT), true);
+    private void writeKotlinAnnotation() {
+        Type type = asmTypeByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS);
+        AnnotationVisitor av = v.newAnnotation(type.getDescriptor(), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
+        av.visitEnum("kind", "L" + type.getInternalName() + "$Kind;", "PACKAGE_PART");
         av.visitEnd();
     }
 

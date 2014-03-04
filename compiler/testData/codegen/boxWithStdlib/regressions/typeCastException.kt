@@ -5,8 +5,8 @@ fun box(): String {
         val a: Any? = null
         a as Array<String>
     }
-    catch(e: TypeCastException) {
-        if (e.getMessage() == "jet.Any? cannot be cast to jet.Array<jet.String>") {
+    catch (e: TypeCastException) {
+        if (e.getMessage() == "kotlin.Any? cannot be cast to kotlin.Array<kotlin.String>") {
             return "OK"
         }
     }

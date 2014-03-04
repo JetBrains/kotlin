@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -75,15 +74,15 @@ public class JetTypeMapper extends BindingTraceAware {
          */
         IMPL,
         /**
-         * jet.Int is mapped to I
+         * kotlin.Int is mapped to I
          */
         VALUE,
         /**
-         * jet.Int is mapped to Ljava/lang/Integer;
+         * kotlin.Int is mapped to Ljava/lang/Integer;
          */
         TYPE_PARAMETER,
         /**
-         * jet.Int is mapped to Ljava/lang/Integer;
+         * kotlin.Int is mapped to Ljava/lang/Integer;
          * No projections allowed in immediate arguments
          */
         SUPER_TYPE

@@ -1,4 +1,4 @@
-fun getEntry(): jet.MutableMap.MutableEntry<Int, String>? = null
+fun getEntry(): MutableMap.MutableEntry<Int, String>? = null
 
 // method: _DefaultPackage::getEntry
 // jvm signature:     ()Ljava/util/Map$Entry;

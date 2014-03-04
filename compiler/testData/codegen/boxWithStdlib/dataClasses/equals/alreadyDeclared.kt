@@ -1,5 +1,5 @@
 data class A(val x: Int) {
-  fun equals(other: Any?): Boolean = false
+  override fun equals(other: Any?): Boolean = false
 }
 
 fun box(): String {

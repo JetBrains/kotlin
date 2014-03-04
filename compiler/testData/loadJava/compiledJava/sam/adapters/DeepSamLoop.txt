@@ -3,17 +3,17 @@ package test
 public trait DeepSamLoop : java.lang.Object {
     
     public trait Bar : java.lang.Object {
-        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar?) -> jet.Unit)?): jet.Unit
-        public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar?) -> kotlin.Unit)?): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo?): kotlin.Unit
     }
     
     public trait Foo : java.lang.Object {
-        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo?) -> jet.Unit)?): jet.Unit
-        public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar?): jet.Unit
+        public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo?) -> kotlin.Unit)?): kotlin.Unit
+        public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar?): kotlin.Unit
     }
 }
 
 package test.DeepSamLoop {
-    public /*synthesized*/ fun Bar(/*0*/ function: (test.DeepSamLoop.Foo?) -> jet.Unit): test.DeepSamLoop.Bar
-    public /*synthesized*/ fun Foo(/*0*/ function: (test.DeepSamLoop.Bar?) -> jet.Unit): test.DeepSamLoop.Foo
+    public /*synthesized*/ fun Bar(/*0*/ function: (test.DeepSamLoop.Foo?) -> kotlin.Unit): test.DeepSamLoop.Bar
+    public /*synthesized*/ fun Foo(/*0*/ function: (test.DeepSamLoop.Bar?) -> kotlin.Unit): test.DeepSamLoop.Foo
 }

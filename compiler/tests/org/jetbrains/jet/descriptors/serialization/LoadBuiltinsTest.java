@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
@@ -58,16 +59,21 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src")
         ));
+
+        PackageFragmentDescriptor deserialized = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
+
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
         List<PackageFragmentDescriptor> fragments =
                 module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
-        assertSize(1, fragments);
-        PackageFragmentDescriptor fromLazyResolve = fragments.iterator().next();
-        PackageFragmentDescriptor deserialized = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
-        RecursiveDescriptorComparator.validateAndCompareDescriptors(
-                fromLazyResolve, deserialized, configuration,
-                new File("compiler/testData/builtin-classes.txt")
-        );
+        for (PackageFragmentDescriptor fromLazyResolve : fragments) {
+            if (fromLazyResolve instanceof LazyPackageDescriptor) {
+                RecursiveDescriptorComparator.validateAndCompareDescriptors(
+                        fromLazyResolve, deserialized, configuration,
+                        new File("compiler/testData/builtin-classes.txt")
+                );
+                break;
+            }
+        }
     }
 
     @NotNull

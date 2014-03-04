@@ -109,7 +109,7 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
                 if (exhaust.isError()) {
                     return printStackTraceToString(exhaust.getError());
                 }
-                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEXT, Progress.DEAF, exhaust.getBindingContext(),
+                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, exhaust.getBindingContext(),
                                             Collections.singletonList(jetFile), true, true,
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             InlineUtil.DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW /*TODO add checkbox or extract it from option*/);

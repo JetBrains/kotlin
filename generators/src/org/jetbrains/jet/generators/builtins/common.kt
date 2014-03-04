@@ -18,6 +18,19 @@ package org.jetbrains.jet.generators.builtins
 
 import org.jetbrains.jet.generators.builtins.ProgressionKind.*
 
+enum class PrimitiveType {
+    BYTE
+    CHAR
+    SHORT
+    INT
+    LONG
+    FLOAT
+    DOUBLE
+    BOOLEAN
+
+    val capitalized: String get() = name().toLowerCase().capitalize()
+}
+
 enum class ProgressionKind {
     BYTE
     CHAR
@@ -27,7 +40,7 @@ enum class ProgressionKind {
     FLOAT
     DOUBLE
 
-    val capitalized = name().toLowerCase().capitalize()
+    val capitalized: String get() = name().toLowerCase().capitalize()
 }
 
 fun progressionIncrementType(kind: ProgressionKind) = when (kind) {

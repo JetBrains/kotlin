@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
@@ -180,7 +179,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private FieldVisitor generateBackingField(JetNamedDeclaration element, PropertyDescriptor propertyDescriptor, boolean isDelegate, JetType jetType, Object defaultValue) {
         int modifiers = getDeprecatedAccessFlag(propertyDescriptor);
 
-        if (KotlinBuiltIns.getInstance().isVolatile(propertyDescriptor)) {
+        if (propertyDescriptor.getOriginal().getAnnotations().findAnnotation(AnnotationCodegen.VOLATILE_FQ_NAME) != null) {
             modifiers |= ACC_VOLATILE;
         }
 

@@ -1,5 +1,5 @@
 data class A(val x: Int) {
-  fun hashCode(): Int = -3
+  override fun hashCode(): Int = -3
 }
 
 fun box(): String {

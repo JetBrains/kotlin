@@ -1,7 +1,7 @@
 // "Add '<*, *>'" "true"
 public fun foo(a: Any) {
     when (a) {
-        is jet.Map<*, *> -> {}
+        is kotlin.Map<*, *> -> {}
         else -> {}
     }
 }

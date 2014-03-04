@@ -1,5 +1,5 @@
 class C(val x: Int) {
-  fun equals(rhs: Any?): Boolean {
+  override fun equals(rhs: Any?): Boolean {
     if (rhs is C) {
       val rhsC = rhs as C
       return rhsC.x == x

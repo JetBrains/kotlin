@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1)
 SUBTYPE T Short
 
 type parameter bounds:
-T >: IntegerValueType(1)(SPECIAL), <: jet.Short(SPECIAL)
+T >: IntegerValueType(1)(SPECIAL), <: kotlin.Short(SPECIAL)
 status:
 -hasConflictingConstraints: false
 -hasContradiction: false
@@ -15,4 +15,4 @@ status:
 -isSuccessful: true
 
 result:
-T=jet.Short
+T=kotlin.Short

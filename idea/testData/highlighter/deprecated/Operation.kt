@@ -13,8 +13,7 @@ deprecated("Use A instead") fun MyClass.contains(i: MyClass): Boolean { i.i; ret
 
 deprecated("Use A instead") fun MyClass.plusAssign(i: MyClass) { i.i }
 
-deprecated("Use A instead") fun MyClass.equals(i: Any?): Boolean { i == null; return false }
-deprecated("Use A instead") fun MyClass.compareTo(i: MyClass): Int { return i.i }
+deprecated("Use A instead") fun MyClass.rangeTo(i: MyClass): IntRange { return IntRange(i.i, i.i) }
 
 fun test() {
     val x1 = MyClass()
@@ -32,9 +31,7 @@ fun test() {
 
     x1 <warning descr="'fun plusAssign(i: MyClass)' is deprecated. Use A instead">+=</warning> x2
 
-    x1 <warning descr="'fun equals(i: jet.Any?)' is deprecated. Use A instead">==</warning> x2
-    x1 <warning descr="'fun equals(i: jet.Any?)' is deprecated. Use A instead">!=</warning> x2
-    x1 <warning descr="'fun compareTo(i: MyClass)' is deprecated. Use A instead">></warning> x2
+    x1<warning descr="'fun rangeTo(i: MyClass)' is deprecated. Use A instead">..</warning>x2
 }
 
 // NO_CHECK_INFOS

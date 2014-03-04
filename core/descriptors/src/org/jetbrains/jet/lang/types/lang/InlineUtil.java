@@ -29,18 +29,13 @@ import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 
 public class InlineUtil {
 
-    public static boolean DEFAULT_INLINE_FLAG = false;
+    public static boolean DEFAULT_INLINE_FLAG = true;
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = false;
+    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = true;
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
-
-    @NotNull
-    public static InlineStrategy getInlineType(@NotNull Annotated annotated) {
-        return getInlineType(annotated.getAnnotations());
-    }
 
     public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
@@ -62,6 +57,7 @@ public class InlineUtil {
             else {
                 assert argument instanceof EnumValue : "Inline annotation parameter should be inline entry but was: " + argument + "!";
                 ClassDescriptor value = ((EnumValue) argument).getValue();
+                assert value != null : "Value for enum value should be not null " + argument;
                 String name = value.getName().asString();
                 return name.equals(InlineStrategy.IN_PLACE.name()) ? InlineStrategy.IN_PLACE : InlineStrategy.AS_FUNCTION;
             }

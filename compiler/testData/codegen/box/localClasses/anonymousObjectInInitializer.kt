@@ -3,7 +3,7 @@ class A {
 
     {
         a = object {
-            fun toString(): String = "OK"
+            override fun toString(): String = "OK"
         }.toString()
     }
 }

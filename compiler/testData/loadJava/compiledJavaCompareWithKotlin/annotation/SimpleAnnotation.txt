@@ -1,5 +1,5 @@
 package test
 
-public final annotation class SimpleAnnotation : jet.Annotation {
+public final annotation class SimpleAnnotation : kotlin.Annotation {
     public constructor SimpleAnnotation()
 }

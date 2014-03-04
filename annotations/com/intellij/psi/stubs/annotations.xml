@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.psi.stubs.AbstractStubIndex java.util.Collection&lt;Psi&gt; get(Key, com.intellij.openapi.project.Project, com.intellij.psi.search.GlobalSearchScope) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.psi.stubs.StubIndex java.util.Collection&lt;Psi&gt; get(com.intellij.psi.stubs.StubIndexKey&lt;Key,Psi&gt;, Key, com.intellij.openapi.project.Project, com.intellij.psi.search.GlobalSearchScope)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

@@ -7,6 +7,9 @@
       name='com.intellij.testFramework.LightProjectDescriptor void configureModule(com.intellij.openapi.module.Module, com.intellij.openapi.roots.ModifiableRootModel, com.intellij.openapi.roots.ContentEntry) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.testFramework.PlatformTestCase com.intellij.openapi.module.Module createModule(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.testFramework.UsefulTestCase java.lang.String getTestName(boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

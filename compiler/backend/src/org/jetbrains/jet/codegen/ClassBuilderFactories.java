@@ -54,34 +54,6 @@ public class ClassBuilderFactories {
         }
     };
 
-    public static ClassBuilderFactory TEXT = new ClassBuilderFactory() {
-        @NotNull
-        @Override
-        public ClassBuilderMode getClassBuilderMode() {
-            return ClassBuilderMode.FULL;
-        }
-
-        @Override
-        public ClassBuilder newClassBuilder() {
-            return new ClassBuilder.Concrete(new TraceClassVisitor(new PrintWriter(new StringWriter())));
-        }
-
-        @Override
-        public String asText(ClassBuilder builder) {
-            TraceClassVisitor visitor = (TraceClassVisitor) builder.getVisitor();
-
-            StringWriter writer = new StringWriter();
-            visitor.p.print(new PrintWriter(writer));
-
-            return writer.toString();
-        }
-
-        @Override
-        public byte[] asBytes(ClassBuilder builder) {
-            throw new UnsupportedOperationException("TEXT generator asked for bytes");
-        }
-    };
-
     public static ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
         @NotNull
         @Override
@@ -91,7 +63,7 @@ public class ClassBuilderFactories {
 
         @Override
         public ClassBuilder newClassBuilder() {
-            return new ClassBuilder.Concrete(new BinaryClassWriter());
+            return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
         }
 
         @Override
@@ -126,7 +98,7 @@ public class ClassBuilderFactories {
         }
     }
 
-    private static class TraceBuilder extends ClassBuilder.Concrete {
+    private static class TraceBuilder extends AbstractClassBuilder.Concrete {
         public final BinaryClassWriter binary;
 
         public TraceBuilder(BinaryClassWriter binary) {

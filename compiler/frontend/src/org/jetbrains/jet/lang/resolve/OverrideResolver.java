@@ -534,32 +534,10 @@ public class OverrideResolver {
             if (invisibleOverriddenDescriptor != null) {
                 reportError.cannotOverrideInvisibleMember(invisibleOverriddenDescriptor);
             }
-            else if (!shouldSuppressOverride(declared)) {
+            else {
                 reportError.nothingToOverride();
             }
         }
-    }
-
-    // TODO: this is temporary to migrate equals, hashCode, toString from extensions to Any
-    private static boolean shouldSuppressOverride(@NotNull CallableMemberDescriptor descriptor) {
-        String name = descriptor.getName().asString();
-        JetType returnType = descriptor.getReturnType();
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-
-        if (name.equals("equals") && builtIns.getBooleanType().equals(returnType)) {
-            List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
-            return parameters.size() == 1 && builtIns.isAnyOrNullableAny(parameters.iterator().next().getType());
-        }
-
-        if (name.equals("hashCode") && builtIns.getIntType().equals(returnType)) {
-            return descriptor.getValueParameters().isEmpty();
-        }
-
-        if (name.equals("toString") && builtIns.getStringType().equals(returnType)) {
-            return descriptor.getValueParameters().isEmpty();
-        }
-
-        return false;
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {

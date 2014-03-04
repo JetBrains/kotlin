@@ -62,7 +62,7 @@ abstract class Tag(val name : String) : Element() {
 
   }
 
-  fun toString(): String {
+  override fun toString(): String {
     val builder = StringBuilder()
     appendTo(builder)
     return builder.toString()!!

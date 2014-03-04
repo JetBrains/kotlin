@@ -1,5 +1,5 @@
 class Dummy {
-  fun equals(other: Any?) = true
+  override fun equals(other: Any?) = true
 }
 
 open data class A(val v: Any)

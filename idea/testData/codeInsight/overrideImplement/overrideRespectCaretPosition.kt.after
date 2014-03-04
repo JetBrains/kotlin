@@ -7,8 +7,17 @@ class C : A() {
     val constant = 42
     // Some comment
     override val bar: Int = 0
+    override fun equals(other: Any?): Boolean {
+        return super<A>.equals(other)
+    }
     override fun foo(value: Int) {
         super<A>.foo(value)
+    }
+    override fun hashCode(): Int {
+        return super<A>.hashCode()
+    }
+    override fun toString(): String {
+        return super<A>.toString()
     }
 
     /*

@@ -17,7 +17,7 @@ package test.DeeplyNestedStatic {
     package test.DeeplyNestedStatic.Foo {
         
         package test.DeeplyNestedStatic.Foo.Bar {
-            public open fun method(): jet.Unit
+            public open fun method(): kotlin.Unit
         }
     }
 }

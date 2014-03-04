@@ -1,4 +1,4 @@
-public interface Primitives extends jet.JetObject {
+public interface Primitives extends kotlin.jvm.internal.KObject {
     int $$int /* Real name is 'int' */(@jet.runtime.typeinfo.JetValueParameter(name = "x") int x);
 
     @org.jetbrains.annotations.Nullable

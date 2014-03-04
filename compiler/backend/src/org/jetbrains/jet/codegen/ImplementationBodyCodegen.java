@@ -52,7 +52,6 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
@@ -350,8 +349,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         sw.writeSuperclassEnd();
 
         List<JetType> interfaceSupertypes = Lists.newArrayList();
-        FqNameUnsafe jetObjectFqName = JvmAbi.JET_OBJECT.getFqNameForClassNameWithoutDollars().toUnsafe();
-        boolean explicitJetObject = false;
+        boolean explicitKObject = false;
 
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
@@ -361,19 +359,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 interfaceSupertypes.add(superType);
 
                 assert superClassDescriptor != null : "should be already checked by isInterface()";
-                if (jetObjectFqName.equals(DescriptorUtils.getFqName(superClassDescriptor))) {
-                    explicitJetObject = true;
+                if (JvmAbi.K_OBJECT.equalsTo(DescriptorUtils.getFqName(superClassDescriptor))) {
+                    explicitKObject = true;
                 }
             }
         }
 
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        if (!explicitJetObject) {
+        if (!explicitKObject) {
+            Type kObject = asmTypeByFqNameWithoutInnerClasses(JvmAbi.K_OBJECT);
             sw.writeInterface();
-            sw.writeClassBegin(Type.getObjectType(JvmAbi.JET_OBJECT.getInternalName()));
+            sw.writeClassBegin(kObject);
             sw.writeClassEnd();
             sw.writeInterfaceEnd();
-            superInterfaces.add(JvmAbi.JET_OBJECT.getInternalName());
+            superInterfaces.add(kObject.getInternalName());
         }
 
         for (JetType supertype : interfaceSupertypes) {
@@ -502,7 +501,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 mv.visitCode();
 
                 iv.load(0, classAsmType);
-                iv.invokestatic("jet/runtime/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;)[Ljava/lang/Object;");
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -519,7 +518,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 iv.load(0, classAsmType);
                 iv.load(1, Type.getObjectType("[Ljava/lang/Object;"));
 
-                iv.invokestatic("jet/runtime/CollectionToArray", "toArray", "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;");
+                iv.invokestatic("kotlin/jvm/internal/CollectionToArray", "toArray", "(Ljava/util/Collection;[Ljava/lang/Object;)[Ljava/lang/Object;");
                 iv.areturn(Type.getObjectType("[Ljava/lang/Object;"));
 
                 FunctionCodegen.endVisit(mv, "toArray", myClass);
@@ -632,30 +631,58 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateDataClassToStringIfNeeded(List<PropertyDescriptor> properties) {
+    private void generateDataClassToStringIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor stringClass = KotlinBuiltIns.getInstance().getString();
-        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toString"), stringClass) == null) {
+        if (!hasDeclaredNonTrivialMember("toString", stringClass)) {
             generateDataClassToStringMethod(properties);
         }
     }
 
-    private void generateDataClassHashCodeIfNeeded(List<PropertyDescriptor> properties) {
+    private void generateDataClassHashCodeIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor intClass = KotlinBuiltIns.getInstance().getInt();
-        if (getDeclaredFunctionByRawSignature(descriptor, Name.identifier("hashCode"), intClass) == null) {
+        if (!hasDeclaredNonTrivialMember("hashCode", intClass)) {
             generateDataClassHashCodeMethod(properties);
         }
     }
 
-    private void generateDataClassEqualsIfNeeded(List<PropertyDescriptor> properties) {
+    private void generateDataClassEqualsIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor booleanClass = KotlinBuiltIns.getInstance().getBoolean();
         ClassDescriptor anyClass = KotlinBuiltIns.getInstance().getAny();
-        FunctionDescriptor equalsFunction = getDeclaredFunctionByRawSignature(descriptor, Name.identifier("equals"), booleanClass, anyClass);
-        if (equalsFunction == null) {
+        if (!hasDeclaredNonTrivialMember("equals", booleanClass, anyClass)) {
             generateDataClassEqualsMethod(properties);
         }
     }
 
-    private void generateDataClassEqualsMethod(List<PropertyDescriptor> properties) {
+    /**
+     * @return true if the class has a declared member with the given name anywhere in its hierarchy besides Any
+     */
+    private boolean hasDeclaredNonTrivialMember(
+            @NotNull String name,
+            @NotNull ClassDescriptor returnedClassifier,
+            @NotNull ClassDescriptor... valueParameterClassifiers
+    ) {
+        FunctionDescriptor function =
+                getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers);
+        if (function == null) {
+            return false;
+        }
+
+        if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            return true;
+        }
+
+        for (CallableDescriptor overridden : OverridingUtil.getOverriddenDeclarations(function)) {
+            if (overridden instanceof CallableMemberDescriptor
+                && ((CallableMemberDescriptor) overridden).getKind() == CallableMemberDescriptor.Kind.DECLARATION
+                && !overridden.getContainingDeclaration().equals(KotlinBuiltIns.getInstance().getAny())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void generateDataClassEqualsMethod(@NotNull List<PropertyDescriptor> properties) {
         MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -709,7 +736,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionCodegen.endVisit(mv, "equals", myClass);
     }
 
-    private void generateDataClassHashCodeMethod(List<PropertyDescriptor> properties) {
+    private void generateDataClassHashCodeMethod(@NotNull List<PropertyDescriptor> properties) {
         MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "hashCode", "()I", null, null);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -755,7 +782,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         FunctionCodegen.endVisit(mv, "hashCode", myClass);
     }
 
-    private void generateDataClassToStringMethod(List<PropertyDescriptor> properties) {
+    private void generateDataClassToStringMethod(@NotNull List<PropertyDescriptor> properties) {
         MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -1530,7 +1557,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             superCallable.invokeWithNotNullAssertion(codegen.v, state, resolvedCall);
         }
         else {
-            codegen.invokeMethodWithArguments(superCallable, resolvedCall, StackValue.none());
+            codegen.invokeMethodWithArguments(null, superCallable, resolvedCall, StackValue.none());
         }
     }
 
@@ -1616,7 +1643,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 
-            codegen.invokeMethodWithArguments(method, resolvedCall, StackValue.none());
+            codegen.invokeMethodWithArguments(null, method, resolvedCall, StackValue.none());
         }
         else {
             iv.invokespecial(implClass.getInternalName(), "<init>", "(Ljava/lang/String;I)V");

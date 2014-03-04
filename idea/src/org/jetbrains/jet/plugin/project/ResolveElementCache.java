@@ -23,7 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.*;
-import jet.Function1;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
@@ -145,10 +145,8 @@ public class ResolveElementCache {
         }
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
-            JetScope scope = resolveSession.getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
-
-            // Get all descriptors to force resolving all imports
-            scope.getAllDescriptors();
+            LazyImportScope scope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile((JetFile) importDirective.getContainingFile());
+            scope.forceResolveAllContents();
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
             annotationAdditionalResolve(resolveSession, (JetAnnotationEntry) resolveElement);

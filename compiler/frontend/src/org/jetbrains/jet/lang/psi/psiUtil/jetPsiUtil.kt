@@ -39,8 +39,6 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.jet.lang.psi.JetClassBody
 import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetProperty
@@ -49,6 +47,14 @@ import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import org.jetbrains.jet.lang.psi.JetParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiParameter
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMember
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -208,5 +214,66 @@ fun PsiElement.parameterIndex(): Int {
         this is JetParameter && parent is JetParameterList -> parent.getParameters().indexOf(this)
         this is PsiParameter && parent is PsiParameterList -> parent.getParameterIndex(this)
         else -> -1
+    }
+}
+
+/**
+ * Returns enclosing qualifying element for given [[JetSimpleNameExpression]]
+ * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
+ */
+fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
+    val baseExpression = (getParent() as? JetCallExpression) ?: this
+    val parent = baseExpression.getParent()
+    return when (parent) {
+        is JetQualifiedExpression -> if (parent.getSelectorExpression().isAncestor(baseExpression)) parent else baseExpression
+        is JetUserType -> if (parent.getReferenceExpression().isAncestor(baseExpression)) parent else baseExpression
+        else -> baseExpression
+    }
+}
+
+/**
+ * Returns rightmost selector of the qualified element (null if there is no such selector)
+ */
+fun JetElement.getQualifiedElementSelector(): JetElement? {
+    return when (this) {
+        is JetSimpleNameExpression -> this
+        is JetQualifiedExpression -> {
+            val selector = getSelectorExpression()
+            if (selector is JetCallExpression) selector.getCalleeExpression() else selector
+        }
+        is JetUserType -> getReferenceExpression()
+        else -> this
+    }
+}
+
+/**
+ * Returns outermost qualified element ([[JetQualifiedExpression]] or [[JetUserType]]) in the non-interleaving chain
+ * of qualified elements which enclose given expression
+ * If there is no such elements original expression is returned
+ */
+fun JetSimpleNameExpression.getOutermostNonInterleavingQualifiedElement(): JetElement {
+    var element = ((getParent() as? JetCallExpression) ?: this).getParent()
+    if (element !is JetQualifiedExpression && element !is JetUserType) return this
+
+    while (true) {
+        val parent = element!!.getParent()
+        if (parent !is JetQualifiedExpression && parent !is JetUserType) return element as JetElement
+        element = parent
+    }
+}
+
+/**
+ * Returns FqName for given declaration (either Java or Kotlin)
+ */
+fun PsiElement.getFqName(): FqName? {
+    return when (this) {
+        is PsiPackage -> FqName(getQualifiedName())
+        is PsiClass -> getQualifiedName()?.let { FqName(it) }
+        is PsiMember -> getName()?.let { name ->
+            val prefix = getContainingClass()?.getQualifiedName()
+            FqName(if (prefix != null) "$prefix.$name" else name)
+        }
+        is JetNamedDeclaration -> JetPsiUtil.getFQName(this)
+        else -> null
     }
 }

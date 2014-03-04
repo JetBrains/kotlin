@@ -3,7 +3,7 @@ package test;
 import org.jetbrains.annotations.NotNull;
 import jet.runtime.typeinfo.KotlinSignature;
 import java.util.*;
-import jet.*;
+import kotlin.*;
 
 public interface TwoSuperclassesSupplementNotNull {
 

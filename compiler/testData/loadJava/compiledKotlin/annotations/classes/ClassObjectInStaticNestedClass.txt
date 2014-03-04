@@ -8,8 +8,8 @@ internal final class A {
         
         internal class object <class-object-for-B> {
             /*primary*/ private constructor <class-object-for-B>()
-            internal final val TEST: jet.Int
-                internal final fun <get-TEST>(): jet.Int
+            internal final val TEST: kotlin.Int
+                internal final fun <get-TEST>(): kotlin.Int
         }
     }
 }

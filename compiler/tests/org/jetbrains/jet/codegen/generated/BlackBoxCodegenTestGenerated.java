@@ -4256,6 +4256,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");
         }
         
+        @TestMetadata("equalsHashCodeToString.kt")
+        public void testEqualsHashCodeToString() throws Exception {
+            doTest("compiler/testData/codegen/box/primitiveTypes/equalsHashCodeToString.kt");
+        }
+        
         @TestMetadata("incrementByteCharShort.kt")
         public void testIncrementByteCharShort() throws Exception {
             doTest("compiler/testData/codegen/box/primitiveTypes/incrementByteCharShort.kt");
@@ -5104,11 +5109,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     public static class TypeMapping extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInTypeMapping() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/typeMapping"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-        
-        @TestMetadata("hashable.kt")
-        public void testHashable() throws Exception {
-            doTest("compiler/testData/codegen/box/typeMapping/hashable.kt");
         }
         
         @TestMetadata("kt2831.kt")

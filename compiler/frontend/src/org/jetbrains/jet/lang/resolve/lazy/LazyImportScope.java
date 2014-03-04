@@ -18,8 +18,8 @@ package org.jetbrains.jet.lang.resolve.lazy;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import jet.Function0;
-import jet.Function1;
+import kotlin.Function0;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.Importer;
+import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -42,7 +43,7 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver.LookupMode;
 
-public class LazyImportScope implements JetScope {
+public class LazyImportScope implements JetScope, LazyEntity {
     private final ResolveSession resolveSession;
     private final PackageViewDescriptor packageDescriptor;
     private final ImportsProvider importsProvider;
@@ -156,6 +157,13 @@ public class LazyImportScope implements JetScope {
                 traceForImportResolve,
                 debugName,
                 packageDescriptor.getFqName().isRoot());
+    }
+
+    @Override
+    public void forceResolveAllContents() {
+        for (JetImportDirective importDirective : importsProvider.getAllImports()) {
+            getImportScope(importDirective, LookupMode.EVERYTHING);
+        }
     }
 
     @Nullable

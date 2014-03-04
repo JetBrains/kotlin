@@ -71,12 +71,12 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, increment)
 
-    fun equals(other: Any?): Boolean =
+    override fun equals(other: Any?): Boolean =
         other is $progression && ${compare("start")} && ${compare("end")} && ${compare("increment")}
 
-    fun hashCode(): Int $hashCode
+    override fun hashCode(): Int $hashCode
 
-    fun toString(): String = ${"if (increment > 0) \"\$start..\$end step \$increment\" else \"\$start downTo \$end step \${-increment}\""}
+    override fun toString(): String = ${"if (increment > 0) \"\$start..\$end step \$increment\" else \"\$start downTo \$end step \${-increment}\""}
 }""")
             out.println()
         }

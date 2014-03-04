@@ -71,7 +71,7 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return answer;
     }
 
-    private void done() {
+    void done() {
         if (!isDone) {
             isDone = true;
             for (PackageCodegen codegen : package2codegen.values()) {
@@ -136,6 +136,13 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return newVisitor(type, sourceFile);
     }
 
+    public ClassBuilder forLambdaInlining(Type lambaType, PsiFile sourceFile) {
+        if (isPrimitive(lambaType)) {
+            throw new IllegalStateException("Codegen for primitive type is not possible: " + lambaType);
+        }
+        return newVisitor(lambaType, sourceFile);
+    }
+
     @NotNull
     public ClassBuilder forPackagePart(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
         return newVisitor(asmType, sourceFile);
@@ -192,15 +199,15 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
             );
         }
 
+        @NotNull
         @Override
         public byte[] asByteArray() {
-            done();
             return builderFactory.asBytes(generators.get(relativeClassFilePath).classBuilder);
         }
 
+        @NotNull
         @Override
         public String asText() {
-            done();
             return builderFactory.asText(generators.get(relativeClassFilePath).classBuilder);
         }
     }

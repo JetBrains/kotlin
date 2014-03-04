@@ -1,4 +1,4 @@
-fun getEntry(): jet.Map.Entry<Int, String>? = null
+fun getEntry(): Map.Entry<Int, String>? = null
 
 // method: _DefaultPackage::getEntry
 // jvm signature:     ()Ljava/util/Map$Entry;

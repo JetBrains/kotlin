@@ -9,13 +9,13 @@ import java.text.DateFormat
 import java.util.Date
 
 // TODO this class should move into the runtime
-// in jet.StringTemplate
+// in kotlin.StringTemplate
 class StringTemplate(val values : Array<Any?>) {
 
     /**
      * Converts the template into a String
      */
-    public fun toString() : String {
+    override fun toString() : String {
         val out = StringBuilder()
         forEach{ out.append(it) }
         return out.toString()
@@ -93,7 +93,7 @@ public open class ToStringFormatter : Formatter {
 
     var nullString : String = "null"
 
-    public open fun toString() : String = "ToStringFormatter"
+    override fun toString() : String = "ToStringFormatter"
 
     public override fun format(out : Appendable, value : Any?) {
         if (value == null) {
@@ -121,7 +121,7 @@ public val defaultLocale : Locale = Locale.getDefault()
  */
 public open class LocaleFormatter(val locale : Locale = defaultLocale) : ToStringFormatter() {
 
-    public override fun toString() : String = "LocaleFormatter{$locale}"
+    override fun toString() : String = "LocaleFormatter{$locale}"
 
     public var numberFormat : NumberFormat = NumberFormat.getInstance(locale)!!
 
@@ -151,7 +151,7 @@ public open class LocaleFormatter(val locale : Locale = defaultLocale) : ToStrin
  */
 public class HtmlFormatter(locale : Locale = defaultLocale) : LocaleFormatter(locale) {
 
-    public override fun toString() : String = "HtmlFormatter{$locale}"
+    override fun toString() : String = "HtmlFormatter{$locale}"
 
     public override fun format(out : Appendable, value : Any?) {
         if (value is Node) {

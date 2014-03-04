@@ -95,8 +95,8 @@ fun LinkedList<Int>.sum(f : (Int, Int) -> Int) : Int {
 }
 
 fun <T> List<T>.backwards() : Iterable<T> = object : Iterable<T> {
-  override fun iterator() : jet.Iterator<T> =
-      object : jet.Iterator<T> {
+  override fun iterator() : Iterator<T> =
+      object : Iterator<T> {
           var current = size()
           override fun next() : T = get(--current)
           override fun hasNext() : Boolean = current > 0

@@ -70,6 +70,10 @@ public class FrameMap {
         return new Mark(myMaxIndex);
     }
 
+    public int getCurrentSize() {
+        return myMaxIndex;
+    }
+
     public class Mark {
         private final int myIndex;
 

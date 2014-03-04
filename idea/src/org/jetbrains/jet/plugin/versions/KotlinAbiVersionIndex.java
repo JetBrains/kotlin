@@ -63,6 +63,8 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
         private final Set<String> kotlinAnnotationsDesc = new ImmutableSet.Builder<String>()
                 .add(asmDescByFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION))
                 .add(asmDescByFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION))
+                .add(asmDescByFqNameWithoutInnerClasses(OLD_KOTLIN_CLASS))
+                .add(asmDescByFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE))
                 .add(asmDescByFqNameWithoutInnerClasses(KOTLIN_CLASS))
                 .add(asmDescByFqNameWithoutInnerClasses(KOTLIN_PACKAGE))
                 .build();

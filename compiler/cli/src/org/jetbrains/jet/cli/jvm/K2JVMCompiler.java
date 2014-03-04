@@ -107,7 +107,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, "on".equalsIgnoreCase(arguments.enableInline));
+        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, !"off".equalsIgnoreCase(arguments.enableInline));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 

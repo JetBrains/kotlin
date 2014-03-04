@@ -1,10 +1,8 @@
 package kotlin
 
-import java.lang.Class
-import java.lang.Object
-import java.lang.annotation.*
-
-import jet.runtime.Intrinsic
+import java.lang.annotation.Retention
+import java.lang.annotation.RetentionPolicy
+import kotlin.jvm.internal.Intrinsic
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method
@@ -26,57 +24,10 @@ public annotation class throws(vararg val exceptionClasses: Class<out Throwable>
 
 [Intrinsic("kotlin.javaClass.function")] fun <reified T> javaClass() : Class<T> = null as Class<T>
 
+Retention(RetentionPolicy.SOURCE)
+public annotation class volatile
 
-/**
- * A helper method for calling hashCode() on Kotlin objects
- * TODO remove when Any supports equals() and hashCode()
- */
-[Intrinsic("kotlin.hashCode")] public fun Any.hashCode(): Int = (this as java.lang.Object).hashCode()
+[Intrinsic("kotlin.synchronized")] public fun <R> synchronized(lock: Any, block: () -> R): R = block()
 
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Boolean.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Byte.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Short.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Char.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Int.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Float.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Long.toString(): String = (null as String)
-
-/**
- * A helper method for calling toString() on Kotlin primitives
- * TODO remove when Any supports toString()
- */
-[Intrinsic("kotlin.toString")] public fun Double.toString(): String = (null as String)
+public fun <T : Annotation> T.annotationType() : Class<out T> =
+    (this as java.lang.annotation.Annotation).annotationType() as Class<out T>

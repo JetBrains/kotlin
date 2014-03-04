@@ -1,3 +1,3 @@
 volatile val foo: Int = 1
 
-// 0 jet/volatile
+// 0 kotlin/volatile

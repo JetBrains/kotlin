@@ -4,7 +4,7 @@ class T4(
   val c3: Boolean,
   val c4: String
 ) {
-  fun equals(o: Any?): Boolean {
+  override fun equals(o: Any?): Boolean {
     if (o !is T4) return false;
     return c1 == o.c1 &&
       c2 == o.c2 &&

@@ -33,12 +33,13 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.java.AnnotationLoadingUtil;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -230,12 +231,12 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private static String getMessageFromAnnotationDescriptor(@NotNull AnnotationDescriptor descriptor) {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
-        assert classDescriptor != null : "ClassDescriptor for jet.deprecated mustn't be null";
-        ValueParameterDescriptor parameter = DescriptorResolverUtils.getAnnotationParameterByName(
-                AnnotationLoadingUtil.DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
-        assert parameter != null : "jet.deprecated must have one parameter called value";
+        assert classDescriptor != null : "ClassDescriptor for kotlin.deprecated mustn't be null";
+        ValueParameterDescriptor parameter =
+                DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
+        assert parameter != null : "kotlin.deprecated must have one parameter called value";
         CompileTimeConstant<?> valueArgument = descriptor.getValueArgument(parameter);
-        assert valueArgument != null : "jet.deprecated must have value argument";
+        assert valueArgument != null : "kotlin.deprecated must have value argument";
         return (String) valueArgument.getValue();
     }
 

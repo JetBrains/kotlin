@@ -56,7 +56,7 @@ import java.util.*;
 import static org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper.getTopLevelFunctionFqNames;
 
 /**
- * Will provide both java elements from jet context and some special declarations special to jet.
+ * Will provide both java elements from kotlin context and some declarations special to kotlin.
  * All those declaration are planned to be used in completion.
  */
 public class JetShortNamesCache extends PsiShortNamesCache {
@@ -80,7 +80,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Return jet class names form jet project sources which should be visible from java.
+     * Return kotlin class names from project sources which should be visible from java.
      */
     @NotNull
     @Override
@@ -97,7 +97,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Return class names form jet sources in given scope which should be visible as Java classes.
+     * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
     @NotNull
     @Override
@@ -146,7 +146,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
     }
 
     /**
-     * Get jet non-extension top-level function names. Method is allowed to give invalid names - all result should be
+     * Get kotlin non-extension top-level function names. Method is allowed to give invalid names - all result should be
      * checked with getTopLevelFunctionDescriptorsByName().
      *
      * @return

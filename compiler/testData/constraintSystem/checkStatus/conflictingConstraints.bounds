@@ -4,7 +4,7 @@ SUBTYPE T Int
 SUPERTYPE T String
 
 type parameter bounds:
-T <: jet.Int(SPECIAL), >: jet.String(SPECIAL)
+T <: kotlin.Int(SPECIAL), >: kotlin.String(SPECIAL)
 status:
 -hasConflictingConstraints: true
 -hasContradiction: true

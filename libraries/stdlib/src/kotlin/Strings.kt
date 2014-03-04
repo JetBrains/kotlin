@@ -49,7 +49,7 @@ public fun String?.orEmpty(): String = this ?: ""
 
 // "Extension functions" for CharSequence
 
-inline val CharSequence.size : Int
+val CharSequence.size : Int
 get() = this.length
 
 /**

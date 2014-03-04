@@ -1,5 +1,5 @@
 public open class TestDelegate<T: Any>(private val initializer: () -> T) {
-    private volatile var value: T? = null
+    private var value: T? = null
 
     public open fun get(thisRef: Any?, desc: PropertyMetadata): T {
         if (value == null) {

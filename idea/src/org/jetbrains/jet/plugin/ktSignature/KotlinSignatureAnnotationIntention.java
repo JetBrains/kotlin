@@ -49,6 +49,8 @@ import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
 import javax.swing.*;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
+
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
     private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
             .setShortNames(true)
@@ -113,7 +115,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             public void afterExternalAnnotationChanging(@NotNull PsiModifierListOwner owner, @NotNull String annotationFQName, boolean successful) {
                 busConnection.disconnect();
 
-                if (successful && owner == annotatedElement && KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION.equals(annotationFQName)) {
+                if (successful && owner == annotatedElement && KOTLIN_SIGNATURE.asString().equals(annotationFQName)) {
                     ApplicationManager.getApplication().invokeLater(new Runnable() {
                         @Override
                         public void run() {
@@ -126,7 +128,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
         });
 
         AddAnnotationFix addAnnotationFix = new AddAnnotationFix(
-                KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION, annotatedElement, KotlinSignatureUtil
+                KOTLIN_SIGNATURE.asString(), annotatedElement, KotlinSignatureUtil
                 .signatureToNameValuePairs(annotatedElement.getProject(), signature));
         addAnnotationFix.invoke(project, editor, file);
     }

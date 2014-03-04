@@ -62,13 +62,20 @@ class EditSignatureBalloon implements Disposable {
     private final MyPanel panel;
     private final Balloon balloon;
     private final boolean editable;
+    private final String kotlinSignatureAnnotationFqName;
 
-    public EditSignatureBalloon(@NotNull PsiModifierListOwner annotatedElement, @NotNull String previousSignature, boolean editable) {
+    public EditSignatureBalloon(
+            @NotNull PsiModifierListOwner annotatedElement,
+            @NotNull String previousSignature,
+            boolean editable,
+            @NotNull String kotlinSignatureAnnotationFqName
+    ) {
         this.annotatedElement = annotatedElement;
-        this.editable = editable;
-        project = annotatedElement.getProject();
         this.previousSignature = previousSignature;
+        this.editable = editable;
+        this.kotlinSignatureAnnotationFqName = kotlinSignatureAnnotationFqName;
 
+        project = annotatedElement.getProject();
         editor = createEditor();
         panel = new MyPanel();
         balloon = createBalloon();
@@ -174,10 +181,11 @@ class EditSignatureBalloon implements Disposable {
 
         new WriteCommandAction(project) {
             @Override
-            protected void run(Result result) throws Throwable {
+            protected void run(@NotNull Result result) throws Throwable {
                 ExternalAnnotationsManager.getInstance(project).editExternalAnnotation(
-                        annotatedElement, KotlinSignatureUtil.KOTLIN_SIGNATURE_ANNOTATION, KotlinSignatureUtil
-                        .signatureToNameValuePairs(project, newSignature));
+                        annotatedElement, kotlinSignatureAnnotationFqName,
+                        KotlinSignatureUtil.signatureToNameValuePairs(project, newSignature)
+                );
             }
         }.execute();
     }
@@ -207,7 +215,7 @@ class EditSignatureBalloon implements Disposable {
 
                 ActionListener saveAndHideListener = new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(@NotNull ActionEvent e) {
                         saveAndHide();
                     }
                 };
@@ -222,7 +230,7 @@ class EditSignatureBalloon implements Disposable {
 
             registerKeyboardAction(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(@NotNull ActionEvent e) {
                     balloon.hide();
                 }
             }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);

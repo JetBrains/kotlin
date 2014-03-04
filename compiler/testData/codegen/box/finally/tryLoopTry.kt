@@ -7,7 +7,7 @@ class MyString {
         return this
     }
 
-    fun toString(): String {
+    override fun toString(): String {
         return s
     }
 }

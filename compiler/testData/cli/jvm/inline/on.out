@@ -7,13 +7,13 @@ Usage: org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments
   -noJdk [flag] don't include Java runtime into classpath
   -noStdlib [flag] don't include Kotlin runtime into classpath
   -noJdkAnnotations [flag] don't include JDK external annotations into classpath
-  -notNullAssertions [flag] generate not-null assertion after each invokation of method returning not-null
+  -notNullAssertions [flag] generate not-null assertion after each invocation of method returning not-null
   -notNullParamAssertions [flag] generate not-null assertions on parameters of methods accessible from Java
   -output [String] output directory
   -module [String] module to compile
   -script [flag] evaluate script
   -kotlinHome [String] Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery
-  -inline [String] Inlining mode: on/off (default is off)
+  -inline [String] Inlining mode: on/off (default is on)
   -tags [flag] Demarcate each compilation message (error, warning, etc) with an open and close tag
   -verbose [flag] Enable verbose logging output
   -version [flag] Display compiler version

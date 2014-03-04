@@ -6,7 +6,7 @@ import java.util.ArrayList
 public class User(val firstName: String,
                   val lastName: String,
                   val age: Int) {
-    fun toString() = "$firstName $lastName, age $age"
+    override fun toString() = "$firstName $lastName, age $age"
 }
 
 public fun <T: Comparable<T>> Collection<T>.testMin(): T? {

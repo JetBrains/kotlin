@@ -48,7 +48,7 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "noJdkAnnotations", description = "don't include JDK external annotations into classpath")
     public boolean noJdkAnnotations;
 
-    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invokation of method returning not-null")
+    @Argument(value = "notNullAssertions", description = "generate not-null assertion after each invocation of method returning not-null")
     public boolean notNullAssertions;
 
     @Argument(value = "notNullParamAssertions", description = "generate not-null assertions on parameters of methods accessible from Java")
@@ -66,6 +66,6 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "kotlinHome", description = "Path to Kotlin compiler home directory, used for annotations and runtime libraries discovery")
     public String kotlinHome;
 
-    @Argument(value = "inline", description = "Inlining mode: on/off (default is off)")
+    @Argument(value = "inline", description = "Inlining mode: on/off (default is on)")
     public String enableInline;
 }

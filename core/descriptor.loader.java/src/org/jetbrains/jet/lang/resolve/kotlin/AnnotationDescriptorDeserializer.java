@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
-import jet.Function1;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
@@ -28,13 +28,11 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.jet.lang.resolve.java.AnnotationLoadingUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -52,6 +50,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
@@ -148,10 +147,10 @@ public class AnnotationDescriptorDeserializer implements AnnotationDeserializer 
     }
 
     private static boolean ignoreAnnotation(@NotNull JvmClassName className) {
-        return className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(AnnotationLoadingUtil.JETBRAINS_NOT_NULL_ANNOTATION))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(AnnotationLoadingUtil.JETBRAINS_NULLABLE_ANNOTATION))
+        return className.equals(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_CLASS))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(KOTLIN_PACKAGE))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JETBRAINS_NOT_NULL_ANNOTATION))
+               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JETBRAINS_NULLABLE_ANNOTATION))
                || className.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 

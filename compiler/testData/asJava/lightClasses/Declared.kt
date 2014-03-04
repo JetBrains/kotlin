@@ -27,11 +27,11 @@ trait Trait
 
 // Deprecation
 deprecated("") class Deprecated
-jet.deprecated("") class DeprecatedFQN
-jet. deprecated /**/ ("") class DeprecatedFQNSpaces
+kotlin.deprecated("") class DeprecatedFQN
+kotlin. deprecated /**/ ("") class DeprecatedFQNSpaces
 [deprecated("")] class DeprecatedWithBrackets
-[jet.deprecated("")] class DeprecatedWithBracketsFQN
-[jet
+[kotlin.deprecated("")] class DeprecatedWithBracketsFQN
+[kotlin
 ./**/deprecated  ("")] class DeprecatedWithBracketsFQNSpaces
 
 // Generic

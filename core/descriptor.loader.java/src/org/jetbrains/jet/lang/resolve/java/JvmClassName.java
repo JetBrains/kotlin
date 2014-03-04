@@ -43,8 +43,8 @@ public class JvmClassName {
     private final static String CLASS_OBJECT_REPLACE_GUARD = "<class_object>";
     private final static String TRAIT_IMPL_REPLACE_GUARD = "<trait_impl>";
 
-    // Internal name:  jet/Map$Entry
-    // FqName:         jet.Map.Entry
+    // Internal name:  kotlin/Map$Entry
+    // FqName:         kotlin.Map.Entry
 
     private final String internalName;
     private FqName fqName;

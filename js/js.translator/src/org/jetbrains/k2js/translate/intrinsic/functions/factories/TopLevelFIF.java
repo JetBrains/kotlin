@@ -19,7 +19,9 @@ package org.jetbrains.k2js.translate.intrinsic.functions.factories;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -29,24 +31,29 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import org.jetbrains.k2js.translate.callTranslator.CallInfo;
 import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
 import org.jetbrains.k2js.translate.intrinsic.functions.patterns.NamePredicate;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
+import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.k2js.translate.intrinsic.functions.basic.FunctionIntrinsic.CallParametersAwareFunctionIntrinsic;
 import static org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {
+    public static final DescriptorPredicate EQUALS_IN_ANY = pattern("kotlin", "Any", "equals");
     @NotNull
-    public static final KotlinFunctionIntrinsic EQUALS = new KotlinFunctionIntrinsic("equals");
+    public static final KotlinFunctionIntrinsic KOTLIN_EQUALS = new KotlinFunctionIntrinsic("equals");
     @NotNull
     public static final FunctionIntrinsic IDENTITY_EQUALS = new FunctionIntrinsic() {
         @NotNull
@@ -54,7 +61,7 @@ public final class TopLevelFIF extends CompositeFIF {
         public JsExpression apply(
                 @Nullable JsExpression receiver, @NotNull List<JsExpression> arguments, @NotNull TranslationContext context
         ) {
-            assert arguments.size() == 1 : "Unexpected argument size for jet.identityEquals: " + arguments.size();
+            assert arguments.size() == 1 : "Unexpected argument size for kotlin.identityEquals: " + arguments.size();
             return new JsBinaryOperation(JsBinaryOperator.REF_EQ, receiver, arguments.get(0));
         }
     };
@@ -75,8 +82,8 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final FunctionIntrinsic NATIVE_MAP_GET = new NativeMapGetSet() {
         @NotNull
         @Override
-        protected String operation() {
-            return "get_s9cetl$";
+        protected String operationName() {
+            return "get";
         }
 
         @Nullable
@@ -99,8 +106,8 @@ public final class TopLevelFIF extends CompositeFIF {
     private static final FunctionIntrinsic NATIVE_MAP_SET = new NativeMapGetSet() {
         @NotNull
         @Override
-        protected String operation() {
-            return "put_5yfy9u$";
+        protected String operationName() {
+            return "put";
         }
 
         @Nullable
@@ -120,6 +127,13 @@ public final class TopLevelFIF extends CompositeFIF {
         }
     };
 
+    @NotNull
+    private static String getStableMangledBuiltInName(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
+        Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
+        assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
+        return TranslationUtils.getMangledName(functions.iterator().next());
+    }
+
     private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {
         @NotNull
         @Override
@@ -138,16 +152,17 @@ public final class TopLevelFIF extends CompositeFIF {
     public static final FunctionIntrinsicFactory INSTANCE = new TopLevelFIF();
 
     private TopLevelFIF() {
-        add(pattern("jet", "toString").receiverExists(), TO_STRING);
-        add(pattern("jet", "equals").receiverExists(), EQUALS);
-        add(pattern("jet", "identityEquals").receiverExists(), IDENTITY_EQUALS);
-        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), EQUALS);
-        add(pattern("String|Boolean|Char|Number.equals"), EQUALS);
-        add(pattern("jet", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
-        add(pattern("jet", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
-        add(pattern("jet", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
+        add(EQUALS_IN_ANY, KOTLIN_EQUALS);
+        add(pattern("kotlin", "toString").receiverExists(), TO_STRING);
+        add(pattern("kotlin", "equals").receiverExists(), KOTLIN_EQUALS);
+        add(pattern("kotlin", "identityEquals").receiverExists(), IDENTITY_EQUALS);
+        add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
+        add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
+        add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
+        add(pattern("kotlin", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
+        add(pattern("kotlin", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("jet", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
+        add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
         add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
@@ -159,7 +174,7 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private abstract static class NativeMapGetSet extends CallParametersAwareFunctionIntrinsic {
         @NotNull
-        protected abstract String operation();
+        protected abstract String operationName();
 
         @Nullable
         protected abstract ExpressionReceiver getExpressionReceiver(@NotNull ResolvedCall<?> resolvedCall);
@@ -198,7 +213,9 @@ public final class TopLevelFIF extends CompositeFIF {
                 }
             }
 
-            return new JsInvocation(new JsNameRef(operation(), thisOrReceiver), arguments);
+            String mangledName = getStableMangledBuiltInName(KotlinBuiltIns.getInstance().getMutableMap(), operationName());
+
+            return new JsInvocation(new JsNameRef(mangledName, thisOrReceiver), arguments);
         }
     }
 

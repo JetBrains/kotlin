@@ -131,7 +131,6 @@ public class GenerationState {
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(this);
         this.classFileFactory.setBuilderFactory(builderFactory);
-        this.intrinsics.init();
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;

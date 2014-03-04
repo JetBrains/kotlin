@@ -22,6 +22,8 @@ import org.jetbrains.asm4.Type;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+
 public class AsmTypeConstants {
     private static final Map<Class<?>, Type> TYPES_MAP = new HashMap<Class<?>, Type>();
 
@@ -29,20 +31,12 @@ public class AsmTypeConstants {
     public static final Type JAVA_STRING_TYPE = getType(String.class);
     public static final Type JAVA_THROWABLE_TYPE = getType(Throwable.class);
 
-    public static final Type JET_UNIT_TYPE = Type.getObjectType("jet/Unit");
-    public static final Type JET_FUNCTION0_TYPE = Type.getObjectType("jet/Function0");
-    public static final Type JET_FUNCTION1_TYPE = Type.getObjectType("jet/Function1");
-    public static final Type JET_INT_RANGE_TYPE = Type.getObjectType("jet/IntRange");
-    public static final Type JET_SHARED_VAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Object");
-    public static final Type JET_SHARED_INT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Int");
-    public static final Type JET_SHARED_DOUBLE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Double");
-    public static final Type JET_SHARED_FLOAT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Float");
-    public static final Type JET_SHARED_BYTE_TYPE = Type.getObjectType("jet/runtime/SharedVar$Byte");
-    public static final Type JET_SHARED_SHORT_TYPE = Type.getObjectType("jet/runtime/SharedVar$Short");
-    public static final Type JET_SHARED_CHAR_TYPE = Type.getObjectType("jet/runtime/SharedVar$Char");
-    public static final Type JET_SHARED_LONG_TYPE = Type.getObjectType("jet/runtime/SharedVar$Long");
-    public static final Type JET_SHARED_BOOLEAN_TYPE = Type.getObjectType("jet/runtime/SharedVar$Boolean");
+    public static final Type UNIT_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Unit");
+    public static final Type FUNCTION0_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function0");
+    public static final Type FUNCTION1_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/Function1");
+    public static final Type INT_RANGE_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/IntRange");
 
+    public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
 
     public static Type getType(@NotNull Class<?> javaClass) {
         Type type = TYPES_MAP.get(javaClass);

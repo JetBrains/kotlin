@@ -20,4 +20,8 @@ public enum InlineStrategy {
     AS_FUNCTION,
     IN_PLACE,
     NOT_INLINE;
+
+    public boolean isInline() {
+        return this != NOT_INLINE;
+    }
 }

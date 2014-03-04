@@ -102,12 +102,8 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         return copy;
     }
 
-    @Override
-    public boolean isInline() {
-        return getInlineStrategy() != InlineStrategy.NOT_INLINE;
-    }
-
     @NotNull
+    @Override
     public InlineStrategy getInlineStrategy() {
         return inlineStrategy;
     }

@@ -3,7 +3,7 @@ package kotlin
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
 import java.util.Arrays
-import jet.runtime.Intrinsic
+import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
 [Intrinsic("kotlin.arrays.array")] public fun <reified T> array(vararg t : T) : Array<T> = t
@@ -105,9 +105,7 @@ public val ByteArray.inputStream : ByteArrayInputStream
 public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 public fun ByteArray.toString(encoding: String): String = String(this, encoding)
-public fun ByteArray.toString(): String = String(this)
-
-public fun ByteArray.toString(encoding: Charset) : String = String(this, encoding)
+public fun ByteArray.toString(encoding: Charset): String = String(this, encoding)
 
 [Intrinsic("kotlin.collections.copyToArray")] public fun <reified T> Collection<T>.copyToArray(): Array<T> =
         throw UnsupportedOperationException()

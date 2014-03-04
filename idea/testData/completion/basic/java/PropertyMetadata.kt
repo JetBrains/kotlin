@@ -6,6 +6,6 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"PropertyMetadata", itemText:"PropertyMetadata", tailText:" (jet)" }
-// EXIST: { lookupString:"PropertyMetadataImpl", itemText:"PropertyMetadataImpl", tailText:" (jet)" }
+// EXIST: { lookupString:"PropertyMetadata", itemText:"PropertyMetadata", tailText:" (kotlin)" }
+// EXIST: { lookupString:"PropertyMetadataImpl", itemText:"PropertyMetadataImpl", tailText:" (kotlin)" }
 // NUMBER: 2

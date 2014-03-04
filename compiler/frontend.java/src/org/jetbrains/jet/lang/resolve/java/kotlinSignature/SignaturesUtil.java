@@ -17,37 +17,38 @@
 package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 
 import com.intellij.openapi.util.text.StringUtil;
-import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.*;
 
 public class SignaturesUtil {
-    public static final FqName KOTLIN_SIGNATURE = fqNameByClass(KotlinSignature.class);
-    public static final Name KOTLIN_SIGNATURE_VALUE_FIELD_NAME = Name.identifier("value");
-
     private SignaturesUtil() {
     }
 
     @Nullable
     public static String getKotlinSignature(@NotNull ExternalAnnotationResolver externalAnnotationResolver, @NotNull JavaMember member) {
-        JavaAnnotation annotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
+        JavaAnnotation newAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, KOTLIN_SIGNATURE);
+        if (newAnnotation != null) return extractKotlinSignatureArgument(newAnnotation);
 
-        if (annotation != null) {
-            JavaAnnotationArgument argument = annotation.findArgument(KOTLIN_SIGNATURE_VALUE_FIELD_NAME);
-            if (argument instanceof JavaLiteralAnnotationArgument) {
-                Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
-                if (value instanceof String) {
-                    return StringUtil.unescapeStringCharacters((String) value);
-                }
+        JavaAnnotation oldAnnotation = findAnnotationWithExternal(externalAnnotationResolver, member, OLD_KOTLIN_SIGNATURE);
+        if (oldAnnotation != null) return extractKotlinSignatureArgument(oldAnnotation);
+
+        return null;
+    }
+
+    @Nullable
+    private static String extractKotlinSignatureArgument(@NotNull JavaAnnotation annotation) {
+        JavaAnnotationArgument argument = annotation.findArgument(DEFAULT_ANNOTATION_MEMBER_NAME);
+        if (argument instanceof JavaLiteralAnnotationArgument) {
+            Object value = ((JavaLiteralAnnotationArgument) argument).getValue();
+            if (value instanceof String) {
+                return StringUtil.unescapeStringCharacters((String) value);
             }
         }
-
         return null;
     }
 

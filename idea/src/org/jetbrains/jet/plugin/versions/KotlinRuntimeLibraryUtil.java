@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.versions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -60,7 +59,6 @@ import java.util.Set;
 
 import static com.intellij.util.PathUtil.getLocalFile;
 import static com.intellij.util.PathUtil.getLocalPath;
-
 import static org.jetbrains.jet.plugin.versions.OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog;
 
 public class KotlinRuntimeLibraryUtil {
@@ -156,12 +154,10 @@ public class KotlinRuntimeLibraryUtil {
 
         ImmutableList<String> candidateClassNames = ImmutableList.of(
                 kotlinPackageClassFqName,
-                // For built-ins module in Kotlin project
-                "jet.Unit",
+                "kotlin.Unit",
                 // For older versions
                 "kotlin.namespace",
-                // For really old versions
-                "jet.JetObject"
+                "jet.Unit"
         );
 
         for (String className : candidateClassNames) {

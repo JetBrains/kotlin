@@ -1,2 +1,2 @@
 val x = 5.<ref>toString()
-//jet/Library.kt:toString
+//kotlin/Any.kt:toString

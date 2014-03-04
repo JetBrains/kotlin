@@ -57,7 +57,6 @@
                       <ignorePackage>com</ignorePackage>
                       <ignorePackage>sun</ignorePackage>
                       <ignorePackage>java</ignorePackage>
-                      <ignorePackage>jet</ignorePackage>
                       <ignorePackage>junit</ignorePackage>
                       <ignorePackage>org</ignorePackage>
                   </ignorePackages>

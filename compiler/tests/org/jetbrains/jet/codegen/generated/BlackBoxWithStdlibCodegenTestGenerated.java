@@ -908,11 +908,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/getGenericInterfaces.kt");
         }
         
-        @TestMetadata("implicitlyCastToHashable.kt")
-        public void testImplicitlyCastToHashable() throws Exception {
-            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/implicitlyCastToHashable.kt");
-        }
-        
         @TestMetadata("kt1406.kt")
         public void testKt1406() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/regressions/kt1406.kt");
@@ -1044,6 +1039,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("forInString.kt")
         public void testForInString() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/strings/forInString.kt");
+        }
+        
+        @TestMetadata("stringPlusOnlyWorksOnString.kt")
+        public void testStringPlusOnlyWorksOnString() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/strings/stringPlusOnlyWorksOnString.kt");
         }
         
     }

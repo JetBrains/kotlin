@@ -33,7 +33,7 @@ import java.net.URLClassLoader
 import java.util.HashSet
 
 public object JavaToKotlinTranslator {
-    private val DISPOSABLE: Disposable? = Disposer.newDisposable()
+    private val DISPOSABLE = Disposer.newDisposable()
 
     private fun createFile(text: String): PsiFile? {
         val javaCoreEnvironment: JavaCoreProjectEnvironment? = setUpJavaCoreEnvironment()

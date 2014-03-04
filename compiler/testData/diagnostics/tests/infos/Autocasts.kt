@@ -183,7 +183,7 @@ fun returnFunctionLiteral(a: Any?): Function0<Int> =
 fun mergeAutocasts(a: Any?) {
   if (a is String || a is Int) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
-    a.toString()
+    <!DEBUG_INFO_AUTOCAST!>a<!>.toString()
   }
   if (a is Int || a is String) {
     a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")

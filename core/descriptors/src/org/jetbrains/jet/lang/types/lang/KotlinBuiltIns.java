@@ -40,7 +40,7 @@ import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
 public class KotlinBuiltIns {
     public static final JetScope STUB = JetScope.EMPTY;
 
-    public static final String BUILT_INS_PACKAGE_NAME_STRING = "jet";
+    public static final String BUILT_INS_PACKAGE_NAME_STRING = "kotlin";
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
 
@@ -291,9 +291,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getArray() {
-        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
-            return BuiltInsPackageMigration.arrayClass;
-        }
         return getBuiltInClassByName("Array");
     }
 
@@ -305,11 +302,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getNumber() {
         return getBuiltInClassByName("Number");
-    }
-
-    @NotNull
-    public ClassDescriptor getHashable() {
-        return getBuiltInClassByName("Hashable");
     }
 
     @NotNull
@@ -367,11 +359,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getVolatileAnnotationClass() {
-        return getBuiltInClassByName("volatile");
-    }
-
-    @NotNull
     public ClassDescriptor getTailRecursiveAnnotationClass() {
         return getBuiltInClassByName("tailRecursive");
     }
@@ -398,9 +385,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getEnum() {
-        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
-            return BuiltInsPackageMigration.enumClass;
-        }
         return getBuiltInClassByName("Enum");
     }
 
@@ -514,7 +498,6 @@ public class KotlinBuiltIns {
                 getString(),
                 getCharSequence(),
                 getThrowable(),
-                getBuiltInClassByName("Hashable"),
 
                 getIterator(),
                 getIterable(),
@@ -534,7 +517,6 @@ public class KotlinBuiltIns {
                 getMutableMap(),
                 getMutableMapEntry(),
 
-                getVolatileAnnotationClass(),
                 getDataClassAnnotation(),
                 getAnnotation(),
                 getComparable(),
@@ -577,9 +559,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getAnyType() {
-        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
-            return BuiltInsPackageMigration.anyType;
-        }
         return getBuiltInTypeByClassName("Any");
     }
 
@@ -651,9 +630,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getStringType() {
-        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
-            return BuiltInsPackageMigration.stringType;
-        }
         return getBuiltInTypeByClassName("String");
     }
 
@@ -717,9 +693,6 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getAnnotationType() {
-        if (BuiltInsPackageMigration.isSerializingBuiltInsInKotlinPackage) {
-            return BuiltInsPackageMigration.annotationType;
-        }
         return getBuiltInTypeByClassName("Annotation");
     }
 
@@ -954,10 +927,6 @@ public class KotlinBuiltIns {
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
         FqName fqName = DescriptorUtils.getFqName(annotationClass).toSafe();
         return descriptor.getOriginal().getAnnotations().findAnnotation(fqName) != null;
-    }
-
-    public boolean isVolatile(@NotNull PropertyDescriptor descriptor) {
-        return containsAnnotation(descriptor, getVolatileAnnotationClass());
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

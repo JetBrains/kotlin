@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -302,23 +303,36 @@ public class AsmUtil {
     }
 
     public static void genClosureFields(CalculatedClosure closure, ClassBuilder v, JetTypeMapper typeMapper) {
+        List<Pair<String, Type>> allFields = new ArrayList<Pair<String, Type>>();
+
         ClassifierDescriptor captureThis = closure.getCaptureThis();
-        int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         if (captureThis != null) {
-            v.newField(null, access, CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis).getDescriptor(), null,
-                       null);
+            allFields.add(Pair.create(CAPTURED_THIS_FIELD, typeMapper.mapType(captureThis)));
         }
 
         JetType captureReceiverType = closure.getCaptureReceiverType();
         if (captureReceiverType != null) {
-            v.newField(null, access, CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType).getDescriptor(),
-                       null, null);
+            allFields.add(Pair.create(CAPTURED_RECEIVER_FIELD, typeMapper.mapType(captureReceiverType)));
         }
 
-        List<Pair<String, Type>> fields = closure.getRecordedFields();
-        for (Pair<String, Type> field : fields) {
-            v.newField(null, access, field.first, field.second.getDescriptor(), null, null);
+        allFields.addAll(closure.getRecordedFields());
+        genClosureFields(allFields, v);
+    }
+
+    public static void genClosureFields(List<Pair<String, Type>> allFields, ClassBuilder builder) {
+        //noinspection PointlessBitwiseExpression
+        int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
+        for (Pair<String, Type> field : allFields) {
+            builder.newField(null, access, field.first, field.second.getDescriptor(), null, null);
         }
+    }
+
+    public static List<FieldInfo> transformCapturedParams(List<Pair<String, Type>> allFields, Type owner) {
+        List<FieldInfo> result = new ArrayList<FieldInfo>();
+        for (Pair<String, Type> field : allFields) {
+            result.add(FieldInfo.createForHiddenField(owner, field.second, field.first));
+        }
+        return result;
     }
 
     public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {
@@ -412,7 +426,7 @@ public class AsmUtil {
                 return StackValue.cmp(opToken, leftType);
             }
             else {
-                v.invokestatic("jet/runtime/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z");
 
                 if (opToken == JetTokens.EXCLEQ || opToken == JetTokens.EXCLEQEQEQ) {
                     genInvertBoolean(v);
@@ -488,7 +502,7 @@ public class AsmUtil {
             if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
                 v.load(index, asmType);
                 v.visitLdcInsn(parameter.getName().asString());
-                v.invokestatic("jet/runtime/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
+                v.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V");
             }
         }
     }
@@ -530,7 +544,7 @@ public class AsmUtil {
             v.dup();
             v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
             v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic("jet/runtime/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
+            v.invokestatic("kotlin/jvm/internal/Intrinsics", assertMethodToCall, "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V");
         }
     }
 

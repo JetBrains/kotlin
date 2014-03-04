@@ -38,7 +38,7 @@ public abstract class VirtualFileKotlinClassFinder implements VirtualFileFinder 
     @Nullable
     @Override
     public KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName) {
-        VirtualFile file = findVirtualFile(fqName);
+        VirtualFile file = findVirtualFileWithHeader(fqName);
         return file == null ? null : createKotlinClass(file);
     }
 

@@ -33,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.kdoc.psi.api.KDocElement;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -409,20 +410,9 @@ public class JetPsiUtil {
     }
 
     public static boolean isSelectorInQualified(@NotNull JetSimpleNameExpression nameExpression) {
-        PsiElement nameExpressionParent = nameExpression.getParent();
-
-        if (nameExpressionParent instanceof JetUserType) {
-            assert ((JetUserType) nameExpressionParent).getReferenceExpression() == nameExpression;
-            return ((JetUserType) nameExpressionParent).getQualifier() != null;
-        }
-
-        JetExpression selector = nameExpression;
-        if (nameExpressionParent instanceof JetCallExpression && ((JetCallExpression) nameExpressionParent).getCalleeExpression() == nameExpression) {
-            selector = (JetCallExpression) nameExpressionParent;
-        }
-
-        PsiElement selectorParent = selector.getParent();
-        return selectorParent instanceof JetQualifiedExpression && (((JetQualifiedExpression) selectorParent).getSelectorExpression() == selector);
+        JetElement qualifiedElement = PsiUtilPackage.getQualifiedElement(nameExpression);
+        return qualifiedElement instanceof JetQualifiedExpression
+               || ((qualifiedElement instanceof JetUserType) && ((JetUserType) qualifiedElement).getQualifier() != null);
     }
 
     public static boolean isLHSOfDot(@NotNull JetExpression expression) {
@@ -443,17 +433,6 @@ public class JetPsiUtil {
     public static boolean isSafeCall(@NotNull Call call) {
         ASTNode callOperationNode = call.getCallOperationNode();
         return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
-    }
-
-    public static boolean isFunctionLiteralWithoutDeclaredParameterTypes(@Nullable JetExpression expression) {
-        if (!(expression instanceof JetFunctionLiteralExpression)) return false;
-        JetFunctionLiteralExpression functionLiteral = (JetFunctionLiteralExpression) expression;
-        for (JetParameter parameter : functionLiteral.getValueParameters()) {
-            if (parameter.getTypeReference() != null) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static boolean isScriptDeclaration(@NotNull JetDeclaration namedDeclaration) {

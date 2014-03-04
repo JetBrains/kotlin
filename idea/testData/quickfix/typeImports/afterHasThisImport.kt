@@ -6,6 +6,6 @@ import java.util.List
 
 class M {
     trait A {
-        val l: jet.List<Int><caret>
+        val l: kotlin.List<Int><caret>
     }
 }

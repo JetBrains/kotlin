@@ -1,6 +1,6 @@
 package kotlin2
 
-import jet.runtime.ArrayIterator
+import kotlin.jvm.internal.ArrayIterator
 
 /**
  * Annotates a class used to implement extension functions

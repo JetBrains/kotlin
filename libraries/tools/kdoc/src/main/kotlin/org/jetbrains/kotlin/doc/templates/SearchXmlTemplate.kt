@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.doc.model.*
 class SearchXmlTemplate(val model: KModel): KDocTemplate() {
 
     class Search(val name: String, val href: String, val kind: String) {
-        fun toString() = "Search($name, $href, $kind)"
+        override fun toString() = "Search($name, $href, $kind)"
     }
 
     override fun render() {

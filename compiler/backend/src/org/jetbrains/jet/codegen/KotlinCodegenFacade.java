@@ -56,6 +56,8 @@ public class KotlinCodegenFacade {
         for (Map.Entry<FqName, Collection<JetFile>> entry : packageFqNameToFiles.entrySet()) {
             generatePackage(state, entry.getKey(), entry.getValue(), errorHandler);
         }
+
+        state.getFactory().done();
     }
 
     public static void generatePackage(

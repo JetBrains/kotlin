@@ -1,20 +1,20 @@
 package test
 
 internal trait A {
-    public open var p: jet.Int
-        public open fun <get-p>(): jet.Int
-        internal open fun <set-p>(/*0*/ value: jet.Int): jet.Unit
-    internal open val v: jet.Int
-        internal open fun <get-v>(): jet.Int
-    internal open fun f(): jet.Int
+    public open var p: kotlin.Int
+        public open fun <get-p>(): kotlin.Int
+        internal open fun <set-p>(/*0*/ value: kotlin.Int): kotlin.Unit
+    internal open val v: kotlin.Int
+        internal open fun <get-v>(): kotlin.Int
+    internal open fun f(): kotlin.Int
 }
 
 internal final class B : test.A {
     /*primary*/ public constructor B()
-    public open override /*1*/ /*fake_override*/ var p: jet.Int
-        public open override /*1*/ /*fake_override*/ fun <get-p>(): jet.Int
-        internal open override /*1*/ /*fake_override*/ fun <set-p>(/*0*/ value: jet.Int): jet.Unit
-    internal open override /*1*/ /*fake_override*/ val v: jet.Int
-        internal open override /*1*/ /*fake_override*/ fun <get-v>(): jet.Int
-    internal open override /*1*/ /*fake_override*/ fun f(): jet.Int
+    public open override /*1*/ /*fake_override*/ var p: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun <get-p>(): kotlin.Int
+        internal open override /*1*/ /*fake_override*/ fun <set-p>(/*0*/ value: kotlin.Int): kotlin.Unit
+    internal open override /*1*/ /*fake_override*/ val v: kotlin.Int
+        internal open override /*1*/ /*fake_override*/ fun <get-v>(): kotlin.Int
+    internal open override /*1*/ /*fake_override*/ fun f(): kotlin.Int
 }

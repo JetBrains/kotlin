@@ -2,12 +2,12 @@ package test
 
 public trait SamSubinterfaceOfTwo : java.lang.Object {
     
-    public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<jet.String> {
-        public abstract override /*2*/ /*fake_override*/ fun f(): jet.String?
+    public trait Sub : test.SamSubinterfaceOfTwo.Super1, test.SamSubinterfaceOfTwo.Super2<kotlin.String> {
+        public abstract override /*2*/ /*fake_override*/ fun f(): kotlin.String?
     }
     
     public trait Super1 : java.lang.Object {
-        public abstract fun f(): jet.CharSequence?
+        public abstract fun f(): kotlin.CharSequence?
     }
     
     public trait Super2</*0*/ T> : java.lang.Object {
@@ -16,7 +16,7 @@ public trait SamSubinterfaceOfTwo : java.lang.Object {
 }
 
 package test.SamSubinterfaceOfTwo {
-    public /*synthesized*/ fun Sub(/*0*/ function: () -> jet.String?): test.SamSubinterfaceOfTwo.Sub
-    public /*synthesized*/ fun Super1(/*0*/ function: () -> jet.CharSequence?): test.SamSubinterfaceOfTwo.Super1
+    public /*synthesized*/ fun Sub(/*0*/ function: () -> kotlin.String?): test.SamSubinterfaceOfTwo.Sub
+    public /*synthesized*/ fun Super1(/*0*/ function: () -> kotlin.CharSequence?): test.SamSubinterfaceOfTwo.Super1
     public /*synthesized*/ fun </*0*/ T> Super2(/*0*/ function: () -> T?): test.SamSubinterfaceOfTwo.Super2<T>
 }

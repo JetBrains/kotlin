@@ -760,7 +760,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
                     for (prefix in arrayList("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
-                            "jet", "java.awt", "java.awt.event", "java.sql", "java.beans",
+                            "java.awt", "java.awt.event", "java.sql", "java.beans",
                             "javax.swing", "javax.swing.event",
                             "org.w3c.dom",
                             "kotlin.template")) {
@@ -934,7 +934,7 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 
     open fun equals(other: KPackage) = name == other.name
 
-    open fun toString() = name
+    override fun toString() = name
 }
 
 
@@ -957,7 +957,7 @@ class KPackage(model: KModel, val descriptor: PackageFragmentDescriptor,
 
     fun equals(other: KPackage) = name == other.name
 
-    fun toString() = "KPackage($name)"
+    override fun toString() = "KPackage($name)"
 
     fun getClass(descriptor: ClassDescriptor): KClass {
         val name = descriptor.getName().asString()
@@ -1089,7 +1089,7 @@ class KClass(
 
     fun equals(other: KClass) = name == other.name
 
-    fun toString() = "$kind($name)"
+    override fun toString() = "$kind($name)"
 
     fun isApi(): Boolean {
         val visibility = descriptor.getVisibility()
@@ -1185,7 +1185,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
     fun equals(other: KFunction) = name == other.name && this.parameterTypeText == other.parameterTypeText &&
     this.extensionClass == other.extensionClass && this.owner == other.owner
 
-    fun toString() = "fun $name($parameterTypeText): $returnType"
+    override fun toString() = "fun $name($parameterTypeText): $returnType"
 
     public val link: String = "$name($parameterTypeText)"
 
@@ -1212,13 +1212,13 @@ class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, 
         return visibility.isPublicAPI()
     }
 
-    fun toString() = "property $name"
+    override fun toString() = "property $name"
 }
 
 class KParameter(val descriptor: ValueParameterDescriptor, val name: String,
         var aType: KType): KAnnotated(aType.model, aType.declarationDescriptor)  {
 
-    fun toString() = "$name: ${aType.name}"
+    override fun toString() = "$name: ${aType.name}"
 
     fun isVarArg(): Boolean = descriptor.getVarargElementType() != null
 
@@ -1237,12 +1237,12 @@ class KTypeParameter(val name: String,
         model: KModel,
         var extends: List<KClass> = arrayList<KClass>()): KAnnotated(model, descriptor) {
 
-    fun toString() = "$name"
+    override fun toString() = "$name"
 }
 
 class KAnnotation(var klass: KClass): KAnnotated(klass.model, klass.descriptor)  {
 
     // TODO add some parameter values?
 
-    fun toString() = "@$klass.simpleName"
+    override fun toString() = "@$klass.simpleName"
 }

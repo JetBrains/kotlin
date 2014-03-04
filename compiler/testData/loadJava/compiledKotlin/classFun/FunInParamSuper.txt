@@ -5,7 +5,7 @@ internal open class Base</*0*/ T> {
     internal final fun foo(): T
 }
 
-internal final class Inh : test.Base<jet.String> {
+internal final class Inh : test.Base<kotlin.String> {
     /*primary*/ public constructor Inh()
-    internal final override /*1*/ /*fake_override*/ fun foo(): jet.String
+    internal final override /*1*/ /*fake_override*/ fun foo(): kotlin.String
 }

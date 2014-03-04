@@ -73,7 +73,7 @@ public class CallResolverExtensionProvider {
     private static void appendExtensionsFor(DeclarationDescriptor declarationDescriptor, List<CallResolverExtension> extensions) {
         if (declarationDescriptor instanceof SimpleFunctionDescriptor) {
             SimpleFunctionDescriptor descriptor = (SimpleFunctionDescriptor) declarationDescriptor;
-            if (descriptor.isInline()) {
+            if (descriptor.getInlineStrategy().isInline()) {
                 extensions.add(new InlineCallResolverExtension(descriptor));
             }
         }

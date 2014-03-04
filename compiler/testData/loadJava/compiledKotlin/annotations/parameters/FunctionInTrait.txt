@@ -1,9 +1,9 @@
 package test
 
-internal final annotation class Anno : jet.Annotation {
+internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
 internal trait Trait {
-    internal open fun foo(/*0*/ test.Anno() x: jet.String): jet.Int
+    internal open fun foo(/*0*/ test.Anno() x: kotlin.String): kotlin.Int
 }

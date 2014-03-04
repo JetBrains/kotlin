@@ -1,4 +1,4 @@
-// "Remove useless import for 'jet.List'" "true"
-import jet.Double
+// "Remove useless import for 'kotlin.List'" "true"
+import kotlin.Double
 
 class List {}

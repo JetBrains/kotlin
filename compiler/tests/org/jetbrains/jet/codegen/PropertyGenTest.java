@@ -159,13 +159,6 @@ public class PropertyGenTest extends CodegenTestCase {
         assertNotNull(aClass.getMethod("getX"));
     }
 
-    public void testVolatileProperty() throws Exception {
-        loadText("abstract class Foo { public volatile var x: String = \"\"; }");
-        Class aClass = generateClass("Foo");
-        Field x = aClass.getDeclaredField("x");
-        assertTrue((x.getModifiers() & Modifier.VOLATILE) != 0);
-    }
-
     public void testKt160() throws Exception {
         loadText("internal val s = java.lang.Double.toString(1.0)");
         Method method = generateFunction("getS");

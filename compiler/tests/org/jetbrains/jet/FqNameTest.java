@@ -39,48 +39,48 @@ public class FqNameTest {
 
     @Test
     public void pathLevel1() {
-        List<FqName> path = new FqName("com").path();
+        List<FqName> path = new FqName("org").path();
         Assert.assertEquals(2, path.size());
         Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("com", path.get(1).asString());
-        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("org", path.get(1).asString());
+        Assert.assertEquals("org", path.get(1).shortName().asString());
         Assert.assertEquals("", path.get(1).parent().asString());
     }
 
     @Test
     public void pathLevel2() {
-        List<FqName> path = new FqName("com.jetbrains").path();
+        List<FqName> path = new FqName("org.jetbrains").path();
         Assert.assertEquals(3, path.size());
         Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("com", path.get(1).asString());
-        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("org", path.get(1).asString());
+        Assert.assertEquals("org", path.get(1).shortName().asString());
         Assert.assertEquals("", path.get(1).parent().asString());
-        Assert.assertEquals("com.jetbrains", path.get(2).asString());
+        Assert.assertEquals("org.jetbrains", path.get(2).asString());
         Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
-        Assert.assertEquals("com", path.get(2).parent().asString());
+        Assert.assertEquals("org", path.get(2).parent().asString());
     }
 
     @Test
     public void pathLevel3() {
-        List<FqName> path = new FqName("com.jetbrains.jet").path();
+        List<FqName> path = new FqName("org.jetbrains.kotlin").path();
         Assert.assertEquals(4, path.size());
         Assert.assertEquals("", path.get(0).asString());
-        Assert.assertEquals("com", path.get(1).asString());
-        Assert.assertEquals("com", path.get(1).shortName().asString());
+        Assert.assertEquals("org", path.get(1).asString());
+        Assert.assertEquals("org", path.get(1).shortName().asString());
         Assert.assertEquals("", path.get(1).parent().asString());
-        Assert.assertEquals("com.jetbrains", path.get(2).asString());
+        Assert.assertEquals("org.jetbrains", path.get(2).asString());
         Assert.assertEquals("jetbrains", path.get(2).shortName().asString());
-        Assert.assertEquals("com", path.get(2).parent().asString());
-        Assert.assertEquals("com.jetbrains.jet", path.get(3).asString());
-        Assert.assertEquals("jet", path.get(3).shortName().asString());
-        Assert.assertEquals("com.jetbrains", path.get(3).parent().asString());
+        Assert.assertEquals("org", path.get(2).parent().asString());
+        Assert.assertEquals("org.jetbrains.kotlin", path.get(3).asString());
+        Assert.assertEquals("kotlin", path.get(3).shortName().asString());
+        Assert.assertEquals("org.jetbrains", path.get(3).parent().asString());
     }
 
     @Test
     public void pathSegments() {
         Assert.assertEquals(Lists.newArrayList(), new FqName("").pathSegments());
 
-        for (String name : new String[] { "com", "com.jetbrains", "com.jetbrains.jet" }) {
+        for (String name : new String[] { "org", "org.jetbrains", "org.jetbrains.kotlin" }) {
             List<Name> segments = new FqName(name).pathSegments();
             List<String> segmentsStrings = new ArrayList<String>();
             for (Name segment : segments) {

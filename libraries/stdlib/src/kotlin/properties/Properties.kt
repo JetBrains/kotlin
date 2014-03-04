@@ -6,7 +6,7 @@ import java.util.ArrayList
 public class ChangeEvent(val source: Any, val name: String, val oldValue: Any?, val newValue: Any?) {
     var propogationId: Any? = null
 
-    public fun toString() : String = "ChangeEvent($name, $oldValue, $newValue)"
+    override fun toString(): String = "ChangeEvent($name, $oldValue, $newValue)"
 }
 
 public trait ChangeListener {

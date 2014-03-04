@@ -30,7 +30,9 @@ import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
@@ -53,7 +55,8 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public class PackageCodegen extends MemberCodegen {
+public class PackageCodegen extends GenerationStateAware {
+    @NotNull
     private final ClassBuilderOnDemand v;
 
     @NotNull
@@ -69,7 +72,7 @@ public class PackageCodegen extends MemberCodegen {
             @NotNull GenerationState state,
             @NotNull Collection<JetFile> packageFiles
     ) {
-        super(state, null);
+        super(state);
         checkAllFilesHaveSamePackage(packageFiles);
 
         this.v = v;
@@ -167,7 +170,8 @@ public class PackageCodegen extends MemberCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file) {
         boolean generateSrcClass = false;
-        FieldOwnerContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file));
+        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
+        PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
@@ -186,16 +190,22 @@ public class PackageCodegen extends MemberCodegen {
 
         if (!generateSrcClass) return null;
 
-        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
         ClassBuilder builder = state.getFactory().forPackagePart(packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, getPackageFragment(file));
-
+        //TODO: FIX: Default method generated at facade without delegation
+        MemberCodegen memberCodegen = new MemberCodegen(state, null, packageFacade, null) {
+            @NotNull
+            @Override
+            public ClassBuilder getBuilder() {
+                return v.getClassBuilder();
+            }
+        };
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                memberCodegen.genFunctionOrProperty(packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
             }
         }
 
@@ -210,8 +220,10 @@ public class PackageCodegen extends MemberCodegen {
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment((JetFile) classOrObject.getContainingFile()));
-        genClassOrObject(context, classOrObject);
+        JetFile file = (JetFile) classOrObject.getContainingFile();
+        Type packagePartType = getPackagePartType(getPackageClassFqName(name), file.getVirtualFile());
+        CodegenContext context = CodegenContext.STATIC.intoPackagePart(getPackageFragment(file), packagePartType);
+        MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 
     /**

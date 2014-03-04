@@ -33,7 +33,7 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
 
     return """class ${t}ProgressionIterator(start: $t, end: $t, val increment: $incrementType) : ${t}Iterator() {
     private var next = start$toInt
-    private val finalElement: $t = ProgressionUtil.getProgressionFinalElement(start$toInt, end$toInt, increment)$toType
+    private val finalElement: $t = getProgressionFinalElement(start$toInt, end$toInt, increment)$toType
     private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
 
     override fun hasNext(): Boolean = hasNext
@@ -69,7 +69,7 @@ fun floatingPointProgressionIterator(kind: ProgressionKind): String {
 
 class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
-        out.println("import jet.runtime.ProgressionUtil")
+        out.println("import kotlin.internal.getProgressionFinalElement")
         out.println()
         for (kind in ProgressionKind.values()) {
             if (kind != FLOAT && kind != DOUBLE) {

@@ -16,25 +16,13 @@
 
 package org.jetbrains.jet.generators.builtins.iterators
 
+import org.jetbrains.jet.generators.builtins.PrimitiveType
 import org.jetbrains.jet.generators.builtins.generateBuiltIns.*
 import java.io.PrintWriter
 
-enum class IteratorKind {
-    BYTE
-    CHAR
-    SHORT
-    INT
-    LONG
-    FLOAT
-    DOUBLE
-    BOOLEAN
-
-    val capitalized: String get() = name().toLowerCase().capitalize()
-}
-
 class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun generateBody() {
-        for (kind in IteratorKind.values()) {
+        for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
             out.println("public abstract class ${s}Iterator : Iterator<$s> {")
             out.println("    override final fun next() = next$s()")

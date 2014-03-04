@@ -53,6 +53,9 @@ JetFile: MissingCommaInConstructorValueParameterList.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       FUN
+        MODIFIER_LIST
+          PsiElement(override)('override')
+        PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('toString')

@@ -22,7 +22,7 @@ class Customer() : ChangeSupport() {
         $city = value
     }
 
-    fun toString() = "Customer($name, $city)"
+    override fun toString() = "Customer($name, $city)"
 }
 
 class MyChangeListener() : ChangeListener {

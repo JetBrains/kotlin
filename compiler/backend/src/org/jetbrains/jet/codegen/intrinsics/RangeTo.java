@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.List;
 
+import static org.jetbrains.asm4.Type.*;
+
 public class RangeTo extends IntrinsicMethod {
     @NotNull
     @Override
@@ -38,24 +40,56 @@ public class RangeTo extends IntrinsicMethod {
             List<JetExpression> arguments,
             StackValue receiver
     ) {
-        Type leftType;
-        Type rightType;
+        v.anew(returnType);
+        v.dup();
+
+        Type type;
         if (arguments.size() == 1) {
-            leftType = receiver.type;
-            rightType = codegen.expressionType(arguments.get(0));
-            receiver.put(leftType, v);
-            codegen.gen(arguments.get(0), rightType);
+            assert receiver instanceof StackValue.CallReceiver :
+                    "Receiver in an intrinsic qualified expression should be CallReceiver: " + receiver + " on " + element.getText();
+            type = parameterType(receiver.type, codegen.expressionType(arguments.get(0)));
+            receiver.put(type, v);
+            codegen.gen(arguments.get(0), type);
         }
         else {
             JetBinaryExpression expression = (JetBinaryExpression) element;
-            leftType = codegen.expressionType(expression.getLeft());
-            rightType = codegen.expressionType(expression.getRight());
-            codegen.gen(expression.getLeft(), leftType);
-            codegen.gen(expression.getRight(), rightType);
+            type = parameterType(codegen.expressionType(expression.getLeft()), codegen.expressionType(expression.getRight()));
+            codegen.gen(expression.getLeft(), type);
+            codegen.gen(expression.getRight(), type);
         }
 
-        v.invokestatic("jet/runtime/Ranges", "rangeTo", Type.getMethodDescriptor(returnType, leftType, rightType));
+        v.invokespecial(returnType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, type, type));
 
         return returnType;
+    }
+
+    @NotNull
+    private static Type parameterType(@NotNull Type leftType, @NotNull Type rightType) {
+        int left = leftType.getSort();
+        int right = rightType.getSort();
+        if (left == DOUBLE || right == DOUBLE) {
+            return DOUBLE_TYPE;
+        }
+        else if (left == FLOAT || right == FLOAT) {
+            return FLOAT_TYPE;
+        }
+        else if (left == LONG || right == LONG) {
+            return LONG_TYPE;
+        }
+        else if (left == INT || right == INT) {
+            return INT_TYPE;
+        }
+        else if (left == SHORT || right == SHORT) {
+            return SHORT_TYPE;
+        }
+        else if (left == CHAR || right == CHAR) {
+            return CHAR_TYPE;
+        }
+        else if (left == BYTE || right == BYTE) {
+            return BYTE_TYPE;
+        }
+        else {
+            throw new IllegalStateException("RangeTo intrinsic can only work for primitive types: " + leftType + ", " + rightType);
+        }
     }
 }

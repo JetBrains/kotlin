@@ -21,8 +21,11 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -33,7 +36,7 @@ import org.jetbrains.jet.plugin.JetLanguage;
 import java.util.Collections;
 import java.util.List;
 
-public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement {
+public class JetFile extends PsiFileBase implements JetDeclarationContainer, JetElement, PsiClassOwner {
 
     private final boolean isCompiled;
 
@@ -96,6 +99,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         return ast != null ? (JetPackageDirective) ast.getPsi() : null;
     }
 
+    @Override
     @Nullable
     public String getPackageName() {
         PsiJetFileStub stub = (PsiJetFileStub) getStub();
@@ -106,6 +110,15 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         JetPackageDirective directive = getPackageDirective();
         return directive != null ? directive.getQualifiedName() : null;
     }
+
+    @NotNull
+    @Override
+    public PsiClass[] getClasses() {
+        return PsiClass.EMPTY_ARRAY;
+    }
+
+    @Override
+    public void setPackageName(String packageName) { }
 
     @Nullable
     public JetScript getScript() {

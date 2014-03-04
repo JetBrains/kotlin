@@ -93,6 +93,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     @InnerTestClasses({Method.PrimitiveOverride.class, Method.Throws.class})
     public static class Method extends AbstractCompileJavaAgainstKotlinTest {
+        @TestMetadata("AccessorGenericSignature.kt")
+        public void testAccessorGenericSignature() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/method/AccessorGenericSignature.kt");
+        }
+        
         public void testAllFilesPresentInMethod() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/compileJavaAgainstKotlin/method"), Pattern.compile("^(.+)\\.kt$"), true);
         }

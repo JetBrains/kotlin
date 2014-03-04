@@ -32,7 +32,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
     private static final Pattern EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$");
 
     public void doTest(@NotNull String filename) throws Exception {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL);
         loadFileByFullPath(filename);
         List<OccurrenceInfo> expected = readExpectedOccurrences(filename);
         countAndCompareActualOccurrences(expected);

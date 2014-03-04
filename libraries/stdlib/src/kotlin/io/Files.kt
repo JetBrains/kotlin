@@ -23,31 +23,31 @@ public fun File.recurse(block: (File) -> Unit): Unit {
 /**
  * Returns this if the file is a directory or the parent if its a file inside a directory
  */
-inline val File.directory: File
+val File.directory: File
 get() = if (this.isDirectory()) this else this.getParentFile()!!
 
 /**
  * Returns the canonical path of the file
  */
-inline val File.canonicalPath: String
+val File.canonicalPath: String
 get() = getCanonicalPath()
 
 /**
  * Returns the file name or "" for an empty name
  */
-inline val File.name: String
+val File.name: String
 get() = getName()
 
 /**
  * Returns the file path or "" for an empty name
  */
-inline val File.path: String
+val File.path: String
 get() = getPath()
 
 /**
  * Returns true if the file ends with the given extension
  */
-inline val File.extension: String
+val File.extension: String
 get() {
     val text = this.name
     val idx = text.lastIndexOf('.')

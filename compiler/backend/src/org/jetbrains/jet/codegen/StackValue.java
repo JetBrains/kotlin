@@ -23,13 +23,13 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
+import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -230,7 +230,7 @@ public abstract class StackValue {
             pop(v, fromType);
         }
         else if (fromType.getSort() == Type.VOID) {
-            if (toType.equals(JET_UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
+            if (toType.equals(UNIT_TYPE) || toType.equals(OBJECT_TYPE)) {
                 putUnitInstance(v);
             }
             else if (toType.getSort() == Type.OBJECT || toType.getSort() == Type.ARRAY) {
@@ -240,9 +240,9 @@ public abstract class StackValue {
                 pushDefaultPrimitiveValueOnStack(toType, v);
             }
         }
-        else if (toType.equals(JET_UNIT_TYPE)) {
+        else if (toType.equals(UNIT_TYPE)) {
             if (fromType.equals(getType(Object.class))) {
-                v.checkcast(JET_UNIT_TYPE);
+                v.checkcast(UNIT_TYPE);
             }
             else if (!fromType.equals(getType(Void.class))) {
                 pop(v, fromType);
@@ -283,7 +283,7 @@ public abstract class StackValue {
     }
 
     public static void putUnitInstance(InstructionAdapter v) {
-        v.visitFieldInsn(GETSTATIC, AsmTypeConstants.JET_UNIT_TYPE.getInternalName(), "VALUE", AsmTypeConstants.JET_UNIT_TYPE.getDescriptor());
+        v.visitFieldInsn(GETSTATIC, UNIT_TYPE.getInternalName(), "VALUE", UNIT_TYPE.getDescriptor());
     }
 
     protected void putAsBoolean(InstructionAdapter v) {
@@ -365,7 +365,7 @@ public abstract class StackValue {
     }
 
     public static class Local extends StackValue {
-        final int index;
+        public final int index;
 
         private Local(int index, Type type) {
             super(type);
@@ -808,9 +808,9 @@ public abstract class StackValue {
     }
 
 
-    static class Field extends StackValueWithSimpleReceiver {
-        final Type owner;
-        final String name;
+    public static class Field extends StackValueWithSimpleReceiver {
+        public final Type owner;
+        public final String name;
 
         public Field(Type type, Type owner, String name, boolean isStatic) {
             super(type, isStatic);
@@ -934,7 +934,7 @@ public abstract class StackValue {
             v.load(index, OBJECT_TYPE);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
             coerceFrom(refType, v);
             coerceTo(type, v);
             if (isReleaseOnPut) {
@@ -950,7 +950,7 @@ public abstract class StackValue {
             AsmUtil.swap(v, sharedTypeForType(this.type), topOfStackType);
             Type refType = refType(this.type);
             Type sharedType = sharedTypeForType(this.type);
-            v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
         }
     }
 
@@ -958,32 +958,23 @@ public abstract class StackValue {
         switch (type.getSort()) {
             case Type.OBJECT:
             case Type.ARRAY:
-                return JET_SHARED_VAR_TYPE;
-
+                return OBJECT_REF_TYPE;
             case Type.BYTE:
-                return JET_SHARED_BYTE_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$ByteRef");
             case Type.SHORT:
-                return JET_SHARED_SHORT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$ShortRef");
             case Type.CHAR:
-                return JET_SHARED_CHAR_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$CharRef");
             case Type.INT:
-                return JET_SHARED_INT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$IntRef");
             case Type.LONG:
-                return JET_SHARED_LONG_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$LongRef");
             case Type.BOOLEAN:
-                return JET_SHARED_BOOLEAN_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$BooleanRef");
             case Type.FLOAT:
-                return JET_SHARED_FLOAT_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$FloatRef");
             case Type.DOUBLE:
-                return JET_SHARED_DOUBLE_TYPE;
-
+                return Type.getObjectType("kotlin/jvm/internal/Ref$DoubleRef");
             default:
                 throw new UnsupportedOperationException();
         }
@@ -1011,7 +1002,7 @@ public abstract class StackValue {
         public void put(Type type, InstructionAdapter v) {
             Type sharedType = sharedTypeForType(this.type);
             Type refType = refType(this.type);
-            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "ref", refType.getDescriptor());
+            v.visitFieldInsn(GETFIELD, sharedType.getInternalName(), "element", refType.getDescriptor());
             coerceFrom(refType, v);
             coerceTo(type, v);
         }
@@ -1019,7 +1010,7 @@ public abstract class StackValue {
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
-            v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "ref", refType(type).getDescriptor());
+            v.visitFieldInsn(PUTFIELD, sharedTypeForType(type).getInternalName(), "element", refType(type).getDescriptor());
         }
     }
 

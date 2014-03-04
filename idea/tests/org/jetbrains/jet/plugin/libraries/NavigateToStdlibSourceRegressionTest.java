@@ -52,11 +52,11 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     }
 
     public void testClassWithJavaAnalog() throws IOException {
-        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/Iterators.kt", "Iterator", "jet.Iterator");
+        doNavigationInSourcesTest("libraries/stdlib/src/kotlin/Iterators.kt", "Iterator", "kotlin.Iterator");
     }
 
     public void testNavigationInKotlinBuiltIns() throws IOException {
-        doNavigationInSourcesTest("libraries/stdlib/src/generated/_Arrays.kt", "Array", "jet.Array");
+        doNavigationInSourcesTest("libraries/stdlib/src/generated/_Arrays.kt", "Array", "kotlin.Array");
     }
 
     private void doNavigationInSourcesTest(@NotNull String path, @NotNull String element, @NotNull String expectedFqName) throws IOException {

@@ -51,12 +51,11 @@ public class SubstitutionUtils {
       For each supertype of a given type, we map type parameters to type arguments.
 
       For instance, we have the following class hierarchy:
-          trait Hashable
           trait Iterable<out T>
-          trait Collection<out E>: Iterable<E>, Hashable
+          trait Collection<out E>: Iterable<E>
           trait MyFooCollection<F>: Collection<Foo<F>>
 
-      For MyFunCollection<out CharSequence>, the following multimap will be returned:
+      For MyFooCollection<out CharSequence>, the following multimap will be returned:
           T declared in Iterable -> Foo<out CharSequence>
           E declared in Collection -> Foo<out CharSequence>
           F declared in MyFooCollection -> out CharSequence

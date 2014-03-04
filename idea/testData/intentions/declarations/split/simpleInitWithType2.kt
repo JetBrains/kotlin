@@ -1,3 +1,3 @@
 fun foo(n: Int) {
-    <caret>var x: jet.String? = ""
+    <caret>var x: String? = ""
 }

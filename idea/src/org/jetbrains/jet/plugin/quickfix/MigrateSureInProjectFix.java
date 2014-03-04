@@ -145,7 +145,7 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
         };
     }
 
-    private static AnalyzeExhaust analyzeFiles(JetFile initialFile, Collection<JetFile> files) {
+    /* package */ static AnalyzeExhaust analyzeFiles(JetFile initialFile, Collection<JetFile> files) {
         AnalyzeExhaust analyzeExhaustHeaders = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeFiles(
                 initialFile.getProject(),
                 files,
