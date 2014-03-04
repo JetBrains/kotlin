@@ -38,10 +38,16 @@ import com.intellij.psi.PsiClass;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.plugin.JetMainDetector;
+import org.jetbrains.jet.plugin.MainFunctionDetector;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 
 import java.util.*;
@@ -269,7 +275,9 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
             Collection<JetNamedFunction> mainFunctions = JetTopLevelFunctionsFqnNameIndex.getInstance().get(
                     mainFunFqName, module.getProject(), module.getModuleRuntimeScope(true));
             for (JetNamedFunction function : mainFunctions) {
-                if (JetMainDetector.isMain(function)) {
+                BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(function);
+                MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(bindingContext);
+                if (mainFunctionDetector.isMain(function)) {
                     return function;
                 }
             }
