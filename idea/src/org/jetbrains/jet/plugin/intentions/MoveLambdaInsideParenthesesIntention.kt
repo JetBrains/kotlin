@@ -34,13 +34,14 @@ public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<Je
         val sb = StringBuilder()
         sb.append("(")
         for (value in element.getValueArguments()) {
+            if (value == null) continue
             if (value.getArgumentName() != null) {
                 sb.append("${value.getArgumentName()?.getText()} = ${value.getArgumentExpression()?.getText()},")
             } else {
                 sb.append("${value.getArgumentExpression()?.getText()},")
             }
         }
-        if (element.getValueArguments().any { it.getArgumentName() != null}) {
+        if (element.getValueArguments().any { it?.getArgumentName() != null}) {
             val context = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingFile() as JetFile).getBindingContext()
             val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
             val literalName = resolvedCall?.getResultingDescriptor()?.getValueParameters()?.last?.getName().toString()
