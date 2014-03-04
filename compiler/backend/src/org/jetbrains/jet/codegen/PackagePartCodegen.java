@@ -79,7 +79,7 @@ public class PackagePartCodegen extends MemberCodegen {
 
         for (JetDeclaration declaration : jetFile.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
+                genFunctionOrProperty((JetTypeParameterListOwner) declaration, v);
             }
         }
 

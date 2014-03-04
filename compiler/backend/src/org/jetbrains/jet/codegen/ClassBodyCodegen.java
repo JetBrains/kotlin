@@ -108,17 +108,17 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
     protected void generateDeclaration(PropertyCodegen propertyCodegen, JetDeclaration declaration) {
         if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-            genFunctionOrProperty(context, (JetTypeParameterListOwner) declaration, v);
+            genFunctionOrProperty((JetTypeParameterListOwner) declaration, v);
         }
         else if (declaration instanceof JetClassOrObject) {
             if (declaration instanceof JetEnumEntry && !enumEntryNeedSubclass(state.getBindingContext(), (JetEnumEntry) declaration)) {
                 return;
             }
 
-            genClassOrObject(context, (JetClassOrObject) declaration);
+            genClassOrObject((JetClassOrObject) declaration);
         }
         else if (declaration instanceof JetClassObject) {
-            genClassOrObject(context, ((JetClassObject) declaration).getObjectDeclaration());
+            genClassOrObject(((JetClassObject) declaration).getObjectDeclaration());
         }
     }
 

@@ -288,7 +288,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
-        final FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
+        FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
         
         final MemberCodegen memberCodegen = getMemberCodegen(packageFacade);
 
@@ -303,7 +303,7 @@ public class PackageCodegen extends GenerationStateAware {
                             @Override
                             public void run() {
                                 memberCodegen.genFunctionOrProperty(
-                                        packageFacade, (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                                        (JetTypeParameterListOwner) declaration, v.getClassBuilder());
                             }
                         }
                 );

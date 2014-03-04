@@ -204,7 +204,7 @@ public class ScriptCodegen extends MemberCodegen {
 
     private void genMembers(@NotNull FieldOwnerContext context, @NotNull ClassBuilder classBuilder) {
         for (JetDeclaration decl : scriptDeclaration.getDeclarations()) {
-            genFunctionOrProperty(context, (JetTypeParameterListOwner) decl, classBuilder);
+            genFunctionOrProperty((JetTypeParameterListOwner) decl, classBuilder);
         }
     }
 

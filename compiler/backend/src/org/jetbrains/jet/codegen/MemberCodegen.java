@@ -52,7 +52,6 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
     }
 
     public void genFunctionOrProperty(
-            @NotNull FieldOwnerContext context,
             @NotNull JetTypeParameterListOwner functionOrProperty,
             @NotNull ClassBuilder classBuilder
     ) {
@@ -127,8 +126,8 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    public void genClassOrObject(CodegenContext parentContext, JetClassOrObject aClass) {
-        genClassOrObject(parentContext, aClass, state, this);
+    public void genClassOrObject(JetClassOrObject aClass) {
+        genClassOrObject(context, aClass, state, this);
     }
 
     @NotNull
