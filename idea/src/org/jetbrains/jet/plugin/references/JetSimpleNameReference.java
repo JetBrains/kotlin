@@ -68,15 +68,17 @@ public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpr
 
     @NotNull
     public PsiElement bindToElement(@NotNull PsiElement element, boolean bindImmediately) {
-        Project project = element.getProject();
-        JetSimpleNameExpression currentExpression = getExpression();
-
         FqName fqName = PsiUtilPackage.getFqName(element);
-        if (fqName == null) return currentExpression;
+        return fqName != null ? bindToFqName(fqName, bindImmediately) : getExpression();
+    }
+
+    @NotNull
+    public PsiElement bindToFqName(@NotNull FqName fqName, boolean bindImmediately) {
+        JetSimpleNameExpression currentExpression = getExpression();
+        Project project = currentExpression.getProject();
 
         ReferenceBindRequest bindRequest = new ReferenceBindRequest(
-                SmartPointerManager.getInstance(element.getProject()).createSmartPsiElementPointer(getExpression()),
-                fqName
+                SmartPointerManager.getInstance(project).createSmartPsiElementPointer(getExpression()), fqName
         );
 
         if (bindImmediately) {

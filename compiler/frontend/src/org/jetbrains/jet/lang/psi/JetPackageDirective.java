@@ -60,14 +60,17 @@ public class JetPackageDirective extends JetReferenceExpression {
     }
 
     @Nullable
-    public PsiElement getNameIdentifier() {
+    public JetSimpleNameExpression getLastReferenceExpression() {
         JetExpression nameExpression = getPackageNameExpression();
         if (nameExpression == null) return null;
 
-        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)PsiUtilPackage.getQualifiedElementSelector(nameExpression);
-        if (lastPart == null) return null;
+        return (JetSimpleNameExpression)PsiUtilPackage.getQualifiedElementSelector(nameExpression);
+    }
 
-        return lastPart.getIdentifier();
+    @Nullable
+    public PsiElement getNameIdentifier() {
+        JetSimpleNameExpression lastPart = getLastReferenceExpression();
+        return lastPart != null ? lastPart.getIdentifier() : null;
     }
 
     @Override
