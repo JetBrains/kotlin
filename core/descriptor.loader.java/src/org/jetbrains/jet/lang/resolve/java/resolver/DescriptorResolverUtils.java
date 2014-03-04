@@ -52,11 +52,6 @@ public final class DescriptorResolverUtils {
     }
 
     @NotNull
-    public static FqName fqNameByClass(@NotNull Class<?> clazz) {
-        return new FqName(clazz.getCanonicalName());
-    }
-
-    @NotNull
     public static <D extends CallableMemberDescriptor> Collection<D> resolveOverrides(
             @NotNull Name name,
             @NotNull Collection<D> membersFromSupertypes,

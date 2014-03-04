@@ -21,13 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
@@ -37,12 +32,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
-import static org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils.fqNameByClass;
-
 public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements PlatformToKotlinClassMap {
-    public static final FqName JAVA_LANG_DEPRECATED = new FqName("java.lang.Deprecated");
-
     private static JavaToKotlinClassMap instance = null;
 
     @NotNull
@@ -95,24 +85,9 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return classDescriptorMap.get(fqName);
     }
 
-    @Nullable
-    public AnnotationDescriptor mapToAnnotationClass(@NotNull FqName fqName) {
-        ClassDescriptor classDescriptor = classDescriptorMap.get(fqName);
-        if (classDescriptor != null && fqName.equals(JAVA_LANG_DEPRECATED)) {
-            return getAnnotationDescriptorForJavaLangDeprecated(classDescriptor);
-        }
-        return null;
-    }
-
     @NotNull
-    private static AnnotationDescriptor getAnnotationDescriptorForJavaLangDeprecated(@NotNull ClassDescriptor annotationClass) {
-        AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
-        annotation.setAnnotationType(annotationClass.getDefaultType());
-        ValueParameterDescriptor value =
-                DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, annotationClass);
-        assert value != null : "kotlin.deprecated must have one parameter called value";
-        annotation.setValueArgument(value, new StringValue("Deprecated in Java", true));
-        return annotation;
+    private static FqName fqNameByClass(@NotNull Class<?> clazz) {
+        return new FqName(clazz.getCanonicalName());
     }
 
     @Override
