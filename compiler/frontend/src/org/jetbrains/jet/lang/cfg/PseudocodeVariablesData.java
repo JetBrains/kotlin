@@ -249,8 +249,8 @@ public class PseudocodeVariablesData {
                                 enterResult.put(variableDescriptor, variableUseState.merge(enterResult.get(variableDescriptor)));
                             }
                         }
-                        VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true,
-                                                                                                              bindingContext);
+                        VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                                instruction, true, bindingContext);
                         if (variableDescriptor == null ||
                             (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
                             return Edges.create(enterResult, enterResult);
@@ -276,7 +276,8 @@ public class PseudocodeVariablesData {
                         }
                         return Edges.create(enterResult, exitResult);
                     }
-                });
+                }
+        );
     }
 
     public static class VariableInitState {
