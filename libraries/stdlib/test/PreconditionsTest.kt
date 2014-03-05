@@ -33,7 +33,7 @@ class PreconditionsTest() {
 
     test fun failingRequireWithLazyMessage() {
         val error = failsWith(javaClass<IllegalArgumentException>()) {
-            require(false) {"Hello"}
+            require(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
     }
@@ -66,7 +66,7 @@ class PreconditionsTest() {
 
     test fun failingCheckWithLazyMessage() {
         val error = failsWith(javaClass<IllegalStateException>()) {
-            check(false) {"Hello"}
+            check(false) { "Hello" }
         }
         assertEquals("Hello", error.getMessage())
     }
@@ -105,16 +105,15 @@ class PreconditionsTest() {
         assertFalse(called)
     }
 
-    test fun failingAssert() {
-        val assertDefaultMessage = "Assertion failed"
 
+    test fun failingAssert() {
         val error = fails {
             assert(false)
         }
-        if(error is AssertionError) {
-            assertEquals(assertDefaultMessage, error.getMessage())
+        if (error is AssertionError) {
+            assertEquals("Assertion failed", error.getMessage())
         } else {
-            fail("Invalid exception type: "+error)
+            fail("Invalid exception type: " + error)
         }
     }
 
@@ -126,21 +125,21 @@ class PreconditionsTest() {
         val error = fails {
             assert(false, "Hello")
         }
-        if(error is AssertionError) {
+        if (error is AssertionError) {
             assertEquals("Hello", error.getMessage())
         } else {
-            fail("Invalid exception type: "+error)
+            fail("Invalid exception type: " + error)
         }
     }
 
     test fun failingAssertWithLazyMessage() {
         val error = fails {
-            assert(false) {"Hello"}
+            assert(false) { "Hello" }
         }
-        if(error is AssertionError) {
+        if (error is AssertionError) {
             assertEquals("Hello", error.getMessage())
         } else {
-            fail("Invalid exception type: "+error)
+            fail("Invalid exception type: " + error)
         }
     }
 }
