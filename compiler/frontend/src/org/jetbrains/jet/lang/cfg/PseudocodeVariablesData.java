@@ -311,6 +311,12 @@ public class PseudocodeVariablesData {
         private static VariableInitState create(boolean isDeclaredHere, @Nullable VariableInitState mergedEdgesData) {
             return create(true, isDeclaredHere || (mergedEdgesData != null && mergedEdgesData.isDeclared));
         }
+
+        @Override
+        public String toString() {
+            if (!isInitialized && !isDeclared) return "-";
+            return (isInitialized ? "I" : "") + (isDeclared ? "D" : "");
+        }
     }
 
     public static enum VariableUseState {

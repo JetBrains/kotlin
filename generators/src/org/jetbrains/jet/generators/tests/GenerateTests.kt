@@ -97,6 +97,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTe
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.jet.cfg.AbstractDataFlowTest
 import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 
@@ -235,6 +236,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractControlFlowTest>()) {
             model("cfg")
+        }
+
+        testClass(javaClass<AbstractDataFlowTest>()) {
+            model("cfg-variables")
         }
 
         testClass(javaClass<AbstractAnnotationParameterTest>()) {

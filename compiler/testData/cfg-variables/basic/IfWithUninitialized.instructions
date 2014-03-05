@@ -1,0 +1,53 @@
+== foo ==
+fun foo() {
+    val b: Boolean
+    if (1 < 2) {
+        use(b)
+    }
+    else {
+        b = true
+    }
+}
+---------------------
+L0:
+    <START>                                                             INIT: in: {} out: {}
+    mark({ val b: Boolean if (1 < 2) { use(b) } else { b = true } })
+    v(val b: Boolean)                                                   INIT: in: {} out: {b=D}
+    mark(if (1 < 2) { use(b) } else { b = true })                       INIT: in: {b=D} out: {b=D}
+    mark(1 < 2)
+    r(1)
+    r(2)
+    call(<, compareTo)
+    jf(L2)
+    mark({ use(b) })
+    mark(use(b))                                                                                       USE: in: {b=READ} out: {b=READ}
+    r(b)                                                                                               USE: in: {} out: {b=READ}
+    call(use, use)
+    jmp(L3)                                                                                            USE: in: {} out: {}
+L2:
+    mark({ b = true })
+    r(true)                                                                                            USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
+    w(b)                                                                INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
+L1:
+L3:
+    <END>                                                               INIT: in: {b=D} out: {b=D}
+error:
+    <ERROR>                                                             INIT: in: {} out: {}
+sink:
+    <SINK>                                                              INIT: in: {b=D} out: {b=D}     USE: in: {} out: {}
+=====================
+== use ==
+fun use(vararg a: Any?) = a
+---------------------
+L0:
+    <START>              INIT: in: {} out: {}
+    v(vararg a: Any?)    INIT: in: {} out: {a=D}
+    w(a)                 INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a)                 INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+L1:
+    <END>
+error:
+    <ERROR>              INIT: in: {} out: {}
+sink:
+    <SINK>               INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+=====================

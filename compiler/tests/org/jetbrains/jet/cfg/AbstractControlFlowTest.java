@@ -16,21 +16,24 @@
 
 package org.jetbrains.jet.cfg;
 
-import com.google.common.collect.Sets;
-import kotlin.Function1;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.InstructionImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.*;
 
 public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
 
     @Override
-    protected void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out) {
+    protected void dumpInstructions(
+            @NotNull PseudocodeImpl pseudocode,
+            @NotNull StringBuilder out,
+            @NotNull BindingContext bindingContext
+    ) {
         final int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getAllInstructions());
 
         dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {

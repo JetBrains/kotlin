@@ -65,7 +65,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
 
         try {
-            processCFData(file, data);
+            processCFData(file, data, bindingContext);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -86,7 +86,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private void processCFData(File file, Map<JetElement, Pseudocode> data) throws IOException {
+    private void processCFData(File file, Map<JetElement, Pseudocode> data, BindingContext bindingContext) throws IOException {
         Collection<Pseudocode> pseudocodes = data.values();
 
         StringBuilder instructionDump = new StringBuilder();
@@ -113,7 +113,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
 
             instructionDump.append(correspondingElement.getText());
             instructionDump.append("\n---------------------\n");
-            dumpInstructions((PseudocodeImpl) pseudocode, instructionDump);
+            dumpInstructions((PseudocodeImpl) pseudocode, instructionDump, bindingContext);
             instructionDump.append("=====================\n");
             checkPseudocode((PseudocodeImpl) pseudocode);
         }
@@ -142,7 +142,11 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         return sb.toString();
     }
 
-    protected abstract void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out);
+    protected abstract void dumpInstructions(
+            @NotNull PseudocodeImpl pseudocode,
+            @NotNull StringBuilder out,
+            @NotNull BindingContext bindingContext
+    );
 
     protected void dumpInstructions(
             @NotNull PseudocodeImpl pseudocode,
