@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -66,6 +67,7 @@ public class DeclarationsChecker {
             }
 
             checkSupertypesForConsistency(classDescriptor);
+            checkTypesInClassHeader(classOrObject);
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
@@ -121,6 +123,32 @@ public class DeclarationsChecker {
 
         for (ASTNode node : modifierList.getModifierNodes()) {
             trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
+        }
+    }
+
+    private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {
+        for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+            checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
+        }
+
+        if (!(classOrObject instanceof JetClass)) return;
+        JetClass jetClass = (JetClass) classOrObject;
+
+        for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
+            checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
+        }
+
+        for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
+            checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
+        }
+    }
+
+    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
+        if (typeReference != null) {
+            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            if (type != null) {
+                DescriptorResolver.checkBounds(typeReference, type, trace);
+            }
         }
     }
 

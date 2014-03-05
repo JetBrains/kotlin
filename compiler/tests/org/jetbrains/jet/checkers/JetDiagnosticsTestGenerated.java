@@ -219,6 +219,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/Dollar.kt");
         }
         
+        @TestMetadata("FinalClassObjectBound.kt")
+        public void testFinalClassObjectBound() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/FinalClassObjectBound.kt");
+        }
+        
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
             doTest("compiler/testData/diagnostics/tests/ForRangeConventions.kt");

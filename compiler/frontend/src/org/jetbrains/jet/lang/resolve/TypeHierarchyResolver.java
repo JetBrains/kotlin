@@ -136,10 +136,6 @@ public class TypeHierarchyResolver {
 
         // Detect and disconnect all loops in the hierarchy
         detectAndDisconnectLoops(c);
-
-        // At this point, there are no loops in the type hierarchy
-
-        checkTypesInClassHeaders(c); // Check bounds in the types used in generic bounds and supertype lists
     }
 
     @NotNull
@@ -316,34 +312,6 @@ public class TypeHierarchyResolver {
         }
         if (elementToMark != null) {
             trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
-        }
-    }
-
-    private void checkTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
-        for (JetClassOrObject classOrObject : c.getClasses().keySet()) {
-            for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
-            }
-
-            if (!(classOrObject instanceof JetClass)) continue;
-            JetClass jetClass = (JetClass) classOrObject;
-
-            for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
-                checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
-            }
-
-            for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
-                checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            }
-        }
-    }
-
-    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
-        if (typeReference != null) {
-            JetType type = trace.getBindingContext().get(TYPE, typeReference);
-            if (type != null) {
-                DescriptorResolver.checkBounds(typeReference, type, trace);
-            }
         }
     }
 
