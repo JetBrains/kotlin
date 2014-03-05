@@ -34,25 +34,25 @@ sink:
     }
 ---------------------
 L3:
-  3 <START>                       INIT: in: {a=ID, f=D} out: {a=ID, f=D}
-    v(x: Int)                     INIT: in: {a=ID, f=D} out: {a=ID, f=D, x=D}
-    w(x)                          INIT: in: {a=ID, f=D, x=D} out: {a=ID, f=D, x=ID}
-  4 mark(val y = x + a use(a))    INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}
-    v(val y = x + a)              INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID, y=D}
-    mark(x + a)                   INIT: in: {a=ID, f=D, x=ID, y=D} out: {a=ID, f=D, x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
-    r(x)                                                                                            USE: in: {a=READ} out: {a=READ, x=READ}
+  3 <START>                       INIT: in: {} out: {}
+    v(x: Int)                     INIT: in: {} out: {x=D}
+    w(x)                          INIT: in: {x=D} out: {x=ID}
+  4 mark(val y = x + a use(a))    INIT: in: {x=ID} out: {x=ID}
+    v(val y = x + a)              INIT: in: {x=ID} out: {x=ID, y=D}
+    mark(x + a)                   INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
+    r(x)                                                                      USE: in: {a=READ} out: {a=READ, x=READ}
     r(a)
     call(+, plus)
-    w(y)                          INIT: in: {a=ID, f=D, x=ID, y=D} out: {a=ID, f=D, x=ID, y=ID}
-    mark(use(a))                  INIT: in: {a=ID, f=D, x=ID, y=ID} out: {a=ID, f=D, x=ID, y=ID}    USE: in: {a=READ} out: {a=READ}
-    r(a)                                                                                            USE: in: {} out: {a=READ}
+    w(y)                          INIT: in: {x=ID, y=D} out: {x=ID, y=ID}
+    mark(use(a))                  INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {a=READ} out: {a=READ}
+    r(a)                                                                      USE: in: {} out: {a=READ}
     call(use, use)
 L4:
-  3 <END>                         INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}
+  3 <END>                         INIT: in: {x=ID} out: {x=ID}
 error:
     <ERROR>                       INIT: in: {} out: {}
 sink:
-    <SINK>                        INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}                USE: in: {} out: {}
+    <SINK>                        INIT: in: {x=ID} out: {x=ID}                USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a

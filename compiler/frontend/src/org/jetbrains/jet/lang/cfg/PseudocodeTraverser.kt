@@ -44,15 +44,6 @@ fun Instruction.getPreviousInstructions(traversalOrder: TraversalOrder): Collect
 fun Instruction.isStartInstruction(traversalOrder: TraversalOrder): Boolean =
     if (traversalOrder == FORWARD) this is SubroutineEnterInstruction else this is SubroutineSinkInstruction
 
-enum class LookInsideStrategy {
-    ANALYSE_LOCAL_DECLARATIONS
-    SKIP_LOCAL_DECLARATIONS
-}
-
-fun Instruction.shouldLookInside(lookInside: LookInsideStrategy): Boolean =
-    lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && this is LocalFunctionDeclarationInstruction
-
-
 fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         analyzeInstruction: (Instruction) -> Unit

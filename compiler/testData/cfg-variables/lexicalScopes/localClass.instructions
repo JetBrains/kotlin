@@ -41,15 +41,15 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                INIT: in: {x=ID} out: {x=ID}
+  3 <START>                INIT: in: {} out: {}
   4 mark({ val b = x })
-    v(val b = x)           INIT: in: {x=ID} out: {b=D, x=ID}          USE: in: {x=READ} out: {x=READ}
-    r(x)                   INIT: in: {b=D, x=ID} out: {b=D, x=ID}     USE: in: {} out: {x=READ}
-    w(b)                   INIT: in: {b=D, x=ID} out: {b=ID, x=ID}
+    v(val b = x)           INIT: in: {} out: {b=D}        USE: in: {x=READ} out: {x=READ}
+    r(x)                   INIT: in: {b=D} out: {b=D}     USE: in: {} out: {x=READ}
+    w(b)                   INIT: in: {b=D} out: {b=ID}
 L4:
-  3 <END>                  INIT: in: {x=ID} out: {x=ID}
+  3 <END>                  INIT: in: {} out: {}
 error:
-    <ERROR>                INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                 INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
+    <SINK>                                                USE: in: {} out: {}
 =====================

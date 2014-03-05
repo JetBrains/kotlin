@@ -17,9 +17,23 @@
 package org.jetbrains.jet.lang.cfg.pseudocode
 
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import kotlin.properties.Delegates
 
 public class LexicalScope(val parentScope: LexicalScope?, val element: JetElement) {
     //todo remove after KT-4126
     private val _d = (parentScope?.depth ?: 0) + 1
     val depth: Int get() = _d
+
+    val lexicalScopeForContainingDeclaration: LexicalScope? by Delegates.lazy { computeLexicalScopeForContainingDeclaration() }
+    private fun computeLexicalScopeForContainingDeclaration(): LexicalScope? {
+        var scope: LexicalScope? = this
+        while (scope != null) {
+            if (scope?.element is JetDeclaration) {
+                return scope
+            }
+            scope = scope?.parentScope
+        }
+        return null
+    }
 }

@@ -261,6 +261,7 @@ public class JetFlowInformationProvider {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Map<Instruction, Edges<Map<VariableDescriptor,VariableInitState>>> initializers = pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
+        final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
 
         final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
@@ -272,7 +273,7 @@ public class JetFlowInformationProvider {
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
                     @Nullable Map<VariableDescriptor, VariableInitState> out) {
                 assert in != null && out != null;
-                VariableInitContext ctxt = new VariableInitContext(instruction, reportedDiagnosticMap, in, out, declaredVariables);
+                VariableInitContext ctxt = new VariableInitContext(instruction, reportedDiagnosticMap, in, out, lexicalScopeVariableInfo);
                 if (ctxt.variableDescriptor == null) return;
                 if (instruction instanceof ReadValueInstruction) {
                     JetElement element = ((ReadValueInstruction) instruction).getElement();
@@ -847,22 +848,22 @@ public class JetFlowInformationProvider {
                 @NotNull Map<Instruction, DiagnosticFactory> map,
                 @NotNull Map<VariableDescriptor, VariableInitState> in,
                 @NotNull Map<VariableDescriptor, VariableInitState> out,
-                @NotNull Set<VariableDescriptor> declaredVariables
+                @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
         ) {
             super(instruction, map);
-            enterInitState = initialize(variableDescriptor, declaredVariables, in);
-            exitInitState = initialize(variableDescriptor, declaredVariables, out);
+            enterInitState = initialize(variableDescriptor, lexicalScopeVariableInfo, in);
+            exitInitState = initialize(variableDescriptor, lexicalScopeVariableInfo, out);
         }
 
         private VariableInitState initialize(
                 VariableDescriptor variableDescriptor,
-                Set<VariableDescriptor> declaredVariables,
+                LexicalScopeVariableInfo lexicalScopeVariableInfo,
                 Map<VariableDescriptor, VariableInitState> map
         ) {
             if (variableDescriptor == null) return null;
             VariableInitState state = map.get(variableDescriptor);
             if (state != null) return state;
-            return PseudocodeVariablesData.getDefaultValueForInitializers(declaredVariables, variableDescriptor);
+            return PseudocodeVariablesData.getDefaultValueForInitializers(variableDescriptor, instruction, lexicalScopeVariableInfo);
         }
     }
 

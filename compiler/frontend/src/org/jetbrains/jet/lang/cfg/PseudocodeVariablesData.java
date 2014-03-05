@@ -63,6 +63,11 @@ public class PseudocodeVariablesData {
     }
 
     @NotNull
+    public LexicalScopeVariableInfo getLexicalScopeVariableInfo() {
+        return pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
+    }
+
+    @NotNull
     public Set<VariableDescriptor> getUsedVariables(@NotNull Pseudocode pseudocode) {
         Set<VariableDescriptor> usedVariables = usedVariablesForDeclaration.get(pseudocode);
         if (usedVariables == null) {
@@ -139,10 +144,10 @@ public class PseudocodeVariablesData {
     @NotNull
     private Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> computeVariableInitializers() {
 
-        final Set<VariableDescriptor> declaredVariables = getDeclaredVariables(pseudocode, true);
+        final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
 
         return pseudocodeVariableDataCollector.collectDataJ(
-                FORWARD,
+                FORWARD, /*mergeDataWithLocalDeclarations=*/ false,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
                     @NotNull
                     @Override
@@ -153,8 +158,8 @@ public class PseudocodeVariablesData {
 
                         Map<VariableDescriptor, VariableInitState> enterInstructionData =
                                 mergeIncomingEdgesDataForInitializers(incomingEdgesData);
-                        Map<VariableDescriptor, VariableInitState> exitInstructionData =
-                                addVariableInitStateFromCurrentInstructionIfAny(instruction, enterInstructionData, declaredVariables);
+                        Map<VariableDescriptor, VariableInitState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
+                                        instruction, enterInstructionData, lexicalScopeVariableInfo);
                         return createEdges(enterInstructionData, exitInstructionData);
                     }
                 }
@@ -162,12 +167,16 @@ public class PseudocodeVariablesData {
     }
 
     public static VariableInitState getDefaultValueForInitializers(
-            @NotNull Set<VariableDescriptor> declaredVariables,
-            @NotNull VariableDescriptor variable
+            @NotNull VariableDescriptor variable,
+            @NotNull Instruction instruction,
+            @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
     ) {
         //todo: think of replacing it with "MapWithDefaultValue"
-        boolean isInitialized = !declaredVariables.contains(variable);
-        return VariableInitState.create(isInitialized);
+        LexicalScope declaredIn = lexicalScopeVariableInfo.getDeclaredIn().get(variable);
+        boolean declaredOutsideThisDeclaration =
+                declaredIn == null //declared outside this pseudocode
+                || declaredIn.getLexicalScopeForContainingDeclaration() != instruction.getLexicalScope().getLexicalScopeForContainingDeclaration();
+        return VariableInitState.create(/*isInitialized=*/declaredOutsideThisDeclaration);
     }
 
     @NotNull
@@ -203,7 +212,7 @@ public class PseudocodeVariablesData {
     private Map<VariableDescriptor, VariableInitState> addVariableInitStateFromCurrentInstructionIfAny(
             @NotNull Instruction instruction,
             @NotNull Map<VariableDescriptor, VariableInitState> enterInstructionData,
-            @NotNull Set<VariableDescriptor> declaredVariables
+            @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
     ) {
         if (!(instruction instanceof WriteValueInstruction) && !(instruction instanceof VariableDeclarationInstruction)) {
             return enterInstructionData;
@@ -222,7 +231,7 @@ public class PseudocodeVariablesData {
         else { // instruction instanceof VariableDeclarationInstruction
             VariableInitState enterInitState = enterInstructionData.get(variable);
             if (enterInitState == null) {
-                enterInitState = getDefaultValueForInitializers(declaredVariables, variable);
+                enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo);
             }
             if (enterInitState == null || !enterInitState.isInitialized || !enterInitState.isDeclared) {
                 boolean isInitialized = enterInitState != null && enterInitState.isInitialized;
@@ -238,7 +247,7 @@ public class PseudocodeVariablesData {
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
         return pseudocodeVariableDataCollector.collectDataJ(
-                BACKWARD,
+                BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @NotNull
                     @Override

@@ -1673,6 +1673,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesOrderInPackage.kt");
             }
             
+            @TestMetadata("referenceToPropertyInitializer.kt")
+            public void testReferenceToPropertyInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/referenceToPropertyInitializer.kt");
+            }
+            
             @TestMetadata("repeatUnitializedErrorOnlyForLocalVars.kt")
             public void testRepeatUnitializedErrorOnlyForLocalVars() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/repeatUnitializedErrorOnlyForLocalVars.kt");

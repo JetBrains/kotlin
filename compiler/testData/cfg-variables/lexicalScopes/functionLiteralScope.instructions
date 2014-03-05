@@ -38,20 +38,20 @@ sink:
     }
 ---------------------
 L3:
-  3 <START>                INIT: in: {b=ID, f=D} out: {b=ID, f=D}
-    v(x: Int)              INIT: in: {b=ID, f=D} out: {b=ID, f=D, x=D}
-    w(x)                   INIT: in: {b=ID, f=D, x=D} out: {b=ID, f=D, x=ID}
-  4 mark(val a = x + b)    INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
-    v(val a = x + b)       INIT: in: {b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}
-    mark(x + b)            INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x)                                                                                    USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b)                                                                                    USE: in: {} out: {b=READ}
+  3 <START>                INIT: in: {} out: {}
+    v(x: Int)              INIT: in: {} out: {x=D}
+    w(x)                   INIT: in: {x=D} out: {x=ID}
+  4 mark(val a = x + b)    INIT: in: {x=ID} out: {x=ID}
+    v(val a = x + b)       INIT: in: {x=ID} out: {a=D, x=ID}
+    mark(x + b)            INIT: in: {a=D, x=ID} out: {a=D, x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x)                                                              USE: in: {b=READ} out: {b=READ, x=READ}
+    r(b)                                                              USE: in: {} out: {b=READ}
     call(+, plus)
-    w(a)                   INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
+    w(a)                   INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
 L4:
-  3 <END>                  INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
+  3 <END>                  INIT: in: {x=ID} out: {x=ID}
 error:
     <ERROR>                INIT: in: {} out: {}
 sink:
-    <SINK>                 INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}               USE: in: {} out: {}
+    <SINK>                 INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
 =====================

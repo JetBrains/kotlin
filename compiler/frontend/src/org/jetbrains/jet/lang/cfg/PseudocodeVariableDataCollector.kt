@@ -29,6 +29,7 @@ import org.jetbrains.jet.utils.addToStdlib.*
 import kotlin.properties.Delegates
 
 import java.util.*
+import org.jetbrains.jet.lang.psi.JetDeclaration
 
 public class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
@@ -39,16 +40,19 @@ public class PseudocodeVariableDataCollector(
     suppress("UNCHECKED_CAST")
     public fun <D> collectDataJ(
             traversalOrder: TraversalOrder,
+            mergeDataWithLocalDeclarations: Boolean,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<MutableMap<VariableDescriptor, D>>
     ): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>> {
         //see KT-4605
         return collectData(
-                traversalOrder, instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
+                traversalOrder, mergeDataWithLocalDeclarations,
+                instructionDataMergeStrategy as InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
         ) as MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, D>>>
     }
 
     public fun <D> collectData(
             traversalOrder: TraversalOrder,
+            mergeDataWithLocalDeclarations: Boolean,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<Map<VariableDescriptor, D>>
     ): Map<Instruction, Edges<Map<VariableDescriptor, D>>> {
         val initialDataValue : Map<VariableDescriptor, D> = Collections.emptyMap<VariableDescriptor, D>()
@@ -61,7 +65,7 @@ public class PseudocodeVariableDataCollector(
         while (changed[0]) {
             changed[0] = false
             collectDataFromSubgraph(
-                    pseudocode, traversalOrder, LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS, edgesMap,
+                    pseudocode, traversalOrder, mergeDataWithLocalDeclarations, edgesMap,
                     instructionDataMergeStrategy, Collections.emptyList<Instruction>(), changed, false)
         }
         return edgesMap
@@ -76,8 +80,8 @@ public class PseudocodeVariableDataCollector(
         val initialEdge = Edges(initialDataValue, initialDataValue)
         for (instruction in instructions) {
             edgesMap.put(instruction, initialEdge)
-            if (instruction.shouldLookInside(LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS)) {
-                initializeEdgesMap((instruction as LocalFunctionDeclarationInstruction).getBody(), edgesMap, initialDataValue)
+            if (instruction is LocalFunctionDeclarationInstruction) {
+                initializeEdgesMap(instruction.getBody(), edgesMap, initialDataValue)
             }
         }
     }
@@ -85,7 +89,7 @@ public class PseudocodeVariableDataCollector(
     private fun <D> collectDataFromSubgraph(
             pseudocode: Pseudocode,
             traversalOrder: TraversalOrder,
-            lookInside: LookInsideStrategy,
+            mergeDataWithLocalDeclarations: Boolean,
             edgesMap: MutableMap<Instruction, Edges<Map<VariableDescriptor, D>>>,
             instructionDataMergeStrategy: InstructionDataMergeStrategy<Map<VariableDescriptor, D>>,
             previousSubGraphInstructions: Collection<Instruction>,
@@ -121,20 +125,22 @@ public class PseudocodeVariableDataCollector(
                 }
             }
 
-            if (instruction.shouldLookInside(lookInside)) {
-                val functionInstruction = (instruction as LocalFunctionDeclarationInstruction)
-                val subroutinePseudocode = functionInstruction.getBody()
+            if (instruction is LocalFunctionDeclarationInstruction) {
+                val subroutinePseudocode = instruction.getBody()
+                val previous = if (mergeDataWithLocalDeclarations) previousInstructions else Collections.emptyList()
                 collectDataFromSubgraph(
-                        subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
-                        previousInstructions, changed, true)
-                val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
-                val previousValue = edgesMap.get(instruction)
-                val newValue = edgesMap.get(lastInstruction)
-                val updatedValue = if (newValue == null) null else
-                    Edges(filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.`in`),
-                          filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.out))
-                updateEdgeDataForInstruction(previousValue, updatedValue)
-                continue
+                        subroutinePseudocode, traversalOrder, mergeDataWithLocalDeclarations,
+                        edgesMap, instructionDataMergeStrategy, previous, changed, true)
+                if (mergeDataWithLocalDeclarations) {
+                    val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
+                    val previousValue = edgesMap.get(instruction)
+                    val newValue = edgesMap.get(lastInstruction)
+                    val updatedValue = if (newValue == null) null else
+                        Edges(filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.`in`),
+                              filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.out))
+                    updateEdgeDataForInstruction(previousValue, updatedValue)
+                    continue
+                }
             }
             val previousDataValue = edgesMap.get(instruction)
 
