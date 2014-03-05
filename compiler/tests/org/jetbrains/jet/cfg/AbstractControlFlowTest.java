@@ -141,22 +141,6 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
 //                        }
     }
 
-    public void dfsDump(PseudocodeImpl pseudocode, StringBuilder nodes, StringBuilder edges, Map<Instruction, String> nodeNames) {
-        dfsDump(nodes, edges, pseudocode.getAllInstructions().get(0), nodeNames);
-    }
-
-    private void dfsDump(StringBuilder nodes, StringBuilder edges, Instruction instruction, Map<Instruction, String> nodeNames) {
-        if (nodeNames.containsKey(instruction)) return;
-        String name = "n" + nodeNames.size();
-        nodeNames.put(instruction, name);
-        nodes.append(name).append(" := ").append(renderName(instruction));
-
-    }
-
-    private String renderName(Instruction instruction) {
-        throw new UnsupportedOperationException(); // TODO
-    }
-
     private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
         String[] parts = instruction.toString().split("\n");
         boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
