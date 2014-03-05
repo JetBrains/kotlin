@@ -27,7 +27,7 @@ import java.util.Map;
 
 public class InliningContext {
 
-    public final Map<Integer, LambdaInfo> expresssionMap;
+    public final Map<Integer, LambdaInfo> expressionMap;
 
     public final List<InvokeCall> invokeCalls;
 
@@ -45,6 +45,8 @@ public class InliningContext {
 
     public final Map<String, String> typeMapping;
 
+    public final boolean isInliningLambda;
+
     public InliningContext(
             Map<Integer, LambdaInfo> map,
             List<InvokeCall> accesses,
@@ -54,9 +56,10 @@ public class InliningContext {
             NameGenerator nameGenerator,
             CodegenContext startContext,
             Call call,
-            Map<String, String> typeMapping
+            Map<String, String> typeMapping,
+            boolean isInliningLambda
     ) {
-        expresssionMap = map;
+        expressionMap = map;
         invokeCalls = accesses;
         constructorInvocation = invocation;
         this.remapper = remapper;
@@ -65,16 +68,26 @@ public class InliningContext {
         this.startContext = startContext;
         this.call = call;
         this.typeMapping = typeMapping;
+        this.isInliningLambda = isInliningLambda;
     }
 
     public InliningContext subInline(NameGenerator generator) {
         return subInline(generator, Collections.<String, String>emptyMap());
     }
 
-    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
-        HashMap<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
-        newTypeMappings.putAll(additionalTypeMappings);
-        return new InliningContext(expresssionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
-                                newTypeMappings);
+    public InliningContext subInlineLambda(NameGenerator generator) {
+        return subInline(generator, Collections.<String, String>emptyMap(), true);
     }
+
+    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
+        return subInline(generator, additionalTypeMappings, isInliningLambda);
+    }
+
+    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {
+        Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
+        newTypeMappings.putAll(additionalTypeMappings);
+        return new InliningContext(expressionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
+                                newTypeMappings, isInliningLambda);
+    }
+
 }

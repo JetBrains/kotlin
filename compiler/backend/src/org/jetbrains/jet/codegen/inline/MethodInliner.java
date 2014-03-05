@@ -46,6 +46,8 @@ public class MethodInliner {
     //current state
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
+    private final InlineResult result;
+
     /*
      *
      * @param node
@@ -68,14 +70,15 @@ public class MethodInliner {
         this.lambdaFieldRemapper = lambdaFieldRemapper;
         this.isSameModule = isSameModule;
         this.typeMapper = parent.state.getTypeMapper();
+        this.result = InlineResult.create();
     }
 
 
-    public void doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
-        doInline(adapter, remapper, new LambdaFieldRemapper(), true);
+    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
+        return doInline(adapter, remapper, new LambdaFieldRemapper(), true);
     }
 
-    public void doInline(
+    public InlineResult doInline(
             MethodVisitor adapter,
             VarRemapper.ParamRemapper remapper,
             LambdaFieldRemapper capturedRemapper, boolean remapReturn
@@ -98,6 +101,7 @@ public class MethodInliner {
         transformedNode.accept(visitor);
         visitor.visitLabel(end);
 
+        return result;
     }
 
     private MethodNode doInline(MethodNode node, final LambdaFieldRemapper capturedRemapper) {
@@ -128,6 +132,11 @@ public class MethodInliner {
                                                                               isSameModule, newLambdaType);
 
                         transformer.doTransform(invocation);
+
+                        if (parent.isInliningLambda) {
+                            //this class is transformed and original not used so we should remove original one after inlining
+                            result.addClassToRemove(invocation.getOwnerInternalName());
+                        }
                     }
                 }
 
@@ -154,11 +163,14 @@ public class MethodInliner {
                     Parameters lambdaParameters = info.addAllParameters(capturedRemapper);
 
                     setInlining(true);
-                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
-                                                              capturedRemapper, true /*cause all calls in same module as lambda*/);
+                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters, parent.subInlineLambda(
+                            parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
+                                                              capturedRemapper, true /*cause all calls in same module as lambda*/
+                    );
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
-                    inliner.doInline(this.mv, remapper); //TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper);//TODO add skipped this and receiver
+                    result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
                     Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();

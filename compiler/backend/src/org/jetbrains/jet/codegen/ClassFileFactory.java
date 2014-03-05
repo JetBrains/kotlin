@@ -221,4 +221,10 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
             this.sourceFiles = sourceFiles;
         }
     }
+
+    public void removeInlinedClasses(Set<String> classNamesToRemove) {
+        for (String classInternalName : classNamesToRemove) {
+            generators.remove(classInternalName + ".class");
+        }
+    }
 }
