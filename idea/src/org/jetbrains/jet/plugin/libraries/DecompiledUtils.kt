@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
 import com.intellij.psi.ClassFileViewProvider
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 
 
 //TODO: this should be done via generic mechanism (special header kind)
@@ -47,7 +48,7 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
         return false
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header != null && header.getKind() != KotlinClassHeader.Kind.TRAIT_IMPL
+    return header != null && header.getSyntheticClassKind() != KotlinSyntheticClass.Kind.TRAIT_IMPL
 }
 
 public fun isKotlinCompiledFileWithIncompatibleAbiVersion(file: VirtualFile): Boolean {
@@ -69,5 +70,5 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
         return true
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header?.getKind() == KotlinClassHeader.Kind.PACKAGE_PART
+    return header?.getKind() == KotlinClassHeader.Kind.SYNTHETIC_CLASS
 }

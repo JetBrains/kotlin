@@ -76,6 +76,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup, ParentCodegenAware {
@@ -1288,7 +1289,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.none();
         }
 
-        StackValue closure = genClosure(function, null);
+        StackValue closure = genClosure(function, null, KotlinSyntheticClass.Kind.LOCAL_FUNCTION);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
         int index = lookupLocalIndex(descriptor);
         closure.put(OBJECT_TYPE, v);
@@ -1304,18 +1305,23 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return gen(expression.getFunctionLiteral().getBodyExpression());
         }
         else {
-            return genClosure(expression.getFunctionLiteral(), null);
+            return genClosure(expression.getFunctionLiteral(), null, KotlinSyntheticClass.Kind.ANONYMOUS_FUNCTION);
         }
     }
 
-    private StackValue genClosure(JetDeclarationWithBody declaration, @Nullable ClassDescriptor samInterfaceClass) {
+    @NotNull
+    private StackValue genClosure(
+            JetDeclarationWithBody declaration,
+            @Nullable ClassDescriptor samInterfaceClass,
+            @NotNull KotlinSyntheticClass.Kind kind
+    ) {
         FunctionDescriptor descriptor = bindingContext.get(BindingContext.FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         Type closureSuperClass = samInterfaceClass == null ? getFunctionImplType(descriptor) : OBJECT_TYPE;
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
-                this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen);
+                kind, this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen);
 
         closureCodegen.gen();
 
@@ -1934,42 +1940,43 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return genSamInterfaceValue(argumentExpression, samInterface, this);
     }
 
+    @NotNull
     private StackValue genSamInterfaceValue(
             @NotNull JetExpression expression,
             @NotNull JavaClassDescriptor samInterface,
             @NotNull JetVisitor<StackValue, StackValue> visitor
     ) {
         if (expression instanceof JetFunctionLiteralExpression) {
-            return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samInterface);
+            return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samInterface,
+                              KotlinSyntheticClass.Kind.SAM_LAMBDA);
         }
-        else {
-            Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
 
-            v.anew(asmType);
-            v.dup();
+        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
 
-            @SuppressWarnings("ConstantConditions")
-            Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
-            expression.accept(visitor, StackValue.none()).put(functionType, v);
+        v.anew(asmType);
+        v.dup();
 
-            Label ifNonNull = new Label();
-            Label afterAll = new Label();
+        @SuppressWarnings("ConstantConditions")
+        Type functionType = typeMapper.mapType(samInterface.getFunctionTypeForSamInterface());
+        expression.accept(visitor, StackValue.none()).put(functionType, v);
 
-            v.dup();
-            v.ifnonnull(ifNonNull);
+        Label ifNonNull = new Label();
+        Label afterAll = new Label();
 
-            // if null: pop function value and wrapper objects, put null
-            v.pop();
-            v.pop2();
-            v.aconst(null);
-            v.goTo(afterAll);
+        v.dup();
+        v.ifnonnull(ifNonNull);
 
-            v.mark(ifNonNull);
-            v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
+        // if null: pop function value and wrapper objects, put null
+        v.pop();
+        v.pop2();
+        v.aconst(null);
+        v.goTo(afterAll);
 
-            v.mark(afterAll);
-            return StackValue.onStack(asmType);
-        }
+        v.mark(ifNonNull);
+        v.invokespecial(asmType.getInternalName(), "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType));
+
+        v.mark(afterAll);
+        return StackValue.onStack(asmType);
     }
 
     @NotNull
@@ -2456,8 +2463,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type closureSuperClass = typeMapper.mapType(kFunctionImpl);
 
         CallableReferenceGenerationStrategy strategy = new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, closureSuperClass, context, this,
-                                                           strategy, getParentCodegen());
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, closureSuperClass, context,
+                                                           KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
+                                                           this, strategy, getParentCodegen());
 
         closureCodegen.gen();
 

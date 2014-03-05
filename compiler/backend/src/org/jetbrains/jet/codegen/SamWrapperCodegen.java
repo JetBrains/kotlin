@@ -38,7 +38,9 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
+import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     private static final String FUNCTION_FIELD_NAME = "function";
@@ -74,6 +76,8 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
                        new String[]{ typeMapper.mapType(samInterface).getInternalName() }
         );
         cv.visitSource(file.getName(), null);
+
+        writeKotlinSyntheticClassAnnotation(cv, KotlinSyntheticClass.Kind.SAM_WRAPPER);
 
         // e.g. ASM type for Function2
         Type functionAsmType = state.getTypeMapper().mapType(functionType);
