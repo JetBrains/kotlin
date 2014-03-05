@@ -420,9 +420,7 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>) : List<T> {
  * Returns a stream containing all elements of original stream and then all elements of the given *collection*
  */
 public fun <T> Stream<T>.plus(collection: Iterable<T>) : Stream<T> {
-    val answer = toArrayList()
-    answer.addAll(collection)
-    return answer.stream()
+    return Multistream(streamOf(this, collection.stream()))
     
 }
 
@@ -530,9 +528,7 @@ public fun <T> Iterable<T>.plus(element: T) : List<T> {
  * Returns a stream containing all elements of original stream and then the given element
  */
 public fun <T> Stream<T>.plus(element: T) : Stream<T> {
-    val answer = toArrayList()
-    answer.add(element)
-    return answer.stream()
+    return Multistream(streamOf(this, streamOf(element)))
     
 }
 
@@ -540,9 +536,7 @@ public fun <T> Stream<T>.plus(element: T) : Stream<T> {
  * Returns a stream containing all elements of original stream and then all elements of the given *stream*
  */
 public fun <T> Stream<T>.plus(stream: Stream<T>) : Stream<T> {
-    val answer = toArrayList()
-    answer.addAll(stream)
-    return answer.stream()
+    return Multistream(streamOf(this, stream))
     
 }
 

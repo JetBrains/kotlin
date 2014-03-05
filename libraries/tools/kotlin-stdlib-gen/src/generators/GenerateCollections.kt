@@ -16,6 +16,7 @@ fun generateCollectionsAPI(outDir : File) {
     guards().writeTo(File(outDir, "_Guards.kt")) { build() }
     generators().writeTo(File(outDir, "_Generators.kt")) { build() }
     strings().writeTo(File(outDir, "_Strings.kt")) { build() }
+    streams().writeTo(File(outDir, "_Streams.kt")) { build() }
     specialJVM().writeTo(File(outDir, "_SpecialJVM.kt")) { build() }
 
     numeric().writeTo(File(outDir, "_Numeric.kt")) {

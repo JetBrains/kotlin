@@ -1,6 +1,5 @@
 package kotlin.dom
 
-import kotlin.*
 import kotlin.support.*
 import java.util.*
 import org.w3c.dom.*

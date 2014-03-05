@@ -18,12 +18,9 @@ fun generators(): List<GenericFunction> {
 
         doc(Streams) { "Returns a stream containing all elements of original stream and then the given element" }
         returns(Streams) { "Stream<T>" }
-        // TODO: Implement lazy behavior
         body(Streams) {
             """
-                val answer = toArrayList()
-                answer.add(element)
-                return answer.stream()
+            return Multistream(streamOf(this, streamOf(element)))
             """
         }
     }
@@ -32,7 +29,6 @@ fun generators(): List<GenericFunction> {
         exclude(Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
-
         body {
             """
                 val answer = toArrayList()
@@ -46,7 +42,6 @@ fun generators(): List<GenericFunction> {
         exclude(Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
-
         body {
             """
                 val answer = toArrayList()
@@ -60,13 +55,9 @@ fun generators(): List<GenericFunction> {
         only(Streams)
         doc { "Returns a stream containing all elements of original stream and then all elements of the given *collection*" }
         returns("Stream<T>")
-
-        // TODO: Implement lazy behavior
         body {
             """
-                val answer = toArrayList()
-                answer.addAll(collection)
-                return answer.stream()
+            return Multistream(streamOf(this, collection.stream()))
             """
         }
     }
@@ -76,11 +67,8 @@ fun generators(): List<GenericFunction> {
         doc { "Returns a stream containing all elements of original stream and then all elements of the given *stream*" }
         returns("Stream<T>")
         body {
-            // TODO: Implement lazy behavior
             """
-                val answer = toArrayList()
-                answer.addAll(stream)
-                return answer.stream()
+            return Multistream(streamOf(this, stream))
             """
         }
     }

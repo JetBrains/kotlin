@@ -6,11 +6,7 @@ public trait Stream<out T> {
     public fun iterator(): Iterator<T>
 }
 
-public fun <T> Iterable<T>.stream(): Stream<T> = object : Stream<T> {
-    override fun iterator(): Iterator<T> {
-        return this@stream.iterator()
-    }
-}
+public fun <T> streamOf(vararg elements : T) : Stream<T> = elements.stream()
 
 public class FilteringStream<T>(val stream: Stream<T>, val sendWhen: Boolean = true, val predicate: (T) -> Boolean) : Stream<T> {
     override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
@@ -79,6 +75,35 @@ public class FlatteningStream<T, R>(val stream: Stream<T>, val transformer: (T) 
                 setNext(currentItemIterator.next())
                 if (!currentItemIterator.hasNext())
                     itemIterator = null
+            }
+        }
+    }
+}
+
+public class Multistream<T>(val streams: Stream<Stream<T>>) : Stream<T> {
+    override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
+        val iterator = streams.iterator()
+        var streamIterator: Iterator<T>? = null
+        override fun computeNext() {
+            while (streamIterator == null) {
+                if (!iterator.hasNext()) {
+                    done()
+                    break;
+                } else {
+                    val stream = iterator.next()
+                    val nextStreamIterator = stream.iterator()
+                    if (nextStreamIterator.hasNext())
+                        streamIterator = nextStreamIterator
+                }
+            }
+
+            val currentStreamIterator = streamIterator
+            if (currentStreamIterator == null) {
+                done()
+            } else {
+                setNext(currentStreamIterator.next())
+                if (!currentStreamIterator.hasNext())
+                    streamIterator = null
             }
         }
     }
