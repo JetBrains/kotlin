@@ -102,16 +102,6 @@ public final class JsDescriptorUtils {
         return !descriptor.getOverriddenDescriptors().isEmpty();
     }
 
-    //TODO: why callable descriptor
-    @Nullable
-    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
-        if (expectedThisObject == null) {
-            return null;
-        }
-        return getDeclarationDescriptorForReceiver(expectedThisObject.getValue());
-    }
-
     @NotNull
     public static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
         DeclarationDescriptor declarationDescriptor;
@@ -125,15 +115,6 @@ public final class JsDescriptorUtils {
         }
 
         return declarationDescriptor.getOriginal();
-    }
-
-    @Nullable
-    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-        if (receiverParameter == null) {
-            return null;
-        }
-        return getDeclarationDescriptorForReceiver(receiverParameter.getValue());
     }
 
     //TODO: maybe we have similar routine
