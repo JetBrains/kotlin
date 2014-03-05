@@ -10,14 +10,14 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>
-    mark({ class B { val a: Int get() { val b: Int return b } } })
+  1 <START>
+  2 mark({ class B { val a: Int get() { val b: Int return b } } })
     v(val a: Int get() { val b: Int return b })
     jmp?(L2)                                                          NEXT:[<END>, d(get() { val b: Int return b })]
     d(get() { val b: Int return b })                                  NEXT:[<SINK>]
 L1:
 L2:
-    <END>                                                             NEXT:[<SINK>]                                                            PREV:[jmp?(L2)]
+  1 <END>                                                             NEXT:[<SINK>]                                                            PREV:[jmp?(L2)]
 error:
     <ERROR>                                                           PREV:[]
 sink:
@@ -30,13 +30,13 @@ get() {
             }
 ---------------------
 L3:
-    <START>
-    mark({ val b: Int return b })
+  3 <START>
+  4 mark({ val b: Int return b })
     v(val b: Int)
     r(b)
     ret(*) L4
 L4:
-    <END>                            NEXT:[<SINK>]
+  3 <END>                            NEXT:[<SINK>]
 error:
     <ERROR>                          PREV:[]
 sink:

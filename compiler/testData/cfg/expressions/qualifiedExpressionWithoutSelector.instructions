@@ -4,14 +4,14 @@ fun foo(s: String) {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(s: String)
     w(s)
-    mark({ s. })
+  2 mark({ s. })
     mark(s.)
     r(s)
 L1:
-    <END>           NEXT:[<SINK>]
+  1 <END>           NEXT:[<SINK>]
 error:
     <ERROR>         PREV:[]
 sink:

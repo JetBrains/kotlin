@@ -16,20 +16,20 @@ class AnonymousInitializers() {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(val k = 34)
     r(34)
     w(k)
     v(val i: Int)
-    mark({ $i = 12 })
+  2 mark({ $i = 12 })
     r(12)
     w($i)
-    v(val j: Int get() = 20)
-    mark({ $i = 13 })
+  1 v(val j: Int get() = 20)
+  2 mark({ $i = 13 })
     r(13)
     w($i)
 L1:
-    <END>                       NEXT:[<SINK>]
+  1 <END>                       NEXT:[<SINK>]
 error:
     <ERROR>                     PREV:[]
 sink:

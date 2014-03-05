@@ -8,8 +8,8 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>                                                             INIT: in: {} out: {}
-    mark({ val a = 1 val f = { (x: Int) -> val y = x + a use(a) } })
+  1 <START>                                                             INIT: in: {} out: {}
+  2 mark({ val a = 1 val f = { (x: Int) -> val y = x + a use(a) } })
     v(val a = 1)                                                        INIT: in: {} out: {a=D}
     r(1)                                                                INIT: in: {a=D} out: {a=D}
     w(a)                                                                INIT: in: {a=D} out: {a=ID}
@@ -21,7 +21,7 @@ L2:
     r({ (x: Int) -> val y = x + a use(a) })                             INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     w(f)                                                                INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
 L1:
-    <END>                                                               INIT: in: {a=ID, f=ID} out: {a=ID, f=ID}
+  1 <END>                                                               INIT: in: {a=ID, f=ID} out: {a=ID, f=ID}
 error:
     <ERROR>                                                             INIT: in: {} out: {}
 sink:
@@ -34,10 +34,10 @@ sink:
     }
 ---------------------
 L3:
-    <START>                       INIT: in: {a=ID, f=D} out: {a=ID, f=D}
+  3 <START>                       INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     v(x: Int)                     INIT: in: {a=ID, f=D} out: {a=ID, f=D, x=D}
     w(x)                          INIT: in: {a=ID, f=D, x=D} out: {a=ID, f=D, x=ID}
-    mark(val y = x + a use(a))    INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}
+  4 mark(val y = x + a use(a))    INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID}
     v(val y = x + a)              INIT: in: {a=ID, f=D, x=ID} out: {a=ID, f=D, x=ID, y=D}
     mark(x + a)                   INIT: in: {a=ID, f=D, x=ID, y=D} out: {a=ID, f=D, x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
     r(x)                                                                                            USE: in: {a=READ} out: {a=READ, x=READ}
@@ -48,7 +48,7 @@ L3:
     r(a)                                                                                            USE: in: {} out: {a=READ}
     call(use, use)
 L4:
-    <END>
+  3 <END>
 error:
     <ERROR>                       INIT: in: {} out: {}
 sink:
@@ -58,7 +58,7 @@ sink:
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-    <START>              INIT: in: {} out: {}
+  1 <START>              INIT: in: {} out: {}
     v(vararg a: Any?)    INIT: in: {} out: {a=D}
     w(a)                 INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
     r(a)                 INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}

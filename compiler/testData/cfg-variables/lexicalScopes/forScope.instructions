@@ -1,0 +1,41 @@
+== foo ==
+fun foo() {
+    "before"
+    for (i in 1..10) {
+        val a = i
+    }
+    "after"
+}
+---------------------
+L0:
+  1 <START>                                                      INIT: in: {} out: {}
+  2 mark({ "before" for (i in 1..10) { val a = i } "after" })
+    mark("before")
+    r("before")
+  3 mark(for (i in 1..10) { val a = i })
+    mark(1..10)
+    r(1)
+    r(10)
+    call(.., rangeTo)
+    v(i)                                                         INIT: in: {} out: {i=D}
+    w(i)                                                         INIT: in: {i=D} out: {i=ID}
+L3:
+    jmp?(L2)                                                     INIT: in: {i=ID} out: {i=ID}
+L4 [loop entry point]:
+L5 [body entry point]:
+  4 mark({ val a = i })                                          INIT: in: {a=ID, i=ID} out: {a=ID, i=ID}
+    v(val a = i)
+    r(i)
+    w(a)
+  3 jmp?(L4 [loop entry point])                                                                              USE: in: {i=READ} out: {i=READ}
+L2:
+    read (Unit)
+  2 mark("after")
+    r("after")
+L1:
+  1 <END>
+error:
+    <ERROR>                                                      INIT: in: {} out: {}
+sink:
+    <SINK>                                                       INIT: in: {a=ID, i=ID} out: {a=ID, i=ID}    USE: in: {} out: {}
+=====================

@@ -5,12 +5,12 @@ tailRecursive fun sum(x: Long, sum: Long): Long {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(x: Long)
     w(x)
     v(sum: Long)
     w(sum)
-    mark({ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) })
+  2 mark({ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) })
     mark(if (x == 0.toLong()) return sum)
     mark(x == 0.toLong())
     r(x)
@@ -38,7 +38,7 @@ L3:
     call(sum, sum)
     ret(*) L1
 L1:
-    <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*) L1, ret(*) L1]
+  1 <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*) L1, ret(*) L1]
 error:
     <ERROR>                                                                 PREV:[]
 sink:

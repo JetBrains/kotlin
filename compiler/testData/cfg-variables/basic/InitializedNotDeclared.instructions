@@ -7,11 +7,11 @@ class A {
 }
 ---------------------
 L0:
-    <START>            INIT: in: {} out: {}
-    mark({ x = 1 })
+  1 <START>            INIT: in: {} out: {}
+  2 mark({ x = 1 })
     r(1)                                               USE: in: {x=ONLY_WRITTEN_NEVER_READ} out: {x=ONLY_WRITTEN_NEVER_READ}
     w(x)               INIT: in: {} out: {x=I}         USE: in: {} out: {x=ONLY_WRITTEN_NEVER_READ}
-    v(val x: Int)      INIT: in: {x=I} out: {x=ID}
+  1 v(val x: Int)      INIT: in: {x=I} out: {x=ID}
 L1:
     <END>              INIT: in: {x=ID} out: {x=ID}
 error:

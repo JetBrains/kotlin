@@ -5,8 +5,8 @@ fun test() {
 }
 ---------------------
 L0:
-    <START>
-    mark({ throw Exception() test() })
+  1 <START>
+  2 mark({ throw Exception() test() })
     mark(throw Exception())
     mark(Exception())
     call(Exception, <init>)
@@ -14,7 +14,7 @@ L0:
 -   mark(test())                          PREV:[]
 -   call(test, test)                      PREV:[]
 L1:
-    <END>                                 NEXT:[<SINK>]                                PREV:[]
+  1 <END>                                 NEXT:[<SINK>]                                PREV:[]
 error:
     <ERROR>                               PREV:[throw (throw Exception())]
 sink:

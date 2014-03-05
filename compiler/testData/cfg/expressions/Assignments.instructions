@@ -4,7 +4,7 @@ class Test {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(var x : Int;)
 L1:
     <END>              NEXT:[<SINK>]
@@ -29,8 +29,8 @@ fun assignments() : Unit {
 }
 ---------------------
 L0:
-    <START>
-    mark({ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 })
+  1 <START>
+  2 mark({ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 })
     v(var x = 1)
     r(1)
     w(x)
@@ -72,7 +72,7 @@ L5:
     r(t)
     w(t.x)
 L1:
-    <END>                                                                                                                          NEXT:[<SINK>]
+  1 <END>                                                                                                                          NEXT:[<SINK>]
 error:
     <ERROR>                                                                                                                        PREV:[]
 sink:

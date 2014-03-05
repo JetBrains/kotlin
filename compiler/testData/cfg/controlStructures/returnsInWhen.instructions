@@ -6,10 +6,10 @@ fun illegalWhenBlock(a: Any): Any {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(a: Any)
     w(a)
-    mark({ when(a) { is Int -> return a } })
+  2 mark({ when(a) { is Int -> return a } })
     mark(when(a) { is Int -> return a })
     r(a)
     mark(is Int -> return a)
@@ -21,7 +21,7 @@ L3:
 L1:
 L2:
 L4:
-    <END>                                       NEXT:[<SINK>]                                      PREV:[jmp?(L4), ret(*) L1]
+  1 <END>                                       NEXT:[<SINK>]                                      PREV:[jmp?(L4), ret(*) L1]
 error:
     <ERROR>                                     PREV:[]
 sink:

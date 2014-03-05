@@ -4,8 +4,8 @@ fun blockAndAndMismatch() : Boolean {
 }
 ---------------------
 L0:
-    <START>
-    mark({ false || (return false) })
+  1 <START>
+  2 mark({ false || (return false) })
     r(false)
     jt(L2)                               NEXT:[mark((return false)), r(false || (return false))]
     mark((return false))
@@ -14,7 +14,7 @@ L0:
 L2:
     r(false || (return false))           PREV:[jt(L2)]
 L1:
-    <END>                                NEXT:[<SINK>]                                              PREV:[ret(*) L1, r(false || (return false))]
+  1 <END>                                NEXT:[<SINK>]                                              PREV:[ret(*) L1, r(false || (return false))]
 error:
     <ERROR>                              PREV:[]
 sink:

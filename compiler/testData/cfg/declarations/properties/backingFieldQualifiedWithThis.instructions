@@ -5,7 +5,7 @@ abstract class Bar {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(abstract var bar : String)
 L1:
     <END>                           NEXT:[<SINK>]
@@ -18,7 +18,7 @@ sink:
 fun foo() = "foo" + this.$bar
 ---------------------
 L0:
-    <START>
+  1 <START>
     mark("foo" + this.$bar)
     mark("foo")
     r("foo")

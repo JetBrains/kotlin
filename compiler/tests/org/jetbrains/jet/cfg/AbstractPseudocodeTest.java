@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -125,11 +126,27 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
     protected void checkPseudocode(PseudocodeImpl pseudocode) {
     }
 
-    private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
-        String[] parts = instruction.toString().split("\n");
+    private String getIsDeadInstructionPrefix(
+            @NotNull Instruction instruction,
+            @NotNull Set<Instruction> remainedAfterPostProcessInstructions
+    ) {
         boolean isRemovedThroughPostProcess = !remainedAfterPostProcessInstructions.contains(instruction);
         assert isRemovedThroughPostProcess == ((InstructionImpl)instruction).isDead();
-        String prefix = isRemovedThroughPostProcess ? "-   " : "    ";
+        return isRemovedThroughPostProcess ? "-" : " ";
+    }
+
+    private String getDepthInstructionPrefix(@NotNull Instruction instruction, @Nullable Instruction previous) {
+        Integer prevDepth = previous != null ? previous.getLexicalScope().getDepth() : null;
+        int depth = instruction.getLexicalScope().getDepth();
+        if (prevDepth == null || depth != prevDepth) {
+            return String.format("%2d ", depth);
+        }
+        return "   ";
+    }
+
+    private String formatInstruction(Instruction instruction, int maxLength, String prefix) {
+        String[] parts = instruction.toString().split("\n");
+
         if (parts.length == 1) {
             return prefix + String.format("%1$-" + maxLength + "s", instruction);
         }
@@ -168,11 +185,14 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
 
             StringBuilder line = new StringBuilder();
 
-            line.append(formatInstruction(instruction, instructionColumnWidth, remainedAfterPostProcessInstructions));
-
             // Only print NEXT and PREV if the values are non-trivial
             Instruction next = i == instructions.size() - 1 ? null : instructions.get(i + 1);
             Instruction prev = i == 0 ? null : instructions.get(i - 1);
+
+            String prefix = getIsDeadInstructionPrefix(instruction, remainedAfterPostProcessInstructions) +
+                    getDepthInstructionPrefix(instruction, prev);
+            line.append(formatInstruction(instruction, instructionColumnWidth, prefix));
+
             line.append(getInstructionData.invoke(instruction, next, prev));
 
             out.append(StringUtil.trimTrailing(line.toString()));

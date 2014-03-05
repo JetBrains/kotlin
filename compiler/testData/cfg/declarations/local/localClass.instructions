@@ -12,13 +12,13 @@ fun f() {
 }
 ---------------------
 L0:
-    <START>
-    mark({ class LocalClass() { fun f() { val x = "" fun loc() { val x3 = "" } } } })
+  1 <START>
+  2 mark({ class LocalClass() { fun f() { val x = "" fun loc() { val x3 = "" } } } })
     jmp?(L2)                                                                             NEXT:[<END>, d(fun f() { val x = "" fun loc() { val x3 = "" } })]
     d(fun f() { val x = "" fun loc() { val x3 = "" } })                                  NEXT:[<SINK>]
 L1:
 L2:
-    <END>                                                                                NEXT:[<SINK>]                                                                               PREV:[jmp?(L2)]
+  1 <END>                                                                                NEXT:[<SINK>]                                                                               PREV:[jmp?(L2)]
 error:
     <ERROR>                                                                              PREV:[]
 sink:
@@ -34,8 +34,8 @@ fun f() {
         }
 ---------------------
 L3:
-    <START>
-    mark({ val x = "" fun loc() { val x3 = "" } })
+  3 <START>
+  4 mark({ val x = "" fun loc() { val x3 = "" } })
     v(val x = "")
     mark("")
     r("")
@@ -44,7 +44,7 @@ L3:
     d(fun loc() { val x3 = "" })                      NEXT:[<SINK>]
 L4:
 L5:
-    <END>                                             NEXT:[<SINK>]                                            PREV:[jmp?(L5)]
+  3 <END>                                             NEXT:[<SINK>]                                            PREV:[jmp?(L5)]
 error:
     <ERROR>                                           PREV:[]
 sink:
@@ -56,14 +56,14 @@ fun loc() {
             }
 ---------------------
 L6:
-    <START>
-    mark({ val x3 = "" })
+  5 <START>
+  6 mark({ val x3 = "" })
     v(val x3 = "")
     mark("")
     r("")
     w(x3)
 L7:
-    <END>                    NEXT:[<SINK>]
+  5 <END>                    NEXT:[<SINK>]
 error:
     <ERROR>                  PREV:[]
 sink:

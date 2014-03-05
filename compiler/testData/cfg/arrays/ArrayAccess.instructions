@@ -10,8 +10,8 @@ fun foo() {
 }
 ---------------------
 L0:
-    <START>
-    mark({ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 })
+  1 <START>
+  2 mark({ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 })
     v(val a = Array<Int>)
     mark(Array<Int>)
     call(Array, <init>)
@@ -41,7 +41,7 @@ L0:
     r(1)
     call(a[10], set)
 L1:
-    <END>                                                              NEXT:[<SINK>]
+  1 <END>                                                              NEXT:[<SINK>]
 error:
     <ERROR>                                                            PREV:[]
 sink:

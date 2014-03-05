@@ -5,26 +5,26 @@ fun foo(a: Int, b: Int) {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(a: Int)
     w(a)
     v(b: Int)
     w(b)
-    mark({ if (a == b) { } })
+  2 mark({ if (a == b) { } })
     mark(if (a == b) { })
     mark(a == b)
     r(a)
     r(b)
     call(==, equals)
     jf(L2)                       NEXT:[read (Unit), mark({ })]
-    mark({ })
+  3 mark({ })
     read (Unit)
-    jmp(L3)                      NEXT:[<END>]
+  2 jmp(L3)                      NEXT:[<END>]
 L2:
     read (Unit)                  PREV:[jf(L2)]
 L1:
 L3:
-    <END>                        NEXT:[<SINK>]                       PREV:[jmp(L3), read (Unit)]
+  1 <END>                        NEXT:[<SINK>]                       PREV:[jmp(L3), read (Unit)]
 error:
     <ERROR>                      PREV:[]
 sink:

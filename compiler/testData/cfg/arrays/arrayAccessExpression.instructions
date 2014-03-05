@@ -4,7 +4,7 @@ abstract class Ab {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
 L1:
     <END>      NEXT:[<SINK>]
 error:
@@ -16,7 +16,7 @@ sink:
 abstract fun getArray() : Array<Int>
 ---------------------
 L0:
-    <START>
+  1 <START>
 L1:
     <END>      NEXT:[<SINK>]
 error:
@@ -30,10 +30,10 @@ fun test(ab: Ab) {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(ab: Ab)
     w(ab)
-    mark({ ab.getArray()[1] })
+  2 mark({ ab.getArray()[1] })
     mark(ab.getArray()[1])
     mark(ab.getArray())
     mark(getArray())
@@ -42,7 +42,7 @@ L0:
     r(1)
     call(ab.getArray()[1], get)
 L1:
-    <END>                          NEXT:[<SINK>]
+  1 <END>                          NEXT:[<SINK>]
 error:
     <ERROR>                        PREV:[]
 sink:

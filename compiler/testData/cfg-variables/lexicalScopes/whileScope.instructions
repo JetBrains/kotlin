@@ -1,0 +1,33 @@
+== foo ==
+fun foo() {
+    "before"
+    while (true) {
+        val a: Int
+    }
+    "after"
+}
+---------------------
+L0:
+  1 <START>                                                   INIT: in: {} out: {}
+  2 mark({ "before" while (true) { val a: Int } "after" })
+    mark("before")
+    r("before")
+    mark(while (true) { val a: Int })
+L2 [loop entry point]:
+L5 [condition entry point]:
+    r(true)                                                   INIT: in: {a=D} out: {a=D}
+L4 [body entry point]:
+  3 mark({ val a: Int })
+    v(val a: Int)
+  2 jmp(L2 [loop entry point])                                                              USE: in: {} out: {}
+L3 [loop exit point]:
+-   read (Unit)
+-   mark("after")
+-   r("after")
+L1:
+  1 <END>                                                     INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                  USE: in: {} out: {}
+=====================

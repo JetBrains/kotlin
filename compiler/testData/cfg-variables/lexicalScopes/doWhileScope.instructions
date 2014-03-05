@@ -1,0 +1,38 @@
+== foo ==
+fun foo() {
+    "before"
+    do {
+        var a = 2
+    } while (a > 0)
+    "after"
+}
+---------------------
+L0:
+  1 <START>                                                      INIT: in: {} out: {}
+  2 mark({ "before" do { var a = 2 } while (a > 0) "after" })
+    mark("before")
+    r("before")
+  3 mark(do { var a = 2 } while (a > 0))
+L2 [loop entry point]:
+L4 [body entry point]:
+    mark({ var a = 2 })                                          INIT: in: {a=ID} out: {a=ID}
+    v(var a = 2)
+    r(2)
+    w(a)
+L5 [condition entry point]:
+    mark(a > 0)
+    r(a)
+    r(0)
+    call(>, compareTo)
+    jt(L2 [loop entry point])                                                                    USE: in: {a=READ} out: {a=READ}
+L3 [loop exit point]:
+    read (Unit)
+  2 mark("after")
+    r("after")
+L1:
+  1 <END>
+error:
+    <ERROR>                                                      INIT: in: {} out: {}
+sink:
+    <SINK>                                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+=====================

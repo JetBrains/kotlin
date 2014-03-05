@@ -4,15 +4,15 @@ fun test(s: String?) {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(s: String?)
     w(s)
-    mark({ s?.length })
+  2 mark({ s?.length })
     mark(s?.length)
     r(s)
     r(length)
 L1:
-    <END>                  NEXT:[<SINK>]
+  1 <END>                  NEXT:[<SINK>]
 error:
     <ERROR>                PREV:[]
 sink:

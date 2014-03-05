@@ -2,11 +2,11 @@
 fun empty() {}
 ---------------------
 L0:
-    <START>
-    mark({})
+  1 <START>
+  2 mark({})
     read (Unit)
 L1:
-    <END>          NEXT:[<SINK>]
+  1 <END>          NEXT:[<SINK>]
 error:
     <ERROR>        PREV:[]
 sink:

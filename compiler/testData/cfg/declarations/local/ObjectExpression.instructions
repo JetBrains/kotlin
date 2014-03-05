@@ -4,7 +4,7 @@ trait A {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
 L1:
     <END>      NEXT:[<SINK>]
 error:
@@ -16,7 +16,7 @@ sink:
 fun foo() : Int
 ---------------------
 L0:
-    <START>
+  1 <START>
 L1:
     <END>      NEXT:[<SINK>]
 error:
@@ -30,7 +30,7 @@ class B : A {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     unsupported(DELEGATOR_SUPER_CLASS : A)
 L1:
     <END>                                     NEXT:[<SINK>]
@@ -43,7 +43,7 @@ sink:
 override fun foo() = 10
 ---------------------
 L0:
-    <START>
+  1 <START>
     r(10)
 L1:
     <END>      NEXT:[<SINK>]
@@ -59,10 +59,10 @@ fun foo(b: B) : Int {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(b: B)
     w(b)
-    mark({ val o = object : A by b {} return o.foo() })
+  2 mark({ val o = object : A by b {} return o.foo() })
     v(val o = object : A by b {})
     mark(object : A by b {})
     r(b)
@@ -74,7 +74,7 @@ L0:
     call(foo, foo)
     ret(*) L1
 L1:
-    <END>                                                  NEXT:[<SINK>]
+  1 <END>                                                  NEXT:[<SINK>]
 error:
     <ERROR>                                                PREV:[]
 sink:

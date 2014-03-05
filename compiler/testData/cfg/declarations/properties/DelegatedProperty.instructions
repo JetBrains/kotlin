@@ -4,7 +4,7 @@ class Delegate {
 }
 ---------------------
 L0:
-    <START>
+  1 <START>
 L1:
     <END>      NEXT:[<SINK>]
 error:
@@ -16,7 +16,7 @@ sink:
 fun get(_this: Any, p: PropertyMetadata): Int = 0
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(_this: Any)
     w(_this)
     v(p: PropertyMetadata)
@@ -33,7 +33,7 @@ sink:
 val a = Delegate()
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(val a = Delegate())
     mark(Delegate())
     call(Delegate, <init>)
@@ -49,7 +49,7 @@ sink:
 val b by a
 ---------------------
 L0:
-    <START>
+  1 <START>
     v(val b by a)
     r(a)
 L1:
