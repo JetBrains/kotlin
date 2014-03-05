@@ -59,6 +59,7 @@ public object ShortenReferences {
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext = resolveMap[expression]!!
 
+        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
         override fun visitUserType(userType: JetUserType) {
             userType.getTypeArgumentList()?.accept(this)
 
@@ -222,7 +223,7 @@ public object ShortenReferences {
             if (target != null) return target.asString()
 
             val targets = bindingContext.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression)
-            if (targets != null) return HashSet(targets.map{it!!.asString()})
+            if (targets != null) return HashSet(targets.map{it.asString()})
 
             return null
         }
