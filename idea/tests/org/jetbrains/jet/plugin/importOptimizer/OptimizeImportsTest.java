@@ -20,7 +20,7 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer;
+import org.jetbrains.jet.plugin.imports.KotlinImportOptimizer;
 
 import java.io.File;
 
@@ -94,7 +94,7 @@ public class OptimizeImportsTest extends JetLightCodeInsightFixtureTestCase {
     }
 
     private void invokeOptimizeImports() {
-        CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new JetImportOptimizer().processFile(myFixture.getFile()),
+        CommandProcessor.getInstance().executeCommand(myFixture.getProject(), new KotlinImportOptimizer().processFile(myFixture.getFile()),
                 "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
 }

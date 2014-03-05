@@ -20,7 +20,7 @@ import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer;
+import org.jetbrains.jet.plugin.imports.KotlinImportOptimizer;
 
 import java.io.File;
 
@@ -68,7 +68,7 @@ public class OptimizeImportsMultiFileTest extends CodeInsightTestCase {
 
     private void invokeFormatFile() {
         CommandProcessor.getInstance().executeCommand(
-                getProject(), new JetImportOptimizer().processFile(getFile()),
+                getProject(), new KotlinImportOptimizer().processFile(getFile()),
                 "Optimize Imports", null, UndoConfirmationPolicy.DO_NOT_REQUEST_CONFIRMATION);
     }
 

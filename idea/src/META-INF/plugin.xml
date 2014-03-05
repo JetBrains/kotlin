@@ -147,7 +147,7 @@
 
     <gotoSymbolContributor implementation="org.jetbrains.jet.plugin.caches.JetGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.jet.plugin.caches.JetGotoClassContributor"/>
-    <lang.importOptimizer language="jet" implementationClass="org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer"/>
+    <lang.importOptimizer language="jet" implementationClass="org.jetbrains.jet.plugin.imports.KotlinImportOptimizer"/>
 
     <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 

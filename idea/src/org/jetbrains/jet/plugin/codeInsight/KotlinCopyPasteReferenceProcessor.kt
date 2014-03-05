@@ -64,6 +64,7 @@ import org.jetbrains.jet.lang.psi.JetTypeReference
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.plugin.imports.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -374,18 +375,6 @@ private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: Int
         range in TextRange(start, end)
     }
 }
-
-public val DeclarationDescriptor.importableFqName: FqName?
-    get() {
-        if (this is ConstructorDescriptor) return getContainingDeclaration().importableFqName
-        val mayBeUnsafe = DescriptorUtils.getFqName(this)
-        return if (mayBeUnsafe.isSafe()) {
-            mayBeUnsafe.toSafe()
-        }
-        else {
-            null
-        }
-    }
 
 private val DeclarationDescriptor.isExtension: Boolean
     get() = this is CallableDescriptor && getReceiverParameter() != null
