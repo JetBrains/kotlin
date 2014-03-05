@@ -78,6 +78,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
+    private Pseudocode parent = null;
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
     private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
@@ -120,6 +121,26 @@ public class PseudocodeImpl implements Pseudocode {
             }
         }
         return localDeclarations;
+    }
+
+    @Override
+    @Nullable
+    public Pseudocode getParent() {
+        return parent;
+    }
+
+    private void setParent(Pseudocode parent) {
+        this.parent = parent;
+    }
+
+    @NotNull
+    public Pseudocode getRootPseudocode() {
+        Pseudocode parent = getParent();
+        while (parent != null) {
+            if (parent.getParent() == null) return parent;
+            parent = parent.getParent();
+        }
+        return this;
     }
 
     /*package*/ PseudocodeLabel createLabel(String name) {
@@ -292,7 +313,9 @@ public class PseudocodeImpl implements Pseudocode {
 
             @Override
             public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
-                ((PseudocodeImpl)instruction.getBody()).postProcess();
+                PseudocodeImpl body = (PseudocodeImpl) instruction.getBody();
+                body.setParent(PseudocodeImpl.this);
+                body.postProcess();
                 instruction.setNext(getSinkInstruction());
             }
 

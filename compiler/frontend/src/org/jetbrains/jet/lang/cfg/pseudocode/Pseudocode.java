@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.List;
@@ -25,6 +26,9 @@ import java.util.Set;
 public interface Pseudocode {
     @NotNull
     JetElement getCorrespondingElement();
+
+    @Nullable
+    Pseudocode getParent();
 
     @NotNull
     Set<LocalFunctionDeclarationInstruction> getLocalDeclarations();

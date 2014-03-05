@@ -42,7 +42,7 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
             @NotNull StringBuilder out,
             @NotNull BindingContext bindingContext
     ) {
-        PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode, bindingContext);
+        PseudocodeVariablesData pseudocodeVariablesData = new PseudocodeVariablesData(pseudocode.getRootPseudocode(), bindingContext);
         final Map<Instruction, Edges<Map<VariableDescriptor, VariableInitState>>> variableInitializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> useStatusData =
