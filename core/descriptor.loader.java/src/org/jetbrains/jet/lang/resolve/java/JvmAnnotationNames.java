@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -37,8 +38,7 @@ public final class JvmAnnotationNames {
     public static final FqName JETBRAINS_READONLY_ANNOTATION = new FqName("org.jetbrains.annotations.ReadOnly");
 
     public static class KotlinSyntheticClass {
-        public static final FqName FQ_NAME = new FqName("kotlin.jvm.internal.KotlinSyntheticClass");
-        public static final String INTERNAL_NAME = JvmClassName.byFqNameWithoutInnerClasses(FQ_NAME).getInternalName();
+        public static final JvmClassName CLASS_NAME = JvmClassName.byInternalName("kotlin/jvm/internal/KotlinSyntheticClass");
         public static final String KIND_INTERNAL_NAME = "kotlin/jvm/internal/KotlinSyntheticClass$Kind";
 
         public static final Name KIND_FIELD_NAME = Name.identifier("kind");
@@ -49,7 +49,23 @@ public final class JvmAnnotationNames {
          */
         public enum Kind {
             PACKAGE_PART,
-            TRAIT_IMPL
+            TRAIT_IMPL,
+            SAM_WRAPPER,
+            SAM_LAMBDA,
+            CALLABLE_REFERENCE_WRAPPER,
+            LOCAL_FUNCTION,
+            ANONYMOUS_FUNCTION,
+            ;
+
+            @Nullable
+            public static Kind valueOfOrNull(@NotNull String name) {
+                try {
+                    return valueOf(name);
+                }
+                catch (IllegalArgumentException e) {
+                    return null;
+                }
+            }
         }
 
         private KotlinSyntheticClass() {

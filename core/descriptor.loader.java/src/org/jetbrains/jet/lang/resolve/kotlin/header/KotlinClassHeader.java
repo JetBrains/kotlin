@@ -19,26 +19,36 @@ package org.jetbrains.jet.lang.resolve.kotlin.header;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+
 public class KotlinClassHeader {
 
     public enum Kind {
+        INCOMPATIBLE_ABI_VERSION,
         CLASS,
         PACKAGE_FACADE,
-        PACKAGE_PART,
-        TRAIT_IMPL,
-        INCOMPATIBLE_ABI_VERSION
+        SYNTHETIC_CLASS,
     }
 
     private final Kind kind;
     private final int version;
     private final String[] data;
+    private final KotlinSyntheticClass.Kind syntheticClassKind;
 
-    public KotlinClassHeader(@NotNull Kind kind, int version, @Nullable String[] annotationData) {
+    public KotlinClassHeader(
+            @NotNull Kind kind,
+            int version,
+            @Nullable String[] annotationData,
+            @Nullable KotlinSyntheticClass.Kind syntheticClassKind
+    ) {
         assert (annotationData == null) == (kind != Kind.CLASS && kind != Kind.PACKAGE_FACADE)
-                : "Annotation data should be not null only for CLASS and PACKAGE_FACADE";
+                : "Annotation data should be not null only for CLASS and PACKAGE_FACADE (kind=" + kind + ")";
+        assert (syntheticClassKind == null) == (kind != Kind.SYNTHETIC_CLASS)
+                : "Synthetic class kind should be present for SYNTHETIC_CLASS (kind=" + kind + ")";
         this.kind = kind;
         this.version = version;
         this.data = annotationData;
+        this.syntheticClassKind = syntheticClassKind;
     }
 
     @NotNull
@@ -53,5 +63,10 @@ public class KotlinClassHeader {
     @Nullable
     public String[] getAnnotationData() {
         return data;
+    }
+
+    @Nullable
+    public KotlinSyntheticClass.Kind getSyntheticClassKind() {
+        return syntheticClassKind;
     }
 }

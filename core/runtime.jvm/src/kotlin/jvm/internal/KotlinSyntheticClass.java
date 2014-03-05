@@ -27,6 +27,11 @@ public @interface KotlinSyntheticClass {
 
     public static enum Kind {
         PACKAGE_PART,
-        TRAIT_IMPL
+        TRAIT_IMPL,
+        SAM_WRAPPER,
+        SAM_LAMBDA,
+        CALLABLE_REFERENCE_WRAPPER,
+        LOCAL_FUNCTION,
+        ANONYMOUS_FUNCTION,
     }
 }

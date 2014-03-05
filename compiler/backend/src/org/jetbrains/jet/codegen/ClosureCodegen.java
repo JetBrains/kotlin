@@ -48,6 +48,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class ClosureCodegen extends ParentCodegenAwareImpl {
     private final PsiElement fun;
@@ -59,6 +60,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
     private final CalculatedClosure closure;
     private final Type asmType;
     private final int visibilityFlag;
+    private final KotlinSyntheticClass.Kind syntheticClassKind;
 
     private Method constructor;
 
@@ -69,6 +71,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             @Nullable ClassDescriptor samInterface,
             @NotNull Type closureSuperClass,
             @NotNull CodegenContext parentContext,
+            @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @NotNull LocalLookup localLookup,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable MemberCodegen parentCodegen
@@ -80,6 +83,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         this.samInterface = samInterface;
         this.superClass = closureSuperClass;
         this.context = parentContext.intoClosure(funDescriptor, localLookup, typeMapper);
+        this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
 
         ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
@@ -120,6 +124,8 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
                        superInterfaces
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
+
+        writeKotlinSyntheticClassAnnotation(cv, syntheticClassKind);
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(funDescriptor).replaceName(interfaceFunction.getName().toString());
         generateBridge(cv, typeMapper.mapSignature(interfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
