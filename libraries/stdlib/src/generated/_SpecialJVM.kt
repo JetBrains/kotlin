@@ -64,65 +64,128 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun <T> Array<out T>.copyOf(newSize: Int = size) : Array<T> {
-    return Arrays.copyOf(this, newSize) as Array<T>
+public fun <T> Array<out T>.copyOf() : Array<T> {
+    return Arrays.copyOf(this, size) as Array<T>
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun BooleanArray.copyOf(newSize: Int = size) : BooleanArray {
+public fun BooleanArray.copyOf() : BooleanArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun ByteArray.copyOf() : ByteArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun CharArray.copyOf() : CharArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun DoubleArray.copyOf() : DoubleArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun FloatArray.copyOf() : FloatArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun IntArray.copyOf() : IntArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun LongArray.copyOf() : LongArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun ShortArray.copyOf() : ShortArray {
+    return Arrays.copyOf(this, size)
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun <T> Array<out T>.copyOf(newSize: Int) : Array<T?> {
+    return Arrays.copyOf(this, newSize) as Array<T?>
+}
+
+/**
+ * Returns new array which is a copy of the original array
+ */
+public fun BooleanArray.copyOf(newSize: Int) : BooleanArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun ByteArray.copyOf(newSize: Int = size) : ByteArray {
+public fun ByteArray.copyOf(newSize: Int) : ByteArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun CharArray.copyOf(newSize: Int = size) : CharArray {
+public fun CharArray.copyOf(newSize: Int) : CharArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun DoubleArray.copyOf(newSize: Int = size) : DoubleArray {
+public fun DoubleArray.copyOf(newSize: Int) : DoubleArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun FloatArray.copyOf(newSize: Int = size) : FloatArray {
+public fun FloatArray.copyOf(newSize: Int) : FloatArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun IntArray.copyOf(newSize: Int = size) : IntArray {
+public fun IntArray.copyOf(newSize: Int) : IntArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun LongArray.copyOf(newSize: Int = size) : LongArray {
+public fun LongArray.copyOf(newSize: Int) : LongArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the riginal array
+ * Returns new array which is a copy of the original array
  */
-public fun ShortArray.copyOf(newSize: Int = size) : ShortArray {
+public fun ShortArray.copyOf(newSize: Int) : ShortArray {
     return Arrays.copyOf(this, newSize)
 }
 

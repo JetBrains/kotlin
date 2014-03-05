@@ -14,16 +14,29 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    // TODO: when newLength is larger than size, we can get null items
-    templates add f("copyOf(newSize: Int = size)") {
+    templates add f("copyOf()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns new array which is a copy of the riginal array" }
+        doc { "Returns new array which is a copy of the original array" }
+        returns("SELF")
+        body {
+            "return Arrays.copyOf(this, size)"
+        }
+        body(ArraysOfObjects) {
+            "return Arrays.copyOf(this, size) as Array<T>"
+        }
+    }
+
+    // This overload can cause nulls if array size is expanding, hence different return overload
+    templates add f("copyOf(newSize: Int)") {
+        only(ArraysOfObjects, ArraysOfPrimitives)
+        doc { "Returns new array which is a copy of the original array" }
         returns("SELF")
         body {
             "return Arrays.copyOf(this, newSize)"
         }
+        returns(ArraysOfObjects) { "Array<T?>" }
         body(ArraysOfObjects) {
-            "return Arrays.copyOf(this, newSize) as Array<T>"
+            "return Arrays.copyOf(this, newSize) as Array<T?>"
         }
     }
 
