@@ -26,6 +26,7 @@ import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
 import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
 import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
+import org.junit.Assert;
 
 import java.io.File;
 
@@ -157,8 +158,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
-        assert isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile())
-                : "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected;
+        Assert.assertTrue(
+                "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
+                isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile()));
+
         if (isApplicableExpected) {
             intentionAction.invoke(getProject(), getEditor(), getFile());
             checkResultByFile(path + ".after");
