@@ -27,25 +27,8 @@ import java.util.Collections;
 import java.util.Map;
 
 public class AliasingContext {
-    private static final AliasingContext ROOT = new AliasingContext(null) {
-        @Override
-        protected JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
-            return null;
-        }
-
-        @Override
-        public JsExpression getAliasForExpression(@NotNull JetExpression element) {
-            return null;
-        }
-
-        @Override
-        public void registerAlias(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
-            throw new IllegalStateException();
-        }
-    };
-
     public static AliasingContext getCleanContext() {
-        return new AliasingContext(ROOT);
+        return new AliasingContext(null, null, null);
     }
 
     @Nullable
@@ -56,10 +39,6 @@ public class AliasingContext {
 
     @Nullable
     private final AliasingContext parent;
-
-    /*package*/ AliasingContext(@Nullable AliasingContext parent) {
-        this(parent, null, null);
-    }
 
     private AliasingContext(
             @Nullable AliasingContext parent,
@@ -72,22 +51,13 @@ public class AliasingContext {
     }
 
     @NotNull
-    public AliasingContext inner(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
-        return new AliasingContext(this, Collections.singletonMap(descriptor, alias), null);
+    public AliasingContext inner() {
+        return new AliasingContext(this, null, null);
     }
 
     @NotNull
-    public AliasingContext notShareableThisAliased(@NotNull final DeclarationDescriptor thisDescriptor, @NotNull final JsExpression alias) {
-        return new AliasingContext(this) {
-            @Nullable
-            @Override
-            protected JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor, boolean fromChild) {
-                if (!fromChild && thisDescriptor == descriptor) {
-                    return alias;
-                }
-                return super.getAliasForDescriptor(descriptor, fromChild);
-            }
-        };
+    public AliasingContext inner(@NotNull DeclarationDescriptor descriptor, @NotNull JsExpression alias) {
+        return new AliasingContext(this, Collections.singletonMap(descriptor, alias), null);
     }
 
     @NotNull
@@ -102,7 +72,7 @@ public class AliasingContext {
 
 
     @Nullable
-    public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
+    final public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         // these aliases cannot be shared and applicable only in current context
         return getAliasForDescriptor(descriptor, false);
     }
