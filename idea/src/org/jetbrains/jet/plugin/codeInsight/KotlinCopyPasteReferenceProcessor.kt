@@ -164,21 +164,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         return collectedData
     }
 
-    private fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
-        if (this is PackageViewDescriptor || DescriptorUtils.isTopLevelDeclaration(this)) {
-            return true
-        }
-        val parent = getContainingDeclaration()!!
-        if (parent !is ClassDescriptor || !parent.canBeReferencedViaImport()) {
-            return false
-        }
-        // inner class constructors can't be referenced via import
-        if (this is ConstructorDescriptor && parent.isInner()) {
-            return false
-        }
-        return this is ClassDescriptor || this is ConstructorDescriptor
-    }
-
     private fun createReferenceData(element: PsiElement, startOffset: Int, fqName: FqName): ReferenceData {
         val range = element.range
         return ReferenceData(range.start - startOffset, range.end - startOffset, fqName.asString(), null)

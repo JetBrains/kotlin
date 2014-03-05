@@ -46,6 +46,11 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest("idea/testData/editor/optimizeImports/ArrayAccessExpression");
     }
     
+    @TestMetadata("ClassMemberImported")
+    public void testClassMemberImported() throws Exception {
+        doTest("idea/testData/editor/optimizeImports/ClassMemberImported");
+    }
+    
     @TestMetadata("ComponentFunction")
     public void testComponentFunction() throws Exception {
         doTest("idea/testData/editor/optimizeImports/ComponentFunction");

@@ -20,6 +20,8 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -32,3 +34,18 @@ public val DeclarationDescriptor.importableFqName: FqName?
             null
         }
     }
+
+public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
+    if (this is PackageViewDescriptor || DescriptorUtils.isTopLevelDeclaration(this)) {
+        return true
+    }
+    val parent = getContainingDeclaration()!!
+    if (parent !is ClassDescriptor || !parent.canBeReferencedViaImport()) {
+        return false
+    }
+    // inner class constructors can't be referenced via import
+    if (this is ConstructorDescriptor && parent.isInner()) {
+        return false
+    }
+    return this is ClassDescriptor || this is ConstructorDescriptor
+}

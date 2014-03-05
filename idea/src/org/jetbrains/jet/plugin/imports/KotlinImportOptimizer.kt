@@ -98,7 +98,8 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 val reference = element.getReference()
                 if (reference is JetReference) {
                     val referencedDescriptors = reference.resolveToDescriptors()
-                    usedQualifiedNames.addAll(referencedDescriptors.map { it.importableFqName }.filterNotNull())
+                    val importableDescriptors = referencedDescriptors.filter { it.canBeReferencedViaImport() }
+                    usedQualifiedNames.addAll(importableDescriptors.map { it.importableFqName }.filterNotNull())
                 }
                 super.visitJetElement(element)
             }
