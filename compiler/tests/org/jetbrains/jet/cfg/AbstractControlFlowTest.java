@@ -18,6 +18,7 @@ package org.jetbrains.jet.cfg;
 
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -186,12 +187,37 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         return sb.toString();
     }
 
-    public void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out) {
+    private void dumpInstructions(PseudocodeImpl pseudocode, @NotNull StringBuilder out) {
+        final int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getAllInstructions());
+
+        dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
+            @Override
+            public String invoke(Instruction instruction, Instruction next, Instruction prev) {
+                StringBuilder result = new StringBuilder();
+                Collection<Instruction> nextInstructions = instruction.getNextInstructions();
+
+                if (!sameContents(next, nextInstructions)) {
+                    result.append("    NEXT:").append(
+                            String.format("%1$-" + nextInstructionsColumnWidth + "s", formatInstructionList(nextInstructions)));
+                }
+                Collection<Instruction> previousInstructions = instruction.getPreviousInstructions();
+                if (!sameContents(prev, previousInstructions)) {
+                    result.append("    PREV:").append(formatInstructionList(previousInstructions));
+                }
+                return result.toString();
+            }
+        });
+    }
+
+    private void dumpInstructions(
+            @NotNull PseudocodeImpl pseudocode,
+            @NotNull StringBuilder out,
+            @NotNull Function3<Instruction, /*next*/Instruction, /*prev*/Instruction, String> getInstructionData
+    ) {
         List<Instruction> instructions = pseudocode.getAllInstructions();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
         int instructionColumnWidth = countInstructionColumnWidth(instructions);
-        int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(instructions);
 
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
@@ -207,17 +233,9 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
 
             // Only print NEXT and PREV if the values are non-trivial
             Instruction next = i == instructions.size() - 1 ? null : instructions.get(i + 1);
-            Collection<Instruction> nextInstructions = instruction.getNextInstructions();
-            if (!sameContents(next, nextInstructions)) {
-                line.append("    NEXT:").append(
-                        String.format("%1$-" + nextInstructionsColumnWidth + "s", formatInstructionList(nextInstructions)));
-            }
-
             Instruction prev = i == 0 ? null : instructions.get(i - 1);
-            Collection<Instruction> previousInstructions = instruction.getPreviousInstructions();
-            if (!sameContents(prev, previousInstructions)) {
-                line.append("    PREV:").append(formatInstructionList(previousInstructions));
-            }
+            line.append(getInstructionData.invoke(instruction, next, prev));
+
             out.append(StringUtil.trimTrailing(line.toString()));
             out.append("\n");
         }
