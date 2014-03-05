@@ -69,7 +69,7 @@ fun <D> Pseudocode.traverse(
         }
         val edges = edgesMap.get(instruction)
         if (edges != null) {
-            analyzeInstruction(instruction, edges.`in`, edges.out)
+            analyzeInstruction(instruction, edges.incoming, edges.outgoing)
         }
     }
 }
@@ -163,8 +163,8 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
                         if (newValue == null)
                             null
                         else
-                            Edges(updateEdge(lastInstruction, instruction, newValue.`in`),
-                                  updateEdge(lastInstruction, instruction, newValue.out))
+                            Edges(updateEdge(lastInstruction, instruction, newValue.incoming),
+                                  updateEdge(lastInstruction, instruction, newValue.outgoing))
                 updateEdgeDataForInstruction(previousValue, updatedValue)
                 continue
             }
@@ -177,7 +177,7 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
             val previousData = edgesMap.get(previousInstruction)
             if (previousData != null) {
                 incomingEdgesData.add(updateEdge(
-                        previousInstruction, instruction, previousData.out))
+                        previousInstruction, instruction, previousData.outgoing))
             }
         }
         val mergedData = mergeEdges(instruction, incomingEdgesData)
@@ -185,7 +185,7 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
     }
 }
 
-data class Edges<T>(val `in`: T, val out: T)
+data class Edges<T>(val incoming: T, val outgoing: T)
 
 
 // returns false when interrupted by handler

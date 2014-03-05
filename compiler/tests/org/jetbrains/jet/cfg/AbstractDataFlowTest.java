@@ -93,8 +93,8 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     @NotNull
     private <D> String dumpEdgesData(String prefix, @NotNull Edges<Map<VariableDescriptor, D>> edges) {
         return prefix +
-               " in: " + renderVariableMap(edges.getIn()) +
-               " out: " + renderVariableMap(edges.getOut());
+               " in: " + renderVariableMap(edges.getIncoming()) +
+               " out: " + renderVariableMap(edges.getOutgoing());
     }
 
     private <D> String renderVariableMap(Map<VariableDescriptor, D> map) {
