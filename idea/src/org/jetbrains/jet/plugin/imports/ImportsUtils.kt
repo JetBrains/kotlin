@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import com.intellij.psi.PsiElement
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -49,3 +52,12 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
     }
     return this is ClassDescriptor || this is ConstructorDescriptor
 }
+
+public fun isInReceiverScope(referenceElement: PsiElement, referencedDescriptor: DeclarationDescriptor): Boolean {
+    val isExpressionWithReceiver = referenceElement is JetSimpleNameExpression && referenceElement.getReceiverExpression() != null
+    return isExpressionWithReceiver && !referencedDescriptor.isExtension
+}
+
+//TODO: move this utility to more appropriate place
+public val DeclarationDescriptor.isExtension: Boolean
+    get() = this is CallableDescriptor && getReceiverParameter() != null

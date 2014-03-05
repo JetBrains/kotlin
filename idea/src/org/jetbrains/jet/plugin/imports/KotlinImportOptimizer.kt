@@ -53,7 +53,10 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                     continue
                 }
 
-                if (isUseful(importPath, usedQualifiedNames) && needImport(importPath, jetFile, directivesBeforeCurrent) && needImport(importPath, jetFile, directivesAfterCurrent)) {
+                if (isUseful(importPath, usedQualifiedNames)
+                    && needImport(importPath, jetFile, directivesBeforeCurrent)
+                    && needImport(importPath, jetFile, directivesAfterCurrent)
+                ) {
                     directivesBeforeCurrent.add(anImport)
                 }
                 else {
@@ -76,20 +79,6 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 element?.acceptChildren(this)
             }
 
-            override fun visitUserType(`type`: JetUserType) {
-                val qualifier = `type`.getQualifier()
-                if (qualifier == null) {
-                    super.visitUserType(`type`)
-                }
-                else {
-                    val argumentList = `type`.getTypeArgumentList()
-                    if (argumentList != null) {
-                        super.visitTypeArgumentList(argumentList)
-                    }
-                    visitUserType(qualifier)
-                }
-            }
-
             override fun visitJetElement(element: JetElement) {
                 if (PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) != null ||
                     PsiTreeUtil.getParentOfType(element, javaClass<JetPackageDirective>()) != null) {
@@ -98,7 +87,9 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                 val reference = element.getReference()
                 if (reference is JetReference) {
                     val referencedDescriptors = reference.resolveToDescriptors()
-                    val importableDescriptors = referencedDescriptors.filter { it.canBeReferencedViaImport() }
+                    val importableDescriptors = referencedDescriptors.filter {
+                        it.canBeReferencedViaImport() && !isInReceiverScope(element, it)
+                    }
                     usedQualifiedNames.addAll(importableDescriptors.map { it.importableFqName }.filterNotNull())
                 }
                 super.visitJetElement(element)
