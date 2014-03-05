@@ -42,9 +42,10 @@ fun main(args: Array<String>) {
         execProtoc(commonProto, "compiler/frontend/serialization/src")
         execProtoc(javaProto, "core/serialization.java/src")
 
-        modifyAndExecProtoc(commonProto, "jps-plugin/test")
-        modifyAndExecProtoc(javaProto, "jps-plugin/test")
-    } finally {
+        modifyAndExecProtoc(commonProto, "compiler/tests")
+        modifyAndExecProtoc(javaProto, "compiler/tests")
+    }
+    finally {
         // Workaround for JVM hanging: IDEA's process handler creates thread pool
         System.exit(0)
     }
