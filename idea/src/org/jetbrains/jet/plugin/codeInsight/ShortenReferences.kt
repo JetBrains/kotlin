@@ -29,47 +29,19 @@ public object ShortenReferences {
     public fun process(elements: Iterable<JetElement>) {
         for ((file, fileElements) in elements.groupBy { element -> element.getContainingFile() as JetFile }) {
             // first resolve all qualified references - optimization
-            val resolveAllVisitor = ResolveAllReferencesVisitor(file)
-            processElements(fileElements, resolveAllVisitor)
+            val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, visitShortNames = false)
 
-            val shortenTypesVisitor = ShortenTypesVisitor(file, resolveAllVisitor.result)
+            val shortenTypesVisitor = ShortenTypesVisitor(file, referenceToContext)
             processElements(fileElements, shortenTypesVisitor)
             shortenTypesVisitor.finish()
 
-            processElements(fileElements, ShortenQualifiedExpressionsVisitor(file, resolveAllVisitor.result))
+            processElements(fileElements, ShortenQualifiedExpressionsVisitor(file, referenceToContext))
         }
     }
 
     private fun processElements(elements: Iterable<JetElement>, visitor: JetVisitorVoid) {
         for (element in elements) {
             element.accept(visitor)
-        }
-    }
-
-    private class ResolveAllReferencesVisitor(file: JetFile) : JetTreeVisitorVoid() {
-        private val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
-        private val resolveMap = HashMap<JetReferenceExpression, BindingContext>()
-
-        public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
-
-        override fun visitUserType(userType: JetUserType) {
-            userType.acceptChildren(this)
-
-            if (userType.getQualifier() != null) {
-                val referenceExpression = userType.getReferenceExpression()
-                if (referenceExpression != null) {
-                    resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
-                }
-            }
-        }
-
-        override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
-            expression.acceptChildren(this)
-
-            val referenceExpression = referenceExpression(expression.getSelectorExpression())
-            if (referenceExpression != null) {
-                resolveMap[referenceExpression] = resolveSession.resolveToElement(referenceExpression)
-            }
         }
     }
 
@@ -223,14 +195,14 @@ public object ShortenReferences {
             val isUsageInImport = qualifiedExpression.getParentByType(javaClass<JetImportDirective>()) != null
             val isClassOrPackage = targetDescriptor is ClassDescriptor || targetDescriptor is PackageViewDescriptor
 
-            val referenceExpression = referenceExpression(qualifiedExpression.getSelectorExpression())!!
+            val referenceExpression = qualifiedExpression.getSelectorExpression()!!.referenceExpression()!!
             val resolveBefore = resolveState(referenceExpression, bindingContext)
 
             val copy = qualifiedExpression.copy()
 
             val selectorExpression = qualifiedExpression.getSelectorExpression()!!
             val newExpression = qualifiedExpression.replace(selectorExpression) as JetExpression
-            val newReferenceExpression = referenceExpression(newExpression)!!
+            val newReferenceExpression = newExpression.referenceExpression()!!
 
             val newBindingContext = resolveSession.resolveToElement(newReferenceExpression)
             val resolveAfter = resolveState(newReferenceExpression, newBindingContext)
@@ -265,12 +237,6 @@ public object ShortenReferences {
             }
         }
     }
-
-    private fun referenceExpression(selectorExpression: JetExpression?): JetReferenceExpression?
-            = if (selectorExpression is JetCallExpression)
-                  selectorExpression.getCalleeExpression() as? JetReferenceExpression
-              else
-                  selectorExpression as? JetReferenceExpression
 
     private fun DeclarationDescriptor.asString() = DescriptorRenderer.TEXT.render(this)
 
