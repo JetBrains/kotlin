@@ -55,6 +55,8 @@ public final class JvmAnnotationNames {
             CALLABLE_REFERENCE_WRAPPER,
             LOCAL_FUNCTION,
             ANONYMOUS_FUNCTION,
+            LOCAL_CLASS,
+            ANONYMOUS_OBJECT,
             ;
 
             @Nullable

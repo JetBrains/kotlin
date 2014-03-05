@@ -84,6 +84,30 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
                ANONYMOUS_FUNCTION);
     }
 
+    public void testLocalClass() {
+        doTest("fun foo() { class Local }",
+               "Local",
+               LOCAL_CLASS);
+    }
+
+    public void testLocalTraitImpl() {
+        doTest("fun foo() { trait Local { fun bar() = 42 } }",
+               "Local",
+               LOCAL_CLASS);
+    }
+
+    public void testInnerClassOfLocalClass() {
+        doTest("fun foo() { class Local { inner class Inner } }",
+               "Inner",
+               LOCAL_CLASS);
+    }
+
+    public void testAnonymousObject() {
+        doTest("val o = object {}",
+               "$",
+               ANONYMOUS_OBJECT);
+    }
+
     private void doTest(@NotNull String code, @NotNull final String classNamePart, @NotNull KotlinSyntheticClass.Kind expectedKind) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
