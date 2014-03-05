@@ -13,6 +13,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.commons.RemappingMethodAdapter;
 import org.jetbrains.asm4.tree.*;
 import org.jetbrains.asm4.tree.analysis.*;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -28,7 +29,7 @@ public class MethodInliner {
 
     private final Parameters parameters;
 
-    private final InliningContext parent;
+    private final InliningContext inliningContext;
 
     @Nullable
     private final Type lambdaType;
@@ -52,7 +53,7 @@ public class MethodInliner {
      *
      * @param node
      * @param parameters
-     * @param parent
+     * @param inliningContext
      * @param lambdaType - in case on lambda 'invoke' inlining
      */
     public MethodInliner(
@@ -65,7 +66,7 @@ public class MethodInliner {
     ) {
         this.node = node;
         this.parameters = parameters;
-        this.parent = parent;
+        this.inliningContext = parent;
         this.lambdaType = lambdaType;
         this.lambdaFieldRemapper = lambdaFieldRemapper;
         this.isSameModule = isSameModule;
@@ -125,15 +126,16 @@ public class MethodInliner {
 
                     if (invocation.shouldRegenerate()) {
                         //TODO: need poping of type but what to do with local funs???
-                        Type newLambdaType = Type.getObjectType(parent.nameGenerator.genLambdaClassName());
+                        Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
                         currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
                         LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(),
-                                                                              parent.subInline(parent.nameGenerator, currentTypeMapping),
+                                                                              inliningContext.subInline(inliningContext.nameGenerator, currentTypeMapping).classRegeneration(),
                                                                               isSameModule, newLambdaType);
 
-                        transformer.doTransform(invocation);
+                        InlineResult transformResult = transformer.doTransform(invocation);
+                        result.addAllClassesToRemove(transformResult);
 
-                        if (parent.isInliningLambda) {
+                        if (inliningContext.isInliningLambda) {
                             //this class is transformed and original not used so we should remove original one after inlining
                             result.addClassToRemove(invocation.getOwnerInternalName());
                         }
@@ -163,8 +165,9 @@ public class MethodInliner {
                     Parameters lambdaParameters = info.addAllParameters(capturedRemapper);
 
                     setInlining(true);
-                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters, parent.subInlineLambda(
-                            parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
+                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
+                                                              inliningContext.subInlineLambda(info),
+                                                              info.getLambdaClassType(),
                                                               capturedRemapper, true /*cause all calls in same module as lambda*/
                     );
 
@@ -331,7 +334,7 @@ public class MethodInliner {
                             }
                         }
 
-                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule));
+                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule, inliningContext.classRegeneration));
                     }
                 }
             }
@@ -422,6 +425,34 @@ public class MethodInliner {
                         //lambda class transformation: skip captured this
                     } else {
                         cur = this.lambdaFieldRemapper.doTransform(node, fieldInsnNode, result);
+                    }
+                } else {
+                    Type type1 = Type.getType(fieldInsnNode.desc);
+                    if (!AsmUtil.isPrimitive(type1)) {
+                        String type = type1.getInternalName();
+                        if (inliningContext.typeMapping.containsKey(type)) {
+                            //TODO value could be null
+                            String newTypeOrSkip = inliningContext.typeMapping.get(type);
+                            if (newTypeOrSkip != null) {
+                                fieldInsnNode.owner = newTypeOrSkip;
+                            }
+                            else {
+                                //generate owner of next instruction
+                                AbstractInsnNode previous = fieldInsnNode.getPrevious();
+                                AbstractInsnNode nextInstruction = fieldInsnNode.getNext();
+                                if (!(nextInstruction instanceof FieldInsnNode)) {
+                                    throw new IllegalStateException(
+                                            "Instruction after inlined one should be field access: " + nextInstruction);
+                                }
+                                if (!(previous instanceof FieldInsnNode)) {
+                                    throw new IllegalStateException("Instruction before inlined one should be field access: " + previous);
+                                }
+                                cur = nextInstruction;
+                                node.instructions.remove(cur.getPrevious());
+                                ((FieldInsnNode) cur).owner = Type.getType(((FieldInsnNode) previous).desc).getInternalName();
+                                ((FieldInsnNode) cur).name = LambdaTransformer.getNewFieldName(((FieldInsnNode) cur).name);
+                            }
+                        }
                     }
                 }
             }

@@ -37,10 +37,18 @@ public class ConstructorInvocation {
 
     private Map<String, LambdaInfo> capturedLambdasToInline;
 
-    ConstructorInvocation(String ownerInternalName, Map<Integer, LambdaInfo> lambdasToInline, boolean isSameModule) {
+    private boolean capturedOuterRegenerated;
+
+    ConstructorInvocation(
+            String ownerInternalName,
+            Map<Integer, LambdaInfo> lambdasToInline,
+            boolean isSameModule,
+            boolean capturedOuterRegenerated
+    ) {
         this.ownerInternalName = ownerInternalName;
         this.lambdasToInline = lambdasToInline;
         this.isSameModule = isSameModule;
+        this.capturedOuterRegenerated = capturedOuterRegenerated;
     }
 
     public String getOwnerInternalName() {
@@ -48,7 +56,7 @@ public class ConstructorInvocation {
     }
 
     public boolean shouldRegenerate() {
-        return !lambdasToInline.isEmpty() || !isSameModule;
+        return !lambdasToInline.isEmpty() || !isSameModule || capturedOuterRegenerated;
     }
 
     public Map<Integer, LambdaInfo> getLambdasToInline() {
@@ -86,4 +94,5 @@ public class ConstructorInvocation {
     public void setCapturedLambdasToInline(Map<String, LambdaInfo> capturedLambdasToInline) {
         this.capturedLambdasToInline = capturedLambdasToInline;
     }
+
 }
