@@ -115,30 +115,28 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
             instructionDump.append("\n---------------------\n");
             dumpInstructions((PseudocodeImpl) pseudocode, instructionDump);
             instructionDump.append("=====================\n");
-            
-            //check edges directions
-            Collection<Instruction> instructions = ((PseudocodeImpl)pseudocode).getAllInstructions();
-            for (Instruction instruction : instructions) {
-                if (!((InstructionImpl)instruction).isDead()) {
-                    for (Instruction nextInstruction : instruction.getNextInstructions()) {
-                        assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
-                                   nextInstruction.getPreviousInstructions().contains(instruction));
-                    }
-                    for (Instruction prevInstruction : instruction.getPreviousInstructions()) {
-                        assertTrue("instruction '" + instruction + "' has '" + prevInstruction + "' among previous instructions list, but not vice versa",
-                                   prevInstruction.getNextInstructions().contains(instruction));
-                    }
-                }
-            }
+            checkPseudocode((PseudocodeImpl) pseudocode);
         }
 
         File expectedInstructionsFile = JetTestUtils.replaceExtension(file, "instructions");
         JetTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
+    }
 
-//                        StringBuilder graphDump = new StringBuilder();
-//                        for (Pseudocode pseudocode : pseudocodes) {
-//                            topOrderDump(pseudocode.)
-//                        }
+    private void checkPseudocode(PseudocodeImpl pseudocode) {
+        //check edges directions
+        Collection<Instruction> instructions = pseudocode.getAllInstructions();
+        for (Instruction instruction : instructions) {
+            if (!((InstructionImpl)instruction).isDead()) {
+                for (Instruction nextInstruction : instruction.getNextInstructions()) {
+                    assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
+                               nextInstruction.getPreviousInstructions().contains(instruction));
+                }
+                for (Instruction prevInstruction : instruction.getPreviousInstructions()) {
+                    assertTrue("instruction '" + instruction + "' has '" + prevInstruction + "' among previous instructions list, but not vice versa",
+                               prevInstruction.getNextInstructions().contains(instruction));
+                }
+            }
+        }
     }
 
     private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
