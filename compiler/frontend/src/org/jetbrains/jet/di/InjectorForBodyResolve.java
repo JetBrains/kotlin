@@ -169,6 +169,7 @@ public class InjectorForBodyResolve {
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
+        declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setTrace(bindingTrace);
 
         functionAnalyzerExtension.setTrace(bindingTrace);

@@ -41,11 +41,18 @@ public class DeclarationsChecker {
     private BindingTrace trace;
     @NotNull
     private ModifiersChecker modifiersChecker;
+    @NotNull
+    private DescriptorResolver descriptorResolver;
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
         this.trace = trace;
         this.modifiersChecker = new ModifiersChecker(trace);
+    }
+
+    @Inject
+    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
     }
 
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
@@ -59,15 +66,18 @@ public class DeclarationsChecker {
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
+            checkSupertypesForConsistency(classDescriptor);
+            checkTypesInClassHeader(classOrObject);
+
             if (classOrObject instanceof JetClass) {
-                checkClass((JetClass) classOrObject, classDescriptor);
+                JetClass jetClass = (JetClass) classOrObject;
+                checkClass(jetClass, classDescriptor);
+                descriptorResolver.checkNamesInConstraints(
+                        jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
                 checkObject((JetObjectDeclaration) classOrObject);
             }
-
-            checkSupertypesForConsistency(classDescriptor);
-            checkTypesInClassHeader(classOrObject);
 
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }

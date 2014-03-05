@@ -208,7 +208,7 @@ public class TypeHierarchyResolver {
             if (classOrObject instanceof JetClass) {
                 ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
                 //noinspection unchecked
-                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForClassHeaderResolution(),
+                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor, descriptor.getScopeForClassHeaderResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
         }

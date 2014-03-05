@@ -209,6 +209,7 @@ public class InjectorForTopDownAnalyzerForJs {
 
         controlFlowAnalyzer.setTrace(bindingTrace);
 
+        declarationsChecker.setDescriptorResolver(descriptorResolver);
         declarationsChecker.setTrace(bindingTrace);
 
         functionAnalyzerExtension.setTrace(bindingTrace);

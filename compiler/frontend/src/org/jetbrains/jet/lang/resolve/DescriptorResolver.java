@@ -306,7 +306,7 @@ public class DescriptorResolver {
         List<TypeParameterDescriptorImpl> typeParameterDescriptors =
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace);
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        resolveGenericBounds(function, innerScope, typeParameterDescriptors, trace);
+        resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace);
 
         JetType receiverType = null;
         JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
@@ -627,6 +627,7 @@ public class DescriptorResolver {
 
     public void resolveGenericBounds(
             @NotNull JetTypeParameterListOwner declaration,
+            @NotNull DeclarationDescriptor descriptor,
             JetScope scope,
             List<TypeParameterDescriptorImpl> parameters,
             BindingTrace trace
@@ -665,18 +666,7 @@ public class DescriptorResolver {
                         .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectConstraint()));
             }
 
-            if (typeParameterDescriptor == null) {
-                // To tell the user that we look only for locally defined type parameters
-                ClassifierDescriptor classifier = scope.getClassifier(referencedName);
-                if (classifier != null) {
-                    trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(subjectTypeParameterName, constraint, declaration));
-                    trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
-                }
-                else {
-                    trace.report(UNRESOLVED_REFERENCE.on(subjectTypeParameterName, subjectTypeParameterName));
-                }
-            }
-            else {
+            if (typeParameterDescriptor != null) {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
                     if (constraint.isClassObjectConstraint()) {
@@ -712,6 +702,41 @@ public class DescriptorResolver {
 
         for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
             checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+        }
+
+        if (!(declaration instanceof JetClass)) {
+            checkNamesInConstraints(declaration, descriptor, scope, trace);
+        }
+    }
+
+    public void checkNamesInConstraints(
+            @NotNull JetTypeParameterListOwner declaration,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace
+    ) {
+        for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
+            JetSimpleNameExpression nameExpression = constraint.getSubjectTypeParameterName();
+            if (nameExpression == null) continue;
+
+            Name name = nameExpression.getReferencedNameAsName();
+
+            ClassifierDescriptor classifier = scope.getClassifier(name);
+            if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
+
+            if (classifier != null) {
+                // To tell the user that we look only for locally defined type parameters
+                trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(nameExpression, constraint, declaration));
+                trace.record(BindingContext.REFERENCE_TARGET, nameExpression, classifier);
+            }
+            else {
+                trace.report(UNRESOLVED_REFERENCE.on(nameExpression, nameExpression));
+            }
+
+            JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+            if (boundTypeReference != null) {
+                typeResolver.resolveType(scope, boundTypeReference, trace, true);
+            }
         }
     }
 
@@ -877,7 +902,7 @@ public class DescriptorResolver {
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(containingDeclaration, writableScope, typeParameters,
                                                                                       trace);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
-                resolveGenericBounds(property, writableScope, typeParameterDescriptors, trace);
+                resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
                 scopeWithTypeParameters = writableScope;
             }
 
