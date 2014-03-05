@@ -89,6 +89,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
                 JetSimpleNameExpression constrainedParameterName = jetTypeConstraint.getSubjectTypeParameterName();
                 if (constrainedParameterName != null) {
                     if (getName().equals(constrainedParameterName.getReferencedNameAsName())) {
+                        resolveSession.getTrace().record(BindingContext.REFERENCE_TARGET, constrainedParameterName, this);
 
                         JetTypeReference boundTypeReference = jetTypeConstraint.getBoundTypeReference();
                         if (boundTypeReference != null) {
