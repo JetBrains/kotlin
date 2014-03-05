@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment {
+public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
     }
