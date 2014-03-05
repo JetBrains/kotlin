@@ -208,30 +208,9 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
         List<Instruction> instructions = pseudocode.getAllInstructions();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
-        int maxLength = 0;
-        int maxNextLength = 0;
-        for (Instruction instruction : instructions) {
-            String instuctionText = instruction.toString();
-            if (instuctionText.length() > maxLength) {
-                String[] parts = instuctionText.split("\n");
-                if (parts.length > 1) {
-                    for (String part : parts) {
-                        if (part.length() > maxLength) {
-                            maxLength = part.length();
-                        }
-                    }
-                }
-                else {
-                    if (instuctionText.length() > maxLength) {
-                        maxLength = instuctionText.length();
-                    }
-                }
-            }
-            String instructionListText = formatInstructionList(instruction.getNextInstructions());
-            if (instructionListText.length() > maxNextLength) {
-                maxNextLength = instructionListText.length();
-            }
-        }
+        int instructionColumnWidth = countInstructionColumnWidth(instructions);
+        int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(instructions);
+
         for (int i = 0; i < instructions.size(); i++) {
             Instruction instruction = instructions.get(i);
             for (PseudocodeImpl.PseudocodeLabel label: labels) {
@@ -242,13 +221,14 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
 
             StringBuilder line = new StringBuilder();
 
-            line.append(formatInstruction(instruction, maxLength, remainedAfterPostProcessInstructions));
+            line.append(formatInstruction(instruction, instructionColumnWidth, remainedAfterPostProcessInstructions));
 
             // Only print NEXT and PREV if the values are non-trivial
             Instruction next = i == instructions.size() - 1 ? null : instructions.get(i + 1);
             Collection<Instruction> nextInstructions = instruction.getNextInstructions();
             if (!sameContents(next, nextInstructions)) {
-                line.append("    NEXT:").append(String.format("%1$-" + maxNextLength + "s", formatInstructionList(nextInstructions)));
+                line.append("    NEXT:").append(
+                        String.format("%1$-" + nextInstructionsColumnWidth + "s", formatInstructionList(nextInstructions)));
             }
 
             Instruction prev = i == 0 ? null : instructions.get(i - 1);
@@ -259,6 +239,40 @@ public abstract class AbstractControlFlowTest extends KotlinTestWithEnvironment 
             out.append(StringUtil.trimTrailing(line.toString()));
             out.append("\n");
         }
+    }
+
+    private static int countInstructionColumnWidth(List<Instruction> instructions) {
+        int maxWidth = 0;
+        for (Instruction instruction : instructions) {
+            String instuctionText = instruction.toString();
+            if (instuctionText.length() > maxWidth) {
+                String[] parts = instuctionText.split("\n");
+                if (parts.length > 1) {
+                    for (String part : parts) {
+                        if (part.length() > maxWidth) {
+                            maxWidth = part.length();
+                        }
+                    }
+                }
+                else {
+                    if (instuctionText.length() > maxWidth) {
+                        maxWidth = instuctionText.length();
+                    }
+                }
+            }
+        }
+        return maxWidth;
+    }
+
+    private static int countNextInstructionsColumnWidth(List<Instruction> instructions) {
+        int maxWidth = 0;
+        for (Instruction instruction : instructions) {
+            String instructionListText = formatInstructionList(instruction.getNextInstructions());
+            if (instructionListText.length() > maxWidth) {
+                maxWidth = instructionListText.length();
+            }
+        }
+        return maxWidth;
     }
 
     private static boolean sameContents(@Nullable Instruction natural, Collection<Instruction> actual) {
