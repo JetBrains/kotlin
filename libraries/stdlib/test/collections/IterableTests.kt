@@ -4,6 +4,17 @@ import org.junit.Test
 import kotlin.test.*
 import java.util.*
 
+fun <T> iterableOf(vararg items : T) : Iterable<T> = IterableWrapper(items.toList())
+
+class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
+    private val collection = collection
+
+    override fun iterator(): Iterator<T> {
+        return collection.iterator()
+    }
+}
+
+class IterableTest : IterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
 class SetTest : IterableTests<Set<String>>(hashSetOf("foo", "bar"), hashSetOf<String>())
 class ListTest : OrderedIterableTests<List<String>>(listOf("foo", "bar"), listOf<String>())
 class ArrayListTest : OrderedIterableTests<ArrayList<String>>(arrayListOf("foo", "bar"), arrayListOf<String>())

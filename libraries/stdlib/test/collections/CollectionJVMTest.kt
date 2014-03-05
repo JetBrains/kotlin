@@ -48,8 +48,7 @@ class CollectionJVMTest {
         }
     }
 
-    // TODO would be nice to avoid the <String>
-    test fun filterNotNullIntolinkedListOf() {
+    test fun filterNotNullIntoLinkedListOf() {
         val data = arrayListOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedListOf<String>())
 
@@ -61,8 +60,6 @@ class CollectionJVMTest {
         }
     }
 
-
-    // TODO would be nice to avoid the <String>
     test fun filterIntoSortedSet() {
         val data = arrayListOf("foo", "bar")
         val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }

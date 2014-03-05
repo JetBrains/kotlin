@@ -48,7 +48,6 @@ class CollectionTest {
         }
     }
 
-    // TODO would be nice to avoid the <String>
     test fun filterIntoSet() {
         val data = arrayListOf("foo", "bar")
         val foo = data.filterTo(hashSetOf<String>()) { it.startsWith("f") }
@@ -170,8 +169,8 @@ class CollectionTest {
     }
 
     test fun mapRanges() {
-        val range = 1..3 map { it * 2}
-        assertEquals(listOf(2,4,6), range)
+        val range = 1..3 map { it * 2 }
+        assertEquals(listOf(2, 4, 6), range)
     }
 
     test fun plus() {
@@ -271,27 +270,23 @@ class CollectionTest {
         }
     }
 
-    test fun simpleCount() {
+    test fun count() {
         val data = arrayListOf("foo", "bar")
         assertEquals(2, data.count())
         assertEquals(3, hashSetOf(12, 14, 15).count())
         assertEquals(0, ArrayList<Double>().count())
     }
 
-    //todo after KT-1873 the name might be returned to 'last'
-    test fun lastElement() {
+    test fun last() {
         val data = arrayListOf("foo", "bar")
         assertEquals("bar", data.last())
         assertEquals(25, arrayListOf(15, 19, 20, 25).last())
         assertEquals('a', arrayListOf('a').last())
+        fails { arrayListOf<Int>().last() }
     }
     // TODO
     // assertEquals(19, TreeSet(arrayListOf(90, 47, 19)).first())
 
-
-    test fun lastException() {
-        fails { arrayListOf<Int>().last() }
-    }
 
     test fun subscript() {
         val list = arrayListOf("foo", "bar")
@@ -321,25 +316,15 @@ class CollectionTest {
         val indices = data.indices
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
-
-        assertEquals(indices, data.size. indices)
+        assertEquals(indices, data.size.indices)
     }
 
     test fun contains() {
-        val data = arrayListOf("foo", "bar")
-        assertTrue(data.contains("foo"))
-        assertTrue(data.contains("bar"))
-        assertFalse(data.contains("some"))
-
-        // TODO: Problems with generation
-        //    assertTrue(IterableWrapper(data).contains("bar"))
-        //    assertFalse(IterableWrapper(data).contains("some"))
-
         assertFalse(hashSetOf<Int>().contains(12))
         assertTrue(arrayListOf(15, 19, 20).contains(15))
 
-        //    assertTrue(IterableWrapper(hashSet(45, 14, 13)).contains(14))
-        //    assertFalse(IterableWrapper(linkedList<Int>()).contains(15))
+        assertTrue(IterableWrapper(hashSetOf(45, 14, 13)).contains(14))
+        assertFalse(IterableWrapper(linkedListOf<Int>()).contains(15))
     }
 
     test fun sortForMutableIterable() {
@@ -422,11 +407,4 @@ class CollectionTest {
         expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
-    class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
-        private val collection = collection
-
-        override fun iterator(): Iterator<T> {
-            return collection.iterator()
-        }
-    }
 }
