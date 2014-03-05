@@ -529,7 +529,7 @@ public class JetFlowInformationProvider {
                 if (instruction instanceof WriteValueInstruction) {
                     if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
                     JetElement element = ((WriteValueInstruction) instruction).getElement();
-                    if (variableUseState != LAST_READ) {
+                    if (variableUseState != READ) {
                         if (element instanceof JetBinaryExpression &&
                             ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {
                             JetExpression right = ((JetBinaryExpression) element).getRight();
@@ -572,7 +572,7 @@ public class JetFlowInformationProvider {
                     else if (variableUseState == ONLY_WRITTEN_NEVER_READ && JetPsiUtil.isVariableNotParameterDeclaration(element)) {
                         report(Errors.ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE.on((JetNamedDeclaration) element, variableDescriptor), ctxt);
                     }
-                    else if (variableUseState == LAST_WRITTEN && element instanceof JetVariableDeclaration) {
+                    else if (variableUseState == WRITTEN_AFTER_READ && element instanceof JetVariableDeclaration) {
                         if (element instanceof JetProperty) {
                             JetExpression initializer = ((JetProperty) element).getInitializer();
                             if (initializer != null) {

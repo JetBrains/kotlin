@@ -257,7 +257,7 @@ public class PseudocodeVariablesData {
                         }
                         Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
                         if (instruction instanceof ReadValueInstruction) {
-                            exitResult.put(variableDescriptor, VariableUseState.LAST_READ);
+                            exitResult.put(variableDescriptor, VariableUseState.READ);
                         }
                         else { //instruction instanceof WriteValueInstruction
                             VariableUseState variableUseState = enterResult.get(variableDescriptor);
@@ -269,9 +269,9 @@ public class PseudocodeVariablesData {
                                 case ONLY_WRITTEN_NEVER_READ:
                                     exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ);
                                     break;
-                                case LAST_WRITTEN:
-                                case LAST_READ:
-                                    exitResult.put(variableDescriptor, VariableUseState.LAST_WRITTEN);
+                                case WRITTEN_AFTER_READ:
+                                case READ:
+                                    exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ);
                             }
                         }
                         return Edges.create(enterResult, exitResult);
@@ -314,19 +314,19 @@ public class PseudocodeVariablesData {
     }
 
     public static enum VariableUseState {
-        LAST_READ(3),
-        LAST_WRITTEN(2),
+        READ(3),
+        WRITTEN_AFTER_READ(2),
         ONLY_WRITTEN_NEVER_READ(1),
         UNUSED(0);
 
-        private final int importance;
+        private final int priority;
 
-        VariableUseState(int importance) {
-            this.importance = importance;
+        VariableUseState(int priority) {
+            this.priority = priority;
         }
 
         private VariableUseState merge(@Nullable VariableUseState variableUseState) {
-            if (variableUseState == null || importance > variableUseState.importance) return this;
+            if (variableUseState == null || priority > variableUseState.priority) return this;
             return variableUseState;
         }
 
