@@ -58,6 +58,16 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             doTest("compiler/testData/cfg-variables/basic/UsageInFunctionLiteral.kt");
         }
         
+        @TestMetadata("varInitializationInIf.kt")
+        public void testVarInitializationInIf() throws Exception {
+            doTest("compiler/testData/cfg-variables/basic/varInitializationInIf.kt");
+        }
+        
+        @TestMetadata("varInitializationInIfInCycle.kt")
+        public void testVarInitializationInIfInCycle() throws Exception {
+            doTest("compiler/testData/cfg-variables/basic/varInitializationInIfInCycle.kt");
+        }
+        
         @TestMetadata("VariablesInitialization.kt")
         public void testVariablesInitialization() throws Exception {
             doTest("compiler/testData/cfg-variables/basic/VariablesInitialization.kt");
