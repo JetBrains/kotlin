@@ -100,4 +100,22 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
         }
         return Collections.singleton(natural).equals(new HashSet<Instruction>(actual));
     }
+
+    @Override
+    protected void checkPseudocode(PseudocodeImpl pseudocode) {
+        //check edges directions
+        Collection<Instruction> instructions = pseudocode.getAllInstructions();
+        for (Instruction instruction : instructions) {
+            if (!((InstructionImpl)instruction).isDead()) {
+                for (Instruction nextInstruction : instruction.getNextInstructions()) {
+                    assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
+                               nextInstruction.getPreviousInstructions().contains(instruction));
+                }
+                for (Instruction prevInstruction : instruction.getPreviousInstructions()) {
+                    assertTrue("instruction '" + instruction + "' has '" + prevInstruction + "' among previous instructions list, but not vice versa",
+                               prevInstruction.getNextInstructions().contains(instruction));
+                }
+            }
+        }
+    }
 }

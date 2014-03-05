@@ -122,21 +122,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         JetTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
     }
 
-    private void checkPseudocode(PseudocodeImpl pseudocode) {
-        //check edges directions
-        Collection<Instruction> instructions = pseudocode.getAllInstructions();
-        for (Instruction instruction : instructions) {
-            if (!((InstructionImpl)instruction).isDead()) {
-                for (Instruction nextInstruction : instruction.getNextInstructions()) {
-                    assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
-                               nextInstruction.getPreviousInstructions().contains(instruction));
-                }
-                for (Instruction prevInstruction : instruction.getPreviousInstructions()) {
-                    assertTrue("instruction '" + instruction + "' has '" + prevInstruction + "' among previous instructions list, but not vice versa",
-                               prevInstruction.getNextInstructions().contains(instruction));
-                }
-            }
-        }
+    protected void checkPseudocode(PseudocodeImpl pseudocode) {
     }
 
     private static String formatInstruction(Instruction instruction, int maxLength, Set<Instruction> remainedAfterPostProcessInstructions) {
