@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -608,14 +607,7 @@ public class JetControlFlowProcessor {
             if (loopRange != null) {
                 generateInstructions(loopRange, NOT_IN_CONDITION);
             }
-            JetParameter loopParameter = expression.getLoopParameter();
-            if (loopParameter != null) {
-                generateInstructions(loopParameter, context);
-            }
-            else {
-                JetMultiDeclaration multiParameter = expression.getMultiParameter();
-                generateInstructions(multiParameter, context);
-            }
+            declareLoopParameter(expression);
 
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
@@ -627,6 +619,8 @@ public class JetControlFlowProcessor {
             LoopInfo loopInfo = builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
+            writeLoopParameterAssignment(expression);
+
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body, NOT_IN_CONDITION);
@@ -636,6 +630,30 @@ public class JetControlFlowProcessor {
             builder.exitLoop(expression);
             builder.loadUnit(expression);
             builder.exitLexicalScope(expression);
+        }
+
+        private void declareLoopParameter(JetForExpression expression) {
+            JetParameter loopParameter = expression.getLoopParameter();
+            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            if (loopParameter != null) {
+                builder.declareParameter(loopParameter);
+            }
+            else if (multiDeclaration != null) {
+                visitMultiDeclaration(multiDeclaration, false);
+            }
+        }
+
+        private void writeLoopParameterAssignment(JetForExpression expression) {
+            JetParameter loopParameter = expression.getLoopParameter();
+            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            if (loopParameter != null) {
+                builder.write(loopParameter, loopParameter);
+            }
+            else if (multiDeclaration != null) {
+                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                    builder.write(entry, entry);
+                }
+            }
         }
 
         @Override
@@ -832,18 +850,21 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitMultiDeclarationVoid(@NotNull JetMultiDeclaration declaration, CFPContext context) {
-            JetExpression initializer = declaration.getInitializer();
-            if (initializer != null) {
-                generateInstructions(initializer, NOT_IN_CONDITION);
-            }
-            List<JetMultiDeclarationEntry> entries = declaration.getEntries();
-            for (JetMultiDeclarationEntry entry : entries) {
+            visitMultiDeclaration(declaration, true);
+        }
+
+        private void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration, boolean generateWriteForEntries) {
+            generateInstructions(declaration.getInitializer(), NOT_IN_CONDITION);
+
+            for (JetMultiDeclarationEntry entry : declaration.getEntries()) {
                 builder.declareVariable(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall != null) {
                     builder.call(entry, resolvedCall);
                 }
-                builder.write(entry, entry);
+                if (generateWriteForEntries) {
+                    builder.write(entry, entry);
+                }
             }
         }
 

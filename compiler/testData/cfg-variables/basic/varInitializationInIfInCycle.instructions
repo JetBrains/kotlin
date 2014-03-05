@@ -21,14 +21,14 @@ L0:
   3 mark(for (i in numbers) { val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })                                                                            USE: in: {numbers=READ} out: {numbers=READ}
     r(numbers)                                                                                                                                                                        USE: in: {} out: {numbers=READ}
     v(i)                                                                                                          INIT: in: {numbers=ID} out: {i=D, numbers=ID}
-    w(i)                                                                                                          INIT: in: {i=D, numbers=ID} out: {i=ID, numbers=ID}
 L3:
-    jmp?(L2)                                                                                                      INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}                USE: in: {} out: {}
+    jmp?(L2)                                                                                                      INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}
 L4 [loop entry point]:
 L5 [body entry point]:
-  4 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })                           INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}
-    v(val b: Boolean)
-    mark(if (1 < 2) { b = false } else { b = true })
+    w(i)                                                                                                          INIT: in: {i=D, numbers=ID} out: {i=ID, numbers=ID}                 USE: in: {} out: {}
+  4 mark({ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) continue })                           INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}
+    v(val b: Boolean)                                                                                             INIT: in: {i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
+    mark(if (1 < 2) { b = false } else { b = true })                                                              INIT: in: {b=D, i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
     mark(1 < 2)
     r(1)
     r(2)
@@ -36,20 +36,20 @@ L5 [body entry point]:
     jf(L6)
   5 mark({ b = false })
     r(false)                                                                                                                                                                          USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b)                                                                                                                                                                              USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
-  4 jmp(L7)                                                                                                                                                                           USE: in: {b=READ} out: {b=READ}
+    w(b)                                                                                                          INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+  4 jmp(L7)                                                                                                       INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
 L6:
-  5 mark({ b = true })
+  5 mark({ b = true })                                                                                            INIT: in: {b=D, i=ID, numbers=ID} out: {b=D, i=ID, numbers=ID}
     r(true)                                                                                                                                                                           USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b)                                                                                                                                                                              USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    w(b)                                                                                                          INIT: in: {b=D, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L7:
-  4 mark(use(b))                                                                                                                                                                      USE: in: {b=READ} out: {b=READ}
-    r(b)                                                                                                                                                                              USE: in: {b=WRITTEN_AFTER_READ} out: {b=READ}
+  4 mark(use(b))                                                                                                  INIT: in: {b=ID, i=ID, numbers=ID} out: {b=ID, i=ID, numbers=ID}    USE: in: {b=READ} out: {b=READ}
+    r(b)                                                                                                                                                                              USE: in: {} out: {b=READ}
     call(use, use)
-    jmp(L4 [loop entry point])                                                                                                                                                        USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    jmp(L4 [loop entry point])                                                                                                                                                        USE: in: {} out: {}
 - 3 jmp?(L4 [loop entry point])
 L2:
-    read (Unit)                                                                                                   INIT: in: {i=ID, numbers=ID} out: {i=ID, numbers=ID}
+    read (Unit)                                                                                                   INIT: in: {i=D, numbers=ID} out: {i=D, numbers=ID}
 L1:
   1 <END>                                                                                                         INIT: in: {numbers=ID} out: {numbers=ID}
 error:

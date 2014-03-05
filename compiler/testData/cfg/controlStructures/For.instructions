@@ -14,16 +14,16 @@ L0:
     r(2)
     call(.., rangeTo)
     v(i)
-    w(i)
 L3:
-    jmp?(L2)                                   NEXT:[read (Unit), mark({ doSmth(i) })]
+    jmp?(L2)                                   NEXT:[read (Unit), w(i)]
 L4 [loop entry point]:
 L5 [body entry point]:
-  4 mark({ doSmth(i) })                        PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    w(i)                                       PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+  4 mark({ doSmth(i) })
     mark(doSmth(i))
     r(i)
     call(doSmth, doSmth)
-  3 jmp?(L4 [loop entry point])                NEXT:[mark({ doSmth(i) }), read (Unit)]
+  3 jmp?(L4 [loop entry point])                NEXT:[w(i), read (Unit)]
 L2:
     read (Unit)                                PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:

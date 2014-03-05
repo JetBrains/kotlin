@@ -1688,6 +1688,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
             }
             
+            @TestMetadata("varInitializationInIfInCycle.kt")
+            public void testVarInitializationInIfInCycle() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/varInitializationInIfInCycle.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn")
             public static class DefiniteReturn extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInDefiniteReturn() throws Exception {
