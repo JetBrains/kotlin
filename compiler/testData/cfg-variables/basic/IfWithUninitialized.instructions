@@ -10,7 +10,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                             INIT: in: {} out: {}
+  1 <START>                                                             INIT: in: {} out: {}           USE: in: {} out: {}
   2 mark({ val b: Boolean if (1 < 2) { use(b) } else { b = true } })
     v(val b: Boolean)                                                   INIT: in: {} out: {b=D}
     mark(if (1 < 2) { use(b) } else { b = true })                       INIT: in: {b=D} out: {b=D}
@@ -30,11 +30,11 @@ L2:
     w(b)                                                                INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
 L1:
 L3:
-  1 <END>                                                               INIT: in: {b=D} out: {b=D}
+  1 <END>                                                               INIT: in: {} out: {}
 error:
-    <ERROR>                                                             INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                              INIT: in: {b=D} out: {b=D}     USE: in: {} out: {}
+    <SINK>                                                                                             USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a

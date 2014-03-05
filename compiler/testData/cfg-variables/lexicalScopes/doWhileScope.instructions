@@ -11,7 +11,7 @@ L0:
   1 <START>                                                      INIT: in: {} out: {}
   2 mark({ "before" do { var a = 2 } while (a > 0) "after" })
     mark("before")
-    r("before")
+    r("before")                                                                                  USE: in: {} out: {}
   3 mark(do { var a = 2 } while (a > 0))
 L2 [loop entry point]:
 L4 [body entry point]:
@@ -27,12 +27,12 @@ L5 [condition entry point]:
     jt(L2 [loop entry point])                                                                    USE: in: {a=READ} out: {a=READ}
 L3 [loop exit point]:
     read (Unit)
-  2 mark("after")
+  2 mark("after")                                                INIT: in: {} out: {}
     r("after")
 L1:
   1 <END>
 error:
-    <ERROR>                                                      INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                                                                                       USE: in: {} out: {}
 =====================

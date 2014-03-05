@@ -9,7 +9,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                                       INIT: in: {} out: {}
+  1 <START>                                                                       INIT: in: {} out: {}                        USE: in: {} out: {}
   2 mark({ "before" val b = 1 val f = { (x: Int) -> val a = x + b } "after" })
     mark("before")
     r("before")
@@ -19,18 +19,18 @@ L0:
     v(val f = { (x: Int) -> val a = x + b })                                      INIT: in: {b=ID} out: {b=ID, f=D}
     mark({ (x: Int) -> val a = x + b })                                           INIT: in: {b=ID, f=D} out: {b=ID, f=D}
     jmp?(L2)
-    d({ (x: Int) -> val a = x + b })                                              INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}    USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    d({ (x: Int) -> val a = x + b })                                                                                          USE: in: {b=READ} out: {b=READ}
 L2:
-    r({ (x: Int) -> val a = x + b })                                              INIT: in: {b=ID, f=D} out: {b=ID, f=D}
+    r({ (x: Int) -> val a = x + b })
     w(f)                                                                          INIT: in: {b=ID, f=D} out: {b=ID, f=ID}
     mark("after")                                                                 INIT: in: {b=ID, f=ID} out: {b=ID, f=ID}
     r("after")
 L1:
-  1 <END>
+  1 <END>                                                                         INIT: in: {} out: {}
 error:
-    <ERROR>                                                                       INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                                        INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}    USE: in: {} out: {}
+    <SINK>                                                                                                                    USE: in: {} out: {}
 =====================
 == anonymous_0 ==
 { (x: Int) ->
@@ -43,15 +43,15 @@ L3:
     w(x)                   INIT: in: {b=ID, f=D, x=D} out: {b=ID, f=D, x=ID}
   4 mark(val a = x + b)    INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
     v(val a = x + b)       INIT: in: {b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}
-    mark(x + b)            INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}      USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x)                                                                                     USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b)                                                                                     USE: in: {} out: {b=READ}
+    mark(x + b)            INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=D, b=ID, f=D, x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x)                                                                                    USE: in: {b=READ} out: {b=READ, x=READ}
+    r(b)                                                                                    USE: in: {} out: {b=READ}
     call(+, plus)
     w(a)                   INIT: in: {a=D, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
 L4:
-  3 <END>                  INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}
+  3 <END>                  INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}
 error:
     <ERROR>                INIT: in: {} out: {}
 sink:
-    <SINK>                 INIT: in: {a=ID, b=ID, f=D, x=ID} out: {a=ID, b=ID, f=D, x=ID}    USE: in: {} out: {}
+    <SINK>                 INIT: in: {b=ID, f=D, x=ID} out: {b=ID, f=D, x=ID}               USE: in: {} out: {}
 =====================

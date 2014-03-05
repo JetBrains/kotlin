@@ -7,7 +7,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                    INIT: in: {} out: {}
+  1 <START>                                    INIT: in: {} out: {}                        USE: in: {} out: {}
   2 mark({ val a = 1 val b: Int b = 2 42 })
     v(val a = 1)                               INIT: in: {} out: {a=D}
     r(1)                                       INIT: in: {a=D} out: {a=D}
@@ -17,11 +17,11 @@ L0:
     w(b)                                       INIT: in: {a=ID, b=D} out: {a=ID, b=ID}     USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
     r(42)                                      INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
 L1:
-  1 <END>
+  1 <END>                                      INIT: in: {} out: {}
 error:
-    <ERROR>                                    INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                     INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}    USE: in: {} out: {}
+    <SINK>                                                                                 USE: in: {} out: {}
 =====================
 == bar ==
 fun bar(foo: Foo) {

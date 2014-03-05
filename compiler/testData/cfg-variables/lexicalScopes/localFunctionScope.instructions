@@ -9,7 +9,7 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                                     INIT: in: {} out: {}
+  1 <START>                                                                     INIT: in: {} out: {}            USE: in: {} out: {}
   2 mark({ "before" val b = 1 fun local(x: Int) { val a = x + b } "after" })
     mark("before")
     r("before")
@@ -17,16 +17,16 @@ L0:
     r(1)                                                                        INIT: in: {b=D} out: {b=D}
     w(b)                                                                        INIT: in: {b=D} out: {b=ID}
     jmp?(L2)                                                                    INIT: in: {b=ID} out: {b=ID}
-    d(fun local(x: Int) { val a = x + b })                                      INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    d(fun local(x: Int) { val a = x + b })                                                                      USE: in: {b=READ} out: {b=READ}
 L2:
-    mark("after")                                                               INIT: in: {b=ID} out: {b=ID}
+    mark("after")
     r("after")
 L1:
-  1 <END>
+  1 <END>                                                                       INIT: in: {} out: {}
 error:
-    <ERROR>                                                                     INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                                      INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {} out: {}
+    <SINK>                                                                                                      USE: in: {} out: {}
 =====================
 == local ==
 fun local(x: Int) {
@@ -39,15 +39,15 @@ L3:
     w(x)                       INIT: in: {b=ID, x=D} out: {b=ID, x=ID}
   4 mark({ val a = x + b })    INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}
     v(val a = x + b)           INIT: in: {b=ID, x=ID} out: {a=D, b=ID, x=ID}
-    mark(x + b)                INIT: in: {a=D, b=ID, x=ID} out: {a=D, b=ID, x=ID}      USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x)                                                                               USE: in: {b=READ} out: {b=READ, x=READ}
-    r(b)                                                                               USE: in: {} out: {b=READ}
+    mark(x + b)                INIT: in: {a=D, b=ID, x=ID} out: {a=D, b=ID, x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x)                                                                              USE: in: {b=READ} out: {b=READ, x=READ}
+    r(b)                                                                              USE: in: {} out: {b=READ}
     call(+, plus)
     w(a)                       INIT: in: {a=D, b=ID, x=ID} out: {a=ID, b=ID, x=ID}
 L4:
-  3 <END>                      INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}
+  3 <END>                      INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}
 error:
     <ERROR>                    INIT: in: {} out: {}
 sink:
-    <SINK>                     INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {} out: {}
+    <SINK>                     INIT: in: {b=ID, x=ID} out: {b=ID, x=ID}               USE: in: {} out: {}
 =====================

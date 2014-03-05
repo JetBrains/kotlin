@@ -65,7 +65,7 @@ public class PseudocodeTraverser {
         SKIP_LOCAL_DECLARATIONS
     }
 
-    protected static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
+    public static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
         return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalFunctionDeclarationInstruction;
     }
 

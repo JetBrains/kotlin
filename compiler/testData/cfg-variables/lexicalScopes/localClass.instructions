@@ -23,17 +23,17 @@ L0:
     v(val a = x)                                                                                INIT: in: {x=ID} out: {a=D, x=ID}
     r(x)                                                                                        INIT: in: {a=D, x=ID} out: {a=D, x=ID}
     w(a)                                                                                        INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
-  2 jmp?(L2)                                                                                    INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
-    d(fun foo() { val b = x })                                                                  INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {x=READ} out: {x=READ}
+  2 jmp?(L2)                                                                                    INIT: in: {x=ID} out: {x=ID}
+    d(fun foo() { val b = x })                                                                                                             USE: in: {x=READ} out: {x=READ}
 L2:
-    mark("after")                                                                               INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
+    mark("after")
     r("after")
 L1:
-  1 <END>
+  1 <END>                                                                                       INIT: in: {} out: {}
 error:
-    <ERROR>                                                                                     INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                                                      INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {} out: {}
+    <SINK>                                                                                                                                 USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {
@@ -41,15 +41,15 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                INIT: in: {a=ID, x=ID} out: {a=ID, x=ID}
+  3 <START>                INIT: in: {x=ID} out: {x=ID}
   4 mark({ val b = x })
-    v(val b = x)           INIT: in: {a=ID, x=ID} out: {a=ID, b=D, x=ID}           USE: in: {x=READ} out: {x=READ}
-    r(x)                   INIT: in: {a=ID, b=D, x=ID} out: {a=ID, b=D, x=ID}      USE: in: {} out: {x=READ}
-    w(b)                   INIT: in: {a=ID, b=D, x=ID} out: {a=ID, b=ID, x=ID}
+    v(val b = x)           INIT: in: {x=ID} out: {b=D, x=ID}          USE: in: {x=READ} out: {x=READ}
+    r(x)                   INIT: in: {b=D, x=ID} out: {b=D, x=ID}     USE: in: {} out: {x=READ}
+    w(b)                   INIT: in: {b=D, x=ID} out: {b=ID, x=ID}
 L4:
-  3 <END>                  INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}
+  3 <END>                  INIT: in: {x=ID} out: {x=ID}
 error:
     <ERROR>                INIT: in: {} out: {}
 sink:
-    <SINK>                 INIT: in: {a=ID, b=ID, x=ID} out: {a=ID, b=ID, x=ID}    USE: in: {} out: {}
+    <SINK>                 INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
 =====================

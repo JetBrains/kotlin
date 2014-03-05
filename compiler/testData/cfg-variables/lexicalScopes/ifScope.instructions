@@ -22,19 +22,19 @@ L0:
     v(val a = 1)                                                             INIT: in: {} out: {a=D}
     r(1)                                                                     INIT: in: {a=D} out: {a=D}
     w(a)                                                                     INIT: in: {a=D} out: {a=ID}
-  2 jmp(L3)                                                                  INIT: in: {a=ID} out: {a=ID}
+  2 jmp(L3)                                                                  INIT: in: {} out: {}
 L2:
-  3 mark({ val b = 2 })                                                      INIT: in: {} out: {}
+  3 mark({ val b = 2 })
     v(val b = 2)                                                             INIT: in: {} out: {b=D}
     r(2)                                                                     INIT: in: {b=D} out: {b=D}
     w(b)                                                                     INIT: in: {b=D} out: {b=ID}
 L3:
-  2 mark("after")                                                            INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}
+  2 mark("after")                                                            INIT: in: {} out: {}
     r("after")
 L1:
   1 <END>
 error:
-    <ERROR>                                                                  INIT: in: {} out: {}
+    <ERROR>
 sink:
-    <SINK>                                                                   INIT: in: {a=ID, b=ID} out: {a=ID, b=ID}    USE: in: {} out: {}
+    <SINK>                                                                                                  USE: in: {} out: {}
 =====================
