@@ -98,6 +98,7 @@ import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
 import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
+import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -513,6 +514,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
             model("libraries/decompiledText", pattern = """^([^\.]+)$""")
+        }
+
+        testClass(javaClass<AbstractOptimizeImportsTest>()) {
+            model("editor/optimizeImports", extension = null, recursive = false)
         }
     }
 

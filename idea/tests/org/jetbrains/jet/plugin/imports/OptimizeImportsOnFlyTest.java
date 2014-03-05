@@ -14,44 +14,32 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.importOptimizer;
+package org.jetbrains.jet.plugin.imports;
 
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.daemon.LightDaemonAnalyzerTestCase;
 import com.intellij.openapi.application.ApplicationManager;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 public class OptimizeImportsOnFlyTest extends LightDaemonAnalyzerTestCase {
 
-    public void testOptimizeImportsOnFly() {
-        doTest("java.util.HashSet");
-    }
-
-    public void doTest(final String importString) {
-        configureByFile(getTestName(false) + ".kt");
+    public void testOptimizeImportsOnFly() throws Exception {
+        configureFromFileText("test.kt", "import java.util.ArrayList");
         boolean oldValue = CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY;
         try {
             CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = true;
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
                 public void run() {
-                    ImportInsertHelper.addImportDirectiveIfNeeded(new FqName(importString), (JetFile) getFile());
+                    ImportInsertHelper.addImportDirectiveIfNeeded(new FqName("java.util.HashSet"), (JetFile) getFile());
                 }
             });
         }
         finally {
             CodeInsightSettings.getInstance().OPTIMIZE_IMPORTS_ON_THE_FLY = oldValue;
         }
-        checkResultByFile(getTestName(false) + ".kt.after");
-    }
-
-    @NotNull
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/editor/optimizeImports/onFly/";
+        checkResultByText("import java.util.HashSet");
     }
 }
