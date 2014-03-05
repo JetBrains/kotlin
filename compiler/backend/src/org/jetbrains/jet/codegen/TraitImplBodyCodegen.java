@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 
 import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
@@ -52,6 +53,10 @@ public class TraitImplBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
-        writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.TRAIT_IMPL);
+        // We write LOCAL_CLASS to local trait-impl, because we don't want PSI classes to be constructed for such files
+        // (currently PSI for synthetic class is built only if this class is a trait-impl, see DecompiledUtils.kt)
+        writeKotlinSyntheticClassAnnotation(v, DescriptorUtils.isTopLevelOrInnerClass(descriptor)
+                                               ? KotlinSyntheticClass.Kind.TRAIT_IMPL
+                                               : KotlinSyntheticClass.Kind.LOCAL_CLASS);
     }
 }

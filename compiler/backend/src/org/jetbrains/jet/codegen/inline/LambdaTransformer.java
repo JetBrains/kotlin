@@ -120,6 +120,10 @@ public class LambdaTransformer {
                                  superName,
                                  interfaces
         );
+
+        // TODO: load synthetic class kind from the transformed class and write the same kind to the copy of that class here
+        // See AsmUtil.writeKotlinSyntheticClassAnnotation
+
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         Parameters parameters = getLambdaParameters(builder, invocation);
 

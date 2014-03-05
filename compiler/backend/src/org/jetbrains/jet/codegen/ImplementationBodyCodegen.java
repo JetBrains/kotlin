@@ -70,6 +70,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String VALUES = "$VALUES";
@@ -209,6 +210,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateKotlinAnnotation() {
+        if (isAnonymousObject(descriptor)) {
+            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.ANONYMOUS_OBJECT);
+            return;
+        }
+
+        if (!isTopLevelOrInnerClass(descriptor)) {
+            // LOCAL_CLASS is also written to inner classes of local classes
+            writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.LOCAL_CLASS);
+            return;
+        }
+
+        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(v.getSerializationBindings()));
 
         ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
