@@ -277,6 +277,10 @@ class CollectionTest {
         assertEquals(0, ArrayList<Double>().count())
     }
 
+    test fun first() {
+        assertEquals(19, TreeSet(arrayListOf(90, 47, 19)).first())
+    }
+
     test fun last() {
         val data = arrayListOf("foo", "bar")
         assertEquals("bar", data.last())
@@ -284,9 +288,6 @@ class CollectionTest {
         assertEquals('a', arrayListOf('a').last())
         fails { arrayListOf<Int>().last() }
     }
-    // TODO
-    // assertEquals(19, TreeSet(arrayListOf(90, 47, 19)).first())
-
 
     test fun subscript() {
         val list = arrayListOf("foo", "bar")
