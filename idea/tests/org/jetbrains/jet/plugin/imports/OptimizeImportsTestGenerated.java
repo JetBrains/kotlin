@@ -66,6 +66,11 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
         doTest("idea/testData/editor/optimizeImports/DuplicatedImports");
     }
     
+    @TestMetadata("Enums")
+    public void testEnums() throws Exception {
+        doTest("idea/testData/editor/optimizeImports/Enums");
+    }
+    
     @TestMetadata("InvokeFunction")
     public void testInvokeFunction() throws Exception {
         doTest("idea/testData/editor/optimizeImports/InvokeFunction");
