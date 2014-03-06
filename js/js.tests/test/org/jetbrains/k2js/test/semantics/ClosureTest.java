@@ -143,4 +143,24 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureInFewFunctionWithDifferentName() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testClosureLambdaVarInLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInExtLambdaInsideMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInWithInsideWith() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInNestedLambdasInObject() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInLambdaInsideMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
