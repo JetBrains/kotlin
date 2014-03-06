@@ -19,17 +19,17 @@ package org.jetbrains.jet.plugin.references;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.SmartPointerManager;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetPsiFactory;
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightPackage;
-import org.jetbrains.jet.plugin.codeInsight.ReferenceBindRequest;
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
+import org.jetbrains.jet.plugin.refactoring.RefactoringPackage;
 
 public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpression> {
     public JetSimpleNameReference(@NotNull JetSimpleNameExpression jetSimpleNameExpression) {
@@ -73,21 +73,26 @@ public class JetSimpleNameReference extends JetSimpleReference<JetSimpleNameExpr
     }
 
     @NotNull
-    public PsiElement bindToFqName(@NotNull FqName fqName, boolean bindImmediately) {
+    public PsiElement bindToFqName(@NotNull FqName fqName, boolean forceImmediateBinding) {
         JetSimpleNameExpression currentExpression = getExpression();
-        Project project = currentExpression.getProject();
 
-        ReferenceBindRequest bindRequest = new ReferenceBindRequest(
-                SmartPointerManager.getInstance(project).createSmartPsiElementPointer(getExpression()), fqName
-        );
+        JetElement qualifier = RefactoringPackage.changeQualifiedName(currentExpression, fqName);
+        JetSimpleNameExpression newExpression = (JetSimpleNameExpression) PsiUtilPackage.getQualifiedElementSelector(qualifier);
+        assert newExpression != null : "No selector in qualified element";
 
-        if (bindImmediately) {
-            JetSimpleNameExpression newExpression = bindRequest.process();
-            return (newExpression != null) ? newExpression : currentExpression;
+        //noinspection unchecked
+        boolean needToShorten =
+                PsiTreeUtil.getParentOfType(currentExpression, JetImportDirective.class, JetPackageDirective.class) == null;
+        if (needToShorten) {
+            if (forceImmediateBinding) {
+                ShortenReferences.instance$.process(PsiUtilPackage.getOutermostNonInterleavingQualifiedElement(newExpression));
+            }
+            else {
+                CodeInsightPackage.addElementToShorteningWaitSet(newExpression.getProject(), newExpression);
+            }
         }
 
-        CodeInsightPackage.addReferenceBindRequest(project, bindRequest);
-        return currentExpression;
+        return newExpression;
     }
 
     @Override

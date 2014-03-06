@@ -29,11 +29,12 @@ import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.SmartPointerManager
 
-public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<ReferenceBindRequest>> {
+public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<SmartPsiElementPointer<JetSimpleNameExpression>>> {
     private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())!!
 
-    override fun prepareOperation(usages: Array<out UsageInfo>?): Set<ReferenceBindRequest>? {
+    override fun prepareOperation(usages: Array<out UsageInfo>?): Set<SmartPsiElementPointer<JetSimpleNameExpression>>? {
         if (usages != null && usages.isNotEmpty()) {
             val project = usages[0].getProject()
             val elementsToShorten = project.getElementsToShorten(false)
@@ -45,13 +46,13 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<Ref
         return null
     }
 
-    override fun performOperation(project: Project, operationData: Set<ReferenceBindRequest>?) {
+    override fun performOperation(project: Project, operationData: Set<SmartPsiElementPointer<JetSimpleNameExpression>>?) {
         ApplicationManager.getApplication()!!.runWriteAction {
             project.getElementsToShorten(false)?.let { bindRequests ->
                 project.clearElementsToShorten()
                 ShortenReferences.process(
                         bindRequests
-                                .map() { req -> req.process()?.getOutermostNonInterleavingQualifiedElement() }
+                                .map() { it.getElement()?.getOutermostNonInterleavingQualifiedElement() }
                                 .filterNotNull()
                 )
             }
@@ -59,26 +60,9 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<Ref
     }
 }
 
-class ReferenceBindRequest(val refExpression: SmartPsiElementPointer<JetSimpleNameExpression>, val fqName: FqName) {
-    fun process(): JetSimpleNameExpression? {
-        fun bindToFqName(expression: JetSimpleNameExpression, fqName: FqName): JetSimpleNameExpression {
-            val qualifier = expression.changeQualifiedName(fqName)
-            val newExpression = qualifier.getQualifiedElementSelector() as JetSimpleNameExpression?
-            assert(newExpression != null) { "No selector in qualified element" }
+private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<SmartPsiElementPointer<JetSimpleNameExpression>>>("ELEMENTS_TO_SHORTEN_KEY")
 
-            return newExpression!!
-        }
-
-        val originalExpression = refExpression.getElement()
-        if (originalExpression == null) return null
-
-        return bindToFqName(originalExpression, fqName)
-    }
-}
-
-private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<ReferenceBindRequest>>("ELEMENTS_TO_SHORTEN_KEY")
-
-private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<ReferenceBindRequest>? {
+private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<SmartPsiElementPointer<JetSimpleNameExpression>>? {
     var elementsToShorten = getUserData(ELEMENTS_TO_SHORTEN_KEY)
     if (createIfNeeded && elementsToShorten == null) {
         elementsToShorten = HashSet()
@@ -92,7 +76,7 @@ private fun Project.clearElementsToShorten() {
     putUserData(ELEMENTS_TO_SHORTEN_KEY, null)
 }
 
-public fun Project.addReferenceBindRequest(request: ReferenceBindRequest) {
+public fun Project.addElementToShorteningWaitSet(expression: JetSimpleNameExpression) {
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
-    getElementsToShorten(true)!!.add(request)
+    getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(expression.getProject())!!.createSmartPsiElementPointer(expression))
 }
