@@ -12,12 +12,25 @@ trait TT : T {
 
 fun f() {
     var i = 0
-    val myLocalFun = {
+    val myAnonymousFunction = {
         ++i
+    }
+
+    fun myLocalFunction() {
+        i++
     }
 
     class MyLocalClass {
     }
+
+    val myAnonymousObject = object {
+    }
+
+
+    val lambda = { }
+    val samWrapper = Thread(lambda)
+
+    val callableReference = Any::toString
 }
 
 class A {

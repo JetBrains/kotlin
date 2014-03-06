@@ -20,29 +20,12 @@ import com.intellij.openapi.fileTypes.StdFileTypes
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 
-
-//TODO: this should be done via generic mechanism (special header kind)
-//TODO: should also check for local classes and functions
-public fun isAnonymousFunction(file: VirtualFile): Boolean {
-    val name = file.getNameWithoutExtension()
-    val index = name.lastIndexOf('$', name.length())
-    if (index > 0 && index < name.length() - 1) {
-        val nameAfterBucks = name.substring(index + 1, name.size)
-        return nameAfterBucks.isNotEmpty() && nameAfterBucks[0].isDigit()
-    }
-    return false
-}
-
 public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
-    if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
+    if (file.getExtension() != StdFileTypes.CLASS.getDefaultExtension()) {
         return false
-    }
-    if (isAnonymousFunction(file)) {
-        return true
     }
     if (isKotlinCompiledFileWithIncompatibleAbiVersion(file)) {
         return false
@@ -52,7 +35,7 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
 }
 
 public fun isKotlinCompiledFileWithIncompatibleAbiVersion(file: VirtualFile): Boolean {
-    if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
+    if (file.getExtension() != StdFileTypes.CLASS.getDefaultExtension()) {
         return false
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
@@ -64,9 +47,6 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
         return false
     }
     if (ClassFileViewProvider.isInnerClass(file)) {
-        return true
-    }
-    if (isAnonymousFunction(file)) {
         return true
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
