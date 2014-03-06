@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.k2js.translate.context.*;
-import org.jetbrains.k2js.translate.expression.InnerObjectTranslator;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -38,13 +37,13 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
 
 /**
@@ -105,21 +104,16 @@ public final class ClassTranslator extends AbstractTranslator {
 
         boolean isTopLevelDeclaration = context() == declarationContext;
 
-        JsNameRef qualifiedReference;
-        if (!isTopLevelDeclaration) {
-            qualifiedReference = null;
-        }
-        else {
-            JsScope scope = context().getScopeForDescriptor(descriptor);
-            DefinitionPlace definitionPlace;
-            if (descriptor.getKind().isSingleton() || isAnonymousObject(descriptor)) {
-                qualifiedReference = null;
-                definitionPlace = new DefinitionPlace(scope, context().getThisObject(descriptor), properties);
-            }
-            else {
+        JsNameRef qualifiedReference = null;
+        if (isTopLevelDeclaration) {
+            DefinitionPlace definitionPlace = null;
+
+            if (!descriptor.getKind().isSingleton() && !isAnonymousObject(descriptor)) {
                 qualifiedReference = declarationContext.getQualifiedReference(descriptor);
+                JsScope scope = context().getScopeForDescriptor(descriptor);
                 definitionPlace = new DefinitionPlace(scope, qualifiedReference, staticProperties);
             }
+
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
