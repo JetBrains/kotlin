@@ -28,7 +28,6 @@ public final class ObjectTest extends SingleFileTranslationTest {
         fooBoxTest();
     }
 
-
     public void testObjectDeclaration() throws Exception {
         fooBoxTest();
     }
@@ -52,7 +51,12 @@ public final class ObjectTest extends SingleFileTranslationTest {
     public void testObjectInheritingFromClass() throws Exception {
         fooBoxTest();
     }
+
     public void testObjectInObjectWithClosure() throws Exception {
         fooBoxTest();
+    }
+
+    public void testLambdaInObjectInsideObject() throws Exception {
+        checkFooBoxIsOk();
     }
 }
