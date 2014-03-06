@@ -77,7 +77,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
         VfsUtilCore.visitChildrenRecursively(jarFile!!, object : VirtualFileVisitor<Any?>() {})
         ((jarFile as NewVirtualFile)).markDirtyRecursively()
 
-        jarFile.refresh(false, true)
-        VfsUtil.markDirtyAndRefresh(false, false, true, localVirtualFile)
+        jarFile.refresh(true, true)
+        VfsUtil.markDirtyAndRefresh(true, false, true, localVirtualFile)
     }
 }
