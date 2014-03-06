@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class KotlinClassHeader {
-
+    // TODO: rewrite to Kotlin
     public enum Kind {
         INCOMPATIBLE_ABI_VERSION,
         CLASS,
