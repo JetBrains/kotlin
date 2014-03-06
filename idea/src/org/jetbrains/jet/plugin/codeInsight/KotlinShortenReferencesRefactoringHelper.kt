@@ -24,17 +24,16 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
-import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
-import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.SmartPointerManager
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetUserType
 
-public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<SmartPsiElementPointer<JetSimpleNameExpression>>> {
+public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())!!
 
-    override fun prepareOperation(usages: Array<out UsageInfo>?): Set<SmartPsiElementPointer<JetSimpleNameExpression>>? {
+    override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
         if (usages != null && usages.isNotEmpty()) {
             val project = usages[0].getProject()
             val elementsToShorten = project.getElementsToShorten(false)
@@ -46,23 +45,19 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<Sma
         return null
     }
 
-    override fun performOperation(project: Project, operationData: Set<SmartPsiElementPointer<JetSimpleNameExpression>>?) {
+    override fun performOperation(project: Project, operationData: Any?) {
         ApplicationManager.getApplication()!!.runWriteAction {
             project.getElementsToShorten(false)?.let { bindRequests ->
                 project.clearElementsToShorten()
-                ShortenReferences.process(
-                        bindRequests
-                                .map() { it.getElement()?.getOutermostNonInterleavingQualifiedElement() }
-                                .filterNotNull()
-                )
+                ShortenReferences.process(bindRequests.map() { it.getElement() }.filterNotNull())
             }
         }
     }
 }
 
-private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<SmartPsiElementPointer<JetSimpleNameExpression>>>("ELEMENTS_TO_SHORTEN_KEY")
+private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<SmartPsiElementPointer<JetElement>>>("ELEMENTS_TO_SHORTEN_KEY")
 
-private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<SmartPsiElementPointer<JetSimpleNameExpression>>? {
+private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<SmartPsiElementPointer<JetElement>>? {
     var elementsToShorten = getUserData(ELEMENTS_TO_SHORTEN_KEY)
     if (createIfNeeded && elementsToShorten == null) {
         elementsToShorten = HashSet()
@@ -76,7 +71,9 @@ private fun Project.clearElementsToShorten() {
     putUserData(ELEMENTS_TO_SHORTEN_KEY, null)
 }
 
-public fun Project.addElementToShorteningWaitSet(expression: JetSimpleNameExpression) {
+public fun JetElement.addToShorteningWaitSet() {
+    assert (this is JetQualifiedExpression || this is JetSimpleNameExpression || this is JetUserType, "Unexpected element type: ${getClass()}: ${getText()}")
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
-    getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(expression.getProject())!!.createSmartPsiElementPointer(expression))
+    val project = getProject()
+    project.getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(project)!!.createSmartPsiElementPointer(this))
 }

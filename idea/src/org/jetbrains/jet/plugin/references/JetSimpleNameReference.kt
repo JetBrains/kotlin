@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getFqName
 import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
-import org.jetbrains.jet.plugin.codeInsight.addElementToShorteningWaitSet
+import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -57,15 +57,16 @@ public class JetSimpleNameReference(
 
     public fun bindToFqName(fqName: FqName, forceImmediateBinding: Boolean): PsiElement {
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
+        val newQualifiedElement = newExpression.getOutermostNonInterleavingQualifiedElement()
 
         val needToShorten =
                 PsiTreeUtil.getParentOfType(expression, javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) == null
         if (needToShorten) {
             if (forceImmediateBinding) {
-                ShortenReferences.process(newExpression.getOutermostNonInterleavingQualifiedElement())
+                ShortenReferences.process(newQualifiedElement)
             }
             else {
-                newExpression.getProject().addElementToShorteningWaitSet(newExpression)
+                newQualifiedElement.addToShorteningWaitSet()
             }
         }
 
