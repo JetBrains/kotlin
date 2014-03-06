@@ -1,0 +1,4 @@
+fun foo() {
+    //comment
+    if (true) println("test")
+}
