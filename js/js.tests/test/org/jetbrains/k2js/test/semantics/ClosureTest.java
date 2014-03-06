@@ -143,4 +143,25 @@ public final class ClosureTest extends SingleFileTranslationTest {
     public void testClosureInFewFunctionWithDifferentName() throws Exception {
         checkFooBoxIsOk();
     }
+
+    // TODO enable this after KT-4656 and KT-4263 will be fixed
+    public void disabled_testClosureLambdaVarInLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInExtLambdaInsideMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInWithInsideWith() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureInNestedLambdasInObject() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testClosureThisInLambdaInsideMethod() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
