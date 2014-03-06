@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="android-studio">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/android-studio/sdk/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/android-studio/sdk/lib" recursive="false" />
+  </library>
+</component>

@@ -5,6 +5,7 @@ dependencies
 dist
 gh-pages
 ideaSDK
+android-studio/sdk
 out
 pluginPublisher/idea*
 pluginPublisher/plugin-verifier.jar

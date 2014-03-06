@@ -360,4 +360,78 @@
       <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
            dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
     </target>
+
+    <target name="get_android_studio">
+      <property name="android.version" value="0.4.6"/>
+      <property name="android.build.version" value="133.1028713"/>
+
+      <condition property="android.os.tag" value="windows">
+        <os family="windows" />
+      </condition>
+
+      <condition property="android.os.tag" value="mac">
+        <os family="mac" />
+      </condition>
+
+      <condition property="android.os.tag" value="linux">
+        <and>
+          <os family="unix" />
+          <not>
+            <os family="mac"/>
+          </not>
+        </and>
+      </condition>
+
+      <property name="android.file.name" value="android-studio-ide-${android.build.version}-${android.os.tag}.zip" />
+      <property name="android.studio.url" value="http://dl.google.com/dl/android/studio/ide-zips/${android.version}/${android.file.name}"/>
+      <property name="android.destination.dir" value="android-studio/sdk" />
+
+      <mkdir dir="dependencies/download"/>
+
+      <get src="${android.studio.url}" dest="dependencies/download" usetimestamp="true"/>
+
+      <delete dir="${android.destination.dir}" failonerror="false" includeemptydirs="true">
+        <exclude name="config/**"/>
+        <exclude name="system/**"/>
+      </delete>
+
+      <unzip src="dependencies/download/${android.file.name}" dest="${android.destination.dir}">
+        <cutdirsmapper dirs="1"/>
+      </unzip>
+
+      <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+      <if>
+        <matches pattern=".+windows\.zip" string="${android.file.name}"/>
+          <then>
+          </then>
+        <elseif>
+          <matches pattern=".+mac\.zip" string="${android.file.name}"/>
+          <then>
+            <exec executable="chmod">
+              <arg value="a+x"/>
+              <arg path="${android.destination.dir}/bin/fsnotifier"/>
+              <arg path="${android.destination.dir}/bin/inspect.sh"/>
+              <arg path="${android.destination.dir}/bin/printenv.py"/>
+              <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+            </exec>
+          </then>
+        </elseif>
+        <elseif>
+          <matches pattern=".+linux\.zip" string="${android.file.name}"/>
+          <then>
+            <exec executable="chmod">
+              <arg value="a+x"/>
+              <arg path="${android.destination.dir}/bin/fsnotifier"/>
+              <arg path="${android.destination.dir}/bin/fsnotifier64"/>
+              <arg path="${android.destination.dir}/bin/inspect.sh"/>
+              <arg path="${android.destination.dir}/bin/studio.sh"/>
+              <arg path="${android.destination.dir}/bin/update_studio.sh"/>
+            </exec>
+          </then>
+        </elseif>
+        <else>
+          <fail message="File name '${android.file.name}' wasn't matched"/>
+        </else>
+      </if>
+    </target>
 </project>
