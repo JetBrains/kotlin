@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
 
@@ -93,8 +93,8 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
     @NotNull
     private <D> String dumpEdgesData(String prefix, @NotNull Edges<Map<VariableDescriptor, D>> edges) {
         return prefix +
-               " in: " + renderVariableMap(edges.in) +
-               " out: " + renderVariableMap(edges.out);
+               " in: " + renderVariableMap(edges.getIn()) +
+               " out: " + renderVariableMap(edges.getOut());
     }
 
     private <D> String renderVariableMap(Map<VariableDescriptor, D> map) {

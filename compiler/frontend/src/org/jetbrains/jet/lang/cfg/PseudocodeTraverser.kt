@@ -14,172 +14,107 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg;
+package org.jetbrains.jet.lang.cfg.pseudocodeTraverser
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.*
+import java.util.*
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
 
-import java.util.*;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+enum class TraversalOrder {
+    FORWARD
+    BACKWARD
+}
 
-public class PseudocodeTraverser {
-    
-    public static enum TraversalOrder {
-        FORWARD,
-        BACKWARD
+fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
+    if (traversalOrder == FORWARD) getEnterInstruction() else getSinkInstruction()
+
+fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
+    if (traversalOrder == FORWARD) getSinkInstruction() else getEnterInstruction()
+
+fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
+    if (traversalOrder == FORWARD) getInstructions() else getReversedInstructions()
+
+fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
+    if (traversalOrder == FORWARD) getNextInstructions() else getPreviousInstructions()
+
+fun Instruction.getPreviousInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
+    if (traversalOrder == FORWARD) getPreviousInstructions() else getNextInstructions()
+
+fun Instruction.isStartInstruction(traversalOrder: TraversalOrder): Boolean =
+    if (traversalOrder == FORWARD) this is SubroutineEnterInstruction else this is SubroutineSinkInstruction
+
+enum class LookInsideStrategy {
+    ANALYSE_LOCAL_DECLARATIONS
+    SKIP_LOCAL_DECLARATIONS
+}
+
+fun Instruction.shouldLookInside(lookInside: LookInsideStrategy): Boolean =
+    lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && this is LocalFunctionDeclarationInstruction
+
+
+fun Pseudocode.traverse(
+        traversalOrder: TraversalOrder,
+        analyzeInstruction: (Instruction) -> Unit
+) {
+    val instructions = getInstructions(traversalOrder)
+    for (instruction in instructions) {
+        if (instruction is LocalFunctionDeclarationInstruction) {
+            instruction.getBody().traverse(traversalOrder, analyzeInstruction)
+        }
+        analyzeInstruction(instruction)
     }
-    
-    @NotNull
-    /*package*/ static Instruction getStartInstruction(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
-        return traversalOrder == FORWARD ? pseudocode.getEnterInstruction() : pseudocode.getSinkInstruction();
-    }
+}
 
-    @NotNull
-    /*package*/ static Instruction getLastInstruction(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
-        return traversalOrder == FORWARD ? pseudocode.getSinkInstruction() : pseudocode.getEnterInstruction();
-    }
-
-    @NotNull
-    /*package*/ static List<Instruction> getInstructions(@NotNull Pseudocode pseudocode, @NotNull TraversalOrder traversalOrder) {
-        return traversalOrder == FORWARD ? pseudocode.getInstructions() : pseudocode.getReversedInstructions();
-    }
-
-    @NotNull
-    /*packge*/ static Collection<Instruction> getPreviousInstruction(@NotNull Instruction instruction, @NotNull TraversalOrder traversalOrder) {
-        return traversalOrder == FORWARD ? instruction.getPreviousInstructions() : instruction.getNextInstructions();
-    }
-
-    /*package*/ static boolean isStartInstruction(@NotNull Instruction instruction, @NotNull TraversalOrder traversalOrder) {
-        return traversalOrder == FORWARD ? instruction instanceof SubroutineEnterInstruction
-                                         : instruction instanceof SubroutineSinkInstruction;
-    }
-
-    public static enum LookInsideStrategy {
-        ANALYSE_LOCAL_DECLARATIONS,
-        SKIP_LOCAL_DECLARATIONS
-    }
-
-    public static boolean shouldLookInside(Instruction instruction, LookInsideStrategy lookInside) {
-        return lookInside == LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS && instruction instanceof LocalFunctionDeclarationInstruction;
-    }
-
-
-    public static void traverse(
-            @NotNull Pseudocode pseudocode,
-            @NotNull TraversalOrder traversalOrder,
-            @NotNull InstructionAnalyzeStrategy instructionAnalyzeStrategy
-    ) {
-        List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
-        for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalFunctionDeclarationInstruction) {
-                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, instructionAnalyzeStrategy);
-            }
-            instructionAnalyzeStrategy.execute(instruction);
+fun <D> Pseudocode.traverse(
+        traversalOrder: TraversalOrder,
+        edgesMap: Map<Instruction, Edges<D>>,
+        instructionDataAnalyzeStrategy: InstructionDataAnalyzeStrategy<D>
+) {
+    val instructions = getInstructions(traversalOrder)
+    for (instruction in instructions) {
+        if (instruction is LocalFunctionDeclarationInstruction) {
+            instruction.getBody().traverse(traversalOrder, edgesMap, instructionDataAnalyzeStrategy)
+        }
+        val edges = edgesMap.get(instruction)
+        if (edges != null) {
+            instructionDataAnalyzeStrategy(instruction, edges.`in`, edges.out)
         }
     }
+}
 
-    public static <D> void traverse(
-            @NotNull Pseudocode pseudocode, TraversalOrder traversalOrder,
-            @NotNull Map<Instruction, Edges<D>> edgesMap,
-            @NotNull InstructionDataAnalyzeStrategy<D> instructionDataAnalyzeStrategy) {
+trait InstructionDataMergeStrategy<D> : (Instruction, Collection<D>) -> Edges<D>
+trait InstructionDataAnalyzeStrategy<D> : (Instruction, D, D) -> Unit
 
-        List<Instruction> instructions = getInstructions(pseudocode, traversalOrder);
-        for (Instruction instruction : instructions) {
-            if (instruction instanceof LocalFunctionDeclarationInstruction) {
-                traverse(((LocalFunctionDeclarationInstruction) instruction).getBody(), traversalOrder, edgesMap,
-                         instructionDataAnalyzeStrategy);
-            }
-            Edges<D> edges = edgesMap.get(instruction);
-            instructionDataAnalyzeStrategy.execute(instruction, edges != null ? edges.in : null, edges != null ? edges.out : null);
-        }
-    }
+data class Edges<T>(val `in`: T, val out: T)
+fun <T> createEdges(`in`: T, out: T) = Edges(`in`, out)
 
-    public interface InstructionDataMergeStrategy<D> {
-        @NotNull
-        Edges<D> execute(@NotNull Instruction instruction, @NotNull Collection<D> incomingEdgesData);
-    }
 
-    public interface InstructionDataAnalyzeStrategy<D> {
-        void execute(@NotNull Instruction instruction, @Nullable D enterData, @Nullable D exitData);
-    }
-
-    public interface InstructionAnalyzeStrategy {
-        void execute(@NotNull Instruction instruction);
-    }
-
-    public static class Edges<T> {
-        @NotNull
-        public final T in;
-        @NotNull
-        public final T out;
-
-        Edges(@NotNull T in, @NotNull T out) {
-            this.in = in;
-            this.out = out;
-        }
-
-        @NotNull
-        public static <T> Edges<T> create(@NotNull T in, @NotNull T out) {
-            return new Edges<T>(in, out);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Edges)) return false;
-
-            Edges edges = (Edges) o;
-
-            if (in != null ? !in.equals(edges.in) : edges.in != null) return false;
-            if (out != null ? !out.equals(edges.out) : edges.out != null) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = in != null ? in.hashCode() : 0;
-            result = 31 * result + (out != null ? out.hashCode() : 0);
-            return result;
-        }
-    }
-
-    public interface InstructionHandler {
+// returns false when interrupted by handler
+fun traverseFollowingInstructions(
+        rootInstruction: Instruction,
+        visited: MutableSet<Instruction>,
+        order: TraversalOrder,
         // true to continue traversal
-        boolean handle(@NotNull Instruction instruction);
-    }
+        handler: ((Instruction)->Boolean)?
+): Boolean {
+    val stack = ArrayDeque<Instruction>()
+    stack.push(rootInstruction)
 
-    // returns false when interrupted by handler
-    public static boolean traverseFollowingInstructions(
-            @NotNull Instruction rootInstruction,
-            @NotNull Set<Instruction> visited,
-            @NotNull TraversalOrder order,
-            @Nullable InstructionHandler handler
-    ) {
-        Deque<Instruction> stack = Queues.newArrayDeque();
-        stack.push(rootInstruction);
+    while (!stack.isEmpty()) {
+        val instruction = stack.pop()
+        visited.add(instruction)
 
-        while (!stack.isEmpty()) {
-            Instruction instruction = stack.pop();
-            visited.add(instruction);
+        val followingInstructions = instruction.getNextInstructions(order)
 
-            Collection<Instruction> followingInstructions =
-                    order == FORWARD ? instruction.getNextInstructions() : instruction.getPreviousInstructions();
-
-            for (Instruction followingInstruction : followingInstructions) {
-                if (followingInstruction != null && !visited.contains(followingInstruction)) {
-                    if (handler != null && !handler.handle(instruction)) return false;
-                    stack.push(followingInstruction);
+        for (followingInstruction in followingInstructions) {
+            if (!visited.contains(followingInstruction)) {
+                if (handler != null && !handler(instruction)) {
+                    return false
                 }
+                stack.push(followingInstruction)
             }
         }
-        return true;
     }
-
+    return true
 }

@@ -18,11 +18,13 @@ package org.jetbrains.jet.lang.cfg;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionAnalyzeStrategy;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionDataMergeStrategy;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.InstructionDataMergeStrategy;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -35,8 +37,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage.createEdges;
 
 public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
@@ -64,14 +67,15 @@ public class PseudocodeVariablesData {
         Set<VariableDescriptor> usedVariables = usedVariablesForDeclaration.get(pseudocode);
         if (usedVariables == null) {
             final Set<VariableDescriptor> result = Sets.newHashSet();
-            PseudocodeTraverser.traverse(pseudocode, FORWARD, new InstructionAnalyzeStrategy() {
+            PseudocodeTraverserPackage.traverse(pseudocode, FORWARD, new Function1<Instruction, Unit>() {
                 @Override
-                public void execute(@NotNull Instruction instruction) {
-                    VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false,
-                                                                                                          bindingContext);
+                public Unit invoke(@NotNull Instruction instruction) {
+                    VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                            instruction, false, bindingContext);
                     if (variableDescriptor != null) {
                         result.add(variableDescriptor);
                     }
+                    return Unit.VALUE;
                 }
             });
             usedVariables = Collections.unmodifiableSet(result);
@@ -142,16 +146,16 @@ public class PseudocodeVariablesData {
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableInitState>>() {
                     @NotNull
                     @Override
-                    public Edges<Map<VariableDescriptor, VariableInitState>> execute(
+                    public Edges<Map<VariableDescriptor, VariableInitState>> invoke(
                             @NotNull Instruction instruction,
-                            @NotNull Collection<Map<VariableDescriptor, VariableInitState>> incomingEdgesData
+                            @NotNull Collection<? extends Map<VariableDescriptor, VariableInitState>> incomingEdgesData
                     ) {
 
                         Map<VariableDescriptor, VariableInitState> enterInstructionData =
                                 mergeIncomingEdgesDataForInitializers(incomingEdgesData);
                         Map<VariableDescriptor, VariableInitState> exitInstructionData =
                                 addVariableInitStateFromCurrentInstructionIfAny(instruction, enterInstructionData, declaredVariables);
-                        return Edges.create(enterInstructionData, exitInstructionData);
+                        return createEdges(enterInstructionData, exitInstructionData);
                     }
                 }
         );
@@ -168,7 +172,7 @@ public class PseudocodeVariablesData {
 
     @NotNull
     private static Map<VariableDescriptor, VariableInitState> mergeIncomingEdgesDataForInitializers(
-            @NotNull Collection<Map<VariableDescriptor, VariableInitState>> incomingEdgesData
+            @NotNull Collection<? extends Map<VariableDescriptor, VariableInitState>> incomingEdgesData
     ) {
         Set<VariableDescriptor> variablesInScope = Sets.newHashSet();
         for (Map<VariableDescriptor, VariableInitState> edgeData : incomingEdgesData) {
@@ -238,9 +242,9 @@ public class PseudocodeVariablesData {
                 new InstructionDataMergeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @NotNull
                     @Override
-                    public Edges<Map<VariableDescriptor, VariableUseState>> execute(
+                    public Edges<Map<VariableDescriptor, VariableUseState>> invoke(
                             @NotNull Instruction instruction,
-                            @NotNull Collection<Map<VariableDescriptor, VariableUseState>> incomingEdgesData
+                            @NotNull Collection<? extends Map<VariableDescriptor, VariableUseState>> incomingEdgesData
                     ) {
 
                         Map<VariableDescriptor, VariableUseState> enterResult = Maps.newHashMap();
@@ -255,7 +259,7 @@ public class PseudocodeVariablesData {
                                 instruction, true, bindingContext);
                         if (variableDescriptor == null ||
                             (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
-                            return Edges.create(enterResult, enterResult);
+                            return createEdges(enterResult, enterResult);
                         }
                         Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
                         if (instruction instanceof ReadValueInstruction) {
@@ -276,7 +280,7 @@ public class PseudocodeVariablesData {
                                     exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ);
                             }
                         }
-                        return Edges.create(enterResult, exitResult);
+                        return createEdges(enterResult, exitResult);
                     }
                 }
         );

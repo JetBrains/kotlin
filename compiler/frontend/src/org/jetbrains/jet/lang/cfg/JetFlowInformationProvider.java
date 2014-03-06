@@ -22,14 +22,17 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.Edges;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionAnalyzeStrategy;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.InstructionDataAnalyzeStrategy;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.InstructionDataAnalyzeStrategy;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
@@ -51,9 +54,8 @@ import org.jetbrains.jet.plugin.MainFunctionDetector;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState.*;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.TailRecursionKind.*;
@@ -262,7 +264,9 @@ public class JetFlowInformationProvider {
 
         final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
 
-        PseudocodeTraverser.traverse(pseudocode, FORWARD, initializers, new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, initializers,
+                new InstructionDataAnalyzeStrategyJ<Map<VariableDescriptor, PseudocodeVariablesData.VariableInitState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableInitState> in,
@@ -497,7 +501,7 @@ public class JetFlowInformationProvider {
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
             if (variable instanceof PropertyDescriptor) {
-                PseudocodeVariablesData.VariableInitState variableInitState = initializers.in.get(variable);
+                PseudocodeVariablesData.VariableInitState variableInitState = initializers.getIn().get(variable);
                 if (variableInitState == null) return;
                 trace.record(BindingContext.IS_INITIALIZED, (PropertyDescriptor) variable, variableInitState.isInitialized);
             }
@@ -512,7 +516,7 @@ public class JetFlowInformationProvider {
         Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
-                new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, PseudocodeVariablesData.VariableUseState>>() {
+                new InstructionDataAnalyzeStrategyJ<Map<VariableDescriptor, PseudocodeVariablesData.VariableUseState>>() {
             @Override
             public void execute(@NotNull Instruction instruction,
                     @Nullable Map<VariableDescriptor, VariableUseState> in,
@@ -586,7 +590,7 @@ public class JetFlowInformationProvider {
                 }
             }
         };
-        PseudocodeTraverser.traverse(pseudocode, BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
+        PseudocodeTraverserPackage.traverse(pseudocode, TraversalOrder.BACKWARD, variableStatusData, variableStatusAnalyzeStrategy);
     }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -594,8 +598,8 @@ public class JetFlowInformationProvider {
 
     public void markUnusedLiteralsInBlock() {
         final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
-        PseudocodeTraverser.traverse(
-                pseudocode, FORWARD, new InstructionAnalyzeStrategy() {
+        PseudocodeTraverserPackage.traverse(
+                pseudocode, FORWARD, new FunctionVoid1<Instruction>() {
             @Override
             public void execute(@NotNull Instruction instruction) {
                 if (!(instruction instanceof ReadValueInstruction)) return;
@@ -642,11 +646,10 @@ public class JetFlowInformationProvider {
             }
         }
         final Map<JetElement, KindAndCall> calls = new HashMap<JetElement, KindAndCall>();
-        PseudocodeTraverser.traverse(
+        PseudocodeTraverserPackage.traverse(
                 pseudocode,
                 FORWARD,
-                new InstructionAnalyzeStrategy() {
-                    @Override
+                new FunctionVoid1<Instruction>() {
                     public void execute(@NotNull Instruction instruction) {
                         if (!(instruction instanceof CallInstruction)) return;
                         CallInstruction callInstruction = (CallInstruction) instruction;
@@ -672,7 +675,7 @@ public class JetFlowInformationProvider {
                             return;
                         }
 
-                        boolean isTail = PseudocodeTraverser.traverseFollowingInstructions(
+                        boolean isTail = PseudocodeTraverserPackage.traverseFollowingInstructions(
                                 callInstruction,
                                 new HashSet<Instruction>(),
                                 FORWARD,
@@ -878,5 +881,26 @@ public class JetFlowInformationProvider {
             enterUseState = variableDescriptor != null ? in.get(variableDescriptor) : null;
             exitUseState = variableDescriptor != null ? out.get(variableDescriptor) : null;
         }
+    }
+
+    //TODO after KT-4621 rewrite to Kotlin
+    public abstract static class InstructionDataAnalyzeStrategyJ<D> implements InstructionDataAnalyzeStrategy<D> {
+        @Override
+        public Unit invoke(Instruction instruction, D enterData, D exitData) {
+            execute(instruction, enterData, exitData);
+            return Unit.VALUE;
+        }
+
+        public abstract void execute(Instruction instruction, D enterData, D exitData);
+    }
+
+    public abstract static class FunctionVoid1<P> implements Function1<P, Unit> {
+        @Override
+        public Unit invoke(P p) {
+            execute(p);
+            return Unit.VALUE;
+        }
+
+        public abstract void execute(P p);
     }
 }

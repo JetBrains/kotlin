@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 
 public class PseudocodeImpl implements Pseudocode {
 
@@ -159,13 +159,13 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public List<Instruction> getReversedInstructions() {
         LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-        PseudocodeTraverser.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
+        PseudocodeTraverserPackage.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
         if (traversedInstructions.size() < instructions.size()) {
             List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
             Collections.reverse(simplyReversedInstructions);
             for (Instruction instruction : simplyReversedInstructions) {
                 if (!traversedInstructions.contains(instruction)) {
-                    PseudocodeTraverser.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
+                    PseudocodeTraverserPackage.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
                 }
             }
         }
@@ -338,7 +338,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private Set<Instruction> collectReachableInstructions() {
         Set<Instruction> visited = Sets.newHashSet();
-        PseudocodeTraverser.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
+        PseudocodeTraverserPackage.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
         if (!visited.contains(getExitInstruction())) {
             visited.add(getExitInstruction());
         }

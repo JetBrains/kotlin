@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser.*
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
 import org.jetbrains.jet.lang.cfg.pseudocode.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.VariableDeclarationInstruction
 import org.jetbrains.jet.utils.addToStdlib.*
@@ -54,8 +54,7 @@ public class PseudocodeVariableDataCollector(
         val initialDataValue : Map<VariableDescriptor, D> = Collections.emptyMap<VariableDescriptor, D>()
         val edgesMap = LinkedHashMap<Instruction, Edges<Map<VariableDescriptor, D>>>()
         initializeEdgesMap(pseudocode, edgesMap, initialDataValue)
-        edgesMap.put(getStartInstruction(pseudocode, traversalOrder),
-                     Edges.create(initialDataValue, initialDataValue))
+        edgesMap.put(pseudocode.getStartInstruction(traversalOrder), Edges(initialDataValue, initialDataValue))
 
         val changed = BooleanArray(1)
         changed[0] = true
@@ -74,11 +73,11 @@ public class PseudocodeVariableDataCollector(
             initialDataValue: M
     ) {
         val instructions = pseudocode.getInstructions()
-        val initialEdge = Edges.create(initialDataValue, initialDataValue)
+        val initialEdge = Edges(initialDataValue, initialDataValue)
         for (instruction in instructions) {
             edgesMap.put(instruction, initialEdge)
-            if (PseudocodeTraverser.shouldLookInside(instruction, LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS)) {
-                initializeEdgesMap(((instruction as LocalFunctionDeclarationInstruction)).getBody(), edgesMap, initialDataValue)
+            if (instruction.shouldLookInside(LookInsideStrategy.ANALYSE_LOCAL_DECLARATIONS)) {
+                initializeEdgesMap((instruction as LocalFunctionDeclarationInstruction).getBody(), edgesMap, initialDataValue)
             }
         }
     }
@@ -93,24 +92,24 @@ public class PseudocodeVariableDataCollector(
             changed: BooleanArray,
             isLocal: Boolean
     ) {
-        val instructions = getInstructions(pseudocode, traversalOrder)
-        val startInstruction = getStartInstruction(pseudocode, traversalOrder)
+        val instructions = pseudocode.getInstructions(traversalOrder)
+        val startInstruction = pseudocode.getStartInstruction(traversalOrder)
 
         for (instruction in instructions) {
-            val isStart = isStartInstruction(instruction, traversalOrder)
+            val isStart = instruction.isStartInstruction(traversalOrder)
             if (!isLocal && isStart)
                 continue
 
-            val allPreviousInstructions: MutableCollection<Instruction>
-            val previousInstructions = getPreviousInstruction(instruction, traversalOrder)
-
-            if (instruction == startInstruction && !previousSubGraphInstructions.isEmpty()) {
-                allPreviousInstructions = ArrayList(previousInstructions)
-                allPreviousInstructions.addAll(previousSubGraphInstructions)
+            fun getPreviousIncludingSubGraphInstructions(): Collection<Instruction> {
+                val previous = instruction.getPreviousInstructions(traversalOrder)
+                if (instruction != startInstruction || previousSubGraphInstructions.isEmpty()) {
+                    return previous
+                }
+                val result = ArrayList(previous)
+                result.addAll(previousSubGraphInstructions)
+                return result
             }
-            else {
-                allPreviousInstructions = previousInstructions
-            }
+            val previousInstructions = getPreviousIncludingSubGraphInstructions()
 
             fun updateEdgeDataForInstruction(
                     previousValue: Edges<Map<VariableDescriptor, D>>?,
@@ -122,19 +121,18 @@ public class PseudocodeVariableDataCollector(
                 }
             }
 
-            if (shouldLookInside(instruction, lookInside)) {
+            if (instruction.shouldLookInside(lookInside)) {
                 val functionInstruction = (instruction as LocalFunctionDeclarationInstruction)
                 val subroutinePseudocode = functionInstruction.getBody()
                 collectDataFromSubgraph(
                         subroutinePseudocode, traversalOrder, lookInside, edgesMap, instructionDataMergeStrategy,
                         previousInstructions, changed, true)
-                val lastInstruction = getLastInstruction(subroutinePseudocode, traversalOrder)
+                val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
                 val previousValue = edgesMap.get(instruction)
                 val newValue = edgesMap.get(lastInstruction)
                 val updatedValue = if (newValue == null) null else
-                    Edges.create(
-                            filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.`in`),
-                            filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.out))
+                    Edges(filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.`in`),
+                          filterOutVariablesOutOfScope(lastInstruction, instruction, newValue.out))
                 updateEdgeDataForInstruction(previousValue, updatedValue)
                 continue
             }
@@ -142,14 +140,14 @@ public class PseudocodeVariableDataCollector(
 
             val incomingEdgesData = HashSet<Map<VariableDescriptor, D>>()
 
-            for (previousInstruction in allPreviousInstructions) {
+            for (previousInstruction in previousInstructions) {
                 val previousData = edgesMap.get(previousInstruction)
                 if (previousData != null) {
                     incomingEdgesData.add(filterOutVariablesOutOfScope(
                             previousInstruction, instruction, previousData.out))
                 }
             }
-            val mergedData = instructionDataMergeStrategy.execute(instruction, incomingEdgesData)
+            val mergedData = instructionDataMergeStrategy(instruction, incomingEdgesData)
             updateEdgeDataForInstruction(previousDataValue, mergedData)
         }
     }
@@ -175,7 +173,7 @@ public class PseudocodeVariableDataCollector(
 
     fun computeLexicalScopeVariableInfo(pseudocode: Pseudocode): LexicalScopeVariableInfo {
         val lexicalScopeVariableInfo = LexicalScopeVariableInfoImpl()
-        PseudocodeTraverser.traverse(pseudocode, TraversalOrder.FORWARD, { instruction ->
+        pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.getVariableDeclarationElement()
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
