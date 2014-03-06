@@ -38,7 +38,7 @@ public fun buildDecompiledText(
     val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
     val classFileHeader = kotlinClass.getClassHeader()
     assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val kind = classFileHeader!!.getKind()
+    val kind = classFileHeader!!.kind
     val packageFqName = classFqName.parent()
 
     return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {

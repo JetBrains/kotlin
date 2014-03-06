@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter
-import org.jetbrains.jet.lang.types.ErrorUtils.getErrorModule
 import org.jetbrains.jet.lang.types.error.MissingDependencyErrorClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.diagnostic.Logger
@@ -57,7 +56,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
         val packageClassFqName = PackageClassUtils.getPackageClassFqName(packageFqName)
         val binaryClassForPackageClass = localClassFinder.findKotlinClass(packageClassFqName)
-        val annotationData = binaryClassForPackageClass?.getClassHeader()?.getAnnotationData()
+        val annotationData = binaryClassForPackageClass?.getClassHeader()?.annotationData
         if (annotationData == null) {
             LOG.error("Could not read annotation data for $packageFqName from ${binaryClassForPackageClass?.getClassName()}")
             return Collections.emptyList()
@@ -145,7 +144,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private fun deserializeBinaryClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor {
-        val data = kotlinClass.getClassHeader()?.getAnnotationData()
+        val data = kotlinClass.getClassHeader()?.annotationData
         if (data == null) {
             LOG.error("Annotation data missing for ${kotlinClass.getClassName()}")
         }

@@ -24,18 +24,13 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.intellij.psi.PsiManager
 import junit.framework.Assert
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.psi.ClassFileViewProvider
 import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.PsiCompiledFile
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.storage.LockBasedStorageManager
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
-import com.intellij.openapi.fileTypes.StdFileTypes
 
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -85,7 +80,7 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
 
     private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean = {
         val header = KotlinBinaryClassCache.getKotlinBinaryClass(this).getClassHeader()
-        header?.getSyntheticClassKind() == kind
+        header?.syntheticClassKind == kind
     }
 
     private fun doTestNoPsiFilesAreBuiltForSyntheticClass(kind: KotlinSyntheticClass.Kind) =
