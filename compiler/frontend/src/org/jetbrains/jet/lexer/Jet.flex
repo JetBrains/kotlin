@@ -116,6 +116,7 @@ ESCAPE_SEQUENCE=\\(u{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}{HEX_DIGIT}|[^\n])
 
 // ANY_ESCAPE_SEQUENCE = \\[^]
 THREE_QUO = (\"\"\")
+THREE_OR_MORE_QUO = ({THREE_QUO}\"*)
 ONE_TWO_QUO = (\"[^\"]) | (\"\"[^\"])
 QUO_STRING_CHAR = [^\"] | {ONE_TWO_QUO}
 RAW_STRING_LITERAL = {THREE_QUO} {QUO_STRING_CHAR}* {THREE_QUO}?
@@ -134,7 +135,17 @@ LONG_TEMPLATE_ENTRY_END=\}
 <RAW_STRING> \n                  { return JetTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \"                  { return JetTokens.REGULAR_STRING_PART; }
 <RAW_STRING> \\                  { return JetTokens.REGULAR_STRING_PART; }
-<RAW_STRING> {THREE_QUO}         { popState(); return JetTokens.CLOSING_QUOTE; }
+<RAW_STRING> {THREE_OR_MORE_QUO} {
+                                    int length = yytext().length();
+                                    if (length <= 3) { // closing """
+                                        popState();
+                                        return JetTokens.CLOSING_QUOTE;
+                                    }
+                                    else { // some quotes at the end of a string, e.g. """ "foo""""
+                                        yypushback(3); // return the closing quotes (""") to the stream
+                                        return JetTokens.REGULAR_STRING_PART;
+                                    }
+                                 }
 
 \"                          { pushState(STRING); return JetTokens.OPEN_QUOTE; }
 <STRING> \n                 { popState(); yypushback(1); return JetTokens.DANGLING_NEWLINE; }

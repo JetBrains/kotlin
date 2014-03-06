@@ -4811,6 +4811,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/strings/rawStrings.kt");
         }
         
+        @TestMetadata("rawStringsWithManyQuotes.kt")
+        public void testRawStringsWithManyQuotes() throws Exception {
+            doTest("compiler/testData/codegen/box/strings/rawStringsWithManyQuotes.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/codegen/box/super")
