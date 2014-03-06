@@ -14,12 +14,12 @@ import java.util.*
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 
-    protected fun initTag<T : Element>(init :  T.() -> Unit) : T
+    protected fun initTag<T : Element>(<warning>init</warning> :  T.() -> Unit) : T
       where <error>class object T : Factory<T></error>{
-      val tag = T.create()
-      tag.init()
-      children.add(tag)
-      return tag
+      val tag = <error>T</error>.<error>create</error>()
+      <error>tag</error>.<error>init</error>()
+      children.add(<error>tag</error>)
+      return <error>tag</error>
     }
   }
 

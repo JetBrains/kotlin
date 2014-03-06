@@ -670,7 +670,8 @@ public class DescriptorResolver {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
                     if (constraint.isClassObjectConstraint()) {
-                        typeParameterDescriptor.addClassObjectBound(bound);
+                        // Class object bounds are not supported
+                        //typeParameterDescriptor.addClassObjectBound(bound);
                     }
                     else {
                         typeParameterDescriptor.addUpperBound(bound);
