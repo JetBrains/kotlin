@@ -120,6 +120,7 @@ public fun JetElement.wrapInBlock(): JetBlockExpression {
     block.appendElement(this)
     return block
 }
+
 /**
  * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
  * via an aliased import, includes both the original and the aliased name (reference resolution during inheritor search will sort this out).

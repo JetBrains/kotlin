@@ -151,6 +151,14 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReplaceItWithExplicitFunctionLiteralParamIntention());
     }
 
+    public void doTestRemoveBraces(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveBracesIntention());
+    }
+
+    public void doTestAddBraces(@NotNull String path) throws Exception {
+        doTestIntention(path, new AddBracesIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
