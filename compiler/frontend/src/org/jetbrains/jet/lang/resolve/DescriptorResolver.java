@@ -685,20 +685,7 @@ public class DescriptorResolver {
 
             parameter.setInitialized();
 
-            if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
-                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
-                }
-            }
-
-            JetType classObjectType = parameter.getClassObjectType();
-            if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
-                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
-                }
-            }
+            checkConflictingUpperBounds(trace, parameter, typeParameters.get(parameter.getIndex()));
         }
 
         if (!(declaration instanceof JetClass)) {
@@ -707,6 +694,26 @@ public class DescriptorResolver {
             }
 
             checkNamesInConstraints(declaration, descriptor, scope, trace);
+        }
+    }
+
+    public static void checkConflictingUpperBounds(
+            @NotNull BindingTrace trace,
+            @NotNull TypeParameterDescriptor parameter,
+            @NotNull JetTypeParameter typeParameter
+    ) {
+        PsiElement nameIdentifier = typeParameter.getNameIdentifier();
+        if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
+            if (nameIdentifier != null) {
+                trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
+            }
+        }
+
+        JetType classObjectType = parameter.getClassObjectType();
+        if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
+            if (nameIdentifier != null) {
+                trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
+            }
         }
     }
 

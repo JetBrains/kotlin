@@ -35,6 +35,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE_PARAMETER;
 
 public class DeclarationsChecker {
     @NotNull
@@ -276,8 +277,13 @@ public class DeclarationsChecker {
 
     private void checkTypeParameters(JetTypeParameterListOwner typeParameterListOwner) {
         // TODO: Support annotation for type parameters
-        for (JetTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
-            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+        for (JetTypeParameter jetTypeParameter : typeParameterListOwner.getTypeParameters()) {
+            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace);
+
+            TypeParameterDescriptor typeParameter = trace.get(TYPE_PARAMETER, jetTypeParameter);
+            if (typeParameter != null) {
+                DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
+            }
         }
     }
 
