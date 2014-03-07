@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.Type;
@@ -41,8 +42,10 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
             String oldOwnerType,
             String newOwnerType,
             Parameters parameters,
-            Map<String, LambdaInfo> recapturedLambdas
+            Map<String, LambdaInfo> recapturedLambdas,
+            LambdaFieldRemapper remapper
     ) {
+        super(oldOwnerType, remapper, parameters);
         this.oldOwnerType = oldOwnerType;
         this.newOwnerType = newOwnerType;
         this.parameters = parameters;
@@ -112,5 +115,41 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
         else {
             return super.findField(fieldInsnNode, captured);
         }
+    }
+
+    @Override
+    public boolean shouldPatch(@NotNull FieldInsnNode node) {
+        //parent is inlined so we need patch instruction chain
+        return shouldPatchByMe(node) || parent.shouldPatch(node);
+    }
+
+    private boolean shouldPatchByMe(@NotNull FieldInsnNode node) {
+        //parent is inlined so we need patch instruction chain
+        //aloading inlined this
+        return parent.isRoot() && node.owner.equals(getLambdaInternalName()) && node.name.equals("this$0");
+    }
+
+    @NotNull
+    @Override
+    public AbstractInsnNode patch(@NotNull FieldInsnNode fieldInsnNode, @NotNull MethodNode node) {
+        if (!shouldPatchByMe(fieldInsnNode)) {
+            return parent.patch(fieldInsnNode, node);
+        }
+        //parent is inlined so we need patch instruction chain
+        AbstractInsnNode previous = fieldInsnNode.getPrevious();
+        AbstractInsnNode nextInstruction = fieldInsnNode.getNext();
+        if (!(nextInstruction instanceof FieldInsnNode)) {
+            throw new IllegalStateException(
+                    "Instruction after inlined one should be field access: " + nextInstruction);
+        }
+        if (!(previous instanceof FieldInsnNode)) {
+            throw new IllegalStateException("Instruction before inlined one should be field access: " + previous);
+        }
+        FieldInsnNode next = (FieldInsnNode) nextInstruction;
+        node.instructions.remove(next.getPrevious());
+        next.owner = Type.getType(((FieldInsnNode) previous).desc).getInternalName();
+        next.name = node.name.equals("this$0") ? node.name : LambdaTransformer.getNewFieldName(next.name);
+
+        return next;
     }
 }

@@ -76,7 +76,7 @@ public class MethodInliner {
 
 
     public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
-        return doInline(adapter, remapper, new LambdaFieldRemapper(), true);
+        return doInline(adapter, remapper, lambdaFieldRemapper, true);
     }
 
     public InlineResult doInline(
@@ -132,7 +132,7 @@ public class MethodInliner {
                                                                               inliningContext.subInline(inliningContext.nameGenerator, currentTypeMapping).classRegeneration(),
                                                                               isSameModule, newLambdaType);
 
-                        InlineResult transformResult = transformer.doTransform(invocation);
+                        InlineResult transformResult = transformer.doTransform(invocation, capturedRemapper);
                         result.addAllClassesToRemove(transformResult);
 
                         if (inliningContext.isInliningLambda) {
@@ -426,34 +426,9 @@ public class MethodInliner {
                     } else {
                         cur = this.lambdaFieldRemapper.doTransform(node, fieldInsnNode, result);
                     }
-                } else {
-                    Type type1 = Type.getType(fieldInsnNode.desc);
-                    if (!AsmUtil.isPrimitive(type1)) {
-                        String type = type1.getInternalName();
-                        if (inliningContext.typeMapping.containsKey(type)) {
-                            //TODO value could be null
-                            String newTypeOrSkip = inliningContext.typeMapping.get(type);
-                            if (newTypeOrSkip != null) {
-                                fieldInsnNode.owner = newTypeOrSkip;
-                            }
-                            else {
-                                //generate owner of next instruction
-                                AbstractInsnNode previous = fieldInsnNode.getPrevious();
-                                AbstractInsnNode nextInstruction = fieldInsnNode.getNext();
-                                if (!(nextInstruction instanceof FieldInsnNode)) {
-                                    throw new IllegalStateException(
-                                            "Instruction after inlined one should be field access: " + nextInstruction);
-                                }
-                                if (!(previous instanceof FieldInsnNode)) {
-                                    throw new IllegalStateException("Instruction before inlined one should be field access: " + previous);
-                                }
-                                cur = nextInstruction;
-                                node.instructions.remove(cur.getPrevious());
-                                ((FieldInsnNode) cur).owner = Type.getType(((FieldInsnNode) previous).desc).getInternalName();
-                                ((FieldInsnNode) cur).name = LambdaTransformer.getNewFieldName(((FieldInsnNode) cur).name);
-                            }
-                        }
-                    }
+                }
+                else if (lambdaFieldRemapper.shouldPatch(fieldInsnNode)) {
+                    cur = lambdaFieldRemapper.patch(fieldInsnNode, node);
                 }
             }
             cur = cur.getNext();

@@ -108,7 +108,7 @@ public class LambdaTransformer {
         }
     }
 
-    public InlineResult doTransform(ConstructorInvocation invocation) {
+    public InlineResult doTransform(ConstructorInvocation invocation, LambdaFieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
 
         //TODO: public visibility for inline function
@@ -129,7 +129,8 @@ public class LambdaTransformer {
 
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
         RegeneratedLambdaFieldRemapper
-                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline());
+                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline(),
+                                                              parentRemapper);
         MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")), oldLambdaType,
                                                   remapper, isSameModule);
         InlineResult result = inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);

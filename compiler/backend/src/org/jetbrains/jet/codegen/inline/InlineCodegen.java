@@ -213,7 +213,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
                                  codegen.getContext(), call, Collections.<String, String>emptyMap(), false, false);
 
-        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(), isSameModule); //with captured
+        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(null, null, parameters), isSameModule); //with captured
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
