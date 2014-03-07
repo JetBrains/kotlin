@@ -54,10 +54,12 @@ public class LazyImportScope implements JetScope, LazyEntity {
     private static class ImportResolveStatus {
         private final LookupMode lookupMode;
         private final JetScope scope;
+        private final Collection<? extends DeclarationDescriptor> descriptors;
 
-        ImportResolveStatus(LookupMode lookupMode, JetScope scope) {
+        ImportResolveStatus(LookupMode lookupMode, JetScope scope, Collection<? extends DeclarationDescriptor> descriptors) {
             this.lookupMode = lookupMode;
             this.scope = scope;
+            this.descriptors = descriptors;
         }
     }
 
@@ -93,16 +95,16 @@ public class LazyImportScope implements JetScope, LazyEntity {
                     Importer.StandardImporter importer = new Importer.StandardImporter(directiveImportScope);
                     directiveUnderResolve = directive;
 
+                    Collection<? extends DeclarationDescriptor> descriptors;
                     try {
-                        Collection<? extends DeclarationDescriptor> descriptors =
-                                resolveSession.getQualifiedExpressionResolver().processImportReference(
-                                        directive,
-                                        rootScope,
-                                        packageDescriptor.getMemberScope(),
-                                        importer,
-                                        traceForImportResolve,
-                                        resolveSession.getModuleDescriptor(),
-                                        mode);
+                        descriptors = resolveSession.getQualifiedExpressionResolver().processImportReference(
+                                directive,
+                                rootScope,
+                                packageDescriptor.getMemberScope(),
+                                importer,
+                                traceForImportResolve,
+                                resolveSession.getModuleDescriptor(),
+                                mode);
                         if (mode == LookupMode.EVERYTHING) {
                             ImportsResolver.checkPlatformTypesMappedToKotlin(
                                     packageDescriptor.getModule(),
@@ -117,7 +119,7 @@ public class LazyImportScope implements JetScope, LazyEntity {
                         directiveImportScope.changeLockLevel(WritableScope.LockLevel.READING);
                     }
 
-                    importResolveStatus = new ImportResolveStatus(mode, directiveImportScope);
+                    importResolveStatus = new ImportResolveStatus(mode, directiveImportScope, descriptors);
                     return directiveImportScope;
                 }
             });
@@ -172,6 +174,11 @@ public class LazyImportScope implements JetScope, LazyEntity {
     public void forceResolveAllContents() {
         for (JetImportDirective importDirective : importsProvider.getAllImports()) {
             getImportScope(importDirective, LookupMode.EVERYTHING);
+
+            ImportResolveStatus status = importedScopesProvider.invoke(importDirective).importResolveStatus;
+            if (status != null && !status.descriptors.isEmpty()) {
+                ImportsResolver.reportUselessImport(importDirective, this, status.descriptors, traceForImportResolve);
+            }
         }
     }
 

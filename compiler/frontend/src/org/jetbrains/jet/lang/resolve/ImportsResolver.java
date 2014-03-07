@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -133,7 +134,7 @@ public class ImportsResolver {
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportUselessImport(importDirective, fileScope, resolvedDirectives, trace);
+                reportUselessImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
             }
         }
     }
@@ -167,15 +168,15 @@ public class ImportsResolver {
         }
     }
 
-    private static void reportUselessImport(
+    public static void reportUselessImport(
         @NotNull JetImportDirective importDirective,
-        @NotNull WritableScope fileScope,
-        @NotNull Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives,
+        @NotNull JetScope fileScope,
+        @Nullable Collection<? extends DeclarationDescriptor> resolvedDirectives,
         @NotNull BindingTrace trace
     ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {
+        if (importedReference == null || resolvedDirectives == null) {
             return;
         }
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
@@ -184,7 +185,7 @@ public class ImportsResolver {
         }
 
         boolean uselessHiddenImport = true;
-        for (DeclarationDescriptor wasResolved : resolvedDirectives.get(importDirective)) {
+        for (DeclarationDescriptor wasResolved : resolvedDirectives) {
             DeclarationDescriptor isResolved = null;
             if (wasResolved instanceof ClassDescriptor) {
                 isResolved = fileScope.getClassifier(aliasName);
