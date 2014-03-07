@@ -62,26 +62,21 @@ public class FunctionTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
-
     public void testImplicitItParameter() throws Exception {
         fooBoxTest();
     }
-
 
     public void testDefaultParameters() throws Exception {
         fooBoxTest();
     }
 
-
     public void testFunctionLiteralAsLastParameter() throws Exception {
         fooBoxTest();
     }
 
-
     public void testNamedArguments() throws Exception {
         fooBoxTest();
     }
-
 
     public void testExpressionAsFunction() throws Exception {
         fooBoxTest();
@@ -129,6 +124,10 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testManglingAnyMethods() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testManglingClashWithFunctionsWithoutParameters() throws Exception {
         checkFooBoxIsOk();
     }
 

@@ -246,9 +246,10 @@ public final class TranslationUtils {
 
                     String name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(functionDescriptor);
 
+                    // when name == null it's mean that it's not native.
                     if (name == null) {
-                        // when name == null it's mean that it's not native
-                        if (needsStableMangling(functionDescriptor)) return null;
+                        // skip functions without arguments, because we don't use mangling for them
+                        if (needsStableMangling(functionDescriptor) && !functionDescriptor.getValueParameters().isEmpty()) return null;
 
                         name = declarationDescriptor.getName().asString();
                     }
