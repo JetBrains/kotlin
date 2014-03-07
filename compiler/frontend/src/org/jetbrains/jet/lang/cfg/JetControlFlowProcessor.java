@@ -22,21 +22,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -550,16 +548,7 @@ public class JetControlFlowProcessor {
             if (condition != null) {
                 generateInstructions(condition, IN_CONDITION);
             }
-            boolean conditionIsTrueConstant = false;
-            if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
-                CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.object$.evaluate(condition, trace, KotlinBuiltIns.getInstance().getBooleanType());
-                if (compileTimeConstant instanceof BooleanValue) {
-                    Boolean value = ((BooleanValue) compileTimeConstant).getValue();
-                    if (Boolean.TRUE.equals(value)) {
-                        conditionIsTrueConstant = true;
-                    }
-                }
-            }
+            boolean conditionIsTrueConstant = CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace, true);
             if (!conditionIsTrueConstant) {
                 builder.jumpOnFalse(loopInfo.getExitPoint());
             }
