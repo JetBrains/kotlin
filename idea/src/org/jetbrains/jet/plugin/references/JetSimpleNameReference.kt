@@ -56,6 +56,8 @@ public class JetSimpleNameReference(
     }
 
     public fun bindToFqName(fqName: FqName, forceImmediateBinding: Boolean): PsiElement {
+        if (fqName.isRoot()) return expression
+
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
         val newQualifiedElement = newExpression.getOutermostNonInterleavingQualifiedElement()
 
