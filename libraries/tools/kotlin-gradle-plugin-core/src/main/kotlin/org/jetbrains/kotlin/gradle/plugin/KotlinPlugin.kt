@@ -110,12 +110,8 @@ open class KotlinPlugin: Plugin<Project> {
         }
 
         project.getTasks()?.withType(javaClass<KDoc>(), object : Action<KDoc> {
-            override fun execute(param: KDoc?) {
-                param?.getConventionMapping()?.map("destinationDir", object : Callable<Any> {
-                    override fun call(): Any {
-                        return File(javaPluginConvention.getDocsDir(), "kdoc");
-                    }
-                })
+            override fun execute(task: KDoc?) {
+                task!!.destinationDir = File(javaPluginConvention.getDocsDir(), "kdoc")
             }
         })
     }

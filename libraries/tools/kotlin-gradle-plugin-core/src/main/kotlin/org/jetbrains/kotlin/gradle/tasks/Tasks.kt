@@ -25,6 +25,9 @@ import org.apache.commons.lang.StringUtils
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.apache.commons.io.FileUtils
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.doc.KDocConfig
+import java.util.concurrent.Callable
+import org.gradle.api.Project
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -40,7 +43,7 @@ public open class KotlinCompile(): AbstractCompile() {
     override fun setSource(source: Any?) {
         srcDirsRoots.clear()
         if (source is SourceDirectorySet) {
-            srcDirsRoots.addAll(source.getSrcDirs()!!)
+            srcDirsRoots.addAll(source.getSrcDirs())
         }
         super.setSource(source)
     }
@@ -49,7 +52,7 @@ public open class KotlinCompile(): AbstractCompile() {
     override fun source(vararg sources: Any?): SourceTask? {
         for (source in sources) {
             if (source is SourceDirectorySet) {
-                srcDirsRoots.addAll(source.getSrcDirs()!!)
+                srcDirsRoots.addAll(source.getSrcDirs())
             }
         }
         return super.source(sources)
@@ -104,7 +107,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.outputDir }
 
-        val embeddedAnnotations = getAnnotations()
+        val embeddedAnnotations = getAnnotations(getProject(), logger)
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
         args.annotations = allAnnotations.makeString(File.pathSeparator)
@@ -127,91 +130,53 @@ public open class KotlinCompile(): AbstractCompile() {
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
     }
-
-    fun getAnnotations(): Collection<File> {
-        val annotations = getProject().getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
-
-        if (!annotations.isEmpty()) {
-            logger.info("using default annontations from [${annotations.map {it.getPath()}}]")
-            return annotations
-        } else {
-            throw GradleException("Default annotations not found in Kotlin gradle plugin classpath")
-        }
-    }
 }
 
 public open class KDoc(): SourceTask() {
 
+
     val logger = Logging.getLogger(getClass())
 
-    /**
-     * Returns the directory to use to output the API docs
-     */
-    public var destinationDir: String = ""
+    public var kdocArgs: KDocArguments = KDocArguments()
 
-    /**
-     * Returns the name of the documentation set
-     */
-    public var title: String = ""
+    public var destinationDir: File? = null;
 
-    /**
-     * Returns the version name of the documentation set
-     */
-    public var version: String = ""
-
-    /**
-     * Returns a map of the package prefix to the HTML URL for the root of the apidoc using javadoc/kdoc style
-     * directory layouts so that this API doc report can link to external packages
-     */
-    public var packagePrefixToUrls: Map<String, String> = HashMap()
-
-    /**
-     * Returns a Set of the package name prefixes to ignore from the KDoc report
-     */
-    public var ignorePackages: Set<String> = HashSet()
-
-    /**
-     * Returns true if a warning should be generated if there are no comments
-     * on documented function or property
-     */
-    public var warnNoComments: Boolean = true
-
-    /**
-     * Returns the HTTP URL of the root directory of source code that we should link to
-     */
-    public var sourceRootHref: String = ""
-
-    /**
-     * The root project directory used to deduce relative file names when linking to source code
-     */
-    public var projectRootDir: String = ""
-
-    /**
-     * A map of package name to html or markdown files used to describe the package. If none is
-     * specified we will look for a package.html or package.md file in the source tree
-     */
-    public var packageDescriptionFiles: Map<String, String> = HashMap()
-
-    /**
-     * A map of package name to summary text used in the package overviews
-     */
-    public var packageSummaryText: Map<String, String> = HashMap()
-
+    {
+        // by default, output dir is not defined in options
+        kdocArgs.docConfig.docOutputDir = ""
+    }
 
     TaskAction fun generateDocs() {
         val args = KDocArguments()
         val cfg = args.docConfig
 
-        cfg.docOutputDir = destinationDir
-        cfg.title = title
-        cfg.sourceRootHref = sourceRootHref
-        cfg.projectRootDir = projectRootDir
-        cfg.warnNoComments = warnNoComments
+        val kdocOptions = kdocArgs.docConfig
 
-        cfg.packagePrefixToUrls.putAll(packagePrefixToUrls)
-        cfg.ignorePackages.addAll(ignorePackages)
-        cfg.packageDescriptionFiles.putAll(packageDescriptionFiles)
-        cfg.packageSummaryText.putAll(packageSummaryText)
+        cfg.docOutputDir = if ((kdocOptions.docOutputDir.length == 0) && (destinationDir != null)) { destinationDir!!.path } else { kdocOptions.docOutputDir }
+        cfg.title = kdocOptions.title
+        cfg.sourceRootHref = kdocOptions.sourceRootHref
+        cfg.projectRootDir = kdocOptions.projectRootDir
+        cfg.warnNoComments = kdocOptions.warnNoComments
+
+        cfg.packagePrefixToUrls.putAll(kdocOptions.packagePrefixToUrls)
+        cfg.ignorePackages.addAll(kdocOptions.ignorePackages)
+        cfg.packageDescriptionFiles.putAll(kdocOptions.packageDescriptionFiles)
+        cfg.packageSummaryText.putAll(kdocOptions.packageSummaryText)
+
+        // KDoc compiler does not accept list of files as input. Try to pass directories instead.
+        args.src = getSource().map { it.getParentFile()!!.getAbsolutePath() }.toSet().makeString(File.pathSeparator)
+        // Drop compiled sources to temp. Why KDoc compiles anything after all?!
+        args.outputDir = getTemporaryDir()?.getAbsolutePath()
+
+        logger.warn(args.src)
+        val embeddedAnnotations = getAnnotations(getProject(), logger)
+        val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
+        val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
+        args.annotations = allAnnotations.makeString(File.pathSeparator)
+
+        args.noStdlib = true
+        args.noJdkAnnotations = true
+
 
         val compiler = KDocCompiler()
 
@@ -224,6 +189,17 @@ public open class KDoc(): SourceTask() {
             else -> {}
         }
 
+    }
+}
+
+fun getAnnotations(project: Project, logger: Logger): Collection<File> {
+    val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
+
+    if (!annotations.isEmpty()) {
+        logger.info("using default annontations from [${annotations.map {it.getPath()}}]")
+        return annotations
+    } else {
+        throw GradleException("Default annotations not found in Kotlin gradle plugin classpath")
     }
 }
 
