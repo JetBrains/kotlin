@@ -411,6 +411,7 @@ public final class TranslationUtils {
         return ensureNotNull;
     }
 
+    @NotNull
     public static String getSuggestedName(TranslationContext context, DeclarationDescriptor descriptor) {
         String suggestedName = "";
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();

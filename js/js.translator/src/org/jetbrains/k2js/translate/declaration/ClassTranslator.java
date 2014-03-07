@@ -22,16 +22,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
-import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
-import org.jetbrains.k2js.translate.context.*;
+import org.jetbrains.k2js.translate.context.DefinitionPlace;
+import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.*;
 
@@ -43,7 +45,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescrip
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
-import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
 
 /**
@@ -79,7 +80,7 @@ public final class ClassTranslator extends AbstractTranslator {
             return translate(context());
         }
 
-        return translateObjectInsideClass(containingClass, context());
+        return translateObjectInsideClass(context());
     }
 
     @NotNull
@@ -217,19 +218,13 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private JsExpression translateObjectInsideClass(@NotNull ClassDescriptor outerClass, @NotNull TranslationContext outerClassContext) {
+    private JsExpression translateObjectInsideClass(@NotNull TranslationContext outerClassContext) {
         JsFunction fun = new JsFunction(outerClassContext.scope(), new JsBlock());
-        JsNameRef outerClassRef = fun.getScope().declareName(Namer.OUTER_CLASS_NAME).makeRef();
-        UsageTracker usageTracker = new UsageTracker(descriptor, outerClassContext.usageTracker(), outerClass);
-        AliasingContext aliasingContext = outerClassContext.aliasingContext().inner(outerClass, outerClassRef);
-        TranslationContext funContext = outerClassContext.newFunctionBody(fun, aliasingContext, usageTracker);
+        TranslationContext funContext = outerClassContext.newFunctionBodyWithUsageTracker(fun, descriptor);
 
         fun.getBody().getStatements().add(new JsReturn(translate(funContext)));
 
-        JetClassBody body = classDeclaration.getBody();
-        assert body != null;
-
-        JsNameRef define = funContext.define(getSuggestedName(funContext, descriptor), fun);
-        return new InnerObjectTranslator(funContext, fun).translate(define, usageTracker.isUsed() ? outerClassRef : null);
+        String suggestedName = TranslationUtils.getSuggestedName(funContext, descriptor);
+        return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, suggestedName);
     }
 }
