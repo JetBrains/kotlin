@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler;
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.plugin.refactoring.move.JetMoveFilesOrDirectoriesHandler;
+import org.jetbrains.jet.plugin.refactoring.move.KotlinMoveFilesOrDirectoriesHandler;
 
 import java.util.ArrayList;
 
@@ -38,7 +38,7 @@ public class JetCopyClassHandler extends CopyHandlerDelegateBase {
 
     private static PsiElement replaceElement(PsiElement element) {
         if (element instanceof JetClassOrObject &&
-            JetMoveFilesOrDirectoriesHandler.isMovableClass((JetClassOrObject) element)) {
+            KotlinMoveFilesOrDirectoriesHandler.isMovableClass((JetClassOrObject) element)) {
             return element.getContainingFile();
         }
         else {

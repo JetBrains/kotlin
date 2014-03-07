@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JetMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHandler {
+public class KotlinMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHandler {
     public static boolean isMovableClass(JetClassOrObject clazz) {
         if (!(clazz.getParent() instanceof JetFile)) return false;
         JetFile file = (JetFile) clazz.getContainingFile();
