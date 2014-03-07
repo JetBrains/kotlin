@@ -21,8 +21,8 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -56,6 +56,7 @@ import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.transla
 import static org.jetbrains.k2js.translate.utils.BindingUtils.*;
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateInitializerForProperty;
 import static org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator.mutateLastExpression;
 
@@ -403,13 +404,18 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, @NotNull TranslationContext context) {
-        return LiteralFunctionTranslator.translate(expression.getFunctionLiteral(), context);
+        return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral());
     }
 
     @Override
     @NotNull
     public JsNode visitNamedFunction(@NotNull JetNamedFunction expression, @NotNull TranslationContext context) {
-        return LiteralFunctionTranslator.translateLocalNamedFunction(expression, context).source(expression);
+        JsExpression alias = new LiteralFunctionTranslator(context).translate(expression);
+
+        FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
+        JsName name = context.getNameForDescriptor(descriptor);
+        context.aliasingContext().registerAlias(descriptor, name.makeRef());
+        return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
     }
 
     @Override
@@ -418,7 +424,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         DeclarationDescriptor thisExpression =
                 getDescriptorForReferenceExpression(context.bindingContext(), expression.getInstanceReference());
         assert thisExpression != null : "This expression must reference a descriptor: " + expression.getText();
-        return context.getThisObject(thisExpression).source(expression);
+
+        return context.getThisObject(getReceiverParameterForDeclaration(thisExpression)).source(expression);
     }
 
     @Override

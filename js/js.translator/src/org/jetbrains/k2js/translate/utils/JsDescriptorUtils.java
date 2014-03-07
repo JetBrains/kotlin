@@ -103,18 +103,34 @@ public final class JsDescriptorUtils {
     }
 
     @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
-        DeclarationDescriptor declarationDescriptor;
+    public static ReceiverParameterDescriptor getReceiverParameterForReceiver(@NotNull ReceiverValue receiverParameter) {
+        DeclarationDescriptor declarationDescriptor = getDeclarationDescriptorForReceiver(receiverParameter);
+        return getReceiverParameterForDeclaration(declarationDescriptor);
+    }
 
+    @NotNull
+    private static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
         if (receiverParameter instanceof ThisReceiver) {
-            declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter.getClass() +
-                                                    ", receiverParameter = " + receiverParameter);
+            DeclarationDescriptor declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
+            return declarationDescriptor.getOriginal();
         }
 
-        return declarationDescriptor.getOriginal();
+        throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter.getClass() +
+                                                ", receiverParameter = " + receiverParameter);
+    }
+
+    public static ReceiverParameterDescriptor getReceiverParameterForDeclaration(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter();
+        }
+        else if (declarationDescriptor instanceof CallableMemberDescriptor) {
+            ReceiverParameterDescriptor receiverDescriptor = ((CallableMemberDescriptor) declarationDescriptor).getReceiverParameter();
+            assert receiverDescriptor != null;
+            return receiverDescriptor;
+        }
+
+        throw new UnsupportedOperationException("Unsupported declaration type: " + declarationDescriptor.getClass() +
+                                                ", declarationDescriptor = " + declarationDescriptor);
     }
 
     //TODO: maybe we have similar routine
