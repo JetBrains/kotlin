@@ -198,6 +198,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitObjectDeclaration(declaration);
         }
         else {
+            if (!filter.shouldProcess(declaration)) return;
+
             ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
             // working around a problem with shallow analysis
             if (classDescriptor == null) return;
