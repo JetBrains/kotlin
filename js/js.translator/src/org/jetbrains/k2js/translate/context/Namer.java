@@ -34,28 +34,31 @@ public final class Namer {
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
 
     public static final String CALLEE_NAME = "$fun";
-    public static final String OUTER_CLASS_NAME = "$outer";
 
     private static final String CALL_FUNCTION = "call";
     private static final String APPLY_FUNCTION = "apply";
+
     private static final String CLASS_OBJECT_NAME = "createClass";
     private static final String TRAIT_OBJECT_NAME = "createTrait";
     private static final String OBJECT_OBJECT_NAME = "createObject";
     private static final String ENUM_ENTRIES_NAME = "createEnumEntries";
+
     private static final String SETTER_PREFIX = "set_";
     private static final String GETTER_PREFIX = "get_";
     private static final String BACKING_FIELD_PREFIX = "$";
+    private static final String DELEGATE_POSTFIX = "$delegate";
+
     private static final String SUPER_METHOD_NAME = "baseInitializer";
+
     private static final String ROOT_PACKAGE = "_";
+
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
+
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String CLASS_OBJECT_GETTER = "object";
     private static final String CLASS_OBJECT_INITIALIZER = "object_initializer$";
     private static final String PROTOTYPE_NAME = "prototype";
     public static final String CAPTURED_VAR_FIELD = "v";
-
-
-    private static final String DELEGATE_POSTFIX = "$delegate";
 
     @NotNull
     public static String getReceiverParameterName() {
@@ -140,6 +143,7 @@ public final class Namer {
     public static JsNameRef getFunctionCallRef(@NotNull JsExpression functionExpression) {
         return new JsNameRef(CALL_FUNCTION, functionExpression);
     }
+
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
         return new JsNameRef(APPLY_FUNCTION, functionExpression);

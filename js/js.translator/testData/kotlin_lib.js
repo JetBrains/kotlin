@@ -622,8 +622,3 @@ String.prototype.contains = function (s) {
         return obj1;
     };
 })();
-
-Kotlin.assignOwner = function (f, o) {
-    f.o = o;
-    return f;
-};
