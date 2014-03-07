@@ -50,10 +50,19 @@ public class JetPackageDirective extends JetReferenceExpression {
         List<JetSimpleNameExpression> packageNames = ContainerUtil.newArrayList();
         while (nameExpression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) nameExpression;
-            packageNames.add((JetSimpleNameExpression) qualifiedExpression.getSelectorExpression());
+
+            JetExpression selector = qualifiedExpression.getSelectorExpression();
+            if (selector instanceof JetSimpleNameExpression) {
+                packageNames.add((JetSimpleNameExpression) selector);
+            }
+
             nameExpression = qualifiedExpression.getReceiverExpression();
         }
-        packageNames.add((JetSimpleNameExpression) nameExpression);
+
+        if (nameExpression instanceof JetSimpleNameExpression) {
+            packageNames.add((JetSimpleNameExpression) nameExpression);
+        }
+
         Collections.reverse(packageNames);
 
         return packageNames;
