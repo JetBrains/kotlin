@@ -96,7 +96,7 @@ public final class RhinoUtils {
             @NotNull Scriptable scope) throws Exception {
         String result;
         try {
-            result = FileUtil.loadFile(new File(inputFile));
+            result = FileUtil.loadFile(new File(inputFile), true);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -224,7 +224,7 @@ public final class RhinoUtils {
             return null;
         }
 
-        Object[] args = {FileUtil.loadFile(new File(fileName)), JSHINT_OPTIONS};
+        Object[] args = {FileUtil.loadFile(new File(fileName), true), JSHINT_OPTIONS};
         Function function = (Function) ScriptableObject.getProperty(scope.getParentScope(), "JSHINT");
         Object status = function.call(context, scope.getParentScope(), scope.getParentScope(), args);
         if (!(Boolean) Context.jsToJava(status, Boolean.class)) {

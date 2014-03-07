@@ -49,7 +49,7 @@ public class JetCodeConformanceTest extends TestCase {
 
     public void testParserCode() throws Exception {
         for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/jet/lang/parsing"))) {
-            String source = FileUtil.loadFile(sourceFile);
+            String source = FileUtil.loadFile(sourceFile, true);
 
             Pattern atPattern = Pattern.compile("assert.*?[^_]at.*?$", Pattern.MULTILINE);
             Matcher matcher = atPattern.matcher(source);
@@ -68,7 +68,7 @@ public class JetCodeConformanceTest extends TestCase {
                 continue;
             }
 
-            String source = FileUtil.loadFile(sourceFile);
+            String source = FileUtil.loadFile(sourceFile, true);
 
             if (source.contains("@author") && JAVADOC_PATTERN.matcher(source).find()) { // .contains() is invoked for optimization
                 filesWithAuthorJavadoc.add(sourceFile);

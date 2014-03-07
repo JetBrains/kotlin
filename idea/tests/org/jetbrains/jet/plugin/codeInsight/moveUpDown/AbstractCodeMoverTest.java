@@ -44,7 +44,7 @@ public abstract class AbstractCodeMoverTest extends LightCodeInsightTestCase {
     private void doTest(@NotNull String path, @NotNull Class<? extends StatementUpDownMover> defaultMoverClass) throws Exception {
         configureByFile(path);
 
-        String fileText = FileUtil.loadFile(new File(path));
+        String fileText = FileUtil.loadFile(new File(path), true);
         String direction = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MOVE: ");
 
         boolean down = true;

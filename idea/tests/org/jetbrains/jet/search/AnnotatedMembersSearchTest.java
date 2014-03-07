@@ -42,7 +42,7 @@ public class AnnotatedMembersSearchTest extends AbstractSearcherTest {
 
     private void doTest() throws IOException {
         myFixture.configureByFile(getFileName());
-        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile())),
+        List<String> directives = InTextDirectivesUtils.findListWithPrefixes(FileUtil.loadFile(new File(getPathToFile()), true),
                                                                              "// ANNOTATION: ");
         assertFalse("Specify ANNOTATION directive in test file", directives.isEmpty());
         String annotationClassName = directives.get(0);

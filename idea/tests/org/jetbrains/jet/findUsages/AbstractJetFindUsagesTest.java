@@ -265,7 +265,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
     protected <T extends PsiElement> void doTest(@NotNull String path) throws Exception {
         File mainFile = new File(path);
         final String mainFileName = mainFile.getName();
-        String mainFileText = FileUtil.loadFile(mainFile);
+        String mainFileText = FileUtil.loadFile(mainFile, true);
         final String prefix = mainFileName.substring(0, mainFileName.indexOf('.') + 1);
 
         List<String> caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ");

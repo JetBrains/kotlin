@@ -70,7 +70,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
             )!!
         }
 
-        val config = JsonParser().parse(FileUtil.loadFile(File(path))) as JsonObject
+        val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
 
         val action = MoveAction.valueOf(config.getString("type"))
 

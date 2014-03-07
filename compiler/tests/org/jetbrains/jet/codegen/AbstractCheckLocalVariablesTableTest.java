@@ -65,7 +65,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
 
     protected void doTest(@NotNull String ktFileName) throws Exception {
         ktFile = new File(ktFileName);
-        String text = FileUtil.loadFile(ktFile);
+        String text = FileUtil.loadFile(ktFile, true);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
         assert psiFile != null;

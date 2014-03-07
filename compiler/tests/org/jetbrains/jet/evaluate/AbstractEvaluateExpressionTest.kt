@@ -61,7 +61,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
 
     private fun doTest(path: String, getValueToTest: (JetProperty, BindingContext) -> String) {
         val myFile = File(path)
-        val fileText = FileUtil.loadFile(myFile)
+        val fileText = FileUtil.loadFile(myFile, true)
         val packageView = getPackage(fileText)
 
         val propertiesForTest = getObjectsToTest(fileText)

@@ -146,7 +146,7 @@ public final class TranslationUtils {
         for (String libFileName : list) {
             try {
                 String path = root == null ? libFileName : (root + libFileName);
-                String text = FileUtil.loadFile(new File(path));
+                String text = FileUtil.loadFile(new File(path), true);
                 JetFile jetFile = JetFileUtils.createJetFile(path, text, project);
                 libFiles.add(jetFile);
             }

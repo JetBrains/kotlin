@@ -206,7 +206,7 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
     }
 
     private static void checkFilePrefixPostfix(@NotNull File file, @Nullable File prefix, @Nullable File postfix) throws IOException {
-        String fileContent = FileUtil.loadFile(file);
+        String fileContent = FileUtil.loadFile(file, true);
 
         String prefixContent = FileUtilsPackage.readTextOrEmpty(prefix);
         assertTrue(fileContent.startsWith(prefixContent));

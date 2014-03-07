@@ -162,7 +162,7 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
-        String fileText = FileUtil.loadFile(new File(path));
+        String fileText = FileUtil.loadFile(new File(path), true);
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 

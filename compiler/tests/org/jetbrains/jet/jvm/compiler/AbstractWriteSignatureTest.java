@@ -66,7 +66,7 @@ public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
 
     protected void doTest(String ktFileName) throws Exception {
         File ktFile = new File(ktFileName);
-        String text = FileUtil.loadFile(ktFile);
+        String text = FileUtil.loadFile(ktFile, true);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
 
