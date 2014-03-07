@@ -374,6 +374,7 @@ fun main(args: Array<String>) {
             model("intentions/replaceItWithExplicitFunctionLiteralParam", testMethod = "doTestReplaceItWithExplicitFunctionLiteralParam")
             model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
             model("intentions/addBraces", testMethod = "doTestAddBraces")
+            model("intentions/splitElseIf", testMethod = "doTestSplitElseIf")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
