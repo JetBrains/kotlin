@@ -52,13 +52,12 @@ public class TranslationContext {
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
-        DynamicContext rootDynamicContext =
-                DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
+        DynamicContext rootDynamicContext = DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
         return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
     }
 
-    private final HashMap<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
+    private final Map<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
 
     private TranslationContext(
             @Nullable TranslationContext parent,
@@ -76,23 +75,6 @@ public class TranslationContext {
         this.definitionPlace = definitionPlace;
     }
 
-    private TranslationContext(
-            @NotNull TranslationContext parent,
-            @NotNull AliasingContext aliasingContext
-    ) {
-        this(parent, parent.staticContext, parent.dynamicContext, aliasingContext, parent.usageTracker, null);
-    }
-
-    private TranslationContext(
-            @NotNull TranslationContext parent,
-            @NotNull JsFunction fun,
-            @NotNull AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker
-    ) {
-        this(parent, parent.staticContext, DynamicContext.newContext(fun.getScope(), fun.getBody()), aliasingContext,
-             usageTracker == null ? parent.usageTracker : usageTracker, null);
-    }
-
     @Nullable
     public UsageTracker usageTracker() {
         return usageTracker;
@@ -104,12 +86,17 @@ public class TranslationContext {
 
     @NotNull
     public TranslationContext contextWithScope(@NotNull JsFunction fun) {
-        return new TranslationContext(this, fun, aliasingContext, null);
+        return this.newFunctionBody(fun, aliasingContext);
     }
 
     @NotNull
     public TranslationContext newFunctionBody(@NotNull JsFunction fun, @Nullable AliasingContext aliasingContext) {
-        return new TranslationContext(this, fun, aliasingContext == null ? this.aliasingContext.inner() : aliasingContext, null);
+        DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
+        if (aliasingContext == null) {
+            aliasingContext = this.aliasingContext.inner();
+        }
+
+        return new TranslationContext(this, this.staticContext, dynamicContext, aliasingContext, this.usageTracker, null);
     }
 
     @NotNull
@@ -131,18 +118,23 @@ public class TranslationContext {
     }
 
     @NotNull
+    private TranslationContext innerWithAliasingContext(AliasingContext aliasingContext) {
+        return new TranslationContext(this, this.staticContext, this.dynamicContext, aliasingContext, this.usageTracker, null);
+    }
+
+    @NotNull
     public TranslationContext innerContextWithAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsNameRef alias) {
-        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
+        return this.innerWithAliasingContext(aliasingContext.inner(correspondingDescriptor, alias));
     }
 
     @NotNull
     public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsExpression> aliases) {
-        return new TranslationContext(this, aliasingContext.withExpressionsAliased(aliases));
+        return this.innerWithAliasingContext(aliasingContext.withExpressionsAliased(aliases));
     }
 
     @NotNull
     public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsExpression> aliases) {
-        return new TranslationContext(this, aliasingContext.withDescriptorsAliased(aliases));
+        return this.innerWithAliasingContext(aliasingContext.withDescriptorsAliased(aliases));
     }
 
     @NotNull
