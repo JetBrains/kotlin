@@ -360,12 +360,12 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         @Nullable
         public V invoke(K input) {
-            Object value = cache.get(input);
+            Object value = checkValueRange(cache.get(input));
             if (value != null && value != NotValue.COMPUTING) return WrappedValues.unescapeExceptionOrNull(value);
 
             lock.lock();
             try {
-                value = cache.get(input);
+                value = checkValueRange(cache.get(input));
                 assert value != NotValue.COMPUTING : "Recursion detected on input: " + input + " under " + LockBasedStorageManager.this;
                 if (value != null) return WrappedValues.unescapeExceptionOrNull(value);
 
@@ -373,7 +373,7 @@ public class LockBasedStorageManager implements StorageManager {
                 try {
                     cache.put(input, NotValue.COMPUTING);
                     V typedValue = compute.invoke(input);
-                    Object oldValue = cache.put(input, WrappedValues.escapeNull(typedValue));
+                    Object oldValue = cache.put(input, WrappedValues.escapeNull(checkValueRange(typedValue)));
 
                     // This code effectively asserts that oldValue is null
                     // The trickery is here because below we catch all exceptions thrown here, and this is the only exception that shouldn't be stored
@@ -400,6 +400,11 @@ public class LockBasedStorageManager implements StorageManager {
             finally {
                 lock.unlock();
             }
+        }
+
+        private <T> T checkValueRange(T value) {
+            assert value == NotValue.COMPUTING || !(value instanceof NotValue) : "Only COMPUTING state is valid in functions";
+            return value;
         }
     }
 
