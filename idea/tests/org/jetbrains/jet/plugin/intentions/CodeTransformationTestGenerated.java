@@ -1890,6 +1890,21 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestMoveLambdaInsideParentheses("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda1.kt");
         }
         
+        @TestMetadata("moveLambda10.kt")
+        public void testMoveLambda10() throws Exception {
+            doTestMoveLambdaInsideParentheses("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda10.kt");
+        }
+        
+        @TestMetadata("moveLambda11.kt")
+        public void testMoveLambda11() throws Exception {
+            doTestMoveLambdaInsideParentheses("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda11.kt");
+        }
+        
+        @TestMetadata("moveLambda12.kt")
+        public void testMoveLambda12() throws Exception {
+            doTestMoveLambdaInsideParentheses("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda12.kt");
+        }
+        
         @TestMetadata("moveLambda2.kt")
         public void testMoveLambda2() throws Exception {
             doTestMoveLambdaInsideParentheses("idea/testData/intentions/moveLambdaInsideParentheses/moveLambda2.kt");
