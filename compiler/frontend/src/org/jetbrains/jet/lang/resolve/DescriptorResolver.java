@@ -701,11 +701,11 @@ public class DescriptorResolver {
             }
         }
 
-        for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-            checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
-        }
-
         if (!(declaration instanceof JetClass)) {
+            for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
+                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+            }
+
             checkNamesInConstraints(declaration, descriptor, scope, trace);
         }
     }
@@ -747,7 +747,7 @@ public class DescriptorResolver {
         }
     }
 
-    private static void checkUpperBoundType(
+    public static void checkUpperBoundType(
             JetTypeReference upperBound,
             JetType upperBoundType,
             boolean isClassObjectConstraint,
