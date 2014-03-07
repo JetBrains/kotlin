@@ -143,7 +143,18 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getMangledName(@NotNull FunctionDescriptor descriptor) {
+    public static String getSuggestedName(@NotNull DeclarationDescriptor descriptor) {
+        String suggestedName = descriptor.getName().asString();
+
+        if (descriptor instanceof FunctionDescriptor) {
+            suggestedName = getMangledName((FunctionDescriptor) descriptor);
+        }
+
+        return suggestedName;
+    }
+
+    @NotNull
+    private static String getMangledName(@NotNull FunctionDescriptor descriptor) {
         if (needsStableMangling(descriptor)) {
             return getStableMangledName(descriptor);
         }
@@ -323,16 +334,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
-            @NotNull List<JetExpression> expressions) {
-        List<JsExpression> result = new ArrayList<JsExpression>();
-        for (JetExpression expression : expressions) {
-            result.add(Translation.translateAsExpression(expression, context));
-        }
-        return result;
-    }
-
-    @NotNull
     public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
             @NotNull JetUnaryExpression expression) {
         JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
@@ -412,7 +413,7 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getSuggestedName(TranslationContext context, DeclarationDescriptor descriptor) {
+    public static String getSuggestedNameForInnerDeclaration(TranslationContext context, DeclarationDescriptor descriptor) {
         String suggestedName = "";
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
         if (containingDeclaration != null &&

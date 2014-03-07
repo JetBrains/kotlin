@@ -20,14 +20,14 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isAncestor
 import com.google.dart.compiler.backend.js.ast.JsName
 import com.google.dart.compiler.backend.js.ast.JsScope
+import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
 
 private val CAPTURED_RECEIVER_NAME_PREFIX : String = "this$"
 
 class UsageTracker(
         private val parent: UsageTracker?,
         val containingDescriptor: MemberDescriptor,
-        private val scope: JsScope,
-        private val staticContext: StaticContext
+        private val scope: JsScope
 ) {
 
     private val captured = hashMapOf<CallableDescriptor, JsName>()
@@ -63,18 +63,7 @@ class UsageTracker(
     }
 
     private fun CallableDescriptor.getJsNameForCapturedDescriptor(): JsName {
-        val suggestedName =
-                when (this) {
-                    is ReceiverParameterDescriptor -> {
-                        this.getNameForCapturedReceiver()
-                    }
-                    else -> {
-                        // TODO: drop temporary HACK or add description
-                        val name = staticContext.getNameForDescriptor(this)
-                        name.getIdent()
-                    }
-                }
-
+        val suggestedName = if (this is ReceiverParameterDescriptor) this.getNameForCapturedReceiver() else getSuggestedName(this)
         return scope.declareFreshName(suggestedName)
     }
 }

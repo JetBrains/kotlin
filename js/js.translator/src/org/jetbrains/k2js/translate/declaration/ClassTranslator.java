@@ -33,7 +33,6 @@ import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
-import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.*;
 
@@ -224,7 +223,6 @@ public final class ClassTranslator extends AbstractTranslator {
 
         fun.getBody().getStatements().add(new JsReturn(translate(funContext)));
 
-        String suggestedName = TranslationUtils.getSuggestedName(funContext, descriptor);
-        return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, suggestedName);
+        return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, descriptor);
     }
 }

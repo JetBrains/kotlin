@@ -26,6 +26,7 @@ import org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor
 import org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody
 import org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName
 import org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction
+import org.jetbrains.jet.lang.descriptors.MemberDescriptor
 
 class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslator(context) {
     fun translate(declaration: JetDeclarationWithBody): JsExpression {
@@ -54,18 +55,16 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
             lambda.setName(tracker.getNameForCapturedDescriptor(descriptor))
         }
 
-        val suggestedName = getSuggestedName(functionContext, descriptor)
-
         if (tracker.hasCapturedExceptContaining()) {
             val lambdaCreator = simpleReturnFunction(invokingContext.scope(), lambda)
-            return lambdaCreator.withCapturedParameters(functionContext, invokingContext, suggestedName)
+            return lambdaCreator.withCapturedParameters(functionContext, invokingContext, descriptor)
         }
 
-        return invokingContext.define(suggestedName, lambda)
+        return invokingContext.define(descriptor, lambda)
     }
 }
 
-fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, suggestedName: String): JsExpression {
+fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
 
     fun getParameterNameRefForInvocation(callableDescriptor: CallableDescriptor): JsExpression {
         val alias = invokingContext.getAliasForDescriptor(callableDescriptor)
@@ -76,7 +75,7 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
         return invokingContext.getNameForDescriptor(callableDescriptor).makeRef()
     }
 
-    val ref = invokingContext.define(suggestedName, this)
+    val ref = invokingContext.define(descriptor, this)
     val invocation = JsInvocation(ref)
 
     val invocationArguments = invocation.getArguments()!!
@@ -84,11 +83,11 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
 
     val tracker = context.usageTracker()!!
 
-    for ((descriptor, name) in tracker.capturedDescriptorToJsName) {
-        if (descriptor == tracker.containingDescriptor) continue
+    for ((capturedDescriptor, name) in tracker.capturedDescriptorToJsName) {
+        if (capturedDescriptor == tracker.containingDescriptor) continue
 
         functionParameters.add(JsParameter(name))
-        invocationArguments.add(getParameterNameRefForInvocation(descriptor))
+        invocationArguments.add(getParameterNameRefForInvocation(capturedDescriptor))
     }
 
     return invocation

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -114,7 +115,7 @@ public class TranslationContext {
     @NotNull
     public TranslationContext newFunctionBodyWithUsageTracker(@NotNull JsFunction fun, @NotNull MemberDescriptor descriptor) {
         DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
-        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, fun.getScope(), this.staticContext);
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, fun.getScope());
         return new TranslationContext(this, this.staticContext, dynamicContext, this.aliasingContext.inner(), usageTracker, this.definitionPlace);
     }
 
@@ -285,8 +286,9 @@ public class TranslationContext {
     }
 
     @NotNull
-    public JsNameRef define(String name, JsExpression expression) {
-        return getDefinitionPlace().define(name, expression);
+    public JsNameRef define(DeclarationDescriptor descriptor, JsExpression expression) {
+        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(this, descriptor);
+        return getDefinitionPlace().define(suggestedName, expression);
     }
 
     @Nullable
