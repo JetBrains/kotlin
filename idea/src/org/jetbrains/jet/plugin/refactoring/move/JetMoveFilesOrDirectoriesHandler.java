@@ -49,7 +49,7 @@ public class JetMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHand
                 return false;
             }
         }
-        return true;
+        return super.canMove(elements, targetContainer);
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.AnnotationVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
@@ -29,16 +28,14 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.asm4.Opcodes.*;
-import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS;
+import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 
 public class PackagePartCodegen extends MemberCodegen {
 
@@ -78,7 +75,7 @@ public class PackagePartCodegen extends MemberCodegen {
         );
         v.visitSource(jetFile.getName(), null);
 
-        writeKotlinAnnotation();
+        writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.PACKAGE_PART);
 
         for (JetDeclaration declaration : jetFile.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -90,15 +87,6 @@ public class PackagePartCodegen extends MemberCodegen {
 
         v.done();
     }
-
-    private void writeKotlinAnnotation() {
-        Type type = asmTypeByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS);
-        AnnotationVisitor av = v.newAnnotation(type.getDescriptor(), true);
-        av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
-        av.visitEnum("kind", "L" + type.getInternalName() + "$Kind;", "PACKAGE_PART");
-        av.visitEnd();
-    }
-
 
     private void generateStaticInitializers() {
         List<JetProperty> properties = collectPropertiesToInitialize();

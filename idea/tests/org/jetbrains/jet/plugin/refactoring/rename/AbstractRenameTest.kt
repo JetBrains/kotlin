@@ -35,7 +35,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
@@ -45,6 +44,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.name.isSubpackageOf
+import org.jetbrains.jet.getString
+import org.jetbrains.jet.getNullableString
 
 private enum class RenameType {
     JAVA_CLASS
@@ -54,17 +55,6 @@ private enum class RenameType {
     KOTLIN_PROPERTY
     KOTLIN_PACKAGE
 }
-
-fun JsonObject.getString(name: String): String {
-    val member = getNullableString(name)
-    if (member == null) {
-        throw IllegalStateException("Member with name '$name' is expected in '$this'")
-    }
-
-    return member
-}
-
-fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
 
 public abstract class AbstractRenameTest : MultiFileTestCase() {
     inner class TestContext(

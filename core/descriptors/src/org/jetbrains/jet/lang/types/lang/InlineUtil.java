@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -56,9 +55,7 @@ public class InlineUtil {
             }
             else {
                 assert argument instanceof EnumValue : "Inline annotation parameter should be inline entry but was: " + argument + "!";
-                ClassDescriptor value = ((EnumValue) argument).getValue();
-                assert value != null : "Value for enum value should be not null " + argument;
-                String name = value.getName().asString();
+                String name = ((EnumValue) argument).getValue().getName().asString();
                 return name.equals(InlineStrategy.IN_PLACE.name()) ? InlineStrategy.IN_PLACE : InlineStrategy.AS_FUNCTION;
             }
         }

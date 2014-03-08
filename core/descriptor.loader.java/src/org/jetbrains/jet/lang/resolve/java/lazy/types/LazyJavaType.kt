@@ -56,6 +56,6 @@ abstract class LazyJavaType(storageManager: StorageManager) : AbstractJetType(),
         if (!_arguments.isComputed()) {
             return "" + getConstructor() + "<arguments are not computed>"
         }
-        return super<AbstractJetType>.toString()!!
+        return super<AbstractJetType>.toString()
     }
 }

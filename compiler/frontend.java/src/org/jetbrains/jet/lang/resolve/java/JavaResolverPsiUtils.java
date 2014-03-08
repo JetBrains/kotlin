@@ -18,19 +18,24 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
+
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_CLASS;
+import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KOTLIN_PACKAGE;
 
 public class JavaResolverPsiUtils {
     private JavaResolverPsiUtils() {
     }
 
     public static boolean isCompiledKotlinClass(@NotNull PsiClass psiClass) {
-        return DescriptorResolverUtils.isCompiledKotlinClass(new JavaClassImpl(psiClass));
+        JavaClass javaClass = new JavaClassImpl(psiClass);
+        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_CLASS) != null;
     }
 
     public static boolean isCompiledKotlinPackageClass(@NotNull PsiClass psiClass) {
-        return DescriptorResolverUtils.isCompiledKotlinPackageClass(new JavaClassImpl(psiClass));
+        JavaClass javaClass = new JavaClassImpl(psiClass);
+        return javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED && javaClass.findAnnotation(KOTLIN_PACKAGE) != null;
     }
 
     public static boolean isCompiledKotlinClassOrPackageClass(@NotNull PsiClass psiClass) {

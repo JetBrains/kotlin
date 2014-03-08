@@ -162,12 +162,7 @@ public final class DescriptorLookupConverter {
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
-            while (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                // TODO: need to know all of them
-                callableMemberDescriptor = callableMemberDescriptor.getOverriddenDescriptors().iterator().next();
-            }
-            descriptor = callableMemberDescriptor;
+            descriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
         return createLookupElement(analyzer, descriptor, BindingContextUtils.descriptorToDeclaration(bindingContext, descriptor));
     }

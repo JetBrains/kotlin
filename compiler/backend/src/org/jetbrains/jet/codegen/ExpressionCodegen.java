@@ -32,12 +32,12 @@ import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.jet.codegen.inline.InlineCodegen;
-import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.context.*;
+import org.jetbrains.jet.codegen.inline.InlineCodegen;
+import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -1641,7 +1641,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         descriptor = descriptor.getOriginal();
 
         if (descriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor memberDescriptor = unwrapFakeOverride((CallableMemberDescriptor) descriptor);
+            CallableMemberDescriptor memberDescriptor = DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
 
             IntrinsicMethod intrinsic = state.getIntrinsics().getIntrinsic(memberDescriptor);
             if (intrinsic != null) {
@@ -1859,7 +1859,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Type owner;
         CallableMethod callableMethod = callableGetter != null ? callableGetter : callableSetter;
 
-        propertyDescriptor = unwrapFakeOverride(propertyDescriptor);
+        propertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         if (callableMethod == null) {
             owner = typeMapper.getOwner(isBackingFieldInAnotherClass ? propertyDescriptor.getContainingDeclaration() : propertyDescriptor,
                                         context.getContextKind(), isCallInsideSameModuleAsDeclared(propertyDescriptor, context));
@@ -2117,7 +2117,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
 
         CallGenerator callGenerator = !isInline ? defaulCallGenerator :
-                          new InlineCodegen(this, state, (SimpleFunctionDescriptor) unwrapFakeOverride(
+                          new InlineCodegen(this, state, (SimpleFunctionDescriptor) DescriptorUtils.unwrapFakeOverride(
                                   (CallableMemberDescriptor) descriptor.getOriginal()), call);
 
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {

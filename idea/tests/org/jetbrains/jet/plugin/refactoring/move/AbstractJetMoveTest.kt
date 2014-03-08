@@ -48,6 +48,9 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassToInnerProce
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
+import com.intellij.refactoring.move.MoveHandler
+import org.jetbrains.jet.getString
+import org.jetbrains.jet.getNullableString
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -92,7 +95,7 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
             else null
 
             try {
-                action.runRefactoring(mainPsiFile, elementAtCaret, config)
+                action.runRefactoring(rootDir, mainPsiFile, elementAtCaret, config)
 
                 assert(!conflictFile.exists())
             }
@@ -126,20 +129,9 @@ public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     }
 }
 
-fun JsonObject.getString(name: String): String {
-    val member = getNullableString(name)
-    if (member == null) {
-        throw IllegalStateException("Member with name '$name' is expected in '$this'")
-    }
-
-    return member
-}
-
-fun JsonObject.getNullableString(name: String): String? = this[name]?.getAsString()
-
 enum class MoveAction {
     MOVE_MEMBERS {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val member = elementAtCaret!!.getParentByType(javaClass<PsiMember>())!!
             val targetClassName = config.getString("targetClass")
             val visibility = config.getNullableString("visibility")
@@ -154,7 +146,7 @@ enum class MoveAction {
     }
 
     MOVE_TOP_LEVEL_CLASSES {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
             val targetPackage = config.getString("targetPackage")
 
@@ -170,7 +162,7 @@ enum class MoveAction {
     }
 
     MOVE_PACKAGES {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.getProject()
             val sourcePackage = config.getString("sourcePackage")
             val targetPackage = config.getString("targetPackage")
@@ -187,7 +179,7 @@ enum class MoveAction {
     }
 
     MOVE_TOP_LEVEL_CLASSES_TO_INNER {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.getProject()
 
             val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
@@ -205,7 +197,7 @@ enum class MoveAction {
     }
 
     MOVE_INNER_CLASS {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.getProject()
 
             val classToMove = elementAtCaret!!.getParentByType(javaClass<PsiClass>())!!
@@ -225,21 +217,34 @@ enum class MoveAction {
     }
 
     MOVE_FILES {
-        override fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             val project = mainFile.getProject()
-            val targetPackage = config.getString("targetPackage")
 
-            MoveFilesOrDirectoriesProcessor(
-                    project = project,
-                    elements = array(mainFile),
-                    newParent = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null,
-                    prepareSuccessfulCallback = null
-            ).run()
+            val targetPackage = config.getNullableString("targetPackage")
+            if (targetPackage != null) {
+                MoveFilesOrDirectoriesProcessor(
+                        project = project,
+                        elements = array(mainFile),
+                        newParent = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
+                        searchInComments = false,
+                        searchInNonJavaFiles = true,
+                        moveCallback = null,
+                        prepareSuccessfulCallback = null
+                ).run()
+            }
+            else {
+                val targetFile = config.getString("targetFile")
+
+                MoveHandler.doMove(
+                        project = project,
+                        elements = array(mainFile),
+                        targetContainer = PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
+                        dataContext = null,
+                        callback = null
+                )
+            }
         }
     }
 
-    abstract fun runRefactoring(mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject)
+    abstract fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject)
 }

@@ -274,6 +274,10 @@ fun main(args: Array<String>) {
             model("intentions/convertToExpressionBody", pattern = "^before(\\w+)\\.kt$")
         }
 
+        testClass(javaClass<AbstractIntentionTest>(), "ConvertToBlockBodyTestGenerated") {
+            model("intentions/convertToBlockBody", pattern = "^before(\\w+)\\.kt$")
+        }
+
         testClass(javaClass<AbstractJSBasicCompletionTest>()) {
             model("completion/basic/common")
             model("completion/basic/js")
@@ -362,6 +366,8 @@ fun main(args: Array<String>) {
             model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
             model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
             model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
+            model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
+            model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

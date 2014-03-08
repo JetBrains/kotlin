@@ -28,11 +28,19 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
+import com.intellij.openapi.diagnostic.Logger
 
 public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<ReferenceBindRequest>> {
+    private val LOG = Logger.getInstance(javaClass<KotlinShortenReferencesRefactoringHelper>().getCanonicalName())!!
+
     override fun prepareOperation(usages: Array<out UsageInfo>?): Set<ReferenceBindRequest>? {
         if (usages != null && usages.isNotEmpty()) {
-            ApplicationManager.getApplication()!!.runWriteAction { usages[0].getProject().getElementsToShorten(true)!!.clear() }
+            val project = usages[0].getProject()
+            val elementsToShorten = project.getElementsToShorten(false)
+            if (elementsToShorten != null && !elementsToShorten.isEmpty()) {
+                LOG.warn("Waiting set for reference shortening is not empty")
+                project.clearElementsToShorten()
+            }
         }
         return null
     }
@@ -40,7 +48,7 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<Ref
     override fun performOperation(project: Project, operationData: Set<ReferenceBindRequest>?) {
         ApplicationManager.getApplication()!!.runWriteAction {
             project.getElementsToShorten(false)?.let { bindRequests ->
-                project.putUserData(ELEMENTS_TO_SHORTEN_KEY, null)
+                project.clearElementsToShorten()
                 ShortenReferences.process(
                         bindRequests
                                 .map() { req -> req.process()?.getOutermostNonInterleavingQualifiedElement() }
@@ -50,8 +58,6 @@ public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Set<Ref
         }
     }
 }
-
-private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<ReferenceBindRequest>>("ELEMENTS_TO_SHORTEN_KEY")
 
 class ReferenceBindRequest(val refExpression: SmartPsiElementPointer<JetSimpleNameExpression>, val fqName: FqName) {
     fun process(): JetSimpleNameExpression? {
@@ -68,8 +74,9 @@ class ReferenceBindRequest(val refExpression: SmartPsiElementPointer<JetSimpleNa
 
         return bindToFqName(originalExpression, fqName)
     }
-
 }
+
+private val ELEMENTS_TO_SHORTEN_KEY = Key.create<MutableSet<ReferenceBindRequest>>("ELEMENTS_TO_SHORTEN_KEY")
 
 private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<ReferenceBindRequest>? {
     var elementsToShorten = getUserData(ELEMENTS_TO_SHORTEN_KEY)
@@ -79,6 +86,10 @@ private fun Project.getElementsToShorten(createIfNeeded: Boolean): MutableSet<Re
     }
 
     return elementsToShorten
+}
+
+private fun Project.clearElementsToShorten() {
+    putUserData(ELEMENTS_TO_SHORTEN_KEY, null)
 }
 
 public fun Project.addReferenceBindRequest(request: ReferenceBindRequest) {

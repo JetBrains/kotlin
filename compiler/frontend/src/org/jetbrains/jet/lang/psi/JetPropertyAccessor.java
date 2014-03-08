@@ -73,7 +73,12 @@ public class JetPropertyAccessor extends JetDeclarationImpl
 
     @Override
     public boolean hasBlockBody() {
-        return findChildByType(JetTokens.EQ) == null;
+        return getEqualsToken() == null;
+    }
+
+    @Nullable
+    public PsiElement getEqualsToken() {
+        return findChildByType(JetTokens.EQ);
     }
 
     @Override
@@ -104,6 +109,6 @@ public class JetPropertyAccessor extends JetDeclarationImpl
     @Nullable
     @Override
     public JetExpression getInitializer() {
-        return PsiTreeUtil.getNextSiblingOfType(findChildByType(JetTokens.EQ), JetExpression.class);
+        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
     }
 }

@@ -126,6 +126,16 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
     }
 
     @Test
+    public void k2jsWithMainFQArgs() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
+    public void k2jsWithMainVarargs() throws Exception {
+        doJsAntTest();
+    }
+
+    @Test
     public void k2jsManySources() throws Exception {
         doJsAntTest();
     }

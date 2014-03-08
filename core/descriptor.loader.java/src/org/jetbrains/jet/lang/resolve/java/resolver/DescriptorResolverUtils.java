@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
-import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -39,30 +38,6 @@ public final class DescriptorResolverUtils {
     public static final FqName OBJECT_FQ_NAME = new FqName("java.lang.Object");
 
     private DescriptorResolverUtils() {
-    }
-
-    public static boolean isCompiledKotlinPackageClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_PACKAGE) != null
-                   || javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS) != null;
-        }
-        return false;
-    }
-
-    public static boolean isCompiledKotlinClass(@NotNull JavaClass javaClass) {
-        if (javaClass.getOriginKind() == JavaClass.OriginKind.COMPILED) {
-            return javaClass.findAnnotation(JvmAnnotationNames.KOTLIN_CLASS) != null;
-        }
-        return false;
-    }
-
-    private static boolean isCompiledKotlinClassOrPackageClass(@NotNull JavaClass javaClass) {
-        return isCompiledKotlinClass(javaClass) || isCompiledKotlinPackageClass(javaClass);
-    }
-
-    @NotNull
-    public static FqName fqNameByClass(@NotNull Class<?> clazz) {
-        return new FqName(clazz.getCanonicalName());
     }
 
     @NotNull
@@ -262,11 +237,7 @@ public final class DescriptorResolverUtils {
         return TypeSubstitutor.create(typeSubstitutionContext);
     }
 
-    public static boolean isJavaClassVisibleAsPackage(@NotNull JavaClass javaClass) {
-        return !isCompiledKotlinClassOrPackageClass(javaClass) && hasStaticMembers(javaClass);
-    }
-
-    private static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
+    public static boolean hasStaticMembers(@NotNull JavaClass javaClass) {
         for (JavaMethod method : javaClass.getMethods()) {
             if (method.isStatic() && !shouldBeInEnumClassObject(method)) {
                 return true;

@@ -28,8 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import java.util.Set;
-
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqNameSafe;
 
@@ -72,18 +70,11 @@ public final class DecompiledNavigationUtils {
 
     //TODO: should be done via some generic mechanism
     @NotNull
-    private static DeclarationDescriptor getEffectiveReferencedDescriptor(@NotNull DeclarationDescriptor referencedDescriptor) {
-        if (referencedDescriptor instanceof CallableMemberDescriptor) {
-            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) referencedDescriptor;
-            CallableMemberDescriptor.Kind kind = callableMemberDescriptor.getKind();
-            if (kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                Set<? extends CallableMemberDescriptor> overriddenDescriptors =
-                        callableMemberDescriptor.getOverriddenDescriptors();
-                //TODO: several descriptors
-                return getEffectiveReferencedDescriptor(overriddenDescriptors.iterator().next());
-            }
+    private static DeclarationDescriptor getEffectiveReferencedDescriptor(@NotNull DeclarationDescriptor descriptor) {
+        if (descriptor instanceof CallableMemberDescriptor) {
+            return DescriptorUtils.unwrapFakeOverride((CallableMemberDescriptor) descriptor);
         }
-        return referencedDescriptor;
+        return descriptor;
     }
 
 

@@ -56,6 +56,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.unwrapFakeOverride;
+
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private static final File BUILT_INS_COMPILABLE_SRC_DIR = new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
 
@@ -178,11 +180,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
     private DeclarationDescriptor findCurrentDescriptorForMember(@NotNull MemberDescriptor originalDescriptor) {
         if (originalDescriptor instanceof CallableMemberDescriptor &&
             ((CallableMemberDescriptor) originalDescriptor).getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            CallableMemberDescriptor descriptor = (CallableMemberDescriptor) originalDescriptor;
-            while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                descriptor = descriptor.getOverriddenDescriptors().iterator().next();
-            }
-            return findCurrentDescriptorForMember(descriptor.getOriginal());
+            return findCurrentDescriptorForMember(unwrapFakeOverride((CallableMemberDescriptor) originalDescriptor).getOriginal());
         }
 
         DeclarationDescriptor containingDeclaration = findCurrentDescriptor(originalDescriptor.getContainingDeclaration());

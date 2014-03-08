@@ -30,7 +30,7 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
             val valueType = expressionType(value)
             if (valueType == null || !KotlinBuiltIns.getInstance().isUnit(valueType)) {
-                specifyUnitTypeExplicitly(declaration)
+                specifyTypeExplicitly(declaration, "Unit")
             }
         }
 
@@ -73,20 +73,6 @@ public class ConvertToExpressionBodyAction : PsiElementBaseIntentionAction() {
 
             else -> null
         }
-    }
-
-    private fun expressionType(expression: JetExpression): JetType? {
-        val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(expression.getContainingFile() as JetFile)
-        val bindingContext = resolveSession.resolveToElement(expression)
-        return bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)
-    }
-
-    private fun specifyUnitTypeExplicitly(declaration: JetNamedFunction) {
-        val project = declaration.getProject()
-        val typeReference = JetPsiFactory.createType(project, "Unit")
-        val anchor = declaration.getValueParameterList() ?: return/*incomplete declaration*/
-        declaration.addAfter(typeReference, anchor)
-        declaration.addAfter(JetPsiFactory.createColon(project), anchor)
     }
 
     private fun containsReturn(element: PsiElement): Boolean {
