@@ -37,7 +37,7 @@ open class BaseGradleIT {
     }
 
     fun CompiledProject.assertSuccessful(): CompiledProject {
-        assertEquals(resultCode, 0)
+        assertEquals(resultCode, 0, "Gradle build failed")
         return this
     }
 
