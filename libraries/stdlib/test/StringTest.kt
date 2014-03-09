@@ -47,4 +47,16 @@ class StringTest {
         assertEquals("abcd", "Abcd".decapitalize())
         assertEquals("uRL", "URL".decapitalize())
     }
+
+    /* tests for CharSequence.slice(), String.slice()
+    *  from /libraries/stdlib/src/kotlin/Strings.kt
+    *  */
+
+    test fun slice() {
+        val iter = CompositeIterator(4, 3, 0, 1)
+        assertEquals("bcd", "abcde".slice(1..3))
+        assertEquals("dcb", "abcde".slice(3 downTo 1))
+        assertEquals("edab", "abcde".slice(iter))
+    }
+
 }
