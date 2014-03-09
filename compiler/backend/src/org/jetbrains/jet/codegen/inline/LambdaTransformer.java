@@ -272,6 +272,10 @@ public class LambdaTransformer {
     }
 
     public static String getNewFieldName(String oldName) {
+        if (oldName.equals("this$0")) {
+            //"this$0" couldn't clash and we should keep this name invariant for further transformations
+            return oldName;
+        }
         return oldName + "$inlined";
     }
 }
