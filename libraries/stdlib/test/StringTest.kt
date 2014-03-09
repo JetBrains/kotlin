@@ -53,7 +53,7 @@ class StringTest {
     *  */
 
     test fun slice() {
-        val iter = CompositeIterator(4, 3, 0, 1)
+        val iter = listOf(4, 3, 0, 1)
         // abcde
         // 01234
         assertEquals("bcd" , "abcde".slice(1..3))

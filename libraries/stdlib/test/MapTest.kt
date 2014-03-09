@@ -224,7 +224,7 @@ class MapTest {
         assertEquals(listOf(null, null, "A", "B", "C").reverse(),               map.slice('c' downTo '_'))
         assertEquals(listOf(null, null, "A", "B", "C", "D", "E", null, null, null).reverce(), map.slice('h'downTo '_'))
 
-        val iter = CompositeIterator('c', 'e', '!', 'a')
+        val iter = listOf('c', 'e', '!', 'a')
         assertEquals(listOf("C", "E", null, "A"),  map.slice(iter))
     }
 }
