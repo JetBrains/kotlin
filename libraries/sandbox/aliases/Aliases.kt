@@ -35,3 +35,27 @@ package kotlin.aliases
  * the standart Kotlin library and must be imported
  * manually.
  * */
+
+/*
+* Short syntax for .slice() functions
+* */
+public fun <T> List<T>.get(indexes: IntRange)     : List<T> = slice(indexes)
+public fun <T> List<T>.get(indexes: Iterable<Int>): List<T> = slice(indexes)
+
+public fun String.get(indexes: Iterable<Int>)     : String  = slice(indexes)
+
+public fun <K, V> Map<K, V>.get(keys: Iterable<K>): List<V?> = slice(keys)
+
+public fun <T> Array<T>.get(indexes: Iterable<Int>): List<T>        = slice(indexes)
+public fun    ByteArray.get(indexes: Iterable<Int>): List<Byte>     = slice(indexes)
+public fun   ShortArray.get(indexes: Iterable<Int>): List<Short>    = slice(indexes)
+public fun     IntArray.get(indexes: Iterable<Int>): List<Int>      = slice(indexes)
+public fun    LongArray.get(indexes: Iterable<Int>): List<Long>     = slice(indexes)
+public fun   FloatArray.get(indexes: Iterable<Int>): List<Float>    = slice(indexes)
+public fun  DoubleArray.get(indexes: Iterable<Int>): List<Double>   = slice(indexes)
+public fun BooleanArray.get(indexes: Iterable<Int>): List<Boolean>  = slice(indexes)
+
+
+
+
+
