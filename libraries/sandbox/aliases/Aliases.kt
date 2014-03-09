@@ -34,7 +34,6 @@ package kotlin.aliases
  * This library is not supposed to be included in
  * the standart Kotlin library and must be imported
  * manually.
-<<<<<<< HEAD
  * */
 
 /*
@@ -60,6 +59,3 @@ public fun BooleanArray.get(indexes: Iterable<Int>): List<Boolean>  = slice(inde
 
 
 
-=======
- * */
->>>>>>> 6beff04... created Aliases.kt
