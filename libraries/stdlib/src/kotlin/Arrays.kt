@@ -34,56 +34,56 @@ public val <T: Any?> Array<out T>.lastIndex : Int
     get() = this.size - 1
 
 // "Iterable-getters"
-public fun <T> Array<T>.get(indexes: Iterable<Int>): List<T>{
+public fun <T> Array<T>.slice(indexes: Iterable<Int>): List<T>{
     val result = listBuilder<T>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun    ByteArray.get(indexes: Iterable<Int>): List<Byte>{
+public fun    ByteArray.slice(indexes: Iterable<Int>): List<Byte>{
     val result = listBuilder<Byte>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun   ShortArray.get(indexes: Iterable<Int>): List<Short>{
+public fun   ShortArray.slice(indexes: Iterable<Int>): List<Short>{
     val result = listBuilder<Short>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun     IntArray.get(indexes: Iterable<Int>): List<Int>{
+public fun     IntArray.slice(indexes: Iterable<Int>): List<Int>{
     val result = listBuilder<Int>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun    LongArray.get(indexes: Iterable<Int>): List<Long>{
+public fun    LongArray.slice(indexes: Iterable<Int>): List<Long>{
     val result = listBuilder<Long>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun   FloatArray.get(indexes: Iterable<Int>): List<Float>{
+public fun   FloatArray.slice(indexes: Iterable<Int>): List<Float>{
     val result = listBuilder<Float>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun  DoubleArray.get(indexes: Iterable<Int>): List<Double>{
+public fun  DoubleArray.slice(indexes: Iterable<Int>): List<Double>{
     val result = listBuilder<Double>()
     for(i in indexes){
         result.add(get(i))
     }
     return result.build()
 }
-public fun BooleanArray.get(indexes: Iterable<Int>): List<Boolean>{
+public fun BooleanArray.slice(indexes: Iterable<Int>): List<Boolean>{
     val result = listBuilder<Boolean>()
     for(i in indexes){
         result.add(get(i))
