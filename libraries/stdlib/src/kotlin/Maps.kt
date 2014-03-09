@@ -140,7 +140,7 @@ public inline fun <K,V,R> Map<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R):
  * Returns a new List of elements, keys of which were iterated by the iterator
  * If a key is not contained in the map, a null value is put instead
  */
-public fun <K, V> Map<K, V>.get(keys: Iterable<K>): List<V?>{
+public fun <K, V> Map<K, V>.slice(keys: Iterable<K>): List<V?>{
     val result = listBuilder<V?>()
     for(k in keys){
         result.add(get(k))
