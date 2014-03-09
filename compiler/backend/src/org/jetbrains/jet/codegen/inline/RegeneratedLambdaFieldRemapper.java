@@ -148,7 +148,7 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
         FieldInsnNode next = (FieldInsnNode) nextInstruction;
         node.instructions.remove(next.getPrevious());
         next.owner = Type.getType(((FieldInsnNode) previous).desc).getInternalName();
-        next.name = node.name.equals("this$0") ? node.name : LambdaTransformer.getNewFieldName(next.name);
+        next.name = LambdaTransformer.getNewFieldName(next.name);
 
         return next;
     }
