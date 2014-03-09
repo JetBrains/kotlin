@@ -86,6 +86,11 @@ public fun CharSequence.slice(indexes: Iterable<Int>): CharSequence{
 public fun String.slice(indexes: IntRange): String{
     return substring(indexes.start, indexes.end + 1) // inclusive
 }
+/**
+ * Returns a string of chars, indexes of which were iterated by the iterator
+ * May throw an IndexOutOfRange exception
+ */
+// Not sure it should be a string, not a list
 public fun String.slice(indexes: Iterable<Int>): String{
     val result = StringBuilder()
     for(i in indexes){
