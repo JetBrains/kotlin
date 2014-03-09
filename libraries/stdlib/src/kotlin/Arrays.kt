@@ -34,6 +34,10 @@ public val <T: Any?> Array<out T>.lastIndex : Int
     get() = this.size - 1
 
 // "Iterable-getters"
+/**
+ * Returns a list of elements, indexes of which were iterated by the iterator
+ * May throw an IndexOutOfRange exception
+ */
 public fun <T> Array<T>.slice(indexes: Iterable<Int>): List<T>{
     val result = listBuilder<T>()
     for(i in indexes){

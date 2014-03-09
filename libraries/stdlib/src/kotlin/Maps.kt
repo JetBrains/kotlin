@@ -137,7 +137,7 @@ public inline fun <K,V,R> Map<K,V>.mapValues(transform : (Map.Entry<K,V>) -> R):
 // "Iterable-getters"
 
 /**
- * Returns a new List of elements, keys of which were iterated by the iterator
+ * Returns a new list of elements, keys of which were iterated by the iterator
  * If a key is not contained in the map, a null value is put instead
  */
 public fun <K, V> Map<K, V>.slice(keys: Iterable<K>): List<V?>{
