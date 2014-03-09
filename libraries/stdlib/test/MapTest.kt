@@ -212,9 +212,19 @@ class MapTest {
 
     test fun slice() {
         val map = hashMapOf('a' to "A", 'b' to "B", 'c' to "C", 'd' to "D", 'e' to "E")
-        assertEquals(listOf("B", "C", "D"),  map.slice('b'..'d'))
-        assertEquals(listOf("B", "C", "D", "E", null, null, null), map.slice('b'..'h'))
-        assertEquals(listOf(null, null, "A", "B", "C"), map.slice('_'..'c'))
+        // **ABCDE***
+        // _`abcdefgh
+        assertEquals(listOf("B", "C", "D"),                                     map.slice('b'..'d'))
+        assertEquals(listOf("B", "C", "D", "E", null, null, null),              map.slice('b'..'h'))
+        assertEquals(listOf(null, null, "A", "B", "C"),                         map.slice('_'..'c'))
         assertEquals(listOf(null, null, "A", "B", "C", "D", "E", null, null, null), map.slice('_'..'h'))
+
+        assertEquals(listOf("B", "C", "D").reverse(),                           map.slice('d' downTo 'b'))
+        assertEquals(listOf("B", "C", "D", "E", null, null, null).reverse(),    map.slice('h' downTo 'b'))
+        assertEquals(listOf(null, null, "A", "B", "C").reverse(),               map.slice('c' downTo '_'))
+        assertEquals(listOf(null, null, "A", "B", "C", "D", "E", null, null, null).reverce(), map.slice('h'downTo '_'))
+
+        val iter = CompositeIterator('c', 'e', '!', 'a')
+        assertEquals(listOf("C", "E", null, "A"),  map.slice(iter))
     }
 }
