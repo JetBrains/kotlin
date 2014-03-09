@@ -213,10 +213,12 @@ class MapTest {
     test fun slice() {
         val map = hashMapOf('a' to "A", 'b' to "B", 'c' to "C", 'd' to "D", 'e' to "E")
         val slice = map.slice('b'..'d')
-        assertEquals(3, slice.size)
-        assertEquals(1, slice.get('b'))
-        assertEquals(2, slice.get('c'))
-        assertEquals(3, slice.get('d'))
-        //assertEquals(setOf('b', 'c', 'd'), slice.keySet())
+        assertEquals(listOf("B", "C", "D"), slice)
+    }
+
+    test fun slice_withNulls() {
+        val map = hashMapOf('a' to "A", 'b' to "B", 'c' to "C", 'd' to "D", 'e' to "E")
+        val slice = map.slice('b'..'h')
+        assertEquals(listOf("B", "C", "D", "E", null, null, null), slice)
     }
 }
