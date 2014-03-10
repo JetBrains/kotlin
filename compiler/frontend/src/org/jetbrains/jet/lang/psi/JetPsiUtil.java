@@ -721,16 +721,20 @@ public class JetPsiUtil {
         return checkElement.apply(lastElement) ? lastElement : null;
     }
 
-    public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
+    public static JetVariableDeclaration findVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
         for (JetElement element : block.getStatements()) {
             if (element instanceof JetVariableDeclaration) {
                 if (((JetVariableDeclaration) element).getNameAsSafeName().asString().equals(varName)) {
-                    return true;
+                    return (JetVariableDeclaration) element;
                 }
             }
         }
 
-        return false;
+        return null;
+    }
+
+    public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
+        return findVariableDeclarationInBlock(block, varName) != null;
     }
 
     public static boolean checkWhenExpressionHasSingleElse(@NotNull JetWhenExpression whenExpression) {
