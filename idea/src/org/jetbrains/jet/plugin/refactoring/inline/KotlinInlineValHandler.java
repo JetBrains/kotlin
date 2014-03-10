@@ -186,7 +186,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         highlightManager.addOccurrenceHighlights(editor, elementsArray, searchResultsAttributes, true, null);
     }
 
-    private static List<JetExpression> findReferenceExpressions(JetProperty val) {
+    public static List<JetExpression> findReferenceExpressions(JetProperty val) {
         List<JetExpression> result = Lists.newArrayList();
 
         for (PsiReference reference : ReferencesSearch.search(val, GlobalSearchScope.allScope(val.getProject()), false).findAll()) {
