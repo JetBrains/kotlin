@@ -22,16 +22,14 @@ import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.tree.AbstractInsnNode;
 import org.jetbrains.asm4.tree.FieldInsnNode;
 import org.jetbrains.asm4.tree.MethodNode;
-import org.jetbrains.asm4.tree.VarInsnNode;
+import org.jetbrains.jet.codegen.StackValue;
 
 import java.util.Collection;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.inline.MethodInliner.getPreviousNoLabelNoLine;
-
 public class LambdaFieldRemapper {
 
-    private String lambdaInternalName;
+    private final String lambdaInternalName;
 
     protected LambdaFieldRemapper parent;
 
@@ -43,42 +41,58 @@ public class LambdaFieldRemapper {
         params = methodParams;
     }
 
-    public AbstractInsnNode doTransform(MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField) {
-        AbstractInsnNode loadThis = getPreviousThis(fieldInsnNode);
-
-        int opcode = fieldInsnNode.getOpcode() == Opcodes.GETFIELD ? capturedField.getType().getOpcode(Opcodes.ILOAD) : capturedField.getType().getOpcode(Opcodes.ISTORE);
-        VarInsnNode newInstruction = new VarInsnNode(opcode, capturedField.getIndex());
-
-        node.instructions.remove(loadThis); //remove aload this
-        node.instructions.insertBefore(fieldInsnNode, newInstruction);
-        node.instructions.remove(fieldInsnNode); //remove aload field
-
-        return newInstruction;
+    public void addCapturedFields(LambdaInfo lambdaInfo, ParametersBuilder builder) {
+        for (CapturedParamInfo info : lambdaInfo.getCapturedVars()) {
+            builder.addCapturedParam(info, info);
+        }
     }
 
-    protected static AbstractInsnNode getPreviousThis(FieldInsnNode fieldInsnNode) {
-        AbstractInsnNode loadThis = getPreviousNoLabelNoLine(fieldInsnNode);
-
-        assert loadThis.getType() == AbstractInsnNode.VAR_INSN || loadThis.getType() == AbstractInsnNode.FIELD_INSN :
-                "Field access instruction should go after load this but goes after " + loadThis;
-        assert loadThis.getOpcode() == Opcodes.ALOAD || loadThis.getOpcode() == Opcodes.GETSTATIC :
-                "This should be loaded by ALOAD or GETSTATIC but " + loadThis.getOpcode();
-        return loadThis;
+    public boolean canProcess(@NotNull String fieldOwner) {
+        return fieldOwner.equals(getLambdaInternalName());
     }
 
-    public List<CapturedParamInfo> markRecaptured(List<CapturedParamInfo> originalCaptured, LambdaInfo lambda) {
-        return originalCaptured;
+    public AbstractInsnNode transformIfNeeded(
+            @NotNull List<AbstractInsnNode> capturedFieldAccess,
+            int currentInstruction,
+            @NotNull MethodNode node
+    ) {
+        if (capturedFieldAccess.size() == 1) {
+            //just aload
+            return null;
+        }
+
+        AbstractInsnNode transformed = null;
+        boolean checkParent = !isRoot() && currentInstruction < capturedFieldAccess.size() - 1;
+        if (checkParent) {
+            transformed = parent.transformIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
+        }
+
+        if (transformed == null) {
+            //if parent couldn't transform
+            FieldInsnNode insnNode = (FieldInsnNode) capturedFieldAccess.get(currentInstruction);
+            if (canProcess(insnNode.owner)) {
+                insnNode.name = "$$$" + insnNode.name;
+                insnNode.setOpcode(Opcodes.GETSTATIC);
+
+                for (int i = 0; i < currentInstruction; i++) {
+                    AbstractInsnNode toRemove = capturedFieldAccess.get(i);
+                    node.instructions.remove(toRemove);
+                }
+                transformed = capturedFieldAccess.get(capturedFieldAccess.size() - 1);
+            }
+        }
+
+        return transformed;
     }
 
-
-    public boolean canProcess(@NotNull String owner, @NotNull String currentLambdaType) {
-        return owner.equals(currentLambdaType);
+    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode) {
+        return findField(fieldInsnNode, params.getCaptured());
     }
 
     @Nullable
     public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
         for (CapturedParamInfo valueDescriptor : captured) {
-            if (valueDescriptor.getFieldName().equals(fieldInsnNode.name)) {
+            if (valueDescriptor.getFieldName().equals(fieldInsnNode.name) && fieldInsnNode.owner.equals(valueDescriptor.getContainingLambdaName())) {
                 return valueDescriptor;
             }
         }
@@ -88,6 +102,7 @@ public class LambdaFieldRemapper {
     public LambdaFieldRemapper getParent() {
         return parent;
     }
+
     public String getLambdaInternalName() {
         return lambdaInternalName;
     }
@@ -96,16 +111,9 @@ public class LambdaFieldRemapper {
         return parent == null;
     }
 
-    public boolean shouldPatch(@NotNull FieldInsnNode node) {
-        return !isRoot() && parent.shouldPatch(node);
-    }
-
-    @NotNull
-    public AbstractInsnNode patch(@NotNull FieldInsnNode field, @NotNull MethodNode node) {
-        //parent is inlined so we need patch instruction chain
-        if (!isRoot()){
-            return parent.patch(field, node);
-        }
-        throw new IllegalStateException("Should be invoked");
+    @Nullable
+    public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
+        CapturedParamInfo field = MethodInliner.findCapturedField(node, this);
+        return field.getRemapValue();
     }
 }

@@ -21,6 +21,8 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.commons.InstructionAdapter;
+import org.jetbrains.asm4.tree.FieldInsnNode;
+import org.jetbrains.jet.codegen.StackValue;
 
 public class RemapVisitor extends InstructionAdapter {
 
@@ -29,12 +31,14 @@ public class RemapVisitor extends InstructionAdapter {
     private final VarRemapper remapper;
 
     private final boolean remapReturn;
+    private LambdaFieldRemapper nodeRemapper;
 
-    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn) {
+    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn, LambdaFieldRemapper nodeRemapper) {
         super(InlineCodegenUtil.API, mv);
         this.end = end;
         this.remapper = remapper;
         this.remapReturn = remapReturn;
+        this.nodeRemapper = nodeRemapper;
     }
 
     @Override
@@ -55,6 +59,22 @@ public class RemapVisitor extends InstructionAdapter {
     @Override
     public void visitVarInsn(int opcode, int var) {
         remapper.visitVarInsn(opcode, var, new InstructionAdapter(mv));
+    }
+
+    @Override
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        if (name.startsWith("$$$")) {
+            if (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot()) {
+                FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
+                StackValue inline = nodeRemapper.getFieldForInline(fin, null);
+                inline.put(inline.type, this);
+            } else {
+                super.visitFieldInsn(opcode, owner, name, desc);
+            }
+        }
+        else {
+            super.visitFieldInsn(opcode, owner, name, desc);
+        }
     }
 
     @Override
@@ -82,15 +102,6 @@ public class RemapVisitor extends InstructionAdapter {
     @Override
     public AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
         return null;
-    }
-
-    @Override
-    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        if (name.equals("$$$this")) {
-            super.visitVarInsn(Opcodes.ALOAD, 0);
-        } else {
-            super.visitFieldInsn(opcode, owner, name, desc);
-        }
     }
 
     //TODO not skip for lambdas
