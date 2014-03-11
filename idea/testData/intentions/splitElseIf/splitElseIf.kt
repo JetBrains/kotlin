@@ -1,0 +1,7 @@
+fun foo() {
+    <caret>if (a == 0) {
+        println("test")
+    } else if (a == 1) {
+        println("test2")
+    }
+}

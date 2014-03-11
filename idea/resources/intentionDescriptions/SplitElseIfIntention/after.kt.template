@@ -1,0 +1,7 @@
+if (a == 0) {
+  return 0
+} <spot>else</spot> {
+  <spot>if</spot> (a == 1) {
+    return 2
+  }
+}

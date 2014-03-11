@@ -159,6 +159,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new AddBracesIntention());
     }
 
+    public void doTestSplitElseIf(@NotNull String path) throws Exception { doTestIntention(path, new SplitElseIfIntention());}
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
