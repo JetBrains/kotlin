@@ -611,9 +611,13 @@
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.AddBracesIntention</className>
-    <category>Kotlin</category>
+      <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ConvertNegatedBooleanSequenceIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
