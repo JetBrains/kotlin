@@ -55,7 +55,7 @@ public class LambdaTransformer {
 
     private final MethodNode bridge;
 
-    private final InliningContext info;
+    private final InliningContext inliningContext;
 
     private final Type oldLambdaType;
 
@@ -67,11 +67,11 @@ public class LambdaTransformer {
     private String[] interfaces;
     private final boolean isSameModule;
 
-    public LambdaTransformer(String lambdaInternalName, InliningContext info, boolean isSameModule, Type newLambdaType) {
+    public LambdaTransformer(String lambdaInternalName, InliningContext inliningContext, boolean isSameModule, Type newLambdaType) {
         this.isSameModule = isSameModule;
-        this.state = info.state;
+        this.state = inliningContext.state;
         this.typeMapper = state.getTypeMapper();
-        this.info = info;
+        this.inliningContext = inliningContext;
         this.oldLambdaType = Type.getObjectType(lambdaInternalName);
         this.newLambdaType = newLambdaType;
 
@@ -108,7 +108,7 @@ public class LambdaTransformer {
         }
     }
 
-    public void doTransform(ConstructorInvocation invocation) {
+    public InlineResult doTransform(ConstructorInvocation invocation, LambdaFieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
 
         //TODO: public visibility for inline function
@@ -120,15 +120,20 @@ public class LambdaTransformer {
                                  superName,
                                  interfaces
         );
+
+        // TODO: load synthetic class kind from the transformed class and write the same kind to the copy of that class here
+        // See AsmUtil.writeKotlinSyntheticClassAnnotation
+
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         Parameters parameters = getLambdaParameters(builder, invocation);
 
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
         RegeneratedLambdaFieldRemapper
-                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline());
-        MethodInliner inliner = new MethodInliner(invoke, parameters, info.subInline(info.nameGenerator.subGenerator("lambda")), oldLambdaType,
+                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline(),
+                                                              parentRemapper);
+        MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")), oldLambdaType,
                                                   remapper, isSameModule);
-        inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
+        InlineResult result = inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
         invokeVisitor.visitMaxs(-1, -1);
 
         generateConstructorAndFields(classBuilder, builder, invocation);
@@ -150,6 +155,7 @@ public class LambdaTransformer {
         classBuilder.done();
 
         invocation.setNewLambdaType(newLambdaType);
+        return result;
     }
 
     private void generateConstructorAndFields(@NotNull ClassBuilder classBuilder, @NotNull ParametersBuilder builder, @NotNull ConstructorInvocation invocation) {
@@ -177,8 +183,8 @@ public class LambdaTransformer {
     }
 
     private ClassBuilder createClassBuilder() {
-        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, info.call.getCallElement().getContainingFile()),
-                     new TypeRemapper(info.typeMapping));
+        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.call.getCallElement().getContainingFile()),
+                     new TypeRemapper(inliningContext.typeMapping));
     }
 
     private static MethodVisitor newMethod(ClassBuilder builder, MethodNode original) {
@@ -266,6 +272,10 @@ public class LambdaTransformer {
     }
 
     public static String getNewFieldName(String oldName) {
+        if (oldName.equals("this$0")) {
+            //"this$0" couldn't clash and we should keep this name invariant for further transformations
+            return oldName;
+        }
         return oldName + "$inlined";
     }
 }

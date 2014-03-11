@@ -24,7 +24,8 @@ public abstract class JetElementInstructionImpl extends InstructionImpl implemen
     @NotNull
     protected final JetElement element;
 
-    public JetElementInstructionImpl(@NotNull JetElement element) {
+    public JetElementInstructionImpl(@NotNull JetElement element, LexicalScope lexicalScope) {
+        super(lexicalScope);
         this.element = element;
     }
 

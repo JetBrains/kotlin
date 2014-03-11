@@ -71,7 +71,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
             public void run() {
                 try {
                     Pair<String, Boolean> pair = LightQuickFixTestCase.parseActionHint(
-                            getFile(),FileUtil.loadFile(new File(getTestDataPath() + beforeFileName)));
+                            getFile(),FileUtil.loadFile(new File(getTestDataPath() + beforeFileName), true));
                     String text = pair.getFirst();
 
                     boolean actionShouldBeAvailable = pair.getSecond();

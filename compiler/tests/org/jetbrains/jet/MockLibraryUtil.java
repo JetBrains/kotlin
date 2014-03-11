@@ -24,15 +24,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.jet.utils.PathUtil;
+import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -44,7 +43,7 @@ public class MockLibraryUtil {
 
     private static Class<?> compilerClass = null;
 
-    public static File compileLibraryToJar(String sourcesPath) {
+    public static File compileLibraryToJar(String sourcesPath, boolean addSources) {
         try {
             File contentDir = JetTestUtils.tmpDir("lib-content");
 
@@ -76,7 +75,9 @@ public class MockLibraryUtil {
 
             ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(jarFile));
             ZipUtil.addDirToZipRecursively(zip, jarFile, classesDir, "", null, null);
-            ZipUtil.addDirToZipRecursively(zip, jarFile, new File(sourcesPath), "src", null, null);
+            if (addSources) {
+                ZipUtil.addDirToZipRecursively(zip, jarFile, new File(sourcesPath), "src", null, null);
+            }
             zip.close();
 
             return jarFile;

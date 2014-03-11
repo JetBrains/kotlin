@@ -1,0 +1,37 @@
+== AnonymousInitializers ==
+class AnonymousInitializers() {
+    val k = 34
+
+    val i: Int
+    {
+        $i = 12
+    }
+
+    val j: Int
+       get() = 20
+
+    {
+        $i = 13
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(val k = 34)
+    r(34)
+    w(k)
+    v(val i: Int)
+  2 mark({ $i = 12 })
+    r(12)
+    w($i)
+  1 v(val j: Int get() = 20)
+  2 mark({ $i = 13 })
+    r(13)
+    w($i)
+L1:
+  1 <END>                       NEXT:[<SINK>]
+error:
+    <ERROR>                     PREV:[]
+sink:
+    <SINK>                      PREV:[<ERROR>, <END>]
+=====================

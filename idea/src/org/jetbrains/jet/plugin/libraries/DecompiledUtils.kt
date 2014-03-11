@@ -20,31 +20,26 @@ import com.intellij.openapi.fileTypes.StdFileTypes
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
-import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind
 import com.intellij.psi.ClassFileViewProvider
-
-
-//TODO: this should be done via generic mechanism (special header kind)
-//TODO: should also check for local classes and functions
-public fun isAnonymousFunction(file: VirtualFile): Boolean {
-    val name = file.getNameWithoutExtension()
-    val index = name.lastIndexOf('$', name.length())
-    if (index > 0 && index < name.length() - 1) {
-        val nameAfterBucks = name.substring(index + 1, name.size)
-        return nameAfterBucks.isNotEmpty() && nameAfterBucks[0].isDigit()
-    }
-    return false
-}
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 
 public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
-    if (!StdFileTypes.CLASS.getDefaultExtension().equals(file.getExtension())) {
+    if (file.getExtension() != StdFileTypes.CLASS.getDefaultExtension()) {
         return false
     }
-    if (isAnonymousFunction(file)) {
-        return true
+    if (isKotlinCompiledFileWithIncompatibleAbiVersion(file)) {
+        return false
     }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header != null && header.getKind() != KotlinClassHeader.Kind.TRAIT_IMPL
+    return header != null && header.syntheticClassKind != KotlinSyntheticClass.Kind.TRAIT_IMPL
+}
+
+public fun isKotlinCompiledFileWithIncompatibleAbiVersion(file: VirtualFile): Boolean {
+    if (file.getExtension() != StdFileTypes.CLASS.getDefaultExtension()) {
+        return false
+    }
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
+    return header?.kind == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION
 }
 
 public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
@@ -54,9 +49,6 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     if (ClassFileViewProvider.isInnerOrAnonymousClass(file)) {
         return true
     }
-    if (isAnonymousFunction(file)) {
-        return true
-    }
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
-    return header != null && header.getKind() == KotlinClassHeader.Kind.PACKAGE_PART
+    return header?.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS
 }

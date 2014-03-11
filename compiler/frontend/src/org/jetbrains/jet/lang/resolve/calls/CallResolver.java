@@ -198,8 +198,6 @@ public class CallResolver {
             JetSimpleNameExpression expression = (JetSimpleNameExpression) calleeExpression;
             functionReference = expression;
 
-            ExpressionTypingUtils.checkCapturingInClosure(expression, context.trace, context.scope);
-
             Name name = expression.getReferencedNameAsName();
 
             prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, functionReference, CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES);
@@ -306,8 +304,13 @@ public class CallResolver {
             }
         }
 
-        return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, context, prioritizedTasks,
-                                               CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
+        OverloadResolutionResultsImpl<FunctionDescriptor> results = doResolveCallOrGetCachedResults(
+                ResolutionResultsCache.FUNCTION_MEMBER_TYPE, context, prioritizedTasks,
+                CallTransformer.FUNCTION_CALL_TRANSFORMER, functionReference);
+        if (calleeExpression instanceof JetSimpleNameExpression) {
+            ExpressionTypingUtils.checkCapturingInClosure((JetSimpleNameExpression) calleeExpression, context.trace, context.scope);
+        }
+        return results;
     }
 
     public OverloadResolutionResults<FunctionDescriptor> resolveCallWithKnownCandidate(

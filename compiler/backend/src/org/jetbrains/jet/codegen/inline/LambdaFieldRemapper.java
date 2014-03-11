@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.tree.AbstractInsnNode;
@@ -29,6 +30,18 @@ import java.util.List;
 import static org.jetbrains.jet.codegen.inline.MethodInliner.getPreviousNoLabelNoLine;
 
 public class LambdaFieldRemapper {
+
+    private String lambdaInternalName;
+
+    protected LambdaFieldRemapper parent;
+
+    private final Parameters params;
+
+    public LambdaFieldRemapper(@Nullable String lambdaInternalName, @Nullable LambdaFieldRemapper parent, @NotNull Parameters methodParams) {
+        this.lambdaInternalName = lambdaInternalName;
+        this.parent = parent;
+        params = methodParams;
+    }
 
     public AbstractInsnNode doTransform(MethodNode node, FieldInsnNode fieldInsnNode, CapturedParamInfo capturedField) {
         AbstractInsnNode loadThis = getPreviousThis(fieldInsnNode);
@@ -58,17 +71,41 @@ public class LambdaFieldRemapper {
     }
 
 
-    public boolean canProcess(String owner, String currentLambdaType) {
+    public boolean canProcess(@NotNull String owner, @NotNull String currentLambdaType) {
         return owner.equals(currentLambdaType);
     }
 
     @Nullable
-    public CapturedParamInfo findField(FieldInsnNode fieldInsnNode, Collection<CapturedParamInfo> captured) {
+    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
         for (CapturedParamInfo valueDescriptor : captured) {
             if (valueDescriptor.getFieldName().equals(fieldInsnNode.name)) {
                 return valueDescriptor;
             }
         }
         return null;
+    }
+
+    public LambdaFieldRemapper getParent() {
+        return parent;
+    }
+    public String getLambdaInternalName() {
+        return lambdaInternalName;
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    public boolean shouldPatch(@NotNull FieldInsnNode node) {
+        return !isRoot() && parent.shouldPatch(node);
+    }
+
+    @NotNull
+    public AbstractInsnNode patch(@NotNull FieldInsnNode field, @NotNull MethodNode node) {
+        //parent is inlined so we need patch instruction chain
+        if (!isRoot()){
+            return parent.patch(field, node);
+        }
+        throw new IllegalStateException("Should be invoked");
     }
 }

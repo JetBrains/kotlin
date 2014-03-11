@@ -81,7 +81,7 @@ public abstract class AbstractSurroundWithTest extends LightCodeInsightTestCase 
     private void doTest(String path, Surrounder surrounder) throws Exception {
         configureByFile(path);
 
-        String fileText = FileUtil.loadFile(new File(path));
+        String fileText = FileUtil.loadFile(new File(path), true);
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
 
         if (isApplicableString != null) {

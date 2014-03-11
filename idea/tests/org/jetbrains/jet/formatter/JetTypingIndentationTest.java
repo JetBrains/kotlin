@@ -105,7 +105,7 @@ public class JetTypingIndentationTest extends LightCodeInsightTestCase {
     }
 
     public void doFileSettingNewLineTest() throws Exception {
-        String originalFileText = FileUtil.loadFile(new File(getTestDataPath(), getBeforeFileName()));
+        String originalFileText = FileUtil.loadFile(new File(getTestDataPath(), getBeforeFileName()), true);
 
         SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText);
 

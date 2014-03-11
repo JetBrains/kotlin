@@ -239,4 +239,14 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     public void mark(@NotNull JetElement element) {
         getDelegateBuilder().mark(element);
     }
+
+    @Override
+    public void enterLexicalScope(@NotNull JetElement element) {
+        getDelegateBuilder().enterLexicalScope(element);
+    }
+
+    @Override
+    public void exitLexicalScope(@NotNull JetElement element) {
+        getDelegateBuilder().exitLexicalScope(element);
+    }
 }

@@ -33,6 +33,7 @@ import java.util.*
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject
 import org.jetbrains.jet.plugin.libraries.JetDecompiledData.descriptorToKey
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
 
 public fun buildDecompiledData(classFile: VirtualFile, project: Project): JetDecompiledData {
     return buildDecompiledData(classFile, project, ProjectBasedResolverForDecompiler(project))
@@ -43,18 +44,23 @@ public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolve
     val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
     val classFileHeader = kotlinClass.getClassHeader()
     assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val kind = classFileHeader!!.getKind()
+    val kind = classFileHeader!!.kind
     val packageFqName = classFqName.parent()
-    val (text, renderedDescriptorsToRange) =
-    if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-        buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
-    }
-    else if (kind == KotlinClassHeader.Kind.CLASS) {
-        buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
-    }
-    else {
-        // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
-        throw UnsupportedOperationException("Unknown header kind: " + kind)
+    val (text, renderedDescriptorsToRange) = when (kind) {
+        KotlinClassHeader.Kind.PACKAGE_FACADE -> {
+            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
+        }
+        KotlinClassHeader.Kind.CLASS -> {
+            buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
+        }
+        KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
+            assert(classFileHeader.syntheticClassKind == KotlinSyntheticClass.Kind.PACKAGE_PART)
+            DecompiledText("", mapOf())
+        }
+        else -> {
+            // TODO: support other header kinds: for trait-impl show the trait, for package fragment - the whole package
+            throw UnsupportedOperationException("Unknown header kind: " + kind)
+        }
     }
 
     val jetFile = JetDummyClassFileViewProvider.createJetFile(PsiManager.getInstance(project), classFile, text)

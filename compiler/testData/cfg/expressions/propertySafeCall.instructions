@@ -1,0 +1,20 @@
+== test ==
+fun test(s: String?) {
+    s?.length
+}
+---------------------
+L0:
+  1 <START>
+    v(s: String?)
+    w(s)
+  2 mark({ s?.length })
+    mark(s?.length)
+    r(s)
+    r(length)
+L1:
+  1 <END>                  NEXT:[<SINK>]
+error:
+    <ERROR>                PREV:[]
+sink:
+    <SINK>                 PREV:[<ERROR>, <END>]
+=====================

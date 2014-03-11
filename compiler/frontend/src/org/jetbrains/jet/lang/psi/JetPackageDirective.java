@@ -50,24 +50,36 @@ public class JetPackageDirective extends JetReferenceExpression {
         List<JetSimpleNameExpression> packageNames = ContainerUtil.newArrayList();
         while (nameExpression instanceof JetQualifiedExpression) {
             JetQualifiedExpression qualifiedExpression = (JetQualifiedExpression) nameExpression;
-            packageNames.add((JetSimpleNameExpression) qualifiedExpression.getSelectorExpression());
+
+            JetExpression selector = qualifiedExpression.getSelectorExpression();
+            if (selector instanceof JetSimpleNameExpression) {
+                packageNames.add((JetSimpleNameExpression) selector);
+            }
+
             nameExpression = qualifiedExpression.getReceiverExpression();
         }
-        packageNames.add((JetSimpleNameExpression) nameExpression);
+
+        if (nameExpression instanceof JetSimpleNameExpression) {
+            packageNames.add((JetSimpleNameExpression) nameExpression);
+        }
+
         Collections.reverse(packageNames);
 
         return packageNames;
     }
 
     @Nullable
-    public PsiElement getNameIdentifier() {
+    public JetSimpleNameExpression getLastReferenceExpression() {
         JetExpression nameExpression = getPackageNameExpression();
         if (nameExpression == null) return null;
 
-        JetSimpleNameExpression lastPart = (JetSimpleNameExpression)PsiUtilPackage.getQualifiedElementSelector(nameExpression);
-        if (lastPart == null) return null;
+        return (JetSimpleNameExpression)PsiUtilPackage.getQualifiedElementSelector(nameExpression);
+    }
 
-        return lastPart.getIdentifier();
+    @Nullable
+    public PsiElement getNameIdentifier() {
+        JetSimpleNameExpression lastPart = getLastReferenceExpression();
+        return lastPart != null ? lastPart.getIdentifier() : null;
     }
 
     @Override

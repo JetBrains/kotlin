@@ -22,8 +22,9 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 
 class CallInstruction(
         element: JetElement,
+        lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>
-) : InstructionWithNext(element) {
+) : InstructionWithNext(element, lexicalScope) {
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCallInstruction(this)
@@ -33,15 +34,16 @@ class CallInstruction(
         return visitor.visitCallInstruction(this)
     }
 
-    override fun createCopy() = CallInstruction(element, resolvedCall)
+    override fun createCopy() = CallInstruction(element, lexicalScope, resolvedCall)
 
     override fun toString() = "call(${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()})"
 }
 
 class CompilationErrorInstruction(
         element: JetElement,
+        lexicalScope: LexicalScope,
         val message: String
-) : InstructionWithNext(element) {
+) : InstructionWithNext(element, lexicalScope) {
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCompilationErrorInstruction(this)
@@ -51,7 +53,7 @@ class CompilationErrorInstruction(
         return visitor.visitCompilationErrorInstruction(this)
     }
 
-    override fun createCopy() = CompilationErrorInstruction(element, message)
+    override fun createCopy() = CompilationErrorInstruction(element, lexicalScope, message)
 
     override fun toString() = "error(${render(element)}, $message)"
 }
@@ -60,8 +62,9 @@ class CompilationErrorInstruction(
 // otherwise only individual parts of expression would be reported as unreachable
 // e.g. for (i in foo) {} -- only i and foo would be marked unreachable
 class MarkInstruction(
-        element: JetElement
-) : InstructionWithNext(element) {
+        element: JetElement,
+        lexicalScope: LexicalScope
+) : InstructionWithNext(element, lexicalScope) {
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMarkInstruction(this)
@@ -71,7 +74,7 @@ class MarkInstruction(
         return visitor.visitMarkInstruction(this)
     }
 
-    override fun createCopy() = MarkInstruction(element)
+    override fun createCopy() = MarkInstruction(element, lexicalScope)
 
     override fun toString() = "mark(${render(element)})"
 }

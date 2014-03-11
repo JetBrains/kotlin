@@ -63,8 +63,8 @@ public final class InitializerUtils {
             @NotNull List<JsStatement> initializers,
             @NotNull TranslationContext context
     ) {
+        JsExpression value = ClassTranslator.generateObjectLiteral(declaration, context);
         ClassDescriptor descriptor = getClassDescriptor(context.bindingContext(), declaration);
-        JsExpression value = ClassTranslator.generateObjectLiteral(declaration, descriptor, context);
         JsExpression expression = assignment(new JsNameRef(descriptor.getName().asString(), JsLiteral.THIS), value);
         initializers.add(expression.makeStmt());
     }

@@ -126,7 +126,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         try {
             node = createMethodNode(callableMethod);
-            inlineCall(node);
+            endCall(inlineCall(node));
         }
         catch (CompilationException e) {
             throw e;
@@ -141,7 +141,13 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
                                        text, e, call.getCallElement());
         }
 
+
+    }
+
+    private void endCall(@NotNull InlineResult result) {
         leaveTemps();
+
+        state.getFactory().removeInlinedClasses(result.getClassesToRemove());
     }
 
     @NotNull
@@ -191,7 +197,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         return node;
     }
 
-    private void inlineCall(MethodNode node) {
+    private InlineResult inlineCall(MethodNode node) {
         generateClosuresBodies();
 
         List<ParameterInfo> realParams = new ArrayList<ParameterInfo>(actualParameters);
@@ -205,15 +211,14 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         InliningContext info =
                 new InliningContext(expressionMap, null, null, null, state,
                                  codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
-                                 codegen.getContext(), call, Collections.<String, String>emptyMap());
+                                 codegen.getContext(), call, Collections.<String, String>emptyMap(), false, false);
 
-        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(), isSameModule); //with captured
+        MethodInliner inliner = new MethodInliner(node, parameters, info, null, new LambdaFieldRemapper(null, null, parameters), isSameModule); //with captured
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
-        inliner.doInline(codegen.v, remapper);
+        return inliner.doInline(codegen.v, remapper);
     }
-
 
     private void generateClosuresBodies() {
         for (LambdaInfo info : expressionMap.values()) {

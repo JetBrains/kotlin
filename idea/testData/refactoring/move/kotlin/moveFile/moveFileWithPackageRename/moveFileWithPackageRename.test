@@ -1,0 +1,5 @@
+{
+  "mainFile": "a/main.kt",
+  "type": "MOVE_FILES",
+  "targetPackage": "b"
+}

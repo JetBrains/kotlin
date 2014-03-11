@@ -31,8 +31,8 @@ import java.io.File;
 
 public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
     public void doTestExpressions(@NotNull String path) throws Exception {
-        String fileText = FileUtil.loadFile(new File(path));
-        String fileText2 = FileUtil.loadFile(new File(path + ".2"));
+        String fileText = FileUtil.loadFile(new File(path), true);
+        String fileText2 = FileUtil.loadFile(new File(path + ".2"), true);
 
         boolean equalityExpected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NOT_EQUAL") == null;
 
@@ -46,8 +46,8 @@ public abstract class AbstractJetPsiMatcherTest extends JetLiteFixture {
     }
 
     public void doTestTypes(@NotNull String path) throws Exception {
-        String fileText = FileUtil.loadFile(new File(path));
-        String fileText2 = FileUtil.loadFile(new File(path + ".2"));
+        String fileText = FileUtil.loadFile(new File(path), true);
+        String fileText2 = FileUtil.loadFile(new File(path + ".2"), true);
 
         boolean equalityExpected = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// NOT_EQUAL") == null;
 

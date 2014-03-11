@@ -186,7 +186,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(compiledDir.mkdir());
 
         List<File> srcFiles = JetTestUtils.createTestFiles(
-                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName)),
+                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName), true),
                 new JetTestUtils.TestFileFactory<File>() {
                     @Override
                     public File create(String fileName, String text, Map<String, String> directives) {

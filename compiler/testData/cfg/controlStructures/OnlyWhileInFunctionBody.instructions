@@ -1,0 +1,60 @@
+== main ==
+fun main() {
+    while(1 > 0) {
+      2
+    }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ while(1 > 0) { 2 } })
+    mark(while(1 > 0) { 2 })
+L2 [loop entry point]:
+L5 [condition entry point]:
+    mark(1 > 0)                     PREV:[mark(while(1 > 0) { 2 }), jmp(L2 [loop entry point])]
+    r(1)
+    r(0)
+    call(>, compareTo)
+    jf(L3 [loop exit point])        NEXT:[read (Unit), mark({ 2 })]
+L4 [body entry point]:
+  3 mark({ 2 })
+    r(2)
+  2 jmp(L2 [loop entry point])      NEXT:[mark(1 > 0)]
+L3 [loop exit point]:
+    read (Unit)                     PREV:[jf(L3 [loop exit point])]
+L1:
+  1 <END>                           NEXT:[<SINK>]
+error:
+    <ERROR>                         PREV:[]
+sink:
+    <SINK>                          PREV:[<ERROR>, <END>]
+=====================
+== dowhile ==
+fun dowhile() {
+    do {return}
+    while(1 > 0)
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ do {return} while(1 > 0) })
+  3 mark(do {return} while(1 > 0))
+L2 [loop entry point]:
+L4 [body entry point]:
+    mark({return})
+    ret L1                                NEXT:[<END>]
+L5 [condition entry point]:
+-   mark(1 > 0)                           PREV:[]
+-   r(1)                                  PREV:[]
+-   r(0)                                  PREV:[]
+-   call(>, compareTo)                    PREV:[]
+-   jt(L2 [loop entry point])             NEXT:[read (Unit), mark({return})]           PREV:[]
+L3 [loop exit point]:
+-   read (Unit)                           PREV:[]
+L1:
+  1 <END>                                 NEXT:[<SINK>]                                PREV:[ret L1]
+error:
+    <ERROR>                               PREV:[]
+sink:
+    <SINK>                                PREV:[<ERROR>, <END>]
+=====================

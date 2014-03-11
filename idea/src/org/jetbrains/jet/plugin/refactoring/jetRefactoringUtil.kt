@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
+import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.Key
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -48,4 +50,10 @@ fun JetSimpleNameExpression.changeQualifiedName(fqName: FqName): JetElement {
         is JetUserType -> elementToReplace.replace(JetPsiFactory.createType(project, text).getTypeElement()!!)
         else -> elementToReplace.replace(JetPsiFactory.createExpression(project, text))
     } as JetElement
+}
+
+fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
+    val data = getCopyableUserData(key)
+    putCopyableUserData(key, null)
+    return data
 }

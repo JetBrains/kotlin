@@ -71,7 +71,7 @@ public abstract class InlineTest extends SingleFileTranslationTest {
     private void checkFooBoxIsTrueAndFunctionNameIsNotReferenced(@NotNull String filename, String funName) throws Exception {
         fooBoxTest();
         String generatedJSFilePath = getOutputFilePath(filename, EcmaVersion.defaultVersion());
-        String outputFileText = FileUtil.loadFile(new File(generatedJSFilePath));
+        String outputFileText = FileUtil.loadFile(new File(generatedJSFilePath), true);
         assertTrue(countOccurrences(outputFileText, funName) == 1);
     }
 

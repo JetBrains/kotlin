@@ -41,6 +41,7 @@ import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.getNameForAnno
 import static org.jetbrains.k2js.translate.utils.AnnotationsUtils.isLibraryObject;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.getMangledName;
+import static org.jetbrains.k2js.translate.utils.TranslationUtils.getSuggestedName;
 
 /**
  * Aggregates all the static parts of the context.
@@ -222,14 +223,7 @@ public final class StaticContext {
                 @Nullable
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     JsScope scope = getEnclosingScope(descriptor);
-
-                    String suggestedName = descriptor.getName().asString();
-
-                    if (descriptor instanceof FunctionDescriptor) {
-                        suggestedName = getMangledName((FunctionDescriptor) descriptor);
-                    }
-
-                    return scope.declareFreshName(suggestedName);
+                    return scope.declareFreshName(getSuggestedName(descriptor));
                 }
             };
             Rule<JsName> constructorHasTheSameNameAsTheClass = new Rule<JsName>() {

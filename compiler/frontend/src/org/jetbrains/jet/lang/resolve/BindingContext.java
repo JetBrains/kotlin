@@ -87,6 +87,8 @@ public interface BindingContext {
 
     WritableSlice<JetReferenceExpression, DeclarationDescriptor> REFERENCE_TARGET =
             new BasicWritableSlice<JetReferenceExpression, DeclarationDescriptor>(DO_NOTHING);
+
+    @KotlinSignature("val RESOLVED_CALL: WritableSlice<JetElement, ResolvedCall<out CallableDescriptor>>")
     WritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>> RESOLVED_CALL =
             new BasicWritableSlice<JetElement, ResolvedCall<? extends CallableDescriptor>>(DO_NOTHING);
     WritableSlice<ResolvedCall<?>, TailRecursionKind> TAIL_RECURSION_CALL = Slices.createSimpleSlice();

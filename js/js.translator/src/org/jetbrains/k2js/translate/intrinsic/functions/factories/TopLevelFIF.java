@@ -131,7 +131,7 @@ public final class TopLevelFIF extends CompositeFIF {
     private static String getStableMangledBuiltInName(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
         Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
-        return TranslationUtils.getMangledName(functions.iterator().next());
+        return TranslationUtils.getSuggestedName(functions.iterator().next());
     }
 
     private static final FunctionIntrinsic PROPERTY_METADATA_IMPL = new FunctionIntrinsic() {

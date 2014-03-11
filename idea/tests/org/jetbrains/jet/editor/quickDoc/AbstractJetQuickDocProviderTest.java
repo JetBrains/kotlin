@@ -52,7 +52,7 @@ public abstract class AbstractJetQuickDocProviderTest extends LightCodeInsightFi
         String info = CtrlMouseHandler.getInfo(targetElement, element);
 
         File testDataFile = new File(path);
-        String textData = FileUtil.loadFile(testDataFile);
+        String textData = FileUtil.loadFile(testDataFile, true);
         List<String> directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(textData, "INFO:");
 
         if (directives.isEmpty()) {

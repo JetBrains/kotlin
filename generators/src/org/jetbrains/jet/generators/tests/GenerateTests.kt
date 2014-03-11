@@ -97,7 +97,9 @@ import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTe
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.jet.cfg.AbstractDataFlowTest
 import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
+import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -236,6 +238,10 @@ fun main(args: Array<String>) {
             model("cfg")
         }
 
+        testClass(javaClass<AbstractDataFlowTest>()) {
+            model("cfg-variables")
+        }
+
         testClass(javaClass<AbstractAnnotationParameterTest>()) {
             model("resolveAnnotations/parameters")
         }
@@ -369,6 +375,15 @@ fun main(args: Array<String>) {
             model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
             model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
             model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")
+            model("intentions/replaceExplicitFunctionLiteralParamWithIt", testMethod = "doTestReplaceExplicitFunctionLiteralParamWithIt")
+            model("intentions/replaceItWithExplicitFunctionLiteralParam", testMethod = "doTestReplaceItWithExplicitFunctionLiteralParam")
+            model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
+            model("intentions/addBraces", testMethod = "doTestAddBraces")
+            model("intentions/attributeCallReplacements/replaceGetIntention", testMethod = "doTestReplaceGetIntention")
+            model("intentions/attributeCallReplacements/replaceContainsIntention", testMethod = "doTestReplaceContainsIntention")
+            model("intentions/attributeCallReplacements/replaceBinaryInfixIntention", testMethod = "doTestReplaceBinaryInfixIntention")
+            model("intentions/attributeCallReplacements/replaceUnaryPrefixIntention", testMethod = "doTestReplaceUnaryPrefixIntention")
+            model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
@@ -511,6 +526,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
             model("libraries/decompiledText", pattern = """^([^\.]+)$""")
+        }
+
+        testClass(javaClass<AbstractOptimizeImportsTest>()) {
+            model("editor/optimizeImports", extension = null, recursive = false)
         }
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
@@ -92,8 +92,13 @@ public final class ReferenceTranslator {
         else if (expression instanceof JetSimpleNameExpression) {
             simpleNameExpression = (JetSimpleNameExpression) expression;
         }
-        return simpleNameExpression != null &&
-               (getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression) instanceof PropertyDescriptor);
+
+        if (simpleNameExpression == null) return false;
+
+        DeclarationDescriptor descriptor = getDescriptorForReferenceExpression(context.bindingContext(), simpleNameExpression);
+
+        // Skip ValueParameterDescriptor because sometime we can miss resolved call for it, e.g. when set something to delegated property.
+        return descriptor instanceof VariableDescriptor && !(descriptor instanceof ValueParameterDescriptor);
     }
 
 }

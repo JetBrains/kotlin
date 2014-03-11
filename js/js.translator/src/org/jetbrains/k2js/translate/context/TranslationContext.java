@@ -20,18 +20,18 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.intrinsic.Intrinsics;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.jetbrains.k2js.translate.context.ContextPackage.getNameForCapturedDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForElement;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 /**
  * All the info about the state of the translation process.
@@ -52,13 +52,12 @@ public class TranslationContext {
 
     @NotNull
     public static TranslationContext rootContext(@NotNull StaticContext staticContext, JsFunction rootFunction) {
-        DynamicContext rootDynamicContext =
-                DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
+        DynamicContext rootDynamicContext = DynamicContext.rootContext(rootFunction.getScope(), rootFunction.getBody());
         AliasingContext rootAliasingContext = AliasingContext.getCleanContext();
         return new TranslationContext(null, staticContext, rootDynamicContext, rootAliasingContext, null, null);
     }
 
-    private final HashMap<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
+    private final Map<JsExpression, TemporaryConstVariable> expressionToTempConstVariableCache = new HashMap<JsExpression, TemporaryConstVariable>();
 
     private TranslationContext(
             @Nullable TranslationContext parent,
@@ -76,23 +75,6 @@ public class TranslationContext {
         this.definitionPlace = definitionPlace;
     }
 
-    private TranslationContext(
-            @NotNull TranslationContext parent,
-            @NotNull AliasingContext aliasingContext
-    ) {
-        this(parent, parent.staticContext, parent.dynamicContext, aliasingContext, parent.usageTracker, null);
-    }
-
-    private TranslationContext(
-            @NotNull TranslationContext parent,
-            @NotNull JsFunction fun,
-            @NotNull AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker
-    ) {
-        this(parent, parent.staticContext, DynamicContext.newContext(fun.getScope(), fun.getBody()), aliasingContext,
-             usageTracker == null ? parent.usageTracker : usageTracker, null);
-    }
-
     @Nullable
     public UsageTracker usageTracker() {
         return usageTracker;
@@ -104,17 +86,24 @@ public class TranslationContext {
 
     @NotNull
     public TranslationContext contextWithScope(@NotNull JsFunction fun) {
-        return new TranslationContext(this, fun, aliasingContext, null);
+        return this.newFunctionBody(fun, aliasingContext);
     }
 
     @NotNull
-    public TranslationContext newFunctionBody(
-            @NotNull JsFunction fun,
-            @Nullable AliasingContext aliasingContext,
-            @Nullable UsageTracker usageTracker
-    ) {
-        return new TranslationContext(this, fun, aliasingContext == null ? new AliasingContext(this.aliasingContext) : aliasingContext,
-                                      usageTracker);
+    public TranslationContext newFunctionBody(@NotNull JsFunction fun, @Nullable AliasingContext aliasingContext) {
+        DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
+        if (aliasingContext == null) {
+            aliasingContext = this.aliasingContext.inner();
+        }
+
+        return new TranslationContext(this, this.staticContext, dynamicContext, aliasingContext, this.usageTracker, null);
+    }
+
+    @NotNull
+    public TranslationContext newFunctionBodyWithUsageTracker(@NotNull JsFunction fun, @NotNull MemberDescriptor descriptor) {
+        DynamicContext dynamicContext = DynamicContext.newContext(fun.getScope(), fun.getBody());
+        UsageTracker usageTracker = new UsageTracker(this.usageTracker, descriptor, fun.getScope());
+        return new TranslationContext(this, this.staticContext, dynamicContext, this.aliasingContext.inner(), usageTracker, this.definitionPlace);
     }
 
     @NotNull
@@ -129,24 +118,29 @@ public class TranslationContext {
     }
 
     @NotNull
+    private TranslationContext innerWithAliasingContext(AliasingContext aliasingContext) {
+        return new TranslationContext(this, this.staticContext, this.dynamicContext, aliasingContext, this.usageTracker, null);
+    }
+
+    @NotNull
     public TranslationContext innerContextWithAliased(@NotNull DeclarationDescriptor correspondingDescriptor, @NotNull JsNameRef alias) {
-        return new TranslationContext(this, aliasingContext.inner(correspondingDescriptor, alias));
+        return this.innerWithAliasingContext(aliasingContext.inner(correspondingDescriptor, alias));
     }
 
     @NotNull
     public TranslationContext innerContextWithAliasesForExpressions(@NotNull Map<JetExpression, JsExpression> aliases) {
-        return new TranslationContext(this, aliasingContext.withExpressionsAliased(aliases));
+        return this.innerWithAliasingContext(aliasingContext.withExpressionsAliased(aliases));
     }
 
     @NotNull
     public TranslationContext innerContextWithDescriptorsAliased(@NotNull Map<DeclarationDescriptor, JsExpression> aliases) {
-        return new TranslationContext(this, aliasingContext.withDescriptorsAliased(aliases));
+        return this.innerWithAliasingContext(aliasingContext.withDescriptorsAliased(aliases));
     }
 
     @NotNull
     public JsBlock getBlockForDescriptor(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof CallableDescriptor) {
-            return getFunctionObject((CallableDescriptor)descriptor).getBody();
+            return getFunctionObject((CallableDescriptor) descriptor).getBody();
         }
         else {
             return new JsBlock();
@@ -261,24 +255,17 @@ public class TranslationContext {
 
     @Nullable
     public JsExpression getAliasForDescriptor(@NotNull DeclarationDescriptor descriptor) {
-        descriptorUsedInThisContext(descriptor);
+        JsNameRef nameRef = captureIfNeedAndGetCapturedName(descriptor);
+        if (nameRef != null) {
+            return nameRef;
+        }
+
         return aliasingContext.getAliasForDescriptor(descriptor);
     }
 
     @NotNull
-    public JsExpression getThisObject(@NotNull DeclarationDescriptor descriptor) {
-        DeclarationDescriptor effectiveDescriptor;
-        if (descriptor instanceof CallableDescriptor) {
-            effectiveDescriptor = getExpectedReceiverDescriptor((CallableDescriptor) descriptor);
-            assert effectiveDescriptor != null;
-        }
-        else {
-            effectiveDescriptor = descriptor;
-        }
-
-        descriptorUsedInThisContext(effectiveDescriptor);
-
-        JsExpression alias = aliasingContext.getAliasForDescriptor(effectiveDescriptor);
+    public JsExpression getThisObject(@NotNull ReceiverParameterDescriptor descriptor) {
+        JsExpression alias = getAliasForDescriptor(descriptor);
         return alias == null ? JsLiteral.THIS : alias;
     }
 
@@ -290,13 +277,23 @@ public class TranslationContext {
         throw new AssertionError("Can not find definition place from rootContext(definitionPlace and parent is null)");
     }
 
-    public JsNameRef define(String name, JsExpression expression) {
-        return getDefinitionPlace().define(name, expression);
+    @NotNull
+    public JsNameRef define(DeclarationDescriptor descriptor, JsExpression expression) {
+        String suggestedName = TranslationUtils.getSuggestedNameForInnerDeclaration(this, descriptor);
+        return getDefinitionPlace().define(suggestedName, expression);
     }
 
-    private void descriptorUsedInThisContext(DeclarationDescriptor effectiveDescriptor) {
-        if (usageTracker != null) {
-            usageTracker.triggerUsed(effectiveDescriptor);
+    @Nullable
+    private JsNameRef captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
+        if (usageTracker != null && descriptor instanceof CallableDescriptor) {
+            CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
+
+            usageTracker.used(callableDescriptor);
+
+            JsName name = getNameForCapturedDescriptor(usageTracker, callableDescriptor);
+            if (name != null) return name.makeRef();
         }
+
+        return null;
     }
 }

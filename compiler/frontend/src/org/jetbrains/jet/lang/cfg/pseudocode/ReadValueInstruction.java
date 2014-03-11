@@ -21,8 +21,8 @@ import org.jetbrains.jet.lang.psi.JetElement;
 
 public class ReadValueInstruction extends InstructionWithNext {
 
-    public ReadValueInstruction(@NotNull JetElement element) {
-        super(element);
+    public ReadValueInstruction(@NotNull JetElement element, @NotNull LexicalScope lexicalScope) {
+        super(element, lexicalScope);
     }
 
     @Override
@@ -43,6 +43,6 @@ public class ReadValueInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new ReadValueInstruction(element);
+        return new ReadValueInstruction(element, lexicalScope);
     }
 }

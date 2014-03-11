@@ -58,7 +58,7 @@ public abstract class AbstractDescriptorSerializationTest extends KotlinTestWith
     protected void doTest(@NotNull String path) throws IOException {
         File ktFile = new File(path);
         ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolveEagerly(Collections.singletonList(
-                JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile), getProject())
+                JetTestUtils.createFile(ktFile.getName(), FileUtil.loadFile(ktFile, true), getProject())
         ), getEnvironment());
 
         PackageViewDescriptor testPackage = moduleDescriptor.getPackage(FqName.topLevel(TEST_PACKAGE_NAME));

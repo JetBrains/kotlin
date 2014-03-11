@@ -80,6 +80,7 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         }
     }
 
+    @NotNull
     @Override
     public List<OutputFile> asList() {
         done();
@@ -173,11 +174,13 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
             this.relativeClassFilePath = relativeClassFilePath;
         }
 
+        @NotNull
         @Override
         public String getRelativePath() {
             return relativeClassFilePath;
         }
 
+        @NotNull
         @Override
         public List<File> getSourceFiles() {
             ClassBuilderAndSourceFileList pair = generators.get(relativeClassFilePath);
@@ -210,6 +213,12 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         public String asText() {
             return builderFactory.asText(generators.get(relativeClassFilePath).classBuilder);
         }
+
+        @NotNull
+        @Override
+        public String toString() {
+            return getRelativePath() + " (compiled from " + getSourceFiles() + ")";
+        }
     }
 
     private static final class ClassBuilderAndSourceFileList {
@@ -219,6 +228,12 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         private ClassBuilderAndSourceFileList(ClassBuilder classBuilder, Collection<? extends PsiFile> sourceFiles) {
             this.classBuilder = classBuilder;
             this.sourceFiles = sourceFiles;
+        }
+    }
+
+    public void removeInlinedClasses(Set<String> classNamesToRemove) {
+        for (String classInternalName : classNamesToRemove) {
+            generators.remove(classInternalName + ".class");
         }
     }
 }

@@ -21,26 +21,21 @@ import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import com.intellij.psi.PsiManager
 import junit.framework.Assert
-import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.psi.ClassFileViewProvider
-import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.PsiCompiledFile
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass.Kind.*
+import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 
-//TODO: test for local functions and classes
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
 
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/internalClasses"
 
-    // Visible in idea-13-0
+    // Visible in idea 13.0
     fun testPackagePartIsInvisible() {
         val project = getProject()!!
-        doTest("package part class", acceptFile = { getNameWithoutExtension().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") }) {
+        doTest(PACKAGE_PART.toString(), isSyntheticClassOfKind(PACKAGE_PART)) {
             val psiFile = PsiManager.getInstance(project).findFile(this)
 
             Assert.assertEquals(
@@ -51,21 +46,37 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
         }
     }
 
-    fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltFor("anonymous function") {
-        isAnonymousFunction(this)
-    }
+    fun testSamWrapperIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(SAM_WRAPPER)
+
+    fun testSamLambdaIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(SAM_LAMBDA)
+
+    fun testCallableReferenceWrapperIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(CALLABLE_REFERENCE_WRAPPER)
+
+    fun testLocalFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(LOCAL_FUNCTION)
+
+    fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_FUNCTION)
+
+    fun testLocalClassIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(LOCAL_CLASS)
+
+    fun testAnonymousObjectIsInvisible() = doTestNoPsiFilesAreBuiltForSyntheticClass(ANONYMOUS_OBJECT)
 
     fun testInnerClassIsInvisible() = doTestNoPsiFilesAreBuiltFor("inner or nested class") {
         ClassFileViewProvider.isInnerOrAnonymousClass(this)
     }
 
-    fun testTraitImplClassIsVisibleAsJavaClass() = doTestNoPsiFilesAreBuiltFor("trait impl class") {
-        getNameWithoutExtension().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)
-    }
+    fun testTraitImplClassIsVisibleAsJavaClass() = doTestNoPsiFilesAreBuiltForSyntheticClass(TRAIT_IMPL)
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
         return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, withSources = false)
     }
+
+    private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean = {
+        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this).getClassHeader()
+        header?.syntheticClassKind == kind
+    }
+
+    private fun doTestNoPsiFilesAreBuiltForSyntheticClass(kind: KotlinSyntheticClass.Kind) =
+            doTestNoPsiFilesAreBuiltFor(kind.toString(), isSyntheticClassOfKind(kind))
 
     private fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
         val project = getProject()!!

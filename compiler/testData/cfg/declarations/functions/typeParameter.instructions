@@ -1,0 +1,16 @@
+== foo ==
+fun <T> foo() {
+    T
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ T })
+    error(T, No resolved call)
+L1:
+  1 <END>                         NEXT:[<SINK>]
+error:
+    <ERROR>                       PREV:[]
+sink:
+    <SINK>                        PREV:[<ERROR>, <END>]
+=====================

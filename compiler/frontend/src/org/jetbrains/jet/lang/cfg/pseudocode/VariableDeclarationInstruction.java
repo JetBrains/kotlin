@@ -22,12 +22,12 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetVariableDeclaration;
 
 public class VariableDeclarationInstruction extends InstructionWithNext {
-    protected VariableDeclarationInstruction(@NotNull JetParameter element) {
-        super(element);
+    protected VariableDeclarationInstruction(@NotNull JetParameter element, @NotNull LexicalScope lexicalScope) {
+        super(element, lexicalScope);
     }
 
-    protected VariableDeclarationInstruction(@NotNull JetVariableDeclaration element) {
-        super(element);
+    protected VariableDeclarationInstruction(@NotNull JetVariableDeclaration element, @NotNull LexicalScope lexicalScope) {
+        super(element, lexicalScope);
     }
     
     public JetDeclaration getVariableDeclarationElement() {
@@ -53,8 +53,8 @@ public class VariableDeclarationInstruction extends InstructionWithNext {
     @Override
     protected Instruction createCopy() {
         if (element instanceof JetParameter) {
-            return new VariableDeclarationInstruction((JetParameter) element);
+            return new VariableDeclarationInstruction((JetParameter) element, lexicalScope);
         }
-        return new VariableDeclarationInstruction((JetVariableDeclaration) element);
+        return new VariableDeclarationInstruction((JetVariableDeclaration) element, lexicalScope);
     }
 }

@@ -44,7 +44,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     protected static final Iterable<EcmaVersion> DEFAULT_ECMA_VERSIONS = Lists.newArrayList(EcmaVersion.v5);
 
     private static final boolean DELETE_OUT = false;
-    private static final String TEST_FILES = "js/js.translator/testFiles/";
+    private static final String TEST_FILES = "js/js.translator/testData/";
     private static final String CASES = "cases/";
     private static final String OUT = "out/";
     private static final String EXPECTED = "expected/";

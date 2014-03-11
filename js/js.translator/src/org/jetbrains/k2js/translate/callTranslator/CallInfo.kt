@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getDeclarationDescriptorForReceiver
+import org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getReceiverParameterForReceiver
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
 import org.jetbrains.jet.lang.psi.JetSuperExpression
@@ -86,7 +86,7 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
 
 private fun TranslationContext.getThisObject(receiverValue: ReceiverValue): JsExpression {
     assert(receiverValue.exists(), "receiverValue must be exist here")
-    return getThisObject(getDeclarationDescriptorForReceiver(receiverValue))
+    return getThisObject(getReceiverParameterForReceiver(receiverValue))
 }
 
 private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out CallableDescriptor>, explicitReceivers: ExplicitReceivers): CallInfo {

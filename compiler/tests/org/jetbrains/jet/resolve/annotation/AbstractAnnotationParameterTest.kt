@@ -23,7 +23,7 @@ import org.jetbrains.jet.JetTestUtils
 
 public abstract class AbstractAnnotationParameterTest : AbstractAnnotationDescriptorResolveTest() {
     fun doTest(path: String) {
-        val fileText = FileUtil.loadFile(File(path))
+        val fileText = FileUtil.loadFile(File(path), true)
         val packageView = getPackage(fileText)
         val classDescriptor = AbstractAnnotationDescriptorResolveTest.getClassDescriptor(packageView, "MyClass")
 

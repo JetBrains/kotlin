@@ -21,14 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.cfg.LoopInfo;
-import org.jetbrains.jet.lang.cfg.PseudocodeTraverser;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.BACKWARD;
-import static org.jetbrains.jet.lang.cfg.PseudocodeTraverser.TraversalOrder.FORWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD;
+import static org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 
 public class PseudocodeImpl implements Pseudocode {
 
@@ -78,6 +78,7 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
+    private Pseudocode parent = null;
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
     private final Map<JetElement, Instruction> representativeInstructions = new HashMap<JetElement, Instruction>();
@@ -113,13 +114,33 @@ public class PseudocodeImpl implements Pseudocode {
     @NotNull
     private static Set<LocalFunctionDeclarationInstruction> getLocalDeclarations(@NotNull Pseudocode pseudocode) {
         Set<LocalFunctionDeclarationInstruction> localDeclarations = Sets.newLinkedHashSet();
-        for (Instruction instruction : pseudocode.getInstructions()) {
+        for (Instruction instruction : ((PseudocodeImpl)pseudocode).mutableInstructionList) {
             if (instruction instanceof LocalFunctionDeclarationInstruction) {
                 localDeclarations.add((LocalFunctionDeclarationInstruction) instruction);
                 localDeclarations.addAll(getLocalDeclarations(((LocalFunctionDeclarationInstruction)instruction).getBody()));
             }
         }
         return localDeclarations;
+    }
+
+    @Override
+    @Nullable
+    public Pseudocode getParent() {
+        return parent;
+    }
+
+    private void setParent(Pseudocode parent) {
+        this.parent = parent;
+    }
+
+    @NotNull
+    public Pseudocode getRootPseudocode() {
+        Pseudocode parent = getParent();
+        while (parent != null) {
+            if (parent.getParent() == null) return parent;
+            parent = parent.getParent();
+        }
+        return this;
     }
 
     /*package*/ PseudocodeLabel createLabel(String name) {
@@ -138,13 +159,13 @@ public class PseudocodeImpl implements Pseudocode {
     @Override
     public List<Instruction> getReversedInstructions() {
         LinkedHashSet<Instruction> traversedInstructions = Sets.newLinkedHashSet();
-        PseudocodeTraverser.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
+        PseudocodeTraverserPackage.traverseFollowingInstructions(sinkInstruction, traversedInstructions, BACKWARD, null);
         if (traversedInstructions.size() < instructions.size()) {
             List<Instruction> simplyReversedInstructions = Lists.newArrayList(instructions);
             Collections.reverse(simplyReversedInstructions);
             for (Instruction instruction : simplyReversedInstructions) {
                 if (!traversedInstructions.contains(instruction)) {
-                    PseudocodeTraverser.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
+                    PseudocodeTraverserPackage.traverseFollowingInstructions(instruction, traversedInstructions, BACKWARD, null);
                 }
             }
         }
@@ -242,9 +263,23 @@ public class PseudocodeImpl implements Pseudocode {
         postPrecessed = true;
         errorInstruction.setSink(getSinkInstruction());
         exitInstruction.setSink(getSinkInstruction());
-        for (int i = 0, instructionsSize = mutableInstructionList.size(); i < instructionsSize; i++) {
-            processInstruction(mutableInstructionList.get(i), i);
+        int index = 0;
+        for (Instruction instruction : mutableInstructionList) {
+            //recursively invokes 'postProcess' for local declarations
+            processInstruction(instruction, index);
+            index++;
         }
+        if (getParent() != null) return;
+
+        // Collecting reachable instructions should be done after processing all instructions
+        // (including instructions in local declarations) to avoid being in incomplete state.
+        collectAndCacheReachableInstructions();
+        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : getLocalDeclarations()) {
+            ((PseudocodeImpl) localFunctionDeclarationInstruction.getBody()).collectAndCacheReachableInstructions();
+        }
+    }
+
+    private void collectAndCacheReachableInstructions() {
         Set<Instruction> reachableInstructions = collectReachableInstructions();
         for (Instruction instruction : mutableInstructionList) {
             if (reachableInstructions.contains(instruction)) {
@@ -292,7 +327,9 @@ public class PseudocodeImpl implements Pseudocode {
 
             @Override
             public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
-                ((PseudocodeImpl)instruction.getBody()).postProcess();
+                PseudocodeImpl body = (PseudocodeImpl) instruction.getBody();
+                body.setParent(PseudocodeImpl.this);
+                body.postProcess();
                 instruction.setNext(getSinkInstruction());
             }
 
@@ -315,7 +352,7 @@ public class PseudocodeImpl implements Pseudocode {
 
     private Set<Instruction> collectReachableInstructions() {
         Set<Instruction> visited = Sets.newHashSet();
-        PseudocodeTraverser.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
+        PseudocodeTraverserPackage.traverseFollowingInstructions(getEnterInstruction(), visited, FORWARD, null);
         if (!visited.contains(getExitInstruction())) {
             visited.add(getExitInstruction());
         }

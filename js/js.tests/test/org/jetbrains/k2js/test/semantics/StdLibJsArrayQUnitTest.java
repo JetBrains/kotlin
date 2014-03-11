@@ -23,7 +23,7 @@ public class StdLibJsArrayQUnitTest extends StdLibQUnitTestSupport {
     }
 
     // TODO for some reason this test fails when ran as part of all the js-backend tests, but works stand alone
-    // generates: ReferenceError: "QUnit" is not defined. (js/js.translator/testFiles/stdlib/out/ArrayQUnitTest.compiler_v3.js#3058)
+    // generates: ReferenceError: "QUnit" is not defined. (js/js.translator/testData/stdlib/out/ArrayQUnitTest.compiler_v3.js#3058)
     // when ran in batch
 
     public void DISABLED_testArrayQUnitTest() throws Exception {

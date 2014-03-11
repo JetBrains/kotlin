@@ -1,0 +1,5 @@
+fun foo() {
+    if (true) {
+        println("test")
+    } else println("test2")
+}

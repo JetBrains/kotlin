@@ -28,7 +28,7 @@ public class InitializerTest extends SingleFileTranslationTest {
     }
 
     public void testRootPackageValInit() throws Exception {
-        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", "_", "box", "OK");
+        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", "_", TEST_FUNCTION, "OK");
     }
 
     public void testClassInitializer() throws Exception {

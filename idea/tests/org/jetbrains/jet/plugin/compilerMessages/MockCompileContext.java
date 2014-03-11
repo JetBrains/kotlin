@@ -169,13 +169,13 @@ public class MockCompileContext implements CompileContextEx {
         throw new UnsupportedOperationException("org.jetbrains.jet.plugin.compilerMessages.MockCompileContext#requestRebuildNextTime");
     }
 
-    // TODO mark with override when updating to IDEA 132.527+
+    @Override
     public boolean isRebuildRequested() {
         throw new UnsupportedOperationException("org.jetbrains.jet.plugin.compilerMessages.MockCompileContext.isRebuildRequested");
     }
 
-    // TODO mark with override when updating to IDEA 132.527+
     @Nullable
+    @Override
     public String getRebuildReason() {
         throw new UnsupportedOperationException("org.jetbrains.jet.plugin.compilerMessages.MockCompileContext.getRebuildReason");
     }

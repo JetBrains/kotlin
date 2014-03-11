@@ -9,10 +9,8 @@ class StandardCollectionTest() : TestCase() {
   fun testDisabled() {
   }
 
-  /*
   fun testAny() {
-    // TODO requires KT-924 to be implemented
-    val data: Iterable<String> = kotlin.util.arrayList("foo", "bar")
+    val data: Iterable<String> = listOf("foo", "bar")
 
     assertTrue {
       data.any{it.startsWith("f")}
@@ -21,5 +19,4 @@ class StandardCollectionTest() : TestCase() {
       data.any{it.startsWith("x")}
     }
   }
-  */
 }

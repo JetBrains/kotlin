@@ -1,0 +1,34 @@
+== foo ==
+fun foo() {
+    {}
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ {} })
+    mark({})
+    jmp?(L2)        NEXT:[r({}), d({})]
+    d({})           NEXT:[<SINK>]
+L2:
+    r({})           PREV:[jmp?(L2)]
+L1:
+  1 <END>           NEXT:[<SINK>]
+error:
+    <ERROR>         PREV:[]
+sink:
+    <SINK>          PREV:[<ERROR>, <END>, d({})]
+=====================
+== anonymous_0 ==
+{}
+---------------------
+L3:
+  3 <START>
+  4 mark()
+    read (Unit)
+L4:
+  3 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================

@@ -147,7 +147,7 @@
 
     <gotoSymbolContributor implementation="org.jetbrains.jet.plugin.caches.JetGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.jet.plugin.caches.JetGotoClassContributor"/>
-    <lang.importOptimizer language="jet" implementationClass="org.jetbrains.jet.plugin.editor.importOptimizer.JetImportOptimizer"/>
+    <lang.importOptimizer language="jet" implementationClass="org.jetbrains.jet.plugin.imports.KotlinImportOptimizer"/>
 
     <fileTypeFactory implementation="org.jetbrains.jet.plugin.JetFileFactory"/>
 
@@ -171,6 +171,7 @@
     <quoteHandler fileType="Kotlin" className="org.jetbrains.jet.plugin.editor.KotlinQuoteHandler"/>
     <refactoring.helper implementation="org.jetbrains.jet.plugin.codeInsight.KotlinShortenReferencesRefactoringHelper"/>
     <refactoring.moveHandler implementation="org.jetbrains.jet.plugin.refactoring.move.JetMoveFilesOrDirectoriesHandler"/>
+    <moveFileHandler implementation="org.jetbrains.jet.plugin.refactoring.move.MoveKotlinFileHandler" />
     <refactoring.copyHandler implementation="org.jetbrains.jet.plugin.refactoring.copy.JetCopyClassHandler"/>
     <refactoring.changeSignatureUsageProcessor implementation="org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureUsageProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.jet.plugin.refactoring.inline.KotlinInlineValHandler"/>
@@ -400,6 +401,31 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceGetIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceContainsIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceInvokeIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.attributeCallReplacements.ReplaceBinaryInfixIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.FoldIfToReturnAsymmetricallyIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -528,6 +554,27 @@
       <className>org.jetbrains.jet.plugin.intentions.ReplaceWithInfixFunctionCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceExplicitFunctionLiteralParamWithItIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ReplaceItWithExplicitFunctionLiteralParamIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.RemoveBracesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.AddBracesIntention</className>
+    <category>Kotlin</category>
+    </intentionAction>
+
 
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 

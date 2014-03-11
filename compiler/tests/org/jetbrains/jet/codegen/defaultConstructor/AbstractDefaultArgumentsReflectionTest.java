@@ -38,7 +38,7 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
     protected void doTest(String path) throws IOException {
         loadFileByFullPath(path);
 
-        String fileText = FileUtil.loadFile(new File(path));
+        String fileText = FileUtil.loadFile(new File(path), true);
         String className = loadInstructionValue(fileText, "CLASS");
         boolean hasDefaultConstructor = loadInstructionValue(fileText, "HAS_DEFAULT_CONSTRUCTOR").equals("true");
 

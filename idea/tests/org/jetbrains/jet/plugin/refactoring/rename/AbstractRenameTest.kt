@@ -63,7 +63,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val module: Module = getModule()!!)
 
     public open fun doTest(path : String) {
-        val fileText = FileUtil.loadFile(File(path))
+        val fileText = FileUtil.loadFile(File(path), true)
 
         val jsonParser = JsonParser()
         val renameObject = jsonParser.parse(fileText) as JsonObject

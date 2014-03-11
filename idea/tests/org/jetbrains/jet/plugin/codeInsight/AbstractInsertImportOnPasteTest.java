@@ -81,7 +81,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
 
         myFixture.checkResultByFile(testFileName.replace(".kt", ".expected.kt"));
 
-        if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile), ALLOW_UNRESOLVED_DIRECTIVE)) {
+        if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testFile, true), ALLOW_UNRESOLVED_DIRECTIVE)) {
             checkNoUnresolvedReferences(toFile);
         }
     }
@@ -134,7 +134,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
         if (file.exists()) {
             if (dependencyFileName.endsWith(".java")) {
                 //allow test framework to put it under right directory
-                myFixture.addClass(FileUtil.loadFile(file));
+                myFixture.addClass(FileUtil.loadFile(file, true));
             }
             else {
                 myFixture.configureByFile(dependencyFileName);

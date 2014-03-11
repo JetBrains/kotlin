@@ -33,6 +33,8 @@ public trait OutputFile {
     public val sourceFiles: List<File>
     public fun asByteArray(): ByteArray
     public fun asText(): String
+
+    override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }
 
 class SimpleOutputFile(

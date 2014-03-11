@@ -37,6 +37,7 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import java.util.HashSet
+import org.gradle.api.UnknownDomainObjectException
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -178,14 +179,18 @@ open class KotlinAndroidPlugin: Plugin<Project> {
         val kotlinOptions = getExtention<K2JVMCompilerArguments>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
         val mainSourceSet = sourceSets.getByName(BuilderConstants.MAIN)
-        val testSourceSet = sourceSets.getByName(BuilderConstants.INSTRUMENT_TEST)
+        val testSourceSet = try {
+            sourceSets.getByName("instrumentTest")
+        } catch (e: UnknownDomainObjectException) {
+            sourceSets.getByName("androidTest")
+        }
 
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildType: BuildType = if (variant is LibraryVariant) {
-                    variant.getBuildType()
+                    variant.getBuildType()!!
                 } else {
-                    (variant as ApkVariant).getBuildType()
+                    (variant as ApkVariant).getBuildType()!!
                 }
 
                 val buildTypeSourceSetName = buildType.getName()

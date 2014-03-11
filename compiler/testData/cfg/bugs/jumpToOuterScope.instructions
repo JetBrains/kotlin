@@ -1,0 +1,54 @@
+== foo ==
+fun foo(c: Collection<Int>) {
+    for (e in c) {
+        {
+            break
+        }
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(c: Collection<Int>)
+    w(c)
+  2 mark({ for (e in c) { { break } } })
+  3 mark(for (e in c) { { break } })
+    r(c)
+    v(e)
+L3:
+    jmp?(L2)                                NEXT:[read (Unit), w(e)]
+L4 [loop entry point]:
+L5 [body entry point]:
+    w(e)                                    PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+  4 mark({ { break } })
+    mark({ break })
+    jmp?(L6)                                NEXT:[r({ break }), d({ break })]
+    d({ break })                            NEXT:[<SINK>]
+L6:
+    r({ break })                            PREV:[jmp?(L6)]
+  3 jmp?(L4 [loop entry point])             NEXT:[w(e), read (Unit)]
+L2:
+    read (Unit)                             PREV:[jmp?(L2), jmp(L2), jmp?(L4 [loop entry point])]
+L1:
+  1 <END>                                   NEXT:[<SINK>]
+error:
+    <ERROR>                                 PREV:[]
+sink:
+    <SINK>                                  PREV:[<ERROR>, <END>, d({ break })]
+=====================
+== anonymous_0 ==
+{
+            break
+        }
+---------------------
+L7:
+  5 <START>
+  6 mark(break)
+    jmp(L2)        NEXT:[read (Unit)]
+L8:
+  5 <END>          NEXT:[<SINK>]         PREV:[]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================

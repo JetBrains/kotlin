@@ -102,37 +102,35 @@ public final class JsDescriptorUtils {
         return !descriptor.getOverriddenDescriptors().isEmpty();
     }
 
-    //TODO: why callable descriptor
-    @Nullable
-    public static DeclarationDescriptor getExpectedThisDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor expectedThisObject = callableDescriptor.getExpectedThisObject();
-        if (expectedThisObject == null) {
-            return null;
-        }
-        return getDeclarationDescriptorForReceiver(expectedThisObject.getValue());
+    @NotNull
+    public static ReceiverParameterDescriptor getReceiverParameterForReceiver(@NotNull ReceiverValue receiverParameter) {
+        DeclarationDescriptor declarationDescriptor = getDeclarationDescriptorForReceiver(receiverParameter);
+        return getReceiverParameterForDeclaration(declarationDescriptor);
     }
 
     @NotNull
-    public static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
-        DeclarationDescriptor declarationDescriptor;
-
+    private static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
         if (receiverParameter instanceof ThisReceiver) {
-            declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
-        }
-        else {
-            throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter);
+            DeclarationDescriptor declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
+            return declarationDescriptor.getOriginal();
         }
 
-        return declarationDescriptor.getOriginal();
+        throw new UnsupportedOperationException("Unsupported receiver type: " + receiverParameter.getClass() +
+                                                ", receiverParameter = " + receiverParameter);
     }
 
-    @Nullable
-    public static DeclarationDescriptor getExpectedReceiverDescriptor(@NotNull CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-        if (receiverParameter == null) {
-            return null;
+    public static ReceiverParameterDescriptor getReceiverParameterForDeclaration(DeclarationDescriptor declarationDescriptor) {
+        if (declarationDescriptor instanceof ClassDescriptor) {
+            return ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter();
         }
-        return getDeclarationDescriptorForReceiver(receiverParameter.getValue());
+        else if (declarationDescriptor instanceof CallableMemberDescriptor) {
+            ReceiverParameterDescriptor receiverDescriptor = ((CallableMemberDescriptor) declarationDescriptor).getReceiverParameter();
+            assert receiverDescriptor != null;
+            return receiverDescriptor;
+        }
+
+        throw new UnsupportedOperationException("Unsupported declaration type: " + declarationDescriptor.getClass() +
+                                                ", declarationDescriptor = " + declarationDescriptor);
     }
 
     //TODO: maybe we have similar routine

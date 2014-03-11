@@ -13,6 +13,7 @@ import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.asm4.commons.RemappingMethodAdapter;
 import org.jetbrains.asm4.tree.*;
 import org.jetbrains.asm4.tree.analysis.*;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -28,7 +29,7 @@ public class MethodInliner {
 
     private final Parameters parameters;
 
-    private final InliningContext parent;
+    private final InliningContext inliningContext;
 
     @Nullable
     private final Type lambdaType;
@@ -46,11 +47,13 @@ public class MethodInliner {
     //current state
     private final Map<String, String> currentTypeMapping = new HashMap<String, String>();
 
+    private final InlineResult result;
+
     /*
      *
      * @param node
      * @param parameters
-     * @param parent
+     * @param inliningContext
      * @param lambdaType - in case on lambda 'invoke' inlining
      */
     public MethodInliner(
@@ -63,19 +66,20 @@ public class MethodInliner {
     ) {
         this.node = node;
         this.parameters = parameters;
-        this.parent = parent;
+        this.inliningContext = parent;
         this.lambdaType = lambdaType;
         this.lambdaFieldRemapper = lambdaFieldRemapper;
         this.isSameModule = isSameModule;
         this.typeMapper = parent.state.getTypeMapper();
+        this.result = InlineResult.create();
     }
 
 
-    public void doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
-        doInline(adapter, remapper, new LambdaFieldRemapper(), true);
+    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
+        return doInline(adapter, remapper, lambdaFieldRemapper, true);
     }
 
-    public void doInline(
+    public InlineResult doInline(
             MethodVisitor adapter,
             VarRemapper.ParamRemapper remapper,
             LambdaFieldRemapper capturedRemapper, boolean remapReturn
@@ -98,6 +102,7 @@ public class MethodInliner {
         transformedNode.accept(visitor);
         visitor.visitLabel(end);
 
+        return result;
     }
 
     private MethodNode doInline(MethodNode node, final LambdaFieldRemapper capturedRemapper) {
@@ -121,13 +126,19 @@ public class MethodInliner {
 
                     if (invocation.shouldRegenerate()) {
                         //TODO: need poping of type but what to do with local funs???
-                        Type newLambdaType = Type.getObjectType(parent.nameGenerator.genLambdaClassName());
+                        Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
                         currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
                         LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(),
-                                                                              parent.subInline(parent.nameGenerator, currentTypeMapping),
+                                                                              inliningContext.subInline(inliningContext.nameGenerator, currentTypeMapping).classRegeneration(),
                                                                               isSameModule, newLambdaType);
 
-                        transformer.doTransform(invocation);
+                        InlineResult transformResult = transformer.doTransform(invocation, capturedRemapper);
+                        result.addAllClassesToRemove(transformResult);
+
+                        if (inliningContext.isInliningLambda) {
+                            //this class is transformed and original not used so we should remove original one after inlining
+                            result.addClassToRemove(invocation.getOwnerInternalName());
+                        }
                     }
                 }
 
@@ -154,11 +165,15 @@ public class MethodInliner {
                     Parameters lambdaParameters = info.addAllParameters(capturedRemapper);
 
                     setInlining(true);
-                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters, parent.subInline(parent.nameGenerator.subGenerator("lambda")), info.getLambdaClassType(),
-                                                              capturedRemapper, true /*cause all calls in same module as lambda*/);
+                    MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
+                                                              inliningContext.subInlineLambda(info),
+                                                              info.getLambdaClassType(),
+                                                              capturedRemapper, true /*cause all calls in same module as lambda*/
+                    );
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
-                    inliner.doInline(this.mv, remapper); //TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper);//TODO add skipped this and receiver
+                    result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
                     Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
@@ -319,7 +334,7 @@ public class MethodInliner {
                             }
                         }
 
-                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule));
+                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule, inliningContext.classRegeneration));
                     }
                 }
             }
@@ -411,6 +426,9 @@ public class MethodInliner {
                     } else {
                         cur = this.lambdaFieldRemapper.doTransform(node, fieldInsnNode, result);
                     }
+                }
+                else if (lambdaFieldRemapper.shouldPatch(fieldInsnNode)) {
+                    cur = lambdaFieldRemapper.patch(fieldInsnNode, node);
                 }
             }
             cur = cur.getNext();
