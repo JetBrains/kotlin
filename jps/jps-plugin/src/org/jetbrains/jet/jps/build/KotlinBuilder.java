@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -35,6 +36,7 @@ import org.jetbrains.jet.compiler.runner.CompilerEnvironment;
 import org.jetbrains.jet.compiler.runner.CompilerRunnerConstants;
 import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
+import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
@@ -191,9 +193,11 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         }
 
         for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
-            // TODO this is a hack: we don't remove
-            if (outputItem.getOutputFile().getName().endsWith("Package.class")) {
-                continue;
+            if (IncrementalCompilation.ENABLED) {
+                // TODO this is a hack: we don't remove
+                if (outputItem.getOutputFile().getName().endsWith("Package.class")) {
+                    continue;
+                }
             }
             BuildTarget<?> target = null;
             Collection<File> sourceFiles = outputItem.getSourceFiles();
@@ -208,14 +212,19 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                                               paths(sourceFiles));
         }
 
-        // TODO should mark dependencies as dirty, as well
-        FSOperations.markDirty(context, chunk, new FileFilter() {
-            @Override
-            public boolean accept(@NotNull File file) {
-                return !allCompiledFiles.contains(file);
-            }
-        });
-        return ExitCode.ADDITIONAL_PASS_REQUIRED;
+        if (IncrementalCompilation.ENABLED) {
+            // TODO should mark dependencies as dirty, as well
+            FSOperations.markDirty(context, chunk, new FileFilter() {
+                @Override
+                public boolean accept(@NotNull File file) {
+                    return !allCompiledFiles.contains(file);
+                }
+            });
+            return ExitCode.ADDITIONAL_PASS_REQUIRED;
+        }
+        else {
+            return ExitCode.OK;
+        }
     }
 
     private static Set<File> getAllCompiledFilesContainer(CompileContext context) {
