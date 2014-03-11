@@ -16,27 +16,31 @@
 
 package org.jetbrains.k2js.translate.operation;
 
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
-import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
-import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
+import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
+import org.jetbrains.k2js.translate.general.Translation;
 import org.jetbrains.k2js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
+import org.jetbrains.k2js.translate.utils.mutator.AssignToExpressionMutator;
+import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionResolvedCall;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.*;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.translateLeftExpression;
@@ -80,8 +84,7 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
             return applyIntrinsic(intrinsic);
         }
         if (getOperationToken(expression).equals(JetTokens.ELVIS)) {
-            return TranslationUtils.notNullConditional(translateLeftExpression(context(), expression),
-                                                       translateRightExpression(context(), expression), context());
+            return translateElvis(expression);
         }
         if (isAssignmentOperator(expression)) {
             return AssignmentTranslator.translate(expression, context());
@@ -95,6 +98,30 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         assert operationDescriptor != null :
                 "Overloadable operations must have not null descriptor";
         return translateAsOverloadedBinaryOperation();
+    }
+
+    @NotNull
+    private JsExpression translateElvis(JetBinaryExpression expression) {
+        JsExpression leftExpression = translateLeftExpression(context(), expression);
+
+        JetExpression rightJetExpression = expression.getRight();
+        assert rightJetExpression != null : "Binary expression should have a right expression";
+        JsNode rightNode = Translation.translateExpression(rightJetExpression, context());
+
+        if (rightNode instanceof JsExpression) {
+            return TranslationUtils.notNullConditional(leftExpression, (JsExpression) rightNode, context());
+        }
+
+        TemporaryVariable result = context().declareTemporary(null);
+        AssignToExpressionMutator saveResultToTemporaryMutator = new AssignToExpressionMutator(result.reference());
+        context().addStatementToCurrentBlock(LastExpressionMutator.mutateLastExpression(leftExpression, saveResultToTemporaryMutator));
+
+        JsExpression testExpression = TranslationUtils.isNullCheck(result.reference());
+        JsStatement thenStatement = convertToStatement(rightNode);
+        JsIf ifStatement = new JsIf(testExpression, thenStatement);
+        context().addStatementToCurrentBlock(ifStatement);
+
+        return result.reference();
     }
 
     @Nullable
