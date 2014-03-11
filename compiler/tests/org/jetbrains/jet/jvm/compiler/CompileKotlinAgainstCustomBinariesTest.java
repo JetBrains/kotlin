@@ -57,28 +57,30 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     }
 
     @NotNull
+    private File getTestDataFileWithExtension(@NotNull String extension) {
+        return new File(getTestDataDirectory(), getTestName(true) + "." + extension);
+    }
+
+    @NotNull
     private File compileLibrary(@NotNull String sourcePath) {
         return MockLibraryUtil.compileLibraryToJar(new File(getTestDataDirectory(), sourcePath).getPath(), false);
     }
 
     private void doTestWithTxt(@NotNull File... extraClassPath) throws Exception {
-        File ktFile = new File(getTestDataDirectory(), getTestName(false) + ".kt");
-
-        PackageViewDescriptor packageView = analyzeFileToPackageView(ktFile, extraClassPath);
+        PackageViewDescriptor packageView = analyzeFileToPackageView(extraClassPath);
 
         RecursiveDescriptorComparator.Configuration comparator =
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
                         DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES);
-        File txtFile = new File(getTestDataDirectory(), FileUtil.getNameWithoutExtension(ktFile) + ".txt");
-        validateAndCompareDescriptorWithFile(packageView, comparator, txtFile);
+        validateAndCompareDescriptorWithFile(packageView, comparator, getTestDataFileWithExtension("txt"));
     }
 
     @NotNull
-    private PackageViewDescriptor analyzeFileToPackageView(@NotNull File ktFile, @NotNull File... extraClassPath) throws IOException {
+    private PackageViewDescriptor analyzeFileToPackageView(@NotNull File... extraClassPath) throws IOException {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
         AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                JetTestUtils.loadJetFile(project, ktFile),
+                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt")),
                 Collections.<AnalyzerScriptParameter>emptyList()
         );
 
@@ -100,8 +102,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     @NotNull
     private Collection<DeclarationDescriptor> analyzeAndGetAllDescriptors(@NotNull File... extraClassPath) throws IOException {
-        File ktFile = new File(getTestDataDirectory(), getTestName(true) + ".kt");
-        return analyzeFileToPackageView(ktFile, extraClassPath).getMemberScope().getAllDescriptors();
+        return analyzeFileToPackageView(extraClassPath).getMemberScope().getAllDescriptors();
     }
 
     @NotNull
@@ -152,11 +153,11 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         assertEmpty("No descriptors should be found: " + allDescriptors, allDescriptors);
     }
 
-    public void testDuplicateLibraries() throws Exception {
+    public void testSameLibraryTwiceInClasspath() throws Exception {
         doTestWithTxt(compileLibrary("library-1"), compileLibrary("library-2"));
     }
 
-    public void testMissingEnumReferencedInAnnotation() throws Exception {
+    public void testMissingEnumReferencedInAnnotationArgument() throws Exception {
         doTestWithTxt(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"));
     }
 }
