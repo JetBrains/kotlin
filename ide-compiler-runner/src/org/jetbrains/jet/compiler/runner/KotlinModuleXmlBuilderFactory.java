@@ -17,6 +17,7 @@
 package org.jetbrains.jet.compiler.runner;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.utils.Printer;
 
 import java.io.File;
@@ -85,13 +86,13 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
                 public void processClassPathSection(@NotNull String sectionDescription, @NotNull Collection<File> files) {
                     p.println("<!-- ", sectionDescription, " -->");
                     for (File file : files) {
-                        boolean isOutput = directoriesToFilterOut.contains(file); // TODO make it optional
+                        boolean isOutput = directoriesToFilterOut.contains(file) && !IncrementalCompilation.ENABLED;
                         if (isOutput) {
                             // For IDEA's make (incremental compilation) purposes, output directories of the current module and its dependencies
                             // appear on the class path, so we are at risk of seeing the results of the previous build, i.e. if some class was
                             // removed in the sources, it may still be there in binaries. Thus, we delete these entries from the classpath.
                             p.println("<!-- Output directory, commented out -->");
-                            //p.println("<!-- ");
+                            p.println("<!-- ");
                             p.pushIndent();
                         }
 
@@ -99,7 +100,7 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
 
                         if (isOutput) {
                             p.popIndent();
-                            //p.println("-->");
+                            p.println("-->");
                         }
                     }
                 }

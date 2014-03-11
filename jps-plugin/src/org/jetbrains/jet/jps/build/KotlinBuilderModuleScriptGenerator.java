@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilder;
 import org.jetbrains.jet.compiler.runner.KotlinModuleDescriptionBuilderFactory;
 import org.jetbrains.jet.compiler.runner.KotlinModuleXmlBuilderFactory;
+import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor;
 import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
@@ -56,7 +57,7 @@ public class KotlinBuilderModuleScriptGenerator {
     public static File generateModuleDescription(
             CompileContext context,
             ModuleChunk chunk,
-            List<File> sourceFiles
+            List<File> sourceFiles // ignored for non-incremental compilation
     )
             throws IOException
     {
@@ -71,6 +72,10 @@ public class KotlinBuilderModuleScriptGenerator {
         ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
         for (ModuleBuildTarget target : chunk.getTargets()) {
             File outputDir = getOutputDir(target);
+
+            if (!IncrementalCompilation.ENABLED) {
+                sourceFiles = new ArrayList<File>(KotlinSourceFileCollector.getAllKotlinSourceFiles(target));
+            }
 
             if (sourceFiles.size() > 0) {
                 noSources = false;

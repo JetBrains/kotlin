@@ -37,6 +37,7 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
@@ -113,6 +114,10 @@ public class PackageCodegen extends GenerationStateAware {
 
     @Nullable
     private PackageFragmentDescriptor getCompiledPackageFragment() {
+        if (!IncrementalCompilation.ENABLED) {
+            return null;
+        }
+
         // TODO rewrite it to something more robust when module system is implemented
         for (PackageFragmentDescriptor anotherFragment : packageFragment.getContainingDeclaration().getPackageFragmentProvider()
                 .getPackageFragments(packageFragment.getFqName())) {

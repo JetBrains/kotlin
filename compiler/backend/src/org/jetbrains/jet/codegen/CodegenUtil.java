@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -167,6 +168,10 @@ public class CodegenUtil {
         if (owner1 instanceof PackageFragmentDescriptor && owner2 instanceof PackageFragmentDescriptor) {
             PackageFragmentDescriptor fragment1 = (PackageFragmentDescriptor) owner1;
             PackageFragmentDescriptor fragment2 = (PackageFragmentDescriptor) owner2;
+
+            if (!IncrementalCompilation.ENABLED) {
+                return fragment1 == fragment2;
+            }
 
             // backing field should be used directly within same module of same package
             // TODO calls from other modules/libraries should use facade: KT-4590

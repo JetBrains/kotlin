@@ -28,6 +28,7 @@ import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.jet.config.IncrementalCompilation
 
 public class IncrementalJpsTest : JpsBuildTestCase() {
     private val testDataDir: File
@@ -64,6 +65,10 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
     }
 
     private fun doTest() {
+        if (!IncrementalCompilation.ENABLED) {
+            return
+        }
+
         addModule("module", array<String>(getAbsolutePath("src")), null, null, addJdk("my jdk"))
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
 
