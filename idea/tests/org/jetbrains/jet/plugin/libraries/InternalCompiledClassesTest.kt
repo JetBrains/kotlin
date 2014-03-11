@@ -30,14 +30,25 @@ import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.PsiCompiledFile
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
+import org.jetbrains.jet.lang.resolve.name.FqName
 
 //TODO: test for local functions and classes
 public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() {
 
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/libraries/internalClasses"
 
-    fun testPackagePartIsInvisible() = doTestNoPsiFilesAreBuiltFor("package part") {
-        getNameWithoutExtension().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-")
+    // Visible in idea-13-0
+    fun testPackagePartIsInvisible() {
+        val project = getProject()!!
+        doTest("package part class", acceptFile = { getNameWithoutExtension().contains(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + "-") }) {
+            val psiFile = PsiManager.getInstance(project).findFile(this)
+
+            Assert.assertEquals(
+                    "// IntelliJ API Decompiler stub source generated from a class file\n" +
+                    "// Implementation of methods is not available",
+                    psiFile?.getText()?.trim()?.replaceAll("  //", "//")
+            )
+        }
     }
 
     fun testAnonymousFunctionIsInvisible() = doTestNoPsiFilesAreBuiltFor("anonymous function") {
@@ -48,22 +59,8 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
         ClassFileViewProvider.isInnerOrAnonymousClass(this)
     }
 
-    fun testTraitImplClassIsVisibleAsJavaClass() {
-        val project = getProject()!!
-        doTest("trait impl", { getNameWithoutExtension().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX) }) {
-            val psiFile = PsiManager.getInstance(project).findFile(this)
-            Assert.assertTrue("Should not be kotlin file",
-                              psiFile !is JetClsFile)
-            Assert.assertTrue("Should be java file, was ${psiFile!!.getClass().getSimpleName()}",
-                              psiFile is ClsFileImpl)
-
-            val decompiledPsiFile = (psiFile as PsiCompiledFile).getDecompiledPsiFile()!!
-            Assert.assertTrue("Should be java decompiled file, was ${decompiledPsiFile.getClass().getSimpleName()}",
-                              decompiledPsiFile is PsiJavaFile)
-            val classes = (decompiledPsiFile as PsiJavaFile).getClasses()
-            Assert.assertTrue("Should have some decompiled text",
-                              classes.size == 1 && classes[0].getName()!!.endsWith(JvmAbi.TRAIT_IMPL_SUFFIX))
-        }
+    fun testTraitImplClassIsVisibleAsJavaClass() = doTestNoPsiFilesAreBuiltFor("trait impl class") {
+        getNameWithoutExtension().endsWith(JvmAbi.TRAIT_IMPL_SUFFIX)
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
