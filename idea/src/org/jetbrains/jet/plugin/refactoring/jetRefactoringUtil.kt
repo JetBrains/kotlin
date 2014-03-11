@@ -26,6 +26,13 @@ import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.psi.PsiFile
+import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import com.intellij.psi.PsiFileFactory
+import java.lang.annotation.Target
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -56,4 +63,15 @@ fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
     putCopyableUserData(key, null)
     return data
+}
+
+fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
+    val packageName = targetDir.getPackage()?.getQualifiedName()
+
+    targetDir.checkCreateFile(fileName)
+    val file = PsiFileFactory.getInstance(targetDir.getProject())!!.createFileFromText(
+            fileName, JetFileType.INSTANCE, if (packageName != null) "package $packageName \n\n" else ""
+    )
+
+    return targetDir.add(file) as JetFile
 }
