@@ -18,7 +18,9 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -28,6 +30,41 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
             @NotNull Annotations annotations,
             @NotNull Name name
     ) {
-        super(containingDeclaration, annotations, name, Kind.DECLARATION);
+        this(containingDeclaration, annotations, name, Kind.DECLARATION);
+    }
+
+    private JavaMethodDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @NotNull Kind kind
+    ) {
+        super(containingDeclaration, annotations, name, kind);
+    }
+
+    private JavaMethodDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull SimpleFunctionDescriptor original,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @NotNull Kind kind
+    ) {
+        super(containingDeclaration, original, annotations, name, kind);
+    }
+
+    @Override
+    public boolean hasStableParameterNames() {
+        // TODO: propagated names should be stable
+        return false;
+    }
+
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+        if (preserveOriginal) {
+            return new JavaMethodDescriptor(newOwner, getOriginal(), getAnnotations(), getName(), kind);
+        }
+        else {
+            return new JavaMethodDescriptor(newOwner, getAnnotations(), getName(), kind);
+        }
     }
 }

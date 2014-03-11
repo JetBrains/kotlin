@@ -5149,6 +5149,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/override")
+        @InnerTestClasses({Override.ParameterNames.class})
         public static class Override extends AbstractJetDiagnosticsTest {
             @TestMetadata("AbstractFunImplemented.kt")
             public void testAbstractFunImplemented() throws Exception {
@@ -5202,16 +5203,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ConflictingFunctionSignatureFromSuperclass.kt")
             public void testConflictingFunctionSignatureFromSuperclass() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ConflictingFunctionSignatureFromSuperclass.kt");
-            }
-            
-            @TestMetadata("ConflictingParameterNames.kt")
-            public void testConflictingParameterNames() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/override/ConflictingParameterNames.kt");
-            }
-            
-            @TestMetadata("ConflictingParameterNames-MultipleSupertypes.kt")
-            public void testConflictingParameterNames_MultipleSupertypes() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/override/ConflictingParameterNames-MultipleSupertypes.kt");
             }
             
             @TestMetadata("ConflictingPropertySignatureFromSuperclass.kt")
@@ -5344,6 +5335,45 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/ToAbstractMembersFromSuper-kt1996.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/override/parameterNames")
+            public static class ParameterNames extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInParameterNames() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/override/parameterNames"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("changeOnOverrideDiagnostic.kt")
+                public void testChangeOnOverrideDiagnostic() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/changeOnOverrideDiagnostic.kt");
+                }
+                
+                @TestMetadata("differentNamesInSupertypesDiagnostic.kt")
+                public void testDifferentNamesInSupertypesDiagnostic() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/differentNamesInSupertypesDiagnostic.kt");
+                }
+                
+                @TestMetadata("jjkHierarchy.kt")
+                public void testJjkHierarchy() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/jjkHierarchy.kt");
+                }
+                
+                @TestMetadata("kotlinInheritsBothJavaAndKotlin.kt")
+                public void testKotlinInheritsBothJavaAndKotlin() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/kotlinInheritsBothJavaAndKotlin.kt");
+                }
+                
+                @TestMetadata("kotlinInheritsJava.kt")
+                public void testKotlinInheritsJava() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/kotlinInheritsJava.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Override");
+                suite.addTestSuite(Override.class);
+                suite.addTestSuite(ParameterNames.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/recovery")
@@ -6978,7 +7008,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTestSuite(Objects.class);
             suite.addTestSuite(OperatorsOverloading.class);
             suite.addTestSuite(Overload.class);
-            suite.addTestSuite(Override.class);
+            suite.addTest(Override.innerSuite());
             suite.addTestSuite(Recovery.class);
             suite.addTestSuite(Redeclarations.class);
             suite.addTestSuite(Regressions.class);

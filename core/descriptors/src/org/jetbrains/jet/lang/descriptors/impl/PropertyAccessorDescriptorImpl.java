@@ -83,6 +83,11 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return Collections.emptyList();
     }
 
+    @Override
+    public boolean hasStableParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Modality getModality() {

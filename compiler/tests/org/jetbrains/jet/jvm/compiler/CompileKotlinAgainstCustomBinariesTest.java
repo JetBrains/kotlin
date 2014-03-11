@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.jvm.compiler;
 
+import com.google.common.collect.Iterables;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
@@ -24,12 +25,15 @@ import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
+import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
 import org.jetbrains.jet.test.util.DescriptorValidator;
@@ -159,5 +163,28 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
 
     public void testMissingEnumReferencedInAnnotationArgument() throws Exception {
         doTestWithTxt(copyJarFileWithoutEntry(compileLibrary("library"), "test/E.class"));
+    }
+
+    public void testNoWarningsOnJavaKotlinInheritance() throws Exception {
+        // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
+        // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
+
+        JetTestUtils.compileJavaFiles(
+                Collections.singletonList(getTestDataFileWithExtension("java")),
+                Arrays.asList("-d", tmpdir.getPath())
+        );
+
+        Project project = createEnvironment(Collections.singletonList(tmpdir)).getProject();
+
+        AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
+                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt")),
+                Collections.<AnalyzerScriptParameter>emptyList()
+        );
+        exhaust.throwIfError();
+
+        BindingContext bindingContext = exhaust.getBindingContext();
+        AnalyzerWithCompilerReport.reportDiagnostics(bindingContext, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+
+        assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
     }
 }

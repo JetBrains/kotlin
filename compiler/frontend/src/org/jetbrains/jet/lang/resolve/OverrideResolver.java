@@ -675,12 +675,15 @@ public class OverrideResolver {
                     }
                 }
 
-                if (!parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
+                DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
+                if (declared.hasStableParameterNames() &&
+                    superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
+                    !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
                     if (noDeclaration) {
                         trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
                     }
                     else {
-                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(), parameterFromSuperclass));
+                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) superFunction.getContainingDeclaration(), parameterFromSuperclass));
                     }
                 }
             }
