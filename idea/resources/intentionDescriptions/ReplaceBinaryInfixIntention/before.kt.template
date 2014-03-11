@@ -1,0 +1,6 @@
+a.plus(b)
+a.minus(b)
+a.times(b)
+a.div(b)
+a.mod(b)
+a.rangeTo(b)

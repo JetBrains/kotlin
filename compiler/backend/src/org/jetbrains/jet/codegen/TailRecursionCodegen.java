@@ -69,7 +69,11 @@ public class TailRecursionCodegen {
         assert fd instanceof FunctionDescriptor : "the resolved call is not refer to the function descriptor so why do we use generateTailRecursion for something strange?";
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
 
-        assignParameterValues(fd, callable, resolvedCall.getValueArgumentsByIndex());
+        List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
+        if (arguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
+        assignParameterValues(fd, callable, arguments);
         if (callable.getReceiverClass() != null) {
             if (resolvedCall.getReceiverArgument() != fd.getReceiverParameter().getValue()) {
                 StackValue expression = context.getReceiverExpression(codegen.typeMapper);

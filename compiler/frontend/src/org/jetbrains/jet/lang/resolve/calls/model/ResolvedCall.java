@@ -56,7 +56,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     Map<ValueParameterDescriptor, ResolvedValueArgument> getValueArguments();
 
     /** Values (arguments) for value parameters indexed by parameter index */
-    @NotNull
+    @Nullable
     List<ResolvedValueArgument> getValueArgumentsByIndex();
 
     /** What's substituted for type parameters */

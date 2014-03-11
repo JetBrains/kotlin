@@ -148,7 +148,11 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private TemporaryVariable createAliasForArgument(@NotNull ValueParameterDescriptor parameterDescriptor) {
-        ResolvedValueArgument actualArgument = resolvedCall.getValueArgumentsByIndex().get(parameterDescriptor.getIndex());
+        List<ResolvedValueArgument> actualArguments = resolvedCall.getValueArgumentsByIndex();
+        if (actualArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
+        ResolvedValueArgument actualArgument = actualArguments.get(parameterDescriptor.getIndex());
         JsExpression translatedArgument = translateArgument(actualArgument);
         TemporaryVariable aliasForArgument = context().declareTemporary(translatedArgument);
         context().addStatementToCurrentBlock(aliasForArgument.assignmentExpression().makeStmt());
