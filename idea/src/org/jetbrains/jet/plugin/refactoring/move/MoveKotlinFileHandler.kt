@@ -40,12 +40,7 @@ import java.util.Collections
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import com.intellij.openapi.util.Key
 import org.jetbrains.jet.plugin.refactoring.getAndRemoveCopyableUserData
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
-import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
-import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.asJava.toLightElements
 import org.jetbrains.jet.lang.psi.JetDeclaration
@@ -74,8 +69,6 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         ) : MoveRenameUsageInfo(reference.getElement(), reference, range.getStartOffset(), range.getEndOffset(), referencedElement, false) {
             val jetDeclaration: JetDeclaration get() = getReferencedElement() as JetDeclaration
         }
-
-        class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
         private val PACKAGE_NAME_INFO_KEY =
                 Key.create<PackageNameInfo>("${javaClass<MoveKotlinFileHandler>().getCanonicalName()}.PACKAGE_NAME_INFO_KEY")
@@ -180,29 +173,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val packageNameInfo = file.getAndRemoveCopyableUserData(PACKAGE_NAME_INFO_KEY)
         if (packageNameInfo == null) return
 
-        val referenceToContext = JetFileReferencesResolver.resolve(file = file, visitReceivers = false)
-
-        for ((refExpr, bindingContext) in referenceToContext) {
-            if (refExpr !is JetSimpleNameExpression) continue
-
-            val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
-                if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration() else descriptor
-            }
-            if (descriptor == null) continue
-
-            val packageName = DescriptorUtils.getParentOfType(
-                    descriptor, javaClass<PackageFragmentDescriptor>(), false
-            )?.let { DescriptorUtils.getFqName(it).toSafe() }
-            when (packageName) {
-                packageNameInfo.oldPackageName,
-                packageNameInfo.newPackageName -> {
-                    val fqName = DescriptorUtils.getFqName(descriptor)
-                    if (fqName.isSafe()) {
-                        (refExpr.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName.toSafe(), false)
-                    }
-                }
-            }
-        }
+        file.updateInternalReferencesOnPackageNameChange(packageNameInfo)
 
         val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
         packageRef?.bindToFqName(packageNameInfo.newPackageName, true)
