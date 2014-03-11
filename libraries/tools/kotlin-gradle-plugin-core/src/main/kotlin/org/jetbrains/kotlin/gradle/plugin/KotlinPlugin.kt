@@ -37,10 +37,11 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import java.util.HashSet
+import org.gradle.api.initialization.dsl.ScriptHandler
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
-open class KotlinPlugin: Plugin<Project> {
+open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
 
     public override fun apply(project: Project) {
         val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
@@ -52,7 +53,8 @@ open class KotlinPlugin: Plugin<Project> {
         configureKDoc(project, javaPluginConvention)
 
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
+
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
 
@@ -124,7 +126,7 @@ open class KotlinPlugin: Plugin<Project> {
 }
 
 
-open class KotlinAndroidPlugin: Plugin<Project> {
+open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
 
     val log = Logging.getLogger(getClass())
 
@@ -170,7 +172,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
         })
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
@@ -271,17 +273,15 @@ open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
     }
 }
 
-open class GradleUtils() {
-    class object {
-        public fun resolveDependencies(project: Project, vararg coordinates: String): Collection<File> {
-            val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
-            val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
+open class GradleUtils(val scriptHandler: ScriptHandler) {
+    public fun resolveDependencies(vararg coordinates: String): Collection<File> {
+        val dependencyHandler : DependencyHandler = scriptHandler.getDependencies()
+        val configurationsContainer : ConfigurationContainer = scriptHandler.getConfigurations()
 
-            val deps = coordinates.map { dependencyHandler.create(it) }
-            val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
+        val deps = coordinates.map { dependencyHandler.create(it) }
+        val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
 
-            return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
-        }
+        return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
     }
 }
 

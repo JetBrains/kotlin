@@ -63,6 +63,14 @@ class BasicKotlinGradleIT {
         }
     }
 
+    Test fun testMultiprojectPluginClasspath() {
+        Project("multiprojectClassPathTest").build("build") {
+            assertSuccessful()
+            assertReportExists("subproject")
+            assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+        }
+    }
+
     class Project(val projectName: String)
 
     class CompiledProject(val project: Project, val output: String, val resultCode: Int)
@@ -78,7 +86,7 @@ class BasicKotlinGradleIT {
     }
 
     private fun CompiledProject.assertSuccessful(): CompiledProject {
-        assertEquals(resultCode, 0)
+        assertEquals(0, resultCode)
         return this
     }
 
@@ -90,7 +98,11 @@ class BasicKotlinGradleIT {
     }
 
     private fun CompiledProject.assertReportExists(): CompiledProject {
-        assertTrue(File(File(workingDir, project.projectName), "build/reports/tests/demo.TestSource.html").exists(), "Test report does not exist. Were tests executed?")
+        assertReportExists("")
+        return this
+    }
+    private fun CompiledProject.assertReportExists(subProject: String): CompiledProject {
+        assertTrue(File(File(File(workingDir, project.projectName), subProject), "build/reports/tests/demo.TestSource.html").exists(), "Test report does not exist. Were tests executed?")
         return this
     }
 
