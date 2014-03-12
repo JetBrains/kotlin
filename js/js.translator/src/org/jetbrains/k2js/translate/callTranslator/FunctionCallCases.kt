@@ -32,6 +32,8 @@ import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsName
 import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.jet.lang.descriptors.Visibilities
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -106,7 +108,16 @@ object DefaultFunctionCallCase : FunctionCallCase {
             val qualifierForFunction = context.getQualifierForDescriptor(it)
             JsNameRef(functionName, qualifierForFunction) // TODO: remake to call
         }
-        return JsInvocation(functionRef, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+
+        val referenceToCall =
+                if (callableDescriptor.getVisibility() == Visibilities.LOCAL) {
+                    Namer.getFunctionCallRef(functionRef)
+                }
+                else {
+                    functionRef
+                }
+
+        return JsInvocation(referenceToCall, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
 
     override fun FunctionCallInfo.bothReceivers(): JsExpression {
@@ -142,7 +153,7 @@ object InvokeIntrinsic : FunctionCallCase {
         return JsInvocation(thisObject, argumentsInfo.getTranslateArguments())
     }
     override fun FunctionCallInfo.bothReceivers(): JsExpression {
-        return JsInvocation(thisObject, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+        return JsInvocation(Namer.getFunctionCallRef(thisObject!!), addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
 }
 
@@ -182,7 +193,7 @@ object ExpressionAsFunctionDescriptorIntrinsic : FunctionCallCase {
         }
 
         val funRef = Translation.translateAsExpression((callableDescriptor as ExpressionAsFunctionDescriptor).getExpression()!!, context)
-        return JsInvocation(funRef, addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
+        return JsInvocation(Namer.getFunctionCallRef(funRef), addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
     }
 }
 

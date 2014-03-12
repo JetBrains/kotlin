@@ -36,13 +36,6 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
         val lambda = invokingContext.getFunctionObject(descriptor)
         val functionContext = invokingContext.newFunctionBodyWithUsageTracker(lambda, descriptor)
 
-        val receiverDescriptor = descriptor.getReceiverParameter()
-        if (receiverDescriptor != null) {
-            val receiverName = lambda.getScope()?.declareName(Namer.getReceiverParameterName())
-            lambda.getParameters()?.add(JsParameter(receiverName))
-            functionContext.aliasingContext().registerAlias(receiverDescriptor, receiverName!!.makeRef())
-        }
-
         FunctionTranslator.addParameters(lambda.getParameters(), descriptor, functionContext)
         val functionBody = translateFunctionBody(descriptor, declaration, functionContext)
         lambda.getBody()?.getStatements()?.addAll(functionBody.getStatements()!!)
