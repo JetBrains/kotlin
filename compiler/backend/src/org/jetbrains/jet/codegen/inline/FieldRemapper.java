@@ -83,10 +83,13 @@ public class FieldRemapper {
                 insnNode.name = "$$$" + insnNode.name;
                 insnNode.setOpcode(Opcodes.GETSTATIC);
 
-                for (int i = 0; i < currentInstruction; i++) {
-                    AbstractInsnNode toRemove = capturedFieldAccess.get(i);
-                    node.instructions.remove(toRemove);
+                AbstractInsnNode next = capturedFieldAccess.get(0);
+                while (next != insnNode) {
+                    AbstractInsnNode toDelete = next;
+                    next = next.getNext();
+                    node.instructions.remove(toDelete);
                 }
+
                 transformed = capturedFieldAccess.get(capturedFieldAccess.size() - 1);
             }
         }

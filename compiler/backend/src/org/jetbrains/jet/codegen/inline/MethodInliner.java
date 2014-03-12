@@ -429,7 +429,11 @@ public class MethodInliner {
         List<AbstractInsnNode> fieldAccessChain = new ArrayList<AbstractInsnNode>();
         fieldAccessChain.add(aload0);
         AbstractInsnNode next = aload0.getNext();
-        while (next != null && next instanceof FieldInsnNode) {
+        while (next != null && next instanceof FieldInsnNode || next instanceof LabelNode) {
+            if (next instanceof LabelNode) {
+                next = next.getNext();
+                continue; //it will be delete on transformation
+            }
             fieldAccessChain.add(next);
             if ("this$0".equals(((FieldInsnNode) next).name)) {
                 next = next.getNext();
