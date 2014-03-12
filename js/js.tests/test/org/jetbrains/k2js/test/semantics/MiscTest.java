@@ -66,7 +66,6 @@ public final class MiscTest extends AbstractExpressionTest {
         checkOutput("KT-1052.kt", "true\n");
     }
 
-
     public void testKt740_1() throws Exception {
         checkFooBoxIsTrue("KT-740.kt");
     }
@@ -123,6 +122,18 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testElvisReturnSimple() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testElvisReturnNested() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testElvisWithThrow() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
         fooBoxTest();
     }
@@ -135,11 +146,9 @@ public final class MiscTest extends AbstractExpressionTest {
         checkOutput("mainFunInNestedPackage.kt", "ayee");
     }
 
-
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
         fooBoxTest();
     }
-
 
     public void testExclExcl() throws Exception {
         fooBoxTest();
