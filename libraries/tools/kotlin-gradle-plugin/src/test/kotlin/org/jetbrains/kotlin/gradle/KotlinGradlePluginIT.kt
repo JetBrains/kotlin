@@ -52,4 +52,12 @@ class BasicKotlinGradleIT: BaseGradleIT() {
             assertContains(":compileKotlin", ":compileTestKotlin")
         }
     }
+
+    Test fun testMultiprojectPluginClasspath() {
+        Project("multiprojectClassPathTest").build("build") {
+            assertSuccessful()
+            assertReportExists("subproject")
+            assertContains(":subproject:compileKotlin", ":subproject:compileTestKotlin")
+        }
+    }
 }

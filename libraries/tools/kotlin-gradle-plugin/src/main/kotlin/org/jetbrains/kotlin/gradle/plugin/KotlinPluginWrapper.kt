@@ -11,14 +11,21 @@ import java.net.URL
 import org.gradle.api.logging.Logging
 import java.util.Properties
 import java.io.FileNotFoundException
+import org.gradle.api.initialization.dsl.ScriptHandler
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
     val log = Logging.getLogger(getClass())!!
 
     public override fun apply(project: Project) {
-        val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
-        val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
+        val sourceBuildScript = findSourceBuildScript(project);
+        if (sourceBuildScript == null) {
+            log.error("Failed to determine source cofiguration of kotlin plugin. Can not download core. Please verify that this or any parent project " +
+                      "contains 'kotlin-gradle-plugin' in buildscript's classpath configuration.");
+            return;
+        }
+        val dependencyHandler : DependencyHandler = sourceBuildScript.getDependencies()
+        val configurationsContainer : ConfigurationContainer = sourceBuildScript.getConfigurations()
 
         log.debug("Loading version information")
         val props = Properties()
@@ -48,7 +55,8 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         log.debug("Class loader created")
         val cls = Class.forName(getPluginClassName(), true, kotlinPluginClassloader)
         log.debug("Plugin class loaded")
-        val pluginInstance = cls.newInstance()
+        val constructor = cls.getConstructor(javaClass<ScriptHandler>())
+        val pluginInstance = constructor.newInstance(sourceBuildScript)
         log.debug("Plugin class instantiated")
 
         val applyMethod = cls.getMethod("apply", javaClass<Project>())
@@ -58,6 +66,23 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
     }
 
     public abstract fun getPluginClassName():String
+
+    private fun findSourceBuildScript(project: Project): ScriptHandler? {
+        log.debug("Looking for proper script handler")
+        var curProject = project
+        while (curProject != curProject.getParent()) {
+            log.debug("Looking in project $project")
+            val scriptHandler = curProject.getBuildscript()
+            val found = scriptHandler.getConfigurations().findByName("classpath")?.find { it.name.contains("kotlin-gradle-plugin") } != null;
+            if (found) {
+                log.debug("Found! returning...")
+                return scriptHandler
+            }
+            log.debug("not found, switching to parent")
+            curProject = curProject.getParent()
+        }
+        return null
+    }
 }
 
 open class KotlinPluginWrapper: KotlinBasePluginWrapper() {
