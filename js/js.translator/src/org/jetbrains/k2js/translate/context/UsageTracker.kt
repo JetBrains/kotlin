@@ -30,7 +30,7 @@ class UsageTracker(
         private val scope: JsScope
 ) {
 
-    private val captured = hashMapOf<CallableDescriptor, JsName>()
+    private val captured = linkedMapOf<CallableDescriptor, JsName>()
 
     // For readonly access from external places.
     val capturedDescriptorToJsName: Map<CallableDescriptor, JsName>
