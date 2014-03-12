@@ -27,15 +27,15 @@ import org.jetbrains.jet.codegen.StackValue;
 import java.util.Collection;
 import java.util.List;
 
-public class LambdaFieldRemapper {
+public class FieldRemapper {
 
     private final String lambdaInternalName;
 
-    protected LambdaFieldRemapper parent;
+    protected FieldRemapper parent;
 
     private final Parameters params;
 
-    public LambdaFieldRemapper(@Nullable String lambdaInternalName, @Nullable LambdaFieldRemapper parent, @NotNull Parameters methodParams) {
+    public FieldRemapper(@Nullable String lambdaInternalName, @Nullable FieldRemapper parent, @NotNull Parameters methodParams) {
         this.lambdaInternalName = lambdaInternalName;
         this.parent = parent;
         params = methodParams;
@@ -51,9 +51,9 @@ public class LambdaFieldRemapper {
         return fieldOwner.equals(getLambdaInternalName());
     }
 
+    @Nullable
     public AbstractInsnNode transformIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,
-            int currentInstruction,
             @NotNull MethodNode node
     ) {
         if (capturedFieldAccess.size() == 1) {
@@ -61,6 +61,15 @@ public class LambdaFieldRemapper {
             return null;
         }
 
+        return transformIfNeeded(capturedFieldAccess, 1, node);
+    }
+
+    @Nullable
+    private AbstractInsnNode transformIfNeeded(
+            @NotNull List<AbstractInsnNode> capturedFieldAccess,
+            int currentInstruction,
+            @NotNull MethodNode node
+    ) {
         AbstractInsnNode transformed = null;
         boolean checkParent = !isRoot() && currentInstruction < capturedFieldAccess.size() - 1;
         if (checkParent) {
@@ -99,7 +108,7 @@ public class LambdaFieldRemapper {
         return null;
     }
 
-    public LambdaFieldRemapper getParent() {
+    public FieldRemapper getParent() {
         return parent;
     }
 

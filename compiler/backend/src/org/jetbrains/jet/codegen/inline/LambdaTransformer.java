@@ -105,7 +105,7 @@ public class LambdaTransformer {
         }
     }
 
-    public InlineResult doTransform(ConstructorInvocation invocation, LambdaFieldRemapper parentRemapper) {
+    public InlineResult doTransform(ConstructorInvocation invocation, FieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
 
         //TODO: public visibility for inline function

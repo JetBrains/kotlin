@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
+public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
 
     private final String oldOwnerType;
 
@@ -42,7 +42,7 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
             String newOwnerType,
             Parameters parameters,
             Map<String, LambdaInfo> recapturedLambdas,
-            LambdaFieldRemapper remapper
+            FieldRemapper remapper
     ) {
         super(oldOwnerType, remapper, parameters);
         this.oldOwnerType = oldOwnerType;
@@ -70,7 +70,7 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
                     throw new IllegalStateException("Captured parameter should exists in outer context: " + originalField.getFieldName());
                 }
 
-                CapturedParamInfo info = builder.addCapturedParam(foundField, foundField);
+                builder.addCapturedParam(foundField, foundField);
             }
         } else {
             //in case when inlining lambda into another one inside inline function
@@ -116,6 +116,7 @@ public class RegeneratedLambdaFieldRemapper extends LambdaFieldRemapper {
     @Nullable
     @Override
     public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
+        assert node.name.startsWith("$$$") : "Captured field template should start with $$$ prefix";
         FieldInsnNode fin = new FieldInsnNode(node.getOpcode(), node.owner, node.name.substring(3), node.desc);
         CapturedParamInfo field = findFieldInMyCaptured(fin);
 

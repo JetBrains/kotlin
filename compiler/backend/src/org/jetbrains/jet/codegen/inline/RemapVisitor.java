@@ -31,9 +31,9 @@ public class RemapVisitor extends InstructionAdapter {
     private final VarRemapper remapper;
 
     private final boolean remapReturn;
-    private LambdaFieldRemapper nodeRemapper;
+    private FieldRemapper nodeRemapper;
 
-    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn, LambdaFieldRemapper nodeRemapper) {
+    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn, FieldRemapper nodeRemapper) {
         super(InlineCodegenUtil.API, mv);
         this.end = end;
         this.remapper = remapper;
@@ -67,8 +67,10 @@ public class RemapVisitor extends InstructionAdapter {
             if (nodeRemapper instanceof RegeneratedLambdaFieldRemapper || nodeRemapper.isRoot()) {
                 FieldInsnNode fin = new FieldInsnNode(opcode, owner, name, desc);
                 StackValue inline = nodeRemapper.getFieldForInline(fin, null);
+                assert inline != null : "Captured field should have not null stackValue " + fin;
                 inline.put(inline.type, this);
-            } else {
+            }
+            else {
                 super.visitFieldInsn(opcode, owner, name, desc);
             }
         }

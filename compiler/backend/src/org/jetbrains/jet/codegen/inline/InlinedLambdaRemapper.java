@@ -22,11 +22,11 @@ import org.jetbrains.asm4.tree.FieldInsnNode;
 
 import java.util.Collection;
 
-public class InlinedLambdaRemapper extends LambdaFieldRemapper {
+public class InlinedLambdaRemapper extends FieldRemapper {
 
     public InlinedLambdaRemapper(
             @NotNull String lambdaInternalName,
-            @NotNull LambdaFieldRemapper parent,
+            @NotNull FieldRemapper parent,
             @NotNull Parameters methodParams
     ) {
         super(lambdaInternalName, parent, methodParams);
@@ -51,7 +51,7 @@ public class InlinedLambdaRemapper extends LambdaFieldRemapper {
     }
 
     @Override
-    public LambdaFieldRemapper getParent() {
+    public FieldRemapper getParent() {
         return parent.getParent();
     }
 

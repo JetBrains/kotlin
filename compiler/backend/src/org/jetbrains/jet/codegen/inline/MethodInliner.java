@@ -15,7 +15,6 @@ import org.jetbrains.asm4.tree.analysis.*;
 import org.jetbrains.jet.codegen.ClosureCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.util.*;
 
@@ -30,7 +29,7 @@ public class MethodInliner {
 
     private final InliningContext inliningContext;
 
-    private final LambdaFieldRemapper nodeRemapper;
+    private final FieldRemapper nodeRemapper;
 
     private final boolean isSameModule;
 
@@ -58,7 +57,7 @@ public class MethodInliner {
             @NotNull MethodNode node,
             @NotNull Parameters parameters,
             @NotNull InliningContext parent,
-            @NotNull LambdaFieldRemapper nodeRemapper,
+            @NotNull FieldRemapper nodeRemapper,
             boolean isSameModule,
             @NotNull String errorPrefix
     ) {
@@ -73,14 +72,14 @@ public class MethodInliner {
     }
 
 
-    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper, LambdaFieldRemapper fieldRemapper) {
-        return doInline(adapter, remapper, fieldRemapper, true);
+    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper, FieldRemapper capturedRemapper) {
+        return doInline(adapter, remapper, capturedRemapper, true);
     }
 
     public InlineResult doInline(
             MethodVisitor adapter,
             VarRemapper.ParamRemapper remapper,
-            LambdaFieldRemapper capturedRemapper, boolean remapReturn
+            FieldRemapper capturedRemapper, boolean remapReturn
     ) {
         //analyze body
         MethodNode transformedNode = markPlacesForInlineAndRemoveInlinable(node);
@@ -93,20 +92,17 @@ public class MethodInliner {
         RemapVisitor visitor = new RemapVisitor(adapter, end, remapper, remapReturn, nodeRemapper);
         try {
             transformedNode.accept(visitor);
-        } catch (Exception e) {
-            String text = InlineCodegen.getNodeText(transformedNode);
-
-            throw new RuntimeException(errorPrefix + ": couldn't inline method call '" +
-                                       transformedNode +
-                                           "\ncause: " +
-                                           text, e);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(errorPrefix + ": couldn't inline method call " + transformedNode + "\ncause: " +
+                                       InlineCodegen.getNodeText(transformedNode), e);
         }
         visitor.visitLabel(end);
 
         return result;
     }
 
-    private MethodNode doInline(MethodNode node, final LambdaFieldRemapper  capturedRemapper) {
+    private MethodNode doInline(MethodNode node, final FieldRemapper capturedRemapper) {
 
         final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
@@ -168,13 +164,13 @@ public class MethodInliner {
                     InlinedLambdaRemapper newCapturedRemapper =
                             new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), capturedRemapper, lambdaParameters);
 
-                    LambdaFieldRemapper lambdaFieldRemapper =
-                            new LambdaFieldRemapper(info.getLambdaClassType().getInternalName(), capturedRemapper, lambdaParameters);
+                    FieldRemapper fieldRemapper =
+                            new FieldRemapper(info.getLambdaClassType().getInternalName(), capturedRemapper, lambdaParameters);
 
                     setInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
                                                               inliningContext.subInlineLambda(info),
-                                                              lambdaFieldRemapper, true /*cause all calls in same module as lambda*/,
+                                                              fieldRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName());
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
@@ -212,12 +208,9 @@ public class MethodInliner {
         return resultNode;
     }
 
-    public CapturedParamInfo findCapturedField(FieldInsnNode node) {
-        return findCapturedField(node, nodeRemapper);
-    }
-
     @NotNull
-    public static CapturedParamInfo findCapturedField(FieldInsnNode node, LambdaFieldRemapper fieldRemapper) {
+    public static CapturedParamInfo findCapturedField(FieldInsnNode node, FieldRemapper fieldRemapper) {
+        assert node.name.startsWith("$$$") : "Captured field template should start with $$$ prefix";
         FieldInsnNode fin = new FieldInsnNode(node.getOpcode(), node.owner, node.name.substring(3), node.desc);
         CapturedParamInfo field = fieldRemapper.findField(fin);
         if (field == null) {
@@ -282,13 +275,10 @@ public class MethodInliner {
         Frame<SourceValue>[] sources;
         try {
             sources = analyzer.analyze("fake", node);
-        } catch (AnalyzerException e) {
-            String text = InlineCodegen.getNodeText(node);
-
-            throw new RuntimeException("Couldn't inline method call '" +
-                                       node +
-                                       "\ncause: " +
-                                       text, e);
+        }
+        catch (AnalyzerException e) {
+            throw new RuntimeException("Couldn't inline method call " + node + "\ncause: " +
+                                       InlineCodegen.getNodeText(node), e);
         }
 
         AbstractInsnNode cur = node.instructions.getFirst();
@@ -378,12 +368,11 @@ public class MethodInliner {
             if (varIndex < parameters.totalSize()) {
                 return parameters.get(varIndex).getLambda();
             }
-        } else if (insnNode instanceof FieldInsnNode) {
+        }
+        else if (insnNode instanceof FieldInsnNode) {
             FieldInsnNode fieldInsnNode = (FieldInsnNode) insnNode;
             if (fieldInsnNode.name.startsWith("$$$")) {
-                CapturedParamInfo field = findCapturedField(fieldInsnNode);
-                return field.getLambda();
-
+                return findCapturedField(fieldInsnNode, nodeRemapper).getLambda();
             }
         }
 
@@ -418,13 +407,14 @@ public class MethodInliner {
             return;
         }
 
-        //encode all captured variable chains - ALOAD 0 ALOAD this$0 GETFIELD $captured - to GETFIELD $$$$captured
+        //Fold all captured variable chain - ALOAD 0 ALOAD this$0 GETFIELD $captured - to GETFIELD $$$$captured
+        //On future decoding this field could be inline or unfolded in another field access chain (it can differ in some missed this$0)
         AbstractInsnNode cur = node.instructions.getFirst();
         while (cur != null) {
             if (cur instanceof VarInsnNode && cur.getOpcode() == Opcodes.ALOAD) {
                 if (((VarInsnNode) cur).var == 0) {
                     List<AbstractInsnNode> accessChain = getCapturedFieldAccessChain((VarInsnNode) cur);
-                    AbstractInsnNode insnNode = nodeRemapper.transformIfNeeded(accessChain, 1, node);
+                    AbstractInsnNode insnNode = nodeRemapper.transformIfNeeded(accessChain, node);
                     if (insnNode != null) {
                         cur = insnNode;
                     }
@@ -435,28 +425,21 @@ public class MethodInliner {
     }
 
     @NotNull
-    public static List<AbstractInsnNode> getCapturedFieldAccessChain(@NotNull VarInsnNode node) {
+    public static List<AbstractInsnNode> getCapturedFieldAccessChain(@NotNull VarInsnNode aload0) {
         List<AbstractInsnNode> fieldAccessChain = new ArrayList<AbstractInsnNode>();
-        fieldAccessChain.add(node);
-        AbstractInsnNode next = node.getNext();
+        fieldAccessChain.add(aload0);
+        AbstractInsnNode next = aload0.getNext();
         while (next != null && next instanceof FieldInsnNode) {
             fieldAccessChain.add(next);
-            if("this$0".equals(((FieldInsnNode) next).name)) {
+            if ("this$0".equals(((FieldInsnNode) next).name)) {
                 next = next.getNext();
-            } else {
+            }
+            else {
                 break;
             }
         }
 
         return fieldAccessChain;
-    }
-
-    public static AbstractInsnNode getPreviousNoLabelNoLine(AbstractInsnNode cur) {
-        AbstractInsnNode prev = cur.getPrevious();
-        while (prev.getType() == AbstractInsnNode.LABEL || prev.getType() == AbstractInsnNode.LINE) {
-            prev = prev.getPrevious();
-        }
-        return prev;
     }
 
     public static void putStackValuesIntoLocals(List<Type> directOrder, int shift, InstructionAdapter iv, String descriptor) {

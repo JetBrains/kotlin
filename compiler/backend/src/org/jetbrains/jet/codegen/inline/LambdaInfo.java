@@ -138,7 +138,7 @@ public class LambdaInfo implements CapturedParamOwner {
         return Arrays.asList(types);
     }
 
-    public Parameters addAllParameters(@NotNull LambdaFieldRemapper remapper) {
+    public Parameters addAllParameters(@NotNull FieldRemapper remapper) {
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         //add skipped this cause inlined lambda doesn't have it
         builder.addThis(AsmTypeConstants.OBJECT_TYPE, true).setLambda(this);
