@@ -19,30 +19,41 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.context.GlobalContext;
+import org.jetbrains.jet.context.GlobalContextImpl;
+import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
+import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 
 public class TopDownAnalyzer {
 
+    public static boolean LAZY;
+
+    static {
+        LAZY = "true".equals(System.getProperty("lazy.tda"));
+    }
+
+    @NotNull
+    private BindingTrace trace;
     @NotNull
     private DeclarationResolver declarationResolver;
     @NotNull
@@ -57,6 +68,13 @@ public class TopDownAnalyzer {
     private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
     private BodyResolver bodyResolver;
+    @NotNull
+    private ScriptHeaderResolver scriptHeaderResolver;
+
+    @Inject
+    public void setTrace(@NotNull BindingTrace trace) {
+        this.trace = trace;
+    }
 
     @Inject
     public void setDeclarationResolver(@NotNull DeclarationResolver declarationResolver) {
@@ -93,8 +111,13 @@ public class TopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
+    @Inject
+    public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
+        this.scriptHeaderResolver = scriptHeaderResolver;
+    }
+
     public void doProcess(
-            @NotNull TopDownAnalysisContext c,
+            @NotNull final TopDownAnalysisContext c,
             @NotNull JetScope outerScope,
             @NotNull PackageLikeBuilder owner,
             @NotNull Collection<? extends PsiElement> declarations
@@ -102,11 +125,113 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        typeHierarchyResolver.process(c, outerScope, owner, declarations);
-        declarationResolver.process(c);
-        overrideResolver.process(c);
+        if (LAZY && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+            final ResolveSession resolveSession = new InjectorForLazyResolve(
+                    declarations.iterator().next().getProject(), // TODO
+                    new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
+                    (ModuleDescriptorImpl) moduleDescriptor, // TODO
+                    new FileBasedDeclarationProviderFactory(c.getStorageManager(), getFiles(declarations)),
+                    trace
+            ).getResolveSession();
 
-        lockScopes(c);
+            // fill in the context
+            for (PsiElement declaration : declarations) {
+                declaration.accept(
+                        new JetVisitorVoid() {
+                            private void registerDeclarations(@NotNull List<JetDeclaration> declarations) {
+                                for (JetDeclaration jetDeclaration : declarations) {
+                                    jetDeclaration.accept(this);
+                                }
+                            }
+
+                            private void registerScope(@Nullable JetDeclaration declaration, @NotNull JetDeclaration anchorForScope) {
+                                if (declaration == null) return;
+                                c.registerDeclaringScope(
+                                        declaration,
+                                        resolveSession.getScopeProvider().getResolutionScopeForDeclaration(anchorForScope)
+                                );
+                            }
+
+                            @Override
+                            public void visitDeclaration(@NotNull JetDeclaration dcl) {
+                                throw new IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText());
+                            }
+
+                            @Override
+                            public void visitJetFile(@NotNull JetFile file) {
+                                if (file.isScript()) {
+                                    JetScript script = file.getScript();
+                                    assert script != null;
+                                    scriptHeaderResolver.processScriptHierarchy(c, script, resolveSession.getScopeProvider().getFileScope(file));
+                                }
+                                else {
+                                    registerDeclarations(file.getDeclarations());
+                                }
+                            }
+
+                            private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
+                                c.getClasses().put(
+                                        classOrObject,
+                                        (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
+                                );
+                                registerDeclarations(classOrObject.getDeclarations());
+                            }
+
+                            @Override
+                            public void visitClass(@NotNull JetClass klass) {
+                                visitClassOrObject(klass);
+                            }
+
+                            @Override
+                            public void visitClassObject(@NotNull JetClassObject classObject) {
+                                visitClassOrObject(classObject.getObjectDeclaration());
+                            }
+
+                            @Override
+                            public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
+                                visitClassOrObject(enumEntry);
+                            }
+
+                            @Override
+                            public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
+                                visitClassOrObject(declaration);
+                            }
+
+                            @Override
+                            public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
+                                registerScope(initializer, initializer);
+                            }
+
+                            @Override
+                            public void visitNamedFunction(@NotNull JetNamedFunction function) {
+                                c.getFunctions().put(
+                                        function,
+                                        (SimpleFunctionDescriptor) resolveSession.resolveToDescriptor(function)
+                                );
+                                registerScope(function, function);
+                            }
+
+                            @Override
+                            public void visitProperty(@NotNull JetProperty property) {
+                                c.getProperties().put(
+                                        property,
+                                        (PropertyDescriptor) resolveSession.resolveToDescriptor(property)
+                                );
+                                registerScope(property, property);
+                                registerScope(property.getGetter(), property);
+                                registerScope(property.getSetter(), property);
+                            }
+                        }
+                );
+            }
+            overrideResolver.check(c);
+        }
+        else {
+            typeHierarchyResolver.process(c, outerScope, owner, declarations);
+            declarationResolver.process(c);
+            overrideResolver.process(c);
+            lockScopes(c);
+        }
 
         overloadResolver.process(c);
 
@@ -116,6 +241,16 @@ public class TopDownAnalyzer {
 
         c.debug("Exit");
         c.printDebugOutput(System.out);
+    }
+
+    private static Collection<JetFile> getFiles(Collection<? extends PsiElement> declarations) {
+        return new LinkedHashSet<JetFile>(KotlinPackage.map(declarations, new Function1<PsiElement, JetFile>() {
+            @Nullable
+            @Override
+            public JetFile invoke(PsiElement element) {
+                return (JetFile) element.getContainingFile();
+            }
+        }));
     }
 
     private void lockScopes(@NotNull TopDownAnalysisContext c) {

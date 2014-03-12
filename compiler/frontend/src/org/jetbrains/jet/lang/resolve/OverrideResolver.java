@@ -61,6 +61,10 @@ public class OverrideResolver {
         //all created fake descriptors are stored to resolve visibility on them later
         generateOverridesAndDelegation(c);
 
+        check(c);
+    }
+
+    public void check(@NotNull TopDownAnalysisContext c) {
         checkVisibility(c);
         checkOverrides(c);
         checkParameterOverridesForAllClasses(c);
