@@ -1,0 +1,15 @@
+public class X {
+  int f(int a) {
+    if (a == 0) {
+      return 0
+    }
+    <spot>else</spot> {
+      if (a == 1) {
+        return 2
+      }
+      else {
+        return 3
+      }
+    }
+  }
+}
