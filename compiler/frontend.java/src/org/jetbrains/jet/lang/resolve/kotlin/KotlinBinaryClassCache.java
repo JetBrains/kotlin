@@ -17,29 +17,29 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.annotations.Nullable;
 
 public final class KotlinBinaryClassCache {
 
     // This cache must be small: we only query the same file a few times in a row (from different places)
     // Since it is on application level we should be careful about this cache. Consider profiling multiple projects indexing simultaneously.
-    private final SLRUCache<VirtualFile, KotlinJvmBinaryClass> cache = new SLRUCache<VirtualFile, KotlinJvmBinaryClass>(2, 2) {
+    private final SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>> cache = new SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>(2, 2) {
         @NotNull
         @Override
-        public KotlinJvmBinaryClass createValue(VirtualFile virtualFile) {
-            // Operations under this lock are not supposed to involve other locks
-            return new VirtualFileKotlinClass(new LockBasedStorageManager(), virtualFile);
+        public Ref<VirtualFileKotlinClass> createValue(VirtualFile virtualFile) {
+            return Ref.create(VirtualFileKotlinClass.create(virtualFile));
         }
     };
 
-    @NotNull
+    @Nullable
     public static KotlinJvmBinaryClass getKotlinBinaryClass(@NotNull VirtualFile file) {
         KotlinBinaryClassCache service = ServiceManager.getService(KotlinBinaryClassCache.class);
         synchronized (service.cache) {
-            return service.cache.get(file);
+            return service.cache.get(file).get();
         }
     }
 }

@@ -30,7 +30,7 @@ public interface KotlinJvmBinaryClass {
 
     void visitMembers(@NotNull MemberVisitor visitor);
 
-    @Nullable
+    @NotNull
     KotlinClassHeader getClassHeader();
 
     interface MemberVisitor {

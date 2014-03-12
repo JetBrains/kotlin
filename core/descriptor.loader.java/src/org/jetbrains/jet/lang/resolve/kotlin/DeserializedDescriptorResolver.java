@@ -117,8 +117,6 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
-        if (header == null) return null;
-
         if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());
         }

@@ -35,10 +35,9 @@ public fun buildDecompiledText(
         resolver: ResolverForDecompiler = DeserializerForDecompiler(classFile)
 ): DecompiledText {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
-    val classFileHeader = kotlinClass.getClassHeader()
-    assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val kind = classFileHeader!!.kind
+    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
+    val kind = kotlinClass.getClassHeader().kind
     val packageFqName = classFqName.parent()
 
     return if (kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {

@@ -79,7 +79,7 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
     }
 
     private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean = {
-        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this).getClassHeader()
+        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.getClassHeader()
         header?.syntheticClassKind == kind
     }
 

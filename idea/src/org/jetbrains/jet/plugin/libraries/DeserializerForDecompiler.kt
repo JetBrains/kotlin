@@ -46,7 +46,8 @@ import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
+    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
     val packageFqName = classFqName.parent()
     return DeserializerForDecompiler(classFile.getParent()!!, packageFqName)
 }
@@ -174,7 +175,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private fun deserializeBinaryClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor {
-        val data = kotlinClass.getClassHeader()?.annotationData
+        val data = kotlinClass.getClassHeader().annotationData
         if (data == null) {
             LOG.error("Annotation data missing for ${kotlinClass.getClassName()}")
         }

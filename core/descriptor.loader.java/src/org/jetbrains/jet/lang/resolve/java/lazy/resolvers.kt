@@ -75,8 +75,8 @@ fun LazyJavaResolverContext.findClassInJava(fqName: FqName): JavaClassLookupResu
     }
 
     val kotlinClass = kotlinClassFinder.findKotlinClass(fqName)
-    val header = kotlinClass?.getClassHeader()
-    if (kotlinClass != null && header != null) {
+    if (kotlinClass != null) {
+        val header = kotlinClass.getClassHeader()
         if (header.kind == KotlinClassHeader.Kind.CLASS) {
             val descriptor = packageFragmentProvider.resolveKotlinBinaryClass(kotlinClass)
             if (descriptor != null) {
