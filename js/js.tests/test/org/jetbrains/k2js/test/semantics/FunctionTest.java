@@ -78,6 +78,10 @@ public class FunctionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testFunctionExpression() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testExpressionAsFunction() throws Exception {
         fooBoxTest();
     }
@@ -120,6 +124,14 @@ public class FunctionTest extends AbstractExpressionTest {
     }
 
     public void testOverloadingWithInheritance() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOverloadOverridenFun() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testOverloadClassConstructorByFactoryMethod() throws Exception {
         checkFooBoxIsOk();
     }
 

@@ -1,0 +1,26 @@
+// KT-2219 if function overload overridden function its name doesn't translated correctly
+
+package foo
+
+fun assertEquals(expected: Any, actual: Any) {
+    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
+}
+
+trait I {
+    fun test(): String
+}
+
+class P : I {
+    override fun test(): String = "foo" + test("bar")
+
+    private fun test(p: String) = p
+
+    fun test(s: String, i: Int) = "$i $s"
+}
+
+fun box(): String {
+    assertEquals("foobar", P().test())
+    assertEquals("35 baz", P().test("baz", 35))
+
+    return "OK"
+}

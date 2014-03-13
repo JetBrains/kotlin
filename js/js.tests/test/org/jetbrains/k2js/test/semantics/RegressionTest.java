@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package org.jetbrains.k2js.test.semantics;
 
-public final class ToStringTest extends AbstractExpressionTest {
+import org.jetbrains.k2js.test.SingleFileTranslationTest;
 
-    public ToStringTest() {
-        super("toString/");
+public final class RegressionTest extends SingleFileTranslationTest {
+
+    public RegressionTest() {
+        super("regression/");
     }
 
-    public void testToString() throws Exception {
-        // TODO uncomment this method to make the test case fail
-        //fooBoxIsValue("Foo(James)");
+    public void testKt2470() throws Exception {
+        checkFooBoxIsOk();
     }
-
 }

@@ -13,12 +13,12 @@ class C : A, B {
 }
 
 fun assertEquals(expected: Any, actual: Any) {
-    if (expected != actual) throw Exception("expected = $expected\nactual = $actual")
+    if (expected != actual) throw Exception("expected = $expected, actual = $actual")
 }
 fun box(): String {
-    assertEquals(C().foo(1), "A")
-    assertEquals(C().foo(""), "B")
-    assertEquals(C().foo(), "C")
+    assertEquals("A", C().foo(1))
+    assertEquals("B", C().foo(""))
+    assertEquals("C", C().foo())
 
     return "OK"
 }

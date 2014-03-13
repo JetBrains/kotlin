@@ -174,12 +174,6 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxIsValue("OK");
     }
 
-    //TODO:see http://youtrack.jetbrains.com/issue/KT-2565
-    @SuppressWarnings("UnusedDeclaration")
-    public void TODO_testFunctionExpression() throws Exception {
-        fooBoxIsValue("OK");
-    }
-
     public void testExclExclThrows() throws Exception {
         try {
             fooBoxTest();
