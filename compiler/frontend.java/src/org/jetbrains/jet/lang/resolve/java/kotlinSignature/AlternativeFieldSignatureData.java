@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.HashMap;
@@ -34,8 +34,9 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
 
     public AlternativeFieldSignatureData(
             @NotNull ExternalAnnotationResolver externalAnnotationResolver,
-            @NotNull JavaFieldImpl field,
+            @NotNull JavaField field,
             @NotNull JetType originalReturnType,
+            @NotNull Project project,
             boolean isVar
     ) {
         String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, field);
@@ -46,7 +47,6 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         }
 
         setAnnotated(true);
-        Project project = field.getPsi().getProject();
         JetProperty altPropertyDeclaration = JetPsiFactory.createProperty(project, signature);
 
         try {
@@ -66,7 +66,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
         return altReturnType;
     }
 
-    private static void checkFieldAnnotation(@NotNull JetProperty altProperty, @NotNull JavaFieldImpl field, boolean isVar) {
+    private static void checkFieldAnnotation(@NotNull JetProperty altProperty, @NotNull JavaField field, boolean isVar) {
         if (!ComparatorUtil.equalsNullable(field.getName().asString(), altProperty.getName())) {
             throw new AlternativeSignatureMismatchException("Field name mismatch, original: %s, alternative: %s",
                                                             field.getName().asString(), altProperty.getName());
