@@ -151,7 +151,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         usageInfos?.forEach { usage ->
             when (usage) {
                 is MoveRenameKotlinUsageInfo -> {
-                    usage.jetReference.bindToFqName(usage.newFqName, false)
+                    usage.jetReference.bindToFqName(usage.newFqName)
                 }
                 is MoveRenameJavaUsageInfo -> {
                     val lightElements = usage.jetDeclaration.toLightElements()
@@ -176,6 +176,6 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         file.updateInternalReferencesOnPackageNameChange(packageNameInfo)
 
         val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
-        packageRef?.bindToFqName(packageNameInfo.newPackageName, true)
+        packageRef?.bindToFqName(packageNameInfo.newPackageName)
     }
 }

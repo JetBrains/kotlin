@@ -26,11 +26,12 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
 public fun JetElement.updateInternalReferencesOnPackageNameChange(
-        packageNameInfo: PackageNameInfo, forceImmediateBinding: Boolean = false
+        packageNameInfo: PackageNameInfo, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
 ) {
     val file = getContainingFile() as? JetFile
     if (file == null) return
@@ -53,7 +54,7 @@ public fun JetElement.updateInternalReferencesOnPackageNameChange(
             packageNameInfo.newPackageName -> {
                 val fqName = DescriptorUtils.getFqName(descriptor)
                 if (fqName.isSafe()) {
-                    (refExpr.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName.toSafe(), forceImmediateBinding)
+                    (refExpr.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName.toSafe(), shorteningMode)
                 }
             }
         }

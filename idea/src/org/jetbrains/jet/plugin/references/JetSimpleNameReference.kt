@@ -48,23 +48,29 @@ public class JetSimpleNameReference(
         return expression.getReferencedNameElement().replace(element)
     }
 
-    // By default reference binding is delayed
-    override fun bindToElement(element: PsiElement): PsiElement = bindToElement(element, false)
-
-    public fun bindToElement(element: PsiElement, bindImmediately: Boolean): PsiElement {
-        return element.getFqName()?.let { fqName -> bindToFqName(fqName, bindImmediately) } ?: expression
+    public enum class ShorteningMode {
+        NO_SHORTENING
+        DELAYED_SHORTENING
+        FORCED_SHORTENING
     }
 
-    public fun bindToFqName(fqName: FqName, forceImmediateBinding: Boolean): PsiElement {
+    // By default reference binding is delayed
+    override fun bindToElement(element: PsiElement): PsiElement {
+        return element.getFqName()?.let { fqName -> bindToFqName(fqName) } ?: expression
+    }
+
+    public fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {
         if (fqName.isRoot()) return expression
 
         val newExpression = expression.changeQualifiedName(fqName).getQualifiedElementSelector() as JetSimpleNameExpression
         val newQualifiedElement = newExpression.getOutermostNonInterleavingQualifiedElement()
 
+        if (shorteningMode == ShorteningMode.NO_SHORTENING) return newExpression
+
         val needToShorten =
                 PsiTreeUtil.getParentOfType(expression, javaClass<JetImportDirective>(), javaClass<JetPackageDirective>()) == null
         if (needToShorten) {
-            if (forceImmediateBinding) {
+            if (shorteningMode == ShorteningMode.FORCED_SHORTENING) {
                 ShortenReferences.process(newQualifiedElement)
             }
             else {
