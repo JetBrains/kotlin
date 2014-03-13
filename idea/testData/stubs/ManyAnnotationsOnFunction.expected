@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=]
+  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]
+    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]
+    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Override]
+    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl

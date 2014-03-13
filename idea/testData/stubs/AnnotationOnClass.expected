@@ -1,0 +1,4 @@
+PsiJetFileStubImpl[package=]
+  CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]
+    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]
+    CLASS_BODY:PsiJetClassBodyStubImpl

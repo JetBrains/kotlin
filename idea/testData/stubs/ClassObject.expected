@@ -1,0 +1,7 @@
+PsiJetFileStubImpl[package=]
+  CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]
+    CLASS_BODY:PsiJetClassBodyStubImpl
+      OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null superNames=[]]
+        CLASS_BODY:PsiJetClassBodyStubImpl
+          FUN:PsiJetFunctionStubImpl[name=foo]
+            VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl

@@ -1,0 +1,2 @@
+[Deprecated Override] fun foo() {
+}

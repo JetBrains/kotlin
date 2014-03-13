@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=]
+  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]
+  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]
+  PROPERTY:PsiJetPropertyStubImpl[val top fqName=obj name=obj typeText=null bodyText=object : A(), T]
+    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=null fqName=null superNames=[AT]]

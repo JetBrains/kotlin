@@ -1,0 +1,2 @@
+PsiJetFileStubImpl[package=test.testing]
+  PROPERTY:PsiJetPropertyStubImpl[val top fqName=test.testing.some name=some typeText=null bodyText=12]

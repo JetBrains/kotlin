@@ -1,0 +1,5 @@
+PsiJetFileStubImpl[package=]
+  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]
+    CLASS_BODY:PsiJetClassBodyStubImpl
+      CLASS:PsiJetClassStubImpl[inner name=B fqn=A.B superNames=[]]
+        CLASS_BODY:PsiJetClassBodyStubImpl
