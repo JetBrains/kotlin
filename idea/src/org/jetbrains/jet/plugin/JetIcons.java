@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import javax.swing.*;
 
 public interface JetIcons {
     Icon SMALL_LOGO = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin.png");
+    Icon KOTLIN_LOGO_24 = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin24.png");
 
     Icon SMALL_LOGO_13 = IconLoader.getIcon("/org/jetbrains/jet/plugin/icons/kotlin13.png");
 
