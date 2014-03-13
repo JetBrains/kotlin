@@ -79,11 +79,13 @@ public class PseudocodeVariableDataCollector(
             if (instruction is VariableDeclarationInstruction) {
                 val variableDeclarationElement = instruction.getVariableDeclarationElement()
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
-                assert(descriptor is VariableDescriptor,
-                       "Variable descriptor should correspond to the instruction for ${instruction.getElement().getText()}.\n" +
-                       "Descriptor : $descriptor")
-                lexicalScopeVariableInfo.registerVariableDeclaredInScope(
-                        descriptor as VariableDescriptor, instruction.getLexicalScope())
+                if (descriptor != null) {
+                    assert(descriptor is VariableDescriptor,
+                           "Variable descriptor should correspond to the instruction for ${instruction.getElement().getText()}.\n" +
+                           "Descriptor : $descriptor")
+                    lexicalScopeVariableInfo.registerVariableDeclaredInScope(
+                            descriptor as VariableDescriptor, instruction.getLexicalScope())
+                }
             }
         })
         return lexicalScopeVariableInfo
