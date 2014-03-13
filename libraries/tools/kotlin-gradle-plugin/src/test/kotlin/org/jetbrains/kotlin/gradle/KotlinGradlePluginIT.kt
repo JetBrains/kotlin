@@ -18,13 +18,13 @@ class BasicKotlinGradleIT: BaseGradleIT() {
     Test fun testCrossCompile() {
         val project = Project("alfa")
 
-        project.build("compileDeployKotlin") {
+        project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertReportExists()
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
-        project.build("compileDeployKotlin") {
+        project.build("compileDeployKotlin", "build") {
             assertSuccessful()
             assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
         }
