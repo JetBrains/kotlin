@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.move
+package org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
 import com.intellij.psi.PsiFile
@@ -28,15 +28,10 @@ import java.util.ArrayList
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.util.MoveRenameUsageInfo
-import org.jetbrains.jet.lang.psi.JetClassOrObject
-import com.intellij.refactoring.util.TextOccurrencesUtil
-import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
-import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiReference
 import org.jetbrains.jet.lang.resolve.name.FqName
-import java.util.Collections
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import com.intellij.openapi.util.Key
 import org.jetbrains.jet.plugin.refactoring.getAndRemoveCopyableUserData
@@ -47,6 +42,13 @@ import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.plugin.search.usagesSearch.descriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import com.intellij.refactoring.util.TextOccurrencesUtil
+import java.util.Collections
+import org.jetbrains.jet.plugin.refactoring.move.PackageNameInfo
+import org.jetbrains.jet.plugin.refactoring.move.updateInternalReferencesOnPackageNameChange
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
     class object {

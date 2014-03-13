@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.move;
+package org.jetbrains.jet.plugin.refactoring.move.moveFilesOrDirectories;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
