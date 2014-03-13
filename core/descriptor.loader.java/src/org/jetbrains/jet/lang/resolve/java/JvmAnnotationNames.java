@@ -21,6 +21,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public final class JvmAnnotationNames {
     public static final FqName KOTLIN_CLASS = new FqName("kotlin.jvm.internal.KotlinClass");
     public static final FqName KOTLIN_PACKAGE = new FqName("kotlin.jvm.internal.KotlinPackage");
@@ -89,15 +93,21 @@ public final class JvmAnnotationNames {
     @Deprecated
     public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
 
-    @SuppressWarnings("deprecation")
+    private static final Set<JvmClassName> SPECIAL_ANNOTATIONS = new HashSet<JvmClassName>();
+    static {
+        for (FqName fqName : Arrays.asList(KOTLIN_CLASS, KOTLIN_PACKAGE, KOTLIN_SIGNATURE, JETBRAINS_NOT_NULL_ANNOTATION,
+                                           JETBRAINS_NULLABLE_ANNOTATION)) {
+            SPECIAL_ANNOTATIONS.add(JvmClassName.byFqNameWithoutInnerClasses(fqName));
+        }
+        SPECIAL_ANNOTATIONS.add(KotlinSyntheticClass.CLASS_NAME);
+    }
+
     public static boolean isSpecialAnnotation(@NotNull FqName fqName) {
-        return fqName.asString().startsWith("jet.runtime.typeinfo.")
-               || fqName.equals(KOTLIN_SIGNATURE)
-               || fqName.equals(JETBRAINS_NOT_NULL_ANNOTATION)
-               || fqName.equals(OLD_KOTLIN_CLASS)
-               || fqName.equals(OLD_KOTLIN_PACKAGE)
-               || fqName.equals(KOTLIN_CLASS)
-               || fqName.equals(KOTLIN_PACKAGE);
+        return isSpecialAnnotation(JvmClassName.byFqNameWithoutInnerClasses(fqName));
+    }
+
+    public static boolean isSpecialAnnotation(@NotNull JvmClassName name) {
+        return SPECIAL_ANNOTATIONS.contains(name) || name.getInternalName().startsWith("jet/runtime/typeinfo/");
     }
 
     private JvmAnnotationNames() {

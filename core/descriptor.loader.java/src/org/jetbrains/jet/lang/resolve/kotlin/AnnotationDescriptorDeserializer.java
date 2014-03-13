@@ -27,7 +27,10 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationsImpl;
-import org.jetbrains.jet.lang.resolve.constants.*;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
+import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+import org.jetbrains.jet.lang.resolve.constants.ErrorValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
@@ -107,21 +110,13 @@ public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer
         return new AnnotationsImpl(result);
     }
 
-    private static boolean ignoreAnnotation(@NotNull JvmClassName className) {
-        return className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION))
-               || className.equals(JvmClassName.byFqNameWithoutInnerClasses(JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION))
-               || className.getInternalName().startsWith("jet/runtime/typeinfo/");
-    }
-
     @Nullable
     public static KotlinJvmBinaryClass.AnnotationArgumentVisitor resolveAnnotation(
             @NotNull JvmClassName className,
             @NotNull final List<AnnotationDescriptor> result,
             @NotNull final DependencyClassByQualifiedNameResolver classResolver
     ) {
-        if (ignoreAnnotation(className)) return null;
+        if (JvmAnnotationNames.isSpecialAnnotation(className)) return null;
 
         final ClassDescriptor annotationClass = resolveClass(className, classResolver);
         final AnnotationDescriptorImpl annotation = new AnnotationDescriptorImpl();
