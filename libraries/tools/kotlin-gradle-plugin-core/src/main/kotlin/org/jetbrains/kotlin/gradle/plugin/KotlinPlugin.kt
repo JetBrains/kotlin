@@ -204,7 +204,7 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
 
 
                 // store kotlin classes in separate directory. They will serve as class-path to java compiler
-                val kotlinOutputDir = File(project.getBuildDir(), "kotlin-classes/${variantName}")
+                val kotlinOutputDir = File(project.getBuildDir(), "tmp/kotlin-classes/${variantName}")
                 kotlinTask.kotlinDestinationDir = kotlinOutputDir;
                 kotlinTask.setDestinationDir(javaTask.getDestinationDir())
                 kotlinTask.setDescription("Compiles the ${variantName} kotlin.")
