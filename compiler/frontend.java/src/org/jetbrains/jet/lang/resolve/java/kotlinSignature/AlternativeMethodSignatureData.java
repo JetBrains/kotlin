@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ExternalAnnotationResolver;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
@@ -56,8 +55,9 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
     public AlternativeMethodSignatureData(
             @NotNull ExternalAnnotationResolver externalAnnotationResolver,
-            @NotNull JavaMethodImpl method,
+            @NotNull JavaMethod method,
             @Nullable JetType receiverType,
+            @NotNull Project project,
             @NotNull List<ValueParameterDescriptor> valueParameters,
             @Nullable JetType originalReturnType,
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
@@ -76,7 +76,6 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
 
         setAnnotated(true);
-        Project project = method.getPsi().getProject();
         altFunDeclaration = JetPsiFactory.createFunction(project, signature);
 
         originalToAltTypeParameters = DescriptorResolverUtils.recreateTypeParametersAndReturnMapping(methodTypeParameters, null);
