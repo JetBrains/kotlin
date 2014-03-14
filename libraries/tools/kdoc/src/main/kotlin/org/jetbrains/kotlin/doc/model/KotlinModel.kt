@@ -132,7 +132,7 @@ fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KPr
     return map
 }
 
-abstract class KClassOrPackage(model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor) {
+abstract class KClassOrPackage(model: KModel, descriptor: DeclarationDescriptor): KAnnotated(model, descriptor) {
     open val functions = sortedSetOf<KFunction>()
     open val properties = sortedSetOf<KProperty>()
 
@@ -158,9 +158,9 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     val allPackages: Collection<KPackage>
     get() = packageMap.values()
 
-    /** Returns the local packages */
+    /** Returns the packages that should be included in the report */
     val packages: Collection<KPackage>
-    get() = allPackages.filter { it.local && config.includePackage(it) }
+    get() = allPackages.filter { config.includePackage(it) }
 
     val classes: Collection<KClass>
     get() = packages.flatMap { it.classes }
@@ -226,14 +226,14 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 warning("No PackageFragmentDescriptor for source $source")
             }
         }
-        val allClasses = HashSet<KClass>()
-        for (packageFragment in allPackageFragments) {
-            getPackage(packageFragment)
-            for (descriptor in packageFragment.getMemberScope().getAllDescriptors()) {
-                if (descriptor is ClassDescriptor) {
-                    val klass = getClass(descriptor)
-                    if (klass != null) {
-                        allClasses.add(klass)
+
+        for ((name, packageFragments) in allPackageFragments.groupBy { qualifiedName(it) }) {
+            createPackage(packageFragments, name)
+
+            for (packageFragment in packageFragments) {
+                for (descriptor in packageFragment.getMemberScope().getAllDescriptors()) {
+                    if (descriptor is ClassDescriptor) {
+                        getClass(descriptor)
                     }
                 }
             }
@@ -264,27 +264,31 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     fun getPackage(name: String): KPackage? = packageMap.get(name)
 
     /** Returns the package for the given descriptor, creating one if its not available */
-    fun getPackage(descriptor: PackageFragmentDescriptor): KPackage {
+    fun getOrCreatePackage(descriptor: PackageFragmentDescriptor): KPackage {
         val name = qualifiedName(descriptor)
-        var created = false
-        val pkg = packageMap.getOrPut(name) {
-            created = true
-            KPackage(this, descriptor, name)
-        }
-        if (created) {
-            configureComments(pkg, descriptor)
-            val scope = descriptor.getMemberScope()
-            addFunctions(pkg, scope)
-            pkg.local = isLocal(descriptor)
-            pkg.useExternalLink = pkg.model.config.resolveLink(pkg.name, false).isNotEmpty()
 
-            if (pkg.wikiDescription.isEmpty()) {
-                // lets try find a custom doc
-                var file = config.packageDescriptionFiles[name]
-                loadWikiDescription(pkg, file)
-            }
+        val pkg = packageMap[name]
+        if (pkg != null) return pkg
+
+        return createPackage(listOf(descriptor), name)
+    }
+
+    private fun createPackage(descriptors: List<PackageFragmentDescriptor>, name: String): KPackage {
+        val pkg = KPackage(this, descriptors, name, config.resolveLink(name, false).isNotEmpty())
+
+        assert(!packageMap.containsKey(name)) { "packageMap entry created earlier for package $name: old=${packageMap[name]}, new=$pkg" }
+
+        packageMap[name] = pkg
+
+        for (descriptor in descriptors) {
+            addFunctions(pkg, descriptor.getMemberScope())
         }
-        return pkg;
+
+        // lets try find a custom doc
+        var file = config.packageDescriptionFiles[name]
+        loadWikiDescription(pkg, file)
+
+        return pkg
     }
 
     protected fun loadWikiDescription(pkg: KPackage, file: String?): Unit {
@@ -343,19 +347,6 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
         }
         return null
-    }
-
-    protected fun isLocal(descriptor: DeclarationDescriptor): Boolean {
-        return if (descriptor is ModuleDescriptor) {
-            true
-        } else {
-            val parent = descriptor.getContainingDeclaration()
-            if (parent != null) {
-                isLocal(parent)
-            } else {
-                false
-            }
-        }
     }
 
     fun addFunctions(owner: KClassOrPackage, scope: JetScope): Unit {
@@ -685,7 +676,7 @@ $highlight"""
         while (dec != null) {
             val container = dec
             if (container is PackageFragmentDescriptor) {
-                val pkg = getPackage(container)
+                val pkg = getOrCreatePackage(container)
                 return pkg.getClass(classElement)
             } else {
                 dec = dec?.getContainingDeclaration()
@@ -732,7 +723,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
                     for (prefix in listOf("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
-                            "java.awt", "java.awt.event", "java.sql", "java.beans",
+                            "kotlin", "java.awt", "java.awt.event", "java.sql", "java.beans",
                             "javax.swing", "javax.swing.event",
                             "org.w3c.dom",
                             "kotlin.template")) {
@@ -894,11 +885,10 @@ abstract class KNamed(val name: String, model: KModel, descriptor: DeclarationDe
 
 class KPackage(
         model: KModel,
-        descriptor: PackageFragmentDescriptor,
+        descriptors: List<PackageFragmentDescriptor>,
         val name: String,
-        var local: Boolean = false,
-        var useExternalLink: Boolean = false
-): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+        val useExternalLink: Boolean = false
+): KClassOrPackage(model, descriptors.first()), Comparable<KPackage> {
     val classMap = sortedMapOf<String, KClass>()
 
     val classes: Collection<KClass>
