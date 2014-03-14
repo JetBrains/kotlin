@@ -469,6 +469,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/branched/ifWhen/whenToIf"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("whenWithDotQualifiedExpression.kt")
+        public void testWhenWithDotQualifiedExpression() throws Exception {
+            doTestWhenToIf("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithDotQualifiedExpression.kt");
+        }
+        
         @TestMetadata("whenWithEqualityTests.kt")
         public void testWhenWithEqualityTests() throws Exception {
             doTestWhenToIf("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithEqualityTests.kt");
