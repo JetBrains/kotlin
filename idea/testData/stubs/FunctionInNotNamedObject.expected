@@ -1,5 +1,5 @@
 PsiJetFileStubImpl[package=]
-  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=null fqName=null superNames=[]]
+  OBJECT_DECLARATION:PsiJetObjectStubImpl[top name=null fqName=<no name> superNames=[]]
     CLASS_BODY:PsiJetClassBodyStubImpl
       FUN:PsiJetFunctionStubImpl[name=testing]
         VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
