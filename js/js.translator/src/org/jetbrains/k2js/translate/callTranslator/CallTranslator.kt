@@ -23,16 +23,15 @@ import com.google.dart.compiler.backend.js.ast.JsExpression
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.k2js.translate.context.TranslationContext
-import java.util.ArrayList
-import org.jetbrains.k2js.facade.exceptions.UnsupportedFeatureException
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind.*
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import org.jetbrains.k2js.translate.utils.JsAstUtils
-import org.jetbrains.k2js.translate.context.Namer
-import org.jetbrains.k2js.translate.utils.ErrorReportingUtils
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
+import org.jetbrains.k2js.translate.general.Translation
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
+import org.jetbrains.jet.lang.psi.Call.CallType
+import kotlin.test.assertNotNull
 
 object CallTranslator {
     fun translate(context: TranslationContext,
@@ -89,24 +88,67 @@ private fun translateCall(context: TranslationContext,
         val variableCall = resolvedCall.getVariableCall()
         if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.receiverOrThisObject)
-            return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
+            return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
         } else {
             val thisObject = CallTranslator.translateGet(context, variableCall, null)
             if (explicitReceivers.receiverOrThisObject == null)
-                return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
+                return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
             else
-                return translateCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
+                return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
         }
     }
 
-    val functionCallInfo = context.getCallInfo(resolvedCall, explicitReceivers)
-    return functionCallInfo.translateFunctionCall()
+    val call = resolvedCall.getCall()
+    if (call.getCallType() == CallType.INVOKE && !CallResolverUtil.isInvokeCallOnVariable(call)) {
+        val explicitReceiversForInvoke = computeExplicitReceiversForInvoke(context, resolvedCall, explicitReceivers)
+        return translateFunctionCall(context, resolvedCall, explicitReceiversForInvoke)
+    }
+
+    return translateFunctionCall(context, resolvedCall, explicitReceivers)
 }
 
+private fun translateFunctionCall(context: TranslationContext,
+                                  resolvedCall: ResolvedCall<out FunctionDescriptor>,
+                                  explicitReceivers: ExplicitReceivers
+): JsExpression {
+    return context.getCallInfo(resolvedCall, explicitReceivers).translateFunctionCall()
+}
+
+fun computeExplicitReceiversForInvoke(
+        context: TranslationContext,
+        resolvedCall: ResolvedCall<out FunctionDescriptor>,
+        explicitReceivers: ExplicitReceivers
+): ExplicitReceivers {
+    val callElement = resolvedCall.getCall().getCallElement()
+    assert(explicitReceivers.receiverObject == null, "'Invoke' call must have one receiver: $callElement")
+
+    fun translateReceiverAsExpression(receiver: ReceiverValue): JsExpression? =
+            (receiver as? ExpressionReceiver)?.let { Translation.translateAsExpression(it.getExpression(), context) }
+
+    val thisObject = resolvedCall.getThisObject()
+    val receiverArgument = resolvedCall.getReceiverArgument()
+
+    if (thisObject.exists() && receiverArgument.exists()) {
+        assertNotNull(explicitReceivers.receiverOrThisObject, "No explicit receiver for 'invoke' resolved call with both receivers: $callElement")
+    }
+    else {
+        assert(explicitReceivers.receiverOrThisObject == null,
+               "Non trivial explicit receiver ${explicitReceivers.receiverOrThisObject}\n for 'invoke' resolved call: $callElement\n"
+               + "This object: $thisObject Receiver argument: $receiverArgument")
+    }
+
+    val thisObjectExpression = translateReceiverAsExpression(thisObject)
+    return when (Pair(thisObject.exists(), receiverArgument.exists())) {
+        Pair(true, true)  -> ExplicitReceivers(thisObjectExpression, explicitReceivers.receiverOrThisObject)
+        Pair(true, false) -> ExplicitReceivers(thisObjectExpression)
+        Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(receiverArgument))
+        else -> throw AssertionError("'Invoke' resolved call without receivers: $callElement")
+    }
+}
 
 trait CallCase<I : CallInfo> {
 
-    protected fun I.unsupported(message: String = "") : Nothing = throw UnsupportedOperationException("this case unsopported. $this")
+    protected fun I.unsupported(message: String = "") : Nothing = throw UnsupportedOperationException("this case unsupported. $this")
 
     protected fun I.noReceivers(): JsExpression = unsupported()
 

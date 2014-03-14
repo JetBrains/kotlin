@@ -34,6 +34,7 @@ import org.jetbrains.k2js.translate.context.TranslationContext
 import org.jetbrains.k2js.translate.reference.CallArgumentTranslator
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.psi.Call.CallType
 
 public fun addReceiverToArgs(receiver: JsExpression, arguments: List<JsExpression>): List<JsExpression> {
     if (arguments.isEmpty())
@@ -174,29 +175,6 @@ object ConstructorCallCase : FunctionCallCase {
     }
 }
 
-object ExpressionAsFunctionDescriptorIntrinsic : FunctionCallCase {
-    fun canApply(callInfo: FunctionCallInfo): Boolean {
-        return callInfo.callableDescriptor is ExpressionAsFunctionDescriptor
-    }
-
-    override fun FunctionCallInfo.noReceivers(): JsExpression {
-        if (callableDescriptor !is ExpressionAsFunctionDescriptor) {
-            throw IllegalStateException("callableDescriptor must be ExpressionAsFunctionDescriptor $this")
-        }
-        val funRef = Translation.translateAsExpression((callableDescriptor as ExpressionAsFunctionDescriptor).getExpression()!!, context)
-        return JsInvocation(funRef, argumentsInfo.getTranslateArguments())
-    }
-
-    override fun FunctionCallInfo.receiverArgument(): JsExpression {
-        if (callableDescriptor !is ExpressionAsFunctionDescriptor) {
-            throw IllegalStateException("callableDescriptor must be ExpressionAsFunctionDescriptor $this")
-        }
-
-        val funRef = Translation.translateAsExpression((callableDescriptor as ExpressionAsFunctionDescriptor).getExpression()!!, context)
-        return JsInvocation(Namer.getFunctionCallRef(funRef), addReceiverToArgs(receiverObject!!, argumentsInfo.getTranslateArguments()))
-    }
-}
-
 object SuperCallCase : FunctionCallCase {
     fun canApply(callInfo: FunctionCallInfo): Boolean {
         return callInfo.isSuperInvocation()
@@ -216,8 +194,6 @@ fun FunctionCallInfo.translateFunctionCall(): JsExpression {
     return when {
         intrinsic != null ->
             intrinsic
-        ExpressionAsFunctionDescriptorIntrinsic.canApply(this) ->
-            ExpressionAsFunctionDescriptorIntrinsic.translate(this)
         InvokeIntrinsic.canApply(this) ->
             InvokeIntrinsic.translate(this)
         ConstructorCallCase.canApply(this) ->
