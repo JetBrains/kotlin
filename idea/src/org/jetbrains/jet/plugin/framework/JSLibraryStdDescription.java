@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
 
@@ -95,6 +96,7 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
         }
     }
 
+    @TestOnly
     public NewLibraryConfiguration createNewLibraryForTests() {
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;
