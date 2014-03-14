@@ -51,4 +51,9 @@ public class K2JvmCliTest extends CliBaseTest {
     public void script() throws Exception {
         executeCompilerCompareOutputJVM();
     }
+
+    @Test
+    public void classpath() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
 }
