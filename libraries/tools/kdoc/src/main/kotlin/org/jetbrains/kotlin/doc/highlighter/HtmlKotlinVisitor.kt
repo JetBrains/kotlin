@@ -8,46 +8,37 @@ import org.jetbrains.jet.lang.psi.*
 
 class HtmlKotlinVisitor: JetTreeVisitor<StringBuilder>() {
 
-    public override fun visitFile(file: PsiFile?) {
+    override fun visitFile(file: PsiFile?) {
         if (file is JetFile) {
-            val data = StringBuilder()
-            visitJetFile(file, data)
+            visitJetFile(file, StringBuilder())
         }
     }
-    public override fun visitJetFile(file: JetFile, data: StringBuilder?): Void? {
-        if (file != null) {
-            println("============ Jet File ${file.getName()}")
-            acceptChildren(file, data)
-        }
+
+    override fun visitJetFile(file: JetFile, data: StringBuilder?): Void? {
+        println("============ Jet File ${file.getName()}")
+        acceptChildren(file, data)
         return null
     }
 
-
-    public override fun visitClassObject(classObject: JetClassObject, data: StringBuilder?): Void? {
+    override fun visitClassObject(classObject: JetClassObject, data: StringBuilder?): Void? {
         println("============ class $classObject data $data")
         return super.visitClassObject(classObject, data)
     }
 
-    public override fun visitClass(klass: JetClass, data: StringBuilder?): Void? {
+    override fun visitClass(klass: JetClass, data: StringBuilder?): Void? {
         println("============ class $klass")
-        if (klass != null) {
-            acceptChildren(klass, data)
-            return null
-        } else {
-            return super.visitClass(klass, data)
-        }
+        acceptChildren(klass, data)
+        return null
     }
 
-
-    public override fun visitClassBody(classBody: JetClassBody, data: StringBuilder?): Void? {
+    override fun visitClassBody(classBody: JetClassBody, data: StringBuilder?): Void? {
         println("============ class body $classBody data $data")
         return super.visitClassBody(classBody, data)
     }
 
-
-    public override fun visitFunctionType(fnType: JetFunctionType, data: StringBuilder?): Void? {
-        println("======================= function Type $fnType")
-        return super.visitFunctionType(fnType, data)
+    override fun visitFunctionType(`type`: JetFunctionType, data: StringBuilder?): Void? {
+        println("======================= function Type $`type`")
+        return super.visitFunctionType(`type`, data)
     }
 
     protected fun accept(child: PsiElement?, data: StringBuilder?): Unit {

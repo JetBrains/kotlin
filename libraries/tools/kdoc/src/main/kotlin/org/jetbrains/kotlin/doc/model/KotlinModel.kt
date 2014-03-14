@@ -22,19 +22,15 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.kotlin.doc.*
-import org.jetbrains.kotlin.doc.highlighter.SyntaxHighligher
+import org.jetbrains.kotlin.doc.highlighter.SyntaxHighlighter
 import org.jetbrains.kotlin.doc.templates.KDocTemplate
 import org.pegdown.Extensions
 import org.pegdown.LinkRenderer
 import org.pegdown.LinkRenderer.Rendering
 import org.pegdown.PegDownProcessor
-import org.pegdown.ast.AutoLinkNode
-import org.pegdown.ast.ExpLinkNode
-import org.pegdown.ast.RefLinkNode
 import org.pegdown.ast.WikiLinkNode
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 
@@ -86,22 +82,14 @@ fun inheritedExtensionFunctions(functions: Collection<KFunction>): Map<KClass, S
     val map = extensionFunctions(functions)
     // for each class, lets walk its base classes and add any other extension functions from base classes
     val answer = TreeMap<KClass, SortedSet<KFunction>>()
-    for (c in map.keySet()) {
-        val allFunctions = map.get(c).orEmpty().toSortedSet()
-        answer.put(c, allFunctions)
-        val des = c.descendants()
-        for (b in des) {
-            val list = map.get(b)
-            if (list != null) {
-                if (allFunctions != null) {
-                    for (f in list) {
-                        if (f != null) {
-                            // add the methods from the base class if we don't have a matching method
-                            if (!allFunctions.any{ it.name == f.name && it.parameterTypeText == f.parameterTypeText}) {
-                                allFunctions.add(f)
-                            }
-                        }
-                    }
+    for (klass in map.keySet()) {
+        val allFunctions = map.get(klass).orEmpty().toSortedSet()
+        answer.put(klass, allFunctions)
+        for (descendant in klass.descendants()) {
+            for (f in map.get(descendant).orEmpty()) {
+                // add the methods from the base class if we don't have a matching method
+                if (!allFunctions.any { it.name == f.name && it.parameterTypeText == f.parameterTypeText }) {
+                    allFunctions.add(f)
                 }
             }
         }
@@ -114,22 +102,14 @@ fun inheritedExtensionProperties(properties: Collection<KProperty>): Map<KClass,
     val map = extensionProperties(properties)
     // for each class, lets walk its base classes and add any other extension properties from base classes
     val answer = TreeMap<KClass, SortedSet<KProperty>>()
-    for (c in map.keySet()) {
-        val allProperties = map.get(c).orEmpty().toSortedSet()
-        answer.put(c, allProperties)
-        val des = c.descendants()
-        for (b in des) {
-            val list = map.get(b)
-            if (list != null) {
-                if (allProperties != null) {
-                    for (f in list) {
-                        if (f != null) {
-                            // add the proeprties from the base class if we don't have a matching method
-                            if (!allProperties.any{ it.name == f.name}) {
-                                allProperties.add(f)
-                            }
-                        }
-                    }
+    for (klass in map.keySet()) {
+        val allProperties = map.get(klass).orEmpty().toSortedSet()
+        answer.put(klass, allProperties)
+        for (descendant in klass.descendants()) {
+            for (f in map.get(descendant).orEmpty()) {
+                // add the properties from the base class if we don't have a matching property
+                if (!allProperties.any { it.name == f.name }) {
+                    allProperties.add(f)
                 }
             }
         }
@@ -153,10 +133,8 @@ fun extensionProperties(properties: Collection<KProperty>): Map<KClass, List<KPr
 }
 
 abstract class KClassOrPackage(model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor) {
-
-    public open val functions: SortedSet<KFunction> = TreeSet<KFunction>()
-
-    public open val properties: SortedSet<KProperty> = TreeSet<KProperty>()
+    open val functions = sortedSetOf<KFunction>()
+    open val properties = sortedSetOf<KProperty>()
 
     fun findProperty(name: String): KProperty? {
         // TODO we should use a Map<String>?
@@ -175,27 +153,25 @@ abstract class KClassOrPackage(model: KModel, declarationDescriptor: Declaration
 class SourceInfo(val psi: JetFile, val relativePath: String, val htmlPath: String)
 
 class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs: List<File>, val sources: List<JetFile>) {
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.UtilPackage.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
-    //val packages = sortedMap<String,KPackage>()
-    public val packageMap: SortedMap<String, KPackage> = TreeMap<String, KPackage>()
+    val packageMap = sortedMapOf<String, KPackage>()
 
-    public val allPackages: Collection<KPackage>
-    get() = packageMap.values()!!
+    val allPackages: Collection<KPackage>
+    get() = packageMap.values()
 
     /** Returns the local packages */
-    public val packages: Collection<KPackage>
-    get() = allPackages.filter{ it.local && config.includePackage(it) }
+    val packages: Collection<KPackage>
+    get() = allPackages.filter { it.local && config.includePackage(it) }
 
-    public val classes: Collection<KClass>
-    get() = packages.flatMap{ it.classes }
+    val classes: Collection<KClass>
+    get() = packages.flatMap { it.classes }
 
-    public var markdownProcessor: PegDownProcessor = PegDownProcessor(Extensions.ALL)
-    public var highlighter: SyntaxHighligher = SyntaxHighligher()
+    var markdownProcessor = PegDownProcessor(Extensions.ALL)
+    var highlighter = SyntaxHighlighter()
 
-    public val title: String
+    val title: String
     get() = config.title
 
-    public val version: String
+    val version: String
     get() = config.version
 
     private var _projectRootDir: String? = null
@@ -203,7 +179,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     /**
      * File names we look for in a package directory for the overall description of a package for KDoc
      */
-    val packageDescriptionFiles = arrayList("readme.md", "ReadMe.md, readme.html, ReadMe.html")
+    val packageDescriptionFiles = listOf("readme.md", "ReadMe.md, readme.html, ReadMe.html")
 
     private val readMeDirsScanned = HashSet<String>()
 
@@ -213,11 +189,11 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     ;{
 
         val normalizedSourceDirs: List<String> =
-        sourceDirs.map { file -> file.getCanonicalPath()!! }
+        sourceDirs.map { file -> file.getCanonicalPath() }
 
         fun relativePath(psiFile: PsiFile): String {
-            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()!!
-            val filePath = file.getPath()!!
+            val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()
+            val filePath = file.getPath()
             for (sourceDirPath in normalizedSourceDirs) {
                 if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
                     return filePath.substring(sourceDirPath.length + 1)
@@ -277,7 +253,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 warning("KDocConfig does not have a projectRootDir defined so we cannot generate relative source Hrefs")
                 ""
             } else {
-                File(rootDir).getCanonicalPath() ?: ""
+                File(rootDir).getCanonicalPath()
             }
         }
         return _projectRootDir ?: ""
@@ -332,7 +308,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             if (srcPath != null) {
                 val srcFile = File(srcPath)
                 val dir = if (srcFile.isDirectory()) srcFile else srcFile.getParentFile()
-                if (dir != null && readMeDirsScanned.add(dir.getPath()!!)) {
+                if (dir != null && readMeDirsScanned.add(dir.getPath())) {
                     val f = packageDescriptionFiles.map{ File(dir, it) }.find{ it.exists() }
                     if (f != null) {
                         val file = f.getCanonicalPath()
@@ -355,7 +331,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
         if (root != null) {
             // lets remove the root project directory
             val rootDir = projectRootDir()
-            val canonicalFile = File(filePath).getCanonicalPath() ?: ""
+            val canonicalFile = File(filePath).getCanonicalPath()
             //println("=========== root dir for filePath: $canonicalFile is $rootDir")
             val relativeFile =
                 if (canonicalFile.startsWith(rootDir))
@@ -419,11 +395,9 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val parameters = ArrayList<KParameter>()
             val params = descriptor.getValueParameters()
             for (param in params) {
-                if (param != null) {
-                    val p = createParameter(param)
-                    if (p != null) {
-                        parameters.add(p)
-                    }
+                val p = createParameter(param)
+                if (p != null) {
+                    parameters.add(p)
                 }
             }
             val function = KFunction(descriptor, owner, name, returnType, parameters)
@@ -503,7 +477,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
     }
 
     protected fun commentsFor(descriptor: DeclarationDescriptor): String {
-        val psiElement =  getPsiElement(descriptor)
+        val psiElement = getPsiElement(descriptor)
 
         // This method is a hack. Doc comments should be easily accessible, but they aren't for now.
         if (psiElement != null) {
@@ -513,14 +487,14 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             }
             if (node == null) return ""
             if (node?.getElementType() != JetTokens.DOC_COMMENT) return ""
-            var text = node?.getText() ?: ""
+            var nodeText = node?.getText() ?: ""
             // lets remove the comment tokens
-            val lines = text.trim().split("\\n")
+            val lines = nodeText.trim().split("\\n")
             // lets remove the /** ... * ... */ tokens
             val buffer = StringBuilder()
             val last = lines.size - 1
             for (i in 0.rangeTo(last)) {
-                var text = lines[i] ?: ""
+                var text = lines[i]
                 text = text.trim()
                 if (i == 0) {
                     text = text.trimLeading("/**").trimLeading("/*")
@@ -536,7 +510,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 text = processMacros(text, psiElement)
                 buffer.append(text)
             }
-            return buffer.toString() ?: ""
+            return buffer.toString()
         }
         return ""
     }
@@ -554,8 +528,8 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
                 if (words.size > 1) {
-                    val includeFile = words[0]!!
-                    val fnName = words[1]!!
+                    val includeFile = words[0]
+                    val fnName = words[1]
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
                     if (content != null) {
                         return content
@@ -579,7 +553,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 if (text != null) {
                     // lets find the function definition
                     val regex = """fun\s+$functionName\(.*\)""".toRegex()
-                    val matcher = regex.matcher(text)!!
+                    val matcher = regex.matcher(text)
                     if (matcher.find()) {
                         val idx = matcher.end()
                         val remaining = text.substring(idx)
@@ -735,7 +709,7 @@ $highlight"""
 class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate): LinkRenderer() {
     // TODO dirty hack - remove when this issue is fixed
     // http://youtrack.jetbrains.com/issue/KT-1524
-    val hackedLinks = hashMap(
+    val hackedLinks = mapOf(
             Pair("IllegalArgumentException", Pair("java.lang", "java/lang/IllegalArgumentException.html")),
             Pair("IllegalStateException", Pair("java.lang", "java/lang/IllegalStateException.html")),
             Pair("Map.Entry", Pair("java.util", "java/util/Map.Entry.html")),
@@ -745,8 +719,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
             Pair("#hashCode()", Pair("java.lang", "java/lang/Object.html#hashCode()"))
     )
 
-
-    public override fun render(node: WikiLinkNode?): Rendering? {
+    override fun render(node: WikiLinkNode?): Rendering? {
         val answer = super.render(node)
         if (answer != null) {
             val text = answer.text
@@ -756,19 +729,16 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
                 if (href != null) {
                     answer.href = href
                 } else {
-
                     // TODO really dirty hack alert!!!
                     // until the resolver is working, lets try adding a few prefixes :)
-                    for (prefix in arrayList("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
+                    for (prefix in listOf("java.lang", "java.util", "java.util.concurrent", "java.util.regex", "java.io",
                             "java.awt", "java.awt.event", "java.sql", "java.beans",
                             "javax.swing", "javax.swing.event",
                             "org.w3c.dom",
                             "kotlin.template")) {
-                        if (href == null) {
-                            href = resolveClassNameLink(prefix + "." + qualified)
-                            if (href != null) {
-                                break
-                            }
+                        href = resolveClassNameLink(prefix + "." + qualified)
+                        if (href != null) {
+                            break
                         }
                     }
                 }
@@ -827,7 +797,7 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
     }
     /**
      * Attempts to resolve the class, method or property expression using the
-     * current imports and declaraiton
+     * current imports and declaration
      */
     protected fun resolveToQualifiedName(text: String): String {
         // TODO use the CompletionContributors maybe to figure out what local names are imported???
@@ -859,26 +829,11 @@ class TemplateLinkRenderer(val annotated: KAnnotated, val template: KDocTemplate
 
         */
     }
-
-    public override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
-        return super.render(node, url, title, text)
-    }
-
-    public override fun render(node: AutoLinkNode?): Rendering? {
-        return super.render(node)
-    }
-
-    public override fun render(node: ExpLinkNode?, text: String?): Rendering? {
-        return super.render(node, text)
-    }
-
-
 }
 
 abstract class KAnnotated(val model: KModel, val declarationDescriptor: DeclarationDescriptor) {
-    public open var wikiDescription: String = ""
-
-    public open var deprecated: Boolean = false
+    open var wikiDescription: String = ""
+    open var deprecated: Boolean = false
 
     open fun description(template: KDocTemplate): String {
         val detailedText = detailedDescription(template)
@@ -928,9 +883,8 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
     }
 }
 
-abstract class KNamed(val name: String, model: KModel, declarationDescriptor: DeclarationDescriptor): KAnnotated(model, declarationDescriptor), Comparable<KNamed> {
-
-    public override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
+abstract class KNamed(val name: String, model: KModel, descriptor: DeclarationDescriptor): KAnnotated(model, descriptor), Comparable<KNamed> {
+    override fun compareTo(other: KNamed): Int = name.compareTo(other.name)
 
     open fun equals(other: KPackage) = name == other.name
 
@@ -938,22 +892,21 @@ abstract class KNamed(val name: String, model: KModel, declarationDescriptor: De
 }
 
 
-class KPackage(model: KModel, val descriptor: PackageFragmentDescriptor,
+class KPackage(
+        model: KModel,
+        descriptor: PackageFragmentDescriptor,
         val name: String,
         var local: Boolean = false,
-        var useExternalLink: Boolean = false): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+        var useExternalLink: Boolean = false
+): KClassOrPackage(model, descriptor), Comparable<KPackage> {
+    val classMap = sortedMapOf<String, KClass>()
 
+    val classes: Collection<KClass>
+    get() = classMap.values().filter{ it.isApi() }
 
-    // TODO generates java.lang.NoSuchMethodError: kotlin.util.UtilPackage.hashMap(Ljet/TypeInfo;Ljet/TypeInfo;)Ljava/util/HashMap;
-    //val classes = sortedMap<String,KClass>()
-    public val classMap: SortedMap<String, KClass> = TreeMap<String, KClass>()
+    val annotations = arrayListOf<KClass>()
 
-    public val classes: Collection<KClass>
-    get() = classMap.values()!!.filter{ it.isApi() }
-
-    public val annotations: Collection<KClass> = ArrayList<KClass>()
-
-    public override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
+    override fun compareTo(other: KPackage): Int = name.compareTo(other.name)
 
     fun equals(other: KPackage) = name == other.name
 
@@ -991,11 +944,11 @@ class KPackage(model: KModel, val descriptor: PackageFragmentDescriptor,
     }
 
     /** Returns the name as a directory using '/' instead of '.' */
-    public val nameAsPath: String
+    val nameAsPath: String
     get() = if (name.length() == 0) "." else name.replace('.', '/')
 
     /** Returns a list of all the paths in the package name */
-    public val namePaths: List<String>
+    val namePaths: List<String>
     get() {
         val answer = ArrayList<String>()
         for (n in name.split("\\.")) {
@@ -1005,7 +958,7 @@ class KPackage(model: KModel, val descriptor: PackageFragmentDescriptor,
     }
 
     /** Returns a relative path like ../.. for each path in the name */
-    public val nameAsRelativePath: String
+    val nameAsRelativePath: String
     get() {
         val answer = namePaths.map{ ".." }.makeString("/")
         return if (answer.length == 0) "" else answer + "/"
@@ -1054,12 +1007,9 @@ class KType(val jetType: JetType, model: KModel, val klass: KClass?, val argumen
             this.wikiDescription = klass.wikiDescription
         }
         for (arg in jetType.getArguments()) {
-            if (arg != null) {
-                val argJetType = arg.getType()
-                val t = model.getType(argJetType)
-                if (t != null) {
-                    arguments.add(t)
-                }
+            val t = model.getType(arg.getType())
+            if (t != null) {
+                arguments.add(t)
             }
         }
     }
@@ -1078,23 +1028,20 @@ class KClass(
 {
     val simpleName = descriptor.getName().asString()
     var group: String = "Other"
-    var annotations: List<KAnnotation> = arrayList<KAnnotation>()
-    var typeParameters: MutableList<KTypeParameter> = arrayList<KTypeParameter>()
+    var annotations: List<KAnnotation> = listOf<KAnnotation>()
+    var typeParameters: MutableList<KTypeParameter> = arrayListOf<KTypeParameter>()
     var since: String = ""
-    var authors: List<String> = arrayList<String>()
-    var baseClasses: MutableList<KType> = arrayList<KType>()
-    var nestedClasses: List<KClass> = arrayList<KClass>()
+    var authors: List<String> = listOf<String>()
+    var baseClasses: MutableList<KType> = arrayListOf<KType>()
+    var nestedClasses: List<KClass> = listOf<KClass>()
 
-    public override fun compareTo(other: KClass): Int = name.compareTo(other.name)
+    override fun compareTo(other: KClass): Int = name.compareTo(other.name)
 
     fun equals(other: KClass) = name == other.name
 
     override fun toString() = "$kind($name)"
 
-    fun isApi(): Boolean {
-        val visibility = descriptor.getVisibility()
-        return visibility.isPublicAPI()
-    }
+    fun isApi() = descriptor.getVisibility().isPublicAPI()
 
     val kind: String
     get() {
@@ -1126,18 +1073,18 @@ class KClass(
     }
 
     /** Link to the type which is relative if its a local type but could be a type in a different library or null if no link */
-    public var url: String? = null
+    var url: String? = null
     get() {
         if ($url == null) $url = "${nameAsPath}.html"
         return $url
     }
 
-    public val name: String = pkg.qualifiedName(descriptor.getName().asString())
+    val name: String = pkg.qualifiedName(descriptor.getName().asString())
 
-    public val packageName: String = pkg.name
+    val packageName: String = pkg.name
 
     /** Returns the name as a directory using '/' instead of '.' */
-    public val nameAsPath: String
+    val nameAsPath: String
     get() = name.replace('.', '/')
 
 
@@ -1162,14 +1109,14 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var parameters: List<KParameter>,
         var receiverType: KType? = null,
         var extensionClass: KClass? = null,
-        var modifiers: List<String> = arrayList<String>(),
-        var typeParameters: MutableList<KTypeParameter> = arrayList<KTypeParameter>(),
-        var exceptions: List<KClass> = arrayList<KClass>(),
-        var annotations: List<KAnnotation> = arrayList<KAnnotation>()): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
+        var modifiers: List<String> = listOf<String>(),
+        var typeParameters: MutableList<KTypeParameter> = arrayListOf<KTypeParameter>(),
+        var exceptions: List<KClass> = listOf<KClass>(),
+        var annotations: List<KAnnotation> = listOf<KAnnotation>()): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
-    public val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
+    val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
 
-    public override fun compareTo(other: KFunction): Int {
+    override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
         if (answer == 0) {
             answer = parameterTypeText.compareTo(other.parameterTypeText)
@@ -1187,19 +1134,19 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 
     override fun toString() = "fun $name($parameterTypeText): $returnType"
 
-    public val link: String = "$name($parameterTypeText)"
+    val link: String = "$name($parameterTypeText)"
 
     /** Returns a list of generic type parameter names kinds like "A, I" */
-    public val typeParametersText: String
+    val typeParametersText: String
     get() = typeParameters.map{ it.name }.makeString(", ")
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,
         val returnType: KType, val extensionClass: KClass?): KAnnotated(owner.model, descriptor), Comparable<KProperty> {
 
-    public override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
+    override fun compareTo(other: KProperty): Int = name.compareTo(other.name)
 
-    public val link: String = "$name"
+    val link = "$name"
 
     fun equals(other: KFunction) = name == other.name
 
@@ -1235,7 +1182,7 @@ class KParameter(val descriptor: ValueParameterDescriptor, val name: String,
 class KTypeParameter(val name: String,
         val descriptor: TypeParameterDescriptor,
         model: KModel,
-        var extends: List<KClass> = arrayList<KClass>()): KAnnotated(model, descriptor) {
+        var extends: List<KClass> = listOf<KClass>()): KAnnotated(model, descriptor) {
 
     override fun toString() = "$name"
 }

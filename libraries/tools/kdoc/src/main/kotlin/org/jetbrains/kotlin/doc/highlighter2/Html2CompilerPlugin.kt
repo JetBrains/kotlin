@@ -30,13 +30,13 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
                 .src
                 .orEmpty()
                 .split(File.pathSeparatorChar)
-                .map { path -> File(path).getCanonicalFile()!! }
+                .map { path -> File(path).getCanonicalFile() }
 
-    private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath()!! }
+    private val sourceDirPaths: List<String> = sourceDirs.map { d -> d.getPath() }
 
     private fun fileToWrite(psiFile: PsiFile): String {
-        val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()!!
-        val filePath = file.getPath()!!
+        val file = File((psiFile.getVirtualFile() as CoreLocalVirtualFile).getPath()!!).getCanonicalFile()
+        val filePath = file.getPath()
         for (sourceDirPath in sourceDirPaths) {
             if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
                 val relativePath = filePath.substring(sourceDirPath.length + 1)
@@ -111,7 +111,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
                                                 elementType.toString()
                                         }
                                         // TODO
-                                        else -> psi.getClass()!!.getName()
+                                        else -> psi.getClass().getName()
                                     }
 
                                     for (t in splitPsi(psiFile)) {

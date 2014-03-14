@@ -72,7 +72,7 @@ abstract class TextTemplate() : TemplateSupport(), Printer {
     fun renderToText(): String {
         val buffer = StringWriter()
         renderTo(buffer)
-        return buffer.toString()!!
+        return buffer.toString()
     }
 
     fun renderTo(writer: Writer): Unit {

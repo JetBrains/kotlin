@@ -130,20 +130,15 @@ ${pkg.detailedDescription(this)}
 
 """)
 
-        val groupMap = pkg.groupClassMap()
-        for (e in groupMap) {
-            val group = e.key ?: "Other"
-            val list = e.value
-            if (list != null) {
-                println(""" <h3>$group</h3>
+        for ((group, list) in pkg.groupClassMap()) {
+            println(""" <h3>$group</h3>
 
  <ul>""")
-                for (c in list) {
-                    println(""" <li><A HREF="${pkg.nameAsRelativePath}${c.nameAsPath}.html" title="class in ${pkg.name}"><CODE>${c.simpleName}</CODE></A>""")
-                }
-                println("""
- </ul>""")
+            for (c in list) {
+                println(""" <li><A HREF="${pkg.nameAsRelativePath}${c.nameAsPath}.html" title="class in ${pkg.name}"><CODE>${c.simpleName}</CODE></A>""")
             }
+            println("""
+ </ul>""")
         }
         println("""<P>""")
 
@@ -270,22 +265,15 @@ Copyright &#169; 2010-2012. All Rights Reserved.
 <B>Extensions Summary</B></FONT></TH>
 </TR>""")
 
-            for (e in map) {
-                val c = e.key
-                if (c != null) {
-                    println("""<TR BGCOLOR="white" CLASS="TableRowColor">
+            for ((c, list) in map) {
+                println("""<TR BGCOLOR="white" CLASS="TableRowColor">
 <TD WIDTH="15%"><B><A HREF="${extensionsHref(pkg, c)}" title="extensions on ${pkg.name}">${c.name}</A></B></TD>
 <TD>""")
-                    val list = e.value
-                    if (list != null) {
-                        val functions = filterDuplicateNames(list)
-                        for (f in functions) {
-                            println("""<A HREF="${extensionsHref(pkg, c, f)}">${f.name}<A> """)
-                        }
-                    }
-                    println("""</TD>
-</TR>""")
+                for (f in filterDuplicateNames(list)) {
+                    println("""<A HREF="${extensionsHref(pkg, c, f)}">${f.name}<A> """)
                 }
+                println("""</TD>
+</TR>""")
             }
             println("""</TABLE>
 &nbsp;

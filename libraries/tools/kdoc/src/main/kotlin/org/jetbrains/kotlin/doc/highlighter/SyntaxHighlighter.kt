@@ -8,8 +8,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.jet.lexer.*
 
 fun main(args: Array<String>) {
-    val tool = SyntaxHighligher()
-    val answer = tool.highlight("""    val x = arrayList(1, 2, 3)
+    val tool = SyntaxHighlighter()
+    val answer = tool.highlight("""    val x = listOf(1, 2, 3)
     println("hello")""")
     println(answer)
 }
@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
 /**
  * Syntax highlights Kotlin code
  */
-class SyntaxHighligher() {
+class SyntaxHighlighter() {
     var formatter: HtmlFormatter = HtmlFormatter()
     val styleMap = createStyleMap()
 
@@ -42,7 +42,6 @@ class SyntaxHighligher() {
             }
             val lexer = JetLexer()
             lexer.start(code)
-            val end = lexer.getTokenEnd()
             while (true) {
                 lexer.advance()
                 val token = lexer.getTokenType()
@@ -52,14 +51,11 @@ class SyntaxHighligher() {
                 if (token is JetKeywordToken) {
                     style = "keyword"
                 } else if (token == JetTokens.IDENTIFIER) {
-                    val types = JetTokens.SOFT_KEYWORDS.getTypes()
-                    if (types != null) {
-                        for (softKeyword in types) {
-                            if (softKeyword is JetKeywordToken) {
-                                if (softKeyword.getValue().equals(tokenText)) {
-                                    style = "softkeyword"
-                                    break
-                                }
+                    for (softKeyword in JetTokens.SOFT_KEYWORDS.getTypes()) {
+                        if (softKeyword is JetKeywordToken) {
+                            if (softKeyword.getValue() == tokenText) {
+                                style = "softkeyword"
+                                break
                             }
                         }
                     }
@@ -80,7 +76,7 @@ class SyntaxHighligher() {
             builder.append("</div>")
             builder.append("</div>")
             builder.append("</div>")
-            return builder.toString() ?: ""
+            return builder.toString()
         } catch (e: Exception) {
             println("Warning: failed to parse code $e")
             val builder = StringBuilder()
@@ -92,7 +88,7 @@ class SyntaxHighligher() {
             formatter.format(builder, code)
             builder.append("</pre>")
             builder.append("</div>")
-            return builder.toString() ?: ""
+            return builder.toString()
         }
     }
 

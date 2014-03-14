@@ -5,15 +5,11 @@ import org.jetbrains.jet.cli.common.CompilerPluginContext
 
 /**
 */
-class HtmlCompilerPlugin: CompilerPlugin {
-
+class HtmlCompilerPlugin : CompilerPlugin {
    public override fun processFiles(context: CompilerPluginContext) {
       val files = context.getFiles()
       for (file in files) {
-          if (file != null) {
-              val visitor = HtmlKotlinVisitor()
-              file.accept(visitor)
-          }
+          file.accept(HtmlKotlinVisitor())
       }
     }
 }

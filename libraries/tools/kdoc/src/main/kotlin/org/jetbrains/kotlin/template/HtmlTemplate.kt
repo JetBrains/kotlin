@@ -6,7 +6,7 @@ abstract class HtmlTemplate() : TextTemplate() {
             tagName: String,
             style: String? = null,
             className: String? = null,
-            attributes: List<Pair<String, String>> = arrayList(),
+            attributes: List<Pair<String, String>> = listOf(),
             content: () -> Unit) {
         val allAttributesBuilder = listBuilder<Pair<String, String>>()
         if (style != null)
@@ -53,7 +53,7 @@ abstract class HtmlTemplate() : TextTemplate() {
     fun linkCssStylesheet(href: String) =
         tag(
             tagName = "link",
-            attributes = arrayList(Pair("rel", "stylesheet"), Pair("type", "text/css"), Pair("href", href))) {}
+            attributes = listOf(Pair("rel", "stylesheet"), Pair("type", "text/css"), Pair("href", href))) {}
 
     fun body(style: String? = null, className: String? = null, content: () -> Unit) =
         tag(tagName = "body", style = style, className = className, content = content)

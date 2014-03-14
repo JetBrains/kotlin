@@ -12,7 +12,7 @@ fun File.rmrf() {
     val children = listFiles()
     if (children != null) {
         for (child in children) {
-            child!!.rmrf()
+            child.rmrf()
         }
     }
     delete()
@@ -50,9 +50,9 @@ class KDocSampleTest {
         classesOutputDir.rmrf()
         classesOutputDir.mkdirsProperly()
 
-        args.outputDir = classesOutputDir.getPath()!!
+        args.outputDir = classesOutputDir.getPath()
 
-        args.docConfig.docOutputDir = outputDir.getPath()!!
+        args.docConfig.docOutputDir = outputDir.getPath()
         args.docConfig.title = "Sample"
 
         val exitCode = compiler.exec(System.err, args)
