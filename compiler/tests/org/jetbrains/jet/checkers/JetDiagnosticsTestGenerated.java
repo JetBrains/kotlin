@@ -5613,6 +5613,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt26-1.kt");
             }
             
+            @TestMetadata("kt2768.kt")
+            public void testKt2768() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/kt2768.kt");
+            }
+            
             @TestMetadata("kt282.kt")
             public void testKt282() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt282.kt");
