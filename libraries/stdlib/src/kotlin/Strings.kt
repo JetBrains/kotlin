@@ -66,3 +66,36 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
     }
     return answer
 }
+
+// "Iterable-getters"
+public fun CharSequence.slice(indexes: IntRange): CharSequence{
+    return subSequence(indexes.start, indexes.end + 1)!! // inclusive
+}
+public fun CharSequence.slice(indexes: Iterable<Int>): CharSequence{
+    val result = StringBuilder()
+    for(i in indexes){
+        result.append(get(i))
+    }
+    return result
+}
+
+/**
+ * Returns a substring
+ * May throw an IndexOutOfRange exception
+ */
+public fun String.slice(indexes: IntRange): String{
+    return substring(indexes.start, indexes.end + 1) // inclusive
+}
+/**
+ * Returns a string of chars, indexes of which were iterated by the iterator
+ * May throw an IndexOutOfRange exception
+ */
+// Not sure it should be a string, not a list
+public fun String.slice(indexes: Iterable<Int>): String{
+    val result = StringBuilder()
+    for(i in indexes){
+        result.append(get(i))
+    }
+    return result.toString()
+}
+
