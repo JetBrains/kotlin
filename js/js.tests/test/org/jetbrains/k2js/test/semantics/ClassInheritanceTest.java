@@ -32,6 +32,10 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testOverrideAnyMethods() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testBaseCall() throws Exception {
         checkFooBoxIsOk();
     }
@@ -75,7 +79,12 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
     public void testKt3499() throws Exception {
         fooBoxTest();
     }
+
     public void testFromFakeClasses() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testWithInitializeMethod() throws Exception {
         checkFooBoxIsOk();
     }
 }

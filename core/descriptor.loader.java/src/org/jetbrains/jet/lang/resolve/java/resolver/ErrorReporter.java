@@ -26,5 +26,5 @@ public interface ErrorReporter {
 
     void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
 
-    void reportAnnotationLoadingError(@NotNull String message, @Nullable Exception exception);
+    void reportLoadingError(@NotNull String message, @Nullable Exception exception);
 }

@@ -24,6 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -43,8 +44,6 @@ import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor
 
 public final class TranslationUtils {
     public static final Comparator<FunctionDescriptor> OVERLOADED_FUNCTION_COMPARATOR = new OverloadedFunctionComparator();
-    // TODO drop after KT-4517 will be fixed.
-    public static final Set<String> ANY_METHODS = ContainerUtil.set("equals", "hashCode", "toString");
 
     private TranslationUtils() {
     }
@@ -142,7 +141,18 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static String getMangledName(@NotNull FunctionDescriptor descriptor) {
+    public static String getSuggestedName(@NotNull DeclarationDescriptor descriptor) {
+        String suggestedName = descriptor.getName().asString();
+
+        if (descriptor instanceof FunctionDescriptor) {
+            suggestedName = getMangledName((FunctionDescriptor) descriptor);
+        }
+
+        return suggestedName;
+    }
+
+    @NotNull
+    private static String getMangledName(@NotNull FunctionDescriptor descriptor) {
         if (needsStableMangling(descriptor)) {
             return getStableMangledName(descriptor);
         }
@@ -165,11 +175,6 @@ public final class TranslationUtils {
         }
         else if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-
-            // TODO drop this temporary workaround and uncomment test cases in manglingAnyMethods.kt after KT-4517 will be fixed.
-            if (ANY_METHODS.contains(descriptor.getName().asString())) {
-                return true;
-            }
 
             // Use stable mangling when it inside a overridable declaration for avoid clashing names when inheritance.
             if (classDescriptor.getModality().isOverridable()) {
@@ -234,9 +239,10 @@ public final class TranslationUtils {
 
                     String name = AnnotationsUtils.getNameForAnnotatedObjectWithOverrides(functionDescriptor);
 
+                    // when name == null it's mean that it's not native.
                     if (name == null) {
-                        // when name == null it's mean that it's not native
-                        if (needsStableMangling(functionDescriptor)) return null;
+                        // skip functions without arguments, because we don't use mangling for them
+                        if (needsStableMangling(functionDescriptor) && !functionDescriptor.getValueParameters().isEmpty()) return null;
 
                         name = declarationDescriptor.getName().asString();
                     }
@@ -322,16 +328,6 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    public static List<JsExpression> translateExpressionList(@NotNull TranslationContext context,
-            @NotNull List<JetExpression> expressions) {
-        List<JsExpression> result = new ArrayList<JsExpression>();
-        for (JetExpression expression : expressions) {
-            result.add(Translation.translateAsExpression(expression, context));
-        }
-        return result;
-    }
-
-    @NotNull
     public static JsExpression translateBaseExpression(@NotNull TranslationContext context,
             @NotNull JetUnaryExpression expression) {
         JetExpression baseExpression = PsiUtils.getBaseExpression(expression);
@@ -408,6 +404,29 @@ public final class TranslationUtils {
         }
 
         return ensureNotNull;
+    }
+
+    @NotNull
+    public static String getSuggestedNameForInnerDeclaration(TranslationContext context, DeclarationDescriptor descriptor) {
+        String suggestedName = "";
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (containingDeclaration != null &&
+            !(containingDeclaration instanceof ClassOrPackageFragmentDescriptor) &&
+            !(containingDeclaration instanceof AnonymousFunctionDescriptor)) {
+            suggestedName = context.getNameForDescriptor(containingDeclaration).getIdent();
+        }
+
+        if (!suggestedName.isEmpty() && !suggestedName.endsWith("$")) {
+            suggestedName += "$";
+        }
+
+        if (descriptor.getName().isSpecial()) {
+            suggestedName += "f";
+        }
+        else {
+            suggestedName += context.getNameForDescriptor(descriptor).getIdent();
+        }
+        return suggestedName;
     }
 
     private static class OverloadedFunctionComparator implements Comparator<FunctionDescriptor> {

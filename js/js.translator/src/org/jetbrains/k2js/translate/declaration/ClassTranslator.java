@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.k2js.translate.context.DefinitionPlace;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.expression.LiteralFunctionTranslator;
+import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.initializer.ClassInitializerTranslator;
 import org.jetbrains.k2js.translate.utils.JsAstUtils;
@@ -62,44 +62,14 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    public static JsInvocation generateClassCreation(@NotNull JetClassOrObject classDeclaration,
-            @NotNull ClassDescriptor descriptor,
-            @NotNull TranslationContext context) {
-        return new ClassTranslator(classDeclaration, descriptor, context).translate();
-    }
-
-    @NotNull
-    public static JsExpression generateObjectLiteral(
-            @NotNull JetObjectDeclaration objectDeclaration,
-            @NotNull TranslationContext context
-    ) {
+    public static JsExpression generateObjectLiteral(@NotNull JetObjectDeclaration objectDeclaration, @NotNull TranslationContext context) {
         return new ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression();
     }
 
-    @NotNull
-    public static JsExpression generateObjectLiteral(
-            @NotNull JetObjectDeclaration objectDeclaration,
-            @NotNull ClassDescriptor descriptor,
-            @NotNull TranslationContext context
-    ) {
-        return new ClassTranslator(objectDeclaration, descriptor, context).translateObjectLiteralExpression();
-    }
-
-    ClassTranslator(
-            @NotNull JetClassOrObject classDeclaration,
-            @NotNull TranslationContext context
-    ) {
-        this(classDeclaration, getClassDescriptor(context.bindingContext(), classDeclaration), context);
-    }
-
-    ClassTranslator(
-            @NotNull JetClassOrObject classDeclaration,
-            @NotNull ClassDescriptor descriptor,
-            @NotNull TranslationContext context
-    ) {
+    private ClassTranslator(@NotNull JetClassOrObject classDeclaration, @NotNull TranslationContext context) {
         super(context);
-        this.descriptor = descriptor;
         this.classDeclaration = classDeclaration;
+        this.descriptor = getClassDescriptor(context.bindingContext(), classDeclaration);
     }
 
     @NotNull
@@ -108,7 +78,8 @@ public final class ClassTranslator extends AbstractTranslator {
         if (containingClass == null) {
             return translate(context());
         }
-        return LiteralFunctionTranslator.translate(containingClass, context(), classDeclaration, descriptor, this);
+
+        return translateObjectInsideClass(context());
     }
 
     @NotNull
@@ -133,21 +104,16 @@ public final class ClassTranslator extends AbstractTranslator {
 
         boolean isTopLevelDeclaration = context() == declarationContext;
 
-        JsNameRef qualifiedReference;
-        if (!isTopLevelDeclaration) {
-            qualifiedReference = null;
-        }
-        else {
-            JsScope scope = context().getScopeForDescriptor(descriptor);
-            DefinitionPlace definitionPlace;
-            if (descriptor.getKind().isSingleton() || isAnonymousObject(descriptor)) {
-                qualifiedReference = null;
-                definitionPlace = new DefinitionPlace(scope, context().getThisObject(descriptor), properties);
-            }
-            else {
+        JsNameRef qualifiedReference = null;
+        if (isTopLevelDeclaration) {
+            DefinitionPlace definitionPlace = null;
+
+            if (!descriptor.getKind().isSingleton() && !isAnonymousObject(descriptor)) {
                 qualifiedReference = declarationContext.getQualifiedReference(descriptor);
+                JsScope scope = context().getScopeForDescriptor(descriptor);
                 definitionPlace = new DefinitionPlace(scope, qualifiedReference, staticProperties);
             }
+
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
@@ -248,5 +214,15 @@ public final class ClassTranslator extends AbstractTranslator {
                 PropertyTranslator.translateAccessors(descriptor, result, classDeclarationContext);
             }
         }
+    }
+
+    @NotNull
+    private JsExpression translateObjectInsideClass(@NotNull TranslationContext outerClassContext) {
+        JsFunction fun = new JsFunction(outerClassContext.scope(), new JsBlock());
+        TranslationContext funContext = outerClassContext.newFunctionBodyWithUsageTracker(fun, descriptor);
+
+        fun.getBody().getStatements().add(new JsReturn(translate(funContext)));
+
+        return ExpressionPackage.withCapturedParameters(fun, funContext, outerClassContext, descriptor);
     }
 }

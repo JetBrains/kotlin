@@ -85,4 +85,8 @@ public final class PatternMatchingTest extends SingleFileTranslationTest {
     public void testWhenWithOnlyElse() throws Exception {
         fooBoxTest();
     }
+
+    public void testIfInWhen() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -546,6 +546,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/ClassDoesNotOverrideMethod.java");
         }
         
+        @TestMetadata("ClassWithConstVal.java")
+        public void testClassWithConstVal() throws Exception {
+            doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/ClassWithConstVal.java");
+        }
+        
         @TestMetadata("ClassWithTypeP.java")
         public void testClassWithTypeP() throws Exception {
             doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/ClassWithTypeP.java");

@@ -27,8 +27,8 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     private Instruction nextOnTrue;
     private Instruction nextOnFalse;
 
-    public ConditionalJumpInstruction(boolean onTrue, Label targetLabel) {
-        super(targetLabel);
+    public ConditionalJumpInstruction(boolean onTrue, LexicalScope lexicalScope, Label targetLabel) {
+        super(targetLabel, lexicalScope);
         this.onTrue = onTrue;
     }
 
@@ -75,7 +75,7 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     }
 
     @Override
-    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
-        return new ConditionalJumpInstruction(onTrue, newLabel);
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
+        return new ConditionalJumpInstruction(onTrue, lexicalScope, newLabel);
     }
 }

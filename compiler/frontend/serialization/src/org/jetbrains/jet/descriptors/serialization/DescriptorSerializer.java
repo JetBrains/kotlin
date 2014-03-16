@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeProjection;
@@ -161,6 +162,7 @@ public class DescriptorSerializer {
 
         boolean hasGetter = false;
         boolean hasSetter = false;
+        boolean hasConstant = false;
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
@@ -194,6 +196,8 @@ public class DescriptorSerializer {
                     }
                 }
             }
+
+            hasConstant = propertyDescriptor.getCompileTimeInitializer() != null;
         }
 
         builder.setFlags(Flags.getCallableFlags(
@@ -203,7 +207,8 @@ public class DescriptorSerializer {
                 descriptor.getKind(),
                 callableKind(descriptor),
                 hasGetter,
-                hasSetter
+                hasSetter,
+                hasConstant
         ));
         //TODO builder.setExtraVisibility()
 

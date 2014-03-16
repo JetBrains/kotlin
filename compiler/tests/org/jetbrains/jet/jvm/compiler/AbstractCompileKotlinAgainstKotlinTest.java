@@ -138,7 +138,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
             @NotNull Disposable disposable
     ) throws IOException {
 
-        String text = FileUtil.loadFile(file);
+        String text = FileUtil.loadFile(file, true);
 
         JetFile psiFile = JetTestUtils.createFile(file.getName(), text, jetCoreEnvironment.getProject());
 

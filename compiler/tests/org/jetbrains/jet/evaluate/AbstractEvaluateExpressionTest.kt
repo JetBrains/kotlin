@@ -33,18 +33,18 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.constants.StringValue
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
 
-abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResolveTest() {
+abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {
         doTest(path) {
             property, context ->
-            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
+            val compileTimeConstant = property.getCompileTimeInitializer()
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.getValue()}\\\""
-            }
-            else {
+            } else {
                 compileTimeConstant.toString()
             }
         }
@@ -54,14 +54,18 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
     fun doIsPureTest(path: String) {
         doTest(path) {
             property, context ->
-            val compileTimeConstant = context.get(BindingContext.COMPILE_TIME_VALUE, property.getInitializer())
-            compileTimeConstant?.isPure().toString()
+            val compileTimeConstant = property.getCompileTimeInitializer()
+            if (compileTimeConstant is IntegerValueConstant) {
+                compileTimeConstant.isPure().toString()
+            } else {
+                "null"
+            }
         }
     }
 
-    private fun doTest(path: String, getValueToTest: (JetProperty, BindingContext) -> String) {
+    private fun doTest(path: String, getValueToTest: (VariableDescriptor, BindingContext) -> String) {
         val myFile = File(path)
-        val fileText = FileUtil.loadFile(myFile)
+        val fileText = FileUtil.loadFile(myFile, true)
         val packageView = getPackage(fileText)
 
         val propertiesForTest = getObjectsToTest(fileText)
@@ -74,11 +78,9 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             assertNotNull(expected, "Failed to find expected directive: $expectedPropertyPrefix")
 
             val property = AbstractAnnotationDescriptorResolveTest.getPropertyDescriptor(packageView, propertyName, false)
-                                ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
+            ?: AbstractAnnotationDescriptorResolveTest.getLocalVarDescriptor(context!!, propertyName)
 
-            val jetProperty = BindingContextUtils.descriptorToDeclaration(context!!, property) as JetProperty
-
-            val testedObject = getValueToTest(jetProperty, context!!)
+            val testedObject = getValueToTest(property, context!!)
             expectedActual.add(expectedPropertyPrefix + expected!! to expectedPropertyPrefix + testedObject)
         }
 
@@ -96,8 +98,7 @@ abstract class AbstractEvaluateExpressionTest: AbstractAnnotationDescriptorResol
             val matcher = pattern.matcher(it)
             if (matcher.find()) {
                 matcher.group(0) ?: "Couldn't match tested object $it"
-            }
-            else "Couldn't match tested object $it"
+            } else "Couldn't match tested object $it"
         }
     }
 

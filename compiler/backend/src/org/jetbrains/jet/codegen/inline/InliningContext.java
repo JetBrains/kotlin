@@ -47,6 +47,8 @@ public class InliningContext {
 
     public final boolean isInliningLambda;
 
+    public final boolean classRegeneration;
+
     public InliningContext(
             Map<Integer, LambdaInfo> map,
             List<InvokeCall> accesses,
@@ -57,7 +59,8 @@ public class InliningContext {
             CodegenContext startContext,
             Call call,
             Map<String, String> typeMapping,
-            boolean isInliningLambda
+            boolean isInliningLambda,
+            boolean classRegeneration
     ) {
         expressionMap = map;
         invokeCalls = accesses;
@@ -69,14 +72,17 @@ public class InliningContext {
         this.call = call;
         this.typeMapping = typeMapping;
         this.isInliningLambda = isInliningLambda;
+        this.classRegeneration = classRegeneration;
     }
 
     public InliningContext subInline(NameGenerator generator) {
         return subInline(generator, Collections.<String, String>emptyMap());
     }
 
-    public InliningContext subInlineLambda(NameGenerator generator) {
-        return subInline(generator, Collections.<String, String>emptyMap(), true);
+    public InliningContext subInlineLambda(LambdaInfo lambdaInfo) {
+        Map<String, String> map = new HashMap();
+        map.put(lambdaInfo.getLambdaClassType().getInternalName(), null); //mark lambda inlined
+        return subInline(nameGenerator.subGenerator("lambda"), map, true);
     }
 
     public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings) {
@@ -87,7 +93,11 @@ public class InliningContext {
         Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
         return new InliningContext(expressionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
-                                newTypeMappings, isInliningLambda);
+                                newTypeMappings, isInliningLambda, classRegeneration);
     }
 
+    public InliningContext classRegeneration() {
+        return new InliningContext(expressionMap, invokeCalls, constructorInvocation, remapper, state, nameGenerator, startContext, call,
+                                   typeMapping, isInliningLambda, true);
+    }
 }

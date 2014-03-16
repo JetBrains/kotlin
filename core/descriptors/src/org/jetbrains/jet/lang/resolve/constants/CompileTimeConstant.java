@@ -25,21 +25,14 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 public abstract class CompileTimeConstant<T> {
     protected final T value;
     private final boolean canBeUsedInAnnotations;
-    // if false = constant type cannot be changed, ex. val a: Long = 1.toInt() (should be a TYPE_MISMATCH error, 1.toInt() isn't pure)
-    private final boolean isPure;
 
-    protected CompileTimeConstant(T value, boolean canBeUsedInAnnotations, boolean pure) {
+    protected CompileTimeConstant(T value, boolean canBeUsedInAnnotations) {
         this.value = value;
         this.canBeUsedInAnnotations = canBeUsedInAnnotations;
-        this.isPure = pure;
     }
 
     public boolean canBeUsedInAnnotations() {
         return canBeUsedInAnnotations;
-    }
-
-    public boolean isPure() {
-        return isPure;
     }
 
     @Nullable

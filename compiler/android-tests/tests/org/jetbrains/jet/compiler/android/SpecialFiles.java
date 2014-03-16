@@ -58,6 +58,7 @@ public class SpecialFiles {
     private static void fillExcludedFiles() {
         excludedFiles.add("boxWithJava");  // Must compile Java files before
         excludedFiles.add("boxMultiFile"); // MultiFileTest not supported yet
+        excludedFiles.add("boxInline"); // MultiFileTest not supported yet
 
         excludedFiles.add("kt3238.kt"); // Reflection
         excludedFiles.add("kt1482_2279.kt"); // Reflection

@@ -41,6 +41,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         doTestMultiFile("compiler/testData/codegen/boxInline/builders");
     }
     
+    @TestMetadata("buildersAndLambdaCapturing")
+    public void testBuildersAndLambdaCapturing() throws Exception {
+        doTestMultiFile("compiler/testData/codegen/boxInline/buildersAndLambdaCapturing");
+    }
+    
     @TestMetadata("captureInlinable")
     public void testCaptureInlinable() throws Exception {
         doTestMultiFile("compiler/testData/codegen/boxInline/captureInlinable");
@@ -134,6 +139,16 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     @TestMetadata("noInline")
     public void testNoInline() throws Exception {
         doTestMultiFile("compiler/testData/codegen/boxInline/noInline");
+    }
+    
+    @TestMetadata("noInlineLambdaChain")
+    public void testNoInlineLambdaChain() throws Exception {
+        doTestMultiFile("compiler/testData/codegen/boxInline/noInlineLambdaChain");
+    }
+    
+    @TestMetadata("noInlineLambdaChainWithCapturedInline")
+    public void testNoInlineLambdaChainWithCapturedInline() throws Exception {
+        doTestMultiFile("compiler/testData/codegen/boxInline/noInlineLambdaChainWithCapturedInline");
     }
     
     @TestMetadata("noInlineLambdaX2")

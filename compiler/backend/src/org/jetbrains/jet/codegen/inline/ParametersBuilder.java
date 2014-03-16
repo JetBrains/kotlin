@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 
@@ -46,9 +47,29 @@ public class  ParametersBuilder {
         return this;
     }
 
-    public CapturedParamInfo addCapturedParam(String fieldName, Type type, boolean skipped, @Nullable ParameterInfo original) {
-        return addCapturedParameter(new CapturedParamInfo(fieldName, type, skipped, nextCaptured,
-                                                          original != null ? original.getIndex() : -1));
+    public CapturedParamInfo addCapturedParam(
+            @NotNull CapturedParamInfo param,
+            @Nullable CapturedParamInfo originalField
+    ) {
+        CapturedParamInfo info = new CapturedParamInfo(param.desc, param.isSkipped, nextCaptured, originalField != null ? originalField.getIndex() : -1);
+        info.setLambda(param.getLambda());
+        return addCapturedParameter(info);
+    }
+
+    public CapturedParamInfo addCapturedParam(
+            String fieldName,
+            Type type,
+            boolean skipped,
+            @Nullable ParameterInfo original,
+            CapturedParamOwner containingLambda
+    ) {
+        CapturedParamInfo info =
+                new CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCaptured,
+                                      original != null ? original.getIndex() : -1);
+        if (original != null) {
+            info.setLambda(original.getLambda());
+        }
+        return addCapturedParameter(info);
     }
 
     private void addParameter(ParameterInfo info) {

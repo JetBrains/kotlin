@@ -198,6 +198,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             super.visitObjectDeclaration(declaration);
         }
         else {
+            if (!filter.shouldProcess(declaration)) return;
+
             ClassDescriptor classDescriptor = bindingContext.get(CLASS, declaration);
             // working around a problem with shallow analysis
             if (classDescriptor == null) return;
@@ -419,6 +421,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             return;
         }
         List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
+        if (valueArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
             JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
             if (samInterface == null) {

@@ -5,7 +5,7 @@ class ConstructorTypeParamClassObjectTypeConflict<test> {
         trait test
     }
 
-    val some: test? = null
+    val some: test? = throw Exception()
 }
 
 class ConstructorTypeParamClassObjectConflict<test> {

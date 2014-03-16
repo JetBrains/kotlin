@@ -45,7 +45,6 @@ import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescrip
 import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.setParameters;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
 
 public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
@@ -80,7 +79,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     private TranslationContext getFunctionBodyContext() {
         AliasingContext aliasingContext;
         if (isExtensionFunction()) {
-            DeclarationDescriptor expectedReceiverDescriptor = getExpectedReceiverDescriptor(descriptor);
+            DeclarationDescriptor expectedReceiverDescriptor = descriptor.getReceiverParameter();
             assert expectedReceiverDescriptor != null;
             extensionFunctionReceiverName = functionObject.getScope().declareName(Namer.getReceiverParameterName());
             //noinspection ConstantConditions
@@ -89,7 +88,7 @@ public final class FunctionTranslator extends AbstractTranslator {
         else {
             aliasingContext = null;
         }
-        return context().newFunctionBody(functionObject, aliasingContext, null);
+        return context().newFunctionBody(functionObject, aliasingContext);
     }
 
     @NotNull

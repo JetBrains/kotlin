@@ -16,11 +16,12 @@
 
 package org.jetbrains.jet.lang.cfg;
 
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements PseudocodeTraverser.InstructionHandler {
+public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, Boolean> {
     private final JetElement subroutine;
     private final Instruction start;
 
@@ -30,7 +31,7 @@ public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean>
     }
 
     @Override
-    public boolean handle(@NotNull Instruction instruction) {
+    public Boolean invoke(@NotNull Instruction instruction) {
         return instruction == start || instruction.accept(this);
     }
 

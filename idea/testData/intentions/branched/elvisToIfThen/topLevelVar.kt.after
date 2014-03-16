@@ -1,0 +1,5 @@
+var a: String? = "A"
+fun main(args: Array<String>) {
+    val s = a
+    if (s != null) s else "bar"
+}

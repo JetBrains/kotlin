@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.PsiEnumConstant;
+import com.intellij.psi.PsiExpression;
 import com.intellij.psi.PsiField;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
@@ -36,5 +38,10 @@ public class JavaFieldImpl extends JavaMemberImpl<PsiField> implements JavaField
     @NotNull
     public JavaType getType() {
         return JavaTypeImpl.create(getPsi().getType());
+    }
+
+    @Nullable
+    public PsiExpression getInitializer() {
+        return getPsi().getInitializer();
     }
 }

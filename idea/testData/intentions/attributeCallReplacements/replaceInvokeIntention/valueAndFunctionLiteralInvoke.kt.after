@@ -1,0 +1,9 @@
+fun test() {
+    class Test {
+        fun invoke(a: Int, fn: () -> Unit) {}
+    }
+    val test = Test()
+    test(0) {
+
+    }
+}

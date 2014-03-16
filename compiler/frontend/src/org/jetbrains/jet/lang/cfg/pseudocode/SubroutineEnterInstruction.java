@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.psi.JetElement;
 public class SubroutineEnterInstruction extends InstructionWithNext {
     private final JetElement subroutine;
 
-    public SubroutineEnterInstruction(@NotNull JetElement subroutine) {
-        super(subroutine);
+    public SubroutineEnterInstruction(@NotNull JetElement subroutine, @NotNull LexicalScope lexicalScope) {
+        super(subroutine, lexicalScope);
         this.subroutine = subroutine;
     }
 
@@ -49,6 +49,6 @@ public class SubroutineEnterInstruction extends InstructionWithNext {
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new SubroutineEnterInstruction(subroutine);
+        return new SubroutineEnterInstruction(subroutine, lexicalScope);
     }
 }

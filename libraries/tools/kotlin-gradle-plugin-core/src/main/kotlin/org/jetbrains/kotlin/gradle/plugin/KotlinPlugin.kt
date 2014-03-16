@@ -37,10 +37,12 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
 import java.util.HashSet
+import org.gradle.api.UnknownDomainObjectException
+import org.gradle.api.initialization.dsl.ScriptHandler
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
-open class KotlinPlugin: Plugin<Project> {
+open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
 
     public override fun apply(project: Project) {
         val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
@@ -52,7 +54,8 @@ open class KotlinPlugin: Plugin<Project> {
         configureKDoc(project, javaPluginConvention)
 
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
+
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
 
@@ -110,12 +113,8 @@ open class KotlinPlugin: Plugin<Project> {
         }
 
         project.getTasks()?.withType(javaClass<KDoc>(), object : Action<KDoc> {
-            override fun execute(param: KDoc?) {
-                param?.getConventionMapping()?.map("destinationDir", object : Callable<Any> {
-                    override fun call(): Any {
-                        return File(javaPluginConvention.getDocsDir(), "kdoc");
-                    }
-                })
+            override fun execute(task: KDoc?) {
+                task!!.destinationDir = File(javaPluginConvention.getDocsDir(), "kdoc")
             }
         })
     }
@@ -124,7 +123,7 @@ open class KotlinPlugin: Plugin<Project> {
 }
 
 
-open class KotlinAndroidPlugin: Plugin<Project> {
+open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
 
     val log = Logging.getLogger(getClass())
 
@@ -170,7 +169,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
         })
         val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils.resolveDependencies(project, "org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
@@ -178,14 +177,18 @@ open class KotlinAndroidPlugin: Plugin<Project> {
         val kotlinOptions = getExtention<K2JVMCompilerArguments>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
         val mainSourceSet = sourceSets.getByName(BuilderConstants.MAIN)
-        val testSourceSet = sourceSets.getByName(BuilderConstants.INSTRUMENT_TEST)
+        val testSourceSet = try {
+            sourceSets.getByName("instrumentTest")
+        } catch (e: UnknownDomainObjectException) {
+            sourceSets.getByName("androidTest")
+        }
 
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildType: BuildType = if (variant is LibraryVariant) {
-                    variant.getBuildType()
+                    variant.getBuildType()!!
                 } else {
-                    (variant as ApkVariant).getBuildType()
+                    (variant as ApkVariant).getBuildType()!!
                 }
 
                 val buildTypeSourceSetName = buildType.getName()
@@ -201,7 +204,7 @@ open class KotlinAndroidPlugin: Plugin<Project> {
 
 
                 // store kotlin classes in separate directory. They will serve as class-path to java compiler
-                val kotlinOutputDir = File(project.getBuildDir(), "kotlin-classes/${variantName}")
+                val kotlinOutputDir = File(project.getBuildDir(), "tmp/kotlin-classes/${variantName}")
                 kotlinTask.kotlinDestinationDir = kotlinOutputDir;
                 kotlinTask.setDestinationDir(javaTask.getDestinationDir())
                 kotlinTask.setDescription("Compiles the ${variantName} kotlin.")
@@ -271,17 +274,15 @@ open class KSpec<T: Any?>(val predicate: (T) -> Boolean): Spec<T> {
     }
 }
 
-open class GradleUtils() {
-    class object {
-        public fun resolveDependencies(project: Project, vararg coordinates: String): Collection<File> {
-            val dependencyHandler : DependencyHandler = project.getBuildscript().getDependencies()
-            val configurationsContainer : ConfigurationContainer = project.getBuildscript().getConfigurations()
+open class GradleUtils(val scriptHandler: ScriptHandler) {
+    public fun resolveDependencies(vararg coordinates: String): Collection<File> {
+        val dependencyHandler : DependencyHandler = scriptHandler.getDependencies()
+        val configurationsContainer : ConfigurationContainer = scriptHandler.getConfigurations()
 
-            val deps = coordinates.map { dependencyHandler.create(it) }
-            val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
+        val deps = coordinates.map { dependencyHandler.create(it) }
+        val configuration = configurationsContainer.detachedConfiguration(*deps.copyToArray())
 
-            return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
-        }
+        return configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!
     }
 }
 

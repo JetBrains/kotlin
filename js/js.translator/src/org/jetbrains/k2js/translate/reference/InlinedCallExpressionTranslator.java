@@ -45,8 +45,6 @@ import java.util.Map;
 import static org.jetbrains.k2js.translate.reference.CallArgumentTranslator.translateSingleArgument;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionForDescriptor;
 import static org.jetbrains.k2js.translate.utils.FunctionBodyTranslator.translateFunctionBody;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedReceiverDescriptor;
-import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getExpectedThisDescriptor;
 
 public final class InlinedCallExpressionTranslator extends AbstractCallExpressionTranslator {
 
@@ -125,12 +123,12 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
         JsExpression receiver = callInfo.getReceiverObject();
         if (receiver != null) {
             contextWithAliasForThisExpression =
-                contextWithAlias(contextWithAliasForThisExpression, receiver, getExpectedReceiverDescriptor(functionDescriptor));
+                contextWithAlias(contextWithAliasForThisExpression, receiver, functionDescriptor.getReceiverParameter());
         }
         JsExpression thisObject = callInfo.getThisObject();
         if (thisObject != null) {
             contextWithAliasForThisExpression =
-                contextWithAlias(contextWithAliasForThisExpression, thisObject, getExpectedThisDescriptor(functionDescriptor));
+                contextWithAlias(contextWithAliasForThisExpression, thisObject, functionDescriptor.getExpectedThisObject());
         }
         return contextWithAliasForThisExpression;
     }
@@ -148,7 +146,11 @@ public final class InlinedCallExpressionTranslator extends AbstractCallExpressio
 
     @NotNull
     private TemporaryVariable createAliasForArgument(@NotNull ValueParameterDescriptor parameterDescriptor) {
-        ResolvedValueArgument actualArgument = resolvedCall.getValueArgumentsByIndex().get(parameterDescriptor.getIndex());
+        List<ResolvedValueArgument> actualArguments = resolvedCall.getValueArgumentsByIndex();
+        if (actualArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
+        ResolvedValueArgument actualArgument = actualArguments.get(parameterDescriptor.getIndex());
         JsExpression translatedArgument = translateArgument(actualArgument);
         TemporaryVariable aliasForArgument = context().declareTemporary(translatedArgument);
         context().addStatementToCurrentBlock(aliasForArgument.assignmentExpression().makeStmt());

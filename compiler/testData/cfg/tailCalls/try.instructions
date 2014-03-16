@@ -8,24 +8,24 @@ tailRecursive fun foo() {
 }
 ---------------------
 L0:
-    <START>
-    mark({ try { return foo() } catch (e: Throwable) { } })
+  1 <START>
+  2 mark({ try { return foo() } catch (e: Throwable) { } })
     mark(try { return foo() } catch (e: Throwable) { })
     jmp?(L2 [onException])                                     NEXT:[v(e: Throwable), mark({ return foo() })]
-    mark({ return foo() })
+  3 mark({ return foo() })
     mark(foo())
     call(foo, foo)
     ret(*) L1                                                  NEXT:[<END>]
--   jmp(L3 [afterCatches])                                     NEXT:[<END>]                                                      PREV:[]
+- 2 jmp(L3 [afterCatches])                                     NEXT:[<END>]                                                      PREV:[]
 L2 [onException]:
-    v(e: Throwable)                                            PREV:[jmp?(L2 [onException])]
+  3 v(e: Throwable)                                            PREV:[jmp?(L2 [onException])]
     w(e)
-    mark({ })
+  4 mark({ })
     read (Unit)
-    jmp(L3 [afterCatches])
+  3 jmp(L3 [afterCatches])
 L1:
 L3 [afterCatches]:
-    <END>                                                      NEXT:[<SINK>]                                                     PREV:[ret(*) L1, jmp(L3 [afterCatches])]
+  1 <END>                                                      NEXT:[<SINK>]                                                     PREV:[ret(*) L1, jmp(L3 [afterCatches])]
 error:
     <ERROR>                                                    PREV:[]
 sink:

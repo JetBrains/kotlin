@@ -69,7 +69,7 @@ public class JetPsiUtilTest extends JetLiteFixture {
     }
 
     public void testIsLocalClass() throws IOException {
-        String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"));
+        String text = FileUtil.loadFile(new File(getTestDataPath() + "/psiUtil/isLocalClass.kt"), true);
         JetClass aClass = JetPsiFactory.createClass(getProject(), text);
 
         @SuppressWarnings("unchecked")

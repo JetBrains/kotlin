@@ -48,7 +48,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     protected LightProjectDescriptor getProjectDescriptorFromFileDirective() {
         if (!isAllFilesPresentInTest()) {
             try {
-                String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()));
+                String fileText = FileUtil.loadFile(new File(getTestDataPath(), fileName()), true);
 
                 List<String> withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:");
                 if (!withLibraryDirective.isEmpty()) {

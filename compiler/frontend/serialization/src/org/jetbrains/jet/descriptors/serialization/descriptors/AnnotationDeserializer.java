@@ -23,6 +23,8 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
+import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
+
 public interface AnnotationDeserializer {
     AnnotationDeserializer UNSUPPORTED = new AnnotationDeserializer() {
         @NotNull
@@ -59,13 +61,6 @@ public interface AnnotationDeserializer {
             throw new UnsupportedOperationException("Annotations are not supported");
         }
     };
-
-    enum AnnotatedCallableKind {
-        FUNCTION,
-        PROPERTY,
-        PROPERTY_GETTER,
-        PROPERTY_SETTER
-    }
 
     @NotNull
     Annotations loadClassAnnotations(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class classProto);

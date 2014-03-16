@@ -25,8 +25,8 @@ import java.util.Collections;
 public abstract class InstructionWithNext extends JetElementInstructionImpl {
     private Instruction next;
 
-    protected InstructionWithNext(@NotNull JetElement element) {
-        super(element);
+    protected InstructionWithNext(@NotNull JetElement element, @NotNull LexicalScope lexicalScope) {
+        super(element, lexicalScope);
     }
 
     public Instruction getNext() {

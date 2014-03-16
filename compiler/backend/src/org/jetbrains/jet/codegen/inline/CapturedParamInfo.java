@@ -23,26 +23,29 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public class CapturedParamInfo extends ParameterInfo {
 
-    private final String fieldName;
+    public static final CapturedParamInfo STUB = new CapturedParamInfo(CapturedParamDesc.createDesc(new CapturedParamOwner() {
+        @Override
+        public Type getType() {
+            return Type.getObjectType("STUB");
+        }
+    }, "STUB", Type.getObjectType("STUB")), true, -1, -1);
+
+    public final CapturedParamDesc desc;
 
     private int shift = 0;
 
-    private LambdaInfo recapturedFrom;
-
-    public static final CapturedParamInfo STUB = new CapturedParamInfo("", AsmTypeConstants.OBJECT_TYPE, true, -1, -1);
-
-    public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int index, int remapIndex) {
-        super(type, skipped, index, remapIndex);
-        this.fieldName = fieldName;
+    public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, int remapIndex) {
+        super(desc.getType(), skipped, index, remapIndex);
+        this.desc = desc;
     }
 
-    public CapturedParamInfo(@NotNull String fieldName, @NotNull Type type, boolean skipped, int index, StackValue remapIndex) {
-        super(type, skipped, index, remapIndex);
-        this.fieldName = fieldName;
+    public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, StackValue remapIndex) {
+        super(desc.getType(), skipped, index, remapIndex);
+        this.desc = desc;
     }
 
     public String getFieldName() {
-        return fieldName;
+        return desc.getFieldName();
     }
 
     @Override
@@ -54,22 +57,17 @@ public class CapturedParamInfo extends ParameterInfo {
         this.shift = shift;
     }
 
-    public LambdaInfo getRecapturedFrom() {
-        return recapturedFrom;
-    }
-
-    public void setRecapturedFrom(LambdaInfo recapturedFrom) {
-        this.recapturedFrom = recapturedFrom;
-    }
-
     public CapturedParamInfo newIndex(int newIndex) {
         return clone(newIndex, getRemapValue());
     }
 
     public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {
-        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(fieldName, type, isSkipped, newIndex, newRamapIndex);
+        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, isSkipped, newIndex, newRamapIndex);
         capturedParamInfo.setLambda(lambda);
-        capturedParamInfo.setRecapturedFrom(recapturedFrom);
         return capturedParamInfo;
+    }
+
+    public String getContainingLambdaName() {
+        return desc.getContainingLambda().getType().getInternalName();
     }
 }

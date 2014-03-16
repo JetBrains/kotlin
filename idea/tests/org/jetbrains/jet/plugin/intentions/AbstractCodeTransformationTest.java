@@ -31,6 +31,22 @@ import org.junit.Assert;
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+    public void doTestElvisToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new ElvisToIfThenIntention());
+    }
+
+    public void doTestIfThenToElvis(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToElvisIntention());
+    }
+
+    public void doTestSafeAccessToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new SafeAccessToIfThenIntention());
+    }
+
+    public void doTestIfThenToSafeAccess(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToSafeAccessIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }
@@ -160,10 +176,30 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new AddBracesIntention());
     }
 
+    public void doTestReplaceGetIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceGetIntention());
+    }
+
+    public void doTestReplaceContainsIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceContainsIntention());
+    }
+
+    public void doTestReplaceBinaryInfixIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceBinaryInfixIntention());
+    }
+
+    public void doTestReplaceUnaryPrefixIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceUnaryPrefixIntention());
+    }
+
+    public void doTestReplaceInvokeIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new TestableReplaceInvokeIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
-        String fileText = FileUtil.loadFile(new File(path));
+        String fileText = FileUtil.loadFile(new File(path), true);
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
@@ -171,9 +207,25 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
                 "isAvailable() for " + intentionAction.getClass() + " should return " + isApplicableExpected,
                 isApplicableExpected == intentionAction.isAvailable(getProject(), getEditor(), getFile()));
 
-        if (isApplicableExpected) {
-            intentionAction.invoke(getProject(), getEditor(), getFile());
-            checkResultByFile(path + ".after");
+        String intentionTextString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// INTENTION_TEXT: ");
+
+        if (intentionTextString != null) {
+            assertEquals("Intention text mismatch.", intentionTextString, intentionAction.getText());
+        }
+
+        String shouldFailString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
+
+        try {
+            if (isApplicableExpected) {
+                intentionAction.invoke(getProject(), getEditor(), getFile());
+                // Don't bother checking if it should have failed.
+                if (shouldFailString == null) {
+                    checkResultByFile(path + ".after");
+                }
+            }
+            assertNull("Expected test to fail.", shouldFailString);
+        } catch (IntentionTestException e) {
+            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
     }
 

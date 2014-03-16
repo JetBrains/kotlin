@@ -1,0 +1,7 @@
+fun test() {
+    class Test {
+        fun invoke(a: Int, vararg b: String, fn: () -> Unit): String = "test"
+    }
+    val test = Test()
+    println(test(1, "a", "b") { })
+}

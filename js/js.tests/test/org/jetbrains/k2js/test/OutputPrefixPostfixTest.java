@@ -84,12 +84,12 @@ public final class OutputPrefixPostfixTest extends SingleFileTranslationTest {
         super.runFunctionOutputTest(ecmaVersions, kotlinFilename, packageName, functionName, expectedResult);
 
         for (EcmaVersion ecmaVersion : ecmaVersions) {
-            String output = FileUtil.loadFile(new File(getOutputFilePath(filename, ecmaVersion)));
+            String output = FileUtil.loadFile(new File(getOutputFilePath(filename, ecmaVersion)), true);
             if (outputPrefixFile != null) {
-                assertTrue(output.startsWith(FileUtil.loadFile(outputPrefixFile)));
+                assertTrue(output.startsWith(FileUtil.loadFile(outputPrefixFile, true)));
             }
             if (outputPostfixFile != null) {
-                assertTrue(output.endsWith(FileUtil.loadFile(outputPostfixFile)));
+                assertTrue(output.endsWith(FileUtil.loadFile(outputPostfixFile, true)));
             }
         }
     }

@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -75,6 +76,7 @@ import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
+import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
@@ -1927,7 +1929,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ResolvedCall<? extends CallableDescriptor> resolvedCall,
             JavaClassDescriptor samInterface
     ) {
-        ResolvedValueArgument argument = resolvedCall.getValueArgumentsByIndex().get(0);
+        List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
+        if (arguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
+        ResolvedValueArgument argument = arguments.get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
             throw new IllegalStateException(
                     "argument of SAM constructor is " + argument.getClass().getName() + " " + expression.getText());
@@ -2321,6 +2327,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
         @SuppressWarnings("unchecked")
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
+        if (valueArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index");
+        }
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         List<ValueParameterDescriptor> valueParameters = fd.getValueParameters();
 

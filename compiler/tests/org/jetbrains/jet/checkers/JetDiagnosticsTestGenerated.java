@@ -1673,6 +1673,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/propertiesOrderInPackage.kt");
             }
             
+            @TestMetadata("referenceToPropertyInitializer.kt")
+            public void testReferenceToPropertyInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/referenceToPropertyInitializer.kt");
+            }
+            
             @TestMetadata("repeatUnitializedErrorOnlyForLocalVars.kt")
             public void testRepeatUnitializedErrorOnlyForLocalVars() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/repeatUnitializedErrorOnlyForLocalVars.kt");
@@ -1686,6 +1691,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("unreachableCode.kt")
             public void testUnreachableCode() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
+            }
+            
+            @TestMetadata("varInitializationInIfInCycle.kt")
+            public void testVarInitializationInIfInCycle() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/varInitializationInIfInCycle.kt");
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn")
@@ -3404,6 +3414,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("typeParameterOnLhsOfDot.kt")
             public void testTypeParameterOnLhsOfDot() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/typeParameterOnLhsOfDot.kt");
+            }
+            
+            @TestMetadata("variableDeclarationInSelector.kt")
+            public void testVariableDeclarationInSelector() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/variableDeclarationInSelector.kt");
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError")

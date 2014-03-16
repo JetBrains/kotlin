@@ -277,7 +277,7 @@ public class LockBasedStorageManager implements StorageManager {
         @Override
         public T invoke() {
             Object _value = value;
-            if (!(value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
+            if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
 
             lock.lock();
             try {

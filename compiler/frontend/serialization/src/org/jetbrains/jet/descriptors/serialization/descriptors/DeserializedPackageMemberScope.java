@@ -35,13 +35,13 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     public DeserializedPackageMemberScope(
             @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull Deserializers deserializers,
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull ProtoBuf.Package proto,
             @NotNull NameResolver nameResolver
     ) {
         super(storageManager, packageDescriptor,
-              DescriptorDeserializer.create(storageManager, packageDescriptor, nameResolver, descriptorFinder, annotationDeserializer),
+              DescriptorDeserializer.create(storageManager, packageDescriptor, nameResolver, descriptorFinder, deserializers),
               proto.getMemberList());
         this.descriptorFinder = descriptorFinder;
         this.packageFqName = packageDescriptor.getFqName();
@@ -50,11 +50,11 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     public DeserializedPackageMemberScope(
             @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull Deserializers deserializers,
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull PackageData packageData
     ) {
-        this(storageManager, packageDescriptor, annotationDeserializer, descriptorFinder, packageData.getPackageProto(),
+        this(storageManager, packageDescriptor, deserializers, descriptorFinder, packageData.getPackageProto(),
              packageData.getNameResolver());
     }
 

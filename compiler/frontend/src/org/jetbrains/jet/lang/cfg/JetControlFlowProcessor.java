@@ -22,22 +22,19 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
-import org.jetbrains.jet.lang.resolve.constants.BooleanValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -73,9 +70,6 @@ public class JetControlFlowProcessor {
     public Pseudocode generatePseudocode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl) pseudocode).postProcess();
-        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            ((PseudocodeImpl) localFunctionDeclarationInstruction.getBody()).postProcess();
-        }
         return pseudocode;
     }
 
@@ -507,6 +501,7 @@ public class JetControlFlowProcessor {
                 }
                 boolean isFirst = true;
                 for (JetCatchClause catchClause : catchClauses) {
+                    builder.enterLexicalScope(catchClause);
                     if (!isFirst) {
                         builder.bindLabel(catchLabels.remove());
                     }
@@ -523,6 +518,7 @@ public class JetControlFlowProcessor {
                         generateInstructions(catchBody, NOT_IN_CONDITION);
                     }
                     builder.jump(afterCatches);
+                    builder.exitLexicalScope(catchClause);
                 }
 
                 builder.bindLabel(afterCatches);
@@ -552,16 +548,7 @@ public class JetControlFlowProcessor {
             if (condition != null) {
                 generateInstructions(condition, IN_CONDITION);
             }
-            boolean conditionIsTrueConstant = false;
-            if (condition instanceof JetConstantExpression && condition.getNode().getElementType() == JetNodeTypes.BOOLEAN_CONSTANT) {
-                CompileTimeConstant<?> compileTimeConstant = ConstantExpressionEvaluator.object$.evaluate(condition, trace, KotlinBuiltIns.getInstance().getBooleanType());
-                if (compileTimeConstant instanceof BooleanValue) {
-                    Boolean value = ((BooleanValue) compileTimeConstant).getValue();
-                    if (Boolean.TRUE.equals(value)) {
-                        conditionIsTrueConstant = true;
-                    }
-                }
-            }
+            boolean conditionIsTrueConstant = CompileTimeConstantUtils.canBeReducedToBooleanConstant(condition, trace, true);
             if (!conditionIsTrueConstant) {
                 builder.jumpOnFalse(loopInfo.getExitPoint());
             }
@@ -578,6 +565,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitDoWhileExpressionVoid(@NotNull JetDoWhileExpression expression, CFPContext context) {
+            builder.enterLexicalScope(expression);
             mark(expression);
             LoopInfo loopInfo = builder.enterLoop(expression, null, null);
 
@@ -594,23 +582,18 @@ public class JetControlFlowProcessor {
             builder.jumpOnTrue(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.loadUnit(expression);
+            builder.exitLexicalScope(expression);
         }
 
         @Override
         public void visitForExpressionVoid(@NotNull JetForExpression expression, CFPContext context) {
+            builder.enterLexicalScope(expression);
             mark(expression);
             JetExpression loopRange = expression.getLoopRange();
             if (loopRange != null) {
                 generateInstructions(loopRange, NOT_IN_CONDITION);
             }
-            JetParameter loopParameter = expression.getLoopParameter();
-            if (loopParameter != null) {
-                generateInstructions(loopParameter, context);
-            }
-            else {
-                JetMultiDeclaration multiParameter = expression.getMultiParameter();
-                generateInstructions(multiParameter, context);
-            }
+            declareLoopParameter(expression);
 
             // TODO : primitive cases
             Label loopExitPoint = builder.createUnboundLabel();
@@ -622,6 +605,8 @@ public class JetControlFlowProcessor {
             LoopInfo loopInfo = builder.enterLoop(expression, loopExitPoint, conditionEntryPoint);
 
             builder.bindLabel(loopInfo.getBodyEntryPoint());
+            writeLoopParameterAssignment(expression);
+
             JetExpression body = expression.getBody();
             if (body != null) {
                 generateInstructions(body, NOT_IN_CONDITION);
@@ -630,6 +615,31 @@ public class JetControlFlowProcessor {
             builder.nondeterministicJump(loopInfo.getEntryPoint());
             builder.exitLoop(expression);
             builder.loadUnit(expression);
+            builder.exitLexicalScope(expression);
+        }
+
+        private void declareLoopParameter(JetForExpression expression) {
+            JetParameter loopParameter = expression.getLoopParameter();
+            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            if (loopParameter != null) {
+                builder.declareParameter(loopParameter);
+            }
+            else if (multiDeclaration != null) {
+                visitMultiDeclaration(multiDeclaration, false);
+            }
+        }
+
+        private void writeLoopParameterAssignment(JetForExpression expression) {
+            JetParameter loopParameter = expression.getLoopParameter();
+            JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            if (loopParameter != null) {
+                builder.write(loopParameter, loopParameter);
+            }
+            else if (multiDeclaration != null) {
+                for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                    builder.write(entry, entry);
+                }
+            }
         }
 
         @Override
@@ -731,6 +741,10 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitBlockExpressionVoid(@NotNull JetBlockExpression expression, CFPContext context) {
+            boolean declareLexicalScope = !isBlockInDoWhile(expression);
+            if (declareLexicalScope) {
+                builder.enterLexicalScope(expression);
+            }
             mark(expression);
             List<JetElement> statements = expression.getStatements();
             for (JetElement statement : statements) {
@@ -739,6 +753,15 @@ public class JetControlFlowProcessor {
             if (statements.isEmpty()) {
                 builder.loadUnit(expression);
             }
+            if (declareLexicalScope) {
+                builder.exitLexicalScope(expression);
+            }
+        }
+
+        private boolean isBlockInDoWhile(@NotNull JetBlockExpression expression) {
+            PsiElement parent = expression.getParent();
+            if (parent == null) return false;
+            return parent.getParent() instanceof JetDoWhileExpression;
         }
 
         @Override
@@ -813,18 +836,21 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitMultiDeclarationVoid(@NotNull JetMultiDeclaration declaration, CFPContext context) {
-            JetExpression initializer = declaration.getInitializer();
-            if (initializer != null) {
-                generateInstructions(initializer, NOT_IN_CONDITION);
-            }
-            List<JetMultiDeclarationEntry> entries = declaration.getEntries();
-            for (JetMultiDeclarationEntry entry : entries) {
+            visitMultiDeclaration(declaration, true);
+        }
+
+        private void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration, boolean generateWriteForEntries) {
+            generateInstructions(declaration.getInitializer(), NOT_IN_CONDITION);
+
+            for (JetMultiDeclarationEntry entry : declaration.getEntries()) {
                 builder.declareVariable(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall != null) {
                     builder.call(entry, resolvedCall);
                 }
-                builder.write(entry, entry);
+                if (generateWriteForEntries) {
+                    builder.write(entry, entry);
+                }
             }
         }
 

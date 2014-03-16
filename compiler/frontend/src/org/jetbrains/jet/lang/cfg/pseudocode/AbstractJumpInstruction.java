@@ -26,7 +26,8 @@ public abstract class AbstractJumpInstruction extends InstructionImpl {
     private final Label targetLabel;
     private Instruction resolvedTarget;
 
-    public AbstractJumpInstruction(Label targetLabel) {
+    public AbstractJumpInstruction(Label targetLabel, LexicalScope lexicalScope) {
+        super(lexicalScope);
         this.targetLabel = targetLabel;
     }
 
@@ -48,15 +49,15 @@ public abstract class AbstractJumpInstruction extends InstructionImpl {
         this.resolvedTarget = outgoingEdgeTo(resolvedTarget);
     }
 
-    protected abstract AbstractJumpInstruction createCopy(@NotNull Label newLabel);
+    protected abstract AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope);
 
     final public Instruction copy(@NotNull Label newLabel) {
-        return updateCopyInfo(createCopy(newLabel));
+        return updateCopyInfo(createCopy(newLabel, lexicalScope));
     }
 
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return createCopy(targetLabel);
+        return createCopy(targetLabel, lexicalScope);
     }
 }

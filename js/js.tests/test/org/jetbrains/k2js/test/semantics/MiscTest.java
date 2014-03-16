@@ -28,8 +28,8 @@ public final class MiscTest extends AbstractExpressionTest {
         super("misc/");
     }
 
-    public void testLocalPropertys() throws Exception {
-        runFunctionOutputTest("localProperty.kt", "foo", "box", 50);
+    public void testLocalProperty() throws Exception {
+        fooBoxIsValue(50);
     }
 
     public void testIntRange() throws Exception {
@@ -42,7 +42,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testClassWithoutPackage() throws Exception {
-        runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), "box", true);
+        runFunctionOutputTest("classWithoutPackage.kt", Namer.getRootPackageName(), TEST_FUNCTION, true);
     }
 
     public void testIfElseAsExpressionWithThrow() throws Exception {
@@ -65,7 +65,6 @@ public final class MiscTest extends AbstractExpressionTest {
     public void testKt1052() throws Exception {
         checkOutput("KT-1052.kt", "true\n");
     }
-
 
     public void testKt740_1() throws Exception {
         checkFooBoxIsTrue("KT-740.kt");
@@ -123,6 +122,18 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
+    public void testElvisReturnSimple() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testElvisReturnNested() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testElvisWithThrow() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testExtensionLiteralCalledInsideExtensionFunction() throws Exception {
         fooBoxTest();
     }
@@ -135,11 +146,9 @@ public final class MiscTest extends AbstractExpressionTest {
         checkOutput("mainFunInNestedPackage.kt", "ayee");
     }
 
-
     public void testPropertiesWithExplicitlyDefinedAccessorsWithoutBodies() throws Exception {
         fooBoxTest();
     }
-
 
     public void testExclExcl() throws Exception {
         fooBoxTest();
@@ -153,10 +162,8 @@ public final class MiscTest extends AbstractExpressionTest {
         fooBoxIsValue("OK");
     }
 
-    //TODO: see http://youtrack.jetbrains.com/issue/KT-2564
-    @SuppressWarnings("UnusedDeclaration")
-    public void TODO_testPackageLevelVarInRoot() throws Exception {
-        runFunctionOutputTest("packageLevelVarInRoot.kt", Namer.getRootPackageName(), "box", "OK");
+    public void testPackageLevelVarInRoot() throws Exception {
+        runFunctionOutputTest("packageLevelVarInRoot.kt", Namer.getRootPackageName(), TEST_FUNCTION, "OK");
     }
 
     public void testLazyPropertyGetterNotCalledOnStart() throws Exception {
@@ -164,12 +171,6 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testLocalVarAsFunction() throws Exception {
-        fooBoxIsValue("OK");
-    }
-
-    //TODO:see http://youtrack.jetbrains.com/issue/KT-2565
-    @SuppressWarnings("UnusedDeclaration")
-    public void TODO_testFunctionExpression() throws Exception {
         fooBoxIsValue("OK");
     }
 

@@ -513,7 +513,7 @@ public class JetTestUtils {
         String content;
 
         try {
-            content = StringUtil.convertLineSeparators(FileUtil.loadFile(new File(filePath)));
+            content = FileUtil.loadFile(new File(filePath), true);
         }
         catch (IOException e) {
             throw new RuntimeException(e);
@@ -743,7 +743,7 @@ public class JetTestUtils {
     }
 
     public static JetFile loadJetFile(@NotNull Project project, @NotNull File ioFile) throws IOException {
-        String text = FileUtil.loadFile(ioFile);
+        String text = FileUtil.loadFile(ioFile, true);
         return JetPsiFactory.createPhysicalFile(project, ioFile.getName(), text);
     }
 

@@ -55,6 +55,8 @@ import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.JavaDirectoryService
+import com.intellij.psi.PsiDirectory
 
 public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -278,3 +280,5 @@ public fun PsiElement.getFqName(): FqName? {
         else -> null
     }
 }
+
+public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)

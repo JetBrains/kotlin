@@ -1,0 +1,12 @@
+class Foo {
+    val b: String?
+        get() {
+            print("I have side effects")
+            return "Foo"
+        }
+}
+fun main(args: Array<String>) {
+    val a = Foo()
+    val s = a.b
+    println(if (s != null) s.length else null)
+}

@@ -1,0 +1,4 @@
+fun main(args: Array<String>) {
+    val x: String? = "abc"
+    val y = if (x != null) x.length else null
+}

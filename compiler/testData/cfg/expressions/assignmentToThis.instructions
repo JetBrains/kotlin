@@ -1,0 +1,19 @@
+== bar ==
+fun Int.bar(c: C) {
+    this = c
+}
+---------------------
+L0:
+  1 <START>
+    v(c: C)
+    w(c)
+  2 mark({ this = c })
+    r(c)
+    unsupported(BINARY_EXPRESSION : this = c)
+L1:
+  1 <END>                                        NEXT:[<SINK>]
+error:
+    <ERROR>                                      PREV:[]
+sink:
+    <SINK>                                       PREV:[<ERROR>, <END>]
+=====================

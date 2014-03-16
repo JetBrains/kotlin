@@ -11,148 +11,43 @@ import org.junit.Test
 import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import org.junit.Ignore
+import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 
-class BasicKotlinGradleIT {
-
-    var workingDir: File = File(".")
-
-    Before fun setUp() {
-        workingDir = Files.createTempDir()
-        workingDir.mkdirs()
-        copyRecursively(File("src/test/resources/testProject/alfa"), workingDir)
-        copyRecursively(File("src/test/resources/testProject/beta"), workingDir)
-    }
-
-
-    After fun tearDown() {
-        deleteRecursively(workingDir)
-    }
+class BasicKotlinGradleIT : BaseGradleIT() {
 
     Test fun testSimpleCompile() {
-        val projectDir = File(workingDir, "alfa")
+        val project = Project("alfa")
 
-        val pathToKotlinPlugin = "-PpathToKotlinPlugin=${File("local-repo").getAbsolutePath()}"
-        val version = "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT"
-        val cmd = if (SystemInfo.isWindows)
-            listOf("cmd", "/C", "gradlew.bat", "compileDeployKotlin", "build", pathToKotlinPlugin, version, "--no-daemon", "--debug")
-        else
-            listOf("/bin/bash", "./gradlew", "compileDeployKotlin", "build", pathToKotlinPlugin, version,  "--no-daemon", "--debug")
-
-        val builder = ProcessBuilder(cmd)
-        builder.directory(projectDir)
-        builder.redirectErrorStream(true)
-        val process = builder.start()
-
-        val s = Scanner(process.getInputStream()!!)
-        val text = StringBuilder()
-        while (s.hasNextLine()) {
-            text append s.nextLine()
-            text append "\n"
+        project.build("compileDeployKotlin", "build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertReportExists("build/reports/tests/demo.TestSource.html")
+            assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
-        s.close()
 
-        val result = process.waitFor()
-        val buildOutput = text.toString()
-
-        println(buildOutput)
-
-        assertEquals(result, 0)
-        assertTrue(buildOutput.contains(":compileKotlin"), "Should contain ':compileKotlin'")
-        assertTrue(buildOutput.contains(":compileTestKotlin"), "Should contain ':compileTestKotlin'")
-        assertTrue(buildOutput.contains(":compileDeployKotlin"), "Should contain ':compileDeployKotlin'")
-        assertTrue(File(projectDir, "build/reports/tests/demo.TestSource.html").exists(), "Test report does not exist. Were tests executed?")
-
-        // Run the build second time, assert everything is up-to-date
-
-        val up2dateBuilder = ProcessBuilder(cmd)
-        up2dateBuilder.directory(projectDir)
-        up2dateBuilder.redirectErrorStream(true)
-        val up2dateProcess = up2dateBuilder.start()
-
-        val up2dateProcessScanner = Scanner(up2dateProcess.getInputStream()!!)
-        val up2dateText = StringBuilder()
-        while (up2dateProcessScanner.hasNextLine()) {
-            up2dateText append up2dateProcessScanner.nextLine()
-            up2dateText append "\n"
+        project.build("compileDeployKotlin", "build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertContains(":compileKotlin UP-TO-DATE", ":compileTestKotlin UP-TO-DATE", ":compileDeployKotlin UP-TO-DATE", ":compileJava UP-TO-DATE")
         }
-        up2dateProcessScanner.close()
-
-        val up2dateResult = up2dateProcess.waitFor()
-        val up2dateBuildOutput = up2dateText.toString()
-
-        println(up2dateBuildOutput)
-
-        assertEquals(up2dateResult, 0)
-        assertTrue(up2dateBuildOutput.contains(":compileKotlin UP-TO-DATE"), "Should contain ':compileKotlin UP-TO-DATE'")
-        assertTrue(up2dateBuildOutput.contains(":compileTestKotlin UP-TO-DATE"), "Should contain ':compileTestKotlin UP-TO-DATE'")
-        assertTrue(up2dateBuildOutput.contains(":compileDeployKotlin UP-TO-DATE"), "Should contain ':compileDeployKotlin UP-TO-DATE'")
-        assertTrue(up2dateBuildOutput.contains(":compileJava UP-TO-DATE"), "Should contain ':compileJava UP-TO-DATE'")
     }
 
     Test fun testKotlinCustomDirectory() {
-            val projectDir = File(workingDir, "beta")
-
-            val pathToKotlinPlugin = "-PpathToKotlinPlugin=${File("local-repo").getAbsolutePath()}"
-            val version = "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT"
-            val cmd = if (SystemInfo.isWindows)
-                listOf("cmd", "/C", "gradlew.bat", "build", pathToKotlinPlugin, version, "--no-daemon", "--debug")
-            else
-                listOf("/bin/bash", "./gradlew", "build", pathToKotlinPlugin, version,  "--no-daemon", "--debug")
-
-            val builder = ProcessBuilder(cmd)
-            builder.directory(projectDir)
-            builder.redirectErrorStream(true)
-            val process = builder.start()
-
-            val s = Scanner(process.getInputStream()!!)
-            val text = StringBuilder()
-            while (s.hasNextLine()) {
-                text append s.nextLine()
-                text append "\n"
-            }
-            s.close()
-
-            val result = process.waitFor()
-            val buildOutput = text.toString()
-
-            println(buildOutput)
-
-            assertEquals(result, 0)
-    }
-
-
-    fun copyRecursively(source: File, target: File) {
-        assertTrue(target.isDirectory())
-        val targetFile = File(target, source.getName())
-        if (source.isDirectory()) {
-            targetFile.mkdir()
-            val array = source.listFiles()
-            if (array != null) {
-                for (child in array) {
-                    copyRecursively(child, targetFile)
-                }
-            }
-        } else {
-            Files.copy(source, targetFile)
+        Project("beta").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
         }
     }
 
-
-    fun deleteRecursively(f: File): Unit {
-        if (f.isDirectory()) {
-            val children = f.listFiles()
-            if (children != null) {
-                for (child in children) {
-                    deleteRecursively(child)
-                }
-            }
-            val shouldBeEmpty = f.listFiles()
-            if (shouldBeEmpty != null) {
-                assertTrue(shouldBeEmpty.isEmpty())
-            } else {
-                fail("Error listing directory content")
-            }
+    Test fun testSimpleKDoc() {
+        Project("delta").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+            assertReportExists("build/docs/kdoc/demo/MyClass.html")
+            assertContains(":kdoc", "Generating kdoc to")
         }
-        f.delete()
+    }
+
+    Ignore fun testKotlinExtraJavaSrc() {
+        Project("gamma").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+        }
     }
 }

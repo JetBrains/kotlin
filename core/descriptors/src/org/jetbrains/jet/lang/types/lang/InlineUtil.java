@@ -32,8 +32,6 @@ public class InlineUtil {
 
     public static boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = true;
-
     public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
 
     public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {

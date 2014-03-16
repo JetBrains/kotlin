@@ -124,10 +124,6 @@ trait CallCase<I : CallInfo> {
                 callInfo.receiverArgument()
         } else {
             if (callInfo.receiverObject == null) {
-                // TODO remake UsageTracker and drop this hack
-                // this call need for usage tracker -- without it, capture this not worked
-                val alias = callInfo.context.getAliasForDescriptor(callInfo.callableDescriptor)
-                assert(alias == null, "Failed hack for usageTracker")
                 callInfo.thisObject()
             } else
                 callInfo.bothReceivers()

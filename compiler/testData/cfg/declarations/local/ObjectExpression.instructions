@@ -1,0 +1,82 @@
+== A ==
+trait A {
+    fun foo() : Int
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo() : Int
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== B ==
+class B : A {
+    override fun foo() = 10
+}
+---------------------
+L0:
+  1 <START>
+    unsupported(DELEGATOR_SUPER_CLASS : A)
+L1:
+    <END>                                     NEXT:[<SINK>]
+error:
+    <ERROR>                                   PREV:[]
+sink:
+    <SINK>                                    PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+override fun foo() = 10
+---------------------
+L0:
+  1 <START>
+    r(10)
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(b: B) : Int {
+    val o = object : A by b {}
+    return o.foo()
+}
+---------------------
+L0:
+  1 <START>
+    v(b: B)
+    w(b)
+  2 mark({ val o = object : A by b {} return o.foo() })
+    v(val o = object : A by b {})
+    mark(object : A by b {})
+    r(b)
+    r(object : A by b {})
+    w(o)
+    mark(o.foo())
+    mark(foo())
+    r(o)
+    call(foo, foo)
+    ret(*) L1
+L1:
+  1 <END>                                                  NEXT:[<SINK>]
+error:
+    <ERROR>                                                PREV:[]
+sink:
+    <SINK>                                                 PREV:[<ERROR>, <END>]
+=====================

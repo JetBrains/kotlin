@@ -1,0 +1,6 @@
+fun main(args: Array<String>) {
+    var a: String? = "A"
+    val s = a
+    println(if (s != null) s.length else null)
+}
+

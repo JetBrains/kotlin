@@ -80,7 +80,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
 
     private JetScope getContextScope() throws IOException {
         // todo comments
-        String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"));
+        String text = FileUtil.loadFile(new File("compiler/testData/type-substitutor.kt"), true);
         JetFile jetFile = JetPsiFactory.createFile(getProject(), text);
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(Collections.singletonList(jetFile), getEnvironment());
         JetScope topLevelDeclarations = module.getPackage(FqName.ROOT).getMemberScope();

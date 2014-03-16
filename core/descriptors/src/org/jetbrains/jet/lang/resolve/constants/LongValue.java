@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-public class LongValue extends CompileTimeConstant<Long> {
+public class LongValue extends IntegerValueConstant<Long> {
 
     public LongValue(long value, boolean canBeUsedInAnnotations, boolean pure) {
         super(value, canBeUsedInAnnotations, pure);

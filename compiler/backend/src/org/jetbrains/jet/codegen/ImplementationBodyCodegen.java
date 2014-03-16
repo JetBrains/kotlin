@@ -1731,11 +1731,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         if (initializer == null) return false;
 
-        CompileTimeConstant<?> compileTimeValue = ExpressionCodegen.getCompileTimeConstant(initializer, typeMapper.getBindingContext());
-        if (compileTimeValue == null) return true;
-
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) typeMapper.getBindingContext().get(BindingContext.VARIABLE, property);
         assert propertyDescriptor != null;
+
+        CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
+        if (compileTimeValue == null) return true;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
 

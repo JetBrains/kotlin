@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImp
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -466,9 +467,9 @@ public class CallExpressionResolver {
         }
 
         CompileTimeConstant<?> value = ConstantExpressionEvaluator.object$.evaluate(expression, context.trace, context.expectedType);
-            if (value != null && value.isPure()) {
-                return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
-            }
+        if (value instanceof IntegerValueConstant && ((IntegerValueConstant) value).isPure()) {
+            return BasicExpressionTypingVisitor.createCompileTimeConstantTypeInfo(value, expression, context);
+        }
 
         JetTypeInfo typeInfo = JetTypeInfo.create(selectorReturnType, selectorReturnTypeInfo.getDataFlowInfo());
         if (context.contextDependency == INDEPENDENT) {

@@ -1,0 +1,23 @@
+== foo ==
+fun foo() {
+    var i = 1
+    i++
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ var i = 1 i++ })
+    v(var i = 1)
+    r(1)
+    w(i)
+    mark(i++)
+    r(i)
+    call(++, inc)
+    w(i)
+L1:
+  1 <END>                      NEXT:[<SINK>]
+error:
+    <ERROR>                    PREV:[]
+sink:
+    <SINK>                     PREV:[<ERROR>, <END>]
+=====================

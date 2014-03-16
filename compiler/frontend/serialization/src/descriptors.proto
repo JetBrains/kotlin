@@ -170,6 +170,7 @@ message Callable {
      MemberKind
      hasGetter
      hasSetter
+     hasConstant
    */
   optional int32 flags = 1;
   optional string extra_visibility = 2; // for things like java-specific visibilities

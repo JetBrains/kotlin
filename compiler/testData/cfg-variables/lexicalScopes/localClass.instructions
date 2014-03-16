@@ -1,0 +1,55 @@
+== foo ==
+fun foo() {
+    "before"
+    class A(val x: Int) {
+        {
+            val a = x
+        }
+        fun foo() {
+            val b = x
+        }
+    }
+    "after"
+}
+---------------------
+L0:
+  1 <START>                                                                                     INIT: in: {} out: {}
+  2 mark({ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" })
+    mark("before")
+    r("before")
+    v(val x: Int)                                                                               INIT: in: {} out: {x=D}
+    w(x)                                                                                        INIT: in: {x=D} out: {x=ID}
+  3 mark({ val a = x })                                                                         INIT: in: {x=ID} out: {x=ID}
+    v(val a = x)                                                                                INIT: in: {x=ID} out: {a=D, x=ID}
+    r(x)                                                                                        INIT: in: {a=D, x=ID} out: {a=D, x=ID}
+    w(a)                                                                                        INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
+  2 jmp?(L2)                                                                                    INIT: in: {x=ID} out: {x=ID}
+    d(fun foo() { val b = x })                                                                                                             USE: in: {x=READ} out: {x=READ}
+L2:
+    mark("after")
+    r("after")
+L1:
+  1 <END>                                                                                       INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                                                 USE: in: {} out: {}
+=====================
+== foo ==
+fun foo() {
+            val b = x
+        }
+---------------------
+L3:
+  3 <START>                INIT: in: {} out: {}
+  4 mark({ val b = x })
+    v(val b = x)           INIT: in: {} out: {b=D}        USE: in: {x=READ} out: {x=READ}
+    r(x)                   INIT: in: {b=D} out: {b=D}     USE: in: {} out: {x=READ}
+    w(b)                   INIT: in: {b=D} out: {b=ID}
+L4:
+  3 <END>                  INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                USE: in: {} out: {}
+=====================

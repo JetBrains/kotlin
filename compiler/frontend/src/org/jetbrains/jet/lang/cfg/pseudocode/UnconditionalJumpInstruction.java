@@ -22,8 +22,8 @@ import org.jetbrains.jet.lang.cfg.Label;
 public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
 
 
-    public UnconditionalJumpInstruction(Label targetLabel) {
-        super(targetLabel);
+    public UnconditionalJumpInstruction(Label targetLabel, @NotNull LexicalScope lexicalScope) {
+        super(targetLabel, lexicalScope);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
     }
 
     @Override
-    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel) {
-        return new UnconditionalJumpInstruction(newLabel);
+    protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
+        return new UnconditionalJumpInstruction(newLabel, lexicalScope);
     }
 }

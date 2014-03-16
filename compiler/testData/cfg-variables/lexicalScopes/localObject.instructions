@@ -1,0 +1,53 @@
+== foo ==
+fun foo() {
+    "before"
+    object A {
+        {
+            val a = 1
+        }
+        fun foo() {
+            val b = 2
+        }
+    }
+    "after"
+}
+---------------------
+L0:
+  1 <START>                                                                          INIT: in: {} out: {}
+  2 mark({ "before" object A { { val a = 1 } fun foo() { val b = 2 } } "after" })
+    mark("before")
+    r("before")
+  3 mark({ val a = 1 })
+    v(val a = 1)                                                                     INIT: in: {} out: {a=D}
+    r(1)                                                                             INIT: in: {a=D} out: {a=D}
+    w(a)                                                                             INIT: in: {a=D} out: {a=ID}
+  2 jmp?(L2)                                                                         INIT: in: {} out: {}
+    d(fun foo() { val b = 2 })
+L2:
+    mark("after")
+    r("after")
+L1:
+  1 <END>
+error:
+    <ERROR>
+sink:
+    <SINK>                                                                                                          USE: in: {} out: {}
+=====================
+== foo ==
+fun foo() {
+            val b = 2
+        }
+---------------------
+L3:
+  3 <START>                INIT: in: {} out: {}
+  4 mark({ val b = 2 })
+    v(val b = 2)           INIT: in: {} out: {b=D}
+    r(2)                   INIT: in: {b=D} out: {b=D}
+    w(b)                   INIT: in: {b=D} out: {b=ID}
+L4:
+  3 <END>                  INIT: in: {} out: {}
+error:
+    <ERROR>
+sink:
+    <SINK>                                                USE: in: {} out: {}
+=====================

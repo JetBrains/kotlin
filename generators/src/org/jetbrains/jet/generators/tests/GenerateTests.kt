@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparingTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
@@ -97,6 +96,7 @@ import org.jetbrains.jet.resolve.AbstractReferenceToJavaWithWrongFileStructureTe
 import org.jetbrains.jet.plugin.navigation.AbstractKotlinGotoTest
 import org.jetbrains.jet.plugin.AbstractExpressionSelectionTest
 import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
+import org.jetbrains.jet.cfg.AbstractDataFlowTest
 import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 
@@ -213,17 +213,6 @@ fun main(args: Array<String>) {
             model("modules.xml", extension = "xml")
         }
 
-        testClass(javaClass<AbstractDescriptorSerializationTest>()) {
-            model("loadJava/compiledKotlin/class")
-            model("loadJava/compiledKotlin/classFun")
-            model("loadJava/compiledKotlin/classObject")
-            model("loadJava/compiledKotlin/constructor")
-            model("loadJava/compiledKotlin/fun")
-            model("loadJava/compiledKotlin/prop")
-            model("loadJava/compiledKotlin/type")
-            model("loadJava/compiledKotlin/visibility")
-        }
-
         testClass(javaClass<AbstractWriteSignatureTest>()) {
             model("writeSignature")
         }
@@ -235,6 +224,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractControlFlowTest>()) {
             model("cfg")
+        }
+
+        testClass(javaClass<AbstractDataFlowTest>()) {
+            model("cfg-variables")
         }
 
         testClass(javaClass<AbstractAnnotationParameterTest>()) {
@@ -342,6 +335,10 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCodeTransformationTest>()) {
+            model("intentions/branched/elvisToIfThen", testMethod = "doTestElvisToIfThen")
+            model("intentions/branched/ifThenToElvis", testMethod = "doTestIfThenToElvis")
+            model("intentions/branched/safeAccessToIfThen", testMethod = "doTestSafeAccessToIfThen")
+            model("intentions/branched/ifThenToSafeAccess", testMethod = "doTestIfThenToSafeAccess")
             model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
             model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
             model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")
@@ -375,6 +372,11 @@ fun main(args: Array<String>) {
             model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
             model("intentions/addBraces", testMethod = "doTestAddBraces")
             model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
+            model("intentions/attributeCallReplacements/replaceGetIntention", testMethod = "doTestReplaceGetIntention")
+            model("intentions/attributeCallReplacements/replaceContainsIntention", testMethod = "doTestReplaceContainsIntention")
+            model("intentions/attributeCallReplacements/replaceBinaryInfixIntention", testMethod = "doTestReplaceBinaryInfixIntention")
+            model("intentions/attributeCallReplacements/replaceUnaryPrefixIntention", testMethod = "doTestReplaceUnaryPrefixIntention")
+            model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

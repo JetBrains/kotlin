@@ -39,6 +39,10 @@ public interface JetControlFlowBuilder {
     @Nullable
     JetElement getReturnSubroutine();
 
+    // Lexical scopes
+    void enterLexicalScope(@NotNull JetElement element);
+    void exitLexicalScope(@NotNull JetElement element);
+
     // Entry/exit points
     @NotNull
     Label getEntryPoint(@NotNull JetElement labelElement);
