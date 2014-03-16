@@ -68,5 +68,16 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add f("contains(item: T)") {
+        isInline = false
+        doc = "Returns true if the array contains the item"
+        returns("Boolean")
+        body {
+            """
+                return this.indexOf(item) >= 0
+           """
+        }
+    }
+
     return templates.sort()
 }
