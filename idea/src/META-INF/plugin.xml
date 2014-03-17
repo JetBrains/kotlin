@@ -203,7 +203,10 @@
     <completion.contributor language="jet" id="JetExtensionFunctionReceiverContributor" order="after JetPackagesContributor"
                             implementationClass="org.jetbrains.jet.plugin.completion.JetExtensionReceiverTypeContributor"/>
 
-    <completion.contributor language="jet" id="JetCompletionContributor" order="after JetExtensionFunctionReceiverContributor"
+    <completion.contributor language="jet" id="KotlinNamedParametersContributor" order="after JetExtensionFunctionReceiverContributor"
+                            implementationClass="org.jetbrains.jet.plugin.completion.KotlinNamedParametersContributor"/>
+
+    <completion.contributor language="jet" id="JetCompletionContributor" order="after KotlinNamedParametersContributor"
                             implementationClass="org.jetbrains.jet.plugin.completion.JetCompletionContributor"/>
 
     <completion.contributor language="jet" implementationClass="org.jetbrains.jet.plugin.liveTemplates.JetLiveTemplateCompletionContributor"

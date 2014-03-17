@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
+import org.jetbrains.jet.plugin.completion.KotlinNamedParametersContributor;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 
 public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
@@ -39,6 +40,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     }
 
     private enum MyResult {
+        positionSpecific,
         kotlinDefaultImport,
         thisFile,
         imported,
@@ -50,6 +52,11 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     @Override
     public Comparable weigh(@NotNull LookupElement element) {
         Object object = element.getObject();
+
+        if (object instanceof KotlinNamedParametersContributor.NamedParameterLookupObject) {
+            return MyResult.positionSpecific;
+        }
+
         if (object instanceof JetLookupObject) {
             JetLookupObject lookupObject = (JetLookupObject) object;
 

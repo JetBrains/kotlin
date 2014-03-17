@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
@@ -72,7 +71,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
 
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
         JetType type = context.get(BindingContext.EXPRESSION_TYPE, argument.getArgumentExpression());
-        Set<String> usedParameters = getUsedParameters(callElement, callableDescriptor);
+        Set<String> usedParameters = QuickFixUtil.getUsedParameters(callElement, null, callableDescriptor);
         List<String> names = Lists.newArrayList();
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
             String name = parameter.getName().asString();
@@ -82,27 +81,6 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
             }
         }
         return names;
-    }
-
-    @NotNull
-    private static Set<String> getUsedParameters(@NotNull JetCallElement callElement, @NotNull CallableDescriptor callableDescriptor) {
-        Set<String> usedParameters = Sets.newHashSet();
-        boolean isPositionalArgument = true;
-        int idx = 0;
-        for (ValueArgument argument : callElement.getValueArguments()) {
-            if (argument.isNamed()) {
-                JetValueArgumentName name = argument.getArgumentName();
-                assert name != null : "Named argument's name cannot be null";
-                usedParameters.add(name.getText());
-                isPositionalArgument = false;
-            }
-            else if (isPositionalArgument) {
-                ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
-                usedParameters.add(parameter.getName().asString());
-                idx++;
-            }
-        }
-        return usedParameters;
     }
 
     @Override

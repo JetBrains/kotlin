@@ -33,7 +33,7 @@ import org.jetbrains.jet.completion.AbstractJvmBasicCompletionTest;
 @InnerTestClasses({JvmBasicCompletionTestGenerated.Common.class, JvmBasicCompletionTestGenerated.Java.class})
 public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionTest {
     @TestMetadata("idea/testData/completion/basic/common")
-    @InnerTestClasses({Common.Extensions.class})
+    @InnerTestClasses({Common.Extensions.class, Common.NamedParameters.class})
     public static class Common extends AbstractJvmBasicCompletionTest {
         @TestMetadata("AfterFloatOnNewLine.kt")
         public void testAfterFloatOnNewLine() throws Exception {
@@ -472,10 +472,54 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             
         }
         
+        @TestMetadata("idea/testData/completion/basic/common/namedParameters")
+        public static class NamedParameters extends AbstractJvmBasicCompletionTest {
+            @TestMetadata("AfterBrace.kt")
+            public void testAfterBrace() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/AfterBrace.kt");
+            }
+            
+            @TestMetadata("AfterComma.kt")
+            public void testAfterComma() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/AfterComma.kt");
+            }
+            
+            public void testAllFilesPresentInNamedParameters() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/basic/common/namedParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("InParameterExpression.kt")
+            public void testInParameterExpression() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/InParameterExpression.kt");
+            }
+            
+            @TestMetadata("NamedParametersFromOverloads.kt")
+            public void testNamedParametersFromOverloads() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NamedParametersFromOverloads.kt");
+            }
+            
+            @TestMetadata("NamedParamsInConstructor.kt")
+            public void testNamedParamsInConstructor() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NamedParamsInConstructor.kt");
+            }
+            
+            @TestMetadata("NoAlreadyUsedParameters.kt")
+            public void testNoAlreadyUsedParameters() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NoAlreadyUsedParameters.kt");
+            }
+            
+            @TestMetadata("NoParamsFromUnapplicableOverload.kt")
+            public void testNoParamsFromUnapplicableOverload() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/NoParamsFromUnapplicableOverload.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Common");
             suite.addTestSuite(Common.class);
             suite.addTestSuite(Extensions.class);
+            suite.addTestSuite(NamedParameters.class);
             return suite;
         }
     }

@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.jet.plugin.completion.JetLookupObject;
+import org.jetbrains.jet.plugin.completion.KotlinNamedParametersContributor;
 
 class JetKindWeigher extends LookupElementWeigher {
     JetKindWeigher() {
@@ -34,6 +35,7 @@ class JetKindWeigher extends LookupElementWeigher {
     private enum MyResult {
         localOrParameter,
         property,
+        namedParameter,
         probableKeyword,
         normal,
         packages
@@ -57,6 +59,9 @@ class JetKindWeigher extends LookupElementWeigher {
                     return MyResult.packages;
                 }
             }
+        }
+        else if (object instanceof KotlinNamedParametersContributor.NamedParameterLookupObject) {
+            return MyResult.namedParameter;
         }
         else if (object instanceof String) {
              return MyResult.probableKeyword;
