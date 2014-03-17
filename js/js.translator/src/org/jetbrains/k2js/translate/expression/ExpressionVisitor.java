@@ -414,7 +414,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
-        context.aliasingContext().registerAlias(descriptor, name.makeRef());
+
         return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
     }
 
