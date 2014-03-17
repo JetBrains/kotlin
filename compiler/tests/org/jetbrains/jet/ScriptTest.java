@@ -50,6 +50,13 @@ public class ScriptTest {
     }
 
     @Test
+    public void testScriptWithPackage() throws Exception {
+        Class<?> aClass = compileScript("fib.pkg.ktscript", numIntParam(), Collections.<JetScriptDefinition>emptyList());
+        Assert.assertNotNull(aClass);
+        aClass.getConstructor(int.class).newInstance(4);
+    }
+
+    @Test
     public void testScriptStandardExt() throws Exception {
         Class<?> aClass = compileScript("fib.kt", numIntParam(), Collections.<JetScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
