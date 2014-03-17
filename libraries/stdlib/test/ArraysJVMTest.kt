@@ -100,6 +100,32 @@ class ArraysJVMTest {
         expect(-1) { booleanArray(true) indexOf false }
     }
 
+    test fun lastIndexOf() {
+        expect(-1) { byteArray(0, 1, 0, 3, 4) lastIndexOf 5 }
+        expect(2) { byteArray(0, 1, 0, 3, 4) lastIndexOf 0 }
+
+        expect(-1) { shortArray(0, 1, 0, 3, 4) lastIndexOf 5 }
+        expect(2) { shortArray(0, 1, 0, 3, 4) lastIndexOf 0 }
+
+        expect(-1) { intArray(0, 1, 0, 3, 4) lastIndexOf 5 }
+        expect(2) { intArray(0, 1, 0, 3, 4) lastIndexOf 0 }
+
+        expect(-1) { longArray(0, 1, 0, 3, 4) lastIndexOf 5 }
+        expect(2) { longArray(0, 1, 0, 3, 4) lastIndexOf 0 }
+
+        expect(-1) { floatArray(0f, 1f, 0f, 3f, 4f) lastIndexOf 5.0f }
+        expect(2) { floatArray(0f, 1f, 0f, 3f, 4f) lastIndexOf 0.0f }
+
+        expect(-1) { doubleArray(0.0, 1.0, 0.0, 3.0, 4.0) lastIndexOf 5.0 }
+        expect(2) { doubleArray(0.0, 1.0, 0.0, 3.0, 4.0) lastIndexOf 0.0 }
+
+        expect(-1) { charArray('a', 'b', 'c') lastIndexOf 'z' }
+        expect(2) { charArray('a', 'b', 'a', 'c') lastIndexOf 'a' }
+
+        expect(-1) { booleanArray(true) lastIndexOf false }
+        expect(2) { booleanArray(true, false, true, false) lastIndexOf true }
+    }
+
     test fun isEmpty() {
         assertTrue(intArray().isEmpty())
         assertFalse(intArray(1).isEmpty())

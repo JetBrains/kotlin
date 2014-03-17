@@ -170,10 +170,6 @@ class ArraysTest {
         val words = array("cat", "dog", "bird", "cat", "mouse")
         expect(3) { words.lastIndexOf("cat") }
         expect(-1) { words.lastIndexOf("lion") }
-
-        val nums = intArray(0, 1, 2, 0, 4, 5)
-        expect(3) { nums.lastIndexOf(0) }
-        expect(-1) { nums.lastIndexOf(6) }
     }
     /*
 
