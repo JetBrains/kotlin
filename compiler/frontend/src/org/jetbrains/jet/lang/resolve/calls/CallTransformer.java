@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -109,28 +110,27 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                         ResolvedCallImpl.create(candidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments), task, candidateTrace, task.tracing, variableCall);
                 return Collections.singleton(context);
             }
-            Call variableCallWithoutReceiver = stripReceiver(variableCall);
             CallCandidateResolutionContext<CallableDescriptor> contextWithReceiver = createContextWithChainedTrace(
-                    candidate, variableCall, candidateTrace, task);
+                    candidate, variableCall, candidateTrace, task, ReceiverValue.NO_RECEIVER);
 
+            Call variableCallWithoutReceiver = stripReceiver(variableCall);
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
                     candidate.getCall(), candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
             CallCandidateResolutionContext<CallableDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
-                    candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task);
-
-            contextWithoutReceiver.explicitExtensionReceiverForInvoke = variableCall.getExplicitReceiver();
+                    candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task, variableCall.getExplicitReceiver());
 
             return Lists.newArrayList(contextWithReceiver, contextWithoutReceiver);
         }
 
-        private CallCandidateResolutionContext<CallableDescriptor> createContextWithChainedTrace(ResolutionCandidate<CallableDescriptor> candidate,
-                Call call, TemporaryBindingTrace temporaryTrace, ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
-
+        private CallCandidateResolutionContext<CallableDescriptor> createContextWithChainedTrace(
+                @NotNull ResolutionCandidate<CallableDescriptor> candidate, @NotNull Call call, @NotNull TemporaryBindingTrace temporaryTrace,
+                @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task, @NotNull ReceiverValue receiverValue
+        ) {
             ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace, "chained trace to resolve candidate", candidate);
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace, task.tracing, task.dataFlowInfoForArguments);
-            return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call);
+            return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call, receiverValue);
         }
 
         private Call stripCallArguments(@NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task) {
