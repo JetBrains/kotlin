@@ -1,5 +1,5 @@
-val x = LineIterator<caret>
+val x = LinesStream<caret>
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"LineIterator", tailText:" (kotlin.io)" }
+// EXIST: { lookupString:"LinesStream", tailText:" (kotlin.io)" }
 // NUMBER: 1
