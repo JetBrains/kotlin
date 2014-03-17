@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collection;
@@ -28,14 +29,18 @@ import java.util.List;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 
 public class ResolutionCandidate<D extends CallableDescriptor> {
+    private final Call call;
     private final D candidateDescriptor;
     private ReceiverValue thisObject; // receiver object of a method
     private ReceiverValue receiverArgument; // receiver of an extension function
     private ExplicitReceiverKind explicitReceiverKind;
     private Boolean isSafeCall;
 
-    private ResolutionCandidate(@NotNull D descriptor, @NotNull ReceiverValue thisObject, @NotNull ReceiverValue receiverArgument,
-            @NotNull ExplicitReceiverKind explicitReceiverKind, @Nullable Boolean isSafeCall) {
+    private ResolutionCandidate(
+            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue thisObject,
+            @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, @Nullable Boolean isSafeCall
+    ) {
+        this.call = call;
         this.candidateDescriptor = descriptor;
         this.thisObject = thisObject;
         this.receiverArgument = receiverArgument;
@@ -43,18 +48,22 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         this.isSafeCall = isSafeCall;
     }
 
-    /*package*/ static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor) {
-        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+    /*package*/ static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull Call call, @NotNull D descriptor) {
+        return new ResolutionCandidate<D>(call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
     /* 'null' for isSafeCall parameter if it should be set later (with 'setSafeCall') */
-    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @Nullable Boolean isSafeCall) {
-        return new ResolutionCandidate<D>(descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
+            @NotNull Call call, @NotNull D descriptor, @Nullable Boolean isSafeCall
+    ) {
+        return new ResolutionCandidate<D>(call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, isSafeCall);
     }
 
-    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(@NotNull D descriptor, @NotNull ReceiverValue thisObject,
-            @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, boolean isSafeCall) {
-        return new ResolutionCandidate<D>(descriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall);
+    public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
+            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue thisObject,
+            @NotNull ReceiverValue receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind, boolean isSafeCall
+    ) {
+        return new ResolutionCandidate<D>(call, descriptor, thisObject, receiverArgument, explicitReceiverKind, isSafeCall);
     }
 
     public void setThisObject(@NotNull ReceiverValue thisObject) {
@@ -67,6 +76,11 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
 
     public void setExplicitReceiverKind(@NotNull ExplicitReceiverKind explicitReceiverKind) {
         this.explicitReceiverKind = explicitReceiverKind;
+    }
+
+    @NotNull
+    public Call getCall() {
+        return call;
     }
 
     @NotNull
@@ -90,10 +104,12 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     }
 
     @NotNull
-    public static <D extends CallableDescriptor> List<ResolutionCandidate<D>> convertCollection(@NotNull Collection<? extends D> descriptors, boolean isSafeCall) {
+    public static <D extends CallableDescriptor> List<ResolutionCandidate<D>> convertCollection(
+            @NotNull Call call, @NotNull Collection<? extends D> descriptors, boolean isSafeCall
+    ) {
         List<ResolutionCandidate<D>> result = Lists.newArrayList();
         for (D descriptor : descriptors) {
-            result.add(create(descriptor, isSafeCall));
+            result.add(create(call, descriptor, isSafeCall));
         }
         return result;
     }

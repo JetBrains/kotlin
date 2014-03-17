@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
@@ -69,6 +70,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         return new ResolvedCallImpl<D>(candidate, trace, tracing, dataFlowInfoForArguments);
     }
 
+    private final Call call;
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverValue thisObject; // receiver object of a method
@@ -96,6 +98,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
             @NotNull TracingStrategy tracing,
             @NotNull MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
+        this.call = candidate.getCall();
         this.candidateDescriptor = candidate.getDescriptor();
         this.thisObject = candidate.getThisObject();
         this.receiverArgument = candidate.getReceiverArgument();
@@ -141,6 +144,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     public TracingStrategy getTracing() {
         assertNotCompleted("TracingStrategy");
         return tracing;
+    }
+
+    @NotNull
+    @Override
+    public Call getCall() {
+        return call;
     }
 
     @Override

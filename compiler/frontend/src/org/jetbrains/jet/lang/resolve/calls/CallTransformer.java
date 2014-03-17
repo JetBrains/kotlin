@@ -114,7 +114,8 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     candidate, variableCall, candidateTrace, task);
 
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
-                    candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
+                    candidate.getCall(), candidate.getDescriptor(), candidate.getThisObject(), ReceiverValue.NO_RECEIVER,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
 
             CallCandidateResolutionContext<CallableDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
                     candidateWithoutReceiver, variableCallWithoutReceiver, candidateTrace, task);

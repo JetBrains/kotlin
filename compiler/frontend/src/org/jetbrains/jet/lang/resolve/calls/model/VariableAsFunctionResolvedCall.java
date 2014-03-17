@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -49,6 +50,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @NotNull
     public ResolvedCallWithTrace<VariableDescriptor> getVariableCall() {
         return variableCall;
+    }
+
+    @NotNull
+    @Override
+    public Call getCall() {
+        return variableCall.getCall();
     }
 
     @NotNull

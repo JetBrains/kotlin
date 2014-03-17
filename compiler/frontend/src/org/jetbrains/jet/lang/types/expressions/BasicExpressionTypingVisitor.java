@@ -411,14 +411,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             JetExpression expression
     ) {
         BindingTrace trace = context.trace;
-        ResolutionCandidate<ReceiverParameterDescriptor> resolutionCandidate =
-                ResolutionCandidate.create(descriptor,
-                                           NO_RECEIVER,
-                                           NO_RECEIVER,
-                                           ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-                                           false);
-
         Call call = CallMaker.makeCall(expression, NO_RECEIVER, null, expression, Collections.<ValueArgument>emptyList());
+        ResolutionCandidate<ReceiverParameterDescriptor> resolutionCandidate =
+                ResolutionCandidate.create(
+                        call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, false);
+
         ResolvedCallImpl<ReceiverParameterDescriptor> resolvedCall =
                 ResolvedCallImpl.create(resolutionCandidate,
                                         TemporaryBindingTrace.create(trace, "Fake trace for fake 'this' or 'super' resolved call"),

@@ -253,7 +253,8 @@ public class CallResolver {
                         return checkArgumentTypesAndFail(context);
                     }
                     Collection<ResolutionCandidate<CallableDescriptor>> candidates =
-                            TaskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(context.scope, constructors);
+                            TaskPrioritizer.<CallableDescriptor>convertWithImpliedThisAndNoReceiver(
+                                    context.scope, constructors, context.call);
                     prioritizedTasks = TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
                             context, candidates, TracingStrategyImpl.create(functionReference, context.call));
                 }
@@ -276,7 +277,8 @@ public class CallResolver {
                     context.trace.report(NO_CONSTRUCTOR.on(reportAbsenceOn));
                     return checkArgumentTypesAndFail(context);
                 }
-                List<ResolutionCandidate<CallableDescriptor>> candidates = ResolutionCandidate.<CallableDescriptor>convertCollection(constructors, JetPsiUtil.isSafeCall(context.call));
+                List<ResolutionCandidate<CallableDescriptor>> candidates = ResolutionCandidate.<CallableDescriptor>convertCollection(
+                        context.call, constructors, JetPsiUtil.isSafeCall(context.call));
                 prioritizedTasks = Collections.singletonList(new ResolutionTask<CallableDescriptor, FunctionDescriptor>(candidates, functionReference, context)); // !! DataFlowInfo.EMPTY
             }
             else if (calleeExpression != null) {
