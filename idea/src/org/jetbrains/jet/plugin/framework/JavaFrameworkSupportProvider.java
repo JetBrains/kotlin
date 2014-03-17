@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,15 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
 
     @NotNull
     @Override
-    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
+    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull final FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
+            JavaRuntimeLibraryDescription description = null;
+
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                return new JavaRuntimeLibraryDescription();
+                description = new JavaRuntimeLibraryDescription(model.getProject());
+                return description;
             }
 
             @Nullable
@@ -66,8 +69,10 @@ public class JavaFrameworkSupportProvider extends FrameworkSupportInModuleProvid
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
-                        new JSLibraryStdDescription(),
+                        JSLibraryStdDescription.SUITABLE_LIBRARY_KINDS,
                         JSFrameworkType.getInstance());
+
+                description.finishLibConfiguration(module, rootModel);
             }
         };
     }

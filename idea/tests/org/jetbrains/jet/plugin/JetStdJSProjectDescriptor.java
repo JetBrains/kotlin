@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class JetStdJSProjectDescriptor implements LightProjectDescriptor {
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model, ContentEntry contentEntry) {
-        NewLibraryConfiguration configuration = new JSLibraryStdDescription().createNewLibraryForTests();
+        NewLibraryConfiguration configuration = new JSLibraryStdDescription(module.getProject()).createNewLibraryForTests();
 
         assert configuration != null : "Configuration should exist";
 
