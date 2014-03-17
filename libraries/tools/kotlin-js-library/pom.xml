@@ -49,33 +49,31 @@
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
-                                    <fileset dir="${basedir}/../../stdlib/src/kotlin/support">
-                                        <include name="**/*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
-                                    </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin/test">
                                         <include name="**/*.kt"/>
                                         <exclude name="**/*JVM.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/kotlin">
-                                        <include name="Arrays.kt"/>
                                         <include name="Preconditions.kt"/>
-                                        <include name="Iterators.kt"/>
-                                        <include name="JUtil.kt"/>
-                                        <include name="Collections.kt"/>
-                                        <include name="Maps.kt"/>
-                                        <include name="Iterables.kt"/>
-                                        <include name="IterablesLazy.kt"/>
-                                        <include name="IterablesSpecial.kt"/>
+                                        <include name="Functions.kt"/>
+                                        <include name="Integers.kt"/>
+                                        <include name="collections/AbstractIterator.kt"/>
+                                        <include name="collections/Iterators.kt"/>
+                                        <include name="collections/Arrays.kt"/>
+                                        <include name="collections/JUtil.kt"/>
+                                        <include name="collections/Maps.kt"/>
+                                        <include name="collections/Stream.kt"/>
+                                        <include name="collections/MutableCollections.kt"/>
+                                        <include name="Functions.kt"/>
 <!--
                                         <include name="Ordering.kt"/>
 -->
                                         <include name="Standard.kt"/>
-                                        <include name="Strings.kt"/>
+                                        <include name="text/Strings.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/generated">
                                         <include name="*.kt"/>
-                                        <exclude name="**/*JVM.kt"/>
+                                        <exclude name="*JVM.kt"/>
                                         <exclude name="DownTo.kt"/>
 <!--
                                         <include name="IteratorsFromJLangIterables.kt"/>

@@ -56,16 +56,16 @@ public class CompileMavenGeneratedJSLibrary extends SingleFileTranslationTest {
         if (generatedJsLibraryDir.exists() && generatedJsLibraryDir.isDirectory()) {
             generateJavaScriptFiles(DEFAULT_ECMA_VERSIONS,
                                     "libraries/stdlib/test",
-                                    "ArraysTest.kt",
+                                    "collections/ArraysTest.kt",
                                     "dom/DomTest.kt",
                                     "js/MapTest.kt",
                                     "js/JsDomTest.kt",
-                                    "iterators/FunctionIteratorTest.kt",
-                                    "iterators/IteratorsTest.kt",
+                                    "collections/FunctionIteratorTest.kt",
+                                    "collections/IteratorsTest.kt",
                                     "GetOrElseTest.kt",
-                                    "ListTest.kt",
-                                    "SetTest.kt",
-                                    "StringTest.kt");
+                                    "collections/ListTest.kt",
+                                    "collections/SetTest.kt",
+                                    "text/StringTest.kt");
 
         } else {
             System.out.println("Warning " + generatedJsLibraryDir + " does not exist - I guess you've not run the maven build in library/ yet?");

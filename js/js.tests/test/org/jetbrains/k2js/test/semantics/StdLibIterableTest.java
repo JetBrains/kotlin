@@ -19,11 +19,9 @@ package org.jetbrains.k2js.test.semantics;
 import junit.framework.Test;
 
 @SuppressWarnings("JUnitTestCaseWithNoTests")
-public final class StdLibSetTest extends JsUnitTestBase {
+public final class StdLibIterableTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/SetTest.kt",
-                                      "SetTest.filter",
-                                      "SetTest.find");
+        return createTestSuiteForFile("libraries/stdlib/test/collections/IterableTests.kt");
     }
 }
 
