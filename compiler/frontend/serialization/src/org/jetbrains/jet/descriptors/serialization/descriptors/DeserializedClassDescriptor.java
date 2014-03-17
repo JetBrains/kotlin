@@ -58,7 +58,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     private final NullableLazyValue<ConstructorDescriptor> primaryConstructor;
 
-    private final AnnotationDeserializer annotationDeserializer;
+    private final Deserializers deserializers;
     private final NotNullLazyValue<Annotations> annotations;
 
     private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
@@ -76,7 +76,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
 
     public DeserializedClassDescriptor(
             @NotNull StorageManager storageManager,
-            @NotNull AnnotationDeserializer annotationResolver,
+            @NotNull Deserializers deserializers,
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull PackageFragmentProvider packageFragmentProvider,
             @NotNull NameResolver nameResolver,
@@ -92,7 +92,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         TypeDeserializer notNullTypeDeserializer = new TypeDeserializer(storageManager, null, nameResolver,
                                                                         descriptorFinder, "Deserializer for class " + getName(), NONE);
         DescriptorDeserializer outerDeserializer = DescriptorDeserializer.create(storageManager, notNullTypeDeserializer,
-                                                                                 this, nameResolver, annotationResolver);
+                                                                                 this, nameResolver, deserializers);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(classProto.getTypeParameterCount());
         this.deserializer = outerDeserializer.createChildDeserializer(this, classProto.getTypeParameterList(), typeParameters);
         this.typeDeserializer = deserializer.getTypeDeserializer();
@@ -113,7 +113,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         this.kind = DescriptorDeserializer.classKind(Flags.CLASS_KIND.get(flags));
         this.isInner = Flags.INNER.get(flags);
 
-        this.annotationDeserializer = annotationResolver;
+        this.deserializers = deserializers;
         this.annotations = storageManager.createLazyValue(new Function0<Annotations>() {
             @Override
             public Annotations invoke() {
@@ -191,7 +191,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
             return Annotations.EMPTY;
         }
-        return annotationDeserializer.loadClassAnnotations(this, classProto);
+        return deserializers.getAnnotationDeserializer().loadClassAnnotations(this, classProto);
     }
 
     @NotNull
@@ -253,7 +253,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                 throw new IllegalStateException("Object should have a serialized class object: " + classId);
             }
 
-            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, descriptorFinder, packageFragmentProvider, 
+            return new DeserializedClassDescriptor(storageManager, deserializers, descriptorFinder, packageFragmentProvider,
                                                    deserializer.getNameResolver(), classObjectProto.getData());
         }
 

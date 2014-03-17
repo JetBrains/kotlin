@@ -88,4 +88,12 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testNativePropertyWithCustomName() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testPassExtLambdaToNative() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testPassExtLambdaFromNative() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

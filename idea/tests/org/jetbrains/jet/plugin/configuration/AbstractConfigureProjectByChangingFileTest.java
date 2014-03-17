@@ -20,7 +20,10 @@ import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.idea.maven.model.MavenConstants;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile;
+
+import java.io.File;
 
 public abstract class AbstractConfigureProjectByChangingFileTest extends LightCodeInsightTestCase {
     private static final String DEFAULT_VERSION = "default_version";
@@ -51,7 +54,7 @@ public abstract class AbstractConfigureProjectByChangingFileTest extends LightCo
             KotlinMavenConfigurator.changePomFile(getModule(), getFile(), version);
         }
 
-        assertSameLinesWithFile(afterFile, getFile().getText().replace(version, "$VERSION$"));
+        JetTestUtils.assertEqualsToFile(new File(afterFile), getFile().getText().replace(version, "$VERSION$"));
     }
 
     @NotNull

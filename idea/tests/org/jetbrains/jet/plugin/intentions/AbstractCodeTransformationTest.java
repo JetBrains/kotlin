@@ -31,6 +31,22 @@ import org.junit.Assert;
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+    public void doTestElvisToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new ElvisToIfThenIntention());
+    }
+
+    public void doTestIfThenToElvis(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToElvisIntention());
+    }
+
+    public void doTestSafeAccessToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new SafeAccessToIfThenIntention());
+    }
+
+    public void doTestIfThenToSafeAccess(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToSafeAccessIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }

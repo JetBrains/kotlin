@@ -4,7 +4,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -39,7 +39,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
         // TODO: support annotations
-        members = new DeserializedPackageMemberScope(storageManager, this, AnnotationDeserializer.UNSUPPORTED,
+        members = new DeserializedPackageMemberScope(storageManager, this, Deserializers.UNSUPPORTED,
                                                      new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
     }
 
@@ -133,7 +133,7 @@ class BuiltinsPackageFragment extends DeclarationDescriptorImpl implements Packa
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, AnnotationDeserializer.UNSUPPORTED, packageFragmentProvider);
+            super(storageManager, Deserializers.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override

@@ -16,30 +16,44 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.annotations.Nullable;
 
-public final class KotlinBinaryClassCache {
+public final class KotlinBinaryClassCache implements Disposable {
 
     // This cache must be small: we only query the same file a few times in a row (from different places)
-    // Since it is on application level we should be careful about this cache. Consider profiling multiple projects indexing simultaneously.
-    private final SLRUCache<VirtualFile, KotlinJvmBinaryClass> cache = new SLRUCache<VirtualFile, KotlinJvmBinaryClass>(2, 2) {
-        @NotNull
-        @Override
-        public KotlinJvmBinaryClass createValue(VirtualFile virtualFile) {
-            // Operations under this lock are not supposed to involve other locks
-            return new VirtualFileKotlinClass(new LockBasedStorageManager(), virtualFile);
-        }
-    };
+    // It's local to each thread: we don't want a single instance to synchronize access on, because VirtualFileKotlinClass.create involves
+    // reading files from disk and may take some time
+    private final ThreadLocal<SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>> cache =
+            new ThreadLocal<SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>>() {
+                @Override
+                protected SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>> initialValue() {
+                    return new SLRUCache<VirtualFile, Ref<VirtualFileKotlinClass>>(2, 2) {
+                        @NotNull
+                        @Override
+                        public Ref<VirtualFileKotlinClass> createValue(VirtualFile virtualFile) {
+                            return Ref.create(VirtualFileKotlinClass.create(virtualFile));
+                        }
+                    };
+                }
+            };
 
-    @NotNull
+    @Nullable
     public static KotlinJvmBinaryClass getKotlinBinaryClass(@NotNull VirtualFile file) {
         KotlinBinaryClassCache service = ServiceManager.getService(KotlinBinaryClassCache.class);
-        synchronized (service.cache) {
-            return service.cache.get(file);
-        }
+        return service.cache.get().get(file).get();
+    }
+
+    @Override
+    public void dispose() {
+        // This is only relevant for tests. We create a new instance of Application for each test, and so a new instance of this service is
+        // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
+        // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
+        cache.remove();
     }
 }

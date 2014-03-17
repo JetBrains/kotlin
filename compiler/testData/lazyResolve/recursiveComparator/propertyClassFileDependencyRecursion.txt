@@ -1,6 +1,6 @@
 package test
 
-internal val checkTypeProp: test.PropType?
+internal val checkTypeProp: test.PropType? = null
 
 internal final class PropType {
     /*primary*/ public constructor PropType()

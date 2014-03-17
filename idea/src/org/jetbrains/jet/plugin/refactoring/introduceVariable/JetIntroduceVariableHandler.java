@@ -65,7 +65,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         JetRefactoringUtil.SelectExpressionCallback callback = new JetRefactoringUtil.SelectExpressionCallback() {
             @Override
             public void run(@Nullable JetExpression expression) {
-                doRefactoring(project, editor, expression);
+                doRefactoring(project, editor, expression, null);
             }
         };
         try {
@@ -76,7 +76,11 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         }
     }
 
-    private static void doRefactoring(@NotNull final Project project, final Editor editor, @Nullable JetExpression _expression) {
+
+    public static void doRefactoring(
+            @NotNull final Project project, final Editor editor, @Nullable JetExpression _expression,
+            @Nullable List<JetExpression> occurrencesToReplace
+    ) {
         if (_expression == null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
             return;
@@ -155,7 +159,15 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
         final boolean isInplaceAvailableOnDataContext =
             editor.getSettings().isVariableInplaceRenameEnabled() &&
             !ApplicationManager.getApplication().isUnitTestMode();
-        final List<JetExpression> allOccurrences = findOccurrences(occurrenceContainer, expression);
+
+        final List<JetExpression> allOccurrences;
+        if (occurrencesToReplace == null) {
+            allOccurrences = findOccurrences(occurrenceContainer, expression);
+        }
+        else {
+            allOccurrences = occurrencesToReplace;
+        }
+
         final boolean finalNoTypeInference = noTypeInference;
         final boolean finalNeedParentheses = needParentheses;
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
@@ -212,7 +224,7 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                 }, INTRODUCE_VARIABLE, null);
             }
         };
-        if (isInplaceAvailableOnDataContext) {
+        if (isInplaceAvailableOnDataContext && occurrencesToReplace == null) {
             OccurrencesChooser.<JetExpression>simpleChooser(editor).
                 showChooser(expression, allOccurrences, callback);
         }

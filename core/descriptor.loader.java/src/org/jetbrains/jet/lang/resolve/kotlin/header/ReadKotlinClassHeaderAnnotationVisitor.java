@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -52,16 +51,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] annotationData = null;
     private KotlinClassHeader.Kind headerKind = null;
     private KotlinSyntheticClass.Kind syntheticClassKind = null;
-
-    private ReadKotlinClassHeaderAnnotationVisitor() {
-    }
-
-    @Nullable
-    public static KotlinClassHeader read(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        ReadKotlinClassHeaderAnnotationVisitor visitor = new ReadKotlinClassHeaderAnnotationVisitor();
-        kotlinClass.loadClassAnnotations(visitor);
-        return visitor.createHeader();
-    }
 
     @Nullable
     public KotlinClassHeader createHeader() {

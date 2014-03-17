@@ -3416,6 +3416,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/typeParameterOnLhsOfDot.kt");
             }
             
+            @TestMetadata("variableDeclarationInSelector.kt")
+            public void testVariableDeclarationInSelector() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/variableDeclarationInSelector.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/incompleteCode/diagnosticWithSyntaxError")
             public static class DiagnosticWithSyntaxError extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInDiagnosticWithSyntaxError() throws Exception {
@@ -5606,6 +5611,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt26-1.kt")
             public void testKt26_1() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/regressions/kt26-1.kt");
+            }
+            
+            @TestMetadata("kt2768.kt")
+            public void testKt2768() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/regressions/kt2768.kt");
             }
             
             @TestMetadata("kt282.kt")

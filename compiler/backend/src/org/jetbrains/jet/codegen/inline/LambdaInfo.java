@@ -37,7 +37,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.anonymousClassForFunction;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
-public class LambdaInfo {
+public class LambdaInfo implements CapturedParamOwner {
 
     public final JetFunctionLiteralExpression expression;
 
@@ -123,8 +123,8 @@ public class LambdaInfo {
     }
 
     @NotNull
-    public static CapturedParamInfo getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
-        return new CapturedParamInfo(descriptor.getFieldName(), descriptor.getType(), false, index, -1);
+    public CapturedParamInfo getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
+        return new CapturedParamInfo(CapturedParamDesc.createDesc(this, descriptor.getFieldName(), descriptor.getType()), false, index, -1);
     }
 
     public void setParamOffset(int paramOffset) {
@@ -138,7 +138,7 @@ public class LambdaInfo {
         return Arrays.asList(types);
     }
 
-    public Parameters addAllParameters(@NotNull LambdaFieldRemapper remapper) {
+    public Parameters addAllParameters(@NotNull FieldRemapper remapper) {
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         //add skipped this cause inlined lambda doesn't have it
         builder.addThis(AsmTypeConstants.OBJECT_TYPE, true).setLambda(this);
@@ -149,11 +149,8 @@ public class LambdaInfo {
             builder.addNextParameter(type, false, null);
         }
 
+        remapper.addCapturedFields(this, builder);
 
-        List<CapturedParamInfo> infos = remapper.markRecaptured(getCapturedVars(), this);
-        for (CapturedParamInfo info : infos) {
-            builder.addCapturedParam(info.getFieldName(), info.getType(), info.isSkipped, info);
-        }
         return builder.buildParameters();
     }
 
@@ -163,5 +160,10 @@ public class LambdaInfo {
             size += next.getType().getSize();
         }
         return size;
+    }
+
+    @Override
+    public Type getType() {
+        return closureClassType;
     }
 }

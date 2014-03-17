@@ -484,4 +484,27 @@ public class DescriptorUtils {
         }
         return descriptor;
     }
+
+    public static boolean isPropertyCompileTimeConstant(@NotNull VariableDescriptor descriptor) {
+        if (descriptor.isVar()) {
+            return false;
+        }
+        if (isClassObject(descriptor.getContainingDeclaration()) || isTopLevelDeclaration(descriptor)) {
+            JetType type = descriptor.getType();
+            return KotlinBuiltIns.getInstance().isPrimitiveType(type) || KotlinBuiltIns.getInstance().getStringType().equals(type);
+        }
+        return false;
+    }
+
+    public static boolean shouldRecordInitializerForProperty(@NotNull VariableDescriptor variable, @NotNull JetType type) {
+        if (variable.isVar() || type.isError()) return false;
+
+        if (type instanceof LazyType || type.isNullable()) return true;
+
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        return builtIns.isPrimitiveType(type) ||
+               builtIns.getStringType().equals(type) ||
+               builtIns.getNumber().getDefaultType().equals(type) ||
+               builtIns.getAnyType().equals(type);
+    }
 }

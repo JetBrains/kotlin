@@ -25,3 +25,6 @@ public fun <R> useNoInline(block: ()-> R) : R {
 public fun Input.copyTo(output: Output, size: Int): Long {
     return output.doOutput(this.data()).toLong()
 }
+
+
+public inline fun with2<T>(receiver : T, body :  T.() -> Unit) : Unit = {receiver.body()}()

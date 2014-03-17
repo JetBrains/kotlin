@@ -186,7 +186,7 @@ public abstract class DeserializedMemberScope implements JetScope {
     @NotNull
     @Override
     public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
-        throw new UnsupportedOperationException("Should not be called");
+        return Collections.emptyList();
     }
 
     private Collection<DeclarationDescriptor> computeAllDescriptors() {

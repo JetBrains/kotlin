@@ -30,6 +30,7 @@ public class Flags {
                                                                                               ProtoBuf.Callable.MemberKind.values());
     public static final FlagField<Boolean> HAS_GETTER = FlagField.booleanAfter(MEMBER_KIND);
     public static final FlagField<Boolean> HAS_SETTER = FlagField.booleanAfter(HAS_GETTER);
+    public static final FlagField<Boolean> HAS_CONSTANT = FlagField.booleanAfter(HAS_SETTER);
 
     // Parameters
 
@@ -93,7 +94,8 @@ public class Flags {
             @NotNull CallableMemberDescriptor.Kind memberKind,
             @NotNull ProtoBuf.Callable.CallableKind callableKind,
             boolean hasGetter,
-            boolean hasSetter
+            boolean hasSetter,
+            boolean hasConstant
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | MODALITY.toFlags(modality(modality))
@@ -102,6 +104,7 @@ public class Flags {
                | CALLABLE_KIND.toFlags(callableKind)
                | HAS_GETTER.toFlags(hasGetter)
                | HAS_SETTER.toFlags(hasSetter)
+               | HAS_CONSTANT.toFlags(hasConstant)
                ;
     }
 

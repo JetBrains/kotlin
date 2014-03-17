@@ -1,15 +1,30 @@
 package foo
 
+fun assertEquals<T>(expected: T, actual: T, message: String) {
+    if (expected != actual) throw Exception("Failed when $message, expected = $expected, actual = $actual")
+}
+
+// workaround for Rhino
+var n = 0
+class A {
+    val i = ++n
+}
+
 fun box(): String {
 
-  fun Int.foo(): Boolean {
-      fun Int.bar() = this == 2 && this@foo == 1
-      val b = { this == 1 }
+    fun A.foo() {
+        fun A.bar() {
+            assertEquals(2, this.i, "check this.i in A.bar()")
+            assertEquals(1, this@foo.i, "check this@foo.i in A.bar()")
+        }
+        val b = { assertEquals(1, this.i, "check this.i in b") }
 
-      return this == 1 && 2.bar() && b()
-  }
+        assertEquals(1, this.i, "check this.i in A.foo()")
+        A().bar()
+        b()
+    }
 
-  if (!1.foo()) return "Failed"
+    A().foo()
 
-  return "OK"
+    return "OK"
 }

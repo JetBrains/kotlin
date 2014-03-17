@@ -8,4 +8,4 @@ annotation class Ann(
 
 Ann(1.toInt().plus(1), 1.minus(1.toInt()), 1.toInt().times(1.toInt())) class MyClass
 
-// EXPECTED: Ann(p1 = 2.toInt(): Int, p2 = 0.toInt(): Int, p3 = 1.toInt(): Int)
+// EXPECTED: Ann(p1 = 2: Int, p2 = 0: Int, p3 = 1: Int)

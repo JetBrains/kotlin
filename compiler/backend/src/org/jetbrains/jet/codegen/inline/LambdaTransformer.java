@@ -27,10 +27,7 @@ import org.jetbrains.asm4.tree.FieldInsnNode;
 import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.asm4.tree.VarInsnNode;
 import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.codegen.AsmUtil;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.ClosureCodegen;
-import org.jetbrains.jet.codegen.FieldInfo;
+import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 
@@ -108,7 +105,7 @@ public class LambdaTransformer {
         }
     }
 
-    public InlineResult doTransform(ConstructorInvocation invocation, LambdaFieldRemapper parentRemapper) {
+    public InlineResult doTransform(ConstructorInvocation invocation, FieldRemapper parentRemapper) {
         ClassBuilder classBuilder = createClassBuilder();
 
         //TODO: public visibility for inline function
@@ -128,11 +125,14 @@ public class LambdaTransformer {
         Parameters parameters = getLambdaParameters(builder, invocation);
 
         MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
-        RegeneratedLambdaFieldRemapper
-                remapper = new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(), parameters, invocation.getCapturedLambdasToInline(),
-                                                              parentRemapper);
-        MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")), oldLambdaType,
-                                                  remapper, isSameModule);
+
+        RegeneratedLambdaFieldRemapper remapper =
+                new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(),
+                                                   parameters, invocation.getCapturedLambdasToInline(),
+                                                   parentRemapper);
+
+        MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
+                                                  remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
         InlineResult result = inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
         invokeVisitor.visitMaxs(-1, -1);
 
@@ -198,16 +198,23 @@ public class LambdaTransformer {
         );
     }
 
-    private static void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, ConstructorInvocation invocation) {
+    private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, final ConstructorInvocation invocation) {
         Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
 
         AbstractInsnNode cur = constructor.instructions.getFirst();
         cur = cur.getNext(); //skip super call
         List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
+        CapturedParamOwner owner = new CapturedParamOwner() {
+            @Override
+            public Type getType() {
+                return Type.getObjectType(invocation.getOwnerInternalName());
+            }
+        };
+
         while (cur != null) {
             if (cur.getType() == AbstractInsnNode.FIELD_INSN) {
                 FieldInsnNode fieldNode = (FieldInsnNode) cur;
-                CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null);
+                CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null, owner);
 
                 assert fieldNode.getPrevious() instanceof VarInsnNode : "Previous instruction should be VarInsnNode but was " + fieldNode.getPrevious();
                 VarInsnNode previous = (VarInsnNode) fieldNode.getPrevious();
@@ -227,8 +234,13 @@ public class LambdaTransformer {
         List<CapturedParamInfo> allRecapturedParameters = new ArrayList<CapturedParamInfo>();
         for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamInfo var : info.getCapturedVars()) {
-                CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(getNewFieldName(var.getFieldName()), var.getType(), true, var);
-                recapturedParamInfo.setRecapturedFrom(info);
+                CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(getNewFieldName(var.getFieldName()), var.getType(), var.isSkipped, var, info);
+                StackValue composed = StackValue.composed(StackValue.local(0, oldLambdaType),
+                                                          StackValue.field(var.getType(),
+                                                                           oldLambdaType, /*TODO owner type*/
+                                                                           getNewFieldName(var.getFieldName()), false)
+                );
+                recapturedParamInfo.setRemapValue(composed);
                 allRecapturedParameters.add(var);
             }
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);

@@ -77,20 +77,6 @@ public class TraceBasedJavaResolverCache implements JavaResolverCache {
     public void recordField(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
         PsiField psiField = ((JavaFieldImpl) field).getPsi();
         trace.record(VARIABLE, psiField, descriptor);
-
-        if (!descriptor.isVar()) {
-            PsiExpression initializer = psiField.getInitializer();
-            Object evaluatedExpression = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false);
-            if (evaluatedExpression != null) {
-                CompileTimeConstant<?> constant =
-                        ResolverPackage.resolveCompileTimeConstantValue(evaluatedExpression,
-                                                                        CompileTimeConstantUtils.isPropertyCompileTimeConstant(descriptor),
-                                                                        descriptor.getType());
-                if (constant != null) {
-                    trace.record(COMPILE_TIME_INITIALIZER, descriptor, constant);
-                }
-            }
-        }
     }
 
     @Override

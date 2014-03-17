@@ -1,0 +1,10 @@
+fun maybeFoo(): String? {
+    return "foo"
+}
+
+fun main(args: Array<String>) {
+    val foo = maybeFoo()
+    print(foo)
+    val bar = "bar"
+    foo ?: bar
+}

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 class InvokeCall {
 
-    public final int index;
+    private final int index;
 
     public final LambdaInfo lambdaInfo;
 

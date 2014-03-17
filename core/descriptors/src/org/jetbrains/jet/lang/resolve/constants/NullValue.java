@@ -26,7 +26,7 @@ public class NullValue extends CompileTimeConstant<Void> {
     public static final NullValue NULL = new NullValue();
 
     private NullValue() {
-        super(null, false, false);
+        super(null, false);
     }
 
     @NotNull

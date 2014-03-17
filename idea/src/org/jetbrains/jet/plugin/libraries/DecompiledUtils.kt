@@ -30,7 +30,7 @@ public fun isKotlinCompiledFile(file: VirtualFile): Boolean {
     if (isKotlinCompiledFileWithIncompatibleAbiVersion(file)) {
         return false
     }
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
     return header != null && header.syntheticClassKind != KotlinSyntheticClass.Kind.TRAIT_IMPL
 }
 
@@ -38,7 +38,7 @@ public fun isKotlinCompiledFileWithIncompatibleAbiVersion(file: VirtualFile): Bo
     if (file.getExtension() != StdFileTypes.CLASS.getDefaultExtension()) {
         return false
     }
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
     return header?.kind == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION
 }
 
@@ -49,6 +49,6 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     if (ClassFileViewProvider.isInnerOrAnonymousClass(file)) {
         return true
     }
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file).getClassHeader()
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
     return header?.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS
 }

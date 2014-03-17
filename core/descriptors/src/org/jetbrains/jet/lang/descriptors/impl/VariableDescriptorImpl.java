@@ -20,8 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.storage.NullableLazyValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +31,7 @@ import java.util.Set;
 
 public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRootImpl implements VariableDescriptor {
     private JetType outType;
+    private NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer;
 
     public VariableDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -58,6 +61,20 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     public void setOutType(JetType outType) {
         assert this.outType == null;
         this.outType = outType;
+    }
+
+    @Nullable
+    @Override
+    public CompileTimeConstant<?> getCompileTimeInitializer() {
+        if (compileTimeInitializer != null) {
+            return compileTimeInitializer.invoke();
+        }
+        return null;
+    }
+
+    public void setCompileTimeInitializer(@NotNull NullableLazyValue<CompileTimeConstant<?>> compileTimeInitializer) {
+        assert !isVar() : "Compile-time value for property initializer should be recorded only for final variables " + getName();
+        this.compileTimeInitializer = compileTimeInitializer;
     }
 
     @Override

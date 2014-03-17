@@ -37,19 +37,11 @@ public class CliVirtualFileFinder extends VirtualFileKotlinClassFinder implement
     @Override
     public VirtualFile findVirtualFileWithHeader(@NotNull FqName className) {
         for (VirtualFile root : classPath) {
-            VirtualFile fileInRoot = findKotlinFile(className, root);
-            if (fileInRoot != null) {
+            VirtualFile fileInRoot = findFileInRoot(className.asString(), root, '.');
+            //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
+            if (fileInRoot != null && KotlinBinaryClassCache.getKotlinBinaryClass(fileInRoot) != null) {
                 return fileInRoot;
             }
-        }
-        return null;
-    }
-
-    private static VirtualFile findKotlinFile(@NotNull FqName className, @NotNull VirtualFile root) {
-        VirtualFile vFile = findFileInRoot(className.asString(), root, '.');
-        //NOTE: currently we use VirtualFileFinder to find Kotlin binaries only
-        if (vFile != null && KotlinBinaryClassCache.getKotlinBinaryClass(vFile).getClassHeader() != null) {
-            return vFile;
         }
         return null;
     }

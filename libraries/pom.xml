@@ -79,6 +79,7 @@
         <module>tools/kotlin-jdk-annotations</module>
         <module>tools/kotlin-android-sdk-annotations</module>
         <module>tools/runtime</module>
+        <module>tools/kotlin-gradle-plugin-test</module>
         <module>tools/kotlin-gradle-plugin</module>
         <module>tools/kotlin-gradle-plugin-core</module>
         <module>tools/kotlin-maven-plugin</module>

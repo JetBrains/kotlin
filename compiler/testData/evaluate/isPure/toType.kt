@@ -14,9 +14,3 @@ val prop4 = 1.toShort()
 
 // val prop5: false
 val prop5 = 1.toChar()
-
-// val prop6: false
-val prop6 = 1.toDouble()
-
-// val prop7: false
-val prop7 = 1.toFloat()

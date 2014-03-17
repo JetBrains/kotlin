@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
@@ -32,4 +34,7 @@ public interface VariableDescriptor extends CallableDescriptor {
     VariableDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     boolean isVar();
+
+    @Nullable
+    CompileTimeConstant<?> getCompileTimeInitializer();
 }

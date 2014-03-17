@@ -41,10 +41,9 @@ public fun buildDecompiledData(classFile: VirtualFile, project: Project): JetDec
 
 public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolver: ResolverForDecompiler): JetDecompiledData {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    val classFqName = kotlinClass.getClassName().getFqNameForClassNameWithoutDollars()
-    val classFileHeader = kotlinClass.getClassHeader()
-    assert(classFileHeader != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val kind = classFileHeader!!.kind
+    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val classFqName = kotlinClass!!.getClassName().getFqNameForClassNameWithoutDollars()
+    val kind = kotlinClass.getClassHeader().kind
     val packageFqName = classFqName.parent()
     val (text, renderedDescriptorsToRange) = when (kind) {
         KotlinClassHeader.Kind.PACKAGE_FACADE -> {
@@ -54,7 +53,7 @@ public fun buildDecompiledData(classFile: VirtualFile, project: Project, resolve
             buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
         }
         KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
-            assert(classFileHeader.syntheticClassKind == KotlinSyntheticClass.Kind.PACKAGE_PART)
+            assert(kotlinClass.getClassHeader().syntheticClassKind == KotlinSyntheticClass.Kind.PACKAGE_PART)
             DecompiledText("", mapOf())
         }
         else -> {

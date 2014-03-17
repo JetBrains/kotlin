@@ -28,13 +28,15 @@ import org.jetbrains.jet.lang.resolve.constants.EnumValue;
 
 public class InlineUtil {
 
-    public static boolean DEFAULT_INLINE_FLAG = true;
+    public static final boolean DEFAULT_INLINE_FLAG = true;
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
+    public static final boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_TOOLWINDOW = true;
+    public static final boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
 
-    public static boolean DEFAULT_INLINE_FLAG_FOR_STUB = false; /*always false*/
+    public static boolean optionToInlineFlag(@Nullable String option) {
+        return ("on".equalsIgnoreCase(option) || "off".equalsIgnoreCase(option)) ? "on".equalsIgnoreCase(option) : DEFAULT_INLINE_FLAG;
+    }
 
     public static boolean hasNoinlineAnnotation(@NotNull CallableDescriptor valueParameterDescriptor) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();

@@ -1,0 +1,8 @@
+var a: String?
+    get() = ""
+    set(v) {}
+
+fun main(args: Array<String>) {
+    val s = a
+    if (s != null) s.length
+}

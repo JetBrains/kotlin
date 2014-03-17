@@ -43,7 +43,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
-    private AnnotationDescriptorDeserializer annotationDeserializer;
+    private DescriptorDeserializers annotationDeserializer;
 
     private StorageManager storageManager;
 
@@ -69,7 +69,7 @@ public final class DeserializedDescriptorResolver {
     };
 
     @Inject
-    public void setAnnotationDeserializer(AnnotationDescriptorDeserializer annotationDeserializer) {
+    public void setAnnotationDeserializer(DescriptorDeserializers annotationDeserializer) {
         this.annotationDeserializer = annotationDeserializer;
     }
 
@@ -117,8 +117,6 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
-        if (header == null) return null;
-
         if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());
         }

@@ -13,5 +13,5 @@ public trait StringConstantInParam : java.lang.Object {
 }
 
 package test.StringConstantInParam {
-    public val HEL: kotlin.String
+    public val HEL: kotlin.String = "hel"
 }

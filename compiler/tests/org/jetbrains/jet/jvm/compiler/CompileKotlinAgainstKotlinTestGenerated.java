@@ -91,6 +91,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/InnerObject.A.kt");
     }
     
+    @TestMetadata("KotlinPropertyAsAnnotationParameter.A.kt")
+    public void testKotlinPropertyAsAnnotationParameter() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/KotlinPropertyAsAnnotationParameter.A.kt");
+    }
+    
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");

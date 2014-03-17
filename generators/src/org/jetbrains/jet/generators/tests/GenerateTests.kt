@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveDescriptorRenderer
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveTest
 import org.jetbrains.jet.lang.resolve.lazy.AbstractLazyResolveRecursiveComparingTest
 import org.jetbrains.jet.modules.xml.AbstractModuleXmlParserTest
-import org.jetbrains.jet.descriptors.serialization.AbstractDescriptorSerializationTest
 import org.jetbrains.jet.jvm.compiler.AbstractWriteSignatureTest
 import org.jetbrains.jet.cli.AbstractKotlincExecutableTest
 import org.jetbrains.jet.cfg.AbstractControlFlowTest
@@ -214,17 +213,6 @@ fun main(args: Array<String>) {
             model("modules.xml", extension = "xml")
         }
 
-        testClass(javaClass<AbstractDescriptorSerializationTest>()) {
-            model("loadJava/compiledKotlin/class")
-            model("loadJava/compiledKotlin/classFun")
-            model("loadJava/compiledKotlin/classObject")
-            model("loadJava/compiledKotlin/constructor")
-            model("loadJava/compiledKotlin/fun")
-            model("loadJava/compiledKotlin/prop")
-            model("loadJava/compiledKotlin/type")
-            model("loadJava/compiledKotlin/visibility")
-        }
-
         testClass(javaClass<AbstractWriteSignatureTest>()) {
             model("writeSignature")
         }
@@ -347,6 +335,10 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCodeTransformationTest>()) {
+            model("intentions/branched/elvisToIfThen", testMethod = "doTestElvisToIfThen")
+            model("intentions/branched/ifThenToElvis", testMethod = "doTestIfThenToElvis")
+            model("intentions/branched/safeAccessToIfThen", testMethod = "doTestSafeAccessToIfThen")
+            model("intentions/branched/ifThenToSafeAccess", testMethod = "doTestIfThenToSafeAccess")
             model("intentions/branched/folding/ifToAssignment", testMethod = "doTestFoldIfToAssignment")
             model("intentions/branched/folding/ifToReturn", testMethod = "doTestFoldIfToReturn")
             model("intentions/branched/folding/ifToReturnAsymmetrically", testMethod = "doTestFoldIfToReturnAsymmetrically")

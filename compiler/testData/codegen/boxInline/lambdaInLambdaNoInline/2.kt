@@ -4,7 +4,7 @@ fun concat(suffix: String, l: (s: String) -> Unit)  {
     l(suffix)
 }
 
-fun <T> mfun(arg: T, f: (T) -> Unit) {
+fun <T> noInlineFun(arg: T, f: (T) -> Unit) {
     f(arg)
 }
 
