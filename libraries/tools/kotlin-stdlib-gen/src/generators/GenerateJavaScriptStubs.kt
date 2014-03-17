@@ -18,7 +18,7 @@ fun generateDomAPI(file: File): Unit {
     val packageName = "org.w3c.dom"
     val imports = ""
 
-    val classes: List<Class<*>> = arrayList(javaClass<Attr>(), javaClass<CDATASection>(),
+    val classes: List<Class<*>> = arrayListOf(javaClass<Attr>(), javaClass<CDATASection>(),
             javaClass<CharacterData>(), javaClass<Comment>(),
             javaClass<Document>(), javaClass<DocumentFragment>(), javaClass<DocumentType>(),
             javaClass<DOMConfiguration>(),
@@ -91,7 +91,7 @@ import js.noImpl
 
             println("native public trait ${klass.getSimpleName()}$extends {")
 
-            val methods = klass.getDeclaredMethods()
+            val methods = klass.getDeclaredMethods().sortBy { it.getName()!! }
             if (methods != null) {
                 // lets figure out the properties versus methods
                 val validMethods = ArrayList<Method>()
@@ -148,7 +148,7 @@ import js.noImpl
                     println("    public fun ${method.getName()}($parameters): $returnType = js.noImpl")
                 }
             }
-            val fields = klass.getDeclaredFields()
+            val fields = klass.getDeclaredFields().sortBy { it.getName()!! }
             if (fields != null) {
                 if (fields.isNotEmpty()) {
                     println("")

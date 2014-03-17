@@ -32,9 +32,9 @@ native public trait Event {
     public fun stopPropagation(): Unit = js.noImpl
 
     public class object {
-        public val CAPTURING_PHASE: Short = 1
         public val AT_TARGET: Short = 2
         public val BUBBLING_PHASE: Short = 3
+        public val CAPTURING_PHASE: Short = 1
     }
 }
 
@@ -67,8 +67,8 @@ native public trait MutationEvent: Event {
     public fun initMutationEvent(arg1: String?, arg2: Boolean, arg3: Boolean, arg4: Node, arg5: String?, arg6: String?, arg7: String?, arg8: Short): Unit = js.noImpl
 
     public class object {
-        public val MODIFICATION: Short = 1
         public val ADDITION: Short = 2
+        public val MODIFICATION: Short = 1
         public val REMOVAL: Short = 3
     }
 }
