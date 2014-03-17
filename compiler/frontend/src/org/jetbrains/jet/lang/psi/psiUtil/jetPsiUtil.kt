@@ -16,44 +16,34 @@
 
 package org.jetbrains.jet.lang.psi.psiUtil
 
+import org.jetbrains.jet.lang.psi.*
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetClass
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lexer.JetTokens
 import java.util.Collections
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.ArrayList
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import kotlin.test.assertTrue
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
-import org.jetbrains.jet.lang.psi.JetClassBody
-import org.jetbrains.jet.lang.psi.JetParameterList
-import org.jetbrains.jet.lang.psi.JetObjectDeclaration
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
-import org.jetbrains.jet.lang.psi.JetParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiParameter
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.JetModifierListOwner
+import org.jetbrains.jet.lang.psi.stubs.PsiJetClassOrObjectStub
+
+public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
+    val calleeExpression = getCalleeExpression()
+    if (calleeExpression == null) return null
+
+    return when (calleeExpression) {
+        is JetSimpleNameExpression -> calleeExpression
+        is JetConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression() as? JetSimpleNameExpression
+        else -> null
+    }
+}
 
 public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean

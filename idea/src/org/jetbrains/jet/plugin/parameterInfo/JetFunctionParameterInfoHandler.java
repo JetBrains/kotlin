@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.JetVisibilityChecker;
@@ -424,27 +425,10 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
     @Nullable
     private static JetSimpleNameExpression getCallSimpleNameExpression(JetValueArgumentList argumentList) {
-        if (!(argumentList.getParent() instanceof JetCallElement)) {
-            return null;
-        }
-
-        JetCallElement callExpression = (JetCallElement)argumentList.getParent();
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression == null) {
-            return null;
-        }
-
-        if (calleeExpression instanceof JetSimpleNameExpression) {
-            return (JetSimpleNameExpression) calleeExpression;
-        }
-        else if (calleeExpression instanceof JetConstructorCalleeExpression) {
-            JetConstructorCalleeExpression constructorCalleeExpression = (JetConstructorCalleeExpression) calleeExpression;
-            if (constructorCalleeExpression.getConstructorReferenceExpression() instanceof JetSimpleNameExpression) {
-                return (JetSimpleNameExpression) constructorCalleeExpression.getConstructorReferenceExpression();
-            }
-        }
-
-        return null;
+        PsiElement argumentListParent = argumentList.getParent();
+        return (argumentListParent instanceof JetCallElement) ?
+               PsiUtilPackage.getCallNameExpression((JetCallElement) argumentListParent) :
+               null;
     }
 
     private static JetValueArgumentList findCallAndUpdateContext(UpdateParameterInfoContext context) {
