@@ -1191,5 +1191,5 @@ class KAnnotation(var klass: KClass): KAnnotated(klass.model, klass.descriptor) 
 
     // TODO add some parameter values?
 
-    override fun toString() = "@$klass.simpleName"
+    override fun toString() = "@${klass.simpleName}"
 }
