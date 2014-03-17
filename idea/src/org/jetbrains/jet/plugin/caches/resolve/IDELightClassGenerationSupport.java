@@ -117,7 +117,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     private static void forceResolvePackageDeclarations(@NotNull Collection<JetFile> files, @NotNull KotlinCodeAnalyzer session) {
         for (JetFile file : files) {
-            // Scripts are not supported
+            // SCRIPT: not supported
             if (file.isScript()) continue;
 
             FqName packageFqName = file.getPackageFqName();

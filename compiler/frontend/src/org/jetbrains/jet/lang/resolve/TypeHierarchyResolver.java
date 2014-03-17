@@ -70,6 +70,7 @@ public class TypeHierarchyResolver {
         this.descriptorResolver = descriptorResolver;
     }
 
+    // SCRIPT: inject script header resolver
     @Inject
     public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
         this.scriptHeaderResolver = scriptHeaderResolver;
@@ -347,6 +348,7 @@ public class TypeHierarchyResolver {
             c.getFileScopes().put(file, packageScope);
 
             if (file.isScript()) {
+                // SCRIPT: process script hierarchy
                 scriptHeaderResolver.processScriptHierarchy(c, file.getScript(), packageScope);
             }
 

@@ -24,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+// SCRIPT: Script declaration
 public class JetScript extends JetDeclarationImpl {
 
     public JetScript(@NotNull ASTNode node) {

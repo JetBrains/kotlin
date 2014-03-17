@@ -145,6 +145,7 @@ public class PackageCodegen extends GenerationStateAware {
             return;
         }
 
+        // SCRIPT: Do not write annotations for scripts (if any is??)
         for (JetFile file : files) {
             if (file.isScript()) return;
         }
@@ -184,6 +185,7 @@ public class PackageCodegen extends GenerationStateAware {
                 }
             }
             else if (declaration instanceof JetScript) {
+               // SCRIPT: generate script code, should be separate execution branch
                ScriptCodegen.createScriptCodegen((JetScript) declaration, state, packagePartContext).generate();
             }
         }

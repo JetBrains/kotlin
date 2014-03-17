@@ -40,6 +40,8 @@ import java.util.Map;
 
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
+
+// SCRIPT: resolve symbols in scripts
 public class ScriptBodyResolver {
 
     @NotNull
