@@ -20,12 +20,13 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPackageDirective;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class ScriptNameUtil {
     private ScriptNameUtil() {
     }
 
-    public static String classNameForScript(JetFile file) {
+    public static FqName classNameForScript(JetFile file) {
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         String name = file.getName();
@@ -40,10 +41,11 @@ public class ScriptNameUtil {
                 name = name.substring(0,index);
         }
         name = Character.toUpperCase(name.charAt(0)) + (name.length() == 0 ? "" : name.substring(1));
+        name = name.replace('.', '_');
         JetPackageDirective directive = file.getPackageDirective();
-        if(directive != null && directive.getName().length() > 0) {
-            name = directive.getName().replace('.','/') + "/" + name;
+        if(directive != null && directive.getQualifiedName().length() > 0) {
+            name = directive.getQualifiedName() + "." + name;
         }
-        return name;
+        return new FqName(name);
     }
 }

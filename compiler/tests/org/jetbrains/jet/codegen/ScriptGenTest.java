@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.lang.reflect.Constructor;
@@ -52,7 +53,8 @@ public class ScriptGenTest extends CodegenTestCase {
         loadFile(filename);
 
         try {
-            Class<?> scriptClass = generateClass(ScriptNameUtil.classNameForScript(myFiles.getPsiFile()));
+            FqName fqName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
+            Class<?> scriptClass = generateClass(fqName.asString());
 
             Constructor constructor = getConstructor(scriptClass);
             scriptInstance = constructor.newInstance(myFiles.getScriptParameterValues().toArray());

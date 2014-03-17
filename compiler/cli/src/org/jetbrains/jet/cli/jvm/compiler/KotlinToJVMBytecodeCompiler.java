@@ -235,7 +235,8 @@ public class KotlinToJVMBytecodeCompiler {
                                                    }, AllModules.class.getClassLoader())
             );
 
-            return classLoader.loadClass(ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0)));
+            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0));
+            return classLoader.loadClass(nameForScript.asString());
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to evaluate script: " + e, e);

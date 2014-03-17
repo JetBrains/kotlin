@@ -113,7 +113,8 @@ public class ScriptHeaderResolver {
             priority = 0;
         }
 
-        Name className = new FqName(ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile()).replace('/', '.')).shortName();
+        FqName nameForScript = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile());
+        Name className = nameForScript.shortName();
         ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, outerScope, className);
 
         //WriteThroughScope scriptScope = new WriteThroughScope(
