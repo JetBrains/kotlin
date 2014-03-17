@@ -22,7 +22,6 @@ import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
-import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -30,16 +29,15 @@ import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
+import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-public class FileBasedDeclarationProviderFactory implements DeclarationProviderFactory {
+public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProviderFactory  {
 
     private static class Index {
         private final Multimap<FqName, JetFile> filesByPackage = HashMultimap.create();
@@ -49,20 +47,13 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
     private final StorageManager storageManager;
     private final NotNullLazyValue<Index> index;
 
-    private final MemoizedFunctionToNullable<FqName, PackageMemberDeclarationProvider> packageDeclarationProviders;
-
     public FileBasedDeclarationProviderFactory(@NotNull StorageManager storageManager, @NotNull final Collection<JetFile> files) {
+        super(storageManager);
         this.storageManager = storageManager;
         this.index = storageManager.createLazyValue(new Function0<Index>() {
             @Override
             public Index invoke() {
                 return computeFilesByPackage(files);
-            }
-        });
-        this.packageDeclarationProviders = storageManager.createMemoizedFunctionWithNullableValues(new Function1<FqName, PackageMemberDeclarationProvider>() {
-            @Override
-            public PackageMemberDeclarationProvider invoke(FqName fqName) {
-                return createPackageMemberDeclarationProvider(fqName);
             }
         });
     }
@@ -124,13 +115,9 @@ public class FileBasedDeclarationProviderFactory implements DeclarationProviderF
         return resultElements;
     }
 
-    @Override
-    public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
-        return packageDeclarationProviders.invoke(packageFqName);
-    }
-
     @Nullable
-    public PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
+    @Override
+    protected PackageMemberDeclarationProvider createPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
         if (isPackageDeclaredExplicitly(packageFqName)) {
             return new FileBasedPackageMemberDeclarationProvider(
                     storageManager, packageFqName, this, index.invoke().filesByPackage.get(packageFqName));

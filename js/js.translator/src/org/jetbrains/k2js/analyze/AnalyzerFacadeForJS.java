@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
@@ -44,6 +44,8 @@ import org.jetbrains.k2js.config.Config;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService.createDeclarationProviderFactory;
 
 public final class AnalyzerFacadeForJS {
     public static final List<ImportPath> DEFAULT_IMPORTS = ImmutableList.of(
@@ -155,8 +157,9 @@ public final class AnalyzerFacadeForJS {
     @NotNull
     public static ResolveSession getLazyResolveSession(Collection<JetFile> files, Config config) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
-                globalContext.getStorageManager(), Config.withJsLibAdded(files, config));
+        DeclarationProviderFactory declarationProviderFactory =
+                createDeclarationProviderFactory(config.getProject(), globalContext.getStorageManager(),
+                                                 Config.withJsLibAdded(files, config));
         ModuleDescriptorImpl module = createJsModule("<lazy module>");
         module.addFragmentProvider(DependencyKind.BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
 

@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetFunctionStubImpl;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
@@ -53,10 +54,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
     public boolean shouldCreateStub(ASTNode node) {
         if (super.shouldCreateStub(node)) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetNamedFunction) {
-                JetNamedFunction function = (JetNamedFunction) psi;
-                return function.getName() != null;
-            }
+            return psi instanceof JetNamedFunction;
         }
 
         return false;
@@ -66,10 +64,8 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
     public PsiJetFunctionStub createStub(@NotNull JetNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof JetFile;
         boolean isExtension = psi.getReceiverTypeRef() != null;
-
-        FqName qualifiedName = psi.getFqName();
-
-        return new PsiJetFunctionStubImpl(parentStub, psi.getName(), isTopLevel, qualifiedName, isExtension);
+        FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
+        return new PsiJetFunctionStubImpl(parentStub, psi.getName(), isTopLevel, fqName, isExtension);
     }
 
     @Override

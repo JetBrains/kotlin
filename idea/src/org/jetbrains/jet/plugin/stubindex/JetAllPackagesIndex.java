@@ -36,6 +36,7 @@ public class JetAllPackagesIndex extends StringStubIndexExtension<JetFile> {
 
     private static final JetAllPackagesIndex ourInstance = new JetAllPackagesIndex();
 
+    @NotNull
     public static JetAllPackagesIndex getInstance() {
         return ourInstance;
     }
@@ -48,6 +49,7 @@ public class JetAllPackagesIndex extends StringStubIndexExtension<JetFile> {
         return KEY;
     }
 
+    @NotNull
     @Override
     public Collection<JetFile> get(String fqName, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(fqName, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));

@@ -33,6 +33,7 @@ public class JetTopLevelFunctionsFqnNameIndex extends StringStubIndexExtension<J
 
     private static final JetTopLevelFunctionsFqnNameIndex INSTANCE = new JetTopLevelFunctionsFqnNameIndex();
 
+    @NotNull
     public static JetTopLevelFunctionsFqnNameIndex getInstance() {
         return INSTANCE;
     }
@@ -45,6 +46,7 @@ public class JetTopLevelFunctionsFqnNameIndex extends StringStubIndexExtension<J
         return KEY;
     }
 
+    @NotNull
     @Override
     public Collection<JetNamedFunction> get(String s, Project project, @NotNull GlobalSearchScope scope) {
         return super.get(s, project, JetSourceFilterScope.kotlinSourcesAndLibraries(scope));

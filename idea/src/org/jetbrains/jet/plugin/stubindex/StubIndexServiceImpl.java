@@ -120,14 +120,13 @@ public class StubIndexServiceImpl implements StubIndexService {
                 else {
                     sink.occurrence(JetTopLevelExtensionFunctionShortNameIndex.getInstance().getKey(), name);
                 }
-
-                FqName topFQName = stub.getFqName();
-                if (topFQName != null) {
-                    sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.asString());
-                }
             }
-
             sink.occurrence(JetFunctionShortNameIndex.getInstance().getKey(), name);
+        }
+        // can have special fq name in case of syntactically incorrect function with no name
+        FqName topFQName = stub.getFqName();
+        if (topFQName != null) {
+            sink.occurrence(JetTopLevelFunctionsFqnNameIndex.getInstance().getKey(), topFQName.asString());
         }
     }
 
@@ -135,14 +134,14 @@ public class StubIndexServiceImpl implements StubIndexService {
     public void indexProperty(PsiJetPropertyStub stub, IndexSink sink) {
         String propertyName = stub.getName();
         if (propertyName != null) {
-            if (stub.isTopLevel()) {
-                FqName topFQName = stub.getFqName();
-                if (topFQName != null) {
-                    sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.asString());
-                }
-            }
-
             sink.occurrence(JetPropertyShortNameIndex.getInstance().getKey(), propertyName);
+        }
+        // can have special fq name in case of syntactically incorrect function with no name
+        if (stub.isTopLevel()) {
+            FqName topFQName = stub.getFqName();
+            if (topFQName != null) {
+                sink.occurrence(JetTopLevelPropertiesFqnNameIndex.getInstance().getKey(), topFQName.asString());
+            }
         }
     }
 

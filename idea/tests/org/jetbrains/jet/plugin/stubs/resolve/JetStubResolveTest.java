@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetFileType;
-import org.jetbrains.jet.plugin.stubindex.resolve.StubPackageMemberDeclarationProvider;
+import org.jetbrains.jet.plugin.stubindex.resolve.StubBasedPackageMemberDeclarationProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,8 +37,8 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
         myFixture.configureByText(JetFileType.INSTANCE,
                                   "package test.testing\n" +
                                   "fun some() {}");
-        StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
+        StubBasedPackageMemberDeclarationProvider provider =
+                new StubBasedPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetNamedFunction> some = Lists.newArrayList(provider.getFunctionDeclarations(Name.identifier("some")));
 
@@ -52,8 +52,8 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
                                   "fun other(v : Int) = 12\n" +
                                   "fun other(v : String) {}");
 
-        StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
+        StubBasedPackageMemberDeclarationProvider provider =
+                new StubBasedPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetNamedFunction> other = Lists.newArrayList(provider.getFunctionDeclarations(Name.identifier("other")));
         Collection<String> functionTexts = Collections2.transform(other, new Function<JetNamedFunction, String>() {
@@ -73,8 +73,8 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
                                   "package test.testing\n" +
                                   "val test = 12\n");
 
-        StubPackageMemberDeclarationProvider provider =
-                new StubPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
+        StubBasedPackageMemberDeclarationProvider provider =
+                new StubBasedPackageMemberDeclarationProvider(new FqName("test.testing"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         List<JetProperty> testProperties = Lists.newArrayList(provider.getPropertyDeclarations(Name.identifier("test")));
 
@@ -85,7 +85,7 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
     public void testGetPackageByIntermediatePartition() {
         myFixture.configureByText(JetFileType.INSTANCE, "package first.second.third");
 
-        StubPackageMemberDeclarationProvider provider = new StubPackageMemberDeclarationProvider(
+        StubBasedPackageMemberDeclarationProvider provider = new StubBasedPackageMemberDeclarationProvider(
                 new FqName("first.second"), getProject(), GlobalSearchScope.projectScope(getProject()));
 
         Collection<NavigatablePsiElement> packageDeclarations = provider.getPackageDeclarations(new FqName("first.second"));

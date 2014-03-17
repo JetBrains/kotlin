@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.IOException;
@@ -53,10 +54,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
     public boolean shouldCreateStub(ASTNode node) {
         if (super.shouldCreateStub(node)) {
             PsiElement psi = node.getPsi();
-            if (psi instanceof JetProperty) {
-                JetProperty property = (JetProperty) psi;
-                return property.getName() != null;
-            }
+            return psi instanceof JetProperty;
         }
 
         return false;
@@ -72,7 +70,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
         return new PsiJetPropertyStubImpl(parentStub,
-            psi.getName(), psi.isVar(), psi.isTopLevel(), psi.getFqName(),
+            psi.getName(), psi.isVar(), psi.isTopLevel(), ResolveSessionUtils.safeFqNameForLazyResolve(psi),
             typeRef != null ? typeRef.getText() : null,
             expression != null ? expression.getText() : null);
     }

@@ -63,6 +63,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
         }
     }
 
+    @NotNull
     @Override
     public Collection<FqName> getAllDeclaredPackages() {
         return allDeclaredPackages.invoke();
@@ -70,7 +71,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     @NotNull
     @Override
-    public Collection<NavigatablePsiElement> getPackageDeclarations(FqName fqName) {
+    public Collection<NavigatablePsiElement> getPackageDeclarations(@NotNull FqName fqName) {
         return factory.getPackageDeclarations(fqName);
     }
 

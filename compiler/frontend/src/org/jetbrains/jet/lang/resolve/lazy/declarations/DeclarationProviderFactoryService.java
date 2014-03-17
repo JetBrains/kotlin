@@ -16,26 +16,28 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
-import com.intellij.psi.NavigatablePsiElement;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 
-public interface PackageMemberDeclarationProvider extends DeclarationProvider {
-
-    //TODO: method name
-    @ReadOnly
+public abstract class DeclarationProviderFactoryService {
     @NotNull
-    Collection<FqName> getAllDeclaredPackages();
+    public abstract DeclarationProviderFactory create(
+            @NotNull Project project,
+            @NotNull StorageManager storageManager,
+            @NotNull Collection<JetFile> files
+    );
 
-    @ReadOnly
     @NotNull
-    Collection<NavigatablePsiElement> getPackageDeclarations(@NotNull FqName fqName);
-
-    @ReadOnly
-    @NotNull
-    Collection<JetFile> getPackageFiles();
+    public static DeclarationProviderFactory createDeclarationProviderFactory(
+            @NotNull Project project,
+            @NotNull StorageManager storageManager,
+            @NotNull Collection<JetFile> files
+    ) {
+        return ServiceManager.getService(DeclarationProviderFactoryService.class).create(project, storageManager, files);
+    }
 }

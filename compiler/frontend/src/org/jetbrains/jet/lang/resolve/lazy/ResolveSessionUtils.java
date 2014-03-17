@@ -21,17 +21,18 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.JetNamed;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 public class ResolveSessionUtils {
 
@@ -141,12 +142,19 @@ public class ResolveSessionUtils {
     }
 
     @NotNull
-    public static Name safeNameForLazyResolve(@NotNull JetNamed named) {
-        return safeNameForLazyResolve(named.getNameAsName());
+    public static Name safeNameForLazyResolve(@NotNull JetNamedDeclaration declaration) {
+        return safeNameForLazyResolve(declaration.getNameAsName());
     }
 
     @NotNull
     public static Name safeNameForLazyResolve(@Nullable Name name) {
         return name != null ? name : NO_NAME_FOR_LAZY_RESOLVE;
+    }
+
+    @Nullable
+    public static FqName safeFqNameForLazyResolve(@NotNull JetNamedDeclaration declaration) {
+        //NOTE: should only create special names for package level declarations, so we can safely rely on real fq name for parent
+        FqName parentFqName = JetPsiUtil.getParentFqName(declaration);
+        return parentFqName != null ? parentFqName.child(safeNameForLazyResolve(declaration)) : null;
     }
 }

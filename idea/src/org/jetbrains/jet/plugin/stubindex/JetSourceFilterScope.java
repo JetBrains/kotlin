@@ -27,11 +27,13 @@ import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
-    public static JetSourceFilterScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate) {
+    @NotNull
+    public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate) {
         return new JetSourceFilterScope(delegate, true);
     }
 
-    public static JetSourceFilterScope kotlinSources(@NotNull GlobalSearchScope delegate) {
+    @NotNull
+    public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate) {
         return new JetSourceFilterScope(delegate, false);
     }
 

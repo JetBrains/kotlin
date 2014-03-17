@@ -37,7 +37,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
+import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -59,21 +60,24 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @Override
     @NotNull
-    public AnalyzeExhaust analyzeFiles(@NotNull Project project,
+    public AnalyzeExhaust analyzeFiles(
+            @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull List<AnalyzerScriptParameter> scriptParameters,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely) {
+            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
+    ) {
         return analyzeFilesWithJavaIntegration(project, files, scriptParameters, filesToAnalyzeCompletely, true);
     }
 
     @NotNull
     @Override
-    public AnalyzeExhaust analyzeBodiesInFiles(@NotNull Project project,
-                                               @NotNull List<AnalyzerScriptParameter> scriptParameters,
-                                               @NotNull Predicate<PsiFile> filesForBodiesResolve,
-                                               @NotNull BindingTrace headersTraceContext,
-                                               @NotNull BodiesResolveContext bodiesResolveContext,
-                                               @NotNull ModuleDescriptor module
+    public AnalyzeExhaust analyzeBodiesInFiles(
+            @NotNull Project project,
+            @NotNull List<AnalyzerScriptParameter> scriptParameters,
+            @NotNull Predicate<PsiFile> filesForBodiesResolve,
+            @NotNull BindingTrace headersTraceContext,
+            @NotNull BodiesResolveContext bodiesResolveContext,
+            @NotNull ModuleDescriptor module
     ) {
         return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
                 project, scriptParameters, filesForBodiesResolve,
@@ -95,10 +99,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
 
-        // TODO: Replace with stub declaration provider
-        FileBasedDeclarationProviderFactory declarationProviderFactory = new FileBasedDeclarationProviderFactory(
-                globalContext.getStorageManager(),
-                files);
+        DeclarationProviderFactory declarationProviderFactory =
+                DeclarationProviderFactoryService.createDeclarationProviderFactory(project, globalContext.getStorageManager(), files);
 
         InjectorForLazyResolveWithJava resolveWithJava = new InjectorForLazyResolveWithJava(
                 project,
@@ -120,7 +122,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
+            JetFile file, List<AnalyzerScriptParameter> scriptParameters
+    ) {
         AnalyzingUtils.checkForSyntacticErrors(file);
 
         AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file, scriptParameters);
@@ -132,7 +135,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(
-            JetFile file, List<AnalyzerScriptParameter> scriptParameters) {
+            JetFile file, List<AnalyzerScriptParameter> scriptParameters
+    ) {
         return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file), scriptParameters,
                                                Predicates.<PsiFile>alwaysTrue());
     }
@@ -169,8 +173,12 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project, Collection<JetFile> files, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve) {
+            Project project,
+            Collection<JetFile> files,
+            List<AnalyzerScriptParameter> scriptParameters,
+            Predicate<PsiFile> filesToAnalyzeCompletely,
+            boolean storeContextForBodiesResolve
+    ) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
         return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, scriptParameters, filesToAnalyzeCompletely,

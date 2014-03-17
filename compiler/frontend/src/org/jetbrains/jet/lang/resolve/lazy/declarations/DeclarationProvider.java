@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
@@ -27,14 +28,19 @@ import java.util.Collection;
 import java.util.List;
 
 public interface DeclarationProvider {
+    @ReadOnly
+    @NotNull
     List<JetDeclaration> getAllDeclarations();
 
+    @ReadOnly
     @NotNull
     Collection<JetNamedFunction> getFunctionDeclarations(@NotNull Name name);
 
+    @ReadOnly
     @NotNull
     Collection<JetProperty> getPropertyDeclarations(@NotNull Name name);
 
+    @ReadOnly
     @NotNull
     Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name);
 }

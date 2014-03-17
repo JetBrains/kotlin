@@ -44,7 +44,10 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class JetPsiUtil {
     private JetPsiUtil() {
@@ -205,42 +208,47 @@ public class JetPsiUtil {
             return null;
         }
 
+        FqName parentFqName = getParentFqName(namedDeclaration);
+
+        if (parentFqName == null) {
+            return null;
+        }
+
+        return parentFqName.child(name);
+    }
+
+    @Nullable
+    public static FqName getParentFqName(@NotNull JetNamedDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();
         if (parent instanceof JetClassBody) {
             // One nesting to JetClassBody doesn't affect to qualified name
             parent = parent.getParent();
         }
 
-        FqName firstPart = null;
         if (parent instanceof JetFile) {
-            firstPart = getFQName((JetFile) parent);
+            return getFQName((JetFile) parent);
         }
         else if (parent instanceof JetNamedFunction || parent instanceof JetClass) {
-            firstPart = getFQName((JetNamedDeclaration) parent);
+            return getFQName((JetNamedDeclaration) parent);
         }
         else if (namedDeclaration instanceof JetParameter) {
             JetClass constructorClass = getClassIfParameterIsProperty((JetParameter) namedDeclaration);
             if (constructorClass != null) {
-                firstPart = getFQName(constructorClass);
+                return getFQName(constructorClass);
             }
         }
         else if (parent instanceof JetObjectDeclaration) {
             if (parent.getParent() instanceof JetClassObject) {
                 JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
                 if (classOrObject != null) {
-                    firstPart = getFQName(classOrObject);
+                    return getFQName(classOrObject);
                 }
             }
             else {
-                firstPart = getFQName((JetNamedDeclaration) parent);
+                return getFQName((JetNamedDeclaration) parent);
             }
         }
-
-        if (firstPart == null) {
-            return null;
-        }
-
-        return firstPart.child(name);
+        return null;
     }
 
     /** @return <code>null</code> iff the tye has syntactic errors */
@@ -811,7 +819,7 @@ public class JetPsiUtil {
 
         final List<JetElement> results = Lists.newArrayList();
 
-        ((JetElement) root).accept(
+        root.accept(
                 new JetVisitorVoid() {
                     @Override
                     public void visitJetElement(@NotNull JetElement element) {
