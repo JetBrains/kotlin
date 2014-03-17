@@ -38,6 +38,7 @@ public class KotlinCodegenFacade {
     ) {
         for (JetFile file : state.getFiles()) {
             if (file.isScript()) {
+                // SCRIPT: register class name for scripting from this file, move outside of this function
                 String name = ScriptNameUtil.classNameForScript(file);
                 JetScript script = file.getScript();
                 assert script != null;

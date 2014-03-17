@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// SCRIPT: Resolve declarations in scripts
 public class ScriptHeaderResolver {
 
     public static final Key<Integer> PRIORITY_KEY = Key.create(JetScript.class.getName() + ".priority");

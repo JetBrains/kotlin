@@ -2163,6 +2163,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
         else if (descriptor instanceof ScriptReceiver) {
+            // SCRIPT: generate script
             generateScript((ScriptReceiver) descriptor);
         }
         else if (descriptor instanceof ExtensionReceiver) {
@@ -2196,6 +2197,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return context.lookupInContext(provided, StackValue.local(0, OBJECT_TYPE), state, false);
     }
 
+    // SCRIPT: generate script, move to ScriptingUtil
     private void generateScript(@NotNull ScriptReceiver receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.local(0, OBJECT_TYPE);
@@ -3222,6 +3224,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Type varType = asmType(variableDescriptor.getType());
 
+        // SCRIPT: Variable at the top of the script is generated as field
         if (JetPsiUtil.isScriptDeclaration(variableDeclaration)) {
             generateInitializer.fun(variableDescriptor);
             JetScript scriptPsi = JetPsiUtil.getScript(variableDeclaration);

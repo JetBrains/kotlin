@@ -429,10 +429,12 @@ public class JetPsiUtil {
         return callOperationNode != null && callOperationNode.getElementType() == JetTokens.SAFE_ACCESS;
     }
 
+    // SCRIPT: is declaration in script?
     public static boolean isScriptDeclaration(@NotNull JetDeclaration namedDeclaration) {
         return getScript(namedDeclaration) != null;
     }
 
+    // SCRIPT: get script from top-level declaration
     @Nullable
     public static JetScript getScript(@NotNull JetDeclaration namedDeclaration) {
         PsiElement parent = namedDeclaration.getParent();

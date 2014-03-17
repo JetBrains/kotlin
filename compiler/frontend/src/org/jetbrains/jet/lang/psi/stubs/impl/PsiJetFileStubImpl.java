@@ -38,6 +38,7 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
     public PsiJetFileStubImpl(JetFile jetFile, StringRef packageName, boolean isScript) {
         super(jetFile);
         this.packageName = packageName;
+        // SCRIPT: PsiJetFileStubImpl knows about scripting
         this.isScript = isScript;
     }
 

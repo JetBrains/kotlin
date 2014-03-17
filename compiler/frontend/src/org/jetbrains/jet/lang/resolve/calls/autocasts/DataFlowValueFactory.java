@@ -60,6 +60,7 @@ public class DataFlowValueFactory {
     @NotNull
     public static DataFlowValue createDataFlowValue(@NotNull ReceiverValue receiverValue, @NotNull BindingContext bindingContext) {
         if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
+            // SCRIPT: autocasts data flow
             JetType type = receiverValue.getType();
             boolean nullable = type.isNullable() || TypeUtils.hasNullableSuperType(type);
             return new DataFlowValue(receiverValue, type, nullable, Nullability.NOT_NULL);

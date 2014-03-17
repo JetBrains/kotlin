@@ -78,6 +78,7 @@ public class ImportsResolver {
             WritableScope fileScope = c.getFileScopes().get(file);
             processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
         }
+        // SCRIPT: process script import directives
         for (JetScript script : c.getScripts().keySet()) {
             WritableScope scriptScope = c.getScriptScopes().get(script);
             processImportsInFile(lookupMode, scriptScope, script.getImportDirectives(), true);

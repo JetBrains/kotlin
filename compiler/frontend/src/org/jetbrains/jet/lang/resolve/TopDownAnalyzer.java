@@ -327,6 +327,8 @@ public class TopDownAnalyzer {
         for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : c.getClasses().values()) {
             ((MutableClassDescriptor) mutableClassDescriptor).lockScopes();
         }
+
+        // SCRIPT: extra code for scripts
         Set<FqName> scriptFqNames = Sets.newHashSet();
         for (JetFile file : c.getFileScopes().keySet()) {
             if (file.isScript()) {

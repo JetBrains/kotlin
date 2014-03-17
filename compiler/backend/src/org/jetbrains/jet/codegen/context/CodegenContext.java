@@ -197,6 +197,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new ConstructorContext(descriptor, getContextKind(), this, closure);
     }
 
+    // SCRIPT: generate into script, move to ScriptingUtil
     @NotNull
     public ScriptContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
         return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
