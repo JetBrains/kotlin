@@ -165,6 +165,21 @@ class ArraysTest {
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
         expect(0) { array(null, "dog", null).indexOf(null)}
     }
+
+    test fun contains() {
+        val words = array("cat", "dog", "bird")
+        expect(false) { words.contains("mouse") }
+        expect(true) { words.contains("cat") }
+        expect(true) { words.contains("dog") }
+        expect(true) { words.contains("bird") }
+
+        val nums = intArray (1, 2, 3)
+        expect(true) { nums.contains(1) }
+        expect(true) { nums.contains(2) }
+        expect(true) { nums.contains(3) }
+        expect(false) { nums.contains(4) }
+
+    }
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers
