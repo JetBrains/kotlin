@@ -227,7 +227,7 @@ public class KotlinToJVMBytecodeCompiler {
             return null;
         }
 
-        GeneratedClassLoader classLoader = null;
+        GeneratedClassLoader classLoader;
         try {
             classLoader = new GeneratedClassLoader(state.getFactory(),
                                                    new URLClassLoader(new URL[] {
@@ -240,12 +240,6 @@ public class KotlinToJVMBytecodeCompiler {
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to evaluate script: " + e, e);
-        }
-        finally {
-            if (classLoader != null) {
-                classLoader.dispose();
-            }
-            state.destroy();
         }
     }
 
