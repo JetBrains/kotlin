@@ -16,11 +16,15 @@ public final class ClassObjectTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testWithExtension() throws Exception {
+    public void testWithInheritance() throws Exception {
         checkFooBoxIsOk();
     }
 
     public void testSetVar() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testAccessing() throws Exception {
         checkFooBoxIsOk();
     }
 }

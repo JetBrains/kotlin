@@ -22,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.k2js.translate.context.DefinitionPlace;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.expression.ExpressionPackage;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
@@ -39,9 +41,11 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.topologicallySortSuperclassesAndRecordAllInstances;
 import static org.jetbrains.k2js.translate.initializer.InitializerUtils.createClassObjectInitializer;
+import static org.jetbrains.k2js.translate.reference.ReferenceTranslator.translateAsFQReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getClassDescriptor;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getContainingClass;
+import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getPrimaryConstructorParameters;
 import static org.jetbrains.k2js.translate.utils.TranslationUtils.simpleReturnFunction;
@@ -117,6 +121,8 @@ public final class ClassTranslator extends AbstractTranslator {
             declarationContext = declarationContext.newDeclaration(descriptor, definitionPlace);
         }
 
+        declarationContext = fixContextForClassObjectAccessing(declarationContext);
+
         invocationArguments.add(getSuperclassReferences(declarationContext));
         if (!isTrait()) {
             JsFunction initializer = new ClassInitializerTranslator(classDeclaration, declarationContext).generateInitializeMethod();
@@ -146,6 +152,26 @@ public final class ClassTranslator extends AbstractTranslator {
             invocationArguments.add(new JsObjectLiteral(staticProperties, true));
         }
         return invocationArguments;
+    }
+
+    private TranslationContext fixContextForClassObjectAccessing(TranslationContext declarationContext) {
+        // In Kotlin we can access to class object members without qualifier just by name, but we should translate it to access with FQ name.
+        // So create alias for class object receiver parameter.
+        ClassDescriptor classObjectDescriptor = descriptor.getClassObjectDescriptor();
+        if (classObjectDescriptor != null) {
+            JsExpression referenceToClass = translateAsFQReference(classObjectDescriptor.getContainingDeclaration(), declarationContext);
+            JsExpression classObjectAccessor = Namer.getClassObjectAccessor(referenceToClass);
+            ReceiverParameterDescriptor classObjectReceiver = getReceiverParameterForDeclaration(classObjectDescriptor);
+            declarationContext.aliasingContext().registerAlias(classObjectReceiver, classObjectAccessor);
+        }
+
+        // Overlap alias of class object receiver for accessing from containing class(see previous if block),
+        // because inside class object we should use simple name for access.
+        if (descriptor.getKind() == ClassKind.CLASS_OBJECT) {
+            declarationContext = declarationContext.innerContextWithAliased(descriptor.getThisAsReceiverParameter(), JsLiteral.THIS);
+        }
+
+        return declarationContext;
     }
 
     private void mayBeAddEnumEntry(@NotNull List<JsPropertyInitializer> enumEntryList,
