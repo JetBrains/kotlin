@@ -34,7 +34,7 @@ import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
     public final ResolvedCallImpl<D> candidateCall;
     public final TracingStrategy tracing;
-    public ReceiverValue receiverForVariableAsFunctionSecondCall = ReceiverValue.NO_RECEIVER;
+    public ReceiverValue explicitExtensionReceiverForInvoke = ReceiverValue.NO_RECEIVER;
 
     private CallCandidateResolutionContext(
             @NotNull ResolvedCallImpl<D> candidateCall,
