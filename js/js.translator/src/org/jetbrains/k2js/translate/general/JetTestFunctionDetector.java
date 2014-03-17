@@ -17,22 +17,25 @@
 package org.jetbrains.k2js.translate.general;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import java.util.Collection;
 import java.util.List;
-
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptor;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getNullableDescriptorForFunction;
 
 /**
  * Helps find functions which are annotated with a @Test annotation from junit
@@ -41,11 +44,7 @@ public class JetTestFunctionDetector {
     private JetTestFunctionDetector() {
     }
 
-    private static boolean isTest(@NotNull BindingContext bindingContext, @NotNull JetNamedFunction function) {
-        FunctionDescriptor functionDescriptor = getNullableDescriptorForFunction(bindingContext, function);
-        if (functionDescriptor == null) {
-            return false;
-        }
+    private static boolean isTest(@NotNull FunctionDescriptor functionDescriptor) {
         Annotations annotations = functionDescriptor.getAnnotations();
         for (AnnotationDescriptor annotation : annotations) {
             // TODO ideally we should find the fully qualified name here...
@@ -66,8 +65,11 @@ public class JetTestFunctionDetector {
     }
 
     @NotNull
-    private static List<JetNamedFunction> findTestFunctions(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files) {
-        List<JetNamedFunction> answer = Lists.newArrayList();
+    public static List<FunctionDescriptor> getTestFunctionDescriptors(
+            @NotNull BindingContext bindingContext,
+            @NotNull Collection<JetFile> files
+    ) {
+        List<FunctionDescriptor> answer = Lists.newArrayList();
         for (JetFile file : files) {
             answer.addAll(getTestFunctions(bindingContext, file.getDeclarations()));
         }
@@ -75,28 +77,40 @@ public class JetTestFunctionDetector {
     }
 
     @NotNull
-    public static List<FunctionDescriptor> getTestFunctionDescriptors(@NotNull BindingContext bindingContext, @NotNull Collection<JetFile> files) {
+    private static List<FunctionDescriptor> getTestFunctions(
+            @NotNull BindingContext bindingContext,
+            @NotNull List<JetDeclaration> declarations
+    ) {
         List<FunctionDescriptor> answer = Lists.newArrayList();
-        for (JetNamedFunction function : findTestFunctions(bindingContext, files)) {
-            answer.add(getFunctionDescriptor(bindingContext, function));
-        }
-        return answer;
-    }
-
-    @NotNull
-    private static List<JetNamedFunction> getTestFunctions(@NotNull BindingContext bindingContext,
-            @NotNull List<JetDeclaration> declarations) {
-        List<JetNamedFunction> answer = Lists.newArrayList();
         for (JetDeclaration declaration : declarations) {
+            JetScope scope = null;
+
             if (declaration instanceof JetClass) {
                 JetClass klass = (JetClass) declaration;
-                answer.addAll(getTestFunctions(bindingContext, klass.getDeclarations()));
-            }
-            else if (declaration instanceof JetNamedFunction) {
-                JetNamedFunction candidateFunction = (JetNamedFunction) declaration;
-                if (isTest(bindingContext, candidateFunction)) {
-                    answer.add(candidateFunction);
+                ClassDescriptor classDescriptor = BindingUtils.getClassDescriptor(bindingContext, klass);
+
+                if (classDescriptor.getModality() != Modality.ABSTRACT) {
+                    scope = classDescriptor.getDefaultType().getMemberScope();
                 }
+            }
+
+            if (scope != null) {
+                Collection<DeclarationDescriptor> allDescriptors = scope.getAllDescriptors();
+                List<FunctionDescriptor> testFunctions = ContainerUtil.mapNotNull(
+                        allDescriptors,
+                        new Function<DeclarationDescriptor, FunctionDescriptor>() {
+                            @Override
+                            public FunctionDescriptor fun(DeclarationDescriptor descriptor) {
+                                if (descriptor instanceof FunctionDescriptor) {
+                                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+                                    if (isTest(functionDescriptor)) return functionDescriptor;
+                                }
+
+                                return null;
+                            }
+                        });
+
+                answer.addAll(testFunctions);
             }
         }
         return answer;
