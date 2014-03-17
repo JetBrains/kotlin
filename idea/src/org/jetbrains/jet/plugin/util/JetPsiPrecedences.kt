@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.parsing.JetExpressionParsing
 import java.util.HashMap
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing.Precedence.*
 import org.jetbrains.jet.lang.psi.*
+import org.jetbrains.jet.utils.*
 
 public object JetPsiPrecedences {
 
@@ -30,7 +31,7 @@ public object JetPsiPrecedences {
     private val precedence: Map<IElementType, Int>
     {
         val builder = HashMap<IElementType, Int>()
-        for ((i, record) in JetExpressionParsing.Precedence.values().withIndices()) {
+        for ((i, record) in JetExpressionParsing.Precedence.values().withIndices_tmp()) {
             for (elementType in record.getOperations().getTypes()) {
                 builder[elementType] = i
             }

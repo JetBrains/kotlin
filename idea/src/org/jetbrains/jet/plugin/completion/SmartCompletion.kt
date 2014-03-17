@@ -32,6 +32,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import org.jetbrains.jet.utils.*
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -287,8 +288,8 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
         }
 
         val nullabilityInfo: Map<DataFlowValue, Nullability> = dataFlowInfo.getCompleteNullabilityInfo()
-        val notNullVariables = nullabilityInfo.iterator()
-                .filter { it.getValue() == Nullability.NOT_NULL }
+        val notNullVariables = nullabilityInfo
+                .filter_tmp { it.getValue() == Nullability.NOT_NULL }
                 .map { dataFlowValueToVariable(it.getKey()) }
                 .filterNotNullTo(HashSet<VariableDescriptor>())
 

@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.utils.Printer
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator
+import org.jetbrains.jet.utils.*
 
 public abstract class LazyJavaMemberScope(
         protected val c: LazyJavaResolverContextWithTypes,
@@ -166,7 +167,7 @@ public abstract class LazyJavaMemberScope(
             function: FunctionDescriptor,
             jValueParameters: List<JavaValueParameter>
     ): List<ValueParameterDescriptor> {
-        return jValueParameters.withIndices().map {
+        return jValueParameters.withIndices_tmp().map_tmp {
             pair ->
             val (index, javaParameter) = pair
 

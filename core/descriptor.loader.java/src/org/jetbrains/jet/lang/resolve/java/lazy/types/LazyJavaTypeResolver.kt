@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.sure
+import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
@@ -194,7 +195,7 @@ class LazyJavaTypeResolver(
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
-            return javaType.getTypeArguments().withIndices().map {
+            return javaType.getTypeArguments().withIndices_tmp().map_tmp {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
                 val parameter = if (i >= typeParameters.size)

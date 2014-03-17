@@ -30,8 +30,8 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.plugin.codeInsight.firstOrNull
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
+import org.jetbrains.jet.utils.firstOrNull_tmp
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
@@ -75,7 +75,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
             }
             is JetSimpleNameExpression -> {
                 val reference = expression.getReference() as JetReference?
-                val variableDescriptor = reference?.resolveToDescriptors()?.firstOrNull() as? VariableDescriptor?
+                val variableDescriptor = reference?.resolveToDescriptors()?.firstOrNull_tmp() as? VariableDescriptor?
                 if (variableDescriptor != null) {
                     val containingDescriptor = variableDescriptor.getContainingDeclaration()
                     if (containingDescriptor is AnonymousFunctionDescriptor) {
