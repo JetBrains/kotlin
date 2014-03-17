@@ -16,18 +16,12 @@
 
 package org.jetbrains.jet.resolve.calls
 
-import com.google.common.collect.ImmutableMap
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
@@ -54,14 +48,14 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
         }
         val explicitReceiverKind = directives.getExplicitReceiverKind()
 
-        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<out CallableDescriptor?>> {
+        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
             val psiFile = JetTestUtils.loadJetFile(getProject(), file)
             val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.emptyList())
-            val bindingContext = analyzeExhaust!!.getBindingContext()
+            val bindingContext = analyzeExhaust.getBindingContext()
             return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
         }
 
-        fun checkResolvedCall(resolvedCall: ResolvedCall<out CallableDescriptor?>, element: JetElement) {
+        fun checkResolvedCall(resolvedCall: ResolvedCall<*>, element: JetElement) {
             val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange())
 
             val (actualThisObject, actualReceiverArgument, actualExplicitReceiverKind) = with(resolvedCall) {

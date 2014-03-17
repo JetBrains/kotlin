@@ -86,8 +86,7 @@ public abstract class AnnotationCodegen {
 
         List<JetAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
         for (JetAnnotationEntry annotationEntry : annotationEntries) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
+            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, annotationEntry.getCalleeExpression());
             if (resolvedCall == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
 
             AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);

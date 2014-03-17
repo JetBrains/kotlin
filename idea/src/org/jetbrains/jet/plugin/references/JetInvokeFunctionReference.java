@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.MultiRangeReference;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -49,7 +48,7 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
     @Override
     @NotNull
     protected Collection<DeclarationDescriptor> getTargetDescriptors(@NotNull BindingContext context) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(RESOLVED_CALL, getExpression().getCalleeExpression());
+        ResolvedCall<?> resolvedCall = context.get(RESOLVED_CALL, getExpression().getCalleeExpression());
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return Collections.<DeclarationDescriptor>singleton(((VariableAsFunctionResolvedCall) resolvedCall).getCandidateDescriptor());
         }

@@ -45,16 +45,16 @@ import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKN
 
 public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallWithTrace<D> {
 
-    public static final Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallWithTrace<?>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallWithTrace<?>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallWithTrace<?> resolvedCall) {
             return resolvedCall.getCandidateDescriptor();
         }
     };
 
-    public static final Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallWithTrace<? extends CallableDescriptor>, CallableDescriptor>() {
+    public static final Function<ResolvedCallWithTrace<?>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallWithTrace<?>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall) {
+        public CallableDescriptor fun(ResolvedCallWithTrace<?> resolvedCall) {
             return resolvedCall.getResultingDescriptor();
         }
     };

@@ -62,8 +62,8 @@ public interface ResolutionResultsCache {
     );
 
     @Nullable
-    CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression);
+    CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression);
 
     @Nullable
-    ResolvedCallWithTrace<? extends CallableDescriptor> getCallForArgument(@Nullable JetExpression expression);
+    ResolvedCallWithTrace<?> getCallForArgument(@Nullable JetExpression expression);
 }

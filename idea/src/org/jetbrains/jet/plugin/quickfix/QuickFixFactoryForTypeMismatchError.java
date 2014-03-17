@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
@@ -72,7 +71,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
         // Fixing overloaded operators:
         if (expression instanceof JetOperationExpression) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+            ResolvedCall<?> resolvedCall =
                     context.get(BindingContext.RESOLVED_CALL, ((JetOperationExpression) expression).getOperationReference());
             if (resolvedCall != null) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
@@ -84,7 +83,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         if (expression.getParent() instanceof JetBinaryExpression) {
             JetBinaryExpression parentBinary = (JetBinaryExpression) expression.getParent();
             if (parentBinary.getRight() == expression) {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, parentBinary.getOperationReference());
+                ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, parentBinary.getOperationReference());
                 if (resolvedCall != null) {
                     PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());
                     if (declaration instanceof JetFunction) {
@@ -97,7 +96,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
 
         // Change function return type when TYPE_MISMATCH is reported on call expression:
         if (expression instanceof JetCallExpression) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+            ResolvedCall<?> resolvedCall =
                     context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) expression).getCalleeExpression());
             if (resolvedCall != null) {
                 PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getResultingDescriptor());

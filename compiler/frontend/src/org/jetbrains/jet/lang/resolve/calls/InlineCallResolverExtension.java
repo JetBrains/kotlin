@@ -70,9 +70,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
     }
 
     @Override
-    public <F extends CallableDescriptor> void run(
-            @NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context
-    ) {
+    public <F extends CallableDescriptor> void run(@NotNull ResolvedCall<F> resolvedCall, @NotNull BasicCallResolutionContext context) {
         JetExpression expression = context.call.getCalleeExpression();
         if (expression == null) {
             return;
@@ -186,7 +184,7 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             @NotNull BasicCallResolutionContext context,
             @NotNull JetExpression expression
     ) {
-        ResolvedCall<? extends CallableDescriptor> thisCall = context.trace.get(BindingContext.RESOLVED_CALL, expression);
+        ResolvedCall<?> thisCall = context.trace.get(BindingContext.RESOLVED_CALL, expression);
         return thisCall != null ? thisCall.getResultingDescriptor() : null;
     }
 

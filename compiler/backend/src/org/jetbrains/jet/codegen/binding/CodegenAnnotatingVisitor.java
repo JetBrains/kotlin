@@ -314,8 +314,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;
 
-        ResolvedCall<? extends CallableDescriptor> referencedFunction =
-                bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
+        ResolvedCall<?> referencedFunction = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
         if (referencedFunction == null) return;
         JetType superType = getSuperTypeForClosure((FunctionDescriptor) referencedFunction.getResultingDescriptor(), true);
 
@@ -406,7 +405,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     @Override
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         super.visitCallExpression(expression);
-        ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
+        ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
         if (call == null) {
             return;
         }

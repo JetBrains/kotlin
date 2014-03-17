@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
-import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -273,8 +272,8 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             OverloadResolutionResults<FunctionDescriptor> ambiguityResolutionResults = OverloadResolutionResultsUtil.ambiguity(assignmentOperationDescriptors, binaryOperationDescriptors);
             context.trace.report(ASSIGN_OPERATOR_AMBIGUITY.on(operationSign, ambiguityResolutionResults.getResultingCalls()));
             Collection<DeclarationDescriptor> descriptors = Sets.newHashSet();
-            for (ResolvedCall<? extends FunctionDescriptor> call : ambiguityResolutionResults.getResultingCalls()) {
-                descriptors.add(call.getResultingDescriptor());
+            for (ResolvedCall<?> resolvedCall : ambiguityResolutionResults.getResultingCalls()) {
+                descriptors.add(resolvedCall.getResultingDescriptor());
             }
             dataFlowInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo)).getDataFlowInfo();
             context.trace.record(AMBIGUOUS_REFERENCE_TARGET, operationSign, descriptors);

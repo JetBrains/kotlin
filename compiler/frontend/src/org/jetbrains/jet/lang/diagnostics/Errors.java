@@ -377,7 +377,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory2<JetExpression, Name, JetType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
-    DiagnosticFactory2<JetExpression, Name, Collection<? extends ResolvedCall<? extends CallableDescriptor>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
+    DiagnosticFactory2<JetExpression, Name, Collection<? extends ResolvedCall<?>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory3<JetExpression, Name, JetType, JetType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
 
     // Super calls

@@ -61,12 +61,12 @@ public class IdeRenderers {
     }
 
     public static final Renderer<Collection<? extends ResolvedCall<?>>> HTML_AMBIGUOUS_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+            new Renderer<Collection<? extends ResolvedCall<?>>>() {
                 @NotNull
                 @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                public String render(@NotNull Collection<? extends ResolvedCall<?>> calls) {
                     StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                    for (ResolvedCall<?> call : calls) {
                         stringBuilder.append("<li>");
                         stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()));
                         stringBuilder.append("</li>");
@@ -84,11 +84,9 @@ public class IdeRenderers {
     };
 
     public static final Renderer<Collection<? extends ResolvedCall<?>>> HTML_NONE_APPLICABLE_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+            new Renderer<Collection<? extends ResolvedCall<?>>>() {
                 @Nullable
-                private ValueParameterDescriptor findParameterByArgumentExpression(
-                        ResolvedCall<? extends CallableDescriptor> call,
-                        JetValueArgument argument) {
+                private ValueParameterDescriptor findParameterByArgumentExpression(ResolvedCall<?> call, JetValueArgument argument) {
                     for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
                         for (ValueArgument va : entry.getValue().getArguments()) {
                             if (va == argument) {
@@ -99,7 +97,7 @@ public class IdeRenderers {
                     return null;
                 }
 
-                private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<? extends CallableDescriptor> call) {
+                private Set<ValueParameterDescriptor> getParametersToHighlight(ResolvedCall<?> call) {
                     Set<ValueParameterDescriptor> parameters = new HashSet<ValueParameterDescriptor>();
                     if (call instanceof ResolvedCallImpl) {
                         Iterable<Diagnostic> diagnostics = ((ResolvedCallImpl)call).getTrace().getBindingContext().getDiagnostics();
@@ -126,9 +124,9 @@ public class IdeRenderers {
 
                 @NotNull
                 @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> calls) {
+                public String render(@NotNull Collection<? extends ResolvedCall<?>> calls) {
                     StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<? extends CallableDescriptor> call : calls) {
+                    for (ResolvedCall<?> call : calls) {
                         stringBuilder.append("<li>");
                         CallableDescriptor funDescriptor = call.getResultingDescriptor();
                         Set<ValueParameterDescriptor> parametersToHighlight = getParametersToHighlight(call);

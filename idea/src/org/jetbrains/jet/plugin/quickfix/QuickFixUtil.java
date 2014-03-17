@@ -99,7 +99,7 @@ public class QuickFixUtil {
     @Nullable
     public static JetParameterList getParameterListOfCallee(@NotNull JetCallExpression callExpression) {
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callExpression.getContainingFile()).getBindingContext();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
         if (resolvedCall == null) return null;
         PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
         if (declaration instanceof JetFunction) {

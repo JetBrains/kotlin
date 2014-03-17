@@ -1322,7 +1322,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
         PropertyDescriptor propertyDescriptor = null;
         if (expression instanceof JetSimpleNameExpression) {
-            ResolvedCall<? extends CallableDescriptor> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
+            ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
             if (call != null) {
                 CallableDescriptor callResultingDescriptor = call.getResultingDescriptor();
                 if (callResultingDescriptor instanceof ValueParameterDescriptor) {
@@ -1549,8 +1549,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         CallableMethod method = typeMapper.mapToCallableMethod(constructorDescriptor);
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, ((JetCallElement) superCall).getCalleeExpression());
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, ((JetCallElement) superCall).getCalleeExpression());
         assert resolvedCall != null;
         ConstructorDescriptor superConstructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
 
@@ -1651,7 +1650,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
             }
 
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+            ResolvedCall<?> resolvedCall =
                     bindingContext.get(BindingContext.RESOLVED_CALL, ((JetDelegatorToSuperCall) specifier).getCalleeExpression());
             assert resolvedCall != null : "Enum entry delegation specifier is unresolved: " + specifier.getText();
 

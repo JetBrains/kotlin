@@ -137,17 +137,15 @@ public final class BindingUtils {
     }
 
     @NotNull
-    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context,
-            @NotNull JetExpression expression) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
+    public static ResolvedCall<?> getResolvedCall(@NotNull BindingContext context, @NotNull JetExpression expression) {
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
         assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
         return resolvedCall;
     }
 
     @NotNull
-    public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context,
-            @NotNull JetExpression expression) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
+    public static ResolvedCall<?> getResolvedCallForProperty(@NotNull BindingContext context, @NotNull JetExpression expression) {
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression);
         assert resolvedCall != null : message(expression, expression.getText() + " must resolve to a call");
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall();

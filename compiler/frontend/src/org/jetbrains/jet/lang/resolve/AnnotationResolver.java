@@ -208,11 +208,10 @@ public class AnnotationResolver {
 
     public static void resolveAnnotationArgument(
             @NotNull AnnotationDescriptorImpl annotationDescriptor,
-            @NotNull ResolvedCall<? extends CallableDescriptor> call,
+            @NotNull ResolvedCall<?> resolvedCall,
             @NotNull BindingTrace trace
     ) {
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
-                call.getValueArguments().entrySet()) {
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
 
             JetType varargElementType = parameterDescriptor.getVarargElementType();

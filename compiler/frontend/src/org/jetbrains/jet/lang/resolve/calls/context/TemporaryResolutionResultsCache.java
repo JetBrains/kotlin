@@ -85,8 +85,8 @@ public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
 
     @Nullable
     @Override
-    public CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
-        CallCandidateResolutionContext<? extends CallableDescriptor> computation = innerCache.getDeferredComputation(expression);
+    public CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression) {
+        CallCandidateResolutionContext<?> computation = innerCache.getDeferredComputation(expression);
         if (computation != null) {
             return computation;
         }
@@ -95,8 +95,8 @@ public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
 
     @Nullable
     @Override
-    public ResolvedCallWithTrace<? extends CallableDescriptor> getCallForArgument(@Nullable JetExpression expression) {
-        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = innerCache.getCallForArgument(expression);
+    public ResolvedCallWithTrace<?> getCallForArgument(@Nullable JetExpression expression) {
+        ResolvedCallWithTrace<?> resolvedCall = innerCache.getCallForArgument(expression);
         if (resolvedCall != null) {
             return resolvedCall;
         }

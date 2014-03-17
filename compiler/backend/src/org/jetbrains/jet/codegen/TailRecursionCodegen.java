@@ -64,7 +64,7 @@ public class TailRecursionCodegen {
         return status != null && status.isDoGenerateTailRecursion();
     }
 
-    public void generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    public void generateTailRecursion(ResolvedCall<?> resolvedCall) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         assert fd instanceof FunctionDescriptor : "Resolved call doesn't refer to the function descriptor: " + fd;
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
@@ -107,7 +107,7 @@ public class TailRecursionCodegen {
                 JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
                 if (argumentExpression instanceof JetSimpleNameExpression) {
-                    ResolvedCall<? extends CallableDescriptor> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
+                    ResolvedCall<?> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
                     if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again
                         AsmUtil.pop(v, type);

@@ -55,7 +55,6 @@ import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -200,14 +199,13 @@ public class ResolveToolWindow extends JPanel implements Disposable {
     private static String renderDebugInfo(
             PsiElement currentElement,
             @Nullable ResolutionDebugInfo.Data debugInfo,
-            @Nullable ResolvedCall<? extends CallableDescriptor> call
+            @Nullable ResolvedCall<?> call
     ) {
         StringBuilder result = new StringBuilder();
 
         if (debugInfo != null) {
-            List<? extends ResolutionTask<? extends CallableDescriptor, ?>> resolutionTasks = debugInfo.get(TASKS);
-            for (ResolutionTask<? extends CallableDescriptor, ?> resolutionTask : resolutionTasks) {
-                for (ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall : resolutionTask.getResolvedCalls()) {
+            for (ResolutionTask<?, ?> resolutionTask : debugInfo.get(TASKS)) {
+                for (ResolvedCallWithTrace<?> resolvedCall : resolutionTask.getResolvedCalls()) {
                     renderResolutionLogForCall(debugInfo, resolvedCall, result);
                 }
             }
@@ -225,11 +223,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
         return result.toString();
     }
 
-    private static void renderResolutionLogForCall(
-            Data debugInfo,
-            ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall,
-            StringBuilder result
-    ) {
+    private static void renderResolutionLogForCall(Data debugInfo, ResolvedCallWithTrace<?> resolvedCall, StringBuilder result) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {
@@ -265,7 +259,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
         }
     }
 
-    private static String renderCall(StringBuilder builder, ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    private static String renderCall(StringBuilder builder, ResolvedCall<?> resolvedCall) {
         CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
         ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
         ReceiverValue thisObject = resolvedCall.getThisObject();

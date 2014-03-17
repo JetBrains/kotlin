@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.results;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -27,18 +26,17 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.util.slicedmap.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class ResolutionDebugInfo {
-    public static final WritableSlice<One, List<? extends ResolutionTask<? extends CallableDescriptor, ?>>> TASKS = Slices.createSimpleSlice();
-    public static final WritableSlice<One, ResolvedCall<? extends CallableDescriptor>> RESULT = Slices.createSimpleSlice();
+    public static final WritableSlice<One, List<? extends ResolutionTask<?, ?>>> TASKS = Slices.createSimpleSlice();
+    public static final WritableSlice<One, ResolvedCall<?>> RESULT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, StringBuilder> ERRORS = Slices.createSimpleSlice();
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, StringBuilder> LOG = Slices.createSimpleSlice();
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
-    public static final WritableSlice<ResolvedCall<? extends CallableDescriptor>, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<?>, StringBuilder> ERRORS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<?>, StringBuilder> LOG = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<?>, Map<TypeParameterDescriptor, BoundsOwner>> BOUNDS_FOR_UNKNOWNS = Slices.createSimpleSlice();
+    public static final WritableSlice<ResolvedCall<?>, Map<JetType, BoundsOwner>> BOUNDS_FOR_KNOWNS = Slices.createSimpleSlice();
 
     public static boolean RESOLUTION_DEBUG_INFO_ENABLED = false;
 

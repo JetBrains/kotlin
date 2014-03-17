@@ -464,7 +464,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         // Is it a "1..2" or so
         RangeCodegenUtil.BinaryCall binaryCall = RangeCodegenUtil.getRangeAsBinaryCall(forExpression);
         if (binaryCall != null) {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(RESOLVED_CALL, binaryCall.op);
+            ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, binaryCall.op);
             if (resolvedCall != null) {
                 if (RangeCodegenUtil.isOptimizableRangeTo(resolvedCall.getResultingDescriptor())) {
                     generateForLoop(new ForInRangeLiteralLoopGenerator(forExpression, binaryCall));
@@ -1625,7 +1625,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression, StackValue receiver) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
 
         DeclarationDescriptor descriptor;
         if (resolvedCall == null) {
@@ -1894,7 +1894,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression callee = expression.getCalleeExpression();
         assert callee != null;
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
         if (resolvedCall == null) {
             throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
         }
@@ -1922,11 +1922,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return invokeFunction(call, receiver, resolvedCall);
     }
 
-    private StackValue invokeSamConstructor(
-            JetCallExpression expression,
-            ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            JavaClassDescriptor samInterface
-    ) {
+    @NotNull
+    private StackValue invokeSamConstructor(JetCallExpression expression, ResolvedCall<?> resolvedCall, JavaClassDescriptor samInterface) {
         List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
         if (arguments == null) {
             throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
@@ -1994,11 +1991,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    public StackValue invokeFunction(
-            Call call,
-            StackValue receiver,
-            ResolvedCall<? extends CallableDescriptor> resolvedCall
-    ) {
+    public StackValue invokeFunction(Call call, StackValue receiver, ResolvedCall<?> resolvedCall) {
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             return invokeFunction(call, receiver, ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall());
         }
@@ -2034,7 +2027,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private StackValue invokeFunctionWithCalleeOnStack(
             @NotNull Call call,
             @NotNull StackValue receiver,
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Callable callable
     ) {
         if (callable instanceof CallableMethod) {
@@ -2118,7 +2111,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public void invokeMethodWithArguments(
             @Nullable Call call,
             @NotNull CallableMethod callableMethod,
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver
     ) {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
@@ -2159,11 +2152,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         callGenerator.genCall(callable, resolvedCall, mask, this);
     }
 
-    private void genThisAndReceiverFromResolvedCall(
-            StackValue receiver,
-            ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            CallableMethod callableMethod
-    ) {
+    private void genThisAndReceiverFromResolvedCall(StackValue receiver, ResolvedCall<?> resolvedCall, CallableMethod callableMethod) {
         receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
         receiver.put(receiver.type, v);
     }
@@ -2461,7 +2450,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
 
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
+        ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
         assert resolvedCall != null : "Callable reference is not resolved: " + functionDescriptor + " " + expression.getText();
 
         JetType kFunctionType = bindingContext.get(EXPRESSION_TYPE, expression);
@@ -2482,13 +2471,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {
-        private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
+        private final ResolvedCall<?> resolvedCall;
         private final FunctionDescriptor referencedFunction;
 
         public CallableReferenceGenerationStrategy(
                 @NotNull GenerationState state,
                 @NotNull FunctionDescriptor functionDescriptor,
-                @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall
+                @NotNull ResolvedCall<?> resolvedCall
         ) {
             super(state, functionDescriptor);
             this.resolvedCall = resolvedCall;
@@ -2704,7 +2693,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateIn(StackValue.expression(Type.INT_TYPE, expression.getLeft(), this), expression.getRight(), reference);
         }
         else {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
+            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
             Call call = bindingContext.get(BindingContext.CALL, reference);
 
             DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
@@ -2912,8 +2901,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(right, type);
         }
         else {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                    bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
             Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
             StackValue result = invokeFunction(call, receiver, resolvedCall);
             type = Type.INT_TYPE;
@@ -2975,8 +2963,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private void callAugAssignMethod(JetBinaryExpression expression, CallableMethod callable, Type lhsType, boolean keepReturnValue) {
         JetSimpleNameExpression reference = expression.getOperationReference();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, reference);
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
         Call call = bindingContext.get(BindingContext.CALL, reference);
 
         assert resolvedCall != null : "Resolved call should be not null for operation reference in " + expression.getText();
@@ -3047,8 +3034,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         DeclarationDescriptor cls = op.getContainingDeclaration();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
         assert resolvedCall != null;
 
         if (isPrimitiveNumberClassDescriptor(cls) || !(op.getName().asString().equals("inc") || op.getName().asString().equals("dec"))) {
@@ -3131,7 +3117,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             storeType = type;
         }
         else {
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
             assert resolvedCall != null;
             Callable callable = resolveToCallable((FunctionDescriptor) op, false);
             CallableMethod callableMethod = (CallableMethod) callable;
@@ -3273,7 +3259,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private StackValue generateNewCall(
             @NotNull JetCallExpression expression,
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            @NotNull ResolvedCall<?> resolvedCall,
             @NotNull StackValue receiver
     ) {
         Type type = expressionType(expression);
@@ -3286,11 +3272,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateConstructorCall(
-            @NotNull ResolvedCall<? extends CallableDescriptor> resolvedCall,
-            @NotNull StackValue receiver,
-            @NotNull Type type
-    ) {
+    private StackValue generateConstructorCall(@NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver, @NotNull Type type) {
         v.anew(type);
         v.dup();
 
@@ -3805,8 +3787,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     private void invokeFunctionByReference(JetSimpleNameExpression operationReference) {
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                bindingContext.get(RESOLVED_CALL, operationReference);
+        ResolvedCall<?> resolvedCall = bindingContext.get(RESOLVED_CALL, operationReference);
         Call call = bindingContext.get(CALL, operationReference);
         invokeFunction(call, StackValue.none(), resolvedCall);
     }

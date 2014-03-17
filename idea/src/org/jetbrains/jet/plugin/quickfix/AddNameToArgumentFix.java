@@ -67,7 +67,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         if (!(callee instanceof JetReferenceExpression)) return Collections.emptyList();
 
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) argument.getContainingFile()).getBindingContext();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, (JetReferenceExpression) callee);
         if (resolvedCall == null) return Collections.emptyList();
 
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();

@@ -106,12 +106,12 @@ public class Renderers {
     };
 
     public static final Renderer<Collection<? extends ResolvedCall<?>>> AMBIGUOUS_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<? extends CallableDescriptor>>>() {
+            new Renderer<Collection<? extends ResolvedCall<?>>>() {
                 @NotNull
                 @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<? extends CallableDescriptor>> argument) {
+                public String render(@NotNull Collection<? extends ResolvedCall<?>> argument) {
                     StringBuilder stringBuilder = new StringBuilder("\n");
-                    for (ResolvedCall<? extends CallableDescriptor> call : argument) {
+                    for (ResolvedCall<?> call : argument) {
                         stringBuilder.append(DescriptorRenderer.TEXT.render(call.getResultingDescriptor())).append("\n");
                     }
                     return stringBuilder.toString();

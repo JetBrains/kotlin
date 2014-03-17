@@ -27,7 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
@@ -347,8 +350,7 @@ public class CandidateResolver {
         context = context.replaceExpectedType(expectedType);
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
-                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
 
         PsiElement parent = expression.getParent();
         if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
@@ -361,7 +363,7 @@ public class CandidateResolver {
             return;
         }
 
-        CallCandidateResolutionContext<? extends CallableDescriptor> contextForArgument = storedContextForArgument
+        CallCandidateResolutionContext<?> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()
@@ -405,32 +407,27 @@ public class CandidateResolver {
             JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
             markResultingCallAsCompleted(context, keyExpression);
 
-            CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+            CallCandidateResolutionContext<?> storedContextForArgument =
                     context.resolutionResultsCache.getDeferredComputation(keyExpression);
             if (storedContextForArgument != null) {
                 completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
-                CallCandidateResolutionContext<? extends CallableDescriptor> newContext =
-                        storedContextForArgument.replaceBindingTrace(context.trace);
+                CallCandidateResolutionContext<?> newContext = storedContextForArgument.replaceBindingTrace(context.trace);
                 completeUnmappedArguments(newContext, storedContextForArgument.candidateCall.getUnmappedArguments());
                 argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(newContext.replaceContextDependency(INDEPENDENT));
             }
         }
     }
 
-    private static void markResultingCallAsCompleted(
-            @NotNull CallResolutionContext<?> context,
-            @Nullable JetExpression keyExpression
-    ) {
+    private static void markResultingCallAsCompleted(@NotNull CallResolutionContext<?> context, @Nullable JetExpression keyExpression) {
         if (keyExpression == null) return;
 
-        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
-                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
         if (storedContextForArgument == null) return;
 
         storedContextForArgument.candidateCall.markCallAsCompleted();
 
         // clean data for "invoke" calls
-        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
+        ResolvedCallWithTrace<?> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
         assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
         resolvedCall.markCallAsCompleted();
     }

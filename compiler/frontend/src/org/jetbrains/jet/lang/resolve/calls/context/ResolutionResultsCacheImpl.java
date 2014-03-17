@@ -36,12 +36,11 @@ import static org.jetbrains.jet.lang.psi.Call.CallType;
 import static org.jetbrains.jet.lang.psi.Call.CallType.*;
 
 public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
-    public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<FunctionDescriptor>>
-            RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
-    public static final WritableSlice<CallKey, CallCandidateResolutionContext<? extends CallableDescriptor>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
-    public static final WritableSlice<CallKey, ResolvedCallWithTrace<? extends CallableDescriptor>> RESOLVED_CALL_FOR_ARGUMENT = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, CallCandidateResolutionContext<?>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, ResolvedCallWithTrace<?>> RESOLVED_CALL_FOR_ARGUMENT = Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(ResolutionResultsCacheImpl.class);
@@ -91,7 +90,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
 
     @Override
     @Nullable
-    public CallCandidateResolutionContext<? extends CallableDescriptor> getDeferredComputation(@Nullable JetExpression expression) {
+    public CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression) {
         return getValueTryingAllCallTypes(expression, DEFERRED_COMPUTATION_FOR_CALL);
     }
 
@@ -113,7 +112,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
 
     @Nullable
     @Override
-    public ResolvedCallWithTrace<? extends CallableDescriptor> getCallForArgument(@Nullable JetExpression expression) {
+    public ResolvedCallWithTrace<?> getCallForArgument(@Nullable JetExpression expression) {
         return getValueTryingAllCallTypes(expression, RESOLVED_CALL_FOR_ARGUMENT);
     }
 
