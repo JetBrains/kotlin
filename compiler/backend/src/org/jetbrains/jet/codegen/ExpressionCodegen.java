@@ -47,7 +47,6 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.evaluate.EvaluatePackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -1356,7 +1355,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             //noinspection SuspiciousMethodCalls
             CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
             Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
-            ResolvedCall resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
+            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
             pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), defaulCallGenerator);
         }
@@ -1734,7 +1733,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
-            assert scriptDescriptor != null;
             Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
             ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
@@ -1931,7 +1929,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
         if (arguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index");
+            throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
         }
         ResolvedValueArgument argument = arguments.get(0);
         if (!(argument instanceof ExpressionValueArgument)) {
@@ -2320,21 +2318,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return false;
     }
 
-    public int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, @NotNull CallGenerator callGenerator) {
+    public int pushMethodArguments(@NotNull ResolvedCall<?> resolvedCall, List<Type> valueParameterTypes, @NotNull CallGenerator callGenerator) {
         return pushMethodArguments(resolvedCall, valueParameterTypes, false, callGenerator);
     }
 
-    private int pushMethodArguments(@NotNull ResolvedCall resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
-        @SuppressWarnings("unchecked")
+    private int pushMethodArguments(@NotNull ResolvedCall<?> resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-        if (valueArguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index");
-        }
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
+        if (valueArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index: " + fd);
+        }
         List<ValueParameterDescriptor> valueParameters = fd.getValueParameters();
 
         if (valueParameters.size() != valueArguments.size()) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("Parameters and arguments size mismatch: " + valueParameters.size() + " != " + valueArguments.size());
         }
 
         int mask = 0;
@@ -2374,6 +2371,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private static boolean hasDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
+        if (valueArguments == null) {
+            throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
+        }
 
         for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
@@ -2835,7 +2835,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private boolean isIntZero(JetExpression expr, Type exprType) {
         CompileTimeConstant<?> exprValue = getCompileTimeConstant(expr, bindingContext);
-        return isIntPrimitive(exprType) && exprValue != null && exprValue.getValue().equals(0);
+        return isIntPrimitive(exprType) && exprValue != null && Integer.valueOf(0).equals(exprValue.getValue());
     }
 
     private StackValue genCmpWithZero(JetExpression exp, Type expType, IElementType opToken) {

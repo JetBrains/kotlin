@@ -422,7 +422,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
         if (valueArguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index");
+            throw new IllegalStateException("Failed to arrange value arguments by index: " + descriptor);
         }
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
             JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
