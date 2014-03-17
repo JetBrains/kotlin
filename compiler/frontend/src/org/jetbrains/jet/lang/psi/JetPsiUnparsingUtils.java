@@ -53,7 +53,8 @@ public class JetPsiUnparsingUtils {
 
         return (expression instanceof JetParenthesizedExpression ||
                 expression instanceof JetConstantExpression ||
-                expression instanceof JetSimpleNameExpression)
+                expression instanceof JetSimpleNameExpression ||
+                expression instanceof JetDotQualifiedExpression)
                ? text : "(" + text + ")";
     }
 
