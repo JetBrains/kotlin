@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.refactoring.listeners.impl.RefactoringTransaction com.intellij.refactoring.listeners.RefactoringElementListener getElementListener(com.intellij.psi.PsiElement)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

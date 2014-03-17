@@ -51,6 +51,10 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -243,6 +247,19 @@ enum class MoveAction {
                         callback = null
                 )
             }
+        }
+    }
+
+    MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val elementToMove = elementAtCaret!!.getParentByType(javaClass<JetNamedDeclaration>())!!
+            val targetPackage = config.getString("targetPackage")
+
+            val options = MoveKotlinTopLevelDeclarationsOptions(
+                    elementsToMove = listOf(elementToMove),
+                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage))
+            )
+            MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
         }
     }
 

@@ -263,3 +263,7 @@ public fun JetSimpleNameExpression.getOutermostNonInterleavingQualifiedElement()
 }
 
 public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
+
+public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
+
+public fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elements.any { it.isAncestor(this) }

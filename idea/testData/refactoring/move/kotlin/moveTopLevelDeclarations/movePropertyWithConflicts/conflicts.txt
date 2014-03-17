@@ -1,0 +1,4 @@
+Package-private property a.test will no longer be accessible from function a.bar
+Package-private property a.test will no longer be accessible from method J.bar()
+Property a.test uses package-private class a.Foo
+Property a.test uses package-private function a.foo

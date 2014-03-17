@@ -1,0 +1,4 @@
+Function a.test uses package-private class a.Foo
+Function a.test uses package-private function a.foo
+Package-private function a.test will no longer be accessible from function a.bar
+Package-private function a.test will no longer be accessible from method J.bar()

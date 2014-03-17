@@ -191,4 +191,44 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest("idea/testData/refactoring/move/kotlin/movePackage/movePackage/movePackage.test");
     }
     
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveClass/moveClass.test")
+    public void testKotlin_moveTopLevelDeclarations_moveClass_MoveClass() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClass/moveClass.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassWithConflicts/moveClassWithConflicts.test")
+    public void testKotlin_moveTopLevelDeclarations_moveClassWithConflicts_MoveClassWithConflicts() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassWithConflicts/moveClassWithConflicts.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunction/moveFunction.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFunction_MoveFunction() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunction/moveFunction.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionWithConflicts/moveFunctionWithConflicts.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFunctionWithConflicts_MoveFunctionWithConflicts() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionWithConflicts/moveFunctionWithConflicts.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveObject/moveObject.test")
+    public void testKotlin_moveTopLevelDeclarations_moveObject_MoveObject() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObject/moveObject.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveObjectWithConflicts/moveObjectWithConflicts.test")
+    public void testKotlin_moveTopLevelDeclarations_moveObjectWithConflicts_MoveObjectWithConflicts() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObjectWithConflicts/moveObjectWithConflicts.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveProperty/moveProperty.test")
+    public void testKotlin_moveTopLevelDeclarations_moveProperty_MoveProperty() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveProperty/moveProperty.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/movePropertyWithConflicts/movePropertyWithConflicts.test")
+    public void testKotlin_moveTopLevelDeclarations_movePropertyWithConflicts_MovePropertyWithConflicts() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePropertyWithConflicts/movePropertyWithConflicts.test");
+    }
+    
 }

@@ -96,3 +96,10 @@ public fun PsiElement.getKotlinFqName(): FqName? {
         else -> null
     }
 }
+
+public fun PsiElement.getUsageContext(): PsiElement {
+    return when (this) {
+        is JetElement -> PsiTreeUtil.getParentOfType(this, javaClass<JetNamedDeclaration>(), javaClass<JetFile>())!!
+        else -> ConflictsUtil.getContainer(this)
+    }
+}

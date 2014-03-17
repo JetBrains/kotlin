@@ -27,6 +27,11 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import com.intellij.psi.PsiClass
+import org.jetbrains.jet.asJava.KotlinLightClass
+import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -58,5 +63,11 @@ public fun JetElement.updateInternalReferencesOnPackageNameChange(
                 }
             }
         }
+    }
+}
+
+public fun JetNamedDeclaration.getFileNameAfterMove(): String? {
+    return (getContainingFile() as? JetFile)?.let { file ->
+        if (file.getDeclarations().size > 1) "${getName()}.${JetFileType.INSTANCE.getDefaultExtension()}" else file.getName()
     }
 }
