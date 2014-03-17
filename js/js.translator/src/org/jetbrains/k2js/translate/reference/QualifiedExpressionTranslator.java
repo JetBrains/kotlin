@@ -27,7 +27,6 @@ import org.jetbrains.k2js.translate.utils.ErrorReportingUtils;
 
 import static org.jetbrains.k2js.translate.general.Translation.translateAsExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
-import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getNotNullSimpleNameSelector;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelector;
 
@@ -66,11 +65,7 @@ public final class QualifiedExpressionTranslator {
         }
         //TODO: never get there
         if (selector instanceof JetSimpleNameExpression) {
-            JsExpression simpleName = ReferenceTranslator.translateSimpleName((JetSimpleNameExpression) selector, context);
-            if (receiver != null) { // TODO: hack for nested Object
-                setQualifier(simpleName, receiver);
-            }
-            return simpleName;
+            return ReferenceTranslator.translateSimpleNameWithQualifier((JetSimpleNameExpression) selector, receiver, context);
         }
         throw new AssertionError("Unexpected qualified expression: " + selector.getText());
     }

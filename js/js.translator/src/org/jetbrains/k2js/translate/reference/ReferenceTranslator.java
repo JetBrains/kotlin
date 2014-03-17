@@ -19,17 +19,17 @@ package org.jetbrains.k2js.translate.reference;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.k2js.translate.context.Namer;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
 
 import static org.jetbrains.jet.lang.psi.JetPsiUtil.isBackingFieldReference;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getDescriptorForReferenceExpression;
+import static org.jetbrains.k2js.translate.utils.JsAstUtils.setQualifier;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getSelectorAsSimpleName;
 
 public final class ReferenceTranslator {
@@ -41,6 +41,31 @@ public final class ReferenceTranslator {
     public static JsExpression translateSimpleName(@NotNull JetSimpleNameExpression expression,
             @NotNull TranslationContext context) {
         return getAccessTranslator(expression, context).translateAsGet();
+    }
+
+    @NotNull
+    public static JsExpression translateSimpleNameWithQualifier(
+            @NotNull JetSimpleNameExpression expression,
+            @Nullable JsExpression qualifier,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression simpleName = translateSimpleName(expression, context);
+
+        // Ignore qualifier if expression is EnumEntry and use always use FQ name.
+        DeclarationDescriptor descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression);
+        if (descriptor instanceof ClassDescriptor) {
+            ClassDescriptor entryClass = (ClassDescriptor) descriptor;
+            if (entryClass.getKind() == ClassKind.ENUM_ENTRY) {
+                DeclarationDescriptor enumClass = entryClass.getContainingDeclaration();
+                qualifier = Namer.getClassObjectAccessor(translateAsFQReference(enumClass, context));
+            }
+        }
+
+        if (qualifier != null) { // TODO: hack for nested Object
+            setQualifier(simpleName, qualifier);
+        }
+
+        return simpleName;
     }
 
     @NotNull
