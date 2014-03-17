@@ -55,10 +55,10 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     protected static final String VERSION_TEMPLATE = "$VERSION$";
 
-    protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$ext.kotlin_version\"";
+    protected static final String CLASSPATH = "classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"";
     protected static final String SNAPSHOT_REPOSITORY = "maven {\nurl 'http://oss.sonatype.org/content/repositories/snapshots'\n}";
     protected static final String REPOSITORY = "mavenCentral()\n";
-    protected static final String LIBRARY = "compile \"org.jetbrains.kotlin:kotlin-stdlib:$ext.kotlin_version\"";
+    protected static final String LIBRARY = "compile \"org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version\"";
     protected static final String SOURCE_SET = "main.java.srcDirs += 'src/main/kotlin'\n";
     protected static final String VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE);
 
