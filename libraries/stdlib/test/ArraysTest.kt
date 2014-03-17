@@ -165,6 +165,16 @@ class ArraysTest {
         expect(2) { array("cat", "dog", "bird").indexOf("bird") }
         expect(0) { array(null, "dog", null).indexOf(null)}
     }
+
+    test fun lastIndexOf() {
+        val words = array("cat", "dog", "bird", "cat", "mouse")
+        expect(3) { words.lastIndexOf("cat") }
+        expect(-1) { words.lastIndexOf("lion") }
+
+        val nums = intArray(0, 1, 2, 0, 4, 5)
+        expect(3) { nums.lastIndexOf(0) }
+        expect(-1) { nums.lastIndexOf(6) }
+    }
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers
