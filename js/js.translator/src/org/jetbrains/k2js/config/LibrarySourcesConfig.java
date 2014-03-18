@@ -26,7 +26,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.utils.JetFileUtils;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,7 +121,7 @@ public class LibrarySourcesConfig extends Config {
             if (!entry.isDirectory() && entry.getName().endsWith(".kt")) {
                 InputStream stream = file.getInputStream(entry);
                 String text = FileUtil.loadTextAndClose(stream);
-                JetFile jetFile = JetFileUtils.createJetFile(entry.getName(), text, getProject());
+                JetFile jetFile = JetPsiFactory.createFile(getProject(), entry.getName(), text);
                 jetFile.putUserData(EXTERNAL_MODULE_NAME, UNKNOWN_EXTERNAL_MODULE_NAME);
                 result.add(jetFile);
             }
