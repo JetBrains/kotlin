@@ -42,8 +42,8 @@ class CompareTest {
 
         val diff = c.compare(v1, v2)
         assertTrue(diff < 0)
-        val items = arrayList(v1, v2)
-        items.sort(c)
+        val items = arrayListOf(v1, v2)
+        items.sortBy(c)
         println("Sorted list in rating order $items")
     }
 
@@ -60,8 +60,8 @@ class CompareTest {
 
         val diff = c.compare(v1, v2)
         assertTrue(diff > 0)
-        val items = arrayList(v1, v2)
-        items.sort(c)
+        val items = arrayListOf(v1, v2)
+        items.sortBy(c)
         println("Sorted list in rating order $items")
     }
 

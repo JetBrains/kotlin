@@ -175,14 +175,14 @@ class MapJsTest {
     */
 
     test fun createUsingPairs() {
-        val map = hashMap(Pair("a", 1), Pair("b", 2))
+        val map = mapOf(Pair("a", 1), Pair("b", 2))
         assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }
 
     test fun createUsingTo() {
-        val map = hashMap("a" to 1, "b" to 2)
+        val map = mapOf("a" to 1, "b" to 2)
         assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))

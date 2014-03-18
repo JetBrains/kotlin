@@ -92,21 +92,21 @@ public fun File.reader(): FileReader = FileReader(this)
  * This method is not recommended on huge files.
  */
 public fun File.readBytes(): ByteArray {
-    return FileInputStream(this).use<FileInputStream,ByteArray>{ it.readBytes(this.length().toInt()) }
+    return FileInputStream(this).use { it.readBytes(this.length().toInt()) }
 }
 
 /**
  * Writes the bytes as the contents of the file
  */
 public fun File.writeBytes(data: ByteArray): Unit {
-    return FileOutputStream(this).use<FileOutputStream,Unit>{ it.write(data) }
+    return FileOutputStream(this).use { it.write(data) }
 }
 
 /**
  * Appends bytes to the contents of the file.
  */
 public fun File.appendBytes(data: ByteArray): Unit {
-   return FileOutputStream(this, true).use<FileOutputStream, Unit>{ it.write(data) }
+   return FileOutputStream(this, true).use { it.write(data) }
 }
 
 /**
