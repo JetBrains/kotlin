@@ -6113,6 +6113,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                         doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/invisibleInvoke.kt");
                     }
                     
+                    @TestMetadata("receiverPresenceErrorForInvoke.kt")
+                    public void testReceiverPresenceErrorForInvoke() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/receiverPresenceErrorForInvoke.kt");
+                    }
+                    
                     @TestMetadata("typeInferenceErrorForInvoke.kt")
                     public void testTypeInferenceErrorForInvoke() throws Exception {
                         doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/typeInferenceErrorForInvoke.kt");
@@ -6126,6 +6131,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     @TestMetadata("unsafeCallWithInvoke.kt")
                     public void testUnsafeCallWithInvoke() throws Exception {
                         doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/unsafeCallWithInvoke.kt");
+                    }
+                    
+                    @TestMetadata("wrongReceiverForInvokeOnExpression.kt")
+                    public void testWrongReceiverForInvokeOnExpression() throws Exception {
+                        doTest("compiler/testData/diagnostics/tests/resolve/invoke/errors/wrongReceiverForInvokeOnExpression.kt");
                     }
                     
                     @TestMetadata("wrongReceiverTypeForInvoke.kt")

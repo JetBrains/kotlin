@@ -107,16 +107,16 @@ public class CandidateResolver {
                     argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
                                                                                                             candidateCall, unmappedArguments);
             if (!argumentMappingStatus.isSuccess()) {
-                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
+                candidateCall.setUnmappedArguments(unmappedArguments);
+                //For the expressions like '42.(f)()' where f: () -> Unit we'd like to generate an error 'no receiver admitted',
+                //not to throw away the candidate.
+                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR
+                            && !CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
                     candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
+                    return;
                 }
                 else {
                     candidateCall.addStatus(OTHER_ERROR);
-                }
-                candidateCall.setUnmappedArguments(unmappedArguments);
-                if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
-                    argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                    return;
                 }
             }
         }
@@ -845,19 +845,24 @@ public class CandidateResolver {
 
         ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
-        ReceiverParameterDescriptor receiverParameterDescriptor;
-        ReceiverValue receiverArgument;
-        if (receiverDescriptor != null && candidateCall.getReceiverArgument().exists()) {
-            receiverParameterDescriptor = receiverDescriptor;
-            receiverArgument = candidateCall.getReceiverArgument();
+        ResolutionStatus status = SUCCESS;
+        // For the expressions like '42.(f)()' where f: String.() -> Unit we'd like to generate a type mismatch error on '1',
+        // not to throw away the candidate, so the following check is skipped.
+        if (!CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
+            status = status.combine(checkReceiverTypeError(context, receiverDescriptor, candidateCall.getReceiverArgument()));
         }
-        else if (expectedThisObjectDescriptor != null && candidateCall.getThisObject().exists()) {
-            receiverParameterDescriptor = expectedThisObjectDescriptor;
-            receiverArgument = candidateCall.getThisObject();
-        }
-        else {
-            return SUCCESS;
-        }
+        status = status.combine(checkReceiverTypeError(context, expectedThisObjectDescriptor, candidateCall.getThisObject()));
+        return status;
+    }
+
+    private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @Nullable ReceiverParameterDescriptor receiverParameterDescriptor,
+            @NotNull ReceiverValue receiverArgument
+    ) {
+        if (receiverParameterDescriptor == null || !receiverArgument.exists()) return SUCCESS;
+
+        D candidateDescriptor = context.candidateCall.getCandidateDescriptor();
 
         JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
 

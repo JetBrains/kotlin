@@ -260,7 +260,6 @@ public class DefaultErrorMessages {
                 TO_STRING, RENDER_TYPE, RENDER_TYPE);
 
         MAP.put(COMPARE_TO_TYPE_MISMATCH, "''compareTo()'' must return kotlin.Int, but returns {0}", RENDER_TYPE);
-        MAP.put(CALLEE_NOT_A_FUNCTION, "Expecting a function type, but found {0}", RENDER_TYPE);
 
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
@@ -400,12 +399,12 @@ public class DefaultErrorMessages {
 
         MAP.put(CONFLICTING_OVERLOADS, "{1} is already defined in ''{0}''", DescriptorRenderer.TEXT, TO_STRING);
 
-        MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function", ELEMENT_TEXT, new Renderer<JetType>() {
+        MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. The function 'invoke()' is not found", ELEMENT_TEXT, new Renderer<JetType>() {
             @NotNull
             @Override
             public String render(@NotNull JetType type) {
                 if (type.isError()) return "";
-                return " of type '" + type.toString() + "'";
+                return " of type '" + RENDER_TYPE.render(type) + "'";
             }
         });
         MAP.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", ELEMENT_TEXT,new Renderer<Boolean>() {

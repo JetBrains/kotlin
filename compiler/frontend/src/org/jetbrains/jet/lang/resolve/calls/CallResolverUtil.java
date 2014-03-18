@@ -154,4 +154,9 @@ public class CallResolverUtil {
         JetExpression expression = ((ExpressionReceiver) thisObject).getExpression();
         return expression instanceof JetSimpleNameExpression;
     }
+
+    public static boolean isInvokeCallOnExpressionWithBothReceivers(@NotNull Call call) {
+        if (call.getCallType() != Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false;
+        return call.getExplicitReceiver().exists() && call.getThisObject().exists();
+    }
 }

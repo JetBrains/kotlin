@@ -287,13 +287,9 @@ public class CallResolver {
 
                 Call call = new CallTransformer.CallForImplicitInvoke(
                         context.call.getExplicitReceiver(), expressionReceiver, context.call);
-                TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call);
-                OverloadResolutionResults<FunctionDescriptor> invokeResults =
+                TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call, calleeType);
+                return (OverloadResolutionResultsImpl<FunctionDescriptor>)
                         resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
-                if (invokeResults.isNothing() || invokeResults.getResultCode() == CANDIDATES_WITH_WRONG_RECEIVER) {
-                    context.trace.report(CALLEE_NOT_A_FUNCTION.on(calleeExpression, calleeType));
-                }
-                return (OverloadResolutionResultsImpl<FunctionDescriptor>) invokeResults; //todo
             }
             else {
 //                checkTypesWithNoCallee(trace, scope, call);
