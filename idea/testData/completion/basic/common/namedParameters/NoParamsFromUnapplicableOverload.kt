@@ -5,7 +5,7 @@ fun test() {
     foo(12, param<caret>)
 }
 
-// ABSENT: {"lookupString":"paramFirst = ","itemText":"paramFirst = "}
-// EXIST: {"lookupString":"paramSecond = ","itemText":"paramSecond = "}
-// ABSENT: {"lookupString":"paramThird = ","itemText":"paramThird = "}
-// ABSENT: {"lookupString":"paramFourth = ","itemText":"paramFourth = "}
+// ABSENT: paramFirst
+// EXIST: {"lookupString":"paramSecond","tailText":"Int","itemText":"paramSecond = "}
+// ABSENT: paramThird
+// ABSENT: paramFourth

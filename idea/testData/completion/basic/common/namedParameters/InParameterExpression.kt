@@ -6,4 +6,6 @@ fun small(paramFirst: Int, paramSecond: Int) {
 fun test() = small(paramFirst = <caret>)
 
 // EXIST: paramTest
-// ABSENT: paramFirst, paramSecond
+// ABSENT: {"lookupString":"paramFirst","tailText":"Int","itemText":"paramFirst = "}
+// ABSENT: paramSecond
+// NUMBER: 1
