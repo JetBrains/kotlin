@@ -66,8 +66,8 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDe
 
     @NotNull
     @Override
-    public String getLibraryNamePrefix() {
-        return LIBRARY_NAME;
+    public LibraryKind getLibraryKind() {
+        return KOTLIN_JAVA_RUNTIME_KIND;
     }
 
     @Nullable

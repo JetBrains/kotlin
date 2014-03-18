@@ -19,9 +19,13 @@ package org.jetbrains.jet.plugin.framework;
 import com.beust.jcommander.internal.Lists;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.Library;
+import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
+import com.intellij.openapi.roots.ui.configuration.libraries.LibraryPresentationManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,11 +33,12 @@ import org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator;
 import org.jetbrains.jet.plugin.util.projectStructure.ProjectStructurePackage;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibraryDescription {
     @NotNull
-    public abstract String getLibraryNamePrefix();
+    public abstract LibraryKind getLibraryKind();
 
     @Nullable
     public abstract DeferredCopyFileRequests getCopyFileRequests();
@@ -45,12 +50,16 @@ public abstract class CustomLibraryDescriptorWithDefferConfig extends CustomLibr
         Library library = ProjectStructurePackage.findLibrary(rootModel.orderEntries(), new Function1<Library, Boolean>() {
             @Override
             public Boolean invoke(@NotNull Library library) {
-                String name = library.getName();
-                return name != null && name.startsWith(getLibraryNamePrefix());
+                LibraryPresentationManager libraryPresentationManager = LibraryPresentationManager.getInstance();
+                List<VirtualFile> classFiles = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
+
+                return libraryPresentationManager.isLibraryOfKind(classFiles, getLibraryKind());
             }
         });
 
-        if (library == null) return;
+        if (library == null) {
+            return;
+        }
 
         Library.ModifiableModel model = library.getModifiableModel();
         try {

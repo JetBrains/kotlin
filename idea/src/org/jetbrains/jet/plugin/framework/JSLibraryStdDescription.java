@@ -66,8 +66,8 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
 
     @NotNull
     @Override
-    public String getLibraryNamePrefix() {
-        return LIBRARY_NAME;
+    public LibraryKind getLibraryKind() {
+        return KOTLIN_JAVASCRIPT_KIND;
     }
 
     @Nullable
