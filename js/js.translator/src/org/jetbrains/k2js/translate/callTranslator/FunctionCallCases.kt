@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import com.google.dart.compiler.backend.js.ast.JsNew
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor
 import org.jetbrains.k2js.translate.general.Translation
 import com.google.dart.compiler.backend.js.ast.JsLiteral
 import com.google.dart.compiler.backend.js.ast.JsName

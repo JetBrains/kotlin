@@ -31,12 +31,12 @@ import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -53,7 +53,6 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionTraitClassName;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
@@ -412,14 +411,7 @@ public class JetTypeMapper extends BindingTraceAware {
         Type thisClass;
         Type calleeType = null;
 
-        if (isLocalNamedFun(functionDescriptor) || functionDescriptor instanceof ExpressionAsFunctionDescriptor) {
-            if (functionDescriptor instanceof ExpressionAsFunctionDescriptor) {
-                JetExpression expression = JetPsiUtil.deparenthesize(((ExpressionAsFunctionDescriptor) functionDescriptor).getExpression());
-                if (expression instanceof JetFunctionLiteralExpression) {
-                    expression = ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
-                }
-                functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
-            }
+        if (isLocalNamedFun(functionDescriptor)) {
             functionDescriptor = functionDescriptor.getOriginal();
 
             owner = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
@@ -552,9 +544,7 @@ public class JetTypeMapper extends BindingTraceAware {
                 return PropertyCodegen.setterName(property.getName());
             }
         }
-        else if (isLocalNamedFun(descriptor) ||
-                 descriptor instanceof AnonymousFunctionDescriptor ||
-                 descriptor instanceof ExpressionAsFunctionDescriptor) {
+        else if (isLocalNamedFun(descriptor) || descriptor instanceof AnonymousFunctionDescriptor) {
             return "invoke";
         }
         else {
@@ -842,21 +832,6 @@ public class JetTypeMapper extends BindingTraceAware {
             return StackValue.sharedTypeForType(mapType(outType));
         }
         return null;
-    }
-
-    @NotNull
-    public CallableMethod mapToFunctionInvokeCallableMethod(@NotNull FunctionDescriptor fd) {
-        JvmMethodSignature signature = erasedInvokeSignature(fd);
-        Type owner = getFunctionTraitClassName(fd);
-        Type receiverParameterType;
-        ReceiverParameterDescriptor receiverParameter = fd.getOriginal().getReceiverParameter();
-        if (receiverParameter != null) {
-            receiverParameterType = mapType(receiverParameter.getType());
-        }
-        else {
-            receiverParameterType = null;
-        }
-        return new CallableMethod(owner, null, null, signature, INVOKEINTERFACE, owner, receiverParameterType, owner);
     }
 
     @NotNull

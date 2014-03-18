@@ -50,7 +50,6 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
@@ -2090,23 +2089,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @NotNull
     private CallableMethod resolveToCallableMethod(@NotNull FunctionDescriptor fd, boolean superCall, @NotNull CodegenContext context) {
-        if (isCallAsFunctionObject(fd)) {
-            return typeMapper.mapToFunctionInvokeCallableMethod(createInvoke(fd));
-        }
-        else {
-            SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(fd);
-            return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall, context);
-        }
+        SimpleFunctionDescriptor originalOfSamAdapter = (SimpleFunctionDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(fd);
+        return typeMapper.mapToCallableMethod(originalOfSamAdapter != null ? originalOfSamAdapter : fd, superCall, context);
     }
-
-    private static boolean isCallAsFunctionObject(FunctionDescriptor fd) {
-        if (fd instanceof ExpressionAsFunctionDescriptor) {
-            JetExpression deparenthesize = JetPsiUtil.deparenthesize(((ExpressionAsFunctionDescriptor) fd).getExpression());
-            return !(deparenthesize instanceof JetCallableReferenceExpression || deparenthesize instanceof JetFunctionLiteralExpression);
-        }
-        return false;
-    }
-
 
     public void invokeMethodWithArguments(
             @Nullable Call call,

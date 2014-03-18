@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -841,7 +840,6 @@ public class CandidateResolver {
     ) {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
-        if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) return SUCCESS;
 
         ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
