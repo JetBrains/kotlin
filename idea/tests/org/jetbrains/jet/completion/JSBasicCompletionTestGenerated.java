@@ -493,6 +493,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest("idea/testData/completion/basic/common/namedParameters/CompactTypeNames.kt");
             }
             
+            @TestMetadata("InIndexCall.kt")
+            public void testInIndexCall() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/InIndexCall.kt");
+            }
+            
             @TestMetadata("InParameterExpression.kt")
             public void testInParameterExpression() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/InParameterExpression.kt");
