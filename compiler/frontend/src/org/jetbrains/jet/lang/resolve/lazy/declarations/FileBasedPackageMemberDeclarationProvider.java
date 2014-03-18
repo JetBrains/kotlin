@@ -32,7 +32,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     private final FqName fqName;
     private final FileBasedDeclarationProviderFactory factory;
     private final Collection<JetFile> packageFiles;
-    private final NotNullLazyValue<Collection<FqName>> allDeclaredPackages;
+    private final NotNullLazyValue<Collection<FqName>> allDeclaredSubPackages;
 
 
     /*package*/ FileBasedPackageMemberDeclarationProvider(
@@ -45,7 +45,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
         this.fqName = _fqName;
         this.factory = _factory;
         this.packageFiles = packageFiles;
-        this.allDeclaredPackages = storageManager.createLazyValue(new Function0<Collection<FqName>>() {
+        this.allDeclaredSubPackages = storageManager.createLazyValue(new Function0<Collection<FqName>>() {
             @Override
             public Collection<FqName> invoke() {
                 return factory.getAllDeclaredSubPackagesOf(fqName);
@@ -65,8 +65,8 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
 
     @NotNull
     @Override
-    public Collection<FqName> getAllDeclaredPackages() {
-        return allDeclaredPackages.invoke();
+    public Collection<FqName> getAllDeclaredSubPackages() {
+        return allDeclaredSubPackages.invoke();
     }
 
     @NotNull

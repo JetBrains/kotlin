@@ -58,7 +58,7 @@ public class StubBasedPackageMemberDeclarationProvider(
         return JetTopLevelPropertiesFqnNameIndex.getInstance().get(childName(name), project, searchScope)
     }
 
-    override fun getAllDeclaredPackages(): Collection<FqName> {
+    override fun getAllDeclaredSubPackages(): Collection<FqName> {
         //TODO: duplication with light class generation support
         val allPackagesInProject = JetAllPackagesIndex.getInstance().getAllKeys(project)
         return allPackagesInProject.filter {

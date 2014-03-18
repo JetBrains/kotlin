@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 
 public class CombinedPackageMemberDeclarationProvider(val providers: Collection<PackageMemberDeclarationProvider>) : PackageMemberDeclarationProvider {
-    override fun getAllDeclaredPackages() = providers.flatMap { it.getAllDeclaredPackages() }
+    override fun getAllDeclaredSubPackages() = providers.flatMap { it.getAllDeclaredSubPackages() }
 
     override fun getPackageDeclarations(fqName: FqName) = providers.flatMap { it.getPackageDeclarations(fqName) }
 

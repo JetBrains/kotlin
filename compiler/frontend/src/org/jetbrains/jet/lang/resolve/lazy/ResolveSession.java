@@ -154,7 +154,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 if (packageDescriptor == null) {
                     return Collections.emptyList();
                 }
-                return packageDescriptor.getDeclarationProvider().getAllDeclaredPackages();
+                return packageDescriptor.getDeclarationProvider().getAllDeclaredSubPackages();
             }
         };
 

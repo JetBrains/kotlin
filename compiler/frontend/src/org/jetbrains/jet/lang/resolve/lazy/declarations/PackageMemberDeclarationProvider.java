@@ -26,10 +26,9 @@ import java.util.Collection;
 
 public interface PackageMemberDeclarationProvider extends DeclarationProvider {
 
-    //TODO: method name
     @ReadOnly
     @NotNull
-    Collection<FqName> getAllDeclaredPackages();
+    Collection<FqName> getAllDeclaredSubPackages();
 
     @ReadOnly
     @NotNull
