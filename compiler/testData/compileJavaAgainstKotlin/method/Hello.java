@@ -1,6 +1,8 @@
+package test;
+
 
 class Hello {
     public static void xx() {
-        String s = _DefaultPackage.f();
+        String s = TestPackage.f();
     }
 }

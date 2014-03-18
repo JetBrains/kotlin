@@ -1,6 +1,8 @@
+package test;
+
 
 class IntWithDefault {
     {
-        int r = _DefaultPackage.www(1);
+        int r = TestPackage.www(1);
     }
 }

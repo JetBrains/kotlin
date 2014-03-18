@@ -1,5 +1,7 @@
+package test;
+
 class GenericArray {
     public static void ggff() {
-        String[] s = _DefaultPackage.ffgg(new String[0]);
+        String[] s = TestPackage.ffgg(new String[0]);
     }
 }

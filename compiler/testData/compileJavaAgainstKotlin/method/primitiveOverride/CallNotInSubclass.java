@@ -1,3 +1,5 @@
+package test;
+
 class Test {
     void test() {
         A<Integer> a = new B();

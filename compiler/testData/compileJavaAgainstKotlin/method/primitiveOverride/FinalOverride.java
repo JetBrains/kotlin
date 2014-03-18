@@ -1,3 +1,5 @@
+package test;
+
 class Test extends B {
     void test() {
         A<Integer> a = new B();

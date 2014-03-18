@@ -1,6 +1,8 @@
+package test;
+
 
 class IntArray {
     {
-        int[] r = _DefaultPackage.doNothing(new int[0], null);
+        int[] r = TestPackage.doNothing(new int[0], null);
     }
 }

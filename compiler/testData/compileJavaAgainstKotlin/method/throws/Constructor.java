@@ -1,3 +1,5 @@
+package test;
+
 class JavaClass {
     void testMethod() {
         new None();

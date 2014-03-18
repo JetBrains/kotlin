@@ -1,6 +1,7 @@
+package test;
 
 class Any {
     {
-        Object r = _DefaultPackage.anyany(new Object(), null);
+        Object r = TestPackage.anyany(new Object(), null);
     }
 }

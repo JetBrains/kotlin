@@ -1,3 +1,5 @@
+package test
+
 class WithClassObject {
   class object {
     fun foo() {}

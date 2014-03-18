@@ -1,3 +1,5 @@
+package test;
+
 class ClassObject {
     void accessToClassObject() {
         WithClassObject.object$.foo();

@@ -1,3 +1,5 @@
+package test;
+
 class staticClassProperty {
 
     public static void main(String[] args) {

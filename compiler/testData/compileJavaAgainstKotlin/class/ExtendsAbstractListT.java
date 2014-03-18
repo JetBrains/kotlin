@@ -1,3 +1,5 @@
+package test;
+
 class ExtendsAbstractListT {
     {
         Mine<String> mine = null;

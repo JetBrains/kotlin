@@ -1,3 +1,5 @@
+package test
+
 trait Test {
 
   class object {
