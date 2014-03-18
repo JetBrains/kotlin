@@ -58,15 +58,21 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     }
 
     public void addCandidates(@NotNull Collection<ResolutionCandidate<D>> candidates) {
+        assertNotFinished();
         if (!candidates.isEmpty()) {
             candidatesList.add(setIsSafeCall(candidates));
         }
     }
 
     public void addCandidates(@NotNull List<Collection<ResolutionCandidate<D>>> candidatesList) {
+        assertNotFinished();
         for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
             addCandidates(candidates);
         }
+    }
+
+    private void assertNotFinished() {
+        assert tasks == null : "Can't add candidates after the resulting tasks were computed.";
     }
 
     public List<ResolutionTask<D, F>> getTasks() {
@@ -76,12 +82,14 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             for (int priority = priorityProvider.getMaxPriority(); priority >= 0; priority--) {
                 final int finalPriority = priority;
                 for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
-                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, new Predicate<ResolutionCandidate<D>>() {
-                        @Override
-                        public boolean apply(@Nullable ResolutionCandidate<D> input) {
-                            return finalPriority == priorityProvider.getPriority(input);
-                        }
-                    });
+                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(
+                            candidates, new Predicate<ResolutionCandidate<D>>() {
+                                @Override
+                                public boolean apply(@Nullable ResolutionCandidate<D> input) {
+                                    return finalPriority == priorityProvider.getPriority(input);
+                                }
+                            }
+                    );
                     if (!filteredCandidates.isEmpty()) {
                         tasks.add(new ResolutionTask<D, F>(filteredCandidates, basicCallResolutionContext, tracing));
                     }
