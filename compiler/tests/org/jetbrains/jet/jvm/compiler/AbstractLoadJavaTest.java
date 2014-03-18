@@ -23,6 +23,7 @@ import com.intellij.psi.PsiFile;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
@@ -35,7 +36,12 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClass
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
+import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -51,6 +57,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.jet.JetTestUtils.*;
 import static org.jetbrains.jet.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.ALLOW_ERROR_TYPES;
 import static org.jetbrains.jet.test.util.RecursiveDescriptorComparator.*;
@@ -116,7 +123,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                                       RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT
                                               .checkPrimaryConstructors(true)
                                               .checkPropertyAccessors(true),
-                                      txtFile);
+                                      txtFile
+        );
     }
 
     protected void doTestJavaAgainstKotlin(String expectedFileName) throws Exception {
@@ -163,6 +171,35 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assert packageView != null : "Test package not found";
 
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
+    }
+
+    // TODO: add more tests on inherited parameter names, but currently impossible because of KT-4509
+    protected void doTestKotlinAgainstCompiledJavaWithKotlin(@NotNull String expectedFileName) throws Exception {
+        File kotlinSrc = new File(expectedFileName);
+        File librarySrc = new File(expectedFileName.replaceFirst("\\.kt$", ""));
+        File expectedFile = new File(expectedFileName.replaceFirst("\\.kt$", ".txt"));
+
+        File libraryOut = new File(tmpdir, "libraryOut");
+        compileKotlinWithJava(
+                Arrays.asList(librarySrc.listFiles(JetTestCaseBuilder.filterByExtension("java"))),
+                Arrays.asList(librarySrc.listFiles(JetTestCaseBuilder.filterByExtension("kt"))),
+                libraryOut,
+                getTestRootDisposable()
+        );
+
+        JetCoreEnvironment environment = JetCoreEnvironment.createForTests(
+                getTestRootDisposable(), compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK,
+                                                                       getAnnotationsJar(), libraryOut)
+        );
+        JetFile jetFile = JetTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
+
+        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(
+                environment.getProject(), Collections.singleton(jetFile), Predicates.<PsiFile>alwaysTrue()
+        );
+        PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        assertNotNull(packageView);
+
+        validateAndCompareDescriptorWithFile(packageView, DONT_INCLUDE_METHODS_OF_OBJECT, expectedFile);
     }
 
     protected void doTestSourceJava(@NotNull String javaFileName) throws Exception {
