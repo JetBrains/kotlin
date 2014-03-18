@@ -41,13 +41,7 @@ public class FieldRemapper {
         params = methodParams;
     }
 
-    public void addCapturedFields(LambdaInfo lambdaInfo, ParametersBuilder builder) {
-        for (CapturedParamInfo info : lambdaInfo.getCapturedVars()) {
-            builder.addCapturedParam(info, info);
-        }
-    }
-
-    public boolean canProcess(@NotNull String fieldOwner) {
+    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
         return fieldOwner.equals(getLambdaInternalName());
     }
 
@@ -79,7 +73,7 @@ public class FieldRemapper {
         if (transformed == null) {
             //if parent couldn't transform
             FieldInsnNode insnNode = (FieldInsnNode) capturedFieldAccess.get(currentInstruction);
-            if (canProcess(insnNode.owner)) {
+            if (canProcess(insnNode.owner, true)) {
                 insnNode.name = "$$$" + insnNode.name;
                 insnNode.setOpcode(Opcodes.GETSTATIC);
 
@@ -102,9 +96,9 @@ public class FieldRemapper {
     }
 
     @Nullable
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
+    protected CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
         for (CapturedParamInfo valueDescriptor : captured) {
-            if (valueDescriptor.getFieldName().equals(fieldInsnNode.name) && fieldInsnNode.owner.equals(valueDescriptor.getContainingLambdaName())) {
+            if (valueDescriptor.getOriginalFieldName().equals(fieldInsnNode.name) && fieldInsnNode.owner.equals(valueDescriptor.getContainingLambdaName())) {
                 return valueDescriptor;
             }
         }

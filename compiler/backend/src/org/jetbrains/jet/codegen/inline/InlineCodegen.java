@@ -217,7 +217,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
 
-        return inliner.doInline(codegen.v, remapper, new FieldRemapper(null, null, parameters));
+        return inliner.doInline(codegen.v, remapper);
     }
 
     private void generateClosuresBodies() {

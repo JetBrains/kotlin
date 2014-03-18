@@ -176,6 +176,11 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         doTestMultiFile("compiler/testData/codegen/boxInline/rootConstructor");
     }
     
+    @TestMetadata("sameCaptured")
+    public void testSameCaptured() throws Exception {
+        doTestMultiFile("compiler/testData/codegen/boxInline/sameCaptured");
+    }
+    
     @TestMetadata("severalClosures")
     public void testSeveralClosures() throws Exception {
         doTestMultiFile("compiler/testData/codegen/boxInline/severalClosures");

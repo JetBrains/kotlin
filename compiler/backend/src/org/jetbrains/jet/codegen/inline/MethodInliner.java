@@ -72,19 +72,19 @@ public class MethodInliner {
     }
 
 
-    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper, FieldRemapper capturedRemapper) {
-        return doInline(adapter, remapper, capturedRemapper, true);
+    public InlineResult doInline(MethodVisitor adapter, VarRemapper.ParamRemapper remapper) {
+        return doInline(adapter, remapper, true);
     }
 
     public InlineResult doInline(
             MethodVisitor adapter,
             VarRemapper.ParamRemapper remapper,
-            FieldRemapper capturedRemapper, boolean remapReturn
+            boolean remapReturn
     ) {
         //analyze body
         MethodNode transformedNode = markPlacesForInlineAndRemoveInlinable(node);
 
-        transformedNode = doInline(transformedNode, capturedRemapper);
+        transformedNode = doInline(transformedNode);
         removeClosureAssertions(transformedNode);
         transformedNode.instructions.resetLabels();
 
@@ -102,7 +102,7 @@ public class MethodInliner {
         return result;
     }
 
-    private MethodNode doInline(MethodNode node, final FieldRemapper capturedRemapper) {
+    private MethodNode doInline(MethodNode node) {
 
         final Deque<InvokeCall> currentInvokes = new LinkedList<InvokeCall>(invokeCalls);
 
@@ -129,7 +129,7 @@ public class MethodInliner {
                                                                               inliningContext.subInline(inliningContext.nameGenerator, currentTypeMapping).classRegeneration(),
                                                                               isSameModule, newLambdaType);
 
-                        InlineResult transformResult = transformer.doTransform(invocation, capturedRemapper);
+                        InlineResult transformResult = transformer.doTransform(invocation, nodeRemapper);
                         result.addAllClassesToRemove(transformResult);
 
                         if (inliningContext.isInliningLambda) {
@@ -159,22 +159,19 @@ public class MethodInliner {
                     int valueParamShift = getNextLocalIndex();//NB: don't inline cause it changes
                     putStackValuesIntoLocals(info.getParamsWithoutCapturedValOrVar(), valueParamShift, this, desc);
 
-                    Parameters lambdaParameters = info.addAllParameters(capturedRemapper);
+                    Parameters lambdaParameters = info.addAllParameters();
 
                     InlinedLambdaRemapper newCapturedRemapper =
-                            new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), capturedRemapper, lambdaParameters);
-
-                    FieldRemapper fieldRemapper =
-                            new FieldRemapper(info.getLambdaClassType().getInternalName(), capturedRemapper, lambdaParameters);
+                            new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), nodeRemapper, lambdaParameters);
 
                     setInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
                                                               inliningContext.subInlineLambda(info),
-                                                              fieldRemapper, true /*cause all calls in same module as lambda*/,
+                                                              newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName());
 
                     VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(lambdaParameters, valueParamShift);
-                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, newCapturedRemapper);//TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper);//TODO add skipped this and receiver
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
@@ -188,7 +185,7 @@ public class MethodInliner {
                     if (invocation.shouldRegenerate()) {
                         //put additional captured parameters on stack
                         for (CapturedParamInfo capturedParamInfo : invocation.getAllRecapturedParameters()) {
-                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamInfo.getContainingLambdaName(), "$$$" + capturedParamInfo.getFieldName(), capturedParamInfo.getType().getDescriptor());
+                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamInfo.getContainingLambdaName(), "$$$" + capturedParamInfo.getOriginalFieldName(), capturedParamInfo.getType().getDescriptor());
                         }
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
                         invocation = null;

@@ -24,7 +24,6 @@ import org.jetbrains.asm4.tree.FieldInsnNode;
 import org.jetbrains.jet.codegen.StackValue;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
@@ -52,35 +51,8 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     }
 
     @Override
-    public void addCapturedFields(LambdaInfo lambdaInfo, ParametersBuilder builder) {
-        if (canProcess(lambdaInfo.getLambdaClassType().getInternalName())) {
-            List<CapturedParamInfo> captured = parameters.getCaptured();
-            for (CapturedParamInfo originalField : lambdaInfo.getCapturedVars()) {
-                CapturedParamInfo foundField = null;
-                for (CapturedParamInfo capturedParamInfo : captured) {
-                    if (capturedParamInfo.getContainingLambdaName().equals(originalField.getContainingLambdaName())) {
-                        if (capturedParamInfo.getFieldName().equals(LambdaTransformer.getNewFieldName(originalField.getFieldName()))) {
-                            foundField = originalField;
-                            break;
-                        }
-                    }
-                }
-
-                if (foundField == null) {
-                    throw new IllegalStateException("Captured parameter should exists in outer context: " + originalField.getFieldName());
-                }
-
-                builder.addCapturedParam(foundField, foundField);
-            }
-        } else {
-            //in case when inlining lambda into another one inside inline function
-            parent.addCapturedFields(lambdaInfo, builder);
-        }
-    }
-
-    @Override
-    public boolean canProcess(@NotNull String fieldOwner) {
-        return super.canProcess(fieldOwner) || isRecapturedLambdaType(fieldOwner);
+    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
+        return super.canProcess(fieldOwner, forTransformation) || isRecapturedLambdaType(fieldOwner);
     }
 
     private boolean isRecapturedLambdaType(String owner) {
@@ -90,27 +62,17 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     @Nullable
     @Override
     public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
-        boolean searchInParent = !canProcess(fieldInsnNode.owner);
+        boolean searchInParent = !canProcess(fieldInsnNode.owner, false);
         if (searchInParent) {
             return parent.findField(fieldInsnNode);
-        } else if (isRecapturedLambdaType(fieldInsnNode.owner)) {
-            LambdaInfo info = recapturedLambdas.get(fieldInsnNode.owner);
-            return super.findField(fieldInsnNode, info.getCapturedVars());
-        }
-        else {
-            return super.findField(fieldInsnNode, captured);
+        } else {
+            return findFieldInMyCaptured(fieldInsnNode);
         }
     }
 
     @Nullable
     public CapturedParamInfo findFieldInMyCaptured(@NotNull FieldInsnNode fieldInsnNode) {
-        if (isRecapturedLambdaType(fieldInsnNode.owner)) {
-            LambdaInfo info = recapturedLambdas.get(fieldInsnNode.owner);
-            return super.findField(fieldInsnNode, info.getCapturedVars());
-        }
-        else {
-            return super.findField(fieldInsnNode, parameters.getCaptured());
-        }
+        return super.findField(fieldInsnNode, parameters.getCaptured());
     }
 
     @Nullable
@@ -129,14 +91,11 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
             }
         }
 
-        String newName = field.getContainingLambdaName().equals(getLambdaInternalName())
-                         ? field.getFieldName()
-                         : LambdaTransformer.getNewFieldName(field.getFieldName());
         StackValue result =
                 StackValue.composed(prefix == null ? StackValue.local(0, Type.getObjectType(getLambdaInternalName())) : prefix,
                                     StackValue.field(field.getType(),
                                                      Type.getObjectType(newOwnerType), /*TODO owner type*/
-                                                     newName, false)
+                                                     field.getNewFieldName(), false)
         );
 
         return searchInParent ? parent.getFieldForInline(node, result) : result;

@@ -34,12 +34,9 @@ public class InlinedLambdaRemapper extends FieldRemapper {
 
 
     @Override
-    public void addCapturedFields(
-            LambdaInfo lambdaInfo, ParametersBuilder builder
-    ) {
-        parent.addCapturedFields(lambdaInfo, builder);
+    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
+        return forTransformation ? super.canProcess(fieldOwner, forTransformation) : false;
     }
-
 
     @Override
     @Nullable
@@ -50,13 +47,4 @@ public class InlinedLambdaRemapper extends FieldRemapper {
         return parent.findField(fieldInsnNode, captured);
     }
 
-    @Override
-    public FieldRemapper getParent() {
-        return parent.getParent();
-    }
-
-    @Override
-    public boolean isRoot() {
-        return parent.isRoot();
-    }
 }
