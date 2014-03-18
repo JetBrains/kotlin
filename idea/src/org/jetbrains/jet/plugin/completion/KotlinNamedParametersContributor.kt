@@ -40,14 +40,13 @@ import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.psi.filters.position.PositionElementFilter
-import com.intellij.psi.PsiElement
 import com.intellij.psi.filters.position.FilterPattern
 import com.intellij.psi.filters.AndFilter
 import org.jetbrains.jet.lang.psi.JetValueArgumentName
 import com.intellij.psi.filters.position.ParentElementFilter
 import com.intellij.psi.filters.OrFilter
 import com.intellij.psi.filters.ClassFilter
+import org.jetbrains.jet.plugin.util.FirstChildInParentFilter
 
 public class KotlinNamedParametersContributor : CompletionContributor() {
     public class NamedParameterLookupObject(val name: Name) {}
@@ -117,25 +116,6 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
 
             editor.getDocument().insertString(tailOffset, " = ")
             editor.getCaretModel().moveToOffset(tailOffset + 3)
-        }
-    }
-
-    private class FirstChildInParentFilter(val level: Int = 1) : PositionElementFilter() {
-        override fun isAcceptable(element: Any?, context: PsiElement?): Boolean {
-            if (!(element is PsiElement)) return false
-
-            var parent: PsiElement? = element
-            for (i in 1..level) {
-                if (parent == null) break
-                parent = parent?.getContext()
-            }
-
-            return (parent != null) && PsiTreeUtil.isAncestor(parent?.getFirstChild(), element, true)
-        }
-
-
-        override fun toString(): String {
-            return "firstChildInParent($level)"
         }
     }
 }
