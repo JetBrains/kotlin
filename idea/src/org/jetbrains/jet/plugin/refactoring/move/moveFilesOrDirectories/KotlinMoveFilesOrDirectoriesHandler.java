@@ -42,14 +42,21 @@ public class KotlinMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesH
 
     @Override
     public boolean canMove(PsiElement[] elements, @Nullable PsiElement targetContainer) {
+        ArrayList<PsiElement> adjustedElements = new ArrayList<PsiElement>();
         for (PsiElement element : elements) {
-            if (!(element instanceof PsiFile) && !(element instanceof PsiDirectory) &&
-                (!(element instanceof JetClassOrObject) ||
-                 !isMovableClass((JetClassOrObject) element))) {
-                return false;
+            if (element instanceof PsiFile || element instanceof PsiDirectory) {
+                adjustedElements.add(element);
+                continue;
             }
+
+            if (element instanceof JetClassOrObject && element.getParent() instanceof JetFile) {
+                adjustedElements.add(element.getParent());
+                continue;
+            }
+
+            return false;
         }
-        return super.canMove(elements, targetContainer);
+        return super.canMove(adjustedElements.toArray(new PsiElement[adjustedElements.size()]), targetContainer);
     }
 
     @Override
