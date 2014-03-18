@@ -17,20 +17,15 @@
 package org.jetbrains.jet.plugin.stubindex.resolve
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
-import java.util.*
-import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSources
-import org.jetbrains.jet.lang.resolve.name.numberOfSegments
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 
 public class StubBasedPackageMemberDeclarationProvider(
@@ -61,18 +56,6 @@ public class StubBasedPackageMemberDeclarationProvider(
 
     override fun getAllDeclaredSubPackages(): Collection<FqName> {
         return PackageIndexUtil.getSubPackageFqNames(fqName, searchScope, project)
-    }
-
-    override fun getPackageDeclarations(fqName: FqName): Collection<NavigatablePsiElement> {
-        if (fqName.isRoot()) {
-            return Collections.emptyList()
-        }
-
-        val files = JetAllPackagesIndex.getInstance().get(fqName.asString(), project, searchScope)
-        return files.map {
-            file ->
-            JetPsiUtil.getPackageReference(file, fqName.numberOfSegments() - 1)
-        }.filterNotNull()
     }
 
     override fun getPackageFiles(): Collection<JetFile> {

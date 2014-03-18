@@ -81,16 +81,4 @@ public class JetStubResolveTest extends LightCodeInsightFixtureTestCase {
         assertSize(1, testProperties);
         assertEquals("val test = 12", testProperties.get(0).getText());
     }
-
-    public void testGetPackageByIntermediatePartition() {
-        myFixture.configureByText(JetFileType.INSTANCE, "package first.second.third");
-
-        StubBasedPackageMemberDeclarationProvider provider = new StubBasedPackageMemberDeclarationProvider(
-                new FqName("first.second"), getProject(), GlobalSearchScope.projectScope(getProject()));
-
-        Collection<NavigatablePsiElement> packageDeclarations = provider.getPackageDeclarations(new FqName("first.second"));
-
-        assertSize(1, packageDeclarations);
-        assertEquals("second", packageDeclarations.iterator().next().getText());
-    }
 }

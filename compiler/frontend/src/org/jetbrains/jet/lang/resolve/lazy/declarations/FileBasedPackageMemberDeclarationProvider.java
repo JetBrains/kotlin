@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
-import com.intellij.psi.NavigatablePsiElement;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -67,12 +66,6 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     @Override
     public Collection<FqName> getAllDeclaredSubPackages() {
         return allDeclaredSubPackages.invoke();
-    }
-
-    @NotNull
-    @Override
-    public Collection<NavigatablePsiElement> getPackageDeclarations(@NotNull FqName fqName) {
-        return factory.getPackageDeclarations(fqName);
     }
 
     @NotNull

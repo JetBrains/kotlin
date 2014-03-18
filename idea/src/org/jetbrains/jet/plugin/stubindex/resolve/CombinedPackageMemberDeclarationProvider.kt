@@ -16,17 +16,11 @@
 
 package org.jetbrains.jet.plugin.stubindex.resolve
 
-import com.intellij.psi.NavigatablePsiElement
-import org.jetbrains.jet.lang.psi.*
-import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedPackageMemberDeclarationProvider
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 
 public class CombinedPackageMemberDeclarationProvider(val providers: Collection<PackageMemberDeclarationProvider>) : PackageMemberDeclarationProvider {
     override fun getAllDeclaredSubPackages() = providers.flatMap { it.getAllDeclaredSubPackages() }
-
-    override fun getPackageDeclarations(fqName: FqName) = providers.flatMap { it.getPackageDeclarations(fqName) }
 
     override fun getPackageFiles() = providers.flatMap { it.getPackageFiles() }
 

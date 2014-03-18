@@ -17,24 +17,21 @@
 package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
-import com.intellij.psi.NavigatablePsiElement;
-import com.intellij.util.Function;
-import com.intellij.util.containers.ContainerUtil;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPackageDirective;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProviderFactory  {
@@ -92,27 +89,6 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
                 return !fqName.isRoot() && fqName.parent().equals(parent);
             }
         });
-    }
-
-    /*package*/ Collection<NavigatablePsiElement> getPackageDeclarations(@NotNull final FqName fqName) {
-        if (fqName.isRoot()) {
-            return Collections.emptyList();
-        }
-
-        Collection<NavigatablePsiElement> resultElements = Lists.newArrayList();
-        for (FqName declaredPackage : index.invoke().filesByPackage.keys()) {
-            if (NamePackage.isSubpackageOf(declaredPackage, fqName)) {
-                Collection<JetFile> files = index.invoke().filesByPackage.get(declaredPackage);
-                resultElements.addAll(ContainerUtil.map(files, new Function<JetFile, NavigatablePsiElement>() {
-                    @Override
-                    public NavigatablePsiElement fun(JetFile file) {
-                        return JetPsiUtil.getPackageReference(file, NamePackage.numberOfSegments(fqName) - 1);
-                    }
-                }));
-            }
-        }
-
-        return resultElements;
     }
 
     @Nullable
