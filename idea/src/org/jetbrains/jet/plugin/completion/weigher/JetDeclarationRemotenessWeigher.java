@@ -40,7 +40,6 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     }
 
     private enum Weight {
-        positionSpecific,
         kotlinDefaultImport,
         thisFile,
         imported,
@@ -52,10 +51,6 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
     @Override
     public Comparable weigh(@NotNull LookupElement element) {
         Object object = element.getObject();
-
-        if (object instanceof KotlinNamedParametersContributor.NamedParameterLookupObject) {
-            return Weight.positionSpecific;
-        }
 
         if (object instanceof JetLookupObject) {
             JetLookupObject lookupObject = (JetLookupObject) object;
