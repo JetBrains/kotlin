@@ -89,8 +89,8 @@ public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferCo
         String defaultPathToJarFileDir =
                 useRelativePaths ? DEFAULT_LIB_DIR_NAME : createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
 
-        boolean jsFilePresent = isJsFilePresent(defaultPathToJsFileDir);
-        boolean jarFilePresent = getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir).exists();
+        boolean jsFilePresent = !useRelativePaths && isJsFilePresent(defaultPathToJsFileDir);
+        boolean jarFilePresent = !useRelativePaths && getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir).exists();
 
         if (jarFilePresent && jsFilePresent) {
             return createConfiguration(getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir));

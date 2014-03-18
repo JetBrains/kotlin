@@ -95,7 +95,7 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDe
         File librarySrcFile;
 
         File stdJarInDefaultPath = getFileInDir(jvmConfigurator.getJarName(), defaultPathToJarFile);
-        if (stdJarInDefaultPath.exists()) {
+        if (!useRelativePaths && stdJarInDefaultPath.exists()) {
             libraryFile = stdJarInDefaultPath;
 
             File sourcesJar = getFileInDir(jvmConfigurator.getSourcesJarName(), defaultPathToJarFile);
