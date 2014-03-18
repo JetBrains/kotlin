@@ -474,9 +474,9 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         
         @TestMetadata("idea/testData/completion/basic/common/namedParameters")
         public static class NamedParameters extends AbstractJvmBasicCompletionTest {
-            @TestMetadata("afterBrace.kt")
+            @TestMetadata("AfterBrace.kt")
             public void testAfterBrace() throws Exception {
-                doTest("idea/testData/completion/basic/common/namedParameters/afterBrace.kt");
+                doTest("idea/testData/completion/basic/common/namedParameters/AfterBrace.kt");
             }
             
             @TestMetadata("AfterComma.kt")
@@ -516,6 +516,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("NoParamsFromUnapplicableOverload.kt")
             public void testNoParamsFromUnapplicableOverload() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/NoParamsFromUnapplicableOverload.kt");
+            }
+            
+            @TestMetadata("WithParameterExpression.kt")
+            public void testWithParameterExpression() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/WithParameterExpression.kt");
             }
             
         }
