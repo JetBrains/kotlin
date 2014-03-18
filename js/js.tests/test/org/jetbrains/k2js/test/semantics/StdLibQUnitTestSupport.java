@@ -41,8 +41,7 @@ public abstract class StdLibQUnitTestSupport extends StdLibTestBase {
     }
 
     protected void runQUnitTestCase(String path, EcmaVersion version, Map<String, Object> variables) throws Exception {
-        String moduleId = moduleIdFromOutputFile(path);
-        RhinoResultChecker checker = new RhinoQUnitResultChecker(moduleId);
+        RhinoResultChecker checker = new RhinoQUnitResultChecker();
         runRhinoTest(Lists.newArrayList(path),
                      checker, variables, version,
                      Lists.newArrayList(

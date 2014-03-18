@@ -16,6 +16,7 @@
 
 package org.jetbrains.k2js.test.rhino;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeJavaObject;
@@ -25,12 +26,13 @@ import org.mozilla.javascript.NativeJavaObject;
  */
 public class RhinoFunctionNativeObjectResultChecker extends RhinoFunctionResultChecker {
 
-    public RhinoFunctionNativeObjectResultChecker(@Nullable String packageName, String functionName, Object expectedResult) {
-        super(packageName, functionName, expectedResult);
-    }
-
-    public RhinoFunctionNativeObjectResultChecker(String functionName, Object expectedResult) {
-        super(functionName, expectedResult);
+    public RhinoFunctionNativeObjectResultChecker(
+            @NotNull String moduleName,
+            @Nullable String packageName,
+            @NotNull String functionName,
+            @NotNull Object expectedResult
+    ) {
+        super(moduleName, packageName, functionName, expectedResult);
     }
 
     @Override
