@@ -324,7 +324,7 @@ public class CandidateResolver {
     public <D extends CallableDescriptor> void completeNestedCallsInference(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
@@ -398,7 +398,7 @@ public class CandidateResolver {
     }
 
     private void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
         if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
 
         for (ValueArgument argument : arguments) {

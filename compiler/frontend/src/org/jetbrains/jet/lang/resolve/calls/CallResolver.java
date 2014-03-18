@@ -399,7 +399,7 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
         if (!results.isSingleResult()) {
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 argumentTypeResolver.checkTypesWithNoCallee(context, RESOLVE_FUNCTION_ARGUMENTS);
@@ -417,7 +417,7 @@ public class CallResolver {
             @NotNull OverloadResolutionResultsImpl<D> results,
             @NotNull TracingStrategy tracing
     ) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return results;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return results;
 
         if (results.isSingleResult()) {
             Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
