@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-"use strict";
-
-// todo inlined
-String.prototype.startsWith = function (s) {
-    return this.indexOf(s) === 0;
-};
-
-String.prototype.endsWith = function (s) {
-    return this.indexOf(s, this.length - s.length) !== -1;
-};
-
-String.prototype.contains = function (s) {
-    return this.indexOf(s) !== -1;
-};
-
 (function () {
+    "use strict";
+
+    // Shims for String
+    String.prototype.startsWith = function (s) {
+        return this.indexOf(s) === 0;
+    };
+
+    String.prototype.endsWith = function (s) {
+        return this.indexOf(s, this.length - s.length) !== -1;
+    };
+
+    String.prototype.contains = function (s) {
+        return this.indexOf(s) !== -1;
+    };
+
+    // Kotlin stdlib
+
     Kotlin.equals = function (obj1, obj2) {
         if (obj1 == null) {
             return obj2 == null;
@@ -95,16 +97,31 @@ String.prototype.contains = function (s) {
         };
     }
 
+    /**
+     * @interface
+     * @template T
+     */
     Kotlin.Iterator = Kotlin.createClassNow(null, null, {
         next: throwAbstractFunctionInvocationError("Iterator#next"),
         hasNext: throwAbstractFunctionInvocationError("Iterator#hasNext")
     });
 
+    /**
+     * @class
+     * @implements {Kotlin.Iterator.<T>}
+     *
+     * @constructor
+     * @param {Array.<T>} array
+     * @template T
+     */
     var ArrayIterator = Kotlin.createClassNow(Kotlin.Iterator,
+        /** @constructs */
         function (array) {
             this.array = array;
             this.index = 0;
-        }, {
+        },
+        /** @lends {ArrayIterator.prototype} */
+        {
             next: function () {
                 return this.array[this.index++];
             },
@@ -118,7 +135,16 @@ String.prototype.contains = function (s) {
             }
     });
 
+    /**
+     * @class
+     * @extends {ArrayIterator.<T>}
+     *
+     * @constructor
+     * @param {Kotlin.AbstractList.<T>} list
+     * @template T
+     */
     var ListIterator = Kotlin.createClassNow(ArrayIterator,
+        /** @constructs */
         function (list) {
             this.list = list;
             this.size = list.size();
@@ -129,6 +155,10 @@ String.prototype.contains = function (s) {
             }
     });
 
+    /**
+     * @interface
+     * @template T
+     */
     Kotlin.Collection = Kotlin.createClassNow();
 
     Kotlin.Enum = Kotlin.createClassNow(null,
@@ -262,6 +292,10 @@ String.prototype.contains = function (s) {
         }
     });
 
+    /**
+     * @interface // actually it's abstract class
+     * @template T
+     */
     Kotlin.AbstractList = Kotlin.createClassNow(Kotlin.AbstractCollection, null, {
         iterator: function () {
             return new ListIterator(this);
@@ -476,16 +510,33 @@ String.prototype.contains = function (s) {
         }
     });
 
+    /**
+     * @interface
+     * @template T
+     */
     Kotlin.Comparator = Kotlin.createClassNow(null, null, {
         compare: throwAbstractFunctionInvocationError("Comparator#compare")
     });
 
+    /**
+     * @class
+     * @implements {Kotlin.Comparator.<T>}
+     *
+     * @constructor
+     * @param {function(T,T): Boolean} comparator
+     * @template T
+     */
     var ComparatorImpl = Kotlin.createClassNow(Kotlin.Comparator,
         function (comparator) {
             this.compare = comparator;
         }
     );
 
+    /**
+     * @param {function(T,T): Boolean} f
+     * @returns {Kotlin.Comparator.<T>}
+     * @template T
+     */
     Kotlin.comparator = function (f) {
         return new ComparatorImpl(f);
     };

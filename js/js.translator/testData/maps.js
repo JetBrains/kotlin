@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-"use strict";
 (function () {
+    "use strict";
+
+    /** @const */
     var FUNCTION = "function";
     var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
                         function (arr, idx) {
@@ -83,6 +85,14 @@
 
     var checkKey = createKeyValCheck("key"), checkValue = createKeyValCheck("value");
 
+    /**
+     * @constructor
+     * @param {string} hash
+     * @param {Key} firstKey
+     * @param {Value} firstValue
+     * @param {(function(Key, Key): boolean)|null|undefined} equalityFunction
+     * @template  Key, Value
+     */
     function Bucket(hash, firstKey, firstValue, equalityFunction) {
         this[0] = hash;
         this.entries = [];
@@ -197,6 +207,14 @@
 
     /*----------------------------------------------------------------------------------------------------------------*/
 
+    /**
+     * @class
+     *
+     * @constructor
+     * @param {(function(Key): string)=} hashingFunctionParam
+     * @param {(function(Key, Key): boolean)=} equalityFunctionParam
+     * @template Key, Value
+     */
     var Hashtable = function (hashingFunctionParam, equalityFunctionParam) {
         var that = this;
         var buckets = [];
@@ -346,7 +364,10 @@
             }
         };
 
-
+        /**
+         * @param {Hashtable.<Key, Value>} hashtable
+         * @param {(function(Key, Value, Value): Value)=} conflictCallback
+         */
         this.putAll_za3j1t$ = function (hashtable, conflictCallback) {
             var entries = hashtable._entries();
             var entry, key, value, thisValue, i = entries.length;
@@ -381,10 +402,13 @@
         };
     };
 
-
     Kotlin.HashTable = Hashtable;
 })();
 
+/**
+ * @interface
+ * @template Key, Value
+ */
 Kotlin.Map = Kotlin.createClassNow();
 
 Kotlin.HashMap = Kotlin.createClassNow(Kotlin.Map,
@@ -396,6 +420,15 @@ Kotlin.HashMap = Kotlin.createClassNow(Kotlin.Map,
 Kotlin.ComplexHashMap = Kotlin.HashMap;
 
 (function () {
+    /**
+     * @class
+     * @implements Kotlin.Iterator.<Value>
+     *
+     * @constructor
+     * @param {Kotlin.Map.<Key, Value>} map
+     * @param {Array.<Value>} keys
+     * @template Key, Value
+     */
     var PrimitiveHashMapValuesIterator = Kotlin.createClassNow(Kotlin.Iterator,
         function (map, keys) {
             this.map = map;
@@ -411,6 +444,14 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             }
     });
 
+    /**
+     * @class
+     * @implements Kotlin.Collection.<Value>
+     *
+     * @constructor
+     * @param {Kotlin.PrimitiveHashMap.<Key, Value>} map
+     * @template Key, Value
+     */
     var PrimitiveHashMapValues = Kotlin.createClassNow(Kotlin.Collection,
         function (map) {
             this.map = map;
@@ -421,11 +462,18 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
             isEmpty: function () {
                 return this.map.$size === 0;
             },
+            // TODO: test it
             contains: function (o) {
                 return this.map.containsValue_za3rmp$(o);
             }
     });
 
+    /**
+     * @class
+     * @implements Kotlin.Map.<Key, Value>
+     * @constructor
+     * @template Key, Value
+     */
     Kotlin.PrimitiveHashMap = Kotlin.createClassNow(Kotlin.Map,
         function () {
             this.$size = 0;
@@ -502,14 +550,24 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
     });
 }());
 
+/**
+ * @interface
+ */
 Kotlin.Set = Kotlin.createClassNow(Kotlin.Collection);
 
+/**
+ * @class
+ * @constructor
+ * @param {Kotlin.Set} set
+ */
 var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
     function (set) {
         this.set = set;
         this.keys = set.toArray();
         this.index = 0;
-    }, {
+    },
+    /** @lends SetIterator.prototype */
+    {
         next: function () {
             return this.keys[this.index++];
         },
@@ -521,12 +579,21 @@ var SetIterator = Kotlin.createClassNow(Kotlin.Iterator,
         }
 });
 
+/**
+ * @class
+ * @constructor
+ * @extends {Kotlin.Collection.<T>}
+ * @template T
+ */
 Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
+    /** @constructs */
     function () {
         this.$size = 0;
         this.map = {};
-    }, {
-        contains_za3rmp$: function (key) {
+    },
+    /** @lends {Kotlin.PrimitiveHashSet.prototype} */
+    {
+        contains_s9cetl$: function (key) {
             return this.map[key] === true;
         },
         iterator: function () {
@@ -563,6 +630,13 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
 });
 
 (function () {
+    /**
+     * @class
+     * @constructor
+     * @param {(function(Key): string)=} hashingFunction
+     * @param {(function(Key, Key): boolean)=} equalityFunction
+     * @template Key, Value
+     */
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
@@ -579,6 +653,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             return hashTable._keys();
         };
 
+        /** @suppress {checkTypes} */
         this.iterator = function () {
             return new SetIterator(this);
         };
