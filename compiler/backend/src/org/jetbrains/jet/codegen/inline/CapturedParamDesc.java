@@ -53,7 +53,7 @@ public class CapturedParamDesc {
     }
 
 
-    public static CapturedParamDesc createDesc(CapturedParamOwner containingLambdaInfo, String fieldName, Type type) {
+    public static CapturedParamDesc createDesc(@NotNull CapturedParamOwner containingLambdaInfo, @NotNull String fieldName, @NotNull Type type) {
         return new CapturedParamDesc(containingLambdaInfo, fieldName, type);
     }
 }

@@ -57,11 +57,11 @@ public class  ParametersBuilder {
     }
 
     public CapturedParamInfo addCapturedParam(
-            String fieldName,
-            Type type,
+            @NotNull String fieldName,
+            @NotNull Type type,
             boolean skipped,
             @Nullable ParameterInfo original,
-            CapturedParamOwner containingLambda
+            @NotNull CapturedParamOwner containingLambda
     ) {
         CapturedParamInfo info =
                 new CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCaptured,
