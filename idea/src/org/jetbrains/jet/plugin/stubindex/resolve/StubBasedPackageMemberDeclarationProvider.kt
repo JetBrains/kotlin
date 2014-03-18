@@ -31,6 +31,7 @@ import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
 import java.util.*
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope.kotlinSources
 import org.jetbrains.jet.lang.resolve.name.numberOfSegments
+import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -59,12 +60,7 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getAllDeclaredSubPackages(): Collection<FqName> {
-        //TODO: duplication with light class generation support
-        val allPackagesInProject = JetAllPackagesIndex.getInstance().getAllKeys(project)
-        return allPackagesInProject.filter {
-            val otherPackageFqName = FqName(it)
-            !otherPackageFqName.isRoot() && otherPackageFqName.parent() == fqName
-        }.map { FqName(it) }
+        return PackageIndexUtil.getSubPackageFqNames(fqName, searchScope, project)
     }
 
     override fun getPackageDeclarations(fqName: FqName): Collection<NavigatablePsiElement> {
@@ -80,11 +76,7 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getPackageFiles(): Collection<JetFile> {
-        //TODO: duplicate with light class generation support
-        val files = JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope))
-        return files.filter {
-            fqName.equals(JetPsiUtil.getFQName(it))
-        }
+       return PackageIndexUtil.findFilesWithExactPackage(fqName, searchScope, project)
     }
 
     private fun childName(name: Name): String {

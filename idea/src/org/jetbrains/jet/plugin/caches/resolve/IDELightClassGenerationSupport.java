@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.caches.resolve;
 
-import com.google.common.collect.Sets;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -40,13 +39,13 @@ import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
 import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
+import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil;
 
 import java.util.*;
 
@@ -169,13 +168,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<JetFile> findFilesForPackage(@NotNull final FqName fqName, @NotNull GlobalSearchScope searchScope) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqName.asString(), project, kotlinSources(searchScope));
-        return ContainerUtil.filter(files, new Condition<JetFile>() {
-            @Override
-            public boolean value(JetFile file) {
-                return fqName.equals(JetPsiUtil.getFQName(file));
-            }
-        });
+        return PackageIndexUtil.findFilesWithExactPackage(fqName, kotlinSources(searchScope), project);
     }
 
     @NotNull
@@ -194,22 +187,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
-        Collection<JetFile> files = JetAllPackagesIndex.getInstance().get(fqn.asString(), project, kotlinSources(scope));
-
-        Set<FqName> result = Sets.newHashSet();
-        for (JetFile file : files) {
-            FqName fqName = JetPsiUtil.getFQName(file);
-
-            assert NamePackage.isSubpackageOf(fqName, fqn) : "Registered package is not a subpackage of actually declared package:\n" +
-                                                             "in index: " + fqn + "\n" +
-                                                             "declared: " + fqName;
-            FqName subpackage = NamePackage.plusOneSegment(fqn, fqName);
-            if (subpackage != null) {
-                result.add(subpackage);
-            }
-        }
-
-        return result;
+        return PackageIndexUtil.getSubPackageFqNames(fqn, kotlinSources(scope), project);
     }
 
     @Nullable
