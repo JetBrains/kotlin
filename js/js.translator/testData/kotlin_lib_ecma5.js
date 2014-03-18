@@ -265,6 +265,8 @@ var Kotlin = {};
 
 ////////////////////////////////// packages & modules //////////////////////////////
 
+    Kotlin.modules = {};
+
     function createPackageGetter(instance, initializer) {
         return function () {
             if (initializer !== null) {

@@ -70,8 +70,6 @@ String.prototype.contains = function (s) {
         return new Kotlin.Progression(from, to, -1);
     };
 
-    Kotlin.modules = {};
-
     Kotlin.RuntimeException = Kotlin.createClassNow();
     Kotlin.NullPointerException = Kotlin.createClassNow();
     Kotlin.NoSuchElementException = Kotlin.createClassNow();
