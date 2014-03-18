@@ -63,17 +63,17 @@ public abstract class BaseDescriptorDeserializer {
         switch (kind) {
             case FUNCTION:
                 if (proto.hasExtension(JavaProtoBuf.methodSignature)) {
-                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature)));
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.methodSignature));
                 }
                 break;
             case PROPERTY_GETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter()));
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getGetter());
                 }
                 break;
             case PROPERTY_SETTER:
                 if (proto.hasExtension(JavaProtoBuf.propertySignature)) {
-                    return MemberSignature.fromAsmMethod(deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter()));
+                    return deserializer.methodSignature(proto.getExtension(JavaProtoBuf.propertySignature).getSetter());
                 }
                 break;
             case PROPERTY:
@@ -87,7 +87,7 @@ public abstract class BaseDescriptorDeserializer {
                         return MemberSignature.fromFieldNameAndDesc(name, type);
                     }
                     else if (propertySignature.hasSyntheticMethod()) {
-                        return MemberSignature.fromAsmMethod(deserializer.methodSignature(propertySignature.getSyntheticMethod()));
+                        return deserializer.methodSignature(propertySignature.getSyntheticMethod());
                     }
                 }
                 break;

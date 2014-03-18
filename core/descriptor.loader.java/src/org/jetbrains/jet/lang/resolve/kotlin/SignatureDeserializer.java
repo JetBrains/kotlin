@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -34,7 +33,7 @@ public class SignatureDeserializer {
     }
 
     @NotNull
-    public Method methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+    public String methodSignatureString(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
         Name name = nameResolver.getName(signature.getName());
 
         StringBuilder sb = new StringBuilder();
@@ -45,7 +44,12 @@ public class SignatureDeserializer {
         sb.append(')');
         typeDescriptor(signature.getReturnType(), sb);
 
-        return new Method(name.asString(), sb.toString());
+        return name.asString() + sb.toString();
+    }
+
+    @NotNull
+    public DescriptorDeserializersStorage.MemberSignature methodSignature(@NotNull JavaProtoBuf.JavaMethodSignature signature) {
+        return DescriptorDeserializersStorage.MemberSignature.fromMethodNameAndDesc(methodSignatureString(signature));
     }
 
     @NotNull

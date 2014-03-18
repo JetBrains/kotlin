@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
@@ -81,7 +80,7 @@ public class DescriptorDeserializersStorage {
             @Nullable
             @Override
             public KotlinJvmBinaryClass.MethodAnnotationVisitor visitMethod(@NotNull Name name, @NotNull String desc) {
-                return new AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name, desc));
+                return new AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString() + desc));
             }
 
             @Nullable
@@ -141,7 +140,7 @@ public class DescriptorDeserializersStorage {
 
     // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
     // into a map indexed by these signatures
-    protected static final class MemberSignature {
+    public static final class MemberSignature {
         private final String signature;
 
         private MemberSignature(@NotNull String signature) {
@@ -149,13 +148,8 @@ public class DescriptorDeserializersStorage {
         }
 
         @NotNull
-        public static MemberSignature fromMethodNameAndDesc(@NotNull Name name, @NotNull String desc) {
-            return new MemberSignature(name.asString() + desc);
-        }
-
-        @NotNull
-        public static MemberSignature fromAsmMethod(@NotNull Method method) {
-            return new MemberSignature(method.toString());
+        public static MemberSignature fromMethodNameAndDesc(@NotNull String nameAndDesc) {
+            return new MemberSignature(nameAndDesc);
         }
 
         @NotNull

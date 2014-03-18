@@ -148,8 +148,8 @@ public class JavaSerializerExtension extends SerializerExtension {
                 @NotNull JavaProtoBuf.JavaMethodSignature signature,
                 @NotNull NameResolver nameResolver
         ) {
-            Method method = new SignatureDeserializer(nameResolver).methodSignature(signature);
-            return methodSignature(method);
+            String method = new SignatureDeserializer(nameResolver).methodSignatureString(signature);
+            return methodSignature(getAsmMethod(method));
         }
 
         @NotNull
@@ -189,11 +189,11 @@ public class JavaSerializerExtension extends SerializerExtension {
             }
 
             Method syntheticMethod = signature.hasSyntheticMethod()
-                    ? signatureDeserializer.methodSignature(signature.getSyntheticMethod())
+                    ? getAsmMethod(signatureDeserializer.methodSignatureString(signature.getSyntheticMethod()))
                     : null;
 
-            Method getter = signature.hasGetter() ? signatureDeserializer.methodSignature(signature.getGetter()) : null;
-            Method setter = signature.hasSetter() ? signatureDeserializer.methodSignature(signature.getSetter()) : null;
+            Method getter = signature.hasGetter() ? getAsmMethod(signatureDeserializer.methodSignatureString(signature.getGetter())) : null;
+            Method setter = signature.hasSetter() ? getAsmMethod(signatureDeserializer.methodSignatureString(signature.getSetter())) : null;
 
             return propertySignature(fieldType, fieldName, isStaticInOuter, syntheticMethod, getter, setter);
         }
@@ -268,5 +268,11 @@ public class JavaSerializerExtension extends SerializerExtension {
         private static FqName internalNameToFqName(@NotNull String internalName) {
             return FqName.fromSegments(Arrays.asList(internalName.split("/")));
         }
+    }
+
+    @NotNull
+    private static Method getAsmMethod(@NotNull String nameAndDesc) {
+        int indexOf = nameAndDesc.indexOf('(');
+        return new Method(nameAndDesc.substring(0, indexOf), nameAndDesc.substring(indexOf));
     }
 }
