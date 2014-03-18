@@ -20,30 +20,27 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.plugin.intentions.SwapBinaryExpression.Position.*
 
 public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(
         "swap.binary.expression", javaClass()
 ) {
-    class object {
-        val FIRST_LEFT = 1
-        val FIRST_RIGHT = 2
-        val NEXT_LEFT = 3
-        val NEXT_RIGHT = 4
+    enum class Position {
+        FIRST_LEFT
+        FIRST_RIGHT
+        NEXT_LEFT
+        NEXT_RIGHT
     }
 
-    fun getInnermostOperand(element: JetBinaryExpression, position: Int): JetExpression {
-        assert (position in SwapBinaryExpression.FIRST_LEFT..SwapBinaryExpression.NEXT_RIGHT) {
-            "Unexpected second argument passed to SwapBinaryExpression.getInnermostOperand"
-        }
+    fun getInnermostOperand(element: JetBinaryExpression, position: Position): JetExpression {
         val left = element.getLeft()
         val right = element.getRight()
 
         return when (position) {
-            SwapBinaryExpression.FIRST_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT) else left as JetExpression
-            SwapBinaryExpression.FIRST_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT) else right as JetExpression
-            SwapBinaryExpression.NEXT_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
-            SwapBinaryExpression.NEXT_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
-            else -> null as JetExpression
+            FIRST_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT) else left as JetExpression
+            FIRST_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT) else right as JetExpression
+            NEXT_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
+            NEXT_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
         }
     }
 
@@ -67,8 +64,8 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
             ">=" -> "<="
             else -> operator
         }
-        val left = getInnermostOperand(element, SwapBinaryExpression.FIRST_LEFT)
-        val right = getInnermostOperand(element, SwapBinaryExpression.FIRST_RIGHT)
+        val left = getInnermostOperand(element, FIRST_LEFT)
+        val right = getInnermostOperand(element, FIRST_RIGHT)
         val newRight = JetPsiFactory.createExpression(element.getProject(), left.getText())
         val newLeft = JetPsiFactory.createExpression(element.getProject(), right.getText())
         left.replace(newLeft)
