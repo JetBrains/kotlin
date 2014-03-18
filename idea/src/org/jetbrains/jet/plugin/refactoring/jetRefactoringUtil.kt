@@ -28,15 +28,18 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.JetFile
-import com.intellij.psi.PsiFileFactory
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
-import org.jetbrains.jet.plugin.JetFileType
+import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.util.ConflictsUtil
+import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import com.intellij.psi.PsiFileFactory
+import org.jetbrains.jet.plugin.JetFileType
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -103,3 +106,6 @@ public fun PsiElement.getUsageContext(): PsiElement {
         else -> ConflictsUtil.getContainer(this)
     }
 }
+
+public fun PsiElement.isInJavaSourceRoot(): Boolean =
+        !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
