@@ -28,11 +28,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.jet.lang.psi.JetFile
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.psiUtil.getPackage
 import com.intellij.psi.PsiFileFactory
-import java.lang.annotation.Target
+import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import org.jetbrains.jet.plugin.JetFileType
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMember
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.asJava.namedUnwrappedElement
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -74,4 +78,21 @@ fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
     )
 
     return targetDir.add(file) as JetFile
+}
+
+/**
+ * Returns FqName for given declaration (either Java or Kotlin)
+ */
+public fun PsiElement.getKotlinFqName(): FqName? {
+    val element = namedUnwrappedElement
+    return when (element) {
+        is PsiPackage -> FqName(element.getQualifiedName())
+        is PsiClass -> element.getQualifiedName()?.let { FqName(it) }
+        is PsiMember -> (element : PsiMember).getName()?.let { name ->
+            val prefix = element.getContainingClass()?.getQualifiedName()
+            FqName(if (prefix != null) "$prefix.$name" else name)
+        }
+        is JetNamedDeclaration -> JetPsiUtil.getFQName(element)
+        else -> null
+    }
 }

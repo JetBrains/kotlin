@@ -23,11 +23,11 @@ import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.lang.psi.psiUtil.getFqName
 import org.jetbrains.jet.plugin.refactoring.changeQualifiedName
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostNonInterleavingQualifiedElement
 import org.jetbrains.jet.plugin.codeInsight.addToShorteningWaitSet
+import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
 
 public class JetSimpleNameReference(
         jetSimpleNameExpression: JetSimpleNameExpression
@@ -56,7 +56,7 @@ public class JetSimpleNameReference(
 
     // By default reference binding is delayed
     override fun bindToElement(element: PsiElement): PsiElement {
-        return element.getFqName()?.let { fqName -> bindToFqName(fqName) } ?: expression
+        return element.getKotlinFqName()?.let { fqName -> bindToFqName(fqName) } ?: expression
     }
 
     public fun bindToFqName(fqName: FqName, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING): PsiElement {

@@ -49,14 +49,11 @@ import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiParameter
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetUserType
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiMember
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.psi.JetModifierListOwner
 
 public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
@@ -262,22 +259,6 @@ public fun JetSimpleNameExpression.getOutermostNonInterleavingQualifiedElement()
         val parent = element!!.getParent()
         if (parent !is JetQualifiedExpression && parent !is JetUserType) return element as JetElement
         element = parent
-    }
-}
-
-/**
- * Returns FqName for given declaration (either Java or Kotlin)
- */
-public fun PsiElement.getFqName(): FqName? {
-    return when (this) {
-        is PsiPackage -> FqName(getQualifiedName())
-        is PsiClass -> getQualifiedName()?.let { FqName(it) }
-        is PsiMember -> getName()?.let { name ->
-            val prefix = getContainingClass()?.getQualifiedName()
-            FqName(if (prefix != null) "$prefix.$name" else name)
-        }
-        is JetNamedDeclaration -> JetPsiUtil.getFQName(this)
-        else -> null
     }
 }
 
