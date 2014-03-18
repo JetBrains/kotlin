@@ -39,7 +39,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
         this.file = file;
     }
 
-    private enum MyResult {
+    private enum Weight {
         positionSpecific,
         kotlinDefaultImport,
         thisFile,
@@ -54,7 +54,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
         Object object = element.getObject();
 
         if (object instanceof KotlinNamedParametersContributor.NamedParameterLookupObject) {
-            return MyResult.positionSpecific;
+            return Weight.positionSpecific;
         }
 
         if (object instanceof JetLookupObject) {
@@ -64,7 +64,7 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
             if (psiElement != null) {
                 PsiFile elementFile = psiElement.getContainingFile();
                 if (elementFile instanceof JetFile && elementFile.getOriginalFile() == file) {
-                    return MyResult.thisFile;
+                    return Weight.thisFile;
                 }
             }
 
@@ -75,18 +75,18 @@ public class JetDeclarationRemotenessWeigher extends LookupElementWeigher {
                 if (NamePackage.isValidJavaFqName(fqName.toString())) {
                     ImportPath importPath = new ImportPath(fqName.toString());
                     if (ImportInsertHelper.needImport(importPath, file)) {
-                        return MyResult.notImported;
+                        return Weight.notImported;
                     }
                     else {
                         if (ImportInsertHelper.isImportedWithDefault(importPath, file)) {
-                            return MyResult.kotlinDefaultImport;
+                            return Weight.kotlinDefaultImport;
                         }
-                        return MyResult.imported;
+                        return Weight.imported;
                     }
                 }
             }
         }
 
-        return MyResult.normal;
+        return Weight.normal;
     }
 }

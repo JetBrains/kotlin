@@ -32,7 +32,7 @@ class JetKindWeigher extends LookupElementWeigher {
         super(JetKindWeigher.class.getSimpleName());
     }
 
-    private enum MyResult {
+    private enum Weight {
         localOrParameter,
         property,
         namedParameter,
@@ -43,31 +43,31 @@ class JetKindWeigher extends LookupElementWeigher {
 
     @NotNull
     @Override
-    public MyResult weigh(@NotNull LookupElement element) {
+    public Weight weigh(@NotNull LookupElement element) {
         Object object = element.getObject();
         if (object instanceof JetLookupObject) {
             JetLookupObject lookupObject = (JetLookupObject) object;
             DeclarationDescriptor descriptor = lookupObject.getDescriptor();
             if (descriptor != null) {
                 if (descriptor instanceof LocalVariableDescriptor || descriptor instanceof ValueParameterDescriptor) {
-                    return MyResult.localOrParameter;
+                    return Weight.localOrParameter;
                 }
                 else if (descriptor instanceof PropertyDescriptor) {
-                    return MyResult.property;
+                    return Weight.property;
                 }
                 else if (descriptor instanceof PackageViewDescriptor) {
-                    return MyResult.packages;
+                    return Weight.packages;
                 }
             }
         }
         else if (object instanceof KotlinNamedParametersContributor.NamedParameterLookupObject) {
-            return MyResult.namedParameter;
+            return Weight.namedParameter;
         }
         else if (object instanceof String) {
-             return MyResult.probableKeyword;
+             return Weight.probableKeyword;
         }
 
-        return MyResult.normal;
+        return Weight.normal;
     }
 
     @Override
