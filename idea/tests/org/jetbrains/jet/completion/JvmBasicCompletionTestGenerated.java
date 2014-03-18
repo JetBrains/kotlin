@@ -474,9 +474,9 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
         
         @TestMetadata("idea/testData/completion/basic/common/namedParameters")
         public static class NamedParameters extends AbstractJvmBasicCompletionTest {
-            @TestMetadata("AfterBrace.kt")
+            @TestMetadata("afterBrace.kt")
             public void testAfterBrace() throws Exception {
-                doTest("idea/testData/completion/basic/common/namedParameters/AfterBrace.kt");
+                doTest("idea/testData/completion/basic/common/namedParameters/afterBrace.kt");
             }
             
             @TestMetadata("AfterComma.kt")
@@ -486,6 +486,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             
             public void testAllFilesPresentInNamedParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/basic/common/namedParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("CompactTypeNames.kt")
+            public void testCompactTypeNames() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/CompactTypeNames.kt");
             }
             
             @TestMetadata("InParameterExpression.kt")
