@@ -76,6 +76,16 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
 
                 description.finishLibConfiguration(module, rootModel);
             }
+
+            @Override
+            public void onFrameworkSelectionChanged(boolean selected) {
+                if (selected) {
+                    String providerId = JavaFrameworkType.getInstance().getId();
+                    if (model.isFrameworkSelected(providerId)) {
+                        model.setFrameworkComponentEnabled(providerId, false);
+                    }
+                }
+            }
         };
     }
 
