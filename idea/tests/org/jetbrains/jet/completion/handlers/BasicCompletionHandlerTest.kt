@@ -24,7 +24,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testNamedParametersCompletion() = doTest()
 
-    fun testNamedParametersCompletionOnEqual() = doTest(0, null, null, '=')
+    fun testNamedParametersCompletionOnEqual() = doTest(0, "paramTest", null, '=')
 
     fun testInsertJavaClassImport() = doTest()
 
