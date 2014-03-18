@@ -104,8 +104,7 @@ public class ScriptHeaderResolver {
 
     public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull JetScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
-        JetPackageDirective packageDirective = file.getPackageDirective();
-        FqName fqName = packageDirective != null ? new FqName(packageDirective.getQualifiedName()) : FqName.ROOT;
+        FqName fqName = file.getPackageFqName();
         PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 
         Integer priority = script.getUserData(PRIORITY_KEY);

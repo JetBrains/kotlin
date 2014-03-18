@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -73,7 +72,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
 
         mySourceElement = file;
 
-        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(JetPsiUtil.getFQName(file));
+        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
 
         return createConfigurationByQName(module, configurationContext, startClassFQName);
     }
@@ -119,7 +118,7 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
             return null;
         }
 
-        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(JetPsiUtil.getFQName(file));
+        FqName startClassFQName = PackageClassUtils.getPackageClassFqName(file.getPackageFqName());
 
         for (RunnerAndConfigurationSettings existingConfiguration : existingConfigurations) {
             if (existingConfiguration.getType() instanceof JetRunConfigurationType) {

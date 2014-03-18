@@ -376,11 +376,9 @@ public class ResolveElementCache {
 
                 if (expression.getParent() instanceof JetDotQualifiedExpression) {
                     JetExpression element = ((JetDotQualifiedExpression) expression.getParent()).getReceiverExpression();
-                    String name = ((JetFile) expression.getContainingFile()).getPackageName();
+                    FqName fqName = ((JetFile) expression.getContainingFile()).getPackageFqName();
 
-                    PackageViewDescriptor filePackage = name != null
-                                                        ? resolveSession.getModuleDescriptor().getPackage(new FqName(name))
-                                                        : rootPackage;
+                    PackageViewDescriptor filePackage = resolveSession.getModuleDescriptor().getPackage(fqName);
                     assert filePackage != null : "File package should be already resolved and be found";
 
                     JetScope scope = filePackage.getMemberScope();

@@ -102,6 +102,6 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
         if (stub != null) {
             return stub.getFqName();
         }
-        return JetPsiUtil.getFQName(this);
+        return JetNamedDeclarationUtil.getFQName(this);
     }
 }

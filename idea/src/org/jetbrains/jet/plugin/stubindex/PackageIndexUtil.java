@@ -23,7 +23,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 
@@ -41,7 +40,7 @@ public final class PackageIndexUtil {
 
         Set<FqName> result = Sets.newHashSet();
         for (JetFile file : files) {
-            FqName fqName = JetPsiUtil.getFQName(file);
+            FqName fqName = file.getPackageFqName();
 
             assert NamePackage.isSubpackageOf(fqName, packageFqName) :
                     "Registered package is not a subpackage of actually declared package:\n" +
@@ -66,7 +65,7 @@ public final class PackageIndexUtil {
         return ContainerUtil.filter(files, new Condition<JetFile>() {
             @Override
             public boolean value(JetFile file) {
-                return packageFqName.equals(JetPsiUtil.getFQName(file));
+                return packageFqName.equals(file.getPackageFqName());
             }
         });
     }

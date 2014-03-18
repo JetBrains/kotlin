@@ -62,7 +62,7 @@ public class PackagePartCodegen extends MemberCodegen {
         this.packagePartName = packagePartName;
         this.context = context;
         descriptor = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, jetFile);
-        assert descriptor != null : "No package fragment found for jetFile " + jetFile + " declared package: " + jetFile.getPackageName();
+        assert descriptor != null : "No package fragment found for jetFile " + jetFile + " declared package: " + jetFile.getPackageFqName();
     }
 
     public void generate() {

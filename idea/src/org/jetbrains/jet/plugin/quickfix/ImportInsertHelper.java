@@ -127,7 +127,7 @@ public class ImportInsertHelper {
             }
 
             // There's no need to import a declaration from the package of current file
-            if (JetPsiUtil.getFQName(jetFile).equals(importPath.fqnPart().parent())) {
+            if (jetFile.getPackageFqName().equals(importPath.fqnPart().parent())) {
                 return true;
             }
         }

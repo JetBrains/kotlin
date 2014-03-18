@@ -237,7 +237,7 @@ public class CodegenBinding {
         HashSet<FqName> names = new HashSet<FqName>();
         for (JetFile file : files) {
             if (!file.isScript()) {
-                names.add(JetPsiUtil.getFQName(file));
+                names.add(file.getPackageFqName());
             }
         }
 

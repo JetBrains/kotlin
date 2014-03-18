@@ -259,10 +259,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             PsiFile containingFile = jetNamedFunction.getContainingFile();
             if (containingFile instanceof JetFile) {
                 JetFile jetFile = (JetFile) containingFile;
-                String packageName = jetFile.getPackageName();
-                if (packageName != null) {
-                    affectedPackages.add(new FqName(packageName));
-                }
+                affectedPackages.add(jetFile.getPackageFqName());
             }
         }
 

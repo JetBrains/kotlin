@@ -97,7 +97,7 @@ public class DescriptorRendererTest extends JetLiteFixture {
         final BindingContext bindingContext = analyzeExhaust.getBindingContext();
         final List<DeclarationDescriptor> descriptors = new ArrayList<DeclarationDescriptor>();
 
-        FqName fqName = psiFile.getPackageDirective().getFqName();
+        FqName fqName = psiFile.getPackageFqName();
         if (!fqName.isRoot()) {
             PackageViewDescriptor packageDescriptor = analyzeExhaust.getModuleDescriptor().getPackage(fqName);
             descriptors.add(packageDescriptor);

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
@@ -90,15 +91,9 @@ public class LazyResolveTestUtil {
     public static Set<Name> getTopLevelPackagesFromFileList(@NotNull List<JetFile> files) {
         Set<Name> shortNames = Sets.newLinkedHashSet();
         for (JetFile file : files) {
-            JetPackageDirective directive = file.getPackageDirective();
-            if (directive != null) {
-                List<JetSimpleNameExpression> names = directive.getPackageNames();
-                Name name = names.isEmpty() ? SpecialNames.ROOT_PACKAGE : names.get(0).getReferencedNameAsName();
-                shortNames.add(name);
-            }
-            else {
-                throw new IllegalStateException("Scripts are not supported: " + file.getName());
-            }
+            List<Name> packageFqNameSegments = file.getPackageFqName().pathSegments();
+            Name name = packageFqNameSegments.isEmpty() ? SpecialNames.ROOT_PACKAGE : packageFqNameSegments.get(0);
+            shortNames.add(name);
         }
         return shortNames;
     }

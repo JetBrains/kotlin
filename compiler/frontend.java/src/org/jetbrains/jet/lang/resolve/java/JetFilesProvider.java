@@ -25,7 +25,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -53,12 +52,12 @@ public abstract class JetFilesProvider {
         private final FqName name;
 
         public SameJetFilePredicate(JetFile file) {
-            this.name = JetPsiUtil.getFQName(file);
+            this.name = file.getPackageFqName();
         }
 
         @Override
         public boolean apply(PsiFile psiFile) {
-            return JetPsiUtil.getFQName((JetFile) psiFile).equals(name);
+            return ((JetFile) psiFile).getPackageFqName().equals(name);
         }
     }
 }

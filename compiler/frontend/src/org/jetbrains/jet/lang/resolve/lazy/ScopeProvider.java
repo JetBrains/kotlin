@@ -73,7 +73,7 @@ public class ScopeProvider {
 
     @NotNull
     public JetScope getFileScope(@NotNull JetFile file) {
-        return new ChainedScope(resolveSession.getPackageFragment(JetPsiUtil.getFQName(file)),
+        return new ChainedScope(resolveSession.getPackageFragment(file.getPackageFqName()),
                                 "File scope: " + file.getName(),
                                 getFilePackageDescriptor(file).getMemberScope(),
                                 JetModuleUtil.getSubpackagesOfRootScope(resolveSession.getModuleDescriptor()),
@@ -108,12 +108,7 @@ public class ScopeProvider {
 
     @NotNull
     private PackageViewDescriptor getFilePackageDescriptor(JetFile file) {
-        JetPackageDirective directive = file.getPackageDirective();
-        if (directive == null) {
-            throw new IllegalArgumentException("Scripts are not supported: " + file.getName());
-        }
-
-        FqName fqName = new FqName(directive.getQualifiedName());
+        FqName fqName = file.getPackageFqName();
         PackageViewDescriptor packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName);
 
         if (packageDescriptor == null) {

@@ -42,7 +42,6 @@ import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -170,7 +169,7 @@ public class KotlinToJVMBytecodeCompiler {
                     // more than one main
                     return null;
                 }
-                FqName fqName = JetPsiUtil.getFQName(file);
+                FqName fqName = file.getPackageFqName();
                 mainClass = PackageClassUtils.getPackageClassFqName(fqName);
             }
         }

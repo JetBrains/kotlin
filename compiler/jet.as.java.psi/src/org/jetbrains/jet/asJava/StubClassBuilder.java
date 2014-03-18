@@ -30,7 +30,6 @@ import org.jetbrains.asm4.FieldVisitor;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.codegen.AbstractClassBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -81,7 +80,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
         super.defineClass(origin, version, access, name, signature, superName, interfaces);
 
         if (origin instanceof JetFile) {
-            FqName packageName = JetPsiUtil.getFQName((JetFile) origin);
+            FqName packageName = ((JetFile) origin).getPackageFqName();
             String packageClassName = PackageClassUtils.getPackageClassName(packageName);
 
             if (name.equals(packageClassName) || name.endsWith("/" + packageClassName)) {

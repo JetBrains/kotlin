@@ -23,7 +23,6 @@ import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -46,8 +45,8 @@ public class JetPsiHeuristicsUtil {
                 // The class is declared private in the targetPackage
                 // It is visible in this package and all of its subpackages
                 JetFile targetFile = (JetFile) classOrObject.getContainingFile();
-                FqName targetPackage = JetPsiUtil.getFQName(targetFile);
-                FqName fromPackage = JetPsiUtil.getFQName(fromFile);
+                FqName targetPackage = targetFile.getPackageFqName();
+                FqName fromPackage = fromFile.getPackageFqName();
 
                 return NamePackage.isSubpackageOf(fromPackage, targetPackage);
             }

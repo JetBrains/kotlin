@@ -20,11 +20,9 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -122,7 +120,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             // Scripts are not supported
             if (file.isScript()) continue;
 
-            FqName packageFqName = JetPsiUtil.getFQName(file);
+            FqName packageFqName = file.getPackageFqName();
 
             // make sure we create a package descriptor
             PackageViewDescriptor packageDescriptor = session.getModuleDescriptor().getPackage(packageFqName);

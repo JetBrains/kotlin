@@ -25,7 +25,6 @@ import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
@@ -92,7 +91,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private void blackBox() {
         // If there are many files, the first of them should contain the 'box(): String' function
         JetFile firstFile = myFiles.getPsiFiles().get(0);
-        String fqName = getPackageClassFqName(JetPsiUtil.getFQName(firstFile)).asString();
+        String fqName = getPackageClassFqName(firstFile.getPackageFqName()).asString();
 
         Class<?> aClass = generateClass(fqName);
         try {

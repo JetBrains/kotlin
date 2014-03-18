@@ -181,7 +181,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     @NotNull
                     @Override
                     public FqName getPackageFqName() {
-                        return JetPsiUtil.getFQName(getFile());
+                        return getFile().getPackageFqName();
                     }
 
                     @Override

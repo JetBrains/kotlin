@@ -80,18 +80,15 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            String packageName = ((JetFile) declaration.getContainingFile()).getPackageName();
-            if (packageName == null) {
-                return null;
-            }
+            FqName packageFqName = ((JetFile) declaration.getContainingFile()).getPackageFqName();
 
             if (declaration instanceof JetNamedFunction) {
-                JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(new FqName(packageName)));
+                JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(packageFqName));
                 Name name = ((JetNamedFunction) declaration).getNameAsName();
                 return name == null ? null : packageClass.getInternalName() + "$" + name.asString();
             }
 
-            parentInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageName).getInternalName();
+            parentInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageFqName).getInternalName();
         }
 
         if (declaration instanceof JetClassObject) {

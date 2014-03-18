@@ -77,7 +77,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     private fun JetFile.packageMatchesDirectory(): Boolean {
-        return getPackageName() == getParent()?.getPackage()?.getQualifiedName()
+        return getPackageFqName().asString() == getParent()?.getPackage()?.getQualifiedName()
     }
 
     override fun canProcessElement(element: PsiFile?): Boolean {
@@ -91,7 +91,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
             if (newPackage != null) {
                 file.putCopyableUserData(
                         PACKAGE_NAME_INFO_KEY,
-                        PackageNameInfo(JetPsiUtil.getFQName(file), FqName(newPackage.getQualifiedName()))
+                        PackageNameInfo(file.getPackageFqName(), FqName(newPackage.getQualifiedName()))
                 )
             }
         }

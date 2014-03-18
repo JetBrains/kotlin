@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -50,7 +49,7 @@ public class KotlinCodegenFacade {
         MultiMap<FqName, JetFile> packageFqNameToFiles = new MultiMap<FqName, JetFile>();
         for (JetFile file : state.getFiles()) {
             if (file == null) throw new IllegalArgumentException("A null file given for compilation");
-            packageFqNameToFiles.putValue(JetPsiUtil.getFQName(file), file);
+            packageFqNameToFiles.putValue(file.getPackageFqName(), file);
         }
 
         for (Map.Entry<FqName, Collection<JetFile>> entry : packageFqNameToFiles.entrySet()) {

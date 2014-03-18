@@ -24,9 +24,11 @@ import com.intellij.psi.stubs.PsiFileStubImpl;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.io.StringRef;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.List;
 
@@ -35,19 +37,20 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
     private final StringRef packageName;
     private final boolean isScript;
 
-    public PsiJetFileStubImpl(JetFile jetFile, StringRef packageName, boolean isScript) {
+    public PsiJetFileStubImpl(JetFile jetFile, @NotNull StringRef packageName, boolean isScript) {
         super(jetFile);
         this.packageName = packageName;
         this.isScript = isScript;
     }
 
-    public PsiJetFileStubImpl(JetFile jetFile, String packageName, boolean isScript) {
+    public PsiJetFileStubImpl(JetFile jetFile, @NotNull String packageName, boolean isScript) {
         this(jetFile, StringRef.fromString(packageName), isScript);
     }
 
     @Override
-    public String getPackageName() {
-        return StringRef.toString(packageName);
+    @NotNull
+    public FqName getPackageFqName() {
+        return new FqName(StringRef.toString(packageName));
     }
 
     @Override
@@ -62,15 +65,7 @@ public class PsiJetFileStubImpl extends PsiFileStubImpl<JetFile> implements PsiJ
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("PsiJetFileStubImpl[");
-
-
-        builder.append("package=").append(getPackageName());
-        builder.append("]");
-
-        return builder.toString();
+        return "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]";
     }
 
     @Override

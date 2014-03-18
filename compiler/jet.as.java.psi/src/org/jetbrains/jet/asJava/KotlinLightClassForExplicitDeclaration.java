@@ -288,7 +288,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                 @NotNull
                 @Override
                 public String getPackageName() {
-                    return JetPsiUtil.getFQName((JetFile) classOrObject.getContainingFile()).asString();
+                    return ((JetFile) classOrObject.getContainingFile()).getPackageFqName().asString();
                 }
 
                 @NotNull

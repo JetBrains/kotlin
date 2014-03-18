@@ -59,12 +59,7 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
     private static Index computeFilesByPackage(@NotNull Collection<JetFile> files) {
         Index index = new Index();
         for (JetFile file : files) {
-            JetPackageDirective directive = file.getPackageDirective();
-            if (directive == null) {
-                throw new IllegalArgumentException("Scripts are not supported");
-            }
-
-            FqName packageFqName = new FqName(directive.getQualifiedName());
+            FqName packageFqName = file.getPackageFqName();
             addMeAndParentPackages(index, packageFqName);
             index.filesByPackage.put(packageFqName, file);
         }

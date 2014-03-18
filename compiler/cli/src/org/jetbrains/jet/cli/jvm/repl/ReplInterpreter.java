@@ -48,7 +48,6 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -362,7 +361,7 @@ public class ReplInterpreter {
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(
                 state,
-                JetPsiUtil.getFQName((JetFile) script.getContainingFile()),
+                ((JetFile) script.getContainingFile()).getPackageFqName(),
                 Collections.singleton((JetFile) script.getContainingFile()),
                 errorHandler);
     }

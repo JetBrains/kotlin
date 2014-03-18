@@ -65,16 +65,16 @@ public class JetFileElementType extends IStubFileElementType<PsiJetFileStub> {
     @Override
     public void serialize(@NotNull PsiJetFileStub stub, @NotNull StubOutputStream dataStream)
             throws IOException {
-        dataStream.writeName(stub.getPackageName());
+        dataStream.writeName(stub.getPackageFqName().asString());
         dataStream.writeBoolean(stub.isScript());
     }
 
     @NotNull
     @Override
     public PsiJetFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        StringRef packName = dataStream.readName();
+        StringRef packageFqNameAsString = dataStream.readName();
         boolean isScript = dataStream.readBoolean();
-        return new PsiJetFileStubImpl(null, packName, isScript);
+        return new PsiJetFileStubImpl(null, packageFqNameAsString, isScript);
     }
 
     @Override

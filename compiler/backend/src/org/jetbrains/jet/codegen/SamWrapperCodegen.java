@@ -26,7 +26,6 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -136,7 +135,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
     }
 
     private String getWrapperName(@NotNull JetFile containingFile) {
-        FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(JetPsiUtil.getFQName(containingFile));
+        FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
                Integer.toHexString(CodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(

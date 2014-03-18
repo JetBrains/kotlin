@@ -234,12 +234,9 @@ public class LightClassUtil {
 
         if (parent instanceof JetFile) {
             // top-level declaration
-            FqName fqName = getPackageClassNameForFile((JetFile) parent);
-            if (fqName != null) {
-                Project project = declaration.getProject();
-
-                return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project));
-            }
+            FqName fqName = PackageClassUtils.getPackageClassFqName(((JetFile) parent).getPackageFqName());
+            Project project = declaration.getProject();
+            return JavaElementFinder.getInstance(project).findClass(fqName.asString(), GlobalSearchScope.allScope(project));
         }
         else if (parent instanceof JetClassBody) {
             assert parent.getParent() instanceof JetClassOrObject;
@@ -247,12 +244,6 @@ public class LightClassUtil {
         }
 
         return null;
-    }
-
-    @Nullable
-    private static FqName getPackageClassNameForFile(@NotNull JetFile jetFile) {
-        String packageName = jetFile.getPackageName();
-        return packageName == null ? null : PackageClassUtils.getPackageClassFqName(new FqName(packageName));
     }
 
     @NotNull

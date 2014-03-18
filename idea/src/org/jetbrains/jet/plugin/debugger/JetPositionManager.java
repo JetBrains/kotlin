@@ -190,7 +190,7 @@ public class JetPositionManager implements PositionManager {
     }
 
     private JetTypeMapper prepareTypeMapper(final JetFile file) {
-        FqName fqName = JetPsiUtil.getFQName(file);
+        FqName fqName = file.getPackageFqName();
         CachedValue<JetTypeMapper> value = myTypeMappers.get(fqName);
         if(value == null) {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
@@ -248,7 +248,7 @@ public class JetPositionManager implements PositionManager {
 
     @TestOnly
     public void addTypeMapper(JetFile file, final JetTypeMapper typeMapper) {
-        FqName fqName = JetPsiUtil.getFQName(file);
+        FqName fqName = file.getPackageFqName();
         CachedValue<JetTypeMapper> value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
             @Override
             public Result<JetTypeMapper> compute() {

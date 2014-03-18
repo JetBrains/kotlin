@@ -17,9 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.PsiFileStub;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface PsiJetFileStub extends PsiFileStub<JetFile> {
-    String getPackageName();
+    @NotNull
+    FqName getPackageFqName();
     boolean isScript();
 }

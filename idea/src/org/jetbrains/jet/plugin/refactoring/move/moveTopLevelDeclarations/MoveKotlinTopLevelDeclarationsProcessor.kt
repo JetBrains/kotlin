@@ -239,10 +239,9 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
 
             assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.getClass()}: ${declaration.getText()}")
 
-            val newPackage = (targetFile as JetFile).getPackageName()
-            assert (newPackage != null, "${targetFile.getClass()}: ${targetFile.getText()}")
+            val newPackageFqName = (targetFile as JetFile).getPackageFqName()
 
-            val packageNameInfo = PackageNameInfo(JetPsiUtil.getFQName(file!!), FqName(newPackage!!))
+            val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), newPackageFqName)
             declaration.updateInternalReferencesOnPackageNameChange(packageNameInfo, ShorteningMode.NO_SHORTENING)
 
             val newElement = targetFile.add(declaration) as JetNamedDeclaration

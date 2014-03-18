@@ -161,7 +161,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
 
-            val fileFqn = jetFile.getPackageDirective()!!.getFqName()
+            val fileFqn = jetFile.getPackageFqName()
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
 
             val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size - 1]

@@ -76,7 +76,7 @@ public class ImportsResolver {
     private void processImports(@NotNull TopDownAnalysisContext c, @NotNull LookupMode lookupMode) {
         for (JetFile file : c.getFiles()) {
             WritableScope fileScope = c.getFileScopes().get(file);
-            processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
+            processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), file.getPackageFqName().isRoot());
         }
         for (JetScript script : c.getScripts().keySet()) {
             WritableScope scriptScope = c.getScriptScopes().get(script);

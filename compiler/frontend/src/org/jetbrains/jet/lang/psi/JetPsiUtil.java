@@ -21,7 +21,10 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Condition;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
@@ -187,68 +190,6 @@ public class JetPsiUtil {
         else {
             return unquoteIdentifier(quoted);
         }
-    }
-
-    @NotNull
-    public static FqName getFQName(@NotNull JetFile file) {
-        JetPackageDirective directive = file.getPackageDirective();
-        return directive != null ? directive.getFqName() : FqName.ROOT;
-    }
-
-    @Nullable
-    public static FqNameUnsafe getUnsafeFQName(@NotNull JetNamedDeclaration namedDeclaration) {
-        FqName fqName = getFQName(namedDeclaration);
-        return fqName != null ? fqName.toUnsafe() : null;
-    }
-
-    @Nullable
-    public static FqName getFQName(@NotNull JetNamedDeclaration namedDeclaration) {
-        Name name = namedDeclaration.getNameAsName();
-        if (name == null) {
-            return null;
-        }
-
-        FqName parentFqName = getParentFqName(namedDeclaration);
-
-        if (parentFqName == null) {
-            return null;
-        }
-
-        return parentFqName.child(name);
-    }
-
-    @Nullable
-    public static FqName getParentFqName(@NotNull JetNamedDeclaration namedDeclaration) {
-        PsiElement parent = namedDeclaration.getParent();
-        if (parent instanceof JetClassBody) {
-            // One nesting to JetClassBody doesn't affect to qualified name
-            parent = parent.getParent();
-        }
-
-        if (parent instanceof JetFile) {
-            return getFQName((JetFile) parent);
-        }
-        else if (parent instanceof JetNamedFunction || parent instanceof JetClass) {
-            return getFQName((JetNamedDeclaration) parent);
-        }
-        else if (namedDeclaration instanceof JetParameter) {
-            JetClass constructorClass = getClassIfParameterIsProperty((JetParameter) namedDeclaration);
-            if (constructorClass != null) {
-                return getFQName(constructorClass);
-            }
-        }
-        else if (parent instanceof JetObjectDeclaration) {
-            if (parent.getParent() instanceof JetClassObject) {
-                JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(parent, JetClassOrObject.class);
-                if (classOrObject != null) {
-                    return getFQName(classOrObject);
-                }
-            }
-            else {
-                return getFQName((JetNamedDeclaration) parent);
-            }
-        }
-        return null;
     }
 
     /** @return <code>null</code> iff the tye has syntactic errors */
@@ -887,21 +828,6 @@ public class JetPsiUtil {
             return e;
         }
         return null;
-    }
-
-    public static NavigatablePsiElement getPackageReference(@NotNull JetFile file, int partIndex) {
-        JetPackageDirective directive = file.getPackageDirective();
-        if (directive == null) {
-            throw new IllegalArgumentException("Should be called only for files with package directive: " + file);
-        }
-
-        List<JetSimpleNameExpression> names = directive.getPackageNames();
-        if (!(0 <= partIndex && partIndex < names.size())) {
-            throw new IndexOutOfBoundsException(String.format("%s index for file with directive %s is out of range", partIndex,
-                                                              directive.getText()));
-        }
-
-        return names.get(partIndex);
     }
 
     // Delete given element and all the elements separating it from the neighboring elements of the same class

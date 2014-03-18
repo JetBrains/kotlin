@@ -82,8 +82,9 @@ public class BuiltInsSerializer(val out: PrintStream?) {
             System.err.println("Could not make directories: " + destDir)
         }
 
-        for (fqName in ContainerUtil.mapNotNull(files) { it?.getPackageName() }.toSet()) {
-            serializePackage(module, FqName(fqName), destDir)
+        files.map { it.getPackageFqName() }.toSet().forEach {
+            fqName ->
+            serializePackage(module, fqName, destDir)
         }
 
         out?.println("Total bytes written: $totalSize to $totalFiles files")

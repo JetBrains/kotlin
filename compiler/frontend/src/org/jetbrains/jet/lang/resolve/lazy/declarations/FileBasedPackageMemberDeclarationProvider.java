@@ -56,7 +56,7 @@ public class FileBasedPackageMemberDeclarationProvider extends AbstractPsiBasedD
     protected void doCreateIndex(@NotNull Index index) {
         for (JetFile file : packageFiles) {
             for (JetDeclaration declaration : file.getDeclarations()) {
-                assert fqName.asString().equals(file.getPackageName()) : "Files declaration utils contains file with invalid package";
+                assert fqName.equals(file.getPackageFqName()) : "Files declaration utils contains file with invalid package";
                 index.putToIndex(declaration);
             }
         }

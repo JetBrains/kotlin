@@ -674,7 +674,7 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
 
         JetScope scope;
         if (isExtension) {
-            scope = currentFileModule.getPackage(JetPsiUtil.getFQName(currentFile)).getMemberScope();
+            scope = currentFileModule.getPackage(currentFile.getPackageFqName()).getMemberScope();
         }
         else {
             scope = ((ClassDescriptorWithResolutionScopes) ownerClassDescriptor).getScopeForMemberDeclarationResolution();

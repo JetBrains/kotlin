@@ -36,7 +36,6 @@ import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -169,7 +168,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Class<?> generatePackageClass() {
-        FqName packageFqName = JetPsiUtil.getFQName(myFiles.getPsiFile());
+        FqName packageFqName = myFiles.getPsiFile().getPackageFqName();
         return generateClass(getPackageClassFqName(packageFqName).asString());
     }
 

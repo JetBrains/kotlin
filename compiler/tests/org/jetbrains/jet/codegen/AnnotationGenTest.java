@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 
 import java.lang.annotation.*;
@@ -40,7 +39,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     private Class<?> getPackageClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(PackageClassUtils.getPackageClassName(JetPsiUtil.getFQName(myFiles.getPsiFile())));
+        return loader.loadClass(PackageClassUtils.getPackageClassName(myFiles.getPsiFile().getPackageFqName()));
     }
 
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {

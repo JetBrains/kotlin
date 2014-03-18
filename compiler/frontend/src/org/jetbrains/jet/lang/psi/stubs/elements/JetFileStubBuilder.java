@@ -31,6 +31,6 @@ public class JetFileStubBuilder extends DefaultStubBuilder {
         }
 
         JetFile jetFile = (JetFile) file;
-        return new PsiJetFileStubImpl(jetFile, jetFile.getPackageName(), jetFile.isScript());
+        return new PsiJetFileStubImpl(jetFile, jetFile.getPackageFqName().asString(), jetFile.isScript());
     }
 }

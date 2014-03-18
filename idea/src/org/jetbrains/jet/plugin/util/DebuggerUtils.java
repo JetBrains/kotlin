@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -53,7 +52,7 @@ public class DebuggerUtils {
             public boolean apply(@Nullable JetFile file) {
                 return file != null
                        && file.getName().equals(fileName)
-                       && JetPsiUtil.getFQName(file).equals(packageFqName);
+                       && file.getPackageFqName().equals(packageFqName);
             }
         });
 

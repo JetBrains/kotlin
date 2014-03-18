@@ -148,7 +148,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
         else {
-            nameStack.push(JvmClassName.byFqNameWithoutInnerClasses(JetPsiUtil.getFQName(file)).getInternalName());
+            nameStack.push(JvmClassName.byFqNameWithoutInnerClasses(file.getPackageFqName()).getInternalName());
         }
         file.acceptChildren(this);
         nameStack.pop();

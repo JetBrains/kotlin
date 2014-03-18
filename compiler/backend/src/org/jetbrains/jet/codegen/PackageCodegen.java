@@ -247,14 +247,14 @@ public class PackageCodegen extends GenerationStateAware {
     private static void checkAllFilesHaveSamePackage(Collection<JetFile> packageFiles) {
         FqName commonFqName = null;
         for (JetFile file : packageFiles) {
-            FqName fqName = JetPsiUtil.getFQName(file);
+            FqName fqName = file.getPackageFqName();
             if (commonFqName != null) {
                 if (!commonFqName.equals(fqName)) {
                     throw new IllegalArgumentException("All files should have same package name");
                 }
             }
             else {
-                commonFqName = JetPsiUtil.getFQName(file);
+                commonFqName = file.getPackageFqName();
             }
         }
     }
@@ -283,7 +283,7 @@ public class PackageCodegen extends GenerationStateAware {
 
     @NotNull
     public static String getPackagePartInternalName(@NotNull JetFile file) {
-        FqName packageFqName = JetPsiUtil.getFQName(file);
+        FqName packageFqName = file.getPackageFqName();
         return getPackagePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
     }
 }

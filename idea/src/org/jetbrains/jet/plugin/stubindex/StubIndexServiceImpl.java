@@ -29,15 +29,14 @@ public class StubIndexServiceImpl implements StubIndexService {
 
     @Override
     public void indexFile(PsiJetFileStub stub, IndexSink sink) {
-        String packageName = stub.getPackageName();
-        FqName fqName = new FqName(packageName == null ? "" : packageName);
+        FqName packageFqName = stub.getPackageFqName();
 
         while (true) {
-            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), fqName.asString());
-            if (fqName.isRoot()) {
+            sink.occurrence(JetAllPackagesIndex.getInstance().getKey(), packageFqName.asString());
+            if (packageFqName.isRoot()) {
                 return;
             }
-            fqName = fqName.parent();
+            packageFqName = packageFqName.parent();
         }
     }
 
@@ -101,10 +100,8 @@ public class StubIndexServiceImpl implements StubIndexService {
         StubElement parentStub = stub.getParentStub();
         if (parentStub instanceof PsiJetFileStub) {
             PsiJetFileStub jetFileStub = (PsiJetFileStub) parentStub;
-            String packageName = jetFileStub.getPackageName();
-            if (packageName != null) {
-                sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageName);
-            }
+            FqName packageFqName = jetFileStub.getPackageFqName();
+            sink.occurrence(JetClassByPackageIndex.getInstance().getKey(), packageFqName.asString());
         }
     }
 

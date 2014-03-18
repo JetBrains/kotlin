@@ -25,11 +25,11 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -92,23 +92,32 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         return null;
     }
 
-    // scripts have no package directive
+    // scripts have no package directive, all other files must have package directives
     @Nullable
     public JetPackageDirective getPackageDirective() {
         ASTNode ast = getNode().findChildByType(JetNodeTypes.PACKAGE_DIRECTIVE);
         return ast != null ? (JetPackageDirective) ast.getPsi() : null;
     }
 
+    @Deprecated // getPackageFqName should be used instead
     @Override
-    @Nullable
+    @NotNull
     public String getPackageName() {
+        return getPackageFqName().asString();
+    }
+
+    @NotNull
+    public FqName getPackageFqName() {
         PsiJetFileStub stub = (PsiJetFileStub) getStub();
         if (stub != null) {
-            return stub.getPackageName();
+            return stub.getPackageFqName();
         }
 
-        JetPackageDirective directive = getPackageDirective();
-        return directive != null ? directive.getQualifiedName() : null;
+        JetPackageDirective packageDirective = getPackageDirective();
+        if (packageDirective == null) {
+            return FqName.ROOT;
+        }
+        return packageDirective.getFqName();
     }
 
     @NotNull

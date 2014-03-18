@@ -71,7 +71,7 @@ public abstract class AbstractLazyResolveDescriptorRendererTest extends KotlinTe
         psiFile.accept(new JetVisitorVoid() {
             @Override
             public void visitJetFile(@NotNull JetFile file) {
-                FqName fqName = file.getPackageDirective().getFqName();
+                FqName fqName = file.getPackageFqName();
                 if (!fqName.isRoot()) {
                     PackageViewDescriptor packageDescriptor = lazyModule.getPackage(fqName);
                     descriptors.add(packageDescriptor);
