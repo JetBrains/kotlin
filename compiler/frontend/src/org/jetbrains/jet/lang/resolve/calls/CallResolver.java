@@ -97,13 +97,13 @@ public class CallResolver {
         assert calleeExpression instanceof JetSimpleNameExpression;
         JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
         Name referencedName = nameExpression.getReferencedNameAsName();
-        List<CallableDescriptorCollector<? extends VariableDescriptor>> callableDescriptorCollectors = Lists.newArrayList();
+        CallableDescriptorCollectors<VariableDescriptor> callableDescriptorCollectors;
         if (nameExpression.getReferencedNameElementType() == JetTokens.FIELD_IDENTIFIER) {
             referencedName = Name.identifier(referencedName.asString().substring(1));
-            callableDescriptorCollectors.add(CallableDescriptorCollectors.PROPERTIES);
+            callableDescriptorCollectors = CallableDescriptorCollectors.PROPERTIES;
         }
         else {
-            callableDescriptorCollectors.add(CallableDescriptorCollectors.VARIABLES);
+            callableDescriptorCollectors = CallableDescriptorCollectors.VARIABLES;
         }
         TracingStrategy tracing = TracingStrategyImpl.create(nameExpression, context.call);
         List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks =
@@ -142,9 +142,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull TracingStrategy tracing
     ) {
-        List<CallableDescriptorCollector<? extends CallableDescriptor>> collectors = Collections
-                .<CallableDescriptorCollector<? extends CallableDescriptor>>singletonList(CallableDescriptorCollectors.FUNCTIONS);
-        return resolveCallWithGivenName(context, Name.identifier("invoke"), tracing, collectors);
+        return resolveCallWithGivenName(context, Name.identifier("invoke"), tracing, CallableDescriptorCollectors.FUNCTIONS);
     }
 
     @NotNull
@@ -152,7 +150,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull Name name,
             @NotNull TracingStrategy tracing,
-            @NotNull List<CallableDescriptorCollector<? extends CallableDescriptor>> collectors
+            @NotNull CallableDescriptorCollectors<CallableDescriptor> collectors
     ) {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, tracing, collectors);
