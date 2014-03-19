@@ -56,8 +56,20 @@ public open class JetCompletionCharFilter() : CharFilter() {
             return null
         }
 
+        fun checkFinishCompletionForEqual(): Result? {
+            if (c == '=') {
+                val currentItem = lookup.getCurrentItem()
+                if (currentItem != null && (currentItem.getObject() is KotlinNamedParametersContributor.NamedParameterLookupObject)) {
+                    return Result.SELECT_ITEM_AND_FINISH_LOOKUP
+                }
+            }
+
+            return null
+        }
+
         return checkHideLookupForRangeOperator() ?:
                checkFinishCompletionForOpenBrace() ?:
+               checkFinishCompletionForEqual() ?:
                null
     }
 }

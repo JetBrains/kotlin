@@ -57,6 +57,19 @@ import com.intellij.psi.PsiMember
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.psi.JetCallElement
+import org.jetbrains.jet.lang.psi.JetConstructorCalleeExpression
+
+public fun getCallSimpleNameExpression(callExpression: JetCallElement): JetSimpleNameExpression? {
+    val calleeExpression = callExpression.getCalleeExpression()
+    if (calleeExpression == null) return null
+
+    return when (calleeExpression) {
+        is JetSimpleNameExpression -> calleeExpression
+        is JetConstructorCalleeExpression -> calleeExpression.getConstructorReferenceExpression() as? JetSimpleNameExpression
+        else -> null
+    }
+}
 
 public fun PsiElement.getParentByTypesAndPredicate<T: PsiElement>(
         strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
