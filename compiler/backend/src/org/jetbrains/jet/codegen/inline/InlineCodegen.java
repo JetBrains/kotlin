@@ -215,7 +215,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + call.getCallElement().getText()); //with captured
 
-        VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
+        VarRemapper remapper = new VarRemapper(parameters, initialFrameSize);
 
         return inliner.doInline(codegen.v, remapper);
     }

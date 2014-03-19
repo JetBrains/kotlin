@@ -24,61 +24,57 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
-public abstract class VarRemapper {
+public class VarRemapper {
 
-    public static class ParamRemapper extends VarRemapper {
+    private final int allParamsSize;
+    private final Parameters params;
+    private final int actualParamsSize;
 
-        private final int allParamsSize;
-        private final Parameters params;
-        private final int actualParamsSize;
+    private final StackValue [] remapValues;
 
-        private final StackValue [] remapValues;
+    private final int additionalShift;
 
-        private final int additionalShift;
+    public VarRemapper(Parameters params, int additionalShift) {
+        this.additionalShift = additionalShift;
+        this.allParamsSize = params.totalSize();
+        this.params = params;
 
-        public ParamRemapper(Parameters params, int additionalShift) {
-            this.additionalShift = additionalShift;
-            this.allParamsSize = params.totalSize();
-            this.params = params;
+        int realSize = 0;
+        remapValues = new StackValue [params.totalSize()];
 
-            int realSize = 0;
-            remapValues = new StackValue [params.totalSize()];
-
-            int index = 0;
-            for (ParameterInfo info : params) {
-                if (!info.isSkippedOrRemapped()) {
-                    remapValues[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
-                    realSize += info.getType().getSize();
-                } else {
-                    remapValues[index] = info.isRemapped() ? info.getRemapValue() : null;
-                }
-                index++;
-            }
-
-            actualParamsSize = realSize;
-        }
-
-        @Override
-        public RemapInfo doRemap(int index) {
-            int remappedIndex;
-
-            if (index < allParamsSize) {
-                ParameterInfo info = params.get(index);
-                StackValue remapped = remapValues[index];
-                if (info.isSkipped || remapped == null) {
-                    throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
-                }
-                if (info.isRemapped()) {
-                    return new RemapInfo(remapped, info);
-                } else {
-                    remappedIndex = ((StackValue.Local)remapped).index;
-                }
+        int index = 0;
+        for (ParameterInfo info : params) {
+            if (!info.isSkippedOrRemapped()) {
+                remapValues[index] = StackValue.local(realSize, AsmTypeConstants.OBJECT_TYPE);
+                realSize += info.getType().getSize();
             } else {
-                remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
+                remapValues[index] = info.isRemapped() ? info.getRemapValue() : null;
             }
-
-            return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE), null);
+            index++;
         }
+
+        actualParamsSize = realSize;
+    }
+
+    public RemapInfo doRemap(int index) {
+        int remappedIndex;
+
+        if (index < allParamsSize) {
+            ParameterInfo info = params.get(index);
+            StackValue remapped = remapValues[index];
+            if (info.isSkipped || remapped == null) {
+                throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
+            }
+            if (info.isRemapped()) {
+                return new RemapInfo(remapped, info);
+            } else {
+                remappedIndex = ((StackValue.Local)remapped).index;
+            }
+        } else {
+            remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
+        }
+
+        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE), null);
     }
 
     public RemapInfo remap(int index) {
@@ -107,8 +103,6 @@ public abstract class VarRemapper {
             value.put(remapInfo.parameterInfo.type, mv);
         }
     }
-
-    abstract public RemapInfo doRemap(int index);
 
     public static class RemapInfo {
 
