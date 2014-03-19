@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -32,7 +31,7 @@ import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_
 
 public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements ConstructorDescriptor {
 
-    private final boolean isPrimary;
+    protected final boolean isPrimary;
 
     private static final Name NAME = Name.special("<init>");
 

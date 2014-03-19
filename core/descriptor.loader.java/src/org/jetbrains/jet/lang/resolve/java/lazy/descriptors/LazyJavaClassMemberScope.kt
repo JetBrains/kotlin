@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -73,7 +74,7 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun resolveConstructor(constructor: JavaMethod, classDescriptor: ClassDescriptor, isStaticClass: Boolean): ConstructorDescriptor {
-        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Annotations.EMPTY, isPrimary = false)
+        val constructorDescriptor = JavaConstructorDescriptor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ false)
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
@@ -85,6 +86,7 @@ public class LazyJavaClassMemberScope(
                 constructor.getVisibility(),
                 isStaticClass
         )
+        constructorDescriptor.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
 
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
 
@@ -104,12 +106,13 @@ public class LazyJavaClassMemberScope(
             return null
 
         val classDescriptor = getContainingDeclaration()
-        val constructorDescriptor = ConstructorDescriptorImpl(classDescriptor, Annotations.EMPTY, isPrimary = true)
+        val constructorDescriptor = JavaConstructorDescriptor(classDescriptor, Annotations.EMPTY, /* isPrimary = */ true)
         val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
 
         constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor), jClass.isStatic())
+        constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
         c.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
         return constructorDescriptor

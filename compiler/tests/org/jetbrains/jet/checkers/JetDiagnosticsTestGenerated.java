@@ -4766,6 +4766,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("allowForJavaAnnotation.kt")
+            public void testAllowForJavaAnnotation() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/allowForJavaAnnotation.kt");
+            }
+            
+            @TestMetadata("disallowForJavaConstructor.kt")
+            public void testDisallowForJavaConstructor() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaConstructor.kt");
+            }
+            
             @TestMetadata("disallowForJavaMethods.kt")
             public void testDisallowForJavaMethods() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaMethods.kt");

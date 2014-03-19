@@ -99,6 +99,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("constructorNamedArguments.kt")
+        public void testConstructorNamedArguments() throws Exception {
+            doTest("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/constructorNamedArguments.kt");
+        }
+        
         @TestMetadata("parameterNames.kt")
         public void testParameterNames() throws Exception {
             doTest("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");

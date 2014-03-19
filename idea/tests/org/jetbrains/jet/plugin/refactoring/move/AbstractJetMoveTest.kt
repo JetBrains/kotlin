@@ -154,12 +154,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    project = mainFile.getProject(),
-                    elements = array(classToMove),
-                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    mainFile.getProject(),
+                    array(classToMove),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -171,12 +171,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    project = project,
-                    elements = array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
-                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    project,
+                    array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -189,12 +189,12 @@ enum class MoveAction {
             val targetClass = config.getString("targetClass")
 
             MoveClassToInnerProcessor(
-                    project = project,
-                    classesToMove = array(classToMove),
-                    targetClass = JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    project,
+                    array(classToMove),
+                    JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -209,12 +209,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveInnerProcessor(
-                    project = project,
-                    innerClass = classToMove,
-                    name = newClassName,
-                    passOuterClass = outerInstanceParameterName != null,
-                    parameterName = outerInstanceParameterName,
-                    targetContainer = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
+                    project,
+                    classToMove,
+                    newClassName,
+                    outerInstanceParameterName != null,
+                    outerInstanceParameterName,
+                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
             ).run()
         }
     }
@@ -226,13 +226,13 @@ enum class MoveAction {
             val targetPackage = config.getNullableString("targetPackage")
             if (targetPackage != null) {
                 MoveFilesOrDirectoriesProcessor(
-                        project = project,
-                        elements = array(mainFile),
-                        newParent = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
-                        searchInComments = false,
-                        searchInNonJavaFiles = true,
-                        moveCallback = null,
-                        prepareSuccessfulCallback = null
+                        project,
+                        array(mainFile),
+                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
+                        /* searchInComments = */ false,
+                        /* searchInNonJavaFiles = */ true,
+                        /* moveCallback = */ null,
+                        /* prepareSuccessfulCallback = */ null
                 ).run()
             }
             else {
