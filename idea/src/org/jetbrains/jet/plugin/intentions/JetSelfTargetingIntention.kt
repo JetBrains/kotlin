@@ -29,9 +29,9 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(val key: String, 
         setText(JetBundle.message(key))
     }
 
-    protected abstract fun isApplicableTo(element: T): Boolean
-    protected open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
-    protected abstract fun applyTo(element: T, editor: Editor)
+    abstract fun isApplicableTo(element: T): Boolean
+    open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
+    abstract fun applyTo(element: T, editor: Editor)
 
     protected fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()
