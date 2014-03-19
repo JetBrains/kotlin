@@ -623,6 +623,13 @@
       <className>org.jetbrains.jet.plugin.intentions.ConvertNegatedExpressionWithDemorgansLawIntention</className>
       <category>Kotlin</category>
     </intentionAction>
+    
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
+        displayName="Explicit 'get'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
