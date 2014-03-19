@@ -44,14 +44,14 @@ import java.util.List;
 public class ScriptTest {
     @Test
     public void testScript() throws Exception {
-        Class<?> aClass = compileScript("fib.ktscript", numIntParam(), Collections.<JetScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.kts", numIntParam(), Collections.<JetScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
     public void testScriptWithPackage() throws Exception {
-        Class<?> aClass = compileScript("fib.pkg.ktscript", numIntParam(), Collections.<JetScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.pkg.kts", numIntParam(), Collections.<JetScriptDefinition>emptyList());
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }

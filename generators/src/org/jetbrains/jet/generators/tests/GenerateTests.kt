@@ -108,7 +108,7 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetDiagnosticsTest>()) {
             model("diagnostics/tests")
-            model("diagnostics/tests/script", extension = "ktscript")
+            model("diagnostics/tests/script", extension = "kts")
             model("codegen/box/functions/tailRecursion")
         }
 
@@ -468,8 +468,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetFormatterTest>()) {
-            model("formatter", pattern = """^([^\.]+)\.after.kt$""")
-            model("formatter", pattern = """^([^\.]+)\.after.inv.kt$""",
+            model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
+            model("formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
                   testMethod = "doTestInverted", testClassName = "FormatterInverted")
         }
 

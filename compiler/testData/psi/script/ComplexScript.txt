@@ -1,4 +1,4 @@
-JetFile: ComplexScript.ktscript
+JetFile: ComplexScript.kts
   PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT

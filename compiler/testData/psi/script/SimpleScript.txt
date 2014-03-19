@@ -1,4 +1,4 @@
-JetFile: SimpleScript.ktscript
+JetFile: SimpleScript.kts
   PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT
