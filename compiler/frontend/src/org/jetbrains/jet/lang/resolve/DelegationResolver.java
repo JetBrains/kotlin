@@ -129,7 +129,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
                 continue;
             }
             JetType delegatedTraitType = typeResolver.resolve(typeReference);
-            if (delegatedTraitType == null) {
+            if (delegatedTraitType == null || delegatedTraitType.isError()) {
                 continue;
             }
             Collection<T> delegatesForTrait = generateDelegatesForTrait(delegatedMembers, delegatedTraitType);

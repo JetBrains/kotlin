@@ -5331,6 +5331,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/kt880.kt");
             }
             
+            @TestMetadata("MissingDelegate.kt")
+            public void testMissingDelegate() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/MissingDelegate.kt");
+            }
+            
             @TestMetadata("MultipleDefaultParametersInSupertypes.kt")
             public void testMultipleDefaultParametersInSupertypes() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/MultipleDefaultParametersInSupertypes.kt");
