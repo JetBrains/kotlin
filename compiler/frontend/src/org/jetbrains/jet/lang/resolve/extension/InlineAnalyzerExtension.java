@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.extension;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
@@ -130,18 +131,20 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         }
     }
 
-    private static boolean checkInlinableParameter(
+    public static boolean checkInlinableParameter(
             @NotNull CallableDescriptor parameter,
             @NotNull JetElement expression,
-            @NotNull FunctionDescriptor functionDescriptor,
-            @NotNull BindingTrace trace
+            @NotNull CallableDescriptor functionDescriptor,
+            @Nullable BindingTrace trace
     ) {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         JetType type = parameter.getReturnType();
         if (type != null && builtIns.isExactFunctionOrExtensionFunctionType(type)) {
             if (!InlineUtil.hasNoinlineAnnotation(parameter)) {
                 if (type.isNullable()) {
-                    trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
+                    if (trace != null) {
+                        trace.report(Errors.NULLABLE_INLINE_PARAMETER.on(expression, expression, functionDescriptor));
+                    }
                 }
                 else {
                     return true;
