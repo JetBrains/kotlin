@@ -28,7 +28,7 @@ public class RemapVisitor extends InstructionAdapter {
 
     private final Label end;
 
-    private final VarRemapper remapper;
+    private final LocalVarRemapper remapper;
 
     private final boolean remapReturn;
 
@@ -39,14 +39,14 @@ public class RemapVisitor extends InstructionAdapter {
     protected RemapVisitor(
             MethodVisitor mv,
             Label end,
-            VarRemapper varRemapper,
+            LocalVarRemapper localVarRemapper,
             boolean remapReturn,
             FieldRemapper nodeRemapper
     ) {
         super(InlineCodegenUtil.API, mv);
         this.instructionAdapter = new InstructionAdapter(mv);
         this.end = end;
-        this.remapper = varRemapper;
+        this.remapper = localVarRemapper;
         this.remapReturn = remapReturn;
         this.nodeRemapper = nodeRemapper;
     }

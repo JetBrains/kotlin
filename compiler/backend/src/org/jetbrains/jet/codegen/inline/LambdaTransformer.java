@@ -132,7 +132,7 @@ public class LambdaTransformer {
 
         MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
-        InlineResult result = inliner.doInline(invokeVisitor, new VarRemapper(parameters, 0), false);
+        InlineResult result = inliner.doInline(invokeVisitor, new LocalVarRemapper(parameters, 0), false);
         invokeVisitor.visitMaxs(-1, -1);
 
         generateConstructorAndFields(classBuilder, builder, invocation);

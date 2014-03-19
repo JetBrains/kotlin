@@ -25,9 +25,9 @@ import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
-import static org.jetbrains.jet.codegen.inline.VarRemapper.RemapStatus.*;
+import static org.jetbrains.jet.codegen.inline.LocalVarRemapper.RemapStatus.*;
 
-public class VarRemapper {
+public class LocalVarRemapper {
 
     private final int allParamsSize;
     private final Parameters params;
@@ -37,7 +37,7 @@ public class VarRemapper {
 
     private final int additionalShift;
 
-    public VarRemapper(Parameters params, int additionalShift) {
+    public LocalVarRemapper(Parameters params, int additionalShift) {
         this.additionalShift = additionalShift;
         this.allParamsSize = params.totalSize();
         this.params = params;

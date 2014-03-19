@@ -72,13 +72,13 @@ public class MethodInliner {
     }
 
 
-    public InlineResult doInline(MethodVisitor adapter, VarRemapper remapper) {
+    public InlineResult doInline(MethodVisitor adapter, LocalVarRemapper remapper) {
         return doInline(adapter, remapper, true);
     }
 
     public InlineResult doInline(
             MethodVisitor adapter,
-            VarRemapper remapper,
+            LocalVarRemapper remapper,
             boolean remapReturn
     ) {
         //analyze body
@@ -170,7 +170,7 @@ public class MethodInliner {
                                                               newCapturedRemapper, true /*cause all calls in same module as lambda*/,
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName());
 
-                    VarRemapper remapper = new VarRemapper(lambdaParameters, valueParamShift);
+                    LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
                     InlineResult lambdaResult = inliner.doInline(this.mv, remapper);//TODO add skipped this and receiver
                     result.addAllClassesToRemove(lambdaResult);
 

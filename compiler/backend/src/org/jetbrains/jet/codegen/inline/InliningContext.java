@@ -33,7 +33,7 @@ public class InliningContext {
 
     public final List<ConstructorInvocation> constructorInvocation;
 
-    public final VarRemapper remapper;
+    public final LocalVarRemapper remapper;
 
     public final GenerationState state;
 
@@ -53,7 +53,7 @@ public class InliningContext {
             Map<Integer, LambdaInfo> map,
             List<InvokeCall> accesses,
             List<ConstructorInvocation> invocation,
-            VarRemapper remapper,
+            LocalVarRemapper remapper,
             GenerationState state,
             NameGenerator nameGenerator,
             CodegenContext startContext,
