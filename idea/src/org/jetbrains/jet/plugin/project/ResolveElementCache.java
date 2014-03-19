@@ -241,8 +241,8 @@ public class ResolveElementCache {
                                                     descriptor.getScopeForMemberDeclarationResolution());
     }
 
-    private static void propertyAdditionalResolve(ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
-        final JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
+    private static void propertyAdditionalResolve(final ResolveSession resolveSession, final JetProperty jetProperty, BindingTrace trace, JetFile file) {
+        JetScope propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty);
 
         BodyResolveContextForLazy bodyResolveContext = new BodyResolveContextForLazy(
                 createParameters(resolveSession),
@@ -251,7 +251,7 @@ public class ResolveElementCache {
                     public JetScope apply(JetDeclaration declaration) {
                         assert declaration.getParent() == jetProperty : "Must be called only for property accessors, but called for " +
                                                                         declaration;
-                        return propertyResolutionScope;
+                        return resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration);
                     }
                 });
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);

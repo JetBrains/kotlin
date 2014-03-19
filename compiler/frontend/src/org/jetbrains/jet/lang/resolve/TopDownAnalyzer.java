@@ -161,11 +161,11 @@ public class TopDownAnalyzer {
                                 }
                             }
 
-                            private void registerScope(@Nullable JetDeclaration declaration, @NotNull JetDeclaration anchorForScope) {
+                            private void registerScope(@Nullable JetDeclaration declaration) {
                                 if (declaration == null) return;
                                 c.registerDeclaringScope(
                                         declaration,
-                                        resolveSession.getScopeProvider().getResolutionScopeForDeclaration(anchorForScope)
+                                        resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
                                 );
                             }
 
@@ -261,7 +261,7 @@ public class TopDownAnalyzer {
 
                             @Override
                             public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
-                                registerScope(initializer, initializer);
+                                registerScope(initializer);
                             }
 
                             @Override
@@ -272,7 +272,7 @@ public class TopDownAnalyzer {
                                                 (SimpleFunctionDescriptor) resolveSession.resolveToDescriptor(function)
                                         )
                                 );
-                                registerScope(function, function);
+                                registerScope(function);
                             }
 
                             @Override
@@ -284,9 +284,9 @@ public class TopDownAnalyzer {
                                 c.getProperties().put(property, descriptor);
                                 registerTopLevelFqName(property, descriptor);
 
-                                registerScope(property, property);
-                                registerScope(property.getGetter(), property);
-                                registerScope(property.getSetter(), property);
+                                registerScope(property);
+                                registerScope(property.getGetter());
+                                registerScope(property.getSetter());
                             }
                         }
                 );

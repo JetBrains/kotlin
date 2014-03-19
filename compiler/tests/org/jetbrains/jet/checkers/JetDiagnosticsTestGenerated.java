@@ -364,6 +364,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/Properties.kt");
         }
         
+        @TestMetadata("PropertyInitializers.kt")
+        public void testPropertyInitializers() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/PropertyInitializers.kt");
+        }
+        
         @TestMetadata("QualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
             doTest("compiler/testData/diagnostics/tests/QualifiedExpressions.kt");

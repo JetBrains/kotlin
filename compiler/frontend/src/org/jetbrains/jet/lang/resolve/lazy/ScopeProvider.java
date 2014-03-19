@@ -126,6 +126,11 @@ public class ScopeProvider {
                 "For JetDeclaration element getParentOfType() should return itself.";
 
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(jetDeclaration, JetDeclaration.class);
+
+        if (jetDeclaration instanceof JetPropertyAccessor) {
+            parentDeclaration = PsiTreeUtil.getParentOfType(parentDeclaration, JetDeclaration.class);
+        }
+
         if (parentDeclaration == null) {
             return getFileScope((JetFile) elementOfDeclaration.getContainingFile());
         }

@@ -294,6 +294,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest("idea/testData/completion/basic/common/InParametersTypesForce.kt");
         }
         
+        @TestMetadata("InPropertyAccessor.kt")
+        public void testInPropertyAccessor() throws Exception {
+            doTest("idea/testData/completion/basic/common/InPropertyAccessor.kt");
+        }
+        
+        @TestMetadata("InPropertyInitializer.kt")
+        public void testInPropertyInitializer() throws Exception {
+            doTest("idea/testData/completion/basic/common/InPropertyInitializer.kt");
+        }
+        
         @TestMetadata("InTypeAnnotation.kt")
         public void testInTypeAnnotation() throws Exception {
             doTest("idea/testData/completion/basic/common/InTypeAnnotation.kt");
