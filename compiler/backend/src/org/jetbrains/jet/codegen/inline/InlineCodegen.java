@@ -240,12 +240,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
-        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration) {
-            @Override
-            public boolean generateLocalVarTable() {
-                return false;
-            }
-        }, codegen.getParentCodegen());
+        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), codegen.getParentCodegen());
         adapter.visitMaxs(-1, -1);
 
         return methodNode;
