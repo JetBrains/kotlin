@@ -47,4 +47,9 @@ public class InlinedLambdaRemapper extends FieldRemapper {
         return parent.findField(fieldInsnNode, captured);
     }
 
+
+    @Override
+    public boolean isInsideInliningLambda() {
+        return true;
+    }
 }

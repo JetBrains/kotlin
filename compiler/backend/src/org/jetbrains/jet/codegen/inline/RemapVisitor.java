@@ -33,7 +33,13 @@ public class RemapVisitor extends InstructionAdapter {
     private final boolean remapReturn;
     private FieldRemapper nodeRemapper;
 
-    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn, FieldRemapper nodeRemapper) {
+    protected RemapVisitor(
+            MethodVisitor mv,
+            Label end,
+            VarRemapper.ParamRemapper remapper,
+            boolean remapReturn,
+            FieldRemapper nodeRemapper
+    ) {
         super(InlineCodegenUtil.API, mv);
         this.end = end;
         this.remapper = remapper;
@@ -106,9 +112,4 @@ public class RemapVisitor extends InstructionAdapter {
         return null;
     }
 
-    //TODO not skip for lambdas
-    @Override
-    public void visitLineNumber(int line, Label start) {
-
-    }
 }

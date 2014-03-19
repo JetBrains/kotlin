@@ -229,6 +229,8 @@ public class MethodInliner {
         node.instructions.resetLabels();
         MethodNode transformedNode = new MethodNode(node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
 
+            private final boolean keepLineNumbers = nodeRemapper.isInsideInliningLambda();
+
             @Override
             public void visitVarInsn(int opcode, int var) {
                 int newIndex;
@@ -254,6 +256,13 @@ public class MethodInliner {
             @Override
             public void visitMaxs(int maxStack, int maxLocals) {
                 super.visitMaxs(maxStack, maxLocals + capturedParamsSize);
+            }
+
+            @Override
+            public void visitLineNumber(int line, Label start) {
+                if(keepLineNumbers) {
+                    super.visitLineNumber(line, start);
+                }
             }
         };
 

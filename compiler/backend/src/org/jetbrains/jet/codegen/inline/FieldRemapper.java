@@ -122,4 +122,8 @@ public class FieldRemapper {
         CapturedParamInfo field = MethodInliner.findCapturedField(node, this);
         return field.getRemapValue();
     }
+
+    public boolean isInsideInliningLambda() {
+        return !isRoot() && parent.isInsideInliningLambda();
+    }
 }
