@@ -25,14 +25,19 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
@@ -150,6 +155,9 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
 
                 JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
+                if (!candidateCall.getCandidateDescriptor().hasStableParameterNames()) {
+                    report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference));
+                }
                 if (valueParameterDescriptor == null) {
                     report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference));
                     unmappedArguments.add(argument);

@@ -51,7 +51,6 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
@@ -240,11 +239,11 @@ enum class MoveAction {
                 val targetFile = config.getString("targetFile")
 
                 MoveHandler.doMove(
-                        project = project,
-                        elements = array(mainFile),
-                        targetContainer = PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
-                        dataContext = null,
-                        callback = null
+                        project,
+                        array(mainFile),
+                        PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
+                        /* dataContext = */ null,
+                        /* callback = */ null
                 )
             }
         }

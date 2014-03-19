@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -307,11 +307,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
             doTest("compiler/testData/diagnostics/tests/MultipleBounds.kt");
-        }
-        
-        @TestMetadata("NamedArgumentsAndDefaultValues.kt")
-        public void testNamedArgumentsAndDefaultValues() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/NamedArgumentsAndDefaultValues.kt");
         }
         
         @TestMetadata("Nullability.kt")
@@ -4765,6 +4760,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")
+        public static class NamedArguments extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInNamedArguments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("disallowForJavaMethods.kt")
+            public void testDisallowForJavaMethods() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaMethods.kt");
+            }
+            
+            @TestMetadata("namedArgumentsAndDefaultValues.kt")
+            public void testNamedArgumentsAndDefaultValues() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/namedArguments/namedArgumentsAndDefaultValues.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/nullabilityAndAutoCasts")
         public static class NullabilityAndAutoCasts extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInNullabilityAndAutoCasts() throws Exception {
@@ -7012,6 +7025,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTestSuite(J_k.class);
             suite.addTest(Jdk_annotations.innerSuite());
             suite.addTestSuite(Library.class);
+            suite.addTestSuite(NamedArguments.class);
             suite.addTestSuite(NullabilityAndAutoCasts.class);
             suite.addTestSuite(NullableTypes.class);
             suite.addTestSuite(Numbers.class);

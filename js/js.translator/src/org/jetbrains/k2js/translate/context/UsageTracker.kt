@@ -55,7 +55,7 @@ class UsageTracker(
     }
 
     private fun captureIfNeed(descriptor: CallableDescriptor?) {
-        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, strict = true)) return
+        if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true)) return
 
         parent?.captureIfNeed(descriptor)
 
