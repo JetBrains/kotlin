@@ -5356,6 +5356,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/override/parameterNames/jjkHierarchy.kt");
                 }
                 
+                @TestMetadata("kjkHierarchy.kt")
+                public void testKjkHierarchy() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/kjkHierarchy.kt");
+                }
+                
+                @TestMetadata("kjkWithSeveralSupers.kt")
+                public void testKjkWithSeveralSupers() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/override/parameterNames/kjkWithSeveralSupers.kt");
+                }
+                
                 @TestMetadata("kotlinInheritsBothJavaAndKotlin.kt")
                 public void testKotlinInheritsBothJavaAndKotlin() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/override/parameterNames/kotlinInheritsBothJavaAndKotlin.kt");

@@ -1,7 +1,7 @@
 package test
 
 public open class RedundantProjectionKind : Object() {
-    public open fun foo(p0: List<Number>) {
+    public open fun foo(list: List<Number>) {
         throw UnsupportedOperationException()
     }
 }

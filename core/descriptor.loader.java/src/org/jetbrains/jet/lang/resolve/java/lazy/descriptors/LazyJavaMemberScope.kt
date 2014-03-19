@@ -126,7 +126,8 @@ public abstract class LazyJavaMemberScope(
         val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature
         if (_containingDeclaration is PackageFragmentDescriptor) {
             superFunctions = Collections.emptyList()
-            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters, methodTypeParameters)
+            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters,
+                                                                                               methodTypeParameters, false)
             signatureErrors = effectiveSignature.getErrors()
         }
         else if (_containingDeclaration is ClassDescriptor) {
@@ -134,7 +135,8 @@ public abstract class LazyJavaMemberScope(
             superFunctions = propagated.getSuperMethods()
             effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
                     method, !superFunctions.isEmpty(), propagated.getReturnType(),
-                    propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters())
+                    propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
+                    propagated.hasStableParameterNames())
 
             signatureErrors = ArrayList<String>(propagated.getErrors())
             signatureErrors.addAll(effectiveSignature.getErrors())
@@ -152,6 +154,8 @@ public abstract class LazyJavaMemberScope(
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility()
         )
+
+        functionDescriptorImpl.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
 
         if (record) {
             c.javaResolverCache.recordMethod(method, functionDescriptorImpl)

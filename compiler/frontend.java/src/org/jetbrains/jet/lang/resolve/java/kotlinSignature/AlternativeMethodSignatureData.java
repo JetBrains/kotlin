@@ -203,11 +203,13 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
                 alternativeType = KotlinBuiltIns.getInstance().getArrayType(alternativeVarargElementType);
             }
 
+            Name altName = annotationValueParameter.getNameAsName();
+
             altParamDescriptors.add(new ValueParameterDescriptorImpl(
                     originalParameterDescriptor.getContainingDeclaration(),
                     originalParameterDescriptor.getIndex(),
                     originalParameterDescriptor.getAnnotations(),
-                    originalParameterDescriptor.getName(),
+                    altName != null ? altName : originalParameterDescriptor.getName(),
                     alternativeType,
                     originalParameterDescriptor.declaresDefaultValue(),
                     alternativeVarargElementType));

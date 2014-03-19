@@ -77,7 +77,7 @@ public class LazyJavaClassMemberScope(
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
-                constructor, false, null, null, valueParameters, Collections.emptyList())
+                constructor, false, null, null, valueParameters, Collections.emptyList(), false)
 
         constructorDescriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),

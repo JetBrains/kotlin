@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
+    private Boolean hasStableParameterNames = null;
+
     public JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
@@ -54,17 +56,20 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
 
     @Override
     public boolean hasStableParameterNames() {
-        // TODO: propagated names should be stable
-        return false;
+        assert hasStableParameterNames != null : "hasStableParameterNames was not set: " + this;
+        return hasStableParameterNames;
+    }
+
+    public void setHasStableParameterNames(boolean hasStableParameterNames) {
+        this.hasStableParameterNames = hasStableParameterNames;
     }
 
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
-        if (preserveOriginal) {
-            return new JavaMethodDescriptor(newOwner, getOriginal(), getAnnotations(), getName(), kind);
-        }
-        else {
-            return new JavaMethodDescriptor(newOwner, getAnnotations(), getName(), kind);
-        }
+        JavaMethodDescriptor result = preserveOriginal
+                                      ? new JavaMethodDescriptor(newOwner, getOriginal(), getAnnotations(), getName(), kind)
+                                      : new JavaMethodDescriptor(newOwner, getAnnotations(), getName(), kind);
+        result.setHasStableParameterNames(hasStableParameterNames());
+        return result;
     }
 }
