@@ -77,12 +77,12 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         LanguageLevelProjectExtension.getInstance(getProject()).setLanguageLevel(LanguageLevel.HIGHEST);
     }
 
-    public void doTextTest(@NonNls String text, File fileAfter) throws IncorrectOperationException {
-        doTextTest(Action.REFORMAT, text, fileAfter);
+    public void doTextTest(@NonNls String text, File fileAfter, String extension) throws IncorrectOperationException {
+        doTextTest(Action.REFORMAT, text, fileAfter, extension);
     }
 
-    public void doTextTest(final Action action, final String text, File fileAfter) throws IncorrectOperationException {
-        final PsiFile file = createFile("A.kt", text);
+    public void doTextTest(final Action action, final String text, File fileAfter, String extension) throws IncorrectOperationException {
+        final PsiFile file = createFile("A" + extension, text);
 
         if (myLineRange != null) {
             DocumentImpl document = new DocumentImpl(text);
@@ -136,7 +136,8 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
 
     public void doTest(@NotNull String expectedFileNameWithExtension, boolean inverted) throws Exception {
         String testFileName = expectedFileNameWithExtension.substring(0, expectedFileNameWithExtension.indexOf("."));
-        String originalFileText = FileUtil.loadFile(new File(testFileName + ".kt"), true);
+        String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
+        String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
         SettingsConfigurator configurator = JetFormatSettingsUtil.createConfigurator(originalFileText, JetFormatSettingsUtil.getSettings());
 
         if (!inverted) {
@@ -145,7 +146,7 @@ public abstract class AbstractJetFormatterTest extends LightIdeaTestCase {
         else {
             configurator.configureInvertedSettings();
         }
-        doTextTest(originalFileText, new File(expectedFileNameWithExtension));
+        doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
 
         JetFormatSettingsUtil.getSettings().clearCodeStyleSettings();
     }
