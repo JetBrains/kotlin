@@ -41,6 +41,26 @@ public class CheckLocalVariablesTableTestGenerated extends AbstractCheckLocalVar
         doTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
     }
     
+    @TestMetadata("inlineLambdaWithItParam.kt")
+    public void testInlineLambdaWithItParam() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithItParam.kt");
+    }
+    
+    @TestMetadata("inlineLambdaWithParam.kt")
+    public void testInlineLambdaWithParam() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
+    }
+    
+    @TestMetadata("inlineSimple.kt")
+    public void testInlineSimple() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
+    }
+    
+    @TestMetadata("inlineSimpleChain.kt")
+    public void testInlineSimpleChain() throws Exception {
+        doTest("compiler/testData/checkLocalVariablesTable/inlineSimpleChain.kt");
+    }
+    
     @TestMetadata("itInLambda.kt")
     public void testItInLambda() throws Exception {
         doTest("compiler/testData/checkLocalVariablesTable/itInLambda.kt");

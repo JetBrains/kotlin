@@ -18,11 +18,14 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.asm4.Opcodes;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+
+import static org.jetbrains.jet.codegen.inline.VarRemapper.RemapStatus.*;
 
 public class VarRemapper {
 
@@ -63,10 +66,10 @@ public class VarRemapper {
             ParameterInfo info = params.get(index);
             StackValue remapped = remapValues[index];
             if (info.isSkipped || remapped == null) {
-                throw new RuntimeException("Trying to access skipped parameter: " + info.type + " at " +index);
+                return new RemapInfo(info);
             }
             if (info.isRemapped()) {
-                return new RemapInfo(remapped, info);
+                return new RemapInfo(remapped, info, REMAPPED);
             } else {
                 remappedIndex = ((StackValue.Local)remapped).index;
             }
@@ -74,11 +77,16 @@ public class VarRemapper {
             remappedIndex = actualParamsSize - params.totalSize() + index; //captured params not used directly in this inlined method, they used in closure
         }
 
-        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE), null);
+        return new RemapInfo(StackValue.local(remappedIndex + additionalShift, AsmTypeConstants.OBJECT_TYPE), null, SHIFT);
     }
 
     public RemapInfo remap(int index) {
-        return doRemap(index);
+        RemapInfo info = doRemap(index);
+        if (FAIL == info.status) {
+            assert info.parameterInfo != null : "Parameter info should be not null";
+            throw new RuntimeException("Trying to access skipped parameter: " + info.parameterInfo.type + " at " +index);
+        }
+        return info;
     }
 
     public void visitIincInsn(int var, int increment, MethodVisitor mv) {
@@ -86,6 +94,15 @@ public class VarRemapper {
         assert remap.value instanceof StackValue.Local;
         mv.visitIincInsn(((StackValue.Local) remap.value).index, increment);
     }
+
+    public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index, MethodVisitor mv) {
+        RemapInfo info = doRemap(index);
+        if (SHIFT == info.status) {
+            //add entries only for shifted vars
+            mv.visitLocalVariable(name, desc, signature, start, end, ((StackValue.Local) info.value).index);
+        }
+    }
+
 
     public void visitVarInsn(int opcode, int var, InstructionAdapter mv) {
         RemapInfo remapInfo = remap(var);
@@ -104,15 +121,30 @@ public class VarRemapper {
         }
     }
 
-    public static class RemapInfo {
+    public enum RemapStatus {
+        SHIFT,
+        REMAPPED,
+        FAIL
+    }
+
+    private static class RemapInfo {
 
         public final StackValue value;
 
         public final ParameterInfo parameterInfo;
 
-        public RemapInfo(@NotNull StackValue value, @Nullable ParameterInfo info) {
+        public final RemapStatus status;
+
+        public RemapInfo(@NotNull StackValue value, @Nullable ParameterInfo info, RemapStatus remapStatus) {
             this.value = value;
             parameterInfo = info;
+            this.status = remapStatus;
+        }
+
+        public RemapInfo(@NotNull ParameterInfo info) {
+            this.value = null;
+            parameterInfo = info;
+            this.status = FAIL;
         }
     }
 }

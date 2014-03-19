@@ -34,6 +34,8 @@ public class RemapVisitor extends InstructionAdapter {
 
     private final FieldRemapper nodeRemapper;
 
+    private final InstructionAdapter instructionAdapter;
+
     protected RemapVisitor(
             MethodVisitor mv,
             Label end,
@@ -42,6 +44,7 @@ public class RemapVisitor extends InstructionAdapter {
             FieldRemapper nodeRemapper
     ) {
         super(InlineCodegenUtil.API, mv);
+        this.instructionAdapter = new InstructionAdapter(mv);
         this.end = end;
         this.remapper = varRemapper;
         this.remapReturn = remapReturn;
@@ -65,7 +68,14 @@ public class RemapVisitor extends InstructionAdapter {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        remapper.visitVarInsn(opcode, var, new InstructionAdapter(mv));
+        remapper.visitVarInsn(opcode, var, instructionAdapter);
+    }
+
+    @Override
+    public void visitLocalVariable(
+            String name, String desc, String signature, Label start, Label end, int index
+    ) {
+        remapper.visitLocalVariable(name, desc, signature, start, end, index, mv);
     }
 
     @Override
@@ -84,13 +94,6 @@ public class RemapVisitor extends InstructionAdapter {
         else {
             super.visitFieldInsn(opcode, owner, name, desc);
         }
-    }
-
-    @Override
-    public void visitLocalVariable(
-            String name, String desc, String signature, Label start, Label end, int index
-    ) {
-
     }
 
     @Override
