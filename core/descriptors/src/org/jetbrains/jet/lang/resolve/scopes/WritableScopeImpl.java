@@ -340,7 +340,10 @@ public class WritableScopeImpl extends WritableScopeWithImports {
         checkMayWrite();
         
         checkForRedeclaration(name, variableDescriptor);
+
         getVariableOrClassDescriptors().put(name, variableDescriptor);
+        getPropertyGroups().put(name, variableDescriptor);
+
         allDescriptors.add(variableDescriptor);
         addToDeclared(variableDescriptor);
     }
