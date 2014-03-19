@@ -68,5 +68,39 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add f("contains(item: Any?)") {
+        absentFor(Arrays)
+        isInline = false
+        doc = "Returns whether the item is in the array"
+        returns("Boolean")
+        body {
+            """
+                if(obj !is T) return false
+
+                for(elm in this)
+                    if(elm == item) return true
+                return false
+            """
+        }
+    }
+
+    /*
+     * implementation for PrimitiveArrays is separate from it for Arrays,
+     * because they cannot hold elements of different types
+     * */
+    templates add f("contains(item: T)") {
+        absentFor(PrimitiveArrays)
+        isInline = false
+        doc = "Returns whether the item is in the array"
+        returns("Boolean")
+        body {
+            """
+                for(elm in this)
+                    if(elm == item) return true
+                return false
+            """
+        }
+    }
+
     return templates.sort()
 }
