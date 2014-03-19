@@ -45,7 +45,7 @@ public class CompileEnvironmentTest extends TestCase {
             File jdkAnnotations = JetTestUtils.getJdkAnnotationsJar();
             File resultJar = new File(tempDir, "result.jar");
             ExitCode rv = new K2JVMCompiler().exec(System.out,
-                                                   "-module", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.kts",
+                                                   "-module", JetTestCaseBuilder.getTestDataPathBase() + "/compiler/smoke/Smoke.ktm",
                                                    "-jar", resultJar.getAbsolutePath(),
                                                    "-noStdlib",
                                                    "-classpath", stdlib.getAbsolutePath(),
