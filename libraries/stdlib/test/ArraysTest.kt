@@ -213,4 +213,26 @@ class ArraysTest {
     }
 
     */
+
+    /*
+    * tests for Array.slice(), IntArray.slice(), etc
+    * in /libraries/stdlib/src/kotlin/Arrays.kt
+    * */
+    test fun slice() {
+        val iter = listOf(3, 1, 2)
+
+        assertEquals(listOf("B"),           array("A", "B", "C").slice(1..1))
+        assertEquals(listOf('E', 'B', 'C'), array('A', 'B', 'C', 'E').slice(iter))
+
+        assertEquals(listOf(),              array<Int>().slice(5..4))
+        assertEquals(listOf(),              array(1, 2, 3).slice(5..1))
+        assertEquals(listOf(2, 3, 9),       array(2, 3, 9, 2, 3, 9).slice(iter))
+        assertEquals(listOf(2.0, 3.0),      array(2.0, 3.0, 9.0).slice(0..1))
+        assertEquals(listOf(2f, 3f),        array(2f, 3f, 9f).slice(0..1))
+        assertEquals(listOf(200, 100),      array<Byte>(50, 100, 200).slice(2 downTo 1))
+        assertEquals(listOf(200, 100),      array<Short>(50, 100, 200).slice(2 downTo 1))
+        assertEquals(listOf(100L, 200L, 30L),      array(50L, 100L, 200L, 30L).slice(1..3))
+        assertEquals(listOf(true, false, true),    array(true, false, true, true).slice(iter))
+    }
+
 }
