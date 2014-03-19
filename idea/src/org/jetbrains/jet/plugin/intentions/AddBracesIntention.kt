@@ -32,7 +32,6 @@ import org.jetbrains.jet.JetNodeTypes
 import com.intellij.psi.PsiWhiteSpace
 
 public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("add.braces", javaClass()) {
-    private var expressionKind: ExpressionKind? = null
     private var caretLocation: Int = 1
 
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
@@ -41,26 +40,27 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("
     }
 
     override fun isApplicableTo(element: JetExpressionImpl): Boolean {
-        expressionKind = element.getExpressionKind(caretLocation)
+        val expressionKind = element.getExpressionKind(caretLocation)
         if (expressionKind == null) return false
 
         val jetBlockElement = element.findBlockInExpression(expressionKind)
         if (jetBlockElement != null) return false
 
-        setText("Add braces to '${expressionKind!!.text}' statement")
+        setText("Add braces to '${expressionKind.text}' statement")
         return true
     }
 
     override fun applyTo(element: JetExpressionImpl, editor: Editor) {
+        val expressionKind = element.getExpressionKind(caretLocation)
         val bodyNode = when (expressionKind) {
             ExpressionKind.ELSE -> element.getNode().findChildByType(JetNodeTypes.ELSE)
             ExpressionKind.IF -> element.getNode().findChildByType(JetNodeTypes.THEN)
             else -> element.getNode().findChildByType(JetNodeTypes.BODY)
         }
-        generateCleanOutput(element, bodyNode)
+        generateCleanOutput(element, bodyNode, expressionKind)
     }
 
-    fun generateCleanOutput(element: JetExpressionImpl, bodyNode: ASTNode?) {
+    fun generateCleanOutput(element: JetExpressionImpl, bodyNode: ASTNode?, expressionKind: ExpressionKind?) {
         if (element.getNextSibling()?.getText() == ";") {
             element.getNextSibling()!!.delete()
         }
