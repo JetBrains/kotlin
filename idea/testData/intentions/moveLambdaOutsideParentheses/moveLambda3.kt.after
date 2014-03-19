@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    bar() { it }
+    bar { it }
 }
 
 fun bar(a: Int, b: Int->Int) {
