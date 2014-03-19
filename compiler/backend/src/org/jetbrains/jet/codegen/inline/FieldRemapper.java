@@ -41,12 +41,12 @@ public class FieldRemapper {
         params = methodParams;
     }
 
-    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
+    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
         return fieldOwner.equals(getLambdaInternalName());
     }
 
     @Nullable
-    public AbstractInsnNode transformIfNeeded(
+    public AbstractInsnNode foldFieldAccessChainIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,
             @NotNull MethodNode node
     ) {
@@ -55,11 +55,11 @@ public class FieldRemapper {
             return null;
         }
 
-        return transformIfNeeded(capturedFieldAccess, 1, node);
+        return foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node);
     }
 
     @Nullable
-    private AbstractInsnNode transformIfNeeded(
+    private AbstractInsnNode foldFieldAccessChainIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,
             int currentInstruction,
             @NotNull MethodNode node
@@ -67,7 +67,7 @@ public class FieldRemapper {
         AbstractInsnNode transformed = null;
         boolean checkParent = !isRoot() && currentInstruction < capturedFieldAccess.size() - 1;
         if (checkParent) {
-            transformed = parent.transformIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
+            transformed = parent.foldFieldAccessChainIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
         }
 
         if (transformed == null) {

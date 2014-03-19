@@ -51,8 +51,8 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     }
 
     @Override
-    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
-        return super.canProcess(fieldOwner, forTransformation) || isRecapturedLambdaType(fieldOwner);
+    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
+        return super.canProcess(fieldOwner, isFolding) || isRecapturedLambdaType(fieldOwner);
     }
 
     private boolean isRecapturedLambdaType(String owner) {

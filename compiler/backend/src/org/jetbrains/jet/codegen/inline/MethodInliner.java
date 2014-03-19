@@ -410,7 +410,7 @@ public class MethodInliner {
             if (cur instanceof VarInsnNode && cur.getOpcode() == Opcodes.ALOAD) {
                 if (((VarInsnNode) cur).var == 0) {
                     List<AbstractInsnNode> accessChain = getCapturedFieldAccessChain((VarInsnNode) cur);
-                    AbstractInsnNode insnNode = nodeRemapper.transformIfNeeded(accessChain, node);
+                    AbstractInsnNode insnNode = nodeRemapper.foldFieldAccessChainIfNeeded(accessChain, node);
                     if (insnNode != null) {
                         cur = insnNode;
                     }

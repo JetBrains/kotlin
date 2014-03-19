@@ -34,8 +34,8 @@ public class InlinedLambdaRemapper extends FieldRemapper {
 
 
     @Override
-    public boolean canProcess(@NotNull String fieldOwner, boolean forTransformation) {
-        return forTransformation ? super.canProcess(fieldOwner, forTransformation) : false;
+    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
+        return isFolding ? super.canProcess(fieldOwner, isFolding) : false;
     }
 
     @Override
