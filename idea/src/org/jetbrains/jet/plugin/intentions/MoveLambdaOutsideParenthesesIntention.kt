@@ -34,7 +34,12 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
         val literal = args.last!!.getArgumentExpression()?.getText() // we know args.last is non null
         val callText = element.getText()
         if (callText == null || literal == null) return
-        val endIndex = Math.max(callText.lastIndexOf(","), callText.indexOf("(") + 1) // in case of single parameter
-        element.replace(JetPsiFactory.createExpression(element.getProject(), "${callText.substring(0,endIndex)})$literal"))
+        val endIndex = callText.lastIndexOf(",")
+        val newCall = if (endIndex > 0) {
+            "${callText.substring(0, endIndex)}) $literal"
+        } else {
+            "${callText.substring(0, callText.indexOf("("))} $literal"
+        }
+        element.replace(JetPsiFactory.createExpression(element.getProject(), newCall))
     }
 }
