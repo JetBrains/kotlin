@@ -68,5 +68,48 @@ fun arrays(): List<GenericFunction> {
         }
     }
 
+    templates add f("lastIndexOf(item: T)") {
+        absentFor(PrimitiveArrays)
+        isInline = false
+        doc = "Returns last index of item, or -1 if the array does not contain item"
+        returns("Int")
+        body {
+            """
+                if (item == null) {
+                    for (i in lastIndex downTo 0) {
+                        if (this[i] == null) {
+                            return i
+                        }
+                    }
+                } else {
+                    for (i in lastIndex downTo 0) {
+                        if (item == this[i]) {
+                            return i
+                        }
+                    }
+                }
+                return -1
+           """
+        }
+    }
+
+    // implementation for PrimitiveArrays is separate from Arrays, because they cannot hold null elements
+    templates add f("lastIndexOf(item: T)") {
+        absentFor(Arrays)
+        isInline = false
+        doc = "Returns last index of item, or -1 if the array does not contain item"
+        returns("Int")
+        body {
+            """
+                for (i in lastIndex downTo 0) {
+                    if (item == this[i]) {
+                        return i
+                    }
+                }
+                return -1
+           """
+        }
+    }
+
     return templates.sort()
 }
