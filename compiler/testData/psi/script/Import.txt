@@ -1,4 +1,4 @@
-JetFile: Import.ktscript
+JetFile: Import.kts
   PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT

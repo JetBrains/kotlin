@@ -97,58 +97,58 @@ public class ScriptGenTest extends CodegenTestCase {
     }
 
     public void testHelloWorld() {
-        blackBoxScript("script/helloWorld.ktscript");
+        blackBoxScript("script/helloWorld.kts");
     }
 
     public void testString() {
-        blackBoxScript("script/string.ktscript");
+        blackBoxScript("script/string.kts");
     }
 
     public void testTopLevelFunction() throws Exception {
-        blackBoxScript("script/topLevelFunction.ktscript");
+        blackBoxScript("script/topLevelFunction.kts");
         Method method = scriptInstance.getClass().getMethod("factorial", new Class<?>[]{ int.class });
         Object r = method.invoke(scriptInstance, 4);
         assertEquals(24, r);
     }
 
     public void testTopLevelFunctionClosure() {
-        blackBoxScript("script/topLevelFunctionClosure.ktscript");
+        blackBoxScript("script/topLevelFunctionClosure.kts");
     }
 
     public void testSecondLevelFunction() {
-        blackBoxScript("script/secondLevelFunction.ktscript");
+        blackBoxScript("script/secondLevelFunction.kts");
     }
 
     public void testSecondLevelFunctionClosure() {
-        blackBoxScript("script/secondLevelFunctionClosure.ktscript");
+        blackBoxScript("script/secondLevelFunctionClosure.kts");
     }
 
     public void testSecondLevelVal() {
-        blackBoxScript("script/secondLevelVal.ktscript");
+        blackBoxScript("script/secondLevelVal.kts");
     }
 
     public void testTopLevelProperty() {
-        blackBoxScript("script/topLevelProperty.ktscript");
+        blackBoxScript("script/topLevelProperty.kts");
     }
 
     public void testScriptParameter() {
-        blackBoxScript("script/parameter.ktscript");
+        blackBoxScript("script/parameter.kts");
     }
 
     public void testScriptParameterLong() {
-        blackBoxScript("script/parameterLong.ktscript");
+        blackBoxScript("script/parameterLong.kts");
     }
 
     public void testScriptParameterArray() {
-        blackBoxScript("script/parameterArray.ktscript");
+        blackBoxScript("script/parameterArray.kts");
     }
 
     public void testScriptParameterClosure() {
-        blackBoxScript("script/parameterClosure.ktscript");
+        blackBoxScript("script/parameterClosure.kts");
     }
 
     public void testEmpty() {
-        blackBoxScript("script/empty.ktscript");
+        blackBoxScript("script/empty.kts");
     }
 
     public void testLanguage() {
@@ -185,7 +185,7 @@ public class ScriptGenTest extends CodegenTestCase {
 
     public void testDependentScripts() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
-        loadFiles("script/fibwp.lang.kt", "script/fibwprunner.ktscript");
+        loadFiles("script/fibwp.lang.kt", "script/fibwprunner.kts");
         Class aClass = generateClass("Fibwprunner");
         try {
             Constructor constructor = aClass.getConstructor();

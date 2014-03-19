@@ -7124,28 +7124,28 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     
     @TestMetadata("compiler/testData/diagnostics/tests/script")
     public static class Script extends AbstractJetDiagnosticsTest {
-        @TestMetadata("AccessForwardDeclarationInScript.ktscript")
+        @TestMetadata("AccessForwardDeclarationInScript.kts")
         public void testAccessForwardDeclarationInScript() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/script/AccessForwardDeclarationInScript.ktscript");
+            doTest("compiler/testData/diagnostics/tests/script/AccessForwardDeclarationInScript.kts");
         }
         
         public void testAllFilesPresentInScript() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/script"), Pattern.compile("^(.+)\\.ktscript$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/script"), Pattern.compile("^(.+)\\.kts$"), true);
         }
         
-        @TestMetadata("ComplexScript.ktscript")
+        @TestMetadata("ComplexScript.kts")
         public void testComplexScript() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/script/ComplexScript.ktscript");
+            doTest("compiler/testData/diagnostics/tests/script/ComplexScript.kts");
         }
         
-        @TestMetadata("imports.ktscript")
+        @TestMetadata("imports.kts")
         public void testImports() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/script/imports.ktscript");
+            doTest("compiler/testData/diagnostics/tests/script/imports.kts");
         }
         
-        @TestMetadata("SimpleScript.ktscript")
+        @TestMetadata("SimpleScript.kts")
         public void testSimpleScript() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/script/SimpleScript.ktscript");
+            doTest("compiler/testData/diagnostics/tests/script/SimpleScript.kts");
         }
         
     }

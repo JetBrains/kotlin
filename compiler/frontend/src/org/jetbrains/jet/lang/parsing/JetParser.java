@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class JetParser implements PsiParser {
 
-    public static final String STD_SCRIPT_EXT = "." + JetParserDefinition.KTSCRIPT_FILE_SUFFIX;
     private final JetScriptDefinitionProvider scriptDefinitionProvider;
 
     public JetParser(Project project) {
@@ -43,7 +42,8 @@ public class JetParser implements PsiParser {
     @NotNull
     public ASTNode parse(IElementType iElementType, PsiBuilder psiBuilder, PsiFile psiFile) {
         JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
-        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile) || psiFile.getName().endsWith(STD_SCRIPT_EXT)) {
+        if (scriptDefinitionProvider != null && scriptDefinitionProvider.isScript(psiFile)
+            || psiFile.getName().endsWith(JetParserDefinition.STD_SCRIPT_EXT)) {
             jetParsing.parseScript();
         }
         else {

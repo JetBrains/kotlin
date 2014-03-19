@@ -40,7 +40,8 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 
 public class JetParserDefinition implements ParserDefinition {
-    public static final String KTSCRIPT_FILE_SUFFIX = "ktscript";
+    public static final String STD_SCRIPT_SUFFIX = "kts";
+    public static final String STD_SCRIPT_EXT = "." + STD_SCRIPT_SUFFIX;
 
     public JetParserDefinition() {
         //todo: ApplicationManager.getApplication() is null during JetParsingTest setting up
