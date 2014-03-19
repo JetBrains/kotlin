@@ -30,29 +30,27 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 
 public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl>("remove.braces", javaClass()) {
-    private var expressionKind: ExpressionKind? = null
-    private var caretLocation: Int = 1
-
-    override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-        caretLocation = editor.getCaretModel().getOffset()
-        return getTarget(editor, file) != null
+    override fun isApplicableTo(element: JetExpressionImpl): Boolean {
+        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
     }
 
-    override fun isApplicableTo(element: JetExpressionImpl): Boolean {
-        expressionKind = element.getExpressionKind(caretLocation)
+    override fun isApplicableTo(element: JetExpressionImpl, editor: Editor): Boolean {
+        val expressionKind = element.getExpressionKind(editor.getCaretModel().getOffset())
         if (expressionKind == null) return false
 
         val jetBlockElement = element.findBlockInExpression(expressionKind)
         if (jetBlockElement == null) return false
 
-        if (jetBlockElement!!.getStatements().size == 1) {
-            setText("Remove braces from '${expressionKind!!.text}' statement")
+        if (jetBlockElement.getStatements().size == 1) {
+            setText("Remove braces from '${expressionKind.text}' statement")
             return true
         }
         return false
     }
 
     override fun applyTo(element: JetExpressionImpl, editor: Editor) {
+        val expressionKind = element.getExpressionKind(editor.getCaretModel().getOffset())!!
+
         val jetBlockElement = element.findBlockInExpression(expressionKind)
         val firstStatement = jetBlockElement!!.getStatements().first()
 
@@ -63,7 +61,6 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetExpressionImpl
         if (expressionKind == ExpressionKind.DOWHILE) {
             newElement.getParent()!!.addAfter(JetPsiFactory.createNewLine(element.getProject()), newElement)
         }
-
     }
 
     fun handleComments(element: JetExpressionImpl, blockElement: JetBlockExpression) {
