@@ -459,11 +459,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/TypeMismatchOnOverrideWithSyntaxErrors.kt");
         }
         
-        @TestMetadata("UninitializedOrReassignedVariables.kt")
-        public void testUninitializedOrReassignedVariables() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/UninitializedOrReassignedVariables.kt");
-        }
-        
         @TestMetadata("UnitByDefaultForFunctionTypes.kt")
         public void testUnitByDefaultForFunctionTypes() throws Exception {
             doTest("compiler/testData/diagnostics/tests/UnitByDefaultForFunctionTypes.kt");
@@ -1683,9 +1678,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/repeatUnitializedErrorOnlyForLocalVars.kt");
             }
             
+            @TestMetadata("scopeOfAnonymousInitializer.kt")
+            public void testScopeOfAnonymousInitializer() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/scopeOfAnonymousInitializer.kt");
+            }
+            
             @TestMetadata("uninitializedInLocalDeclarations.kt")
             public void testUninitializedInLocalDeclarations() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedInLocalDeclarations.kt");
+            }
+            
+            @TestMetadata("UninitializedOrReassignedVariables.kt")
+            public void testUninitializedOrReassignedVariables() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/UninitializedOrReassignedVariables.kt");
             }
             
             @TestMetadata("unreachableCode.kt")

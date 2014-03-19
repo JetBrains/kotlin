@@ -245,7 +245,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, primaryConstructor, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
         for (ValueParameterDescriptor valueParameterDescriptor : primaryConstructor.getValueParameters()) {
-            scope.addVariableDescriptor(valueParameterDescriptor);
+            JetParameter jetParameter = originalClassInfo.getPrimaryConstructorParameters().get(valueParameterDescriptor.getIndex());
+            if (jetParameter.getValOrVarNode() == null) {
+                scope.addVariableDescriptor(valueParameterDescriptor);
+            }
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);
 
