@@ -52,7 +52,7 @@ public interface JetNodeTypes {
 
     IElementType CLASS_BODY                         = JetStubElementTypes.CLASS_BODY;
     IElementType IMPORT_LIST                        = JetStubElementTypes.IMPORT_LIST;
-    JetNodeType IMPORT_DIRECTIVE                    = new JetNodeType("IMPORT_DIRECTIVE", JetImportDirective.class);
+    IElementType IMPORT_DIRECTIVE                   = JetStubElementTypes.IMPORT_DIRECTIVE;
     JetNodeType MODIFIER_LIST                       = new JetNodeType("MODIFIER_LIST", JetModifierList.class);
     JetNodeType PRIMARY_CONSTRUCTOR_MODIFIER_LIST   = new JetNodeType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST", JetModifierList.class);
     JetNodeType ANNOTATION = new JetNodeType("ANNOTATION", JetAnnotation.class);

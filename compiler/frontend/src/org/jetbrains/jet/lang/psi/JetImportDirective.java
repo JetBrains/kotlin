@@ -17,14 +17,21 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetImportDirective extends JetElementImpl {
+public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetImportDirective(@NotNull PsiJetImportDirectiveStub stub) {
+        super(stub, JetStubElementTypes.IMPORT_DIRECTIVE);
     }
 
     @Override

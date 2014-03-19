@@ -33,4 +33,5 @@ public interface JetStubElementTypes {
     JetAnnotationElementType ANNOTATION_ENTRY = new JetAnnotationElementType("ANNOTATION_ENTRY");
     JetClassBodyElementType CLASS_BODY = new JetClassBodyElementType("CLASS_BODY");
     JetImportListElementType IMPORT_LIST = new JetImportListElementType("IMPORT_LIST");
+    JetImportDirectiveElementType IMPORT_DIRECTIVE = new JetImportDirectiveElementType("IMPORT_DIRECTIVE");
 }
