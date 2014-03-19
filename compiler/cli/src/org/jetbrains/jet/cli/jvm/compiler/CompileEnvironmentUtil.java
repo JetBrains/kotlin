@@ -74,7 +74,7 @@ public class CompileEnvironmentUtil {
             return ModuleChunk.EMPTY;
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
-        if ("kts".equalsIgnoreCase(extension)) {
+        if ("ktm".equalsIgnoreCase(extension)) {
             return new ModuleChunk(loadModuleScript(paths, moduleDefinitionFile, messageCollector));
         }
         if ("xml".equalsIgnoreCase(extension)) {
