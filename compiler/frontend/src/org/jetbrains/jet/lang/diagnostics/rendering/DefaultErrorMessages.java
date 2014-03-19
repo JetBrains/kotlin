@@ -104,7 +104,7 @@ public class DefaultErrorMessages {
         MAP.put(INACCESSIBLE_BACKING_FIELD, "The backing field is not accessible here");
         MAP.put(NOT_PROPERTY_BACKING_FIELD, "The referenced variable is not a property and doesn't have backing field");
 
-        MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments in not allowed");
+        MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
         MAP.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", ELEMENT_TEXT);
         MAP.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list");
