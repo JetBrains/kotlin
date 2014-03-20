@@ -24,11 +24,13 @@ import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassOwner;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFileStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
@@ -73,6 +75,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @Nullable
     public JetImportList getImportList() {
+        PsiJetFileStub stub = getStub();
+        if (stub != null) {
+            StubElement<JetImportList> importListStub = stub.findChildStubByType(JetStubElementTypes.IMPORT_LIST);
+            return importListStub != null ? importListStub.getPsi() : null;
+        }
         return findChildByClass(JetImportList.class);
     }
 
@@ -108,7 +115,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
 
     @NotNull
     public FqName getPackageFqName() {
-        PsiJetFileStub stub = (PsiJetFileStub) getStub();
+        PsiJetFileStub stub = getStub();
         if (stub != null) {
             return stub.getPackageFqName();
         }
@@ -118,6 +125,12 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
             return FqName.ROOT;
         }
         return packageDirective.getFqName();
+    }
+
+    @Override
+    @Nullable
+    public PsiJetFileStub getStub() {
+        return (PsiJetFileStub) super.getStub();
     }
 
     @NotNull
@@ -136,7 +149,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     }
 
     public boolean isScript() {
-        PsiJetFileStub stub = (PsiJetFileStub) getStub();
+        PsiJetFileStub stub = getStub();
         if (stub != null) {
             return stub.isScript();
         }

@@ -17,8 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
@@ -26,6 +26,15 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
+    public static final JetImportDirective[] EMPTY_ARRAY = new JetImportDirective[0];
+
+    public static final ArrayFactory<JetImportDirective> ARRAY_FACTORY = new ArrayFactory<JetImportDirective>() {
+        @Override
+        public JetImportDirective[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new JetImportDirective[count];
+        }
+    };
+
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
     }
