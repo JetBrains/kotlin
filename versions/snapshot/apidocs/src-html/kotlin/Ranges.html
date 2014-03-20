@@ -151,10 +151,6 @@
 <a href='#150' name='150'>150</a>
 <a href='#151' name='151'>151</a>
 <a href='#152' name='152'>152</a>
-<a href='#153' name='153'>153</a>
-<a href='#154' name='154'>154</a>
-<a href='#155' name='155'>155</a>
-<a href='#156' name='156'>156</a>
 </td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
 
 </span><span class='public'>public</span><span> </span><span class='IDENTIFIER'>data</span><span> </span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>ComparableRange</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Comparable</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='LPAR'>(</span><span>
@@ -163,10 +159,6 @@
 </span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Range</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LBRACE'>{</span><span>
     </span><span class='public'>public</span><span> </span><span class='override'>override</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>contains</span><span class='LPAR'>(</span><span class='IDENTIFIER'>item</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span> </span><span class='LBRACE'>{</span><span>
         </span><span class='hl-keyword'>return</span><span> </span><span class='IDENTIFIER'>start</span><span> </span><span class='LTEQ'>&lt;=</span><span> </span><span class='IDENTIFIER'>item</span><span> </span><span class='ANDAND'>&amp;&amp;</span><span> </span><span class='IDENTIFIER'>item</span><span> </span><span class='LTEQ'>&lt;=</span><span> </span><span class='IDENTIFIER'>end</span><span>
-    </span><span class='RBRACE'>}</span><span>
-
-    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>toString</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>String</span><span> </span><span class='LBRACE'>{</span><span>
-        </span><span class='hl-keyword'>return</span><span> </span><span class='OPEN_QUOTE'>&quot;</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>start</span><span class='REGULAR_STRING_PART'>..</span><span class='SHORT_TEMPLATE_ENTRY_START'>$</span><span class='IDENTIFIER'>end</span><span class='CLOSING_QUOTE'>&quot;</span><span>
     </span><span class='RBRACE'>}</span><span>
 </span><span class='RBRACE'>}</span><span>
 
