@@ -21,11 +21,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +59,7 @@ public class GenerationUtils {
     public static GenerationState compileFilesGetGenerationState(@NotNull Project project, @NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
         analyzeExhaust.throwIfError();
         GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getBindingContext(), files,
-                                                    InlineUtil.DEFAULT_INLINE_FLAG_FOR_TEST);
+                                                    CompilerArgumentsUtil.DEFAULT_INLINE_FLAG_FOR_TEST);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

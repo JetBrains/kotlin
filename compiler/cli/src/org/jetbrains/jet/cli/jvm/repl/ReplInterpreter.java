@@ -32,6 +32,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageCollectorToString;
@@ -56,7 +57,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.storage.ExceptionTracker;
@@ -248,7 +248,7 @@ public class ReplInterpreter {
 
         BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
-                                                              bindingContext, Collections.singletonList(psiFile), InlineUtil.DEFAULT_INLINE_FLAG);
+                                                              bindingContext, Collections.singletonList(psiFile), CompilerArgumentsUtil.DEFAULT_INLINE_FLAG);
 
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
                       CompilationErrorHandler.THROW_EXCEPTION);

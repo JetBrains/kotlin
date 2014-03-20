@@ -21,8 +21,8 @@ import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.Reference;
 import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
 import org.jetbrains.jet.buildtools.core.Util;
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -141,7 +141,12 @@ public class BytecodeCompilerTask extends Task {
         String stdlibPath = (this.stdlib != null ? getPath(this.stdlib) : null);
         String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
         String[] externalAnnotationsPath = (this.externalAnnotations != null) ? this.externalAnnotations.list() : null;
-        boolean enableInline = InlineUtil.optionToInlineFlag(inline);
+
+        if (!CompilerArgumentsUtil.checkInlineOption(inline)) {
+            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongOptionErrorMessage(inline));
+        }
+
+        boolean enableInline = CompilerArgumentsUtil.optionToInlineFlag(inline);
 
         if (this.src != null) {
 

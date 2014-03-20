@@ -86,6 +86,16 @@ public class AntTaskTest extends KotlinIntegrationTestBase {
     }
 
     @Test
+    public void inlineDisabled() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
+    public void inlineWrongArg() throws Exception {
+        doAntTest(FAILED);
+    }
+
+    @Test
     public void jvmClasspath() throws Exception {
         doJvmAntTest();
     }

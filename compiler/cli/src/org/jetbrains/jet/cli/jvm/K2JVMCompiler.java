@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.ExitCode;
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.jet.cli.common.messages.*;
 import org.jetbrains.jet.cli.jvm.compiler.*;
@@ -32,7 +33,6 @@ import org.jetbrains.jet.codegen.CompilationException;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.jet.utils.PathUtil;
@@ -108,7 +108,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, arguments.notNullAssertions);
         configuration.put(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, arguments.notNullParamAssertions);
-        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, InlineUtil.optionToInlineFlag(arguments.enableInline));
+        configuration.put(JVMConfigurationKeys.ENABLE_INLINE, CompilerArgumentsUtil.optionToInlineFlag(arguments.inline));
 
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
@@ -197,11 +197,9 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     protected void checkArguments(@NotNull K2JVMCompilerArguments argument) {
         super.checkArguments(argument);
 
-        String inline = argument.enableInline;
-        if (inline != null) {
-            if (!"on".equalsIgnoreCase(inline) && !"off".equalsIgnoreCase(inline)) {
-                throw new IllegalArgumentException("Wrong value for inline option: '" + inline + "'. Should be 'on' or 'off'");
-            }
+        if (!CompilerArgumentsUtil.checkInlineOption(argument.inline)) {
+            throw new IllegalArgumentException(CompilerArgumentsUtil.getWrongOptionErrorMessage(argument.inline));
         }
     }
+
 }

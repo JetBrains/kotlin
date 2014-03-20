@@ -37,6 +37,12 @@ class BasicKotlinGradleIT : BaseGradleIT() {
         }
     }
 
+    Test fun testInlineDisabled() {
+        Project("inlineDisabled").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+            assertSuccessful()
+        }
+    }
+
     Test fun testSimpleKDoc() {
         Project("delta").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()

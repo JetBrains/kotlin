@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.doc.KDocConfig
 import java.util.concurrent.Callable
 import org.gradle.api.Project
+import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil
 
 public open class KotlinCompile(): AbstractCompile() {
 
@@ -114,7 +115,11 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.noStdlib = true
         args.noJdkAnnotations = true
-        args.enableInline = kotlinOptions.enableInline
+        args.inline = kotlinOptions.inline
+
+        if (!CompilerArgumentsUtil.checkInlineOption(args.inline)) {
+            throw GradleException(CompilerArgumentsUtil.getWrongOptionErrorMessage(args.inline))
+        }
 
         val messageCollector = GradleMessageCollector(logger)
         val exitCode = compiler.exec(messageCollector, args)

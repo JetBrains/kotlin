@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.jetbrains.kotlin.it</groupId>
-    <artifactId>test-helloworld</artifactId>
+    <artifactId>test-inlineDisabled</artifactId>
     <version>1.0</version>
     <name>Test Hello World project</name>
 
@@ -70,6 +70,9 @@
                         </goals>
                     </execution>
                 </executions>
+              <configuration>
+                <inline>false</inline>
+              </configuration>
             </plugin>
         </plugins>
     </build>
