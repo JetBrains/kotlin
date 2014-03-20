@@ -3351,8 +3351,13 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Map-extensions.html#empty</href>
-  <name>empty [kotlin.Map]</name>
+  <href>kotlin/kotlin/Collection-extensions.html#empty</href>
+  <name>empty [kotlin.Collection]</name>
+  <kind>val</kind>
+</search>
+<search>
+  <href>kotlin/kotlin/List-extensions.html#empty</href>
+  <name>empty [kotlin.List]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -15111,6 +15116,11 @@
   <kind>val</kind>
 </search>
 <search>
+  <href>kotlin/kotlin/CharSequence-extensions.html#size</href>
+  <name>size [kotlin.CharSequence]</name>
+  <kind>val</kind>
+</search>
+<search>
   <href>kotlin/DoubleArray.html#size</href>
   <name>size [kotlin.DoubleArray]</name>
   <kind>val</kind>
@@ -15131,13 +15141,13 @@
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Map-extensions.html#size</href>
-  <name>size [kotlin.Map]</name>
+  <href>kotlin/ShortArray.html#size</href>
+  <name>size [kotlin.ShortArray]</name>
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/ShortArray.html#size</href>
-  <name>size [kotlin.ShortArray]</name>
+  <href>kotlin/kotlin/String-extensions.html#size</href>
+  <name>size [kotlin.String]</name>
   <kind>val</kind>
 </search>
 <search>
