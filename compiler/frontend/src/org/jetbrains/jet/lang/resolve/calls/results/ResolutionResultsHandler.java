@@ -39,7 +39,7 @@ public class ResolutionResultsHandler {
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing,
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates
+            @NotNull Collection<? extends ResolvedCallWithTrace<D>> candidates
     ) {
         Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
