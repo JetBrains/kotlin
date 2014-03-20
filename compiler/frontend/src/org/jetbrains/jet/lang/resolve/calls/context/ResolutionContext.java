@@ -36,6 +36,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public final LabelResolver labelResolver;
     public final CallResolverExtension callResolverExtension;
     public final boolean isAnnotationContext;
+    public final boolean collectAllCandidates;
 
     protected ResolutionContext(
             @NotNull BindingTrace trace,
@@ -46,7 +47,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @NotNull CallResolverExtension callResolverExtension,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -57,6 +59,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.labelResolver = labelResolver;
         this.callResolverExtension = callResolverExtension;
         this.isAnnotationContext = isAnnotationContext;
+        this.collectAllCandidates = collectAllCandidates;
     }
 
     protected abstract Context create(
@@ -66,7 +69,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver
+            @NotNull LabelResolver labelResolver,
+            boolean collectAllCandidates
     );
 
     @NotNull
@@ -78,42 +82,47 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     @NotNull
     public Context replaceBindingTrace(@NotNull BindingTrace trace) {
         if (this.trace == trace) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceDataFlowInfo(@NotNull DataFlowInfo newDataFlowInfo) {
         if (newDataFlowInfo == dataFlowInfo) return self();
-        return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
+        return create(trace, scope, newDataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceExpectedType(@Nullable JetType newExpectedType) {
         if (newExpectedType == null) return replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE);
         if (expectedType == newExpectedType) return self();
-        return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, labelResolver);
+        return create(trace, scope, dataFlowInfo, newExpectedType, contextDependency, resolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceScope(@NotNull JetScope newScope) {
         if (newScope == scope) return self();
-        return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver);
+        return create(trace, newScope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceContextDependency(@NotNull ContextDependency newContextDependency) {
         if (newContextDependency == contextDependency) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, labelResolver);
+        return create(trace, scope, dataFlowInfo, expectedType, newContextDependency, resolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceResolutionResultsCache(@NotNull ResolutionResultsCache newResolutionResultsCache) {
         if (newResolutionResultsCache == resolutionResultsCache) return self();
-        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, labelResolver);
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, newResolutionResultsCache, labelResolver, collectAllCandidates);
     }
 
     @NotNull
     public Context replaceTraceAndCache(@NotNull TemporaryTraceAndCache traceAndCache) {
         return replaceBindingTrace(traceAndCache.trace).replaceResolutionResultsCache(traceAndCache.cache);
+    }
+
+    @NotNull
+    public Context replaceCollectAllCandidates(boolean newCollectAllCandidates) {
+        return create(trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, labelResolver, newCollectAllCandidates);
     }
 }

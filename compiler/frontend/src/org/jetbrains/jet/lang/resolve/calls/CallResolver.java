@@ -182,10 +182,11 @@ public class CallResolver {
             @NotNull DataFlowInfo dataFlowInfo,
             boolean isAnnotationContext
     ) {
-        return resolveFunctionCall(BasicCallResolutionContext.create(
-                trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
-                expressionTypingServices.createExtension(scope, isAnnotationContext), isAnnotationContext));
+        return resolveFunctionCall(
+                BasicCallResolutionContext.create(
+                        trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                        expressionTypingServices.createExtension(scope, isAnnotationContext), isAnnotationContext)
+        );
     }
 
     @NotNull

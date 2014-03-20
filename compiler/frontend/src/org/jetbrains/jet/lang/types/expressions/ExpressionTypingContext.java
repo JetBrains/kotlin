@@ -45,11 +45,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     }
 
     @NotNull
-    public static ExpressionTypingContext newContext(@NotNull ResolutionContext resolutionContext) {
-        return newContext(resolutionContext.trace, resolutionContext.scope, resolutionContext.dataFlowInfo,
-                          resolutionContext.expectedType, resolutionContext.contextDependency,
-                          resolutionContext.resolutionResultsCache, resolutionContext.labelResolver,
-                          resolutionContext.callResolverExtension, resolutionContext.isAnnotationContext);
+    public static ExpressionTypingContext newContext(@NotNull ResolutionContext context) {
+        return new ExpressionTypingContext(
+                context.labelResolver, context.trace, context.scope, context.scope.getContainingDeclaration(),
+                context.dataFlowInfo, context.expectedType, context.contextDependency, context.resolutionResultsCache,
+                context.callResolverExtension, context.isAnnotationContext, context.collectAllCandidates
+        );
     }
 
     @NotNull
@@ -64,8 +65,9 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull CallResolverExtension callResolverExtension,
             boolean isAnnotationContext
     ) {
-        return new ExpressionTypingContext(labelResolver, trace, scope, scope.getContainingDeclaration(), dataFlowInfo,
-                                           expectedType, contextDependency, resolutionResultsCache, callResolverExtension, isAnnotationContext);
+        return new ExpressionTypingContext(
+                labelResolver, trace, scope, scope.getContainingDeclaration(), dataFlowInfo, expectedType, contextDependency,
+                resolutionResultsCache, callResolverExtension, isAnnotationContext, false);
     }
 
     public final DeclarationDescriptor containingDeclaration;
@@ -81,10 +83,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallResolverExtension callResolverExtension,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
-              isAnnotationContext);
+              isAnnotationContext, collectAllCandidates);
         this.containingDeclaration = containingDeclaration;
     }
 
@@ -96,11 +99,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver
+            @NotNull LabelResolver labelResolver,
+            boolean collectAllCandidates
     ) {
         return new ExpressionTypingContext(this.labelResolver, trace, scope, containingDeclaration, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache, callResolverExtension,
-                                           isAnnotationContext);
+                                           isAnnotationContext, collectAllCandidates);
     }
 
 ///////////// LAZY ACCESSORS
