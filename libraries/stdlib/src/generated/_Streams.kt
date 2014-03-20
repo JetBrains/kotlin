@@ -84,6 +84,7 @@ public fun ShortArray.stream() : Stream<Short> {
  */
 public fun <T> Iterable<T>.stream() : Stream<T> {
     return object : Stream<T> { override fun iterator() : Iterator<T> { return this@stream.iterator() } }
+    
 }
 
 /**
