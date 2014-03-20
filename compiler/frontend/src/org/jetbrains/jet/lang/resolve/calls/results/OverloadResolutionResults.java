@@ -49,7 +49,7 @@ public interface OverloadResolutionResults<D extends CallableDescriptor> {
     Collection<ResolvedCall<D>> getAllCandidates();
 
     @NotNull
-    Collection<? extends ResolvedCall<? extends D>> getResultingCalls();
+    Collection<? extends ResolvedCall<D>> getResultingCalls();
 
     @NotNull
     ResolvedCall<D> getResultingCall();
