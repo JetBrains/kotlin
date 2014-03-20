@@ -227,13 +227,13 @@ public class CallExpressionResolver {
     }
 
     @Nullable
-    public ResolvedCallWithTrace<FunctionDescriptor> getResolvedCallForFunction(
+    public ResolvedCall<FunctionDescriptor> getResolvedCallForFunction(
             @NotNull Call call, @NotNull JetExpression callExpression,
             @NotNull ResolutionContext context, @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull boolean[] result
     ) {
         CallResolver callResolver = expressionTypingServices.getCallResolver();
-        OverloadResolutionResultsImpl<FunctionDescriptor> results = callResolver.resolveFunctionCall(
+        OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveFunctionCall(
                 BasicCallResolutionContext.create(context, call, checkArguments));
         if (!results.isNothing()) {
             checkSuper(call.getExplicitReceiver(), results, context.trace, callExpression);
@@ -343,7 +343,7 @@ public class CallExpressionResolver {
 
         TemporaryTraceAndCache temporaryForFunction = TemporaryTraceAndCache.create(
                 context, "trace to resolve as function call", callExpression);
-        ResolvedCallWithTrace<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
+        ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call, callExpression, context.replaceTraceAndCache(temporaryForFunction),
                 CheckValueArgumentsMode.ENABLED, result);
         if (result[0]) {

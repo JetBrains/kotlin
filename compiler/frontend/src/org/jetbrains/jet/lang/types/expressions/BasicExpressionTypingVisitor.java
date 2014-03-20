@@ -565,7 +565,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, "trace to resolve as function", reference);
 
         ExpressionTypingContext contextForResolve = context.replaceBindingTrace(trace).replaceExpectedType(NO_EXPECTED_TYPE);
-        ResolvedCallWithTrace<FunctionDescriptor> function = components.expressionTypingServices.getCallExpressionResolver()
+        ResolvedCall<FunctionDescriptor> function = components.expressionTypingServices.getCallExpressionResolver()
                 .getResolvedCallForFunction(call, reference, contextForResolve, CheckValueArgumentsMode.DISABLED, result);
         if (!result[0]) return null;
 

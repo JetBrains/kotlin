@@ -42,17 +42,18 @@ public class OverloadResolutionResultsUtil {
             @NotNull OverloadResolutionResults<D> results,
             @NotNull ContextDependency contextDependency
     ) {
-        ResolvedCall<D> resultingCall = getResultingCall((OverloadResolutionResultsImpl<D>) results, contextDependency);
+        ResolvedCall<D> resultingCall = getResultingCall(results, contextDependency);
         return resultingCall != null ? resultingCall.getResultingDescriptor().getReturnType() : null;
     }
 
     @Nullable
-    public static <D extends CallableDescriptor> ResolvedCallWithTrace<D> getResultingCall(
-            @NotNull OverloadResolutionResultsImpl<D> results,
+    public static <D extends CallableDescriptor> ResolvedCall<D> getResultingCall(
+            @NotNull OverloadResolutionResults<D> results,
             @NotNull ContextDependency contextDependency
     ) {
         if (results.isSingleResult() && contextDependency == ContextDependency.INDEPENDENT) {
-            if (!results.getResultingCall().getCallToCompleteTypeArgumentInference().hasInferredReturnType()) {
+            ResolvedCall<D> resultingCall = results.getResultingCall();
+            if (!((ResolvedCallWithTrace<D>)resultingCall).getCallToCompleteTypeArgumentInference().hasInferredReturnType()) {
                 return null;
             }
         }

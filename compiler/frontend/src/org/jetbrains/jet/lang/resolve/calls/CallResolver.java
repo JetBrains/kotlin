@@ -192,7 +192,7 @@ public class CallResolver {
     }
 
     @NotNull
-    /*package*/ OverloadResolutionResultsImpl<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
+    public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
 
         ProgressIndicatorProvider.checkCanceled();
 
@@ -291,11 +291,9 @@ public class CallResolver {
                 Call call = new CallTransformer.CallForImplicitInvoke(
                         context.call.getExplicitReceiver(), expressionReceiver, context.call);
                 TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call, calleeType);
-                return (OverloadResolutionResultsImpl<FunctionDescriptor>)
-                        resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
+                return resolveCallForInvoke(context.replaceCall(call), tracingForInvoke);
             }
             else {
-//                checkTypesWithNoCallee(trace, scope, call);
                 return checkArgumentTypesAndFail(context);
             }
         }
