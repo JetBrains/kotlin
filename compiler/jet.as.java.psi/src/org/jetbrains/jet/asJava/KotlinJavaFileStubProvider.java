@@ -281,7 +281,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     Lists.newArrayList(files),
                     /*not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
-                    InlineUtil.DEFAULT_INLINE_FLAG_FOR_STUB);
+                    /*to generate inline flag on methods*/true);
             state.beforeCompile();
 
             bindingContext = state.getBindingContext();
