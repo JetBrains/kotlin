@@ -371,6 +371,7 @@ fun main(args: Array<String>) {
             model("intentions/replaceItWithExplicitFunctionLiteralParam", testMethod = "doTestReplaceItWithExplicitFunctionLiteralParam")
             model("intentions/removeBraces", testMethod = "doTestRemoveBraces")
             model("intentions/addBraces", testMethod = "doTestAddBraces")
+            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
             model("intentions/attributeCallReplacements/replaceGetIntention", testMethod = "doTestReplaceGetIntention")
             model("intentions/attributeCallReplacements/replaceContainsIntention", testMethod = "doTestReplaceContainsIntention")
             model("intentions/attributeCallReplacements/replaceBinaryInfixIntention", testMethod = "doTestReplaceBinaryInfixIntention")
