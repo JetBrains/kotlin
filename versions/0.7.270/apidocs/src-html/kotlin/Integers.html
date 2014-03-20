@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html><head><title>Integers.kt xref</title><link rel='stylesheet' type='text/css' href='highlight.css'></link></head><body><table style='white-space: pre; font-size: 10pt; font-family: Monaco, monospace'><tr><td style='margin-right: 1.5em; text-align: right'><a href='#1' name='1'>1</a>
+<a href='#2' name='2'>2</a>
+<a href='#3' name='3'>3</a>
+<a href='#4' name='4'>4</a>
+<a href='#5' name='5'>5</a>
+<a href='#6' name='6'>6</a>
+<a href='#7' name='7'>7</a>
+<a href='#8' name='8'>8</a>
+<a href='#9' name='9'>9</a>
+</td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span>
+
+</span><span class='public'>public</span><span> </span><span class='IDENTIFIER'>inline</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>Int</span><span class='DOT'>.</span><span class='IDENTIFIER'>times</span><span class='LPAR'>(</span><span class='IDENTIFIER'>body</span><span> </span><span class='COLON'>:</span><span> </span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='ARROW'>-&gt;</span><span> </span><span class='IDENTIFIER'>Unit</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+    </span><span class='hl-keyword'>var</span><span> </span><span class='IDENTIFIER'>count</span><span> </span><span class='EQ'>=</span><span> </span><span class='hl-keyword'>this</span><span class='SEMICOLON'>;</span><span>
+    </span><span class='hl-keyword'>while</span><span> </span><span class='LPAR'>(</span><span class='IDENTIFIER'>count</span><span> </span><span class='GT'>&gt;</span><span> </span><span class='INTEGER_LITERAL'>0</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+       </span><span class='IDENTIFIER'>body</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+       </span><span class='IDENTIFIER'>count</span><span class='MINUSMINUS'>--</span><span>
+    </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+</span></td></tr></table></body></html>

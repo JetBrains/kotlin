@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html><head><title>FunctionalQueue.kt xref</title><link rel='stylesheet' type='text/css' href='highlight.css'></link></head><body><table style='white-space: pre; font-size: 10pt; font-family: Monaco, monospace'><tr><td style='margin-right: 1.5em; text-align: right'><a href='#1' name='1'>1</a>
+<a href='#2' name='2'>2</a>
+<a href='#3' name='3'>3</a>
+<a href='#4' name='4'>4</a>
+<a href='#5' name='5'>5</a>
+<a href='#6' name='6'>6</a>
+<a href='#7' name='7'>7</a>
+<a href='#8' name='8'>8</a>
+<a href='#9' name='9'>9</a>
+<a href='#10' name='10'>10</a>
+<a href='#11' name='11'>11</a>
+<a href='#12' name='12'>12</a>
+<a href='#13' name='13'>13</a>
+<a href='#14' name='14'>14</a>
+<a href='#15' name='15'>15</a>
+<a href='#16' name='16'>16</a>
+<a href='#17' name='17'>17</a>
+<a href='#18' name='18'>18</a>
+<a href='#19' name='19'>19</a>
+<a href='#20' name='20'>20</a>
+<a href='#21' name='21'>21</a>
+<a href='#22' name='22'>22</a>
+<a href='#23' name='23'>23</a>
+<a href='#24' name='24'>24</a>
+<a href='#25' name='25'>25</a>
+<a href='#26' name='26'>26</a>
+<a href='#27' name='27'>27</a>
+<a href='#28' name='28'>28</a>
+<a href='#29' name='29'>29</a>
+</td><td><span class='hl-keyword'>package</span><span> </span><span class='IDENTIFIER'>kotlin</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span>
+
+</span><span class='import'>import</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>concurrent</span><span class='DOT'>.</span><span class='IDENTIFIER'>Executor</span><span>
+
+</span><span class='hl-keyword'>class</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='LPAR'>(</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>input</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FunctionalList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionalList</span><span class='DOT'>.</span><span class='IDENTIFIER'>emptyList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span>
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>output</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FunctionalList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionalList</span><span class='DOT'>.</span><span class='IDENTIFIER'>emptyList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Int</span><span>
+        </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>input</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span> </span><span class='PLUS'>+</span><span> </span><span class='IDENTIFIER'>output</span><span class='DOT'>.</span><span class='IDENTIFIER'>size</span><span>
+
+    </span><span class='hl-keyword'>val</span><span> </span><span class='IDENTIFIER'>empty</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Boolean</span><span>
+        </span><span class='get'>get</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>size</span><span> </span><span class='EQEQ'>==</span><span> </span><span class='INTEGER_LITERAL'>0</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>add</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>input</span><span> </span><span class='IDENTIFIER'>add</span><span> </span><span class='IDENTIFIER'>element</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>output</span><span class='RPAR'>)</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>addFirst</span><span class='LPAR'>(</span><span class='IDENTIFIER'>element</span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>T</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>input</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>output</span><span> </span><span class='IDENTIFIER'>add</span><span> </span><span class='IDENTIFIER'>element</span><span class='RPAR'>)</span><span>
+
+    </span><span class='public'>public</span><span> </span><span class='hl-keyword'>fun</span><span> </span><span class='IDENTIFIER'>removeFirst</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span> </span><span class='COLON'>:</span><span> </span><span class='IDENTIFIER'>Pair</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='GT'>&gt;</span><span> </span><span class='EQ'>=</span><span>
+        </span><span class='hl-keyword'>if</span><span class='LPAR'>(</span><span class='IDENTIFIER'>output</span><span class='DOT'>.</span><span class='IDENTIFIER'>empty</span><span class='RPAR'>)</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='hl-keyword'>if</span><span class='LPAR'>(</span><span class='IDENTIFIER'>input</span><span class='DOT'>.</span><span class='IDENTIFIER'>empty</span><span class='RPAR'>)</span><span>
+                </span><span class='hl-keyword'>throw</span><span> </span><span class='IDENTIFIER'>java</span><span class='DOT'>.</span><span class='IDENTIFIER'>util</span><span class='DOT'>.</span><span class='IDENTIFIER'>NoSuchElementException</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+            </span><span class='hl-keyword'>else</span><span>
+                </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>FunctionalList</span><span class='DOT'>.</span><span class='IDENTIFIER'>emptyList</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>input</span><span class='DOT'>.</span><span class='IDENTIFIER'>reversed</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span class='DOT'>.</span><span class='IDENTIFIER'>removeFirst</span><span class='LPAR'>(</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+        </span><span class='hl-keyword'>else</span><span> </span><span class='LBRACE'>{</span><span>
+            </span><span class='IDENTIFIER'>Pair</span><span class='LPAR'>(</span><span class='IDENTIFIER'>output</span><span class='DOT'>.</span><span class='IDENTIFIER'>head</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>FunctionalQueue</span><span class='LT'>&lt;</span><span class='IDENTIFIER'>T</span><span class='GT'>&gt;</span><span class='LPAR'>(</span><span class='IDENTIFIER'>input</span><span class='COMMA'>,</span><span> </span><span class='IDENTIFIER'>output</span><span class='DOT'>.</span><span class='IDENTIFIER'>tail</span><span class='RPAR'>)</span><span class='RPAR'>)</span><span>
+        </span><span class='RBRACE'>}</span><span>
+</span><span class='RBRACE'>}</span><span>
+</span></td></tr></table></body></html>
