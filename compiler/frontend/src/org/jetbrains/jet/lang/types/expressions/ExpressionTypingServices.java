@@ -346,9 +346,9 @@ public class ExpressionTypingServices {
     }
 
     private ExpressionTypingContext createContext(ExpressionTypingContext oldContext, BindingTrace trace, WritableScope scope, DataFlowInfo dataFlowInfo, JetType expectedType) {
-        return ExpressionTypingContext.newContext(trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency,
-                                                  oldContext.resolutionResultsCache, oldContext.labelResolver,
-                                                  oldContext.callResolverExtension, oldContext.isAnnotationContext);
+        return ExpressionTypingContext.newContext(
+                trace, scope, dataFlowInfo, expectedType, oldContext.contextDependency, oldContext.resolutionResultsCache,
+                oldContext.labelResolver, oldContext.callResolverExtension, oldContext.isAnnotationContext, oldContext.collectAllCandidates);
     }
 
     @Nullable

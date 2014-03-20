@@ -180,12 +180,16 @@ public class CallResolver {
             @NotNull Call call,
             @NotNull JetType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
-        return resolveFunctionCall(BasicCallResolutionContext.create(
-                trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
-                expressionTypingServices.createExtension(scope, isAnnotationContext), isAnnotationContext));
+        return resolveFunctionCall(
+                BasicCallResolutionContext.create(
+                        trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                        ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
+                        expressionTypingServices.createExtension(scope, isAnnotationContext),
+                        isAnnotationContext, collectAllCandidates)
+        );
     }
 
     @NotNull

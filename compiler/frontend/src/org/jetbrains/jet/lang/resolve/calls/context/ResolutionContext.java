@@ -36,6 +36,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
     public final LabelResolver labelResolver;
     public final CallResolverExtension callResolverExtension;
     public final boolean isAnnotationContext;
+    public final boolean collectAllCandidates;
 
     protected ResolutionContext(
             @NotNull BindingTrace trace,
@@ -46,7 +47,8 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @NotNull CallResolverExtension callResolverExtension,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
         this.trace = trace;
         this.scope = scope;
@@ -57,6 +59,7 @@ public abstract class ResolutionContext<Context extends ResolutionContext<Contex
         this.labelResolver = labelResolver;
         this.callResolverExtension = callResolverExtension;
         this.isAnnotationContext = isAnnotationContext;
+        this.collectAllCandidates = collectAllCandidates;
     }
 
     protected abstract Context create(

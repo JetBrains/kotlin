@@ -41,7 +41,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
                           ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create(),
-                          expressionTypingServices.createExtension(scope, false), false);
+                          expressionTypingServices.createExtension(scope, false), false, false);
     }
 
     @NotNull
@@ -49,7 +49,8 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
         return newContext(resolutionContext.trace, resolutionContext.scope, resolutionContext.dataFlowInfo,
                           resolutionContext.expectedType, resolutionContext.contextDependency,
                           resolutionContext.resolutionResultsCache, resolutionContext.labelResolver,
-                          resolutionContext.callResolverExtension, resolutionContext.isAnnotationContext);
+                          resolutionContext.callResolverExtension, resolutionContext.isAnnotationContext,
+                          resolutionContext.collectAllCandidates);
     }
 
     @NotNull
@@ -62,10 +63,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull LabelResolver labelResolver,
             @NotNull CallResolverExtension callResolverExtension,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
         return new ExpressionTypingContext(labelResolver, trace, scope, scope.getContainingDeclaration(), dataFlowInfo,
-                                           expectedType, contextDependency, resolutionResultsCache, callResolverExtension, isAnnotationContext);
+                                           expectedType, contextDependency, resolutionResultsCache, callResolverExtension, 
+                                           isAnnotationContext, collectAllCandidates);
     }
 
     public final DeclarationDescriptor containingDeclaration;
@@ -81,10 +84,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull CallResolverExtension callResolverExtension,
-            boolean isAnnotationContext
+            boolean isAnnotationContext,
+            boolean collectAllCandidates
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
-              isAnnotationContext);
+              isAnnotationContext, collectAllCandidates);
         this.containingDeclaration = containingDeclaration;
     }
 
@@ -100,7 +104,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(this.labelResolver, trace, scope, containingDeclaration, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache, callResolverExtension,
-                                           isAnnotationContext);
+                                           isAnnotationContext, collectAllCandidates);
     }
 
 ///////////// LAZY ACCESSORS
