@@ -90,8 +90,8 @@ class SiteGenerator(val sourceDir: File, val outputDir: File) : Runnable {
             <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
               <li><a href="http://confluence.jetbrains.net/display/Kotlin/Welcome" title="All the documentation is in the wiki">Documentation</a></li>
-              <li><a href="versions/snapshot/apidocs/index.html" title="Kotlin API documentation">API</a></li>
-              <li><a href="versions/snapshot/jsdocs/index.html" title="Kotlin JavaScript API documentation">JS</a></li>
+              <li><a href="versions/$versionDir/apidocs/index.html" title="Kotlin API documentation">API</a></li>
+              <li><a href="versions/$versionDir/jsdocs/index.html" title="Kotlin JavaScript API documentation">JS</a></li>
               <li><a href="http://blog.jetbrains.com/kotlin/">Blog</a></li>
               <li><a href="http://stackoverflow.com/questions/tagged/kotlin" title="Frequently Asked Questions">FAQ</a></li>
               <li><a href="http://devnet.jetbrains.net/community/kotlin" title="Join us for some kool chat!">Forum</a></li>

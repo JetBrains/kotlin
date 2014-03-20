@@ -2,14 +2,15 @@ package org.jetbrains.kotlin.site
 
 import java.io.File
 
+val version = System.getProperty("project.version") ?: "SNAPSHOT"
+val versionDir = if (version.contains("SNAPSHOT")) "snapshot" else version
+
 class SiteGeneratorMain(projectRoot: File) {
     val srcDir = File(projectRoot, "src/main/templates")
     val apiDocsDir = File(projectRoot, "../apidoc/target/site/apidocs")
     val jsApiDocsDir = File(projectRoot, "../jsdoc/target/site/apidocs")
     val siteOutputDir = File(projectRoot, "target/site")
 
-    val version = System.getProperty("project.version") ?: "SNAPSHOT"
-    val versionDir = if (version.contains("SNAPSHOT")) "snapshot" else version
 
     fun generateSite(): Unit {
         val generator = SiteGenerator(srcDir, siteOutputDir)

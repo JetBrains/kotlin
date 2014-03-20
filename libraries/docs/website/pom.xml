@@ -71,6 +71,12 @@
                     <arguments>
                         <argument>${basedir}</argument>
                     </arguments>
+                    <systemProperties>
+                        <systemProperty>
+                            <key>project.version</key>
+                            <value>${project.version}</value>
+                        </systemProperty>
+                    </systemProperties>
                 </configuration>
             </plugin>
 
