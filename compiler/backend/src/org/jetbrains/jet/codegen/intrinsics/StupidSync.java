@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -47,7 +46,7 @@ public class StupidSync extends IntrinsicMethod {
             StackValue receiver
     ) {
         assert element != null : "Element should not be null";
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
+        ResolvedCall<?> resolvedCall =
                 codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, ((JetCallExpression) element).getCalleeExpression());
 
         assert resolvedCall != null : "Resolved call for " + element.getText() + " should be not null";

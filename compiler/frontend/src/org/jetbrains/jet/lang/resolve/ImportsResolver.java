@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -73,7 +74,7 @@ public class ImportsResolver {
     }
 
     private void processImports(@NotNull TopDownAnalysisContext c, @NotNull LookupMode lookupMode) {
-        for (JetFile file : c.getPackageFragments().keySet()) {
+        for (JetFile file : c.getFiles()) {
             WritableScope fileScope = c.getFileScopes().get(file);
             processImportsInFile(lookupMode, fileScope, Lists.newArrayList(file.getImportDirectives()), JetPsiUtil.getFQName(file).isRoot());
         }
@@ -125,18 +126,29 @@ public class ImportsResolver {
                 resolvedDirectives.put(importDirective, descriptors);
             }
 
-            JetExpression importedReference = importDirective.getImportedReference();
-            if (lookupMode != LookupMode.ONLY_CLASSES && importedReference != null) {
-                for (DeclarationDescriptor descriptor : descriptors) {
-                    reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
-                }
+            if (lookupMode != LookupMode.ONLY_CLASSES) {
+                checkPlatformTypesMappedToKotlin(module, trace, importDirective, descriptors);
             }
         }
         delayedImporter.processImports();
 
         if (lookupMode == LookupMode.EVERYTHING) {
             for (JetImportDirective importDirective : importDirectives) {
-                reportUselessImport(importDirective, fileScope, resolvedDirectives, trace);
+                reportUselessImport(importDirective, fileScope, resolvedDirectives.get(importDirective), trace);
+            }
+        }
+    }
+
+    public static void checkPlatformTypesMappedToKotlin(
+            @NotNull ModuleDescriptor module,
+            @NotNull BindingTrace trace,
+            @NotNull JetImportDirective importDirective,
+            @NotNull Collection<? extends DeclarationDescriptor> descriptors
+    ) {
+        JetExpression importedReference = importDirective.getImportedReference();
+        if (importedReference != null) {
+            for (DeclarationDescriptor descriptor : descriptors) {
+                reportPlatformClassMappedToKotlin(module, trace, importedReference, descriptor);
             }
         }
     }
@@ -156,15 +168,15 @@ public class ImportsResolver {
         }
     }
 
-    private static void reportUselessImport(
+    public static void reportUselessImport(
         @NotNull JetImportDirective importDirective,
-        @NotNull WritableScope fileScope,
-        @NotNull Map<JetImportDirective, Collection<? extends DeclarationDescriptor>> resolvedDirectives,
+        @NotNull JetScope fileScope,
+        @Nullable Collection<? extends DeclarationDescriptor> resolvedDirectives,
         @NotNull BindingTrace trace
     ) {
 
         JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null || !resolvedDirectives.containsKey(importDirective)) {
+        if (importedReference == null || resolvedDirectives == null) {
             return;
         }
         Name aliasName = JetPsiUtil.getAliasName(importDirective);
@@ -173,7 +185,7 @@ public class ImportsResolver {
         }
 
         boolean uselessHiddenImport = true;
-        for (DeclarationDescriptor wasResolved : resolvedDirectives.get(importDirective)) {
+        for (DeclarationDescriptor wasResolved : resolvedDirectives) {
             DeclarationDescriptor isResolved = null;
             if (wasResolved instanceof ClassDescriptor) {
                 isResolved = fileScope.getClassifier(aliasName);

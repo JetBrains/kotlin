@@ -1,3 +1,5 @@
+package test;
+
 class ExtendsB extends B {
     void test() {
         byte x = foo();

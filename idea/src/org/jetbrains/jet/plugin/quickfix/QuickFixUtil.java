@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
+import com.google.common.collect.Sets;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -23,8 +24,10 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -37,6 +40,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 
 import java.util.List;
+import java.util.Set;
 
 public class QuickFixUtil {
     private QuickFixUtil() {
@@ -64,7 +68,7 @@ public class QuickFixUtil {
         if (!(descriptor instanceof CallableDescriptor)) return null;
         JetType type = ((CallableDescriptor) descriptor).getReturnType();
         if (type instanceof DeferredType) {
-            type = ((DeferredType) type).getActualType();
+            type = ((DeferredType) type).getDelegate();
         }
         return type;
     }
@@ -99,7 +103,7 @@ public class QuickFixUtil {
     @Nullable
     public static JetParameterList getParameterListOfCallee(@NotNull JetCallExpression callExpression) {
         BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) callExpression.getContainingFile()).getBindingContext();
-        ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
         if (resolvedCall == null) return null;
         PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
         if (declaration instanceof JetFunction) {
@@ -195,5 +199,36 @@ public class QuickFixUtil {
             JetReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, JetReturnExpression.class);
             return returnExpression != null && canEvaluateTo(returnExpression.getReturnedExpression(), expression);
         }
+    }
+
+    @ReadOnly
+    @NotNull
+    public static Set<String> getUsedParameters(
+            @NotNull JetCallElement callElement,
+            @Nullable JetValueArgument ignoreArgument,
+            @NotNull CallableDescriptor callableDescriptor
+    ) {
+        Set<String> usedParameters = Sets.newHashSet();
+        boolean isPositionalArgument = true;
+        int idx = 0;
+        for (ValueArgument argument : callElement.getValueArguments()) {
+            if (argument.isNamed()) {
+                JetValueArgumentName name = argument.getArgumentName();
+                assert name != null : "Named argument's name cannot be null";
+                if (argument != ignoreArgument) {
+                    usedParameters.add(name.getText());
+                }
+                isPositionalArgument = false;
+            }
+            else if (isPositionalArgument) {
+                ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
+                if (argument != ignoreArgument) {
+                    usedParameters.add(parameter.getName().asString());
+                }
+                idx++;
+            }
+        }
+
+        return usedParameters;
     }
 }

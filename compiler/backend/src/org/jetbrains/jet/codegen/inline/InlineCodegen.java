@@ -215,9 +215,9 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + call.getCallElement().getText()); //with captured
 
-        VarRemapper.ParamRemapper remapper = new VarRemapper.ParamRemapper(parameters, initialFrameSize);
+        LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
-        return inliner.doInline(codegen.v, remapper, new FieldRemapper(null, null, parameters));
+        return inliner.doInline(codegen.v, remapper);
     }
 
     private void generateClosuresBodies() {
@@ -240,12 +240,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 
-        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration) {
-            @Override
-            public boolean generateLocalVarTable() {
-                return false;
-            }
-        }, codegen.getParentCodegen());
+        FunctionCodegen.generateMethodBody(adapter, descriptor, context, jvmMethodSignature, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), codegen.getParentCodegen());
         adapter.visitMaxs(-1, -1);
 
         return methodNode;

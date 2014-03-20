@@ -530,7 +530,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumClassBody
-     *   : "{" enumEntry* "}"
+     *   : "{" (enumEntry | memberDeclaration)* "}"
      *   ;
      */
     private void parseEnumClassBody() {
@@ -600,7 +600,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * classBody
-     *   : ("{" memberDeclaration "}")?
+     *   : ("{" memberDeclaration* "}")?
      *   ;
      */
     /*package*/ void parseClassBody() {

@@ -1,3 +1,5 @@
+package test;
+
 @AString(value = Test.vstring)
 @AChar(value = Test.vchar)
 @AInt(value = Test.vint)

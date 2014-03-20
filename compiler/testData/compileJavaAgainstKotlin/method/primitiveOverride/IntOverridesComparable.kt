@@ -1,3 +1,5 @@
+package test
+
 trait A<T : Comparable<T>> {
     fun foo(): T
 }

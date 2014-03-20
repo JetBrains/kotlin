@@ -1,3 +1,5 @@
+package test
+
 trait A {
     fun foo(): Any
 }

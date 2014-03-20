@@ -16,29 +16,34 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE_PARAMETER;
 
 public class DeclarationsChecker {
     @NotNull
     private BindingTrace trace;
     @NotNull
     private ModifiersChecker modifiersChecker;
+    @NotNull
+    private DescriptorResolver descriptorResolver;
 
     @Inject
     public void setTrace(@NotNull BindingTrace trace) {
@@ -46,15 +51,30 @@ public class DeclarationsChecker {
         this.modifiersChecker = new ModifiersChecker(trace);
     }
 
+    @Inject
+    public void setDescriptorResolver(@NotNull DescriptorResolver descriptorResolver) {
+        this.descriptorResolver = descriptorResolver;
+    }
+
     public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
+        for (JetFile file : bodiesResolveContext.getFiles()) {
+            checkModifiersAndAnnotationsInPackageDirective(file);
+        }
+
         Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getClasses();
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             if (!bodiesResolveContext.completeAnalysisNeeded(classOrObject)) continue;
 
+            checkSupertypesForConsistency(classDescriptor);
+            checkTypesInClassHeader(classOrObject);
+
             if (classOrObject instanceof JetClass) {
-                checkClass((JetClass) classOrObject, classDescriptor);
+                JetClass jetClass = (JetClass) classOrObject;
+                checkClass(jetClass, classDescriptor);
+                descriptorResolver.checkNamesInConstraints(
+                        jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
                 checkObject((JetObjectDeclaration) classOrObject);
@@ -93,21 +113,184 @@ public class DeclarationsChecker {
             trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
         }
     }
-    
+
+    private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
+        JetPackageDirective packageDirective = file.getPackageDirective();
+        if (packageDirective == null) return;
+
+        PsiElement firstChild = packageDirective.getFirstChild();
+        if (!(firstChild instanceof JetModifierList)) return;
+        JetModifierList modifierList = (JetModifierList) firstChild;
+
+        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
+            JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+            if (calleeExpression != null) {
+                JetReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
+                if (reference != null) {
+                    trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
+                }
+            }
+        }
+
+        for (ASTNode node : modifierList.getModifierNodes()) {
+            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
+        }
+    }
+
+    private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {
+        for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+            checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
+        }
+
+        if (!(classOrObject instanceof JetClass)) return;
+        JetClass jetClass = (JetClass) classOrObject;
+
+        for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
+            checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
+            checkFinalUpperBounds(jetTypeParameter.getExtendsBound(), false);
+        }
+
+        for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
+            checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
+            checkFinalUpperBounds(constraint.getBoundTypeReference(), constraint.isClassObjectConstraint());
+        }
+    }
+
+    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
+        if (typeReference != null) {
+            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            if (type != null) {
+                DescriptorResolver.checkBounds(typeReference, type, trace);
+            }
+        }
+    }
+
+    private void checkFinalUpperBounds(@Nullable JetTypeReference typeReference, boolean isClassObjectConstraint) {
+        if (typeReference != null) {
+            JetType type = trace.getBindingContext().get(TYPE, typeReference);
+            if (type != null) {
+                DescriptorResolver.checkUpperBoundType(typeReference, type, isClassObjectConstraint, trace);
+            }
+        }
+    }
+
+    private void checkSupertypesForConsistency(@NotNull ClassDescriptor classDescriptor) {
+        Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
+                .buildDeepSubstitutionMultimap(classDescriptor.getDefaultType());
+        for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
+            Collection<TypeProjection> projections = entry.getValue();
+            if (projections.size() > 1) {
+                TypeConstructor typeConstructor = entry.getKey();
+                DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
+                assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
+                TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
+
+                // Immediate arguments of supertypes cannot be projected
+                Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
+                for (TypeProjection projection : projections) {
+                    conflictingTypes.add(projection.getType());
+                }
+                switch (typeParameterDescriptor.getVariance()) {
+                    case INVARIANT:
+                        // Leave conflicting types as is
+                        break;
+                    case IN_VARIANCE:
+                        // Filter out those who have supertypes in this set (common supertype)
+                        Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
+                        break;
+                    case OUT_VARIANCE:
+                        // Filter out those who have subtypes in this set (common subtype)
+                        Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
+                        break;
+                }
+
+                if (conflictingTypes.size() > 1) {
+                    DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
+                    assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
+                    JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils
+                            .classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
+                    JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
+                    assert delegationSpecifierList != null;
+                    //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
+                    trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
+                                         .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
+                                             conflictingTypes));
+                }
+            }
+        }
+    }
+
+    private enum Filter {
+        REMOVE_IF_SUBTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
+            }
+        },
+        REMOVE_IF_SUPERTYPE_IN_THE_SET {
+            @Override
+            public boolean removeNeeded(JetType subject, JetType other) {
+                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
+            }
+        };
+
+        private void proceed(Set<JetType> conflictingTypes) {
+            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
+                JetType type = iterator.next();
+                for (JetType otherType : conflictingTypes) {
+                    boolean subtypeOf = removeNeeded(type, otherType);
+                    if (type != otherType && subtypeOf) {
+                        iterator.remove();
+                        break;
+                    }
+                }
+            }
+        }
+
+        public abstract boolean removeNeeded(JetType subject, JetType other);
+    }
+
     private void checkObject(JetObjectDeclaration declaration) {
         reportErrorIfHasIllegalModifier(declaration);
     }
 
     private void checkClass(JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
+        if (TopDownAnalyzer.LAZY) {
+            checkTypeParameters(aClass);
+        }
         if (aClass.isTrait()) {
             checkTraitModifiers(aClass);
+            checkConstructorInTrait(aClass);
+        }
+        else if (aClass.isAnnotation()) {
+            checkAnnotationClassWithBody(aClass);
+            checkValOnAnnotationParameter(aClass);
         }
         else if (aClass.isEnum()) {
             checkEnumModifiers(aClass);
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
+        }
+    }
+
+    private void checkTypeParameters(JetTypeParameterListOwner typeParameterListOwner) {
+        // TODO: Support annotation for type parameters
+        for (JetTypeParameter jetTypeParameter : typeParameterListOwner.getTypeParameters()) {
+            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace);
+
+            TypeParameterDescriptor typeParameter = trace.get(TYPE_PARAMETER, jetTypeParameter);
+            if (typeParameter != null) {
+                DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
+            }
+        }
+    }
+
+    private void checkConstructorInTrait(JetClass klass) {
+        JetParameterList primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+        if (primaryConstructorParameterList != null) {
+            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
         }
     }
 
@@ -126,6 +309,19 @@ public class DeclarationsChecker {
         }
     }
 
+    private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
+        if (classOrObject.getBody() != null) {
+            trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
+        }
+    }
+
+    private void checkValOnAnnotationParameter(JetClass aClass) {
+        for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
+            if (parameter.getValOrVarNode() == null) {
+                trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
+            }
+        }
+    }
 
     private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
         for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
@@ -190,7 +386,7 @@ public class DeclarationsChecker {
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
             JetType returnType = propertyDescriptor.getReturnType();
             if (returnType instanceof DeferredType) {
-                returnType = ((DeferredType) returnType).getActualType();
+                returnType = ((DeferredType) returnType).getDelegate();
             }
 
             JetExpression initializer = property.getInitializer();

@@ -30,7 +30,7 @@ fun productSnippet(product: Product) = "<li>${product.name}. Price : ${product.p
 
 
 class StringExpressionExampleTest : TestCase() {
-    val customer = Customer("James", arrayList(Product("Beer", 1.99), Product("Wine", 5.99)))
+    val customer = Customer("James", arrayListOf(Product("Beer", 1.99), Product("Wine", 5.99)))
 
     fun testExpressions(): Unit {
         println(customerTemplate(customer))

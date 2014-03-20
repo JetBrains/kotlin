@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 import org.jetbrains.jet.plugin.references.JetReference
-import org.jetbrains.jet.plugin.codeInsight.firstOrNull
+import org.jetbrains.jet.utils.firstOrNull_tmp
 
 public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {
@@ -64,7 +64,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBa
 
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(simpleNameExpression)
         val reference = simpleNameExpression.getReference() as JetReference?
-        val simpleNameTarget = reference?.resolveToDescriptors()?.firstOrNull() as? ValueParameterDescriptor?
+        val simpleNameTarget = reference?.resolveToDescriptors()?.firstOrNull_tmp() as? ValueParameterDescriptor?
         if (simpleNameTarget == null || bindingContext.get(BindingContext.AUTO_CREATED_IT, simpleNameTarget) != true) {
             return false
         }

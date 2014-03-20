@@ -26,6 +26,20 @@ import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiDirectory
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.openapi.roots.JavaProjectRootsUtil
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiMember
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.asJava.namedUnwrappedElement
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.util.ConflictsUtil
+import org.jetbrains.jet.lang.psi.psiUtil.getPackage
+import com.intellij.psi.PsiFileFactory
+import org.jetbrains.jet.plugin.JetFileType
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -57,3 +71,41 @@ fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     putCopyableUserData(key, null)
     return data
 }
+
+fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
+    val packageName = targetDir.getPackage()?.getQualifiedName()
+
+    targetDir.checkCreateFile(fileName)
+    val file = PsiFileFactory.getInstance(targetDir.getProject())!!.createFileFromText(
+            fileName, JetFileType.INSTANCE, if (packageName != null) "package $packageName \n\n" else ""
+    )
+
+    return targetDir.add(file) as JetFile
+}
+
+/**
+ * Returns FqName for given declaration (either Java or Kotlin)
+ */
+public fun PsiElement.getKotlinFqName(): FqName? {
+    val element = namedUnwrappedElement
+    return when (element) {
+        is PsiPackage -> FqName(element.getQualifiedName())
+        is PsiClass -> element.getQualifiedName()?.let { FqName(it) }
+        is PsiMember -> (element : PsiMember).getName()?.let { name ->
+            val prefix = element.getContainingClass()?.getQualifiedName()
+            FqName(if (prefix != null) "$prefix.$name" else name)
+        }
+        is JetNamedDeclaration -> JetPsiUtil.getFQName(element)
+        else -> null
+    }
+}
+
+public fun PsiElement.getUsageContext(): PsiElement {
+    return when (this) {
+        is JetElement -> PsiTreeUtil.getParentOfType(this, javaClass<JetNamedDeclaration>(), javaClass<JetFile>())!!
+        else -> ConflictsUtil.getContainer(this)
+    }
+}
+
+public fun PsiElement.isInJavaSourceRoot(): Boolean =
+        !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())

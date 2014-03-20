@@ -82,6 +82,11 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         return Collections.emptyList();
     }
 
+    @Override
+    public boolean hasStableParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Set<? extends CallableDescriptor> getOverriddenDescriptors() {

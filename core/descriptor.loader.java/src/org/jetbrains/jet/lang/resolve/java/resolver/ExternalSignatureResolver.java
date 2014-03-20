@@ -45,19 +45,22 @@ public interface ExternalSignatureResolver {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
         private final List<TypeParameterDescriptor> typeParameters;
+        private final boolean hasStableParameterNames;
 
         public AlternativeMethodSignature(
                 @Nullable JetType returnType,
                 @Nullable JetType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
-                @NotNull List<String> signatureErrors
+                @NotNull List<String> signatureErrors,
+                boolean hasStableParameterNames
         ) {
             super(signatureErrors);
             this.returnType = returnType;
             this.receiverType = receiverType;
             this.valueParameters = valueParameters;
             this.typeParameters = typeParameters;
+            this.hasStableParameterNames = hasStableParameterNames;
         }
 
         @Nullable
@@ -78,6 +81,10 @@ public interface ExternalSignatureResolver {
         @NotNull
         public List<TypeParameterDescriptor> getTypeParameters() {
             return typeParameters;
+        }
+
+        public boolean hasStableParameterNames() {
+            return hasStableParameterNames;
         }
     }
 
@@ -104,9 +111,10 @@ public interface ExternalSignatureResolver {
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters,
                 @NotNull List<String> signatureErrors,
+                boolean hasStableParameterNames,
                 @NotNull List<FunctionDescriptor> superMethods
         ) {
-            super(returnType, receiverType, valueParameters, typeParameters, signatureErrors);
+            super(returnType, receiverType, valueParameters, typeParameters, signatureErrors, hasStableParameterNames);
             this.superMethods = superMethods;
         }
 
@@ -133,7 +141,8 @@ public interface ExternalSignatureResolver {
             @Nullable JetType returnType,
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<TypeParameterDescriptor> typeParameters
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            boolean hasStableParameterNames
     );
 
     @NotNull

@@ -50,6 +50,8 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();
 
+    boolean hasStableParameterNames();
+
     @NotNull
     Set<? extends CallableDescriptor> getOverriddenDescriptors();
 }

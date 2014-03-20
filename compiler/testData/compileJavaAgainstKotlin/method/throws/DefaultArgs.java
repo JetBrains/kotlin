@@ -1,3 +1,5 @@
+package test;
+
 class JavaClass {
     void testMethod(One instance) {
         try {
@@ -21,12 +23,12 @@ class JavaClass {
         catch (E1 e) {}
 
         try {
-            _DefaultPackage.one(1);
+            TestPackage.one(1);
         }
         catch (E1 e) {}
 
         try {
-            _DefaultPackage.one$default(1, 0);
+            TestPackage.one$default(1, 0);
         }
         catch (E1 e) {}
     }

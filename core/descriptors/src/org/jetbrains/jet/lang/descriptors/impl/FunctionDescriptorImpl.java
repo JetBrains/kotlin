@@ -165,6 +165,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public boolean hasStableParameterNames() {
+        return true;
+    }
+
+    @Override
     public JetType getReturnType() {
         return unsubstitutedReturnType;
     }

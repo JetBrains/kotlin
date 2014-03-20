@@ -32,10 +32,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.asm4.Opcodes.ASM4;
 import static org.jetbrains.asm4.Opcodes.V1_6;
@@ -63,6 +60,8 @@ public class LambdaTransformer {
     private String superName;
     private String[] interfaces;
     private final boolean isSameModule;
+
+    private Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
 
     public LambdaTransformer(String lambdaInternalName, InliningContext inliningContext, boolean isSameModule, Type newLambdaType) {
         this.isSameModule = isSameModule;
@@ -133,7 +132,7 @@ public class LambdaTransformer {
 
         MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
                                                   remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
-        InlineResult result = inliner.doInline(invokeVisitor, new VarRemapper.ParamRemapper(parameters, 0), remapper, false);
+        InlineResult result = inliner.doInline(invokeVisitor, new LocalVarRemapper(parameters, 0), false);
         invokeVisitor.visitMaxs(-1, -1);
 
         generateConstructorAndFields(classBuilder, builder, invocation);
@@ -163,7 +162,7 @@ public class LambdaTransformer {
         List<Pair<String, Type>> newConstructorSignature = new ArrayList<Pair<String, Type>>();
         for (CapturedParamInfo capturedParamInfo : infos) {
             if (capturedParamInfo.getLambda() == null) { //not inlined
-                newConstructorSignature.add(new Pair<String, Type>(capturedParamInfo.getFieldName(), capturedParamInfo.getType()));
+                newConstructorSignature.add(new Pair<String, Type>(capturedParamInfo.getNewFieldName(), capturedParamInfo.getType()));
             }
         }
 
@@ -224,6 +223,8 @@ public class LambdaTransformer {
                     info.setLambda(lambdaInfo);
                     capturedLambdas.add(lambdaInfo);
                 }
+
+                addUniqueField(info.getOriginalFieldName());
             }
             cur = cur.getNext();
         }
@@ -234,11 +235,11 @@ public class LambdaTransformer {
         List<CapturedParamInfo> allRecapturedParameters = new ArrayList<CapturedParamInfo>();
         for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamInfo var : info.getCapturedVars()) {
-                CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(getNewFieldName(var.getFieldName()), var.getType(), var.isSkipped, var, info);
+                CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(var, getNewFieldName(var.getOriginalFieldName()));
                 StackValue composed = StackValue.composed(StackValue.local(0, oldLambdaType),
                                                           StackValue.field(var.getType(),
                                                                            oldLambdaType, /*TODO owner type*/
-                                                                           getNewFieldName(var.getFieldName()), false)
+                                                                           recapturedParamInfo.getNewFieldName(), false)
                 );
                 recapturedParamInfo.setRemapValue(composed);
                 allRecapturedParameters.add(var);
@@ -283,11 +284,25 @@ public class LambdaTransformer {
         return methodNode[0];
     }
 
-    public static String getNewFieldName(String oldName) {
+    @NotNull
+    public String getNewFieldName(@NotNull String oldName) {
         if (oldName.equals("this$0")) {
             //"this$0" couldn't clash and we should keep this name invariant for further transformations
             return oldName;
         }
-        return oldName + "$inlined";
+        return addUniqueField(oldName + "$inlined");
+    }
+
+    @NotNull
+    private String addUniqueField(@NotNull String name) {
+        List<String> existNames = fieldNames.get(name);
+        if (existNames == null) {
+            existNames = new LinkedList<String>();
+            fieldNames.put(name, existNames);
+        }
+        String suffix = existNames.isEmpty() ? "" : "$" + existNames.size();
+        String newName = name + suffix;
+        existNames.add(newName);
+        return newName;
     }
 }

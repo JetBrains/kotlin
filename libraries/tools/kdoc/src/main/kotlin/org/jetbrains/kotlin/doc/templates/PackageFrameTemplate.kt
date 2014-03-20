@@ -84,7 +84,7 @@ ${stylesheets()}
 
     protected fun printExtensionFunctions(): Unit {
         val map = extensionFunctions(pkg.functions)
-        if (! map.isEmpty()) {
+        if (!map.isEmpty()) {
             println("""<TABLE BORDER="0" WIDTH="100%" SUMMARY="">
 <TR>
 <TD NOWRAP><FONT size="+1" CLASS="FrameHeadingFont">Extensions</FONT>&nbsp;
@@ -92,10 +92,8 @@ ${stylesheets()}
 <BR>""")
             for (e in map) {
                 val c = e.key
-                if (c != null) {
-                    println("""<A HREF="${extensionsHref(pkg, c)}" title="extensions functions on class ${c.name} from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
+                println("""<A HREF="${extensionsHref(pkg, c)}" title="extensions functions on class ${c.name} from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
 <BR>""")
-                }
             }
             println("""</TR>
 </TABLE>""")
@@ -110,10 +108,8 @@ ${stylesheets()}
 <FONT CLASS="FrameItemFont">
 <BR>""")
             for (c in list) {
-                if (c != null) {
-                    println("""<A HREF="${href(pkg, c)}" title="property from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
+                println("""<A HREF="${href(pkg, c)}" title="property from ${pkg.name}" target="classFrame"><I>${c.name}</I></A>
 <BR>""")
-                }
             }
             println("""</TR>
 </TABLE>""")

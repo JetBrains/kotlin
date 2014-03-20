@@ -61,6 +61,10 @@ public class OverrideResolver {
         //all created fake descriptors are stored to resolve visibility on them later
         generateOverridesAndDelegation(c);
 
+        check(c);
+    }
+
+    public void check(@NotNull TopDownAnalysisContext c) {
         checkVisibility(c);
         checkOverrides(c);
         checkParameterOverridesForAllClasses(c);
@@ -205,11 +209,11 @@ public class OverrideResolver {
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
-            checkOverridesInAClass(c, (MutableClassDescriptor) entry.getValue(), entry.getKey());
+            checkOverridesInAClass(c, entry.getValue(), entry.getKey());
         }
     }
 
-    private void checkOverridesInAClass(@NotNull TopDownAnalysisContext c, @NotNull MutableClassDescriptor classDescriptor, @NotNull JetClassOrObject klass) {
+    private void checkOverridesInAClass(@NotNull TopDownAnalysisContext c, @NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull JetClassOrObject klass) {
         if (c.getTopDownAnalysisParameters().isAnalyzingBootstrapLibrary()) return;
 
         // Check overrides for internal consistency
@@ -671,12 +675,15 @@ public class OverrideResolver {
                     }
                 }
 
-                if (!parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
+                DeclarationDescriptor superFunction = parameterFromSuperclass.getContainingDeclaration();
+                if (declared.hasStableParameterNames() &&
+                    superFunction instanceof CallableDescriptor && ((CallableDescriptor) superFunction).hasStableParameterNames() &&
+                    !parameterFromSuperclass.getName().equals(parameterFromSubclass.getName())) {
                     if (noDeclaration) {
                         trace.report(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES.on(classElement, declared.getOverriddenDescriptors(), parameterFromSuperclass.getIndex() + 1));
                     }
                     else {
-                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) parameterFromSuperclass.getContainingDeclaration().getContainingDeclaration(), parameterFromSuperclass));
+                        trace.report(PARAMETER_NAME_CHANGED_ON_OVERRIDE.on(parameter, (ClassDescriptor) superFunction.getContainingDeclaration(), parameterFromSuperclass));
                     }
                 }
             }

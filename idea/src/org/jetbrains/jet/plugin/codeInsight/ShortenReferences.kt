@@ -20,6 +20,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
+import kotlin.support.AbstractIterator
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -246,10 +247,3 @@ public object ShortenReferences {
         ImportInsertHelper.addImportDirectiveIfNeeded(DescriptorUtils.getFqNameSafe(descriptor), file)
     }
 }
-
-//TODO: how about such function in stdlib?
-fun <T: Any> Iterable<T>.firstOrNull() : T? {
-    val iterator = this.iterator()
-    return if (iterator.hasNext()) iterator.next() else null
-}
-

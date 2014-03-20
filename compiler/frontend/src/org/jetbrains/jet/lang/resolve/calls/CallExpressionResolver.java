@@ -399,8 +399,12 @@ public class CallExpressionResolver {
         return false;
     }
 
-    private void checkSuper(@NotNull ReceiverValue receiverValue, @NotNull OverloadResolutionResults<? extends CallableDescriptor> results,
-            @NotNull BindingTrace trace, @NotNull JetExpression expression) {
+    private static void checkSuper(
+            @NotNull ReceiverValue receiverValue,
+            @NotNull OverloadResolutionResults<?> results,
+            @NotNull BindingTrace trace,
+            @NotNull JetExpression expression
+    ) {
         if (!results.isSingleResult()) return;
         if (!(receiverValue instanceof ExpressionReceiver)) return;
         JetExpression receiver = ((ExpressionReceiver) receiverValue).getExpression();

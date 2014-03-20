@@ -1,16 +1,16 @@
 package regressions
 
 import junit.framework.TestCase
+import kotlin.test.expect
 
 class Kt1619Test: TestCase() {
 
-    fun doSomething(list: List<String?>): Boolean {
-        return list.size() > 0
+    fun doSomething(list: List<String?>): Int {
+        return list.size()
     }
 
     fun testCollectionNotNullCanBeUsedForNullables() {
-        val list: List<String> = arrayList("foo", "bar")
-        // TODO uncomment this line to reproduce KT-1619
-        // doSomething(list)
+        val list: List<String> = arrayListOf("foo", "bar")
+        expect(2) { doSomething(list) }
     }
 }

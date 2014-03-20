@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.k2js.utils.JetFileUtils;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -74,7 +74,7 @@ public final class MetaInfServices {
                                 InputStream stream = loadClasspathResource(line);
                                 if (stream != null) {
                                     String text = FileUtil.loadTextAndClose(stream);
-                                    libFiles.add(JetFileUtils.createJetFile(line, text, project));
+                                    libFiles.add(JetPsiFactory.createFile(project, line, text));
                                 }
                             }
                         }

@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -48,8 +47,7 @@ public class JavaClassFunction extends IntrinsicMethod {
             StackValue receiver
     ) {
         JetCallExpression call = (JetCallExpression) element;
-        ResolvedCall<? extends CallableDescriptor> resolvedCall =
-                codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
+        ResolvedCall<?> resolvedCall = codegen.getBindingContext().get(BindingContext.RESOLVED_CALL, call.getCalleeExpression());
         assert resolvedCall != null;
         JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
         assert returnType != null;

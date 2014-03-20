@@ -25,13 +25,8 @@ import com.intellij.util.Query
 import com.intellij.psi.search.GlobalSearchScope
 import java.util.HashMap
 import org.jetbrains.jet.lang.psi.psiUtil.*
-import org.jetbrains.jet.lang.psi.JetNamedFunction
 import java.util.Collections
-import org.jetbrains.jet.asJava.LightClassUtil
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.PsiClass
-import org.jetbrains.jet.lang.psi.JetParameter
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.MethodSignatureUtil
@@ -40,8 +35,6 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
-import com.intellij.util.UniqueResultsQuery
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.asJava.toLightMethods
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
@@ -76,10 +69,10 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
         val classTraverser = object : HierarchyTraverser<PsiClass> {
             override fun nextElements(current: PsiClass): Iterable<PsiClass> =
                     DirectClassInheritorsSearch.search(
-                            aClass = current,
-                            scope = GlobalSearchScope.allScope(current.getProject()),
-                            checkInheritance = true,
-                            includeAnonymous = true
+                            current,
+                            GlobalSearchScope.allScope(current.getProject()),
+                            /* checkInheritance = */ true,
+                            /* includeAnonymous = */ true
                     )
 
             override fun shouldDescend(element: PsiClass): Boolean =

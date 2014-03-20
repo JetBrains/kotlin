@@ -27,7 +27,7 @@ class KDocConfig() {
      * Returns a map of the package prefix to the HTML URL for the root of the apidoc using javadoc/kdoc style
      * directory layouts so that this API doc report can link to external packages
      */
-    public val packagePrefixToUrls: MutableMap<String, String> = TreeMap<String, String>(LongestFirstStringComparator())
+    public val packagePrefixToUrls: MutableMap<String, String> = TreeMap<String, String>(LongestFirstStringComparator)
 
     /**
      * Returns a Set of the package name prefixes to ignore from the KDoc report
@@ -112,12 +112,12 @@ class KDocConfig() {
     }
 }
 
-private class LongestFirstStringComparator() : Comparator<String> {
-    public override fun compare(s1: String, s2: String): Int {
-        return compareBy<String>(s1, s2, { length() }, { this })
+private object LongestFirstStringComparator : Comparator<String> {
+    override fun compare(o1: String, o2: String): Int {
+        return compareBy<String>(o1, o2, { length() }, { this })
     }
 
-    public override fun equals(obj : Any?) : Boolean {
-        return obj is LongestFirstStringComparator
+    override fun equals(other: Any?): Boolean {
+        return other is LongestFirstStringComparator
     }
 }

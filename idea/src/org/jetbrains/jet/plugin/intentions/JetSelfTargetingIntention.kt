@@ -30,11 +30,12 @@ public abstract class JetSelfTargetingIntention<T: JetElement>(val key: String, 
     }
 
     protected abstract fun isApplicableTo(element: T): Boolean
+    protected open fun isApplicableTo(element: T, editor: Editor): Boolean = isApplicableTo(element)
     protected abstract fun applyTo(element: T, editor: Editor)
 
     protected fun getTarget(editor: Editor, file: PsiFile): T? {
         val offset = editor.getCaretModel().getOffset()
-        return file.findElementAt(offset)?.getParentByTypesAndPredicate(false, elementType) { element -> isApplicableTo(element) }
+        return file.findElementAt(offset)?.getParentByTypesAndPredicate(false, elementType) { element -> isApplicableTo(element, editor) }
     }
 
     public override fun getFamilyName(): String {

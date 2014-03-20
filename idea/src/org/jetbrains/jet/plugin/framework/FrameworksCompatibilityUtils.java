@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,18 +39,17 @@ public class FrameworksCompatibilityUtils {
 
     public static void suggestRemoveIncompatibleFramework(
             @NotNull ModifiableRootModel rootModel,
-            @NotNull CustomLibraryDescription libraryDescription,
+            @NotNull Set<? extends LibraryKind> frameworkLibraryKinds,
             @NotNull FrameworkType frameworkType
     ) {
         List<OrderEntry> existingEntries = new ArrayList<OrderEntry>();
-        Set<? extends LibraryKind> kinds = libraryDescription.getSuitableLibraryKinds();
 
         for (OrderEntry entry : rootModel.getOrderEntries()) {
             if (!(entry instanceof LibraryOrderEntry)) continue;
             Library library = ((LibraryOrderEntry)entry).getLibrary();
             if (library == null) continue;
 
-            for (LibraryKind kind : kinds) {
+            for (LibraryKind kind : frameworkLibraryKinds) {
                 if (LibraryPresentationManager.getInstance().isLibraryOfKind(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), kind)) {
                     existingEntries.add(entry);
                 }

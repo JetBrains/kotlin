@@ -1,3 +1,5 @@
+package test
+
 class Test {
 
   class object {

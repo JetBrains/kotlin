@@ -293,10 +293,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         Label methodEnd = new Label();
         mv.visitLabel(methodEnd);
 
-        if (strategy.generateLocalVarTable()) {
-            Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
-            generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
-        }
+        Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
+        generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
     }
 
     private static void generateLocalVariableTable(

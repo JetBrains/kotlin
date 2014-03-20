@@ -50,10 +50,6 @@ public abstract class FunctionGenerationStrategy {
         return frameMap;
     }
 
-    public boolean generateLocalVarTable() {
-        return true;
-    }
-
     public static class FunctionDefault extends CodegenBased<CallableDescriptor> {
         private final JetDeclarationWithBody declaration;
 

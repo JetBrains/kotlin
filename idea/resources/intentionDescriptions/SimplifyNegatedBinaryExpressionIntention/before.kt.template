@@ -1,0 +1,3 @@
+if (<spot>!(a == b)</spot>) {
+  println("Not Equal")
+}

@@ -4,16 +4,16 @@ public trait DeeplySubstitutedClassParameter : java.lang.Object {
     
     public trait Middle</*0*/ E> : test.DeeplySubstitutedClassParameter.Super<E> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(/*0*/ p0: E): kotlin.Unit
+        public abstract override /*1*/ fun foo(/*0*/ t: E): kotlin.Unit
     }
     
     public trait Sub : test.DeeplySubstitutedClassParameter.Middle<kotlin.String> {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(/*0*/ p0: kotlin.String): kotlin.Unit
+        public abstract override /*1*/ fun foo(/*0*/ t: kotlin.String): kotlin.Unit
     }
     
     public trait Super</*0*/ T> : java.lang.Object {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(/*0*/ p0: T): kotlin.Unit
+        public abstract fun foo(/*0*/ t: T): kotlin.Unit
     }
 }

@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScopeUtils;
@@ -54,6 +55,8 @@ import java.util.*;
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
@@ -108,8 +111,10 @@ public class DescriptorResolver {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
-            // TODO: Support
-            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+            if (!TopDownAnalyzer.LAZY) {
+                // TODO: Support
+                AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
+            }
 
             TypeParameterDescriptor typeParameterDescriptor = TypeParameterDescriptorImpl.createForFurtherModification(
                     descriptor,
@@ -301,7 +306,7 @@ public class DescriptorResolver {
         List<TypeParameterDescriptorImpl> typeParameterDescriptors =
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace);
         innerScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        resolveGenericBounds(function, innerScope, typeParameterDescriptors, trace);
+        resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace);
 
         JetType receiverType = null;
         JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
@@ -622,6 +627,7 @@ public class DescriptorResolver {
 
     public void resolveGenericBounds(
             @NotNull JetTypeParameterListOwner declaration,
+            @NotNull DeclarationDescriptor descriptor,
             JetScope scope,
             List<TypeParameterDescriptorImpl> parameters,
             BindingTrace trace
@@ -644,9 +650,7 @@ public class DescriptorResolver {
             }
         }
         for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
-            if (constraint.isClassObjectConstraint()) {
-                trace.report(UNSUPPORTED.on(constraint, "Class objects constraints are not supported yet"));
-            }
+            reportUnsupportedClassObjectConstraint(trace, constraint);
 
             JetSimpleNameExpression subjectTypeParameterName = constraint.getSubjectTypeParameterName();
             if (subjectTypeParameterName == null) {
@@ -662,22 +666,12 @@ public class DescriptorResolver {
                         .add(new UpperBoundCheckerTask(boundTypeReference, bound, constraint.isClassObjectConstraint()));
             }
 
-            if (typeParameterDescriptor == null) {
-                // To tell the user that we look only for locally defined type parameters
-                ClassifierDescriptor classifier = scope.getClassifier(referencedName);
-                if (classifier != null) {
-                    trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(subjectTypeParameterName, constraint, declaration));
-                    trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, classifier);
-                }
-                else {
-                    trace.report(UNRESOLVED_REFERENCE.on(subjectTypeParameterName, subjectTypeParameterName));
-                }
-            }
-            else {
+            if (typeParameterDescriptor != null) {
                 trace.record(BindingContext.REFERENCE_TARGET, subjectTypeParameterName, typeParameterDescriptor);
                 if (bound != null) {
                     if (constraint.isClassObjectConstraint()) {
-                        typeParameterDescriptor.addClassObjectBound(bound);
+                        // Class object bounds are not supported
+                        //typeParameterDescriptor.addClassObjectBound(bound);
                     }
                     else {
                         typeParameterDescriptor.addUpperBound(bound);
@@ -691,28 +685,76 @@ public class DescriptorResolver {
 
             parameter.setInitialized();
 
-            if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
-                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
-                }
-            }
-
-            JetType classObjectType = parameter.getClassObjectType();
-            if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
-                PsiElement nameIdentifier = typeParameters.get(parameter.getIndex()).getNameIdentifier();
-                if (nameIdentifier != null) {
-                    trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
-                }
-            }
+            checkConflictingUpperBounds(trace, parameter, typeParameters.get(parameter.getIndex()));
         }
 
-        for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-            checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+        if (!(declaration instanceof JetClass)) {
+            for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
+                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, checkerTask.isClassObjectConstraint, trace);
+            }
+
+            checkNamesInConstraints(declaration, descriptor, scope, trace);
         }
     }
 
-    private static void checkUpperBoundType(
+    public static void checkConflictingUpperBounds(
+            @NotNull BindingTrace trace,
+            @NotNull TypeParameterDescriptor parameter,
+            @NotNull JetTypeParameter typeParameter
+    ) {
+        PsiElement nameIdentifier = typeParameter.getNameIdentifier();
+        if (KotlinBuiltIns.getInstance().isNothing(parameter.getUpperBoundsAsType())) {
+            if (nameIdentifier != null) {
+                trace.report(CONFLICTING_UPPER_BOUNDS.on(nameIdentifier, parameter));
+            }
+        }
+
+        JetType classObjectType = parameter.getClassObjectType();
+        if (classObjectType != null && KotlinBuiltIns.getInstance().isNothing(classObjectType)) {
+            if (nameIdentifier != null) {
+                trace.report(CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS.on(nameIdentifier, parameter));
+            }
+        }
+    }
+
+    public void checkNamesInConstraints(
+            @NotNull JetTypeParameterListOwner declaration,
+            @NotNull DeclarationDescriptor descriptor,
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace
+    ) {
+        for (JetTypeConstraint constraint : declaration.getTypeConstraints()) {
+            JetSimpleNameExpression nameExpression = constraint.getSubjectTypeParameterName();
+            if (nameExpression == null) continue;
+
+            Name name = nameExpression.getReferencedNameAsName();
+
+            ClassifierDescriptor classifier = scope.getClassifier(name);
+            if (classifier instanceof TypeParameterDescriptor && classifier.getContainingDeclaration() == descriptor) continue;
+
+            if (classifier != null) {
+                // To tell the user that we look only for locally defined type parameters
+                trace.report(NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER.on(nameExpression, constraint, declaration));
+                trace.record(BindingContext.REFERENCE_TARGET, nameExpression, classifier);
+            }
+            else {
+                trace.report(UNRESOLVED_REFERENCE.on(nameExpression, nameExpression));
+            }
+
+            JetTypeReference boundTypeReference = constraint.getBoundTypeReference();
+            if (boundTypeReference != null) {
+                typeResolver.resolveType(scope, boundTypeReference, trace, true);
+            }
+        }
+    }
+
+    public static void reportUnsupportedClassObjectConstraint(BindingTrace trace, JetTypeConstraint constraint) {
+        if (constraint.isClassObjectConstraint()) {
+            trace.report(UNSUPPORTED.on(constraint, "Class objects constraints are not supported yet"));
+        }
+    }
+
+    public static void checkUpperBoundType(
             JetTypeReference upperBound,
             JetType upperBoundType,
             boolean isClassObjectConstraint,
@@ -868,7 +910,7 @@ public class DescriptorResolver {
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(containingDeclaration, writableScope, typeParameters,
                                                                                       trace);
                 writableScope.changeLockLevel(WritableScope.LockLevel.READING);
-                resolveGenericBounds(property, writableScope, typeParameterDescriptors, trace);
+                resolveGenericBounds(property, propertyDescriptor, writableScope, typeParameterDescriptors, trace);
                 scopeWithTypeParameters = writableScope;
             }
 
@@ -1406,6 +1448,24 @@ public class DescriptorResolver {
                 }
                 node = node.getTreeNext();
             }
+        }
+    }
+
+    public static void resolvePackageHeader(
+            @NotNull JetPackageDirective packageDirective,
+            @NotNull ModuleDescriptor module,
+            @NotNull BindingTrace trace
+    ) {
+        for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
+            FqName fqName = packageDirective.getFqName(nameExpression);
+
+            PackageViewDescriptor packageView = module.getPackage(fqName);
+            assert packageView != null : "package not found: " + fqName;
+            trace.record(REFERENCE_TARGET, nameExpression, packageView);
+
+            PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
+            assert parentPackageView != null : "package has no parent: " + packageView;
+            trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
         }
     }
 }

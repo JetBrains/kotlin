@@ -18,11 +18,11 @@ package org.jetbrains.k2js.translate.operation;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.ReferenceAccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isPrefix;
@@ -51,7 +51,7 @@ public final class IntrinsicIncrementTranslator extends IncrementTranslator {
     }
 
     private boolean isPrimitiveExpressionIncrement() {
-        return accessTranslator instanceof ReferenceAccessTranslator;
+        return expression.getBaseExpression() instanceof JetSimpleNameExpression;
     }
 
     @NotNull

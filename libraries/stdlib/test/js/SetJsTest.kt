@@ -6,7 +6,7 @@ import org.junit.Test
 
 class SetJsTest {
     val data: Set<String> = createTestMutableSet()
-    val empty: Set<String> = hashSet<String>()
+    val empty: Set<String> = hashSetOf<String>()
 
     Test fun size() {
         assertEquals(2, data.size())
@@ -39,10 +39,10 @@ class SetJsTest {
     }
 
     Test fun containsAll() {
-        assertTrue(data.containsAll(arrayList("foo", "bar")))
-        assertTrue(data.containsAll(arrayList<String>()))
-        assertFalse(data.containsAll(arrayList("foo", "bar", "baz")))
-        assertFalse(data.containsAll(arrayList("baz")))
+        assertTrue(data.containsAll(arrayListOf("foo", "bar")))
+        assertTrue(data.containsAll(arrayListOf<String>()))
+        assertFalse(data.containsAll(arrayListOf("foo", "bar", "baz")))
+        assertFalse(data.containsAll(arrayListOf("baz")))
     }
 
     Test fun add() {
@@ -51,7 +51,7 @@ class SetJsTest {
         assertEquals(3, data.size())
         assertFalse(data.add("baz"))
         assertEquals(3, data.size())
-        assertTrue(data.containsAll(arrayList("foo", "bar", "baz")))
+        assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz")))
     }
 
     Test fun remove() {
@@ -65,36 +65,36 @@ class SetJsTest {
 
     Test fun addAll() {
         val data = createTestMutableSet()
-        assertTrue(data.addAll(arrayList("foo", "bar", "baz", "boo")))
+        assertTrue(data.addAll(arrayListOf("foo", "bar", "baz", "boo")))
         assertEquals(4, data.size())
-        assertFalse(data.addAll(arrayList("foo", "bar", "baz", "boo")))
+        assertFalse(data.addAll(arrayListOf("foo", "bar", "baz", "boo")))
         assertEquals(4, data.size())
-        assertTrue(data.containsAll(arrayList("foo", "bar", "baz", "boo")))
+        assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz", "boo")))
     }
 
     Test fun removeAll() {
         val data = createTestMutableSet()
-        assertFalse(data.removeAll(arrayList("baz")))
-        assertTrue(data.containsAll(arrayList("foo", "bar")))
+        assertFalse(data.removeAll(arrayListOf("baz")))
+        assertTrue(data.containsAll(arrayListOf("foo", "bar")))
         assertEquals(2, data.size())
-        assertTrue(data.removeAll(arrayList("foo")))
+        assertTrue(data.removeAll(arrayListOf("foo")))
         assertTrue(data.contains("bar"))
         assertEquals(1, data.size())
-        assertTrue(data.removeAll(arrayList("foo", "bar")))
+        assertTrue(data.removeAll(arrayListOf("foo", "bar")))
         assertEquals(0, data.size())
 
         val data2 = createTestMutableSet()
-        assertFalse(data.removeAll(arrayList("foo", "bar", "baz")))
+        assertFalse(data.removeAll(arrayListOf("foo", "bar", "baz")))
         assertTrue(data.isEmpty())
     }
 
     Test fun retainAll() {
         val data1 = createTestMutableSet()
-        assertTrue(data1.retainAll(arrayList("baz")))
+        assertTrue(data1.retainAll(arrayListOf("baz")))
         assertTrue(data1.isEmpty())
 
         val data2 = createTestMutableSet()
-        assertTrue(data2.retainAll(arrayList("foo")))
+        assertTrue(data2.retainAll(arrayListOf("foo")))
         assertTrue(data2.contains("foo"))
         assertEquals(1, data2.size())
     }
@@ -109,5 +109,5 @@ class SetJsTest {
     }
 
     //Helpers
-    fun createTestMutableSet(): MutableSet<String> = hashSet("foo", "bar")
+    fun createTestMutableSet(): MutableSet<String> = hashSetOf("foo", "bar")
 }

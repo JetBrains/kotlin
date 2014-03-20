@@ -1,0 +1,33 @@
+<root>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate boolean canMove(com.intellij.psi.PsiElement[], com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate boolean isValidTarget(com.intellij.psi.PsiElement, com.intellij.psi.PsiElement[]) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate boolean tryToMove(com.intellij.psi.PsiElement, com.intellij.openapi.project.Project, com.intellij.openapi.actionSystem.DataContext, com.intellij.psi.PsiReference, com.intellij.openapi.editor.Editor)'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value"
+           val="&quot;fun tryToMove(element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?): Boolean&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate com.intellij.psi.PsiElement[] adjustForMove(com.intellij.openapi.project.Project, com.intellij.psi.PsiElement[], com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate com.intellij.psi.PsiElement[] adjustForMove(com.intellij.openapi.project.Project, com.intellij.psi.PsiElement[], com.intellij.psi.PsiElement) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate void doMove(com.intellij.openapi.project.Project, com.intellij.psi.PsiElement[], com.intellij.psi.PsiElement, com.intellij.refactoring.move.MoveCallback) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.move.MoveHandlerDelegate void doMove(com.intellij.openapi.project.Project, com.intellij.psi.PsiElement[], com.intellij.psi.PsiElement, com.intellij.refactoring.move.MoveCallback) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

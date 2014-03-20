@@ -44,7 +44,7 @@ public fun <T> assertNotNull(actual: T?, message: String = ""): T {
     return actual!!
 }
 
-//TODO merge with next via default
+//TODO merge with next via default (currently inline functions do not support default values)
 /** Asserts that the expression is not null, with an optional message and a function block to process the not-null value */
 public inline fun <T, R> assertNotNull(actual: T?, block: (T) -> R) {
     assertNotNull(actual, "", block)

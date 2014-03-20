@@ -96,9 +96,9 @@ native public trait DOMError {
     public val severity: Short
 
     public class object {
-        public val SEVERITY_WARNING: Short = 1
         public val SEVERITY_ERROR: Short = 2
         public val SEVERITY_FATAL_ERROR: Short = 3
+        public val SEVERITY_WARNING: Short = 1
     }
 }
 
@@ -107,9 +107,9 @@ native public trait DOMErrorHandler {
 }
 
 native public trait DOMImplementation {
-    public fun getFeature(arg1: String?, arg2: String?): Any = js.noImpl
     public fun createDocument(arg1: String?, arg2: String?, arg3: DocumentType?): Document = js.noImpl
     public fun createDocumentType(arg1: String?, arg2: String?, arg3: String?): DocumentType = js.noImpl
+    public fun getFeature(arg1: String?, arg2: String?): Any = js.noImpl
     public fun hasFeature(arg1: String?, arg2: String?): Boolean = js.noImpl
 }
 
@@ -137,11 +137,11 @@ native public trait Element: Node {
     public val schemaTypeInfo: TypeInfo
     public val tagName: String
     public fun getAttribute(arg1: String?): String = js.noImpl
-    public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
-    public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
     public fun getAttributeNS(arg1: String?, arg2: String?): String = js.noImpl
     public fun getAttributeNode(arg1: String?): Attr = js.noImpl
     public fun getAttributeNodeNS(arg1: String?, arg2: String?): Attr = js.noImpl
+    public fun getElementsByTagName(arg1: String?): NodeList = js.noImpl
+    public fun getElementsByTagNameNS(arg1: String?, arg2: String?): NodeList = js.noImpl
     public fun hasAttribute(arg1: String?): Boolean = js.noImpl
     public fun hasAttributeNS(arg1: String?, arg2: String?): Boolean = js.noImpl
     public fun removeAttribute(arg1: String?): Unit = js.noImpl
@@ -170,17 +170,17 @@ native public trait EntityReference: Node {
 
 native public trait NameList {
     public val length: Int
-    public fun getName(arg1: Int): String = js.noImpl
     public fun contains(arg1: String?): Boolean = js.noImpl
-    public fun getNamespaceURI(arg1: Int): String = js.noImpl
     public fun containsNS(arg1: String?, arg2: String?): Boolean = js.noImpl
+    public fun getName(arg1: Int): String = js.noImpl
+    public fun getNamespaceURI(arg1: Int): String = js.noImpl
 }
 
 native public trait NamedNodeMap {
     public val length: Int
-    public fun item(arg1: Int): Node = js.noImpl
     public fun getNamedItem(arg1: String?): Node = js.noImpl
     public fun getNamedItemNS(arg1: String?, arg2: String?): Node = js.noImpl
+    public fun item(arg1: Int): Node = js.noImpl
     public fun removeNamedItem(arg1: String?): Node = js.noImpl
     public fun removeNamedItemNS(arg1: String?, arg2: String?): Node = js.noImpl
     public fun setNamedItem(arg1: Node): Node = js.noImpl
@@ -204,8 +204,6 @@ native public trait Node {
     public var prefix: String
     public val previousSibling: Node
     public var textContent: String
-    public fun isSupported(arg1: String?, arg2: String?): Boolean = js.noImpl
-    public fun normalize(): Unit = js.noImpl
     public fun appendChild(arg1: Node): Node = js.noImpl
     public fun cloneNode(arg1: Boolean): Node = js.noImpl
     public fun compareDocumentPosition(arg1: Node): Short = js.noImpl
@@ -217,31 +215,33 @@ native public trait Node {
     public fun isDefaultNamespace(arg1: String?): Boolean = js.noImpl
     public fun isEqualNode(arg1: Node): Boolean = js.noImpl
     public fun isSameNode(arg1: Node): Boolean = js.noImpl
+    public fun isSupported(arg1: String?, arg2: String?): Boolean = js.noImpl
     public fun lookupNamespaceURI(arg1: String?): String = js.noImpl
     public fun lookupPrefix(arg1: String?): String = js.noImpl
+    public fun normalize(): Unit = js.noImpl
     public fun removeChild(arg1: Node): Node = js.noImpl
     public fun replaceChild(arg1: Node, arg2: Node): Node = js.noImpl
     public fun setUserData(arg1: String?, arg2: Any, arg3: UserDataHandler): Any = js.noImpl
 
     public class object {
-        public val ELEMENT_NODE: Short = 1
         public val ATTRIBUTE_NODE: Short = 2
-        public val TEXT_NODE: Short = 3
         public val CDATA_SECTION_NODE: Short = 4
-        public val ENTITY_REFERENCE_NODE: Short = 5
-        public val ENTITY_NODE: Short = 6
-        public val PROCESSING_INSTRUCTION_NODE: Short = 7
         public val COMMENT_NODE: Short = 8
-        public val DOCUMENT_NODE: Short = 9
-        public val DOCUMENT_TYPE_NODE: Short = 10
         public val DOCUMENT_FRAGMENT_NODE: Short = 11
-        public val NOTATION_NODE: Short = 12
-        public val DOCUMENT_POSITION_DISCONNECTED: Short = 1
-        public val DOCUMENT_POSITION_PRECEDING: Short = 2
-        public val DOCUMENT_POSITION_FOLLOWING: Short = 4
-        public val DOCUMENT_POSITION_CONTAINS: Short = 8
+        public val DOCUMENT_NODE: Short = 9
         public val DOCUMENT_POSITION_CONTAINED_BY: Short = 16
+        public val DOCUMENT_POSITION_CONTAINS: Short = 8
+        public val DOCUMENT_POSITION_DISCONNECTED: Short = 1
+        public val DOCUMENT_POSITION_FOLLOWING: Short = 4
         public val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short = 32
+        public val DOCUMENT_POSITION_PRECEDING: Short = 2
+        public val DOCUMENT_TYPE_NODE: Short = 10
+        public val ELEMENT_NODE: Short = 1
+        public val ENTITY_NODE: Short = 6
+        public val ENTITY_REFERENCE_NODE: Short = 5
+        public val NOTATION_NODE: Short = 12
+        public val PROCESSING_INSTRUCTION_NODE: Short = 7
+        public val TEXT_NODE: Short = 3
     }
 }
 
@@ -273,10 +273,10 @@ native public trait TypeInfo {
     public fun isDerivedFrom(arg1: String?, arg2: String?, arg3: Int): Boolean = js.noImpl
 
     public class object {
-        public val DERIVATION_RESTRICTION: Int = 1
         public val DERIVATION_EXTENSION: Int = 2
-        public val DERIVATION_UNION: Int = 4
         public val DERIVATION_LIST: Int = 8
+        public val DERIVATION_RESTRICTION: Int = 1
+        public val DERIVATION_UNION: Int = 4
     }
 }
 
@@ -284,11 +284,11 @@ native public trait UserDataHandler {
     public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = js.noImpl
 
     public class object {
-        public val NODE_CLONED: Short = 1
-        public val NODE_IMPORTED: Short = 2
-        public val NODE_DELETED: Short = 3
-        public val NODE_RENAMED: Short = 4
         public val NODE_ADOPTED: Short = 5
+        public val NODE_CLONED: Short = 1
+        public val NODE_DELETED: Short = 3
+        public val NODE_IMPORTED: Short = 2
+        public val NODE_RENAMED: Short = 4
     }
 }
 

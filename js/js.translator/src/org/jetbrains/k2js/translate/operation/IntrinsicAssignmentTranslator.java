@@ -21,10 +21,10 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetToken;
 import org.jetbrains.k2js.translate.context.TranslationContext;
-import org.jetbrains.k2js.translate.reference.ReferenceAccessTranslator;
 
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.isAssignment;
@@ -53,7 +53,7 @@ public final class IntrinsicAssignmentTranslator extends AssignmentTranslator {
 
     @NotNull
     private JsExpression translateAsAssignmentOperation() {
-        if (accessTranslator instanceof ReferenceAccessTranslator) {
+        if (expression.getLeft() instanceof JetSimpleNameExpression) {
             return translateAsPlainAssignmentOperation();
         }
         return translateAsAssignToCounterpart();

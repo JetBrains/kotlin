@@ -1,3 +1,5 @@
+package test
+
 trait A<T : Number> {
     fun foo(): T
 }

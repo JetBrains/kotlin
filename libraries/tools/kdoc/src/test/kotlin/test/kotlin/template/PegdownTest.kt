@@ -10,7 +10,7 @@ class PegdownTest() : TestCase() {
     var linkRenderer = CustomLinkRenderer()
 
     fun testPegDown() {
-        val markups = arrayList(
+        val markups = listOf(
         "hello **there **",
         "a [[WikiLink]] blah",
         "a [[WikiLink someText]] blah",
@@ -26,24 +26,23 @@ class PegdownTest() : TestCase() {
 }
 
 
-class CustomLinkRenderer() : LinkRenderer() {
-
-    public override fun render(node : WikiLinkNode?) : Rendering? {
+class CustomLinkRenderer : LinkRenderer() {
+    override fun render(node: WikiLinkNode?): Rendering? {
         println("LinkRenderer.render(WikiLinkNode): $node")
         return super.render(node)
     }
 
-    public override fun render(node : RefLinkNode?, url : String?, title : String?, text : String?) : Rendering? {
+    override fun render(node: RefLinkNode?, url: String?, title: String?, text: String?): Rendering? {
         println("LinkRenderer.render(RefLinkNode): $node url: $url title: $title text: $text")
         return super.render(node, url, title, text)
     }
 
-    public override fun render(node : AutoLinkNode?) : Rendering? {
+    override fun render(node: AutoLinkNode?): Rendering? {
         println("LinkRenderer.render(AutoLinkNode): $node")
         return super.render(node)
     }
 
-    public override fun render(node : ExpLinkNode?, text : String?) : Rendering? {
+    override fun render(node: ExpLinkNode?, text: String?): Rendering? {
         println("LinkRenderer.render(ExpLinkNode): $node text: $text")
         return super.render(node, text)
     }

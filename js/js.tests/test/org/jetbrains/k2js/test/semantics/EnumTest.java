@@ -35,4 +35,7 @@ public class EnumTest  extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testAccessing() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

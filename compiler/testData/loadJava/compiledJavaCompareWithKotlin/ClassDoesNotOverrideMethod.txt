@@ -4,7 +4,7 @@ public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     public constructor ClassDoesNotOverrideMethod()
     public open override /*1*/ /*fake_override*/ fun after(/*0*/ p0: java.util.Date): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun before(/*0*/ p0: java.util.Date): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ p0: java.util.Date): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: java.util.Date): kotlin.Int
     kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open override /*1*/ /*fake_override*/ fun getDate(): kotlin.Int
     kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open override /*1*/ /*fake_override*/ fun getDay(): kotlin.Int
     kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open override /*1*/ /*fake_override*/ fun getHours(): kotlin.Int

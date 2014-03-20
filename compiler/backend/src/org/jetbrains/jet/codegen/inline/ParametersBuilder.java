@@ -42,26 +42,29 @@ public class  ParametersBuilder {
         return info;
     }
 
-    public ParametersBuilder addNextParameter(Type type, boolean skipped, @Nullable ParameterInfo original) {
+    @NotNull
+    public ParametersBuilder addNextParameter(@NotNull Type type, boolean skipped, @Nullable ParameterInfo original) {
         addParameter(new ParameterInfo(type, skipped, nextIndex, original != null ? original.getIndex() : -1));
         return this;
     }
 
+    @NotNull
     public CapturedParamInfo addCapturedParam(
-            @NotNull CapturedParamInfo param,
-            @Nullable CapturedParamInfo originalField
+            @NotNull CapturedParamInfo original,
+            @NotNull String newFieldName
     ) {
-        CapturedParamInfo info = new CapturedParamInfo(param.desc, param.isSkipped, nextCaptured, originalField != null ? originalField.getIndex() : -1);
-        info.setLambda(param.getLambda());
+        CapturedParamInfo info = new CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextCaptured, original.getIndex());
+        info.setLambda(original.getLambda());
         return addCapturedParameter(info);
     }
 
+    @NotNull
     public CapturedParamInfo addCapturedParam(
-            String fieldName,
-            Type type,
+            @NotNull String fieldName,
+            @NotNull Type type,
             boolean skipped,
             @Nullable ParameterInfo original,
-            CapturedParamOwner containingLambda
+            @NotNull CapturedParamOwner containingLambda
     ) {
         CapturedParamInfo info =
                 new CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCaptured,

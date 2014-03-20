@@ -27,7 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.*;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
@@ -35,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -104,16 +106,16 @@ public class CandidateResolver {
                     argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
                                                                                                             candidateCall, unmappedArguments);
             if (!argumentMappingStatus.isSuccess()) {
-                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
+                candidateCall.setUnmappedArguments(unmappedArguments);
+                //For the expressions like '42.(f)()' where f: () -> Unit we'd like to generate an error 'no receiver admitted',
+                //not to throw away the candidate.
+                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR
+                            && !CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
                     candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
+                    return;
                 }
                 else {
                     candidateCall.addStatus(OTHER_ERROR);
-                }
-                candidateCall.setUnmappedArguments(unmappedArguments);
-                if ((argumentMappingStatus == ValueArgumentsToParametersMapper.Status.ERROR && candidate.getTypeParameters().isEmpty()) ||
-                    argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                    return;
                 }
             }
         }
@@ -321,7 +323,7 @@ public class CandidateResolver {
     public <D extends CallableDescriptor> void completeNestedCallsInference(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
@@ -347,8 +349,7 @@ public class CandidateResolver {
         context = context.replaceExpectedType(expectedType);
 
         JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
-                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
 
         PsiElement parent = expression.getParent();
         if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
@@ -361,7 +362,7 @@ public class CandidateResolver {
             return;
         }
 
-        CallCandidateResolutionContext<? extends CallableDescriptor> contextForArgument = storedContextForArgument
+        CallCandidateResolutionContext<?> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
         JetType type;
         if (contextForArgument.candidateCall.hasIncompleteTypeParameters()
@@ -396,7 +397,7 @@ public class CandidateResolver {
     }
 
     private void completeNestedCallsForNotResolvedInvocation(@NotNull CallResolutionContext<?> context, @NotNull Collection<? extends ValueArgument> arguments) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) return;
+        if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
         if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
 
         for (ValueArgument argument : arguments) {
@@ -405,32 +406,27 @@ public class CandidateResolver {
             JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
             markResultingCallAsCompleted(context, keyExpression);
 
-            CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
+            CallCandidateResolutionContext<?> storedContextForArgument =
                     context.resolutionResultsCache.getDeferredComputation(keyExpression);
             if (storedContextForArgument != null) {
                 completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
-                CallCandidateResolutionContext<? extends CallableDescriptor> newContext =
-                        storedContextForArgument.replaceBindingTrace(context.trace);
+                CallCandidateResolutionContext<?> newContext = storedContextForArgument.replaceBindingTrace(context.trace);
                 completeUnmappedArguments(newContext, storedContextForArgument.candidateCall.getUnmappedArguments());
                 argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(newContext.replaceContextDependency(INDEPENDENT));
             }
         }
     }
 
-    private static void markResultingCallAsCompleted(
-            @NotNull CallResolutionContext<?> context,
-            @Nullable JetExpression keyExpression
-    ) {
+    private static void markResultingCallAsCompleted(@NotNull CallResolutionContext<?> context, @Nullable JetExpression keyExpression) {
         if (keyExpression == null) return;
 
-        CallCandidateResolutionContext<? extends CallableDescriptor> storedContextForArgument =
-                context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
         if (storedContextForArgument == null) return;
 
         storedContextForArgument.candidateCall.markCallAsCompleted();
 
         // clean data for "invoke" calls
-        ResolvedCallWithTrace<? extends CallableDescriptor> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
+        ResolvedCallWithTrace<?> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
         assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
         resolvedCall.markCallAsCompleted();
     }
@@ -844,23 +840,27 @@ public class CandidateResolver {
     ) {
         ResolvedCallImpl<D> candidateCall = context.candidateCall;
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
-        if (candidateDescriptor instanceof ExpressionAsFunctionDescriptor) return SUCCESS;
 
         ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();
         ReceiverParameterDescriptor expectedThisObjectDescriptor = candidateDescriptor.getExpectedThisObject();
-        ReceiverParameterDescriptor receiverParameterDescriptor;
-        ReceiverValue receiverArgument;
-        if (receiverDescriptor != null && candidateCall.getReceiverArgument().exists()) {
-            receiverParameterDescriptor = receiverDescriptor;
-            receiverArgument = candidateCall.getReceiverArgument();
+        ResolutionStatus status = SUCCESS;
+        // For the expressions like '42.(f)()' where f: String.() -> Unit we'd like to generate a type mismatch error on '1',
+        // not to throw away the candidate, so the following check is skipped.
+        if (!CallResolverUtil.isInvokeCallOnExpressionWithBothReceivers(context.call)) {
+            status = status.combine(checkReceiverTypeError(context, receiverDescriptor, candidateCall.getReceiverArgument()));
         }
-        else if (expectedThisObjectDescriptor != null && candidateCall.getThisObject().exists()) {
-            receiverParameterDescriptor = expectedThisObjectDescriptor;
-            receiverArgument = candidateCall.getThisObject();
-        }
-        else {
-            return SUCCESS;
-        }
+        status = status.combine(checkReceiverTypeError(context, expectedThisObjectDescriptor, candidateCall.getThisObject()));
+        return status;
+    }
+
+    private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @Nullable ReceiverParameterDescriptor receiverParameterDescriptor,
+            @NotNull ReceiverValue receiverArgument
+    ) {
+        if (receiverParameterDescriptor == null || !receiverArgument.exists()) return SUCCESS;
+
+        D candidateDescriptor = context.candidateCall.getCandidateDescriptor();
 
         JetType erasedReceiverType = CallResolverUtil.getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor);
 

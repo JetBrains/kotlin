@@ -1,4 +1,4 @@
-package concurrent
+package test.concurrent
 
 import kotlin.concurrent.*
 import kotlin.test.*

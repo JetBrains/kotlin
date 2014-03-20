@@ -1,3 +1,5 @@
+package test
+
 trait Trait {
     fun foo()
     val bar: Int

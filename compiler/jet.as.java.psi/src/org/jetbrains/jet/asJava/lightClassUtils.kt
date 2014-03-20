@@ -41,15 +41,15 @@ import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import com.intellij.psi.PsiClass
 
-fun JetClassOrObject.toLightClass(): PsiClass? = LightClassUtil.getPsiClass(this)
+fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
-public fun JetDeclaration.toLightElements(): List<PsiElement> =
+public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
             is JetClassOrObject -> Collections.singletonList(LightClassUtil.getPsiClass(this))
             is JetNamedFunction -> Collections.singletonList(LightClassUtil.getLightClassMethod(this))
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
-            is JetParameter -> ArrayList<PsiElement>().let { elements ->
+            is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
                 toPsiParameter()?.let { psiParameter -> elements.add(psiParameter) }
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
 

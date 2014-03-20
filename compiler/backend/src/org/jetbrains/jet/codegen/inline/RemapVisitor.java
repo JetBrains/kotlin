@@ -28,15 +28,25 @@ public class RemapVisitor extends InstructionAdapter {
 
     private final Label end;
 
-    private final VarRemapper remapper;
+    private final LocalVarRemapper remapper;
 
     private final boolean remapReturn;
-    private FieldRemapper nodeRemapper;
 
-    protected RemapVisitor(MethodVisitor mv, Label end, VarRemapper.ParamRemapper remapper, boolean remapReturn, FieldRemapper nodeRemapper) {
+    private final FieldRemapper nodeRemapper;
+
+    private final InstructionAdapter instructionAdapter;
+
+    protected RemapVisitor(
+            MethodVisitor mv,
+            Label end,
+            LocalVarRemapper localVarRemapper,
+            boolean remapReturn,
+            FieldRemapper nodeRemapper
+    ) {
         super(InlineCodegenUtil.API, mv);
+        this.instructionAdapter = new InstructionAdapter(mv);
         this.end = end;
-        this.remapper = remapper;
+        this.remapper = localVarRemapper;
         this.remapReturn = remapReturn;
         this.nodeRemapper = nodeRemapper;
     }
@@ -58,7 +68,14 @@ public class RemapVisitor extends InstructionAdapter {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        remapper.visitVarInsn(opcode, var, new InstructionAdapter(mv));
+        remapper.visitVarInsn(opcode, var, instructionAdapter);
+    }
+
+    @Override
+    public void visitLocalVariable(
+            String name, String desc, String signature, Label start, Label end, int index
+    ) {
+        remapper.visitLocalVariable(name, desc, signature, start, end, index, mv);
     }
 
     @Override
@@ -77,13 +94,6 @@ public class RemapVisitor extends InstructionAdapter {
         else {
             super.visitFieldInsn(opcode, owner, name, desc);
         }
-    }
-
-    @Override
-    public void visitLocalVariable(
-            String name, String desc, String signature, Label start, Label end, int index
-    ) {
-
     }
 
     @Override
@@ -106,9 +116,4 @@ public class RemapVisitor extends InstructionAdapter {
         return null;
     }
 
-    //TODO not skip for lambdas
-    @Override
-    public void visitLineNumber(int line, Label start) {
-
-    }
 }

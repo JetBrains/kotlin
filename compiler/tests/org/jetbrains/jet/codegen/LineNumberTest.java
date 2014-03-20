@@ -293,6 +293,10 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         doTest();
     }
 
+    public void testInlineSimpleCall() {
+        doTest();
+    }
+
     public void testCompileTimeConstant() {
         doTestCustom();
     }

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
@@ -29,9 +28,12 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
-import org.jetbrains.jet.lang.resolve.scopes.*;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
+import org.jetbrains.jet.lang.resolve.scopes.WriteThroughScope;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.DFS;
 
@@ -134,13 +136,6 @@ public class TypeHierarchyResolver {
 
         // Detect and disconnect all loops in the hierarchy
         detectAndDisconnectLoops(c);
-
-        // At this point, there are no loops in the type hierarchy
-
-        checkSupertypesForConsistency(c);
-        //        computeSuperclasses();
-
-        checkTypesInClassHeaders(c); // Check bounds in the types used in generic bounds and supertype lists
     }
 
     @NotNull
@@ -213,7 +208,7 @@ public class TypeHierarchyResolver {
             if (classOrObject instanceof JetClass) {
                 ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
                 //noinspection unchecked
-                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor.getScopeForClassHeaderResolution(),
+                descriptorResolver.resolveGenericBounds((JetClass) classOrObject, descriptor, descriptor.getScopeForClassHeaderResolution(),
                                                         (List) descriptor.getTypeConstructor().getParameters(), trace);
             }
         }
@@ -249,193 +244,74 @@ public class TypeHierarchyResolver {
 
     private void detectAndDisconnectLoops(@NotNull TopDownAnalysisContext c) {
         // Loop detection and disconnection
-        Set<ClassDescriptor> visited = Sets.newHashSet();
-        Set<ClassDescriptor> beingProcessed = Sets.newHashSet();
-        List<ClassDescriptor> currentPath = Lists.newArrayList();
-        for (MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
-            traverseTypeHierarchy(klass, visited, beingProcessed, currentPath);
+        List<Runnable> tasks = new ArrayList<Runnable>();
+        for (final MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
+            for (final JetType supertype : klass.getSupertypes()) {
+                ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                if (supertypeDescriptor instanceof MutableClassDescriptorLite) {
+                    MutableClassDescriptorLite superclass = (MutableClassDescriptorLite) supertypeDescriptor;
+                    if (isReachable(superclass, klass, new HashSet<ClassDescriptor>())) {
+                        tasks.add(new Runnable() {
+                            @Override
+                            public void run() {
+                                klass.getSupertypes().remove(supertype);
+                            }
+                        });
+                        reportCyclicInheritanceHierarchyError(trace, klass, superclass);
+                    }
+                }
+            }
+        }
+
+        for (Runnable task : tasks) {
+            task.run();
         }
     }
 
-    private void traverseTypeHierarchy(
-            MutableClassDescriptorLite currentClass,
-            Set<ClassDescriptor> visited,
-            Set<ClassDescriptor> beingProcessed,
-            List<ClassDescriptor> currentPath
+    // Temporary. Duplicates logic from LazyClassTypeConstructor.isReachable
+    private static boolean isReachable(MutableClassDescriptorLite from, MutableClassDescriptorLite to, Set<ClassDescriptor> visited) {
+        if (!visited.add(from)) return false;
+        for (JetType supertype : from.getSupertypes()) {
+            TypeConstructor supertypeConstructor = supertype.getConstructor();
+            if (supertypeConstructor.getDeclarationDescriptor() == to) {
+                return true;
+            }
+            ClassifierDescriptor superclass = supertypeConstructor.getDeclarationDescriptor();
+            if (superclass instanceof MutableClassDescriptorLite && isReachable((MutableClassDescriptorLite) superclass, to, visited)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void reportCyclicInheritanceHierarchyError(
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull ClassDescriptor superclass
     ) {
-        if (!visited.add(currentClass)) {
-            if (beingProcessed.contains(currentClass)) {
-                markCycleErrors(currentPath, currentClass);
-                assert !currentPath.isEmpty() : "Cycle cannot be found on an empty currentPath";
-                ClassDescriptor subclassOfCurrent = currentPath.get(currentPath.size() - 1);
-                assert subclassOfCurrent instanceof MutableClassDescriptor;
-                // Disconnect the loop
-                for (Iterator<JetType> iterator = ((MutableClassDescriptor) subclassOfCurrent).getSupertypes().iterator();
-                     iterator.hasNext(); ) {
-                    JetType type = iterator.next();
-                    if (type.getConstructor() == currentClass.getTypeConstructor()) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-            return;
-        }
+        PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
 
-        beingProcessed.add(currentClass);
-        currentPath.add(currentClass);
-        for (JetType supertype : Lists.newArrayList(currentClass.getSupertypes())) {
-            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-            if (declarationDescriptor instanceof MutableClassDescriptor) {
-                MutableClassDescriptor mutableClassDescriptor = (MutableClassDescriptor) declarationDescriptor;
-                traverseTypeHierarchy(mutableClassDescriptor, visited, beingProcessed, currentPath);
-            }
-        }
-        beingProcessed.remove(currentClass);
-        currentPath.remove(currentPath.size() - 1);
-    }
-
-    private void markCycleErrors(List<ClassDescriptor> currentPath, @NotNull ClassDescriptor current) {
-        int size = currentPath.size();
-        for (int i = size - 1; i >= 0; i--) {
-            ClassDescriptor classDescriptor = currentPath.get(i);
-
-            ClassDescriptor superclass = (i < size - 1) ? currentPath.get(i + 1) : current;
-            PsiElement psiElement = BindingContextUtils.classDescriptorToDeclaration(trace.getBindingContext(), classDescriptor);
-
-            PsiElement elementToMark = null;
-            if (psiElement instanceof JetClassOrObject) {
-                JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
-                for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-                    JetTypeReference typeReference = delegationSpecifier.getTypeReference();
-                    if (typeReference == null) continue;
-                    JetType supertype = trace.get(TYPE, typeReference);
-                    if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
-                        elementToMark = typeReference;
-                    }
-                }
-            }
-            if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
-                PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
-                PsiElement nameIdentifier = namedElement.getNameIdentifier();
-                if (nameIdentifier != null) {
-                    elementToMark = nameIdentifier;
-                }
-            }
-            if (elementToMark != null) {
-                trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
-            }
-
-            if (classDescriptor == current) {
-                // Beginning of cycle is found
-                break;
-            }
-        }
-    }
-
-    private void checkSupertypesForConsistency(@NotNull TopDownAnalysisContext c) {
-        for (MutableClassDescriptorLite mutableClassDescriptor : c.getClassesTopologicalOrder()) {
-            Multimap<TypeConstructor, TypeProjection> multimap = SubstitutionUtils
-                    .buildDeepSubstitutionMultimap(mutableClassDescriptor.getDefaultType());
-            for (Map.Entry<TypeConstructor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
-                Collection<TypeProjection> projections = entry.getValue();
-                if (projections.size() > 1) {
-                    TypeConstructor typeConstructor = entry.getKey();
-                    DeclarationDescriptor declarationDescriptor = typeConstructor.getDeclarationDescriptor();
-                    assert declarationDescriptor instanceof TypeParameterDescriptor : declarationDescriptor;
-                    TypeParameterDescriptor typeParameterDescriptor = (TypeParameterDescriptor) declarationDescriptor;
-
-                    // Immediate arguments of supertypes cannot be projected
-                    Set<JetType> conflictingTypes = Sets.newLinkedHashSet();
-                    for (TypeProjection projection : projections) {
-                        conflictingTypes.add(projection.getType());
-                    }
-                    switch (typeParameterDescriptor.getVariance()) {
-                        case INVARIANT:
-                            // Leave conflicting types as is
-                            break;
-                        case IN_VARIANCE:
-                            // Filter out those who have supertypes in this set (common supertype)
-                            Filter.REMOVE_IF_SUPERTYPE_IN_THE_SET.proceed(conflictingTypes);
-                            break;
-                        case OUT_VARIANCE:
-                            // Filter out those who have subtypes in this set (common subtype)
-                            Filter.REMOVE_IF_SUBTYPE_IN_THE_SET.proceed(conflictingTypes);
-                            break;
-                    }
-
-                    if (conflictingTypes.size() > 1) {
-                        DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-                        assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                        JetClassOrObject psiElement = (JetClassOrObject) BindingContextUtils
-                                .classDescriptorToDeclaration(trace.getBindingContext(), mutableClassDescriptor);
-                        JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
-                        assert delegationSpecifierList != null;
-                        //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
-                                             .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
-                                                 conflictingTypes));
-                    }
-                }
-            }
-        }
-    }
-
-    private enum Filter {
-        REMOVE_IF_SUBTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(other, subject);
-            }
-        },
-        REMOVE_IF_SUPERTYPE_IN_THE_SET {
-            @Override
-            public boolean removeNeeded(JetType subject, JetType other) {
-                return JetTypeChecker.INSTANCE.isSubtypeOf(subject, other);
-            }
-        };
-
-        private void proceed(Set<JetType> conflictingTypes) {
-            for (Iterator<JetType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-                JetType type = iterator.next();
-                for (JetType otherType : conflictingTypes) {
-                    boolean subtypeOf = removeNeeded(type, otherType);
-                    if (type != otherType && subtypeOf) {
-                        iterator.remove();
-                        break;
-                    }
-                }
-            }
-        }
-
-        public abstract boolean removeNeeded(JetType subject, JetType other);
-    }
-
-    private void checkTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
-        for (JetClassOrObject classOrObject : c.getClasses().keySet()) {
+        PsiElement elementToMark = null;
+        if (psiElement instanceof JetClassOrObject) {
+            JetClassOrObject classOrObject = (JetClassOrObject) psiElement;
             for (JetDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-                checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
-            }
-
-            if (!(classOrObject instanceof JetClass)) continue;
-            JetClass jetClass = (JetClass) classOrObject;
-
-            for (JetTypeParameter jetTypeParameter : jetClass.getTypeParameters()) {
-                checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
-            }
-
-            for (JetTypeConstraint constraint : jetClass.getTypeConstraints()) {
-                checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
+                JetTypeReference typeReference = delegationSpecifier.getTypeReference();
+                if (typeReference == null) continue;
+                JetType supertype = trace.get(TYPE, typeReference);
+                if (supertype != null && supertype.getConstructor() == superclass.getTypeConstructor()) {
+                    elementToMark = typeReference;
+                }
             }
         }
-    }
-
-    private void checkBoundsForTypeInClassHeader(@Nullable JetTypeReference typeReference) {
-        if (typeReference != null) {
-            JetType type = trace.getBindingContext().get(TYPE, typeReference);
-            if (type != null) {
-                DescriptorResolver.checkBounds(typeReference, type, trace);
+        if (elementToMark == null && psiElement instanceof PsiNameIdentifierOwner) {
+            PsiNameIdentifierOwner namedElement = (PsiNameIdentifierOwner) psiElement;
+            PsiElement nameIdentifier = namedElement.getNameIdentifier();
+            if (nameIdentifier != null) {
+                elementToMark = nameIdentifier;
             }
+        }
+        if (elementToMark != null) {
+            trace.report(CYCLIC_INHERITANCE_HIERARCHY.on(elementToMark));
         }
     }
 
@@ -461,6 +337,7 @@ public class TypeHierarchyResolver {
         public void visitJetFile(@NotNull JetFile file) {
             MutablePackageFragmentDescriptor packageFragment = getOrCreatePackageFragmentForFile(file);
             c.getPackageFragments().put(file, packageFragment);
+            c.addFile(file);
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(packageFragment.getFqName());
             ChainedScope rootPlusPackageScope = new ChainedScope(packageView, "Root scope for " + file, packageView.getMemberScope(), outerScope);
@@ -548,17 +425,8 @@ public class TypeHierarchyResolver {
 
             MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(packageDirective.getFqName());
 
-            for (JetSimpleNameExpression nameExpression : packageDirective.getPackageNames()) {
-                FqName fqName = packageDirective.getFqName(nameExpression);
-
-                PackageViewDescriptor packageView = packageFragmentProvider.getModule().getPackage(fqName);
-                assert packageView != null : "package not found: " + fqName;
-                trace.record(REFERENCE_TARGET, nameExpression, packageView);
-
-                PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
-                assert parentPackageView != null : "package has no parent: " + packageView;
-                trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
-            }
+            ModuleDescriptor module = packageFragmentProvider.getModule();
+            DescriptorResolver.resolvePackageHeader(packageDirective, module, TypeHierarchyResolver.this.trace);
 
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
 

@@ -1,6 +1,8 @@
+package test;
+
 
 class Int {
     {
-        int r = _DefaultPackage.lll(1);
+        int r = TestPackage.lll(1);
     }
 }

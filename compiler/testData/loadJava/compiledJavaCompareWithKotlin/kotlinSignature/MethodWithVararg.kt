@@ -3,7 +3,7 @@ package test
 import java.util.*
 
 public open class MethodWithVararg : Object() {
-    public open fun foo(vararg p0 : String) {
+    public open fun foo(vararg s : String) {
         throw UnsupportedOperationException()
     }
 }

@@ -51,6 +51,9 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -151,12 +154,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    project = mainFile.getProject(),
-                    elements = array(classToMove),
-                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    mainFile.getProject(),
+                    array(classToMove),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -168,12 +171,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    project = project,
-                    elements = array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
-                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    project,
+                    array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -186,12 +189,12 @@ enum class MoveAction {
             val targetClass = config.getString("targetClass")
 
             MoveClassToInnerProcessor(
-                    project = project,
-                    classesToMove = array(classToMove),
-                    targetClass = JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
-                    searchInComments = false,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                    project,
+                    array(classToMove),
+                    JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null
             ).run()
         }
     }
@@ -206,12 +209,12 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveInnerProcessor(
-                    project = project,
-                    innerClass = classToMove,
-                    name = newClassName,
-                    passOuterClass = outerInstanceParameterName != null,
-                    parameterName = outerInstanceParameterName,
-                    targetContainer = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
+                    project,
+                    classToMove,
+                    newClassName,
+                    outerInstanceParameterName != null,
+                    outerInstanceParameterName,
+                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
             ).run()
         }
     }
@@ -223,26 +226,39 @@ enum class MoveAction {
             val targetPackage = config.getNullableString("targetPackage")
             if (targetPackage != null) {
                 MoveFilesOrDirectoriesProcessor(
-                        project = project,
-                        elements = array(mainFile),
-                        newParent = JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
-                        searchInComments = false,
-                        searchInNonJavaFiles = true,
-                        moveCallback = null,
-                        prepareSuccessfulCallback = null
+                        project,
+                        array(mainFile),
+                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
+                        /* searchInComments = */ false,
+                        /* searchInNonJavaFiles = */ true,
+                        /* moveCallback = */ null,
+                        /* prepareSuccessfulCallback = */ null
                 ).run()
             }
             else {
                 val targetFile = config.getString("targetFile")
 
                 MoveHandler.doMove(
-                        project = project,
-                        elements = array(mainFile),
-                        targetContainer = PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
-                        dataContext = null,
-                        callback = null
+                        project,
+                        array(mainFile),
+                        PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
+                        /* dataContext = */ null,
+                        /* callback = */ null
                 )
             }
+        }
+    }
+
+    MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val elementToMove = elementAtCaret!!.getParentByType(javaClass<JetNamedDeclaration>())!!
+            val targetPackage = config.getString("targetPackage")
+
+            val options = MoveKotlinTopLevelDeclarationsOptions(
+                    elementsToMove = listOf(elementToMove),
+                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage))
+            )
+            MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
         }
     }
 

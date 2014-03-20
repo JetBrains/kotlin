@@ -21,12 +21,12 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.psi.Call;
-import org.jetbrains.jet.lang.psi.CallKey;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition;
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -104,7 +104,7 @@ public class CallResolverUtil {
 
     @Nullable
     public static CallKey createCallKey(@NotNull BasicCallResolutionContext context) {
-        if (context.call.getCallType() == Call.CallType.INVOKE) {
+        if (isInvokeCallOnVariable(context.call)) {
             return null;
         }
         PsiElement callElement = context.call.getCallElement();
@@ -145,5 +145,18 @@ public class CallResolverUtil {
             return true;
         }
         return false;
+    }
+
+    public static boolean isInvokeCallOnVariable(@NotNull Call call) {
+        if (call.getCallType() != Call.CallType.INVOKE) return false;
+        ReceiverValue thisObject = call.getThisObject();
+        //calleeExpressionAsThisObject for invoke is always ExpressionReceiver, see CallForImplicitInvoke
+        JetExpression expression = ((ExpressionReceiver) thisObject).getExpression();
+        return expression instanceof JetSimpleNameExpression;
+    }
+
+    public static boolean isInvokeCallOnExpressionWithBothReceivers(@NotNull Call call) {
+        if (call.getCallType() != Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false;
+        return call.getExplicitReceiver().exists() && call.getThisObject().exists();
     }
 }

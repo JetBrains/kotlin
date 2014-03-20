@@ -26,8 +26,8 @@ import org.jetbrains.jet.plugin.libraries.NavigateToStdlibSourceRegressionTest;
 public class LightClassForLibrarySourceFileTest extends NavigateToStdlibSourceRegressionTest {
 
     public void testLightClassForFileFromLibrarySource() throws Exception {
-        PsiElement navigationElement = getNavigationElement("libraries/stdlib/src/kotlin/Iterators.kt", "FunctionIterator");
-        assertTrue("FunctionIterator should navigate to JetClassOrObject", navigationElement instanceof JetClassOrObject);
+        PsiElement navigationElement = getNavigationElement("libraries/stdlib/src/kotlin/collections/Stream.kt", "AbstractIterator");
+        assertTrue("AbstractIterator should navigate to JetClassOrObject", navigationElement instanceof JetClassOrObject);
         PsiClass lightClass = LightClassUtil.getPsiClass((JetClassOrObject) navigationElement);
         assertTrue("Do not create Kotlin Light Class for file from library sources", !(lightClass instanceof KotlinLightClass));
     }

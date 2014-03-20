@@ -2515,6 +2515,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/recursiveComparator/classObjectHeader.kt");
         }
         
+        @TestMetadata("CyclicHierarchy.kt")
+        public void testCyclicHierarchy() throws Exception {
+            doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/recursiveComparator/CyclicHierarchy.kt");
+        }
+        
         @TestMetadata("enum.kt")
         public void testEnum() throws Exception {
             doTestCheckingPrimaryConstructors("compiler/testData/lazyResolve/recursiveComparator/enum.kt");

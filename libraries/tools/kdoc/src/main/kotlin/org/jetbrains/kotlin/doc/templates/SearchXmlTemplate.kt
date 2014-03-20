@@ -30,30 +30,28 @@ class SearchXmlTemplate(val model: KModel): KDocTemplate() {
         for (c in model.classes) {
             add("${c.simpleName} [${c.pkg.name}]", "${c.nameAsPath}.html", c.kind)
 
-            c.functions.forEach{ add(c, it, href(it)) }
-            c.properties.forEach{ add(c, it, href(it)) }
+            c.functions.forEach { add(c, it, href(it)) }
+            c.properties.forEach { add(c, it, href(it)) }
         }
 
         for (p in model.packages) {
-            val map = inheritedExtensionFunctions(p.functions)
+            val fmap = inheritedExtensionFunctions(p.functions)
             val pmap = inheritedExtensionProperties(p.properties)
-            val classes = hashSet<KClass>()
-            classes.addAll(map.keySet())
+            val classes = hashSetOf<KClass>()
+            classes.addAll(fmap.keySet())
             classes.addAll(pmap.keySet())
             for (c in classes) {
-                if (c != null) {
-                    val functions = map.get(c).orEmpty()
-                    val properties = pmap.get(c).orEmpty()
+                val functions = fmap.get(c).orEmpty()
+                val properties = pmap.get(c).orEmpty()
 
-                    functions.forEach{ add(c, it, p.nameAsPath + "/" + extensionsHref(p, c, it)) }
-                    functions.forEach{ add(c, it, p.nameAsPath + "/" + extensionsHref(p, c, it)) }
-                }
+                functions.forEach { add(c, it, p.nameAsPath + "/" + extensionsHref(p, c, it)) }
+                properties.forEach { add(c, it, p.nameAsPath + "/" + extensionsHref(p, c, it)) }
             }
         }
 
         println("""<?xml version="1.0" encoding="UTF-8"?>
 <searches>""")
-        for (s in map.values()!!) {
+        for (s in map.values()) {
             println("""<search>
   <href>${s.href}</href>
   <name>${s.name}</name>

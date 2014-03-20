@@ -39,9 +39,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.jet.lang.diagnostics.Errors.AMBIGUOUS_LABEL;
-import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_LABEL_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CAPTURED_IN_CLOSURE;
-import static org.jetbrains.jet.lang.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 
 public class BindingContextUtils {
     private BindingContextUtils() {
@@ -302,7 +300,7 @@ public class BindingContextUtils {
     ) {
         if (expression instanceof JetCallExpression) {
             JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = context.get(BindingContext.RESOLVED_CALL, calleeExpression);
+            ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, calleeExpression);
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 return true;
             }

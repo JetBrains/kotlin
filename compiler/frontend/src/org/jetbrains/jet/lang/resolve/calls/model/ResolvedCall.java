@@ -21,8 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.ValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -31,6 +30,10 @@ import java.util.List;
 import java.util.Map;
 
 public interface ResolvedCall<D extends CallableDescriptor> {
+    /** The call that was resolved to this ResolvedCall */
+    @NotNull
+    Call getCall();
+
     /** A target callable descriptor as it was accessible in the corresponding scope, i.e. with type arguments not substituted */
     @NotNull
     D getCandidateDescriptor();
@@ -63,6 +66,7 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     @NotNull
     Map<TypeParameterDescriptor, JetType> getTypeArguments();
 
+    /** Data flow info for each argument and the result data flow info */
     @NotNull
     DataFlowInfoForArguments getDataFlowInfoForArguments();
 

@@ -208,11 +208,10 @@ public class AnnotationResolver {
 
     public static void resolveAnnotationArgument(
             @NotNull AnnotationDescriptorImpl annotationDescriptor,
-            @NotNull ResolvedCall<? extends CallableDescriptor> call,
+            @NotNull ResolvedCall<?> resolvedCall,
             @NotNull BindingTrace trace
     ) {
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument :
-                call.getValueArguments().entrySet()) {
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
 
             JetType varargElementType = parameterDescriptor.getVarargElementType();
@@ -346,8 +345,8 @@ public class AnnotationResolver {
         return new AnnotationsImpl(result);
     }
 
-    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetModifierListOwner modifierListOwner, BindingTrace trace) {
-        JetModifierList modifierList = modifierListOwner.getModifierList();
+    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull JetTypeParameter jetTypeParameter, @NotNull BindingTrace trace) {
+        JetModifierList modifierList = jetTypeParameter.getModifierList();
         if (modifierList == null) return;
 
         for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {

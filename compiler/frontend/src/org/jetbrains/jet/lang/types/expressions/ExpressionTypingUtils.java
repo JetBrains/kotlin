@@ -153,12 +153,12 @@ public class ExpressionTypingUtils {
             return false;
         }
 
-        ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
-        if (call == null) {
+        ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
+        if (resolvedCall == null) {
             return false;
         }
 
-        CallableDescriptor callable = call.getResultingDescriptor();
+        CallableDescriptor callable = resolvedCall.getResultingDescriptor();
         if (callable instanceof SimpleFunctionDescriptor && ((SimpleFunctionDescriptor) callable).getInlineStrategy().isInline()) {
             DeclarationDescriptor scopeContainerParent = scopeContainer.getContainingDeclaration();
             assert scopeContainerParent != null : "parent is null for " + scopeContainer;

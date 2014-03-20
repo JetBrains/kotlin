@@ -1,3 +1,5 @@
+package test
+
 class E1: Exception()
 
 trait Base<T> {

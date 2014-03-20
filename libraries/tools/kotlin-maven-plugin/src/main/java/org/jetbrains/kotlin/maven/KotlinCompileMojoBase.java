@@ -206,7 +206,7 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
             }
         };
 
-        final ExitCode exitCode = compiler.exec(messageCollector, arguments);
+        final ExitCode exitCode = executeCompiler(compiler, arguments, messageCollector);
 
         switch (exitCode) {
             case COMPILATION_ERROR:
@@ -256,6 +256,15 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
      */
     protected CommonCompilerArguments createCompilerArguments() {
         return new K2JVMCompilerArguments();
+    }
+
+    @NotNull
+    protected ExitCode executeCompiler(
+            @NotNull CLICompiler compiler,
+            @NotNull CommonCompilerArguments arguments,
+            @NotNull MessageCollector messageCollector
+    ) {
+        return compiler.exec(messageCollector, arguments);
     }
 
     /**

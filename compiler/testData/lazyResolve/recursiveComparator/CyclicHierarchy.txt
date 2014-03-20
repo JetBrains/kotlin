@@ -1,0 +1,25 @@
+package test
+
+internal trait A {
+}
+
+internal trait B : test.A {
+}
+
+internal trait C {
+}
+
+internal trait D {
+}
+
+internal trait E {
+}
+
+internal trait F {
+}
+
+internal trait G : test.F {
+}
+
+internal trait H : test.F {
+}

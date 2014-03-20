@@ -21,6 +21,6 @@ import junit.framework.Test;
 @SuppressWarnings("JUnitTestCaseWithNoTests")
 public final class ArraysTest extends JsUnitTestBase {
     public static Test suite() throws Exception {
-        return createTestSuiteForFile("libraries/stdlib/test/ArraysTest.kt");
+        return createTestSuiteForFile("libraries/stdlib/test/collections/ArraysTest.kt");
     }
 }

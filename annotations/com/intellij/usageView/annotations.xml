@@ -5,4 +5,8 @@
   <item name='com.intellij.usageView.UsageInfo mySmartPointer'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.usageView.UsageViewUtil com.intellij.usageView.UsageInfo[] removeDuplicatedUsages(com.intellij.usageView.UsageInfo[])'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Sets;
 import com.intellij.framework.library.LibraryVersionProperties;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -38,37 +38,74 @@ import java.util.Set;
 
 import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 
-public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
+public class JavaRuntimeLibraryDescription extends CustomLibraryDescriptorWithDefferConfig {
     public static final LibraryKind KOTLIN_JAVA_RUNTIME_KIND = LibraryKind.create("kotlin-java-runtime");
     public static final String LIBRARY_NAME = "KotlinJavaRuntime";
 
     public static final String JAVA_RUNTIME_LIBRARY_CREATION = "Java Runtime Library Creation";
-    private static final Set<LibraryKind> libraryKinds = Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
+    public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVA_RUNTIME_KIND);
+
+    private static final String DEFAULT_LIB_DIR_NAME = "lib";
+
+    private final boolean useRelativePaths;
+
+    private DeferredCopyFileRequests deferredCopyFileRequests = null;
+
+    /**
+     * @param project null when project doesn't exist yet (called from project wizard)
+     */
+    public JavaRuntimeLibraryDescription(@Nullable Project project) {
+        useRelativePaths = project == null;
+    }
 
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return libraryKinds;
+        return SUITABLE_LIBRARY_KINDS;
+    }
+
+    @NotNull
+    @Override
+    public LibraryKind getLibraryKind() {
+        return KOTLIN_JAVA_RUNTIME_KIND;
+    }
+
+    @Nullable
+    @Override
+    public DeferredCopyFileRequests getCopyFileRequests() {
+        return deferredCopyFileRequests;
     }
 
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        KotlinJavaModuleConfigurator configurator = (KotlinJavaModuleConfigurator) ConfigureKotlinInProjectUtils
-                .getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-        assert configurator != null : "Configurator with name " + KotlinJavaModuleConfigurator.NAME + " should exists";
+        KotlinJavaModuleConfigurator jvmConfigurator =
+                (KotlinJavaModuleConfigurator) ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
+        assert jvmConfigurator != null : "Configurator with name " + KotlinJavaModuleConfigurator.NAME + " should exists";
 
-        String defaultPathToJarFile = FileUIUtils.createRelativePath(null, contextDirectory, "lib");
+        deferredCopyFileRequests = new DeferredCopyFileRequests(jvmConfigurator);
 
-        boolean jarFilePresent = getFileInDir(configurator.getJarName(), defaultPathToJarFile).exists();
+        String defaultPathToJarFile = useRelativePaths ? DEFAULT_LIB_DIR_NAME
+                                                       : FileUIUtils.createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
+
+        File bundledLibJarFile = jvmConfigurator.getExistedJarFile();
+        File bundledLibSourcesJarFile = jvmConfigurator.getExistedSourcesJarFile();
 
         File libraryFile;
         File librarySrcFile;
-        if (jarFilePresent) {
-            libraryFile = getFileInDir(configurator.getJarName(), defaultPathToJarFile);
-            File sourcesJar = getFileInDir(configurator.getSourcesJarName(), defaultPathToJarFile);
-            librarySrcFile = sourcesJar.exists() ? sourcesJar
-                                                 : configurator.copyFileToDir(configurator.getExistedSourcesJarFile(), libraryFile.getParent());
+
+        File stdJarInDefaultPath = getFileInDir(jvmConfigurator.getJarName(), defaultPathToJarFile);
+        if (!useRelativePaths && stdJarInDefaultPath.exists()) {
+            libraryFile = stdJarInDefaultPath;
+
+            File sourcesJar = getFileInDir(jvmConfigurator.getSourcesJarName(), defaultPathToJarFile);
+            if (sourcesJar.exists()) {
+                librarySrcFile = sourcesJar;
+            }
+            else {
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, libraryFile.getParent());
+                librarySrcFile = bundledLibSourcesJarFile;
+            }
         }
         else {
             CreateJavaLibraryDialog dialog = new CreateJavaLibraryDialog(defaultPathToJarFile);
@@ -77,18 +114,19 @@ public class JavaRuntimeLibraryDescription extends CustomLibraryDescription {
             if (!dialog.isOK()) return null;
 
             String copyIntoPath = dialog.getCopyIntoPath();
+            if (copyIntoPath != null) {
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibJarFile, copyIntoPath);
+                deferredCopyFileRequests.addCopyWithReplaceRequest(bundledLibSourcesJarFile, copyIntoPath);
+            }
 
-            File existedJarFile = configurator.getExistedJarFile();
-            libraryFile = copyIntoPath != null ? configurator.copyFileToDir(existedJarFile, copyIntoPath) : existedJarFile;
-
-            File existedSourcesJarFile = configurator.getExistedSourcesJarFile();
-            librarySrcFile = copyIntoPath != null ? configurator.copyFileToDir(existedSourcesJarFile, copyIntoPath) : existedSourcesJarFile;
+            libraryFile = bundledLibJarFile;
+            librarySrcFile = bundledLibSourcesJarFile;
         }
 
         final String libraryFileUrl = VfsUtil.getUrlForLibraryRoot(libraryFile);
         final String libraryFileSrcUrl = VfsUtil.getUrlForLibraryRoot(librarySrcFile);
 
-        return new NewLibraryConfiguration(LIBRARY_NAME, getDownloadableLibraryType(), new LibraryVersionProperties()) {
+        return new NewLibraryConfiguration(LIBRARY_NAME, null, new LibraryVersionProperties()) {
             @Override
             public void addRoots(@NotNull LibraryEditor editor) {
                 editor.addRoot(libraryFileUrl, OrderRootType.CLASSES);

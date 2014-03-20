@@ -18,16 +18,58 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
+    private Boolean hasStableParameterNames = null;
+
     public JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name
     ) {
-        super(containingDeclaration, annotations, name, Kind.DECLARATION);
+        this(containingDeclaration, annotations, name, Kind.DECLARATION);
+    }
+
+    private JavaMethodDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @NotNull Kind kind
+    ) {
+        super(containingDeclaration, annotations, name, kind);
+    }
+
+    private JavaMethodDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull SimpleFunctionDescriptor original,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @NotNull Kind kind
+    ) {
+        super(containingDeclaration, original, annotations, name, kind);
+    }
+
+    @Override
+    public boolean hasStableParameterNames() {
+        assert hasStableParameterNames != null : "hasStableParameterNames was not set: " + this;
+        return hasStableParameterNames;
+    }
+
+    public void setHasStableParameterNames(boolean hasStableParameterNames) {
+        this.hasStableParameterNames = hasStableParameterNames;
+    }
+
+    @Override
+    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+        JavaMethodDescriptor result = preserveOriginal
+                                      ? new JavaMethodDescriptor(newOwner, getOriginal(), getAnnotations(), getName(), kind)
+                                      : new JavaMethodDescriptor(newOwner, getAnnotations(), getName(), kind);
+        result.setHasStableParameterNames(hasStableParameterNames());
+        return result;
     }
 }

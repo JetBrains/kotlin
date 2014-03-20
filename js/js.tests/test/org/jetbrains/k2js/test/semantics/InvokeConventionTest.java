@@ -23,11 +23,34 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
     }
 
     public void testInvokeMethod() throws Exception {
-        // TODO uncomment this method to make the test case fail
-        // fooBoxIsValue("hello world!");
+        fooBoxIsValue("hello world!");
     }
 
     public void testExplicitInvokeLambda() throws Exception {
         checkFooBoxIsOk();
+    }
+
+    public void testInvokeOnExprByConvention() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testInvokeInExtensionFunctionLiteral() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testInvokeInFunctionLiteral() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testInvokeWithReceiverArgument() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testInvokeWithThisObject() throws Exception {
+        fooBoxTest();
+    }
+
+    public void testInvokeWithThisObjectAndReceiver() throws Exception {
+        fooBoxTest();
     }
 }

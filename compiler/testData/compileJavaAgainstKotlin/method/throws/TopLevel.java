@@ -1,14 +1,16 @@
+package test;
+
 class JavaClass {
     void testMethod() {
-        _DefaultPackage.none();
+        TestPackage.none();
 
         try {
-            _DefaultPackage.one();
+            TestPackage.one();
         }
         catch (E1 e) {}
 
         try {
-            _DefaultPackage.two();
+            TestPackage.two();
         }
         catch (E1 e) {}
         catch (E2 e) {}

@@ -3,10 +3,10 @@ package test
 public trait UseParameterInUpperBoundWithKotlinSignature : java.lang.Object {
     
     public trait Sub : test.UseParameterInUpperBoundWithKotlinSignature.Super {
-        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : kotlin.List<B>> foo(/*0*/ p0: B, /*1*/ p1: A): kotlin.Unit
+        public abstract override /*1*/ fun </*0*/ B, /*1*/ A : kotlin.List<B>> foo(/*0*/ b: B, /*1*/ a: A): kotlin.Unit
     }
     
     public trait Super : java.lang.Object {
-        public abstract fun </*0*/ A, /*1*/ B : kotlin.List<A>> foo(/*0*/ p0: A, /*1*/ p1: B): kotlin.Unit
+        public abstract fun </*0*/ A, /*1*/ B : kotlin.List<A>> foo(/*0*/ a: A, /*1*/ b: B): kotlin.Unit
     }
 }

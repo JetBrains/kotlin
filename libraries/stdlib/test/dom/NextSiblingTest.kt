@@ -39,7 +39,7 @@ class NextSiblingTest {
 
         val elems = doc["#id3"]
         val element = elems.first()
-        val elements = element.nextElements().toList()
+        val elements = element.nextElements()
         val nodes = element.nextSiblings().toList()
 
         assertEquals(1, elements.size())

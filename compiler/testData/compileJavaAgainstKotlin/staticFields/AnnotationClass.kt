@@ -1,3 +1,5 @@
+package test
+
 annotation class AString(val value: String)
 annotation class AChar(val value: Char)
 annotation class AInt(val value: Int)

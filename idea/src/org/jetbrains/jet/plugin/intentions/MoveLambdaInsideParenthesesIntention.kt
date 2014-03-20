@@ -29,8 +29,10 @@ public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<Je
     override fun isApplicableTo(element: JetCallExpression): Boolean = !element.getFunctionLiteralArguments().isEmpty()
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val funName = element.getCalleeExpression()?.getText()
-        if (funName == null) return
+        val typeArgs = element.getTypeArgumentList()?.getText()
+        val exprText = element.getCalleeExpression()?.getText()
+        if (exprText == null) return
+        val funName = if (!element.getTypeArguments().isEmpty() && typeArgs != null) "$exprText$typeArgs" else "$exprText"
         val sb = StringBuilder()
         sb.append("(")
         for (value in element.getValueArguments()) {

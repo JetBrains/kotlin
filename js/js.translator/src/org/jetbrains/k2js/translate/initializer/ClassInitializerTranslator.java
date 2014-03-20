@@ -20,7 +20,6 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
@@ -125,7 +124,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsExpression> translateArguments(@NotNull JetDelegatorToSuperCall superCall) {
-        ResolvedCall<? extends CallableDescriptor> call = context().bindingContext().get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
+        ResolvedCall<?> call = context().bindingContext().get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
         assert call != null : "ResolvedCall for superCall must be not null";
         return CallArgumentTranslator.translate(call, null, context()).getTranslateArguments();
     }

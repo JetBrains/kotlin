@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,15 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
 
     @NotNull
     @Override
-    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull FrameworkSupportModel model) {
+    public FrameworkSupportInModuleConfigurable createConfigurable(@NotNull final FrameworkSupportModel model) {
         return new FrameworkSupportInModuleConfigurable() {
+            public JSLibraryStdDescription description;
+
             @Nullable
             @Override
             public CustomLibraryDescription createLibraryDescription() {
-                return new JSLibraryStdDescription();
+                description = new JSLibraryStdDescription(model.getProject());
+                return description;
             }
 
             @Nullable
@@ -66,10 +69,22 @@ public class JSFrameworkSupportProvider extends FrameworkSupportInModuleProvider
                     @NotNull ModifiableModelsProvider modifiableModelsProvider) {
                 FrameworksCompatibilityUtils.suggestRemoveIncompatibleFramework(
                         rootModel,
-                        new JavaRuntimeLibraryDescription(),
+                        JavaRuntimeLibraryDescription.SUITABLE_LIBRARY_KINDS,
                         JavaFrameworkType.getInstance());
 
                 FrameworksCompatibilityUtils.suggestRemoveOldJsLibrary(rootModel);
+
+                description.finishLibConfiguration(module, rootModel);
+            }
+
+            @Override
+            public void onFrameworkSelectionChanged(boolean selected) {
+                if (selected) {
+                    String providerId = JavaFrameworkType.getInstance().getId();
+                    if (model.isFrameworkSelected(providerId)) {
+                        model.setFrameworkComponentEnabled(providerId, false);
+                    }
+                }
             }
         };
     }

@@ -16,18 +16,12 @@
 
 package org.jetbrains.jet.resolve.calls
 
-import com.google.common.collect.ImmutableMap
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
@@ -40,6 +34,7 @@ import java.io.File
 import java.util.Collections
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -54,14 +49,14 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
         }
         val explicitReceiverKind = directives.getExplicitReceiverKind()
 
-        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<out CallableDescriptor?>> {
+        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
             val psiFile = JetTestUtils.loadJetFile(getProject(), file)
             val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.emptyList())
-            val bindingContext = analyzeExhaust!!.getBindingContext()
+            val bindingContext = analyzeExhaust.getBindingContext()
             return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
         }
 
-        fun checkResolvedCall(resolvedCall: ResolvedCall<out CallableDescriptor?>, element: JetElement) {
+        fun checkResolvedCall(resolvedCall: ResolvedCall<*>, element: JetElement) {
             val lineAndColumn = DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange())
 
             val (actualThisObject, actualReceiverArgument, actualExplicitReceiverKind) = with(resolvedCall) {
@@ -78,12 +73,22 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         var callFound = false
         for ((element, resolvedCall) in analyzeFileAndGetResolvedCallEntries()) {
-            if (callName.equals(element.getText())) {
+
+            fun tryCall(resolvedCall: ResolvedCall<*>, actualName: String? = element.getText()) {
+                if (callName == null || callName != actualName) return
                 callFound = true
                 checkResolvedCall(resolvedCall, element)
             }
+
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                tryCall(resolvedCall.getFunctionCall(), "invoke")
+                tryCall(resolvedCall.getVariableCall())
+            }
+            else {
+                tryCall(resolvedCall)
+            }
         }
-        assertTrue(callFound, "Resolved call for $callName was not found.")
+        assertTrue(callFound, "Resolved call for $callName was not found")
     }
 }
 

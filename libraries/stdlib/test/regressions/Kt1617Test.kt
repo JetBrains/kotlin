@@ -9,7 +9,7 @@ import junit.framework.TestCase
 
 class Kt1617Test: TestCase() {
     fun testMapFunction() {
-        val coll: Collection<String> = arrayList("foo", "bar")
+        val coll: Collection<String> = arrayListOf("foo", "bar")
 
         val files =  coll.map{ File(it) }
 

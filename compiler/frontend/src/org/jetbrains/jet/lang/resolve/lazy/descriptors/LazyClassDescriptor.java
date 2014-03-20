@@ -24,6 +24,7 @@ import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.Unit;
 import kotlin.KotlinPackage;
+import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,6 +34,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -53,6 +55,7 @@ import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.CLASS_OBJECT_NOT_ALLOWED;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
@@ -76,7 +79,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     private final boolean isInner;
 
     private final NotNullLazyValue<Annotations> annotations;
-    private final NullableLazyValue<ClassDescriptor> classObjectDescriptor;
+    private final NullableLazyValue<ClassDescriptorWithResolutionScopes> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
 
@@ -129,9 +132,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
                 return resolveAnnotations();
             }
         });
-        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptor>() {
+        this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptorWithResolutionScopes>() {
             @Override
-            public ClassDescriptor invoke() {
+            public ClassDescriptorWithResolutionScopes invoke() {
                 return computeClassObjectDescriptor();
             }
         });
@@ -164,7 +167,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
 
     @NotNull
     @Override
-    protected JetScope getScopeForMemberLookup() {
+    public JetScope getScopeForMemberLookup() {
         return unsubstitutedMemberScope;
     }
 
@@ -224,7 +227,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     public Collection<CallableMemberDescriptor> getDeclaredCallableMembers() {
         //noinspection unchecked
         return (Collection) KotlinPackage.filter(
-                unsubstitutedMemberScope.getDescriptorsFromDeclaredElements(),
+                unsubstitutedMemberScope.getAllDescriptors(),
                 new Function1<DeclarationDescriptor, Boolean>() {
                     @Override
                     public Boolean invoke(DeclarationDescriptor descriptor) {
@@ -270,12 +273,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     }
 
     @Override
-    public ClassDescriptor getClassObjectDescriptor() {
+    public ClassDescriptorWithResolutionScopes getClassObjectDescriptor() {
         return classObjectDescriptor.invoke();
     }
 
     @Nullable
-    private ClassDescriptor computeClassObjectDescriptor() {
+    private ClassDescriptorWithResolutionScopes computeClassObjectDescriptor() {
         JetClassObject classObject = declarationProvider.getOwnerInfo().getClassObject();
 
         JetClassLikeInfo classObjectInfo = getClassObjectInfo(classObject);
@@ -288,6 +291,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
     @Nullable
     public JetClassLikeInfo getClassObjectInfo(JetClassObject classObject) {
         if (classObject != null) {
+            if (getKind() != ClassKind.CLASS && getKind() != ClassKind.TRAIT && getKind() != ClassKind.ANNOTATION_CLASS || isInner()) {
+                resolveSession.getTrace().report(CLASS_OBJECT_NOT_ALLOWED.on(classObject));
+            }
+
             JetObjectDeclaration objectDeclaration = classObject.getObjectDeclaration();
             return JetClassInfoUtil.createClassLikeInfo(objectDeclaration);
         }
@@ -378,44 +385,65 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         getVisibility();
     }
 
+    private static class Supertypes {
+        @Mutable
+        public final Collection<JetType> trueSupertypes;
+        @Mutable
+        public final Collection<JetType> cyclicSupertypes;
+
+        private Supertypes(@Mutable @NotNull Collection<JetType> trueSupertypes) {
+            this(trueSupertypes, new ArrayList<JetType>(0));
+        }
+
+        private Supertypes(@Mutable @NotNull Collection<JetType> trueSupertypes, @Mutable @NotNull Collection<JetType> cyclicSupertypes) {
+            this.trueSupertypes = trueSupertypes;
+            this.cyclicSupertypes = cyclicSupertypes;
+        }
+
+        @NotNull
+        public Collection<JetType> getAllSupertypes() {
+            return KotlinPackage.plus(trueSupertypes, cyclicSupertypes);
+        }
+    }
+
     private class LazyClassTypeConstructor implements LazyEntity, TypeConstructor {
-        private final NotNullLazyValue<Collection<JetType>> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
-                new Function0<Collection<JetType>>() {
+        private final NotNullLazyValue<Supertypes> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
+                new Function0<Supertypes>() {
                     @Override
-                    public Collection<JetType> invoke() {
+                    public Supertypes invoke() {
                         if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
-                            return Collections.emptyList();
+                            return new Supertypes(Collections.<JetType>emptyList());
                         }
 
                         JetClassLikeInfo info = declarationProvider.getOwnerInfo();
                         if (info instanceof SyntheticClassObjectInfo) {
                             LazyClassDescriptor descriptor = ((SyntheticClassObjectInfo) info).getClassDescriptor();
                             if (descriptor.getKind().isSingleton()) {
-                                return Collections.singleton(descriptor.getDefaultType());
+                                return new Supertypes(Collections.singleton(descriptor.getDefaultType()));
                             }
                         }
 
                         JetClassOrObject classOrObject = info.getCorrespondingClassOrObject();
                         if (classOrObject == null) {
-                            return Collections.singleton(KotlinBuiltIns.getInstance().getAnyType());
+                            return new Supertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
                         }
 
                         List<JetType> allSupertypes = resolveSession.getDescriptorResolver()
                                 .resolveSupertypes(getScopeForClassHeaderResolution(), LazyClassDescriptor.this, classOrObject,
                                                    resolveSession.getTrace());
 
-                        return Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE));
+                        return new Supertypes(Lists.newArrayList(Collections2.filter(allSupertypes, VALID_SUPERTYPE)));
                     }
                 },
-                new Function1<Boolean, Collection<JetType>>() {
+                new Function1<Boolean, Supertypes>() {
                     @Override
-                    public Collection<JetType> invoke(Boolean firstTime) {
-                        return Collections.emptyList();
+                    public Supertypes invoke(Boolean firstTime) {
+                        return new Supertypes(Collections.<JetType>emptyList());
                     }
                 },
-                new Function1<Collection<JetType>, Unit>() {
+                new Function1<Supertypes, Unit>() {
                     @Override
-                    public Unit invoke(@NotNull Collection<JetType> supertypes) {
+                    public Unit invoke(@NotNull Supertypes supertypes) {
                         findAndDisconnectLoopsInTypeHierarchy(supertypes);
                         return Unit.VALUE;
                     }
@@ -455,21 +483,32 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEnti
         @NotNull
         @Override
         public Collection<JetType> getSupertypes() {
-            return supertypes.invoke();
+            return supertypes.invoke().trueSupertypes;
         }
 
-        private void findAndDisconnectLoopsInTypeHierarchy(Collection<JetType> supertypes) {
-            for (Iterator<JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
+        private void findAndDisconnectLoopsInTypeHierarchy(Supertypes supertypes) {
+            for (Iterator<JetType> iterator = supertypes.trueSupertypes.iterator(); iterator.hasNext(); ) {
                 JetType supertype = iterator.next();
                 if (isReachable(supertype.getConstructor(), this, new HashSet<TypeConstructor>())) {
                     iterator.remove();
+                    supertypes.cyclicSupertypes.add(supertype);
+
+                    ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
+                    if (supertypeDescriptor instanceof ClassDescriptor) {
+                        ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
+                        TypeHierarchyResolver.reportCyclicInheritanceHierarchyError(resolveSession.getTrace(), LazyClassDescriptor.this,
+                                                                                    superclass);
+                    }
                 }
             }
         }
 
         private boolean isReachable(TypeConstructor from, TypeConstructor to, Set<TypeConstructor> visited) {
             if (!visited.add(from)) return false;
-            for (JetType supertype : from.getSupertypes()) {
+            Collection<JetType> supertypes = from instanceof LazyClassTypeConstructor
+                                             ? ((LazyClassTypeConstructor) from).supertypes.invoke().getAllSupertypes()
+                                             : from.getSupertypes();
+            for (JetType supertype : supertypes) {
                 TypeConstructor supertypeConstructor = supertype.getConstructor();
                 if (supertypeConstructor == to) {
                     return true;

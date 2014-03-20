@@ -44,9 +44,9 @@ fun main(args : Array<String>) {
     b : Int
     <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>fooT2<!>()(1) // : Any?
 
-    <!CALLEE_NOT_A_FUNCTION!>1<!>()
-    <!CALLEE_NOT_A_FUNCTION!>1<!>{}
-    <!CALLEE_NOT_A_FUNCTION!>1<!>(){}
+    <!FUNCTION_EXPECTED!>1<!>()
+    <!FUNCTION_EXPECTED!>1<!>{}
+    <!FUNCTION_EXPECTED!>1<!>(){}
 }
 
 fun f() :  Int.() -> Unit = {}
@@ -63,7 +63,7 @@ fun main1() {
     1.if(true){Int.() -> 1}else{f()}()
     1.if(true){Int.() -> 1}else{Int.() -> 1}()
 
-    1.<!CALLEE_NOT_A_FUNCTION!>"sdf"<!>()
+    1.<!FUNCTION_EXPECTED!>"sdf"<!>()
 
     1.<!ILLEGAL_SELECTOR!>"sdf"<!>
     1.<!ILLEGAL_SELECTOR!>{}<!>

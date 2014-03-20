@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.util.ExpressionAsFunctionDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -198,10 +197,6 @@ public class JetControlFlowProcessor {
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
                 builder.readThis(expression, (ReceiverParameterDescriptor) resultingDescriptor);
-            }
-            else if (resultingDescriptor instanceof ExpressionAsFunctionDescriptor) {
-                // TODO: no information about actual target
-                builder.readThis(expression, null);
             }
         }
 
@@ -1067,9 +1062,6 @@ public class JetControlFlowProcessor {
             }
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-            if (resultingDescriptor instanceof ExpressionAsFunctionDescriptor) {
-                generateInstructions(((ExpressionAsFunctionDescriptor) resultingDescriptor).getExpression(), NOT_IN_CONDITION);
-            }
 
             generateReceiver(resolvedCall.getThisObject());
             generateReceiver(resolvedCall.getReceiverArgument());

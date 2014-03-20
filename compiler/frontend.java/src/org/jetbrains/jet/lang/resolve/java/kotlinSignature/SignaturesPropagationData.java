@@ -25,6 +25,8 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -96,6 +98,10 @@ public class SignaturesPropagationData {
 
     public List<ValueParameterDescriptor> getModifiedValueParameters() {
         return modifiedValueParameters.descriptors;
+    }
+
+    public boolean getModifiedHasStableParameterNames() {
+        return modifiedValueParameters.hasStableParameterNames;
     }
 
     public JetType getModifiedReturnType() {
@@ -176,35 +182,49 @@ public class SignaturesPropagationData {
 
         boolean shouldBeExtension = checkIfShouldBeExtension();
 
-        for (ValueParameterDescriptor originalParam : parameters) {
+        for (final ValueParameterDescriptor originalParam : parameters) {
             final int originalIndex = originalParam.getIndex();
-            List<TypeAndVariance> typesFromSuperMethods = ContainerUtil.map(superFunctions,
-                    new Function<FunctionDescriptor, TypeAndVariance>() {
+            List<TypeAndName> typesFromSuperMethods = ContainerUtil.map(superFunctions,
+                    new Function<FunctionDescriptor, TypeAndName>() {
                         @Override
-                        public TypeAndVariance fun(FunctionDescriptor superFunction) {
+                        public TypeAndName fun(FunctionDescriptor superFunction) {
                             ReceiverParameterDescriptor receiver = superFunction.getReceiverParameter();
                             int index = receiver != null ? originalIndex - 1 : originalIndex;
                             if (index == -1) {
                                 assert receiver != null : "can't happen: index is -1, while function is not extension";
-                                return new TypeAndVariance(receiver.getType(), INVARIANT);
+                                return new TypeAndName(receiver.getType(), originalParam.getName());
                             }
-                            return new TypeAndVariance(superFunction.getValueParameters().get(index).getType(), INVARIANT);
+                            ValueParameterDescriptor parameter = superFunction.getValueParameters().get(index);
+                            return new TypeAndName(parameter.getType(), parameter.getName());
                         }
                     });
 
             VarargCheckResult varargCheckResult = checkVarargInSuperFunctions(originalParam);
 
-            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType, typesFromSuperMethods, MEMBER_SIGNATURE_CONTRAVARIANT);
+            JetType altType = modifyTypeAccordingToSuperMethods(varargCheckResult.parameterType,
+                                                                convertToTypeVarianceList(typesFromSuperMethods),
+                                                                MEMBER_SIGNATURE_CONTRAVARIANT);
 
             if (shouldBeExtension && originalIndex == 0) {
                 resultReceiverType = altType;
             }
             else {
+                Name stableName = null;
+                for (int i = 0; i < superFunctions.size(); i++) {
+                    if (superFunctions.get(i).hasStableParameterNames()) {
+                        // When there's more than one stable name in super functions, we pick the first one. This behaviour is similar to
+                        // the compiler front-end, except that it reports a warning in such cases
+                        // TODO: report a warning somewhere if there's more than one stable name in super functions
+                        stableName = typesFromSuperMethods.get(i).name;
+                        break;
+                    }
+                }
+
                 resultParameters.add(new ValueParameterDescriptorImpl(
                         originalParam.getContainingDeclaration(),
                         shouldBeExtension ? originalIndex - 1 : originalIndex,
                         originalParam.getAnnotations(),
-                        originalParam.getName(),
+                        stableName != null ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
                         varargCheckResult.isVararg ? KotlinBuiltIns.getInstance().getArrayElementType(altType) : null
@@ -212,7 +232,24 @@ public class SignaturesPropagationData {
             }
         }
 
-        return new ValueParameters(resultReceiverType, resultParameters);
+        boolean hasStableParameterNames = KotlinPackage.any(superFunctions, new Function1<FunctionDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(FunctionDescriptor descriptor) {
+                return descriptor.hasStableParameterNames();
+            }
+        });
+
+        return new ValueParameters(resultReceiverType, resultParameters, hasStableParameterNames);
+    }
+
+    @NotNull
+    private static List<TypeAndVariance> convertToTypeVarianceList(@NotNull List<TypeAndName> list) {
+        return KotlinPackage.map(list, new Function1<TypeAndName, TypeAndVariance>() {
+            @Override
+            public TypeAndVariance invoke(TypeAndName tvn) {
+                return new TypeAndVariance(tvn.type, INVARIANT);
+            }
+        });
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
@@ -747,13 +784,29 @@ public class SignaturesPropagationData {
         }
     }
 
+    private static class TypeAndName {
+        public final JetType type;
+        public final Name name;
+
+        public TypeAndName(JetType type, Name name) {
+            this.type = type;
+            this.name = name;
+        }
+    }
+
     private static class ValueParameters {
         private final JetType receiverType;
         private final List<ValueParameterDescriptor> descriptors;
+        private final boolean hasStableParameterNames;
 
-        public ValueParameters(@Nullable JetType receiverType, @NotNull List<ValueParameterDescriptor> descriptors) {
+        public ValueParameters(
+                @Nullable JetType receiverType,
+                @NotNull List<ValueParameterDescriptor> descriptors,
+                boolean hasStableParameterNames
+        ) {
             this.receiverType = receiverType;
             this.descriptors = descriptors;
+            this.hasStableParameterNames = hasStableParameterNames;
         }
     }
 }

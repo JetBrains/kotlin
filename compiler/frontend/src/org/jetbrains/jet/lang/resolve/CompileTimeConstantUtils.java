@@ -112,11 +112,11 @@ public class CompileTimeConstantUtils {
         return value instanceof String ? (String) value : null;
     }
 
-    public static boolean isArrayMethodCall(@NotNull ResolvedCall resolvedCall) {
+    public static boolean isArrayMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
         return "kotlin.arrays.array".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 
-    public static boolean isJavaClassMethodCall(@NotNull ResolvedCall resolvedCall) {
+    public static boolean isJavaClassMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
         return "kotlin.javaClass.function".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 

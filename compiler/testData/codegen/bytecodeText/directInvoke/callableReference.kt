@@ -7,4 +7,4 @@ class Z{
     }
 }
 
-// 2 invoke \(LZ;I\)V
+// 1 invoke \(LZ;I\)V

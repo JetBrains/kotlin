@@ -66,7 +66,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
                                               trace);
         return new PropagatedMethodSignature(data.getModifiedReturnType(), data.getModifiedReceiverType(),
                                              data.getModifiedValueParameters(), data.getModifiedTypeParameters(), data.getSignatureErrors(),
-                                             data.getSuperFunctions());
+                                             data.getModifiedHasStableParameterNames(), data.getSuperFunctions());
     }
 
     @Override
@@ -77,7 +77,8 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @Nullable JetType returnType,
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> valueParameters,
-            @NotNull List<TypeParameterDescriptor> typeParameters
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            boolean hasStableParameterNames
     ) {
         AlternativeMethodSignatureData data =
                 new AlternativeMethodSignatureData(externalAnnotationResolver, (JavaMethodImpl) method, receiverType, valueParameters, returnType,
@@ -85,11 +86,11 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
 
         if (data.isAnnotated() && !data.hasErrors()) {
             return new AlternativeMethodSignature(data.getReturnType(), receiverType, data.getValueParameters(), data.getTypeParameters(),
-                                                  Collections.<String>emptyList());
+                                                  Collections.<String>emptyList(), true);
         }
 
         List<String> error = data.hasErrors() ? Collections.singletonList(data.getError()) : Collections.<String>emptyList();
-        return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error);
+        return new AlternativeMethodSignature(returnType, receiverType, valueParameters, typeParameters, error, hasStableParameterNames);
     }
 
     @Override

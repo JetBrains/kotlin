@@ -27,13 +27,13 @@ import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 import org.jetbrains.k2js.config.Config;
 import org.jetbrains.k2js.config.EcmaVersion;
 import org.jetbrains.k2js.facade.MainCallParameters;
 import org.jetbrains.k2js.facade.exceptions.TranslationException;
 import org.jetbrains.k2js.test.config.TestConfigFactory;
-import org.jetbrains.k2js.utils.JetFileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -147,7 +147,7 @@ public final class TranslationUtils {
             try {
                 String path = root == null ? libFileName : (root + libFileName);
                 String text = FileUtil.loadFile(new File(path), true);
-                JetFile jetFile = JetFileUtils.createJetFile(path, text, project);
+                JetFile jetFile = JetPsiFactory.createFile(project, path, text);
                 libFiles.add(jetFile);
             }
             catch (IOException e) {

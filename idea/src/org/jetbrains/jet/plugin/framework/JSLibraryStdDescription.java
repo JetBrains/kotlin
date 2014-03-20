@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,16 @@ package org.jetbrains.jet.plugin.framework;
 
 import com.google.common.collect.Sets;
 import com.intellij.framework.library.LibraryVersionProperties;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.libraries.LibraryKind;
 import com.intellij.openapi.roots.libraries.NewLibraryConfiguration;
-import com.intellij.openapi.roots.ui.configuration.libraries.CustomLibraryDescription;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditor;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.jet.plugin.framework.ui.CreateJavaScriptLibraryDialog;
 
@@ -40,33 +41,59 @@ import static org.jetbrains.jet.plugin.configuration.KotlinJsModuleConfigurator.
 import static org.jetbrains.jet.plugin.configuration.KotlinWithLibraryConfigurator.getFileInDir;
 import static org.jetbrains.jet.plugin.framework.ui.FileUIUtils.createRelativePath;
 
-public class JSLibraryStdDescription extends CustomLibraryDescription {
+public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDefferConfig {
     public static final LibraryKind KOTLIN_JAVASCRIPT_KIND = LibraryKind.create("kotlin-js-stdlib");
     public static final String LIBRARY_NAME = "KotlinJavaScript";
 
     public static final String JAVA_SCRIPT_LIBRARY_CREATION = "JavaScript Library Creation";
-    private static final Set<LibraryKind> libraryKinds = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
+    public static final Set<LibraryKind> SUITABLE_LIBRARY_KINDS = Sets.newHashSet(KOTLIN_JAVASCRIPT_KIND);
+
+    private static final String DEFAULT_LIB_DIR_NAME = "lib";
+    private static final String DEFAULT_SCRIPT_DIR_NAME = "script";
+
+    private final boolean useRelativePaths;
+    private DeferredCopyFileRequests deferredCopyFileRequests;
+
+    public JSLibraryStdDescription(@Nullable Project project) {
+        useRelativePaths = project == null;
+    }
 
     @NotNull
     @Override
     public Set<? extends LibraryKind> getSuitableLibraryKinds() {
-        return libraryKinds;
+        return SUITABLE_LIBRARY_KINDS;
+    }
+
+    @NotNull
+    @Override
+    public LibraryKind getLibraryKind() {
+        return KOTLIN_JAVASCRIPT_KIND;
+    }
+
+    @Nullable
+    @Override
+    public DeferredCopyFileRequests getCopyFileRequests() {
+        return deferredCopyFileRequests;
     }
 
     @Nullable
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
-        KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
-        assert configurator != null : "Cannot find configurator with name " + NAME;
+        KotlinJsModuleConfigurator jsConfigurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
+        assert jsConfigurator != null : "Cannot find configurator with name " + NAME;
 
-        String defaultPathToJsFileDir = createRelativePath(null, contextDirectory, "script");
-        String defaultPathToJarFileDir = createRelativePath(null, contextDirectory, "lib");
+        deferredCopyFileRequests = new DeferredCopyFileRequests(jsConfigurator);
 
-        boolean jsFilePresent = isJsFilePresent(defaultPathToJsFileDir);
-        boolean jarFilePresent = getFileInDir(configurator.getJarName(), defaultPathToJarFileDir).exists();
+        String defaultPathToJsFileDir =
+                useRelativePaths ? DEFAULT_SCRIPT_DIR_NAME : createRelativePath(null, contextDirectory, DEFAULT_SCRIPT_DIR_NAME);
+        String defaultPathToJarFileDir =
+                useRelativePaths ? DEFAULT_LIB_DIR_NAME : createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
+
+        boolean jsFilePresent = !useRelativePaths && isJsFilePresent(defaultPathToJsFileDir);
+        boolean jarFilePresent = !useRelativePaths && getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir).exists();
 
         if (jarFilePresent && jsFilePresent) {
-            return createConfiguration(getFileInDir(configurator.getJarName(), defaultPathToJarFileDir));
+            return createConfiguration(getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir));
         }
 
         CreateJavaScriptLibraryDialog dialog =
@@ -77,24 +104,25 @@ public class JSLibraryStdDescription extends CustomLibraryDescription {
 
         String copyJsFileIntoPath = dialog.getCopyJsIntoPath();
         if (!jsFilePresent && copyJsFileIntoPath != null) {
-            configurator.copyFileToDir(configurator.getJsFile(), copyJsFileIntoPath);
+            deferredCopyFileRequests.addCopyRequest(jsConfigurator.getJsFile(), copyJsFileIntoPath);
         }
 
         if (jarFilePresent) {
-            return createConfiguration(getFileInDir(configurator.getJarName(), defaultPathToJarFileDir));
+            return createConfiguration(getFileInDir(jsConfigurator.getJarName(), defaultPathToJarFileDir));
         }
         else {
             String copyIntoPath = dialog.getCopyLibraryIntoPath();
-            File existedJarFile = configurator.getExistedJarFile();
+            File existedJarFile = jsConfigurator.getExistedJarFile();
+
             if (copyIntoPath != null) {
-                return createConfiguration(configurator.copyFileToDir(existedJarFile, copyIntoPath));
+                deferredCopyFileRequests.addCopyWithReplaceRequest(existedJarFile, copyIntoPath);
             }
-            else {
-                return createConfiguration(existedJarFile);
-            }
+
+            return createConfiguration(existedJarFile);
         }
     }
 
+    @TestOnly
     public NewLibraryConfiguration createNewLibraryForTests() {
         KotlinJsModuleConfigurator configurator = (KotlinJsModuleConfigurator) getConfiguratorByName(NAME);
         assert configurator != null : "Cannot find configurator with name " + NAME;

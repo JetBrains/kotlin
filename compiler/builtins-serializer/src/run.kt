@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
         println(
 """Kotlin built-ins serializer
 
-Usage: ... <destination dir> (<built-ins src dir>)+
+Usage: ... <destination dir> (<source dir>)+
 
 Analyzes Kotlin sources found in the given source directories and serializes
 found top-level declarations to <destination dir> (files such as
@@ -36,8 +36,11 @@ found top-level declarations to <destination dir> (files such as
 
     val destDir = File(args[0])
 
-    val srcDirs = args.iterator().skip(1).map({ File(it) }).toList()
-    assert(srcDirs all { it.exists() }) { "Some of the built-ins source directories don't exist: $srcDirs" }
+    val srcDirs = args drop(1) map { File(it) }
+    assert(srcDirs.isNotEmpty()) { "At least one source directory should be specified" }
+
+    val missing = srcDirs filterNot { it.exists() }
+    assert(missing.isEmpty()) { "These source directories are missing: $missing" }
 
     BuiltInsSerializer(System.out).serialize(destDir, srcDirs)
 }

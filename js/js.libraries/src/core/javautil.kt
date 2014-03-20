@@ -67,7 +67,7 @@ public open class LinkedList<E>() : AbstractList<E>() {
 }
 
 library
-public open class HashSet<E>() : AbstractCollection<E>(), MutableSet<E> {
+public open class HashSet<E>(capacity: Int = 0) : AbstractCollection<E>(), MutableSet<E> {
 }
 
 library

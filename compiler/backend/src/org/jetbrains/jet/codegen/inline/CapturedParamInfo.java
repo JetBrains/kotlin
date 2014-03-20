@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 
 public class CapturedParamInfo extends ParameterInfo {
 
@@ -34,17 +33,31 @@ public class CapturedParamInfo extends ParameterInfo {
 
     private int shift = 0;
 
+    private final String newFieldName;
+
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, int remapIndex) {
-        super(desc.getType(), skipped, index, remapIndex);
-        this.desc = desc;
+        this(desc, desc.getFieldName(), skipped, index, remapIndex);
     }
 
-    public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, StackValue remapIndex) {
+    public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, int remapIndex) {
         super(desc.getType(), skipped, index, remapIndex);
         this.desc = desc;
+        this.newFieldName = newFieldName;
     }
 
-    public String getFieldName() {
+    public CapturedParamInfo(@NotNull CapturedParamDesc desc, @NotNull String newFieldName, boolean skipped, int index, StackValue remapIndex) {
+        super(desc.getType(), skipped, index, remapIndex);
+        this.desc = desc;
+        this.newFieldName = newFieldName;
+    }
+
+    @NotNull
+    public String getNewFieldName() {
+        return newFieldName;
+    }
+
+    @NotNull
+    public String getOriginalFieldName() {
         return desc.getFieldName();
     }
 
@@ -57,16 +70,19 @@ public class CapturedParamInfo extends ParameterInfo {
         this.shift = shift;
     }
 
+    @NotNull
     public CapturedParamInfo newIndex(int newIndex) {
         return clone(newIndex, getRemapValue());
     }
 
+    @NotNull
     public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {
-        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, isSkipped, newIndex, newRamapIndex);
+        CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRamapIndex);
         capturedParamInfo.setLambda(lambda);
         return capturedParamInfo;
     }
 
+    @NotNull
     public String getContainingLambdaName() {
         return desc.getContainingLambda().getType().getInternalName();
     }

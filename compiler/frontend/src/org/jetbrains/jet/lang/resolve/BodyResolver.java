@@ -122,7 +122,10 @@ public class BodyResolver {
         resolveDelegationSpecifierLists(c);
 
         resolvePropertyDeclarationBodies(c);
-        resolveClassAnnotations(c);
+
+        if (!TopDownAnalyzer.LAZY) {
+            resolveClassAnnotations(c);
+        }
         resolveAnonymousInitializers(c);
         resolvePrimaryConstructorParameters(c);
 
@@ -589,7 +592,9 @@ public class BodyResolver {
             JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
-            resolveAnnotationArguments(declaringScope, declaration);
+            if (!TopDownAnalyzer.LAZY || c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+                resolveAnnotationArguments(declaringScope, declaration);
+            }
             resolveFunctionBody(c, trace, declaration, descriptor, declaringScope);
 
             assert descriptor.getReturnType() != null;
@@ -653,7 +658,7 @@ public class BodyResolver {
         if (type instanceof DeferredType) {
             DeferredType deferredType = (DeferredType) type;
             if (!deferredType.isComputed()) {
-                deferredType.getActualType();
+                deferredType.getDelegate();
             }
         }
     }
@@ -676,7 +681,7 @@ public class BodyResolver {
                 DeferredType deferredType = queue.pullFirst();
                 if (!deferredType.isComputed()) {
                     try {
-                        deferredType.getActualType(); // to compute
+                        deferredType.getDelegate(); // to compute
                     }
                     catch (ReenteringLazyValueComputationException e) {
                         // A problem should be reported while computing the type

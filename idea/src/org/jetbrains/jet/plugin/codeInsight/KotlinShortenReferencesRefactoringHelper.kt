@@ -72,7 +72,6 @@ private fun Project.clearElementsToShorten() {
 }
 
 public fun JetElement.addToShorteningWaitSet() {
-    assert (this is JetQualifiedExpression || this is JetSimpleNameExpression || this is JetUserType, "Unexpected element type: ${getClass()}: ${getText()}")
     assert (ApplicationManager.getApplication()!!.isWriteAccessAllowed(), "Write access needed")
     val project = getProject()
     project.getElementsToShorten(true)!!.add(SmartPointerManager.getInstance(project)!!.createSmartPsiElementPointer(this))

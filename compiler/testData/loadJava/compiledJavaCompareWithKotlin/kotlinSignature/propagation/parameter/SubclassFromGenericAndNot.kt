@@ -10,12 +10,12 @@ public trait SubclassFromGenericAndNot: Object {
     }
 
     public trait Generic<T> : Object {
-        public fun foo(p0: T)
+        public fun foo(key: T)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
     public trait Sub : NonGeneric, Generic<String> {
-        override fun foo(p0: String)
+        override fun foo(key: String)
     }
 }

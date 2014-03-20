@@ -41,19 +41,22 @@ import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.InlineStrategy;
+import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 
@@ -134,33 +137,43 @@ public class JetPositionManager implements PositionManager {
                 JetFile file = (JetFile) sourcePosition.getFile();
                 JetTypeMapper typeMapper = prepareTypeMapper(file);
 
-                PsiElement element = PsiTreeUtil.getParentOfType(sourcePosition.getElementAt(), JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
-                if (element instanceof JetClassOrObject) {
-                    result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element));
-                }
-                else if (element instanceof JetFunctionLiteral) {
-                    Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), ((JetFunctionLiteral) element));
-                    result.set(asmType.getInternalName());
-                }
-                else if (element instanceof JetNamedFunction) {
-                    PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
-                    if (parent instanceof JetClassOrObject) {
-                        result.set(getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent));
-                    }
-                    else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
-                        Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), (JetElement) element);
-                        result.set(asmType.getInternalName());
-                    }
-                }
-
-                if (result.isNull()) {
-                    result.set(PackageCodegen.getPackagePartInternalName(file));
-                }
+                result.set(getClassNameForElement(sourcePosition.getElementAt(), typeMapper, file));
             }
+
         });
 
         return result.get();
     }
+
+    @SuppressWarnings("unchecked")
+    private static String getClassNameForElement(@Nullable PsiElement notPositionedElement, @NotNull JetTypeMapper typeMapper, @NotNull JetFile file) {
+        PsiElement element = PsiTreeUtil.getParentOfType(notPositionedElement, JetClassOrObject.class, JetFunctionLiteral.class, JetNamedFunction.class);
+
+        if (element instanceof JetClassOrObject) {
+            return getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) element);
+        }
+        else if (element instanceof JetFunctionLiteral) {
+            if (isInlinedLambda((JetFunctionLiteral) element, typeMapper.getBindingContext())) {
+                return getClassNameForElement(element.getParent(), typeMapper, file);
+            } else {
+                Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), ((JetFunctionLiteral) element));
+                return asmType.getInternalName();
+            }
+        }
+        else if (element instanceof JetNamedFunction) {
+            PsiElement parent = PsiTreeUtil.getParentOfType(element, JetClassOrObject.class, JetFunctionLiteralExpression.class, JetNamedFunction.class);
+            if (parent instanceof JetClassOrObject) {
+                return getJvmInternalNameForImpl(typeMapper, (JetClassOrObject) parent);
+            }
+            else if (parent instanceof JetFunctionLiteralExpression || parent instanceof JetNamedFunction) {
+                Type asmType = asmTypeForAnonymousClass(typeMapper.getBindingContext(), (JetElement) element);
+                return asmType.getInternalName();
+            }
+        }
+
+        return PackageCodegen.getPackagePartInternalName(file);
+    }
+
 
     @Nullable
     private static String getJvmInternalNameForImpl(JetTypeMapper typeMapper, JetClassOrObject jetClass) {
@@ -244,4 +257,57 @@ public class JetPositionManager implements PositionManager {
         }, false);
         myTypeMappers.put(fqName, value);
     }
+
+
+    public static boolean isInlinedLambda(@NotNull JetFunctionLiteral functionLiteral, @NotNull BindingContext context) {
+        PsiElement functionLiteralExpression = functionLiteral.getParent();
+        if (functionLiteralExpression == null) return false;
+
+        PsiElement parent = functionLiteralExpression.getParent();
+
+        PsiElement valueArgument = functionLiteralExpression;
+        while (parent instanceof JetParenthesizedExpression ||
+               parent instanceof JetBinaryExpressionWithTypeRHS ||
+               parent instanceof JetPrefixExpression && JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent)) {
+            valueArgument = parent;
+            parent = parent.getParent();
+        }
+
+        while (parent instanceof ValueArgument ||
+               parent instanceof JetValueArgumentList) {
+            parent = parent.getParent();
+        }
+
+        if ((parent == null || !(parent instanceof JetBinaryExpression)) && !(parent instanceof JetCallExpression)) return false;
+
+        ResolvedCall<?> call = null;
+        if (parent instanceof JetCallExpression) {
+            call = context.get(BindingContext.RESOLVED_CALL, ((JetCallExpression) parent).getCalleeExpression());
+        }
+        if (parent instanceof JetBinaryExpression) {
+            call = context.get(BindingContext.RESOLVED_CALL, ((JetBinaryExpression) parent).getOperationReference());
+        }
+
+        if (call == null) return false;
+
+        InlineStrategy inlineType = InlineUtil.getInlineType(call.getResultingDescriptor().getAnnotations());
+        if (!inlineType.isInline()) return false;
+
+        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : call.getValueArguments().entrySet()) {
+            ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
+            ResolvedValueArgument resolvedValueArgument = entry.getValue();
+
+            for (ValueArgument next : resolvedValueArgument.getArguments()) {
+                JetExpression expression = next.getArgumentExpression();
+                if (valueArgument == expression) {
+                    return InlineAnalyzerExtension.checkInlinableParameter(
+                            valueParameterDescriptor, expression,
+                            call.getResultingDescriptor(), null
+                    );
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
@@ -31,6 +32,13 @@ public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
 
     @NotNull
     JetScope getScopeForInitializerResolution();
+
+    @NotNull
+    JetScope getScopeForMemberLookup();
+
+    @Nullable
+    @Override
+    ClassDescriptorWithResolutionScopes getClassObjectDescriptor();
 
     @NotNull
     @ReadOnly

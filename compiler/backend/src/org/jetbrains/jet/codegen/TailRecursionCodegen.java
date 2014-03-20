@@ -64,14 +64,14 @@ public class TailRecursionCodegen {
         return status != null && status.isDoGenerateTailRecursion();
     }
 
-    public void generateTailRecursion(ResolvedCall<? extends CallableDescriptor> resolvedCall) {
+    public void generateTailRecursion(ResolvedCall<?> resolvedCall) {
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
-        assert fd instanceof FunctionDescriptor : "the resolved call is not refer to the function descriptor so why do we use generateTailRecursion for something strange?";
+        assert fd instanceof FunctionDescriptor : "Resolved call doesn't refer to the function descriptor: " + fd;
         CallableMethod callable = (CallableMethod) codegen.resolveToCallable((FunctionDescriptor) fd, false);
 
         List<ResolvedValueArgument> arguments = resolvedCall.getValueArgumentsByIndex();
         if (arguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index");
+            throw new IllegalStateException("Failed to arrange value arguments by index: " + fd);
         }
         assignParameterValues(fd, callable, arguments);
         if (callable.getReceiverClass() != null) {
@@ -107,7 +107,7 @@ public class TailRecursionCodegen {
                 JetExpression argumentExpression = argument == null ? null : argument.getArgumentExpression();
 
                 if (argumentExpression instanceof JetSimpleNameExpression) {
-                    ResolvedCall<? extends CallableDescriptor> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
+                    ResolvedCall<?> resolvedCall = state.getBindingContext().get(RESOLVED_CALL, argumentExpression);
                     if (resolvedCall != null && resolvedCall.getResultingDescriptor().equals(parameterDescriptor.getOriginal())) {
                         // do nothing: we shouldn't store argument to itself again
                         AsmUtil.pop(v, type);

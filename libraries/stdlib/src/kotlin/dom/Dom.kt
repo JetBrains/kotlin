@@ -1,6 +1,5 @@
 package kotlin.dom
 
-import kotlin.*
 import kotlin.support.*
 import java.util.*
 import org.w3c.dom.*
@@ -153,7 +152,7 @@ fun Document?.get(selector: String): List<Element> {
             val id = selector.substring(1)
             val element = this?.getElementById(id)
             return if (element != null)
-                arrayList<Element>(element)
+                arrayListOf(element)
             else
                 emptyElementList()
         } else {
@@ -174,7 +173,7 @@ fun Element.get(selector: String): List<Element> {
     } else if (selector.startsWith("#")) {
         val element = this.ownerDocument?.getElementById(selector.substring(1))
         return if (element != null)
-            arrayList<Element>(element)
+            arrayListOf(element)
         else
             emptyElementList()
     } else {
@@ -259,33 +258,35 @@ fun Node.clear(): Unit {
 }
 
 /** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.nextSiblings() : Iterator<Node> = NextSiblingIterator(this)
+fun Node.nextSiblings() : Iterable<Node> = NextSiblings(this)
 
-class NextSiblingIterator(var node: Node) : AbstractIterator<Node>() {
-
-    override fun computeNext(): Unit {
-        val nextValue = node.nextSibling
-        if (nextValue != null) {
-            setNext(nextValue)
-            node = nextValue
-        } else {
-            done()
+class NextSiblings(var node: Node) : Iterable<Node> {
+    override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
+        override fun computeNext(): Unit {
+            val nextValue = node.nextSibling
+            if (nextValue != null) {
+                setNext(nextValue)
+                node = nextValue
+            } else {
+                done()
+            }
         }
     }
 }
 
 /** Returns an [[Iterator]] over the next siblings of this node */
-fun Node.previousSiblings() : Iterator<Node> = PreviousSiblingIterator(this)
+fun Node.previousSiblings() : Iterable<Node> = PreviousSiblings(this)
 
-class PreviousSiblingIterator(var node: Node) : AbstractIterator<Node>() {
-
-    override fun computeNext(): Unit {
-        val nextValue = node.previousSibling
-        if (nextValue != null) {
-            setNext(nextValue)
-            node = nextValue
-        } else {
-            done()
+class PreviousSiblings(var node: Node) : Iterable<Node> {
+    override fun iterator(): Iterator<Node> = object : AbstractIterator<Node>() {
+        override fun computeNext(): Unit {
+            val nextValue = node.previousSibling
+            if (nextValue != null) {
+                setNext(nextValue)
+                node = nextValue
+            } else {
+                done()
+            }
         }
     }
 }

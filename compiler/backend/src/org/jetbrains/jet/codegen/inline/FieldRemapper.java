@@ -41,18 +41,12 @@ public class FieldRemapper {
         params = methodParams;
     }
 
-    public void addCapturedFields(LambdaInfo lambdaInfo, ParametersBuilder builder) {
-        for (CapturedParamInfo info : lambdaInfo.getCapturedVars()) {
-            builder.addCapturedParam(info, info);
-        }
-    }
-
-    public boolean canProcess(@NotNull String fieldOwner) {
+    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
         return fieldOwner.equals(getLambdaInternalName());
     }
 
     @Nullable
-    public AbstractInsnNode transformIfNeeded(
+    public AbstractInsnNode foldFieldAccessChainIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,
             @NotNull MethodNode node
     ) {
@@ -61,11 +55,11 @@ public class FieldRemapper {
             return null;
         }
 
-        return transformIfNeeded(capturedFieldAccess, 1, node);
+        return foldFieldAccessChainIfNeeded(capturedFieldAccess, 1, node);
     }
 
     @Nullable
-    private AbstractInsnNode transformIfNeeded(
+    private AbstractInsnNode foldFieldAccessChainIfNeeded(
             @NotNull List<AbstractInsnNode> capturedFieldAccess,
             int currentInstruction,
             @NotNull MethodNode node
@@ -73,13 +67,13 @@ public class FieldRemapper {
         AbstractInsnNode transformed = null;
         boolean checkParent = !isRoot() && currentInstruction < capturedFieldAccess.size() - 1;
         if (checkParent) {
-            transformed = parent.transformIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
+            transformed = parent.foldFieldAccessChainIfNeeded(capturedFieldAccess, currentInstruction + 1, node);
         }
 
         if (transformed == null) {
             //if parent couldn't transform
             FieldInsnNode insnNode = (FieldInsnNode) capturedFieldAccess.get(currentInstruction);
-            if (canProcess(insnNode.owner)) {
+            if (canProcess(insnNode.owner, true)) {
                 insnNode.name = "$$$" + insnNode.name;
                 insnNode.setOpcode(Opcodes.GETSTATIC);
 
@@ -102,9 +96,9 @@ public class FieldRemapper {
     }
 
     @Nullable
-    public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
+    protected CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
         for (CapturedParamInfo valueDescriptor : captured) {
-            if (valueDescriptor.getFieldName().equals(fieldInsnNode.name) && fieldInsnNode.owner.equals(valueDescriptor.getContainingLambdaName())) {
+            if (valueDescriptor.getOriginalFieldName().equals(fieldInsnNode.name) && fieldInsnNode.owner.equals(valueDescriptor.getContainingLambdaName())) {
                 return valueDescriptor;
             }
         }
@@ -127,5 +121,9 @@ public class FieldRemapper {
     public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
         CapturedParamInfo field = MethodInliner.findCapturedField(node, this);
         return field.getRemapValue();
+    }
+
+    public boolean isInsideInliningLambda() {
+        return !isRoot() && parent.isInsideInliningLambda();
     }
 }

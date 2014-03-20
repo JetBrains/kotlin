@@ -67,7 +67,7 @@ public class InternalCompiledClassesTest : JetLightCodeInsightFixtureTestCase() 
     fun testTraitImplClassIsVisibleAsJavaClass() = doTestNoPsiFilesAreBuiltForSyntheticClass(TRAIT_IMPL)
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, withSources = false)
+        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH, /* withSources = */ false)
     }
 
     private fun isSyntheticClassOfKind(kind: KotlinSyntheticClass.Kind) : VirtualFile.() -> Boolean = {

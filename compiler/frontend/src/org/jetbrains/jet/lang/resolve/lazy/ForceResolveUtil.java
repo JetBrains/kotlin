@@ -34,10 +34,11 @@ public class ForceResolveUtil {
 
     private ForceResolveUtil() {}
 
-    public static void forceResolveAllContents(@NotNull DeclarationDescriptor descriptor) {
+    public static <T extends DeclarationDescriptor> T forceResolveAllContents(@NotNull T descriptor) {
         LOG.debug("descriptor: " + descriptor);
         doForceResolveAllContents(descriptor);
         LOG.debug("<<< " + descriptor);
+        return descriptor;
     }
 
     public static void forceResolveAllContents(@NotNull JetScope scope) {

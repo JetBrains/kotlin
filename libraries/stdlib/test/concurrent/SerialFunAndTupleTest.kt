@@ -1,4 +1,4 @@
-package serial
+package test.concurrent
 
 import java.io.ObjectOutputStream
 import java.io.ByteArrayOutputStream

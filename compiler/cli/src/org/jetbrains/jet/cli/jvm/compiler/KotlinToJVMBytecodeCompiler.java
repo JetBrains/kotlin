@@ -288,26 +288,29 @@ public class KotlinToJVMBytecodeCompiler {
                 }, environment.getSourceFiles()
         );
 
-        return analyzerWithCompilerReport.hasErrors() ? null : analyzerWithCompilerReport.getAnalyzeExhaust();
+        AnalyzeExhaust exhaust = analyzerWithCompilerReport.getAnalyzeExhaust();
+        assert exhaust != null : "AnalyzeExhaust should be non-null, compiling: " + environment.getSourceFiles();
+
+        CompilerPluginContext context = new CompilerPluginContext(environment.getProject(), exhaust.getBindingContext(),
+                                                                  environment.getSourceFiles());
+        for (CompilerPlugin plugin : environment.getConfiguration().getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
+            plugin.processFiles(context);
+        }
+
+        return analyzerWithCompilerReport.hasErrors() ? null : exhaust;
     }
 
     @NotNull
     private static GenerationState generate(@NotNull JetCoreEnvironment environment, @NotNull AnalyzeExhaust exhaust) {
-        Project project = environment.getProject();
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState generationState = new GenerationState(
-                project, ClassBuilderFactories.BINARIES, Progress.DEAF, exhaust.getBindingContext(), environment.getSourceFiles(),
+                environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF, exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineUtil.DEFAULT_INLINE_FLAG)
         );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
-
-        CompilerPluginContext context = new CompilerPluginContext(project, exhaust.getBindingContext(), environment.getSourceFiles());
-        for (CompilerPlugin plugin : configuration.getList(CLIConfigurationKeys.COMPILER_PLUGINS)) {
-            plugin.processFiles(context);
-        }
         return generationState;
     }
 }

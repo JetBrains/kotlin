@@ -21,7 +21,7 @@ import org.junit.Test
 class PsiUtilsTest {
 
     val rootDisposable = object : Disposable {
-        public override fun dispose() {
+        override fun dispose() {
         }
     }
 
@@ -52,7 +52,6 @@ class PsiUtilsTest {
     fun splitPsi() {
         val file = createFile("class Foo")
         val items: List<String> = splitPsi(file).map { t -> t.first }
-        Assert.assertEquals(arrayList("class", " ", "Foo"), items)
+        Assert.assertEquals(listOf("class", " ", "Foo"), items)
     }
-
 }

@@ -45,12 +45,11 @@ import com.intellij.refactoring.util.RefactoringMessageDialog;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -344,7 +343,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
 
         JetExpression callee = callExpression.getCalleeExpression();
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(initializer);
-        ResolvedCall<? extends CallableDescriptor> call = context.get(BindingContext.RESOLVED_CALL, callee);
+        ResolvedCall<?> call = context.get(BindingContext.RESOLVED_CALL, callee);
         if (call == null) {
             return null;
         }

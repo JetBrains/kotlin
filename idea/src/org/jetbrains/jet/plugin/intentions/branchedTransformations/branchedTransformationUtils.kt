@@ -27,6 +27,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import java.util.Collections
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.utils.*
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -325,17 +326,17 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
     fun checkConditions(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
         if (e1.isElse() != e2.isElse()) return false
 
-        val conditions1 = e1.getConditions()
-        val conditions2 = e2.getConditions()
+        val conditions1 = e1.getConditions().toList()
+        val conditions2 = e2.getConditions().toList()
         return conditions1.size == conditions2.size &&
-            (conditions1.iterator() zip conditions2.iterator()).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
+            (conditions1 zip_tmp conditions2).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
     }
 
     fun JetWhenEntry.declarationNames(): Set<String> =
             getExpression()?.blockExpressionsOrSingle()
-                    ?.filterIsInstance(javaClass<JetNamedDeclaration>())
+                    ?.filter { it is JetNamedDeclaration }
                     ?.map { decl -> decl.getName() }
-                    ?.filterNotNull()?.toHashSet() ?: Collections.emptySet<String>()
+                    ?.filterNotNull()?.toSet() ?: Collections.emptySet<String>()
 
     fun checkBodies(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
         if (ContainerUtil.intersects(e1.declarationNames(), e2.declarationNames())) return false
@@ -353,7 +354,7 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
 
     val entries1 = getEntries()
     val entries2 = sibling.getEntries()
-    return entries1.size == entries2.size && (entries1.iterator() zip entries2.iterator()).all { pair ->
+    return entries1.size == entries2.size && (entries1 zip_tmp entries2).all { pair ->
         checkConditions(pair.first, pair.second) && checkBodies(pair.first, pair.second)
     }
 }
@@ -373,7 +374,7 @@ public fun JetWhenExpression.mergeWithNext() {
     }
 
     val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>()) as JetWhenExpression
-    for ((entry1, entry2) in getEntries().iterator() zip sibling.getEntries().iterator()) {
+    for ((entry1, entry2) in getEntries() zip_tmp sibling.getEntries()) {
         entry1.getExpression() mergeWith entry2.getExpression()
     }
 

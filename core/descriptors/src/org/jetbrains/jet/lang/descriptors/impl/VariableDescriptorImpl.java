@@ -89,6 +89,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         return Collections.emptyList();
     }
 
+    @Override
+    public boolean hasStableParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Set<? extends CallableDescriptor> getOverriddenDescriptors() {

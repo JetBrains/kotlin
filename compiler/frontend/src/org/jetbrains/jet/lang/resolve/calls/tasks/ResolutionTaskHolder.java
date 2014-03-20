@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.tasks;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
-    private final JetReferenceExpression reference;
     private final BasicCallResolutionContext basicCallResolutionContext;
     private final PriorityProvider<ResolutionCandidate<D>> priorityProvider;
     private final TracingStrategy tracing;
@@ -41,12 +39,11 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
 
     private List<ResolutionTask<D, F>> tasks = null;
 
-    public ResolutionTaskHolder(@NotNull JetReferenceExpression reference,
+    public ResolutionTaskHolder(
             @NotNull BasicCallResolutionContext basicCallResolutionContext,
             @NotNull PriorityProvider<ResolutionCandidate<D>> priorityProvider,
-            @Nullable TracingStrategy tracing
+            @NotNull TracingStrategy tracing
     ) {
-        this.reference = reference;
         this.basicCallResolutionContext = basicCallResolutionContext;
         this.priorityProvider = priorityProvider;
         this.tracing = tracing;
@@ -61,15 +58,21 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
     }
 
     public void addCandidates(@NotNull Collection<ResolutionCandidate<D>> candidates) {
+        assertNotFinished();
         if (!candidates.isEmpty()) {
             candidatesList.add(setIsSafeCall(candidates));
         }
     }
 
     public void addCandidates(@NotNull List<Collection<ResolutionCandidate<D>>> candidatesList) {
+        assertNotFinished();
         for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
             addCandidates(candidates);
         }
+    }
+
+    private void assertNotFinished() {
+        assert tasks == null : "Can't add candidates after the resulting tasks were computed.";
     }
 
     public List<ResolutionTask<D, F>> getTasks() {
@@ -79,14 +82,16 @@ public class ResolutionTaskHolder<D extends CallableDescriptor, F extends D> {
             for (int priority = priorityProvider.getMaxPriority(); priority >= 0; priority--) {
                 final int finalPriority = priority;
                 for (Collection<ResolutionCandidate<D>> candidates : candidatesList) {
-                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(candidates, new Predicate<ResolutionCandidate<D>>() {
-                        @Override
-                        public boolean apply(@Nullable ResolutionCandidate<D> input) {
-                            return finalPriority == priorityProvider.getPriority(input);
-                        }
-                    });
+                    Collection<ResolutionCandidate<D>> filteredCandidates = Collections2.filter(
+                            candidates, new Predicate<ResolutionCandidate<D>>() {
+                                @Override
+                                public boolean apply(@Nullable ResolutionCandidate<D> input) {
+                                    return finalPriority == priorityProvider.getPriority(input);
+                                }
+                            }
+                    );
                     if (!filteredCandidates.isEmpty()) {
-                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, reference, basicCallResolutionContext, tracing));
+                        tasks.add(new ResolutionTask<D, F>(filteredCandidates, basicCallResolutionContext, tracing));
                     }
                 }
             }

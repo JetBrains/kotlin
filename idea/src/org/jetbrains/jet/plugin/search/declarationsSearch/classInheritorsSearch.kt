@@ -18,12 +18,10 @@ package org.jetbrains.jet.plugin.search.declarationsSearch
 
 import com.intellij.psi.PsiClass
 import com.intellij.util.Query
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiAnonymousClass
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.asJava.LightClassUtil
-import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.util.EmptyQuery
@@ -37,11 +35,11 @@ public fun HierarchySearchRequest<PsiElement>.searchInheritors(): Query<PsiClass
     if (psiClass == null) return EmptyQuery.getEmptyQuery()
 
     return ClassInheritorsSearch.search(
-            aClass = psiClass,
-            scope = searchScope,
-            checkDeep = searchDeeply,
-            checkInheritance = true,
-            includeAnonymous = true
+            psiClass,
+            searchScope,
+            searchDeeply,
+            /* checkInheritance = */ true,
+            /* includeAnonymous = */ true
     )
 }
 

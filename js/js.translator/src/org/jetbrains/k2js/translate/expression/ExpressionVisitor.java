@@ -219,7 +219,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @NotNull
     public JsExpression visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression,
             @NotNull TranslationContext context) {
-        return ReferenceTranslator.translateSimpleName(expression, context).source(expression);
+        return ReferenceTranslator.translateSimpleNameWithQualifier(expression, null, context).source(expression);
     }
 
     @NotNull
@@ -414,7 +414,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         FunctionDescriptor descriptor = getFunctionDescriptor(context.bindingContext(), expression);
         JsName name = context.getNameForDescriptor(descriptor);
-        context.aliasingContext().registerAlias(descriptor, name.makeRef());
+
         return new JsVars(new JsVars.JsVar(name, alias)).source(expression);
     }
 

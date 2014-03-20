@@ -1,4 +1,7 @@
 <root>
+  <item name='com.intellij.openapi.vfs.VfsUtil java.lang.String getUrlForLibraryRoot(java.io.File)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.openapi.vfs.VirtualFile com.intellij.openapi.vfs.VirtualFile createChildDirectory(java.lang.Object, java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>

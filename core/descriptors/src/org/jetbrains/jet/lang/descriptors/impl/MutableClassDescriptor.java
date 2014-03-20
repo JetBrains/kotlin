@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.types.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +61,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
         scopeForMemberResolution.addLabeledDeclaration(this);
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    @Nullable
+    @Override
+    public MutableClassDescriptor getClassObjectDescriptor() {
+        return (MutableClassDescriptor) super.getClassObjectDescriptor();
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     public void setPrimaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {
@@ -69,9 +75,12 @@ public class MutableClassDescriptor extends MutableClassDescriptorLite implement
 
         constructors.add(constructorDescriptor);
 
-        if (defaultType.isComputed()) {
-            ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(getDefaultType());
-        }
+        ((ConstructorDescriptorImpl) constructorDescriptor).setReturnType(new DelegatingType() {
+            @Override
+            protected JetType getDelegate() {
+                return getDefaultType();
+            }
+        });
 
         if (constructorDescriptor.isPrimary()) {
             setUpScopeForInitializers(constructorDescriptor);

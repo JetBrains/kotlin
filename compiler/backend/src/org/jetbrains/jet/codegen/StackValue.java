@@ -23,7 +23,6 @@ import org.jetbrains.asm4.Label;
 import org.jetbrains.asm4.Type;
 import org.jetbrains.asm4.commons.InstructionAdapter;
 import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.tree.MethodNode;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -326,7 +325,7 @@ public abstract class StackValue {
     }
 
     public static StackValue receiver(
-            ResolvedCall<? extends CallableDescriptor> resolvedCall,
+            ResolvedCall<?> resolvedCall,
             StackValue receiver,
             ExpressionCodegen codegen,
             @Nullable CallableMethod callableMethod
@@ -775,7 +774,7 @@ public abstract class StackValue {
             }
         }
 
-        private boolean isStandardStack(ResolvedCall call, int valueParamsSize) {
+        private boolean isStandardStack(ResolvedCall<?> call, int valueParamsSize) {
             if (call == null) {
                 return true;
             }
@@ -1099,14 +1098,14 @@ public abstract class StackValue {
     }
 
     public static class CallReceiver extends StackValue {
-        private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
+        private final ResolvedCall<?> resolvedCall;
         final StackValue receiver;
         private final ExpressionCodegen codegen;
         private final CallableMethod callableMethod;
         private final boolean putReceiverArgumentOnStack;
 
         public CallReceiver(
-                ResolvedCall<? extends CallableDescriptor> resolvedCall,
+                ResolvedCall<?> resolvedCall,
                 StackValue receiver,
                 ExpressionCodegen codegen,
                 CallableMethod callableMethod,
@@ -1120,11 +1119,7 @@ public abstract class StackValue {
             this.putReceiverArgumentOnStack = putReceiverArgumentOnStack;
         }
 
-        private static Type calcType(
-                ResolvedCall<? extends CallableDescriptor> resolvedCall,
-                ExpressionCodegen codegen,
-                CallableMethod callableMethod
-        ) {
+        private static Type calcType(ResolvedCall<?> resolvedCall, ExpressionCodegen codegen, CallableMethod callableMethod) {
             ReceiverValue thisObject = resolvedCall.getThisObject();
             ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
 

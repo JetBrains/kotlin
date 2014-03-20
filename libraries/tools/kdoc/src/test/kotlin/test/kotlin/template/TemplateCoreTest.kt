@@ -6,13 +6,13 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.template.*
 
 class EmailTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {
-    public override fun render() {
+    override fun render() {
     print("Hello there $name and how are you? Today is $time. Kotlin rocks")
   }
 }
 
 class MoreDryTemplate(var name: String = "James", var time: Date = Date()) : TextTemplate() {
-    public override fun render() {
+    override fun render() {
     +"Hey there $name and how are you? Today is $time. Kotlin rocks"
   }
 }

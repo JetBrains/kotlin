@@ -1,0 +1,5 @@
+// INTENTION_TEXT: Simplify negated '!in' expression to 'in'
+fun test(n: Int) {
+    val arr = ArrayList<Int>(1)
+    !(0<caret> !in arr)
+}

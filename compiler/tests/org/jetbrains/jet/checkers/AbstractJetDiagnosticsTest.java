@@ -22,7 +22,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -71,17 +70,16 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             }
         }
 
-        ImmutableMap<JetElement,ResolvedCall<? extends CallableDescriptor>> resolvedCallsEntries =
-                bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
-        for (Map.Entry<JetElement, ResolvedCall<? extends CallableDescriptor>> entry : resolvedCallsEntries.entrySet()) {
+        ImmutableMap<JetElement, ResolvedCall<?>> resolvedCallsEntries = bindingContext.getSliceContents(BindingContext.RESOLVED_CALL);
+        for (Map.Entry<JetElement, ResolvedCall<?>> entry : resolvedCallsEntries.entrySet()) {
             JetElement element = entry.getKey();
-            ResolvedCall<? extends CallableDescriptor> resolvedCall = entry.getValue();
+            ResolvedCall<?> resolvedCall = entry.getValue();
 
             DiagnosticUtils.LineAndColumn lineAndColumn =
                     DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
 
             assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " in not completed",
-                       ((ResolvedCallWithTrace<? extends CallableDescriptor>)resolvedCall).isCompleted());
+                       ((ResolvedCallWithTrace<?>) resolvedCall).isCompleted());
         }
     }
 }

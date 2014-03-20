@@ -17,8 +17,11 @@
 package org.jetbrains.kotlin.maven.doc;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.jetbrains.jet.cli.common.CLICompiler;
+import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.jet.cli.common.arguments.K2JVMCompilerArguments;
+import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.doc.KDocArguments;
 import org.jetbrains.kotlin.doc.KDocCompiler;
@@ -181,6 +184,21 @@ public class KDocMojo extends KotlinCompileMojoBase {
     @Override
     protected K2JVMCompilerArguments createCompilerArguments() {
         return new KDocArguments();
+    }
+
+    @Override
+    protected ExitCode executeCompiler(
+            CLICompiler compiler,
+            CommonCompilerArguments arguments,
+            MessageCollector messageCollector
+    ) {
+        ExitCode exitCode = super.executeCompiler(compiler, arguments, messageCollector);
+        if (exitCode == ExitCode.COMPILATION_ERROR) {
+            // KDoc should ignore compilation errors, since it's not supposed to compile code.
+            // KDoc is supposed to generate documentation by the code that may be correct or not
+            return ExitCode.OK;
+        }
+        return exitCode;
     }
 
     @Override

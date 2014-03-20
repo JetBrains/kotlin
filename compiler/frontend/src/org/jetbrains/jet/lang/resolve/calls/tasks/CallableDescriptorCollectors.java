@@ -30,15 +30,23 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.LibrarySourceHacks.filterOutMembersFromLibrarySource;
 
-public class CallableDescriptorCollectors {
-    public static CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS =
+@SuppressWarnings("unchecked")
+public class CallableDescriptorCollectors<D extends CallableDescriptor> implements Iterable<CallableDescriptorCollector<D>> {
+    private static final CallableDescriptorCollector<FunctionDescriptor> FUNCTIONS_COLLECTOR =
             new FilteredCollector<FunctionDescriptor>(new FunctionCollector());
-    public static CallableDescriptorCollector<VariableDescriptor> VARIABLES =
+    private static final CallableDescriptorCollector<VariableDescriptor> VARIABLES_COLLECTOR =
             new FilteredCollector<VariableDescriptor>(new VariableCollector());
-    public static CallableDescriptorCollector<VariableDescriptor> PROPERTIES =
+    private static final CallableDescriptorCollector<VariableDescriptor> PROPERTIES_COLLECTOR =
             new FilteredCollector<VariableDescriptor>(new PropertyCollector());
-    public static List<CallableDescriptorCollector<? extends CallableDescriptor>> FUNCTIONS_AND_VARIABLES =
-            Lists.newArrayList(FUNCTIONS, VARIABLES);
+
+    public static final CallableDescriptorCollectors<CallableDescriptor> FUNCTIONS_AND_VARIABLES =
+            new CallableDescriptorCollectors(FUNCTIONS_COLLECTOR, VARIABLES_COLLECTOR);
+    public static final CallableDescriptorCollectors<CallableDescriptor> FUNCTIONS =
+            new CallableDescriptorCollectors(FUNCTIONS_COLLECTOR);
+    public static final CallableDescriptorCollectors<VariableDescriptor> VARIABLES =
+            new CallableDescriptorCollectors(VARIABLES_COLLECTOR);
+    public static final CallableDescriptorCollectors<VariableDescriptor> PROPERTIES =
+            new CallableDescriptorCollectors(PROPERTIES_COLLECTOR);
 
     private static class FunctionCollector implements CallableDescriptorCollector<FunctionDescriptor> {
 
@@ -145,19 +153,19 @@ public class CallableDescriptorCollectors {
         @NotNull
         @Override
         public Collection<VariableDescriptor> getNonExtensionsByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES.getNonExtensionsByName(scope, name, bindingTrace));
+            return filterProperties(VARIABLES_COLLECTOR.getNonExtensionsByName(scope, name, bindingTrace));
         }
 
         @NotNull
         @Override
         public Collection<VariableDescriptor> getMembersByName(@NotNull JetType receiver, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES.getMembersByName(receiver, name, bindingTrace));
+            return filterProperties(VARIABLES_COLLECTOR.getMembersByName(receiver, name, bindingTrace));
         }
 
         @NotNull
         @Override
         public Collection<VariableDescriptor> getNonMembersByName(JetScope scope, Name name, @NotNull BindingTrace bindingTrace) {
-            return filterProperties(VARIABLES.getNonMembersByName(scope, name, bindingTrace));
+            return filterProperties(VARIABLES_COLLECTOR.getNonMembersByName(scope, name, bindingTrace));
         }
 
         @Override
@@ -197,6 +205,15 @@ public class CallableDescriptorCollectors {
         }
     }
 
-    private CallableDescriptorCollectors() {
+    private final Collection<CallableDescriptorCollector<D>> collectors;
+
+    private CallableDescriptorCollectors(CallableDescriptorCollector<D>... collectors) {
+        this.collectors = Lists.newArrayList(collectors);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<CallableDescriptorCollector<D>> iterator() {
+        return collectors.iterator();
     }
 }

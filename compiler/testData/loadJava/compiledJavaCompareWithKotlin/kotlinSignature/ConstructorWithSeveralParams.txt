@@ -1,5 +1,5 @@
 package test
 
 public open class ConstructorWithSeveralParams : java.lang.Object {
-    public constructor ConstructorWithSeveralParams(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.ArrayList<kotlin.String>)
+    public constructor ConstructorWithSeveralParams(/*0*/ integer: kotlin.Int, /*1*/ intField: kotlin.Int, /*2*/ collection: java.util.ArrayList<kotlin.String>)
 }
