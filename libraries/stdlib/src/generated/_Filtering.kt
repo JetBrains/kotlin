@@ -836,6 +836,126 @@ public inline fun <T, C: MutableCollection<in T>> Stream<T>.filterTo(collection:
 }
 
 /**
+ * Returns a list containing elements at specified positions
+ */
+public fun <T> Array<out T>.slice(indices: Iterable<Int>) : List<T> {
+    val list = ArrayList<T>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun BooleanArray.slice(indices: Iterable<Int>) : List<Boolean> {
+    val list = ArrayList<Boolean>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun ByteArray.slice(indices: Iterable<Int>) : List<Byte> {
+    val list = ArrayList<Byte>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun CharArray.slice(indices: Iterable<Int>) : List<Char> {
+    val list = ArrayList<Char>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun DoubleArray.slice(indices: Iterable<Int>) : List<Double> {
+    val list = ArrayList<Double>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun FloatArray.slice(indices: Iterable<Int>) : List<Float> {
+    val list = ArrayList<Float>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun IntArray.slice(indices: Iterable<Int>) : List<Int> {
+    val list = ArrayList<Int>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun LongArray.slice(indices: Iterable<Int>) : List<Long> {
+    val list = ArrayList<Long>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun ShortArray.slice(indices: Iterable<Int>) : List<Short> {
+    val list = ArrayList<Short>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun <T> List<T>.slice(indices: Iterable<Int>) : List<T> {
+    val list = ArrayList<T>()
+    for (index in indices) {
+        list.add(get(index))
+    }
+    return list
+    
+}
+
+/**
  * Returns a list containing first *n* elements
  */
 public fun <T> Array<out T>.take(n: Int) : List<T> {

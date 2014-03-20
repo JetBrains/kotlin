@@ -264,5 +264,20 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
+    templates add f("slice(indices: Iterable<Int>)") {
+        only(Lists, ArraysOfPrimitives, ArraysOfObjects)
+        doc { "Returns a list containing elements at specified positions" }
+        returns("List<T>")
+        body {
+            """
+            val list = ArrayList<T>()
+            for (index in indices) {
+                list.add(get(index))
+            }
+            return list
+            """
+        }
+    }
+
     return templates
 }
