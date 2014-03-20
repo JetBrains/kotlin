@@ -88,6 +88,8 @@ public class KotlinNamedParametersContributor : CompletionContributor() {
         val functionDescriptors = callReference.resolveToDescriptors().map { it as? FunctionDescriptor }.filterNotNull()
 
         for (funDescriptor in functionDescriptors) {
+            if (!funDescriptor.hasStableParameterNames()) continue
+
             val usedArguments = QuickFixUtil.getUsedParameters(callElement, valueArgument, funDescriptor)
 
             for (parameter in funDescriptor.getValueParameters()) {

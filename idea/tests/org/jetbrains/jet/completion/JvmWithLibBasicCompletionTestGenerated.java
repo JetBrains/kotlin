@@ -36,6 +36,11 @@ public class JvmWithLibBasicCompletionTestGenerated extends AbstractJvmWithLibBa
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/basic/custom"), Pattern.compile("^(.+)\\.kt$"), false);
     }
     
+    @TestMetadata("JavaMethodNamedArguments.kt")
+    public void testJavaMethodNamedArguments() throws Exception {
+        doTest("idea/testData/completion/basic/custom/JavaMethodNamedArguments.kt");
+    }
+    
     @TestMetadata("TopLevelNonImportedExtFun.kt")
     public void testTopLevelNonImportedExtFun() throws Exception {
         doTest("idea/testData/completion/basic/custom/TopLevelNonImportedExtFun.kt");
