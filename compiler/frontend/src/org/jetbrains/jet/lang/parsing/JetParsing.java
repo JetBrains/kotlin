@@ -376,7 +376,7 @@ public class JetParsing extends AbstractJetParsing {
     /*
      * (modifier | attribute)*
      */
-    boolean parseModifierList(JetNodeType nodeType, boolean allowShortAnnotations) {
+    boolean parseModifierList(IElementType nodeType, boolean allowShortAnnotations) {
         return parseModifierList(nodeType, null, allowShortAnnotations);
     }
 
@@ -385,7 +385,7 @@ public class JetParsing extends AbstractJetParsing {
      *
      * Feeds modifiers (not attributes) into the passed consumer, if it is not null
      */
-    boolean parseModifierList(JetNodeType nodeType, @Nullable Consumer<IElementType> tokenConsumer, boolean allowShortAnnotations) {
+    boolean parseModifierList(IElementType nodeType, @Nullable Consumer<IElementType> tokenConsumer, boolean allowShortAnnotations) {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
@@ -1615,7 +1615,7 @@ public class JetParsing extends AbstractJetParsing {
         return atGT;
     }
 
-    private void parseModifierListWithShortAnnotations(JetNodeType modifierList, TokenSet lookFor, TokenSet stopAt) {
+    private void parseModifierListWithShortAnnotations(IElementType modifierList, TokenSet lookFor, TokenSet stopAt) {
         int lastId = findLastBefore(lookFor, stopAt, false);
         createTruncatedBuilder(lastId).parseModifierList(modifierList, true);
     }

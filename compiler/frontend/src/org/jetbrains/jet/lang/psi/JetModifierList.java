@@ -19,9 +19,12 @@ package org.jetbrains.jet.lang.psi;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetModifiedListStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
@@ -30,9 +33,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JetModifierList extends JetElementImpl {
+public class JetModifierList extends JetElementImplStub<PsiJetModifiedListStub> {
     public JetModifierList(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetModifierList(@NotNull PsiJetModifiedListStub stub) {
+        super(stub, JetStubElementTypes.MODIFIER_LIST);
     }
 
     @Override

@@ -34,4 +34,7 @@ public interface JetStubElementTypes {
     JetClassBodyElementType CLASS_BODY = new JetClassBodyElementType("CLASS_BODY");
     JetImportListElementType IMPORT_LIST = new JetImportListElementType("IMPORT_LIST");
     JetImportDirectiveElementType IMPORT_DIRECTIVE = new JetImportDirectiveElementType("IMPORT_DIRECTIVE");
+
+    JetModifierListElementType MODIFIER_LIST = new JetModifierListElementType("MODIFIER_LIST");
+    JetModifierListElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST = new JetModifierListElementType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST");
 }
