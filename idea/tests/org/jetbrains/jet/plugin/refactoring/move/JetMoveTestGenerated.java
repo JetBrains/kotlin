@@ -185,6 +185,11 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest("idea/testData/refactoring/move/kotlin/movePackage/movePackage/movePackage.test");
     }
     
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToFile/moveClassToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_moveClassToFile_MoveClassToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToFile/moveClassToFile.test");
+    }
+    
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test")
     public void testKotlin_moveTopLevelDeclarations_moveClassToPackage_MoveClassToPackage() throws Exception {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToPackage/moveClassToPackage.test");
@@ -193,6 +198,11 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveClassToPackageWithConflicts/moveClassToPackageWithConflicts.test")
     public void testKotlin_moveTopLevelDeclarations_moveClassToPackageWithConflicts_MoveClassToPackageWithConflicts() throws Exception {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveClassToPackageWithConflicts/moveClassToPackageWithConflicts.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_moveFunctionToFile_MoveFunctionToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToFile/moveFunctionToFile.test");
     }
     
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveFunctionToPackage/moveFunctionToPackage.test")
@@ -205,6 +215,11 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveFunctionToPackageWithConflicts/moveFunctionToPackageWithConflicts.test");
     }
     
+    @TestMetadata("kotlin/moveTopLevelDeclarations/moveObjectToFile/moveObjectToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_moveObjectToFile_MoveObjectToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObjectToFile/moveObjectToFile.test");
+    }
+    
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveObjectToPackage/moveObjectToPackage.test")
     public void testKotlin_moveTopLevelDeclarations_moveObjectToPackage_MoveObjectToPackage() throws Exception {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObjectToPackage/moveObjectToPackage.test");
@@ -213,6 +228,11 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
     @TestMetadata("kotlin/moveTopLevelDeclarations/moveObjectToPackageWithConflicts/moveObjectToPackageWithConflicts.test")
     public void testKotlin_moveTopLevelDeclarations_moveObjectToPackageWithConflicts_MoveObjectToPackageWithConflicts() throws Exception {
         doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/moveObjectToPackageWithConflicts/moveObjectToPackageWithConflicts.test");
+    }
+    
+    @TestMetadata("kotlin/moveTopLevelDeclarations/movePropertyToFile/movePropertyToFile.test")
+    public void testKotlin_moveTopLevelDeclarations_movePropertyToFile_MovePropertyToFile() throws Exception {
+        doTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/movePropertyToFile/movePropertyToFile.test");
     }
     
     @TestMetadata("kotlin/moveTopLevelDeclarations/movePropertyToPackage/movePropertyToPackage.test")

@@ -20,7 +20,6 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.openapi.project.Project
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
-import com.intellij.refactoring.MoveDestination
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.MoveMultipleElementsViewDescriptor
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil
@@ -33,7 +32,6 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.refactoring.util.RefactoringUIUtil
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.refactoring.rename.RenameUtil
-import com.intellij.refactoring.move.MoveClassesOrPackagesCallback
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDirectory
@@ -56,14 +54,12 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.util.MoveRenameUsageInfo
-import com.intellij.psi.PsiClass
 import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.asJava.namedUnwrappedElement
 import org.jetbrains.jet.lang.psi.psiUtil.isPrivate
 import org.jetbrains.jet.plugin.refactoring.getUsageContext
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
 import org.jetbrains.jet.plugin.codeInsight.JetFileReferencesResolver
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -78,7 +74,7 @@ import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 
 public class MoveKotlinTopLevelDeclarationsOptions(
         val elementsToMove: Collection<JetNamedDeclaration>,
-        val moveDestination: MoveDestination,
+        val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
         val searchInNonCode: Boolean = true,
         val moveCallback: MoveCallback? = null
@@ -92,18 +88,19 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     }
 
     private var nonCodeUsages: Array<NonCodeUsageInfo>? = null
-    private val kotlinToLightElements = options.elementsToMove.keysToMap { it.toLightElements() }
+    private val elementsToMove = options.elementsToMove.filter { e -> e.getContainingFile() != options.moveTarget.getTargetPsiIfExists(e) }
+    private val kotlinToLightElements = elementsToMove.keysToMap { it.toLightElements() }
     private val conflicts = MultiMap<PsiElement, String>()
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>?): UsageViewDescriptor {
         return MoveMultipleElementsViewDescriptor(
-                options.elementsToMove.copyToArray(),
-                MoveClassesOrPackagesUtil.getPackageName(options.moveDestination.getTargetPackage())
+                elementsToMove.copyToArray(),
+                MoveClassesOrPackagesUtil.getPackageName(options.moveTarget.packageWrapper)
         )
     }
 
     override fun findUsages(): Array<UsageInfo> {
-        val newPackageName = options.moveDestination.getTargetPackage()?.getQualifiedName() ?: ""
+        val newPackageName = options.moveTarget.packageWrapper?.getQualifiedName() ?: ""
 
         fun collectUsages(): List<UsageInfo> {
             return kotlinToLightElements.values().flatten().flatMap { lightElement ->
@@ -156,7 +153,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                 val declaration = usage.getReferencedElement()?.namedUnwrappedElement as? JetNamedDeclaration
                 if (declaration == null || !declaration.isPrivate()) continue
 
-                if (element.isInsideOf(options.elementsToMove)) continue
+                if (element.isInsideOf(elementsToMove)) continue
 
                 val container = element.getUsageContext()
                 if (!declarationToContainers.getOrPut(declaration) { HashSet<PsiElement>() }.add(container)) continue
@@ -177,13 +174,13 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
 
         fun collectConflictsInDeclarations() {
             val declarationToReferenceTargets = HashMap<JetNamedDeclaration, MutableSet<PsiElement>>()
-            for (declaration in options.elementsToMove) {
+            for (declaration in elementsToMove) {
                 val referenceToContext = JetFileReferencesResolver.resolve(element = declaration, visitReceivers = false)
                 for ((refExpr, bindingContext) in referenceToContext) {
                     val refTarget = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
                         DescriptorToDeclarationUtil.getDeclaration(declaration.getProject(), descriptor, bindingContext)
                     }
-                    if (refTarget == null || refTarget.isInsideOf(options.elementsToMove)) continue
+                    if (refTarget == null || refTarget.isInsideOf(elementsToMove)) continue
 
                     val packagePrivate = when(refTarget) {
                         is JetModifierListOwner ->
@@ -223,23 +220,32 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>?) {
-        fun moveDeclaration(declaration: JetNamedDeclaration, moveDestination: PsiDirectory): JetNamedDeclaration? {
-            val newPackage = moveDestination.getPackage()
-            if (newPackage == null) return null
-
+        fun moveDeclaration(declaration: JetNamedDeclaration, moveTarget: KotlinMoveTarget): JetNamedDeclaration? {
             val file = declaration.getContainingFile() as? JetFile
-            if (file == null) return null
+            assert (file != null, "${declaration.getClass()}: ${declaration.getText()}")
 
-            val packageNameInfo = PackageNameInfo(JetPsiUtil.getFQName(file), FqName(newPackage.getQualifiedName()))
+            val targetPsi = moveTarget.getOrCreateTargetPsi(declaration)
+            val targetFile =
+                    if (targetPsi is PsiDirectory) {
+                        val existingFile = if (targetPsi != file!!.getContainingDirectory()) targetPsi.findFile(file.getName()) else null
+                        val newFile = existingFile ?: declaration.getFileNameAfterMove()?.let {
+                            fileName ->
+                            createKotlinFile(fileName, targetPsi)
+                        }
 
-            val existingFile = if (moveDestination != file.getContainingDirectory()) moveDestination.findFile(file.getName()) else null
-            val newFile = existingFile ?: declaration.getFileNameAfterMove()?.let {
-                fileName -> createKotlinFile(fileName, moveDestination)
-            }
-            assert(newFile != null, "Couldn't create Koltin file for: ${declaration.getClass()}: ${declaration.getText()}")
+                        newFile
+                    }
+                    else targetPsi
 
+            assert(targetFile is JetFile, "Couldn't create Koltin file for: ${declaration.getClass()}: ${declaration.getText()}")
+
+            val newPackage = (targetFile as JetFile).getPackageName()
+            assert (newPackage != null, "${targetFile.getClass()}: ${targetFile.getText()}")
+
+            val packageNameInfo = PackageNameInfo(JetPsiUtil.getFQName(file!!), FqName(newPackage!!))
             declaration.updateInternalReferencesOnPackageNameChange(packageNameInfo, ShorteningMode.NO_SHORTENING)
-            val newElement = newFile!!.add(declaration) as JetNamedDeclaration
+
+            val newElement = targetFile.add(declaration) as JetNamedDeclaration
             declaration.delete()
 
             newElement.addToShorteningWaitSet()
@@ -250,11 +256,13 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
         try {
             val oldToNewElementsMapping = HashMap<PsiElement, PsiElement>()
             for ((oldDeclaration, oldLightElements) in kotlinToLightElements) {
-                val targetDirectory = options.moveDestination.getTargetDirectory(oldDeclaration.getContainingFile())
-                if (targetDirectory == null) continue
-
-                val newDeclaration = moveDeclaration(oldDeclaration, targetDirectory)
-                if (newDeclaration == null) continue
+                val newDeclaration = moveDeclaration(oldDeclaration, options.moveTarget)
+                if (newDeclaration == null) {
+                    for (oldElement in oldLightElements) {
+                        oldToNewElementsMapping[oldElement] = oldElement
+                    }
+                    continue
+                }
 
                 getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
                 for ((oldElement, newElement) in oldLightElements.iterator() zip newDeclaration.toLightElements().iterator()) {
@@ -272,13 +280,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
 
     override fun performPsiSpoilingRefactoring() {
         nonCodeUsages?.let { nonCodeUsages -> RenameUtil.renameNonCodeUsages(myProject, nonCodeUsages) }
-
-        options.moveCallback?.let { moveCallback ->
-            if (moveCallback is MoveClassesOrPackagesCallback) {
-                moveCallback.classesOrPackagesMoved(options.moveDestination)
-            }
-            moveCallback.refactoringCompleted()
-        }
+        options.moveCallback?.refactoringCompleted()
     }
 
     override fun getCommandName(): String = REFACTORING_NAME

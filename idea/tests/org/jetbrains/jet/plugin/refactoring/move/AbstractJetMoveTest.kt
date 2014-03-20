@@ -52,8 +52,11 @@ import com.intellij.refactoring.move.MoveHandler
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
-import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
+import org.jetbrains.jet.lang.psi.JetFile
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -251,13 +254,16 @@ enum class MoveAction {
 
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            val project = mainFile.getProject()
             val elementToMove = elementAtCaret!!.getParentByType(javaClass<JetNamedDeclaration>())!!
-            val targetPackage = config.getString("targetPackage")
 
-            val options = MoveKotlinTopLevelDeclarationsOptions(
-                    elementsToMove = listOf(elementToMove),
-                    moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage))
-            )
+            val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
+                MoveDestinationKotlinMoveTarget(MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName)))
+            } ?: config.getString("targetFile").let { filePath ->
+                JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)
+            }
+
+            val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
             MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
         }
     }
