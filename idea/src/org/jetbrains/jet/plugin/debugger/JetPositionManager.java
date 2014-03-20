@@ -301,7 +301,7 @@ public class JetPositionManager implements PositionManager {
                 JetExpression expression = next.getArgumentExpression();
                 if (valueArgument == expression) {
                     return InlineAnalyzerExtension.checkInlinableParameter(
-                            valueParameterDescriptor, (JetElement) resolvedValueArgument,
+                            valueParameterDescriptor, expression,
                             call.getResultingDescriptor(), null
                     );
                 }
