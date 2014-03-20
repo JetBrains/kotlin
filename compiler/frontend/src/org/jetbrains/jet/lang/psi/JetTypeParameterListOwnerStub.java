@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetStubWithFqName;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
@@ -43,7 +42,7 @@ abstract class JetTypeParameterListOwnerStub<T extends PsiJetStubWithFqName> ext
 
     @Nullable
     JetTypeConstraintList getTypeConstraintList() {
-        return (JetTypeConstraintList) findChildByType(JetNodeTypes.TYPE_CONSTRAINT_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_CONSTRAINT_LIST);
     }
 
     @Override
