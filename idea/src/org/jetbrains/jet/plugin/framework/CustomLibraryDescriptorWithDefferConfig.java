@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.plugin.framework;
 
-import com.beust.jcommander.internal.Lists;
+import com.google.common.collect.Lists;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.OrderRootType;
