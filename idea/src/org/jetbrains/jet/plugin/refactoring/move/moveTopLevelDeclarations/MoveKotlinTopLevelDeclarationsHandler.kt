@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.psi.PsiReference
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.isInJavaSourceRoot
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration
@@ -74,9 +73,17 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
         val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
         val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
+        val targetFile: JetFile? = when (targetContainer) {
+            is JetFile -> targetContainer
+            else -> {
+                val files = elements.mapTo(HashSet<JetFile>()) { e -> e.getContainingFile() as JetFile }
+                if (files.size == 1) files.first() else null
+            }
+        }
+        val moveToPackage = targetContainer !is JetFile
 
         MoveKotlinTopLevelDeclarationsDialog(
-                project, elementsToSearch, targetPackageName, targetDirectory, searchInComments, searchInText, callback
+                project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
         ).show()
 
         return true
@@ -93,7 +100,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     }
 
     override fun isValidTarget(psiElement: PsiElement?, sources: Array<out PsiElement>): Boolean {
-        return psiElement is PsiPackage || (psiElement is PsiDirectory && psiElement.getPackage() != null)
+        return psiElement is PsiPackage || (psiElement is PsiDirectory && psiElement.getPackage() != null) || psiElement is JetFile
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {

@@ -40,6 +40,12 @@ import com.intellij.refactoring.util.ConflictsUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
 import com.intellij.psi.PsiFileFactory
 import org.jetbrains.jet.plugin.JetFileType
+import com.intellij.openapi.project.Project
+import java.io.File
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiFile
+import com.intellij.openapi.vfs.VirtualFile
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -81,6 +87,12 @@ fun createKotlinFile(fileName: String, targetDir: PsiDirectory): JetFile {
     )
 
     return targetDir.add(file) as JetFile
+}
+
+public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance()!!.findFileByIoFile(this)
+
+public fun File.toPsiFile(project: Project): PsiFile? {
+    return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findFile(vfile) }
 }
 
 /**
