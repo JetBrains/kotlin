@@ -19,6 +19,7 @@ package org.jetbrains.jet;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -77,7 +78,7 @@ public interface JetNodeTypes {
     JetNodeType INITIALIZER_LIST         = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
     JetNodeType THIS_CALL                = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
     JetNodeType THIS_CONSTRUCTOR_REFERENCE = new JetNodeType("THIS_CONSTRUCTOR_REFERENCE", JetThisReferenceExpression.class);
-    JetNodeType TYPE_CONSTRAINT_LIST     = new JetNodeType("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);
+    IElementType TYPE_CONSTRAINT_LIST    = JetStubElementTypes.TYPE_CONSTRAINT_LIST;
     JetNodeType TYPE_CONSTRAINT          = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);
 
     // TODO: Not sure if we need separate NT for each kind of constants

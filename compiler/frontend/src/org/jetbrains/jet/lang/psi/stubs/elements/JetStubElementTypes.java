@@ -37,4 +37,6 @@ public interface JetStubElementTypes {
 
     JetModifierListElementType MODIFIER_LIST = new JetModifierListElementType("MODIFIER_LIST");
     JetModifierListElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST = new JetModifierListElementType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST");
+
+    JetTypeConstraintListElementType TYPE_CONSTRAINT_LIST = new JetTypeConstraintListElementType("TYPE_CONSTRAINT_LIST");
 }
