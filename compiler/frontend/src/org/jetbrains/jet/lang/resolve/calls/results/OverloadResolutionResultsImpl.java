@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.calls.results;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 
 import java.util.Collection;
@@ -60,6 +62,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     private final Collection<ResolvedCallWithTrace<D>> results;
     private final Code resultCode;
     private DelegatingBindingTrace trace;
+    private Collection<ResolvedCall<D>> allCandidates;
 
     private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCallWithTrace<D>> results) {
         this.results = results;
@@ -116,11 +119,6 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return resultCode == Code.INCOMPLETE_TYPE_INFERENCE;
     }
 
-    //
-//    public OverloadResolutionResultsImpl<D> newContents(@NotNull Collection<D> functionDescriptors) {
-//        return new OverloadResolutionResultsImpl<D>(resultCode, functionDescriptors);
-//    }
-
     public DelegatingBindingTrace getTrace() {
         return trace;
     }
@@ -128,5 +126,15 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     public OverloadResolutionResultsImpl<D> setTrace(DelegatingBindingTrace trace) {
         this.trace = trace;
         return this;
+    }
+
+    public void setAllCandidates(@Nullable Collection<ResolvedCall<D>> allCandidates) {
+        this.allCandidates = allCandidates;
+    }
+
+    @Nullable
+    @Override
+    public Collection<ResolvedCall<D>> getAllCandidates() {
+        return allCandidates;
     }
 }

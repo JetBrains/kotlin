@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
@@ -53,7 +54,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.lang.diagnostics.Errors.*;
+import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_A_CLASS;
+import static org.jetbrains.jet.lang.diagnostics.Errors.NO_CONSTRUCTOR;
 import static org.jetbrains.jet.lang.resolve.BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
 import static org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -495,21 +497,29 @@ public class CallResolver {
         if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
             argumentTypeResolver.analyzeArgumentsAndRecordTypes(context);
         }
-
+        Collection<ResolvedCall<F>> allCandidates = Lists.newArrayList();
+        OverloadResolutionResultsImpl<F> successfulResults = null;
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
         OverloadResolutionResultsImpl<F> resultsForFirstNonemptyCandidateSet = null;
         for (ResolutionTask<D, F> task : prioritizedTasks) {
+            if (successfulResults != null && !context.collectAllCandidates) continue;
+
             TemporaryBindingTrace taskTrace =
                     TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.call.getCalleeExpression());
             OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(
                     task.replaceBindingTrace(taskTrace), callTransformer);
+
+            allCandidates.addAll(task.getResolvedCalls());
+
+            if (successfulResults != null) continue;
+
             if (results.isSuccess() || results.isAmbiguity()) {
                 taskTrace.commit();
-                return results;
+                successfulResults = results;
             }
             if (results.getResultCode() == INCOMPLETE_TYPE_INFERENCE) {
                 results.setTrace(taskTrace);
-                return results;
+                successfulResults = results;
             }
             boolean updateResults = traceForFirstNonemptyCandidateSet == null
                                     || (resultsForFirstNonemptyCandidateSet.getResultCode() == CANDIDATES_WITH_WRONG_RECEIVER
@@ -519,13 +529,21 @@ public class CallResolver {
                 resultsForFirstNonemptyCandidateSet = results;
             }
         }
-        if (traceForFirstNonemptyCandidateSet == null) {
+        OverloadResolutionResultsImpl<F> results;
+        if (successfulResults != null) {
+            results = successfulResults;
+        }
+        else if (traceForFirstNonemptyCandidateSet == null) {
             tracing.unresolvedReference(context.trace);
             argumentTypeResolver.checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
-            return OverloadResolutionResultsImpl.<F>nameNotFound();
+            results = OverloadResolutionResultsImpl.<F>nameNotFound();
         }
-        traceForFirstNonemptyCandidateSet.commit();
-        return resultsForFirstNonemptyCandidateSet;
+        else {
+            traceForFirstNonemptyCandidateSet.commit();
+            results = resultsForFirstNonemptyCandidateSet;
+        }
+        results.setAllCandidates(context.collectAllCandidates ? allCandidates : null);
+        return results;
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -602,7 +620,7 @@ public class CallResolver {
                 for (ResolvedCallWithTrace<F> call : calls) {
                     task.tracing.bindReference(call.getTrace(), call);
                     task.tracing.bindResolvedCall(call.getTrace(), call);
-                    task.getResolvedCalls().add(call);
+                    task.addResolvedCall(call);
                 }
             }
         }
