@@ -3351,13 +3351,8 @@
   <kind>fun</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/Collection-extensions.html#empty</href>
-  <name>empty [kotlin.Collection]</name>
-  <kind>val</kind>
-</search>
-<search>
-  <href>kotlin/kotlin/List-extensions.html#empty</href>
-  <name>empty [kotlin.List]</name>
+  <href>kotlin/kotlin/Map-extensions.html#empty</href>
+  <name>empty [kotlin.Map]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -8631,8 +8626,28 @@
   <kind>val</kind>
 </search>
 <search>
+  <href>kotlin/swing/java/awt/Component-extensions.html#height</href>
+  <name>height [java.awt.Component]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/Container-extensions.html#height</href>
+  <name>height [java.awt.Container]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JComponent-extensions.html#height</href>
+  <name>height [javax.swing.JComponent]</name>
+  <kind>var</kind>
+</search>
+<search>
   <href>kotlin/swing/javax/swing/JFrame-extensions.html#height</href>
   <name>height [javax.swing.JFrame]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JMenu-extensions.html#height</href>
+  <name>height [javax.swing.JMenu]</name>
   <kind>var</kind>
 </search>
 <search>
@@ -10516,8 +10531,8 @@
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/List-extensions.html#lastIndex</href>
-  <name>lastIndex [kotlin.List]</name>
+  <href>kotlin/kotlin/BooleanArray-extensions.html#lastIndex</href>
+  <name>lastIndex [kotlin.BooleanArray]</name>
   <kind>val</kind>
 </search>
 <search>
@@ -15096,11 +15111,6 @@
   <kind>val</kind>
 </search>
 <search>
-  <href>kotlin/kotlin/CharSequence-extensions.html#size</href>
-  <name>size [kotlin.CharSequence]</name>
-  <kind>val</kind>
-</search>
-<search>
   <href>kotlin/DoubleArray.html#size</href>
   <name>size [kotlin.DoubleArray]</name>
   <kind>val</kind>
@@ -19446,8 +19456,28 @@
   <kind>var</kind>
 </search>
 <search>
+  <href>kotlin/swing/java/awt/Component-extensions.html#width</href>
+  <name>width [java.awt.Component]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/java/awt/Container-extensions.html#width</href>
+  <name>width [java.awt.Container]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JComponent-extensions.html#width</href>
+  <name>width [javax.swing.JComponent]</name>
+  <kind>var</kind>
+</search>
+<search>
   <href>kotlin/swing/javax/swing/JFrame-extensions.html#width</href>
   <name>width [javax.swing.JFrame]</name>
+  <kind>var</kind>
+</search>
+<search>
+  <href>kotlin/swing/javax/swing/JMenu-extensions.html#width</href>
+  <name>width [javax.swing.JMenu]</name>
   <kind>var</kind>
 </search>
 <search>
