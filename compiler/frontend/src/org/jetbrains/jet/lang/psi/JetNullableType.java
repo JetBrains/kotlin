@@ -24,7 +24,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetNullableType extends JetTypeElement {
+public class JetNullableType extends JetElementImpl implements JetTypeElement {
     public JetNullableType(@NotNull ASTNode node) {
         super(node);
     }

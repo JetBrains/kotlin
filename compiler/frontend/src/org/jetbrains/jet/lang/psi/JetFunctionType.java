@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JetFunctionType extends JetTypeElement {
+public class JetFunctionType extends JetElementImpl implements JetTypeElement {
 
     public static final JetToken RETURN_TYPE_SEPARATOR = JetTokens.ARROW;
 

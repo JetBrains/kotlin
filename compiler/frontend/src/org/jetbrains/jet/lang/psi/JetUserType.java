@@ -26,7 +26,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetUserType extends JetTypeElement {
+public class JetUserType extends JetElementImpl implements JetTypeElement {
     public JetUserType(@NotNull ASTNode node) {
         super(node);
     }

@@ -16,17 +16,11 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public abstract class JetTypeElement extends JetElementImpl {
-    public JetTypeElement(@NotNull ASTNode node) {
-        super(node);
-    }
-
+public interface JetTypeElement extends JetElement {
     @NotNull
-    public abstract List<JetTypeReference> getTypeArgumentsAsTypes();
-
+    List<JetTypeReference> getTypeArgumentsAsTypes();
 }

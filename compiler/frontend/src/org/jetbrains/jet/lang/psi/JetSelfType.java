@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class JetSelfType extends JetTypeElement {
+public class JetSelfType extends JetElementImpl implements JetTypeElement {
     public JetSelfType(@NotNull ASTNode node) {
         super(node);
     }
