@@ -166,9 +166,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {
-                            result.add(MethodSmartStepTarget(method = psiMethod, label = null,
-                                                             highlightElement = expression,
-                                                             needBreakpointRequest = false, lines = lines))
+                            result.add(MethodSmartStepTarget(psiMethod, null, expression, false, lines))
                         }
                     }
                 }
