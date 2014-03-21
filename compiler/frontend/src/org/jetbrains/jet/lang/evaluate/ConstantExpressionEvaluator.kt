@@ -350,7 +350,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
                 val descriptor = AnnotationDescriptorImpl()
                 descriptor.setAnnotationType(classDescriptor.getDefaultType())
-                AnnotationResolver.resolveAnnotationArgument(descriptor, call, trace)
+                AnnotationResolver.resolveAnnotationArguments(descriptor, call, trace)
                 return AnnotationValue(descriptor)
             }
         }

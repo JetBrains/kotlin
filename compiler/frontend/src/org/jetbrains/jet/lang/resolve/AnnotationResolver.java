@@ -215,11 +215,11 @@ public class AnnotationResolver {
         if (results.isSingleResult()) {
             AnnotationDescriptorImpl annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
             assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
-            resolveAnnotationArgument(annotationDescriptor, results.getResultingCall(), trace);
+            resolveAnnotationArguments(annotationDescriptor, results.getResultingCall(), trace);
         }
     }
 
-    public static void resolveAnnotationArgument(
+    public static void resolveAnnotationArguments(
             @NotNull AnnotationDescriptorImpl annotationDescriptor,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull BindingTrace trace
