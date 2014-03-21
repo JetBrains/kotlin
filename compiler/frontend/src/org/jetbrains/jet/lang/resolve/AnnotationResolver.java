@@ -220,26 +220,37 @@ public class AnnotationResolver {
     ) {
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
+            ResolvedValueArgument resolvedArgument = descriptorToArgument.getValue();
 
-            JetType varargElementType = parameterDescriptor.getVarargElementType();
-            boolean argumentsAsVararg = varargElementType != null && !hasSpread(descriptorToArgument.getValue());
-            List<CompileTimeConstant<?>> constants = resolveValueArguments(descriptorToArgument.getValue(),
-                                                                           argumentsAsVararg ? varargElementType : parameterDescriptor.getType(),
-                                                                           trace);
+            CompileTimeConstant<?> value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument);
+            if (value != null) {
+                annotationDescriptor.setValueArgument(parameterDescriptor, value);
+            }
+        }
+    }
 
-            if (argumentsAsVararg) {
-                JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
-                if (arrayType == null) {
-                    arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
-                }
-                annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType, true));
+    @Nullable
+    private static CompileTimeConstant<?> getAnnotationArgumentValue(
+            BindingTrace trace,
+            ValueParameterDescriptor parameterDescriptor,
+            ResolvedValueArgument resolvedArgument
+    ) {
+        JetType varargElementType = parameterDescriptor.getVarargElementType();
+        boolean argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument);
+        List<CompileTimeConstant<?>> constants = resolveValueArguments(resolvedArgument,
+                                                                       argumentsAsVararg ? varargElementType : parameterDescriptor.getType(),
+                                                                       trace);
+
+        if (argumentsAsVararg) {
+            JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
+            if (arrayType == null) {
+                arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
             }
-            else {
-                // we should actually get only one element, but just in case of getting many, we take the last one
-                if (!constants.isEmpty()) {
-                    annotationDescriptor.setValueArgument(parameterDescriptor, KotlinPackage.last(constants));
-                }
-            }
+            return new ArrayValue(constants, arrayType, true);
+        }
+        else {
+            // we should actually get only one element, but just in case of getting many, we take the last one
+            return !constants.isEmpty() ? KotlinPackage.last(constants) : null;
         }
     }
 
