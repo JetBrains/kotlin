@@ -1125,37 +1125,22 @@ public abstract class StackValue {
 
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-            if (thisObject.exists()) {
+            if (receiverArgument.exists()) {
                 if (callableMethod != null) {
-                    if (receiverArgument.exists()) {
-                        return callableMethod.getReceiverClass();
-                    }
-                    else {
-                        //noinspection ConstantConditions
-                        return callableMethod.getThisType();
-                    }
+                    return callableMethod.getReceiverClass();
                 }
                 else {
-                    if (receiverArgument.exists()) {
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
-                    }
-                    else {
-                        return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
-                    }
+                    return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
                 }
-            }
-            else {
-                if (receiverArgument.exists()) {
-                    if (callableMethod != null) {
-                        return callableMethod.getReceiverClass();
-                    }
-                    else {
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
-                    }
+            } else if (thisObject.exists()) {
+                if (callableMethod != null) {
+                    return callableMethod.getThisType();
                 }
                 else {
-                    return Type.VOID_TYPE;
+                    return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
                 }
+            } else {
+                return Type.VOID_TYPE;
             }
         }
 
@@ -1165,27 +1150,26 @@ public abstract class StackValue {
 
             ReceiverValue thisObject = resolvedCall.getThisObject();
             ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
+            int depth;
             if (thisObject.exists()) {
                 if (receiverArgument.exists()) {
-                    if (callableMethod != null) {
-                        codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner());
-                    }
-                    else {
-                        codegen.generateFromResolvedCall(thisObject, codegen.typeMapper
-                                .mapType(descriptor.getExpectedThisObject().getType()));
-                    }
-                    if (putReceiverArgumentOnStack) {
-                        genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
-                    }
+                    Type resultType = callableMethod != null ? callableMethod.getOwner() : codegen.typeMapper
+                            .mapType(descriptor.getExpectedThisObject().getType());
+
+                    codegen.generateFromResolvedCall(thisObject, resultType);
                 }
                 else {
                     genReceiver(v, thisObject, type, null, 0);
                 }
+
+                depth = 1;
             }
             else {
-                if (putReceiverArgumentOnStack && receiverArgument.exists()) {
-                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 0);
-                }
+                depth = 0;
+            }
+
+            if (putReceiverArgumentOnStack && receiverArgument.exists()) {
+                genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), depth);
             }
         }
 
