@@ -1125,37 +1125,22 @@ public abstract class StackValue {
 
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-            if (thisObject.exists()) {
+            if (receiverArgument.exists()) {
                 if (callableMethod != null) {
-                    if (receiverArgument.exists()) {
-                        return callableMethod.getReceiverClass();
-                    }
-                    else {
-                        //noinspection ConstantConditions
-                        return callableMethod.getThisType();
-                    }
+                    return callableMethod.getReceiverClass();
                 }
                 else {
-                    if (receiverArgument.exists()) {
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
-                    }
-                    else {
-                        return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
-                    }
+                    return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
                 }
-            }
-            else {
-                if (receiverArgument.exists()) {
-                    if (callableMethod != null) {
-                        return callableMethod.getReceiverClass();
-                    }
-                    else {
-                        return codegen.typeMapper.mapType(descriptor.getReceiverParameter().getType());
-                    }
+            } else if (thisObject.exists()) {
+                if (callableMethod != null) {
+                    return callableMethod.getThisType();
                 }
                 else {
-                    return Type.VOID_TYPE;
+                    return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
                 }
+            } else {
+                return Type.VOID_TYPE;
             }
         }
 
