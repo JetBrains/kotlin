@@ -141,6 +141,11 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest("idea/testData/stubs/PackageProperty.kt");
     }
     
+    @TestMetadata("ParametersWithFqName.kt")
+    public void testParametersWithFqName() throws Exception {
+        doTest("idea/testData/stubs/ParametersWithFqName.kt");
+    }
+    
     @TestMetadata("QualifiedAnnotationOnFunction.kt")
     public void testQualifiedAnnotationOnFunction() throws Exception {
         doTest("idea/testData/stubs/QualifiedAnnotationOnFunction.kt");
