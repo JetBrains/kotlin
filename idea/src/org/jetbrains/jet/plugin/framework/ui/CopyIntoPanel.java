@@ -20,6 +20,7 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.ui.DocumentAdapter;
+import com.intellij.ui.JBColor;
 import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +48,7 @@ public class CopyIntoPanel {
                 FileChooserDescriptorFactory.createSingleFolderDescriptor());
         copyIntoField.getTextField().getDocument().addDocumentListener(new DocumentAdapter() {
             @Override
-            protected void textChanged(final DocumentEvent e) {
+            protected void textChanged(DocumentEvent e) {
                 updateComponents();
             }
         });
@@ -89,10 +90,10 @@ public class CopyIntoPanel {
     private void updateComponents() {
         boolean isError = false;
 
-        copyIntoLabel.setForeground(Color.BLACK);
+        copyIntoLabel.setForeground(JBColor.foreground());
         if (copyIntoField.isEnabled()) {
             if (copyIntoField.getText().trim().isEmpty()) {
-                copyIntoLabel.setForeground(Color.RED);
+                copyIntoLabel.setForeground(JBColor.red);
                 isError = true;
             }
         }
