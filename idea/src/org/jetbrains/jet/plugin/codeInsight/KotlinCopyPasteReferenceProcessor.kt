@@ -100,12 +100,19 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             return null
         }
 
-        val collectedData = zip(startOffsets, endOffsets).toList().flatMap {
-            val (startOffset, endOffset) = it
-            CollectHighlightsUtil.getElementsInRange(file, startOffset, endOffset).flatMap { element ->
-                collectReferenceDataFromElement(element, file, startOffset, startOffsets, endOffsets)
+        val collectedData = try {
+            zip(startOffsets, endOffsets).toList().flatMap {
+                val (startOffset, endOffset) = it
+                CollectHighlightsUtil.getElementsInRange(file, startOffset, endOffset).flatMap { element ->
+                    collectReferenceDataFromElement(element, file, startOffset, startOffsets, endOffsets)
+                }
             }
         }
+        catch (e: Throwable) {
+            LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
+            return null
+        }
+
         if (collectedData.isEmpty()) {
             return null
         }
@@ -241,7 +248,13 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         if (reference == null) {
             return null
         }
-        val referencedDescriptors = reference.resolveToDescriptors()
+        val referencedDescriptors = try {
+            reference.resolveToDescriptors()
+        }
+        catch (e: Throwable) {
+            LOG.error("Failed to analyze reference (${expression.getText()}) after copy paste", e)
+            return null
+        }
         val referencedFqNames = referencedDescriptors.filterNot { ErrorUtils.isError(it) } .map { it.importableFqName }
         val referencesSame = referencedFqNames any { it == originalReferencedFqName }
         val conflict = referencedFqNames any { it != originalReferencedFqName && (it?.shortName() == originalReferencedFqName.shortName()) }
@@ -287,6 +300,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     }
 
     class object {
+        private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
+
         private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>?> = array(
                 javaClass<JetImportDirective>(),
                 javaClass<JetPackageDirective>(),
@@ -296,7 +311,6 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
     }
 
     private object LengthenReferences {
-        private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
 
         private fun createQualifiedExpression(project: Project, text: String): JetDotQualifiedExpression {
             val newExpression = JetPsiFactory.createExpression(project, text)
