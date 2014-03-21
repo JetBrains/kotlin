@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -234,8 +235,9 @@ public class AnnotationResolver {
                 annotationDescriptor.setValueArgument(parameterDescriptor, new ArrayValue(constants, arrayType, true));
             }
             else {
-                for (CompileTimeConstant<?> constant : constants) {
-                    annotationDescriptor.setValueArgument(parameterDescriptor, constant);
+                // we should actually get only one element, but just in case of getting many, we take the last one
+                if (!constants.isEmpty()) {
+                    annotationDescriptor.setValueArgument(parameterDescriptor, KotlinPackage.last(constants));
                 }
             }
         }
