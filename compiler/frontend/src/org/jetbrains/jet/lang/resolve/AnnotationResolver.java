@@ -126,7 +126,7 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    public JetType resolveAnnotationType(
+    private JetType resolveAnnotationType(
             JetScope scope,
             JetAnnotationEntry entryElement,
             BindingTrace trace
@@ -230,7 +230,7 @@ public class AnnotationResolver {
     }
 
     @Nullable
-    private static CompileTimeConstant<?> getAnnotationArgumentValue(
+    public static CompileTimeConstant<?> getAnnotationArgumentValue(
             BindingTrace trace,
             ValueParameterDescriptor parameterDescriptor,
             ResolvedValueArgument resolvedArgument
