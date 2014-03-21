@@ -108,7 +108,8 @@ public class AnnotationResolver {
 
     private Annotations resolveAnnotationEntries(
             @NotNull JetScope scope,
-            @NotNull List<JetAnnotationEntry> annotationEntryElements, @NotNull BindingTrace trace,
+            @NotNull List<JetAnnotationEntry> annotationEntryElements,
+            @NotNull BindingTrace trace,
             boolean shouldResolveArguments
     ) {
         if (annotationEntryElements.isEmpty()) return Annotations.EMPTY;
@@ -117,7 +118,7 @@ public class AnnotationResolver {
             AnnotationDescriptorImpl descriptor = trace.get(BindingContext.ANNOTATION, entryElement);
             if (descriptor == null) {
                 descriptor = new AnnotationDescriptorImpl();
-                resolveAnnotationStub(scope, entryElement, descriptor, trace);
+                descriptor.setAnnotationType(resolveAnnotationType(scope, entryElement, trace));
                 trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
             }
 
@@ -130,14 +131,23 @@ public class AnnotationResolver {
         return new AnnotationsImpl(result);
     }
 
-    public void resolveAnnotationStub(
-            @NotNull JetScope scope,
-            @NotNull JetAnnotationEntry entryElement,
-            @NotNull AnnotationDescriptorImpl annotationDescriptor,
-            @NotNull BindingTrace trace
+    @NotNull
+    public JetType resolveAnnotationType(
+            JetScope scope,
+            JetAnnotationEntry entryElement,
+            BindingTrace trace
     ) {
         TemporaryBindingTrace temporaryBindingTrace = new TemporaryBindingTrace(trace, "Trace for resolve annotation type");
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(entryElement, scope, temporaryBindingTrace);
+        return getAnnotationTypeFromResolutionResults(entryElement, trace, results);
+    }
+
+    @NotNull
+    public static JetType getAnnotationTypeFromResolutionResults(
+            JetAnnotationEntry entryElement,
+            BindingTrace trace,
+            OverloadResolutionResults<FunctionDescriptor> results
+    ) {
         if (results.isSingleResult()) {
             FunctionDescriptor descriptor = results.getResultingDescriptor();
             if (!ErrorUtils.isError(descriptor)) {
@@ -152,17 +162,19 @@ public class AnnotationResolver {
                     trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().asString()));
                 }
             }
-            JetType annotationType = results.getResultingDescriptor().getReturnType();
-            annotationDescriptor.setAnnotationType(annotationType);
+            JetType type = results.getResultingDescriptor().getReturnType();
+            assert type != null : "No return type for " + results.getResultingDescriptor();
+            return type;
         }
         else {
             JetConstructorCalleeExpression calleeExpression = entryElement.getCalleeExpression();
-            annotationDescriptor.setAnnotationType(ErrorUtils.createErrorType("Unresolved annotation type: " +
-                                                                              (calleeExpression == null ? "null" : calleeExpression.getText())));
+            return ErrorUtils.createErrorType("Unresolved annotation type: " +
+                                              (calleeExpression == null ? "null" : calleeExpression.getText()));
         }
     }
 
-    private OverloadResolutionResults<FunctionDescriptor> resolveAnnotationCall(
+    @NotNull
+    public OverloadResolutionResults<FunctionDescriptor> resolveAnnotationCall(
             JetAnnotationEntry annotationEntry,
             JetScope scope,
             BindingTrace trace
