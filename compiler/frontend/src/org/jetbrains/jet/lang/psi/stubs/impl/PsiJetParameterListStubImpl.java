@@ -26,9 +26,4 @@ public class PsiJetParameterListStubImpl extends StubBase<JetParameterList> impl
     public PsiJetParameterListStubImpl(StubElement parent) {
         super(parent, JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
-
-    @Override
-    public String toString() {
-        return "PsiJetParameterListStubImpl";
-    }
 }
