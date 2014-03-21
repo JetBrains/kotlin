@@ -603,6 +603,10 @@
             this.string = this.string + obj.toString();
             return this;
         },
+        reverse: function () {
+            this.string = this.string.split("").reverse().join("");
+            return this;
+        },
         toString: function () {
             return this.string;
         }
