@@ -1,5 +1,6 @@
 package org.jetbrains.jet.plugin.framework.ui;
 
+import com.intellij.ui.JBColor;
 import com.intellij.util.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +30,7 @@ public class ChooseLibraryPathPanel {
 
         ActionListener actionListener = new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(@NotNull ActionEvent e) {
                 actionDispatcher.getMulticaster().actionPerformed(e);
                 updateComponents();
             }
@@ -74,10 +75,10 @@ public class ChooseLibraryPathPanel {
     private void updateComponents() {
         copyFilePanel.setEnabled(copyToRadioButton.isSelected());
         if (copyToRadioButton.isSelected() && copyFilePanel.hasErrors()) {
-            copyToRadioButton.setForeground(Color.RED);
+            copyToRadioButton.setForeground(JBColor.red);
         }
         else {
-            copyToRadioButton.setForeground(Color.BLACK);
+            copyToRadioButton.setForeground(JBColor.foreground());
         }
     }
 }
