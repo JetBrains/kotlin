@@ -34,9 +34,10 @@ import org.jetbrains.asm4.Type;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.context.PackageContext;
+import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
@@ -45,11 +46,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpl
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
-import org.jetbrains.jet.descriptors.serialization.BitEncoding;
-import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
-import org.jetbrains.jet.descriptors.serialization.PackageData;
-import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -58,6 +54,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
+import org.jetbrains.jet.lang.resolve.kotlin.BaseDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -294,7 +291,7 @@ public class PackageCodegen extends GenerationStateAware {
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
-        
+
         final MemberCodegen memberCodegen = getMemberCodegen(packageFacade);
 
         for (final JetDeclaration declaration : file.getDeclarations()) {
@@ -381,11 +378,7 @@ public class PackageCodegen extends GenerationStateAware {
         String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
                 CodegenUtil.getPathHashCode(file));
 
-        return getPackagePartType(facadeFqName, Name.identifier(srcName));
-    }
-
-    public static Type getPackagePartType(FqName facadeFqName, Name packagePartName) {
-        return asmTypeByFqNameWithoutInnerClasses(facadeFqName.parent().child(packagePartName));
+        return asmTypeByFqNameWithoutInnerClasses(facadeFqName.parent().child(Name.identifier(srcName)));
     }
 
     @NotNull
@@ -400,15 +393,9 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor deserializedCallable) {
-        DeclarationDescriptor parent = deserializedCallable.getContainingDeclaration();
-        assert parent instanceof PackageFragmentDescriptor : "parent should be package, but was: " + parent;
-
-        assert deserializedCallable.getProto().hasExtension(JavaProtoBuf.implClassName)
-                : "implClassName extension is absent for " + deserializedCallable;
-        Name shortName = deserializedCallable.getNameResolver()
-                .getName(deserializedCallable.getProto().getExtension(JavaProtoBuf.implClassName));
-        FqName packagePartFqName = ((PackageFragmentDescriptor) parent).getFqName().child(shortName);
+    public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor callable) {
+        FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
+        FqName packagePartFqName = packageFqName.child(BaseDescriptorDeserializer.getPackagePartClassName(callable));
         return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
     }
 }

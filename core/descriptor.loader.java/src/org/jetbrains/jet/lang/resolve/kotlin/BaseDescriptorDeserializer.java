@@ -21,13 +21,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
@@ -103,7 +103,7 @@ public abstract class BaseDescriptorDeserializer {
             @NotNull AnnotatedCallableKind kind
     ) {
         if (container instanceof PackageFragmentDescriptor) {
-            return loadPackageFragmentClassFqName((PackageFragmentDescriptor) container, proto, nameResolver);
+            return getPackagePartClassFqNameSafe((PackageFragmentDescriptor) container, proto, nameResolver);
         }
         else if (isClassObject(container) && isStaticFieldInOuter(proto)) {
             // Backing fields of properties of a class object are generated in the outer class
@@ -124,17 +124,25 @@ public abstract class BaseDescriptorDeserializer {
     }
 
     @Nullable
-    private KotlinJvmBinaryClass loadPackageFragmentClassFqName(
+    private KotlinJvmBinaryClass getPackagePartClassFqNameSafe(
             @NotNull PackageFragmentDescriptor container,
             @NotNull ProtoBuf.Callable proto,
             @NotNull NameResolver nameResolver
     ) {
         if (proto.hasExtension(JavaProtoBuf.implClassName)) {
-            Name name = nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
-            FqName fqName = PackageClassUtils.getPackageClassFqName(container.getFqName()).parent().child(name);
-            return kotlinClassFinder.findKotlinClass(fqName);
+            return kotlinClassFinder.findKotlinClass(container.getFqName().child(getPackagePartClassName(proto, nameResolver)));
         }
         return null;
+    }
+
+    @NotNull
+    public static Name getPackagePartClassName(@NotNull DeserializedCallableMemberDescriptor deserializedCallableMember) {
+        return getPackagePartClassName(deserializedCallableMember.getProto(), deserializedCallableMember.getNameResolver());
+    }
+
+    @NotNull
+    private static Name getPackagePartClassName(@NotNull ProtoBuf.Callable proto, @NotNull NameResolver nameResolver) {
+        return nameResolver.getName(proto.getExtension(JavaProtoBuf.implClassName));
     }
 
     private static boolean isStaticFieldInOuter(@NotNull ProtoBuf.Callable proto) {
