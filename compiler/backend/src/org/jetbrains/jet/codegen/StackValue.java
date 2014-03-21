@@ -1150,27 +1150,23 @@ public abstract class StackValue {
 
             ReceiverValue thisObject = resolvedCall.getThisObject();
             ReceiverValue receiverArgument = resolvedCall.getReceiverArgument();
+            int depth = 0;
             if (thisObject.exists()) {
                 if (receiverArgument.exists()) {
-                    if (callableMethod != null) {
-                        codegen.generateFromResolvedCall(thisObject, callableMethod.getOwner());
-                    }
-                    else {
-                        codegen.generateFromResolvedCall(thisObject, codegen.typeMapper
-                                .mapType(descriptor.getExpectedThisObject().getType()));
-                    }
-                    if (putReceiverArgumentOnStack) {
-                        genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 1);
-                    }
+                    Type resultType = callableMethod != null ? callableMethod.getOwner() : codegen.typeMapper
+                            .mapType(descriptor.getExpectedThisObject().getType());
+
+                    codegen.generateFromResolvedCall(thisObject, resultType);
                 }
                 else {
                     genReceiver(v, thisObject, type, null, 0);
                 }
+
+                depth = 1;
             }
-            else {
-                if (putReceiverArgumentOnStack && receiverArgument.exists()) {
-                    genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), 0);
-                }
+
+            if (putReceiverArgumentOnStack && receiverArgument.exists()) {
+                genReceiver(v, receiverArgument, type, descriptor.getReceiverParameter(), depth);
             }
         }
 
