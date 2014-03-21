@@ -8,4 +8,10 @@
   <item name='com.intellij.util.QueryFactory com.intellij.util.Query&lt;Result&gt; createUniqueResultsQuery(Parameters)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.util.Range T getFrom()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.util.Range T getTo()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

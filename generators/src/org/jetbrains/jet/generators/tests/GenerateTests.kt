@@ -99,6 +99,7 @@ import org.jetbrains.jet.plugin.refactoring.move.AbstractJetMoveTest
 import org.jetbrains.jet.cfg.AbstractDataFlowTest
 import org.jetbrains.jet.plugin.libraries.AbstractDecompiledTextTest
 import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
+import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -523,6 +524,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractOptimizeImportsTest>()) {
             model("editor/optimizeImports", extension = null, recursive = false)
+        }
+
+        testClass(javaClass<AbstractSmartStepIntoTest>()) {
+            model("debugger/smartStepInto")
         }
     }
 

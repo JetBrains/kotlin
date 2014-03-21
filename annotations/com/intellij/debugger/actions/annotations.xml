@@ -1,0 +1,12 @@
+<root>
+  <item
+      name='com.intellij.debugger.actions.JvmSmartStepIntoHandler java.util.List&lt;com.intellij.debugger.actions.SmartStepTarget&gt; findSmartStepTargets(com.intellij.debugger.SourcePosition)'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value" val="&quot;fun findSmartStepTargets(position: SourcePosition): List&lt;SmartStepTarget&gt;&quot;"/>
+    </annotation>
+  </item>
+  <item
+      name='com.intellij.debugger.actions.JvmSmartStepIntoHandler java.util.List&lt;com.intellij.debugger.actions.SmartStepTarget&gt; findSmartStepTargets(com.intellij.debugger.SourcePosition) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>
