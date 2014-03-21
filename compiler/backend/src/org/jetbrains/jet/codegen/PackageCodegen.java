@@ -91,7 +91,7 @@ public class PackageCodegen extends GenerationStateAware {
         this.packageFragment = getOnlyPackageFragment();
         this.compiledPackageFragment = getCompiledPackageFragment();
 
-        final PsiFile sourceFile = packageFiles.size() == 1 && getAlreadyCompiledCallables().isEmpty()
+        final PsiFile sourceFile = packageFiles.size() == 1 && getPreviouslyCompiledCallables().isEmpty()
                                    ? packageFiles.iterator().next().getContainingFile() : null;
 
         v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
@@ -129,7 +129,7 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     @NotNull
-    private List<DeserializedCallableMemberDescriptor> getAlreadyCompiledCallables() {
+    private List<DeserializedCallableMemberDescriptor> getPreviouslyCompiledCallables() {
         List<DeserializedCallableMemberDescriptor> callables = Lists.newArrayList();
         if (compiledPackageFragment != null) {
             for (DeclarationDescriptor member : compiledPackageFragment.getMemberScope().getAllDescriptors()) {
@@ -141,8 +141,8 @@ public class PackageCodegen extends GenerationStateAware {
         return callables;
     }
 
-    private void generateDelegationsToAlreadyCompiled(Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
-        for (final DeserializedCallableMemberDescriptor member : getAlreadyCompiledCallables()) {
+    private void generateDelegationsToPreviouslyCompiled(Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
+        for (final DeserializedCallableMemberDescriptor member : getPreviouslyCompiledCallables()) {
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
                 public void run() {
@@ -219,7 +219,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         if (shouldGeneratePackageClass) {
             // Shouldn't generate delegations to previously compiled if we compile only "classes" part of a package.
-            generateDelegationsToAlreadyCompiled(generateCallableMemberTasks);
+            generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
         }
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(generateCallableMemberTasks.keySet())) {
