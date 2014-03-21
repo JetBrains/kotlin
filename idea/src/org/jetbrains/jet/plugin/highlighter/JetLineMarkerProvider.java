@@ -21,10 +21,7 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.codeInsight.daemon.impl.GutterIconTooltipHelper;
-import com.intellij.codeInsight.daemon.impl.LineMarkerNavigator;
-import com.intellij.codeInsight.daemon.impl.MarkerType;
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator;
+import com.intellij.codeInsight.daemon.impl.*;
 import com.intellij.codeInsight.hint.HintUtil;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.icons.AllIcons;
@@ -35,6 +32,7 @@ import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
@@ -44,6 +42,7 @@ import com.intellij.psi.search.PsiElementProcessorAdapter;
 import com.intellij.psi.search.searches.AllOverridingMethodsSearch;
 import com.intellij.psi.search.searches.ClassInheritorsSearch;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.util.*;
@@ -59,6 +58,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -76,6 +76,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon IMPLEMENTING_MARK = AllIcons.Gutter.ImplementingMethod;
     protected static final Icon OVERRIDDEN_MARK = AllIcons.Gutter.OverridenMethod;
     protected static final Icon IMPLEMENTED_MARK = AllIcons.Gutter.ImplementedMethod;
+    public static final Icon RECURSIVE_MARK = AllIcons.Gutter.RecursiveMethod;
 
     private static final MarkerType SUBCLASSED_CLASS = new MarkerType(
             new NullableFunction<PsiElement, String>() {
@@ -113,6 +114,33 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
                     if (psiMethod != null) {
                         MarkerType.navigateToOverriddenMethod(e, psiMethod);
                     }
+                }
+            }
+    );
+
+    private static final MarkerType RECURSIVE_FUNCTION = new MarkerType(
+            new NullableFunction<PsiElement, String>() {
+                @Override
+                public String fun(@Nullable PsiElement element) {
+                    if (element == null) return null;
+
+                    PsiReference target = element.getReference();
+                    if (target == null) return null;
+
+                    JetNamedFunction referenceFunction = (JetNamedFunction) target.resolve();
+                    if (referenceFunction == null) return null;
+
+                    FqName fqName = referenceFunction.getFqName();
+                    if (fqName == null) return JetBundle.message("recursive.function.tooltip", referenceFunction.getName());
+
+                    return JetBundle.message("recursive.function.tooltip", fqName.asString());
+                }
+            },
+
+            new LineMarkerNavigator() {
+                @Override
+                public void browse(MouseEvent e, PsiElement element) {
+                    //no action to replicate Java experience
                 }
             }
     );
@@ -375,6 +403,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
 
         Set<JetNamedFunction> functions = Sets.newHashSet();
         Set<JetProperty> properties = Sets.newHashSet();
+        Set<JetSimpleNameExpression> functionCalls = Sets.newHashSet();
 
         for (PsiElement element : elements) {
             if (element instanceof JetClass) {
@@ -388,10 +417,15 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             if (element instanceof JetProperty) {
                 properties.add((JetProperty) element);
             }
+
+            if (element instanceof  JetSimpleNameExpression) {
+                functionCalls.add((JetSimpleNameExpression) element);
+            }
         }
 
         collectOverridingAccessors(functions, result);
         collectOverridingPropertiesAccessors(properties, result);
+        collectRecursiveCalls(functionCalls,result);
     }
 
     private static void collectInheritingClasses(JetClass element, Collection<LineMarkerInfo> result) {
@@ -427,6 +461,59 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         }
 
         return false;
+    }
+
+    private static void collectRecursiveCalls(Collection<JetSimpleNameExpression> expressions, Collection<LineMarkerInfo> result) {
+        for (JetSimpleNameExpression expression : expressions) {
+
+            if (!isRecursive1(expression)) continue;
+
+
+            LineMarkerInfo info = new LineMarkerInfo<PsiElement>(
+                    expression, expression.getTextOffset(),
+                    RECURSIVE_MARK,
+                    Pass.UPDATE_OVERRIDEN_MARKERS,
+                    RECURSIVE_FUNCTION.getTooltip(),
+                    RECURSIVE_FUNCTION.getNavigationHandler(),
+                    GutterIconRenderer.Alignment.RIGHT);
+
+            result.add(info);
+        }
+    }
+
+    private static boolean isRecursive1(JetSimpleNameExpression expression) {
+        final PsiReference targetFunction = expression.getReference();
+        if (targetFunction == null) return false;
+
+        if (expression.getText().equals("this")) return false;
+
+        PsiElement functionDef = PsiTreeUtil.findFirstParent(expression, new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement parent) {
+                return (parent instanceof JetNamedFunction && targetFunction.isReferenceTo(parent));
+            }
+        });
+
+        return functionDef != null;
+    }
+
+    private static boolean isRecursive(JetCallExpression expression) {
+        if (expression.getCalleeExpression() == null) return false;
+
+
+
+        final PsiReference targetFunction = expression.getCalleeExpression().getReference();
+        if (targetFunction == null) return false;
+
+
+        PsiElement functionDef = PsiTreeUtil.findFirstParent(expression, new Condition<PsiElement>() {
+            @Override
+            public boolean value(PsiElement parent) {
+                return (parent instanceof JetFunction && targetFunction.isReferenceTo(parent));
+            }
+        });
+
+        return functionDef != null;
     }
 
     private static boolean isImplemented(JetNamedDeclaration declaration) {
