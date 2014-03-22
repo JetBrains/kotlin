@@ -493,6 +493,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest("idea/testData/completion/basic/common/namedParameters/CompactTypeNames.kt");
             }
             
+            @TestMetadata("ForEmptyParametersFunction.kt")
+            public void testForEmptyParametersFunction() throws Exception {
+                doTest("idea/testData/completion/basic/common/namedParameters/ForEmptyParametersFunction.kt");
+            }
+            
             @TestMetadata("InParameterExpression.kt")
             public void testInParameterExpression() throws Exception {
                 doTest("idea/testData/completion/basic/common/namedParameters/InParameterExpression.kt");
