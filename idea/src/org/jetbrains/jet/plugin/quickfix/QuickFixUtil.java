@@ -221,11 +221,13 @@ public class QuickFixUtil {
                 isPositionalArgument = false;
             }
             else if (isPositionalArgument) {
-                ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
-                if (argument != ignoreArgument) {
-                    usedParameters.add(parameter.getName().asString());
+                if (callableDescriptor.getValueParameters().size() > idx) {
+                    ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
+                    if (argument != ignoreArgument) {
+                        usedParameters.add(parameter.getName().asString());
+                    }
+                    idx++;
                 }
-                idx++;
             }
         }
 
