@@ -8,11 +8,11 @@ Ignore("Requires Android SDK")
 class KotlinAndroidGradleIT: BaseGradleIT() {
 
         Test fun testSimpleCompile() {
-            val project = Project("AndroidAlfaProject", "1.6")
+            val project = Project("AndroidProject", "1.6")
 
             project.build("build") {
                 assertSuccessful()
-                assertContains(":LibAlfa:compileReleaseKotlin",
+                assertContains(":Lib:compileReleaseKotlin",
                                ":compileFlavor1DebugKotlin",
                                ":compileFlavor2DebugKotlin",
                                ":compileFlavor1JnidebugKotlin",
@@ -30,14 +30,14 @@ class KotlinAndroidGradleIT: BaseGradleIT() {
             // Run the build second time, assert everything is up-to-date
             project.build("build") {
                 assertSuccessful()
-                assertContains(":LibAlfa:compileReleaseKotlin UP-TO-DATE", ":LibAlfa:compileRelease UP-TO-DATE")
+                assertContains(":Lib:compileReleaseKotlin UP-TO-DATE", ":Lib:compileRelease UP-TO-DATE")
             }
 
             // Run the build third time, re-run tasks
 
             project.build("build", "--rerun-tasks") {
                 assertSuccessful()
-                assertContains(":LibAlfa:compileReleaseKotlin",
+                assertContains(":Lib:compileReleaseKotlin",
                         ":compileFlavor1DebugKotlin",
                         ":compileFlavor2DebugKotlin",
                         ":compileFlavor1JnidebugKotlin",

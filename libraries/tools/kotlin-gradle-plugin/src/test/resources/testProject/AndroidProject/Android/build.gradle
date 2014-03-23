@@ -14,7 +14,7 @@ apply plugin: 'android'
 apply plugin: 'kotlin-android'
 
 dependencies {
-    compile project(':LibAlfa')
+    compile project(':Lib')
 }
 
 android {
