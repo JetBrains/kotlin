@@ -9,8 +9,9 @@ import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-open class BaseGradleIT {
+open class BaseGradleIT(val resourcesRoot: String = "src/test/resources") {
 
+    val resourcesRootFile: File = File(resourcesRoot)
     var workingDir: File = File(".")
 
     Before fun setUp() {
@@ -26,9 +27,9 @@ open class BaseGradleIT {
     class CompiledProject(val project: Project, val output: String, val resultCode: Int)
 
     fun Project.build(vararg tasks: String, check: CompiledProject.() -> Unit) {
-        copyRecursively(File("src/test/resources/testProject/$projectName"), workingDir)
+        copyRecursively(File(resourcesRootFile, "testProject/$projectName"), workingDir)
         val projectDir = File(workingDir, projectName)
-        copyDirRecursively(File("src/test/resources/GradleWrapper-$wrapperVersion"), projectDir)
+        copyDirRecursively(File(resourcesRootFile, "GradleWrapper-$wrapperVersion"), projectDir)
         val cmd = createCommand(tasks)
         val process = createProcess(cmd, projectDir)
 
