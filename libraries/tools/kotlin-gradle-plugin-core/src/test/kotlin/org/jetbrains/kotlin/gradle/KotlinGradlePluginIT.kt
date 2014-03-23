@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 class BasicKotlinGradleIT : BaseGradleIT() {
 
     Test fun testSimpleCompile() {
-        val project = Project("alfa")
+        val project = Project("simpleProject")
 
         project.build("compileDeployKotlin", "build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
@@ -32,7 +32,7 @@ class BasicKotlinGradleIT : BaseGradleIT() {
     }
 
     Test fun testKotlinCustomDirectory() {
-        Project("beta").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("customSrcDir").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }
@@ -44,7 +44,7 @@ class BasicKotlinGradleIT : BaseGradleIT() {
     }
 
     Test fun testSimpleKDoc() {
-        Project("delta").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("kdocProject").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
             assertReportExists("build/docs/kdoc/demo/MyClass.html")
             assertContains(":kdoc", "Generating kdoc to")
@@ -52,7 +52,7 @@ class BasicKotlinGradleIT : BaseGradleIT() {
     }
 
     Ignore fun testKotlinExtraJavaSrc() {
-        Project("gamma").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("additionalJavaSrc").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }
