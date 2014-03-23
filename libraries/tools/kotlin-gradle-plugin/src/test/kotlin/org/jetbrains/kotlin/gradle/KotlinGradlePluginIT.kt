@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 class BasicKotlinGradleIT: BaseGradleIT() {
 
     Test fun testCrossCompile() {
-        val project = Project("alfa")
+        val project = Project("kotlinJavaProject")
 
         project.build("compileDeployKotlin", "build") {
             assertSuccessful()
@@ -31,7 +31,7 @@ class BasicKotlinGradleIT: BaseGradleIT() {
     }
 
     Test fun testKotlinOnlyCompile() {
-        val project = Project("beta")
+        val project = Project("kotlinProject")
 
         project.build("build") {
             assertSuccessful()
