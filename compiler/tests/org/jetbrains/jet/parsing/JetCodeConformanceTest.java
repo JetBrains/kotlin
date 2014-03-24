@@ -16,23 +16,24 @@
 
 package org.jetbrains.jet.parsing;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import junit.framework.TestCase;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class JetCodeConformanceTest extends TestCase {
     private static final Pattern JAVA_FILE_PATTERN = Pattern.compile(".+\\.java");
-    private static final Pattern SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.jet|.+\\.js)");
+    private static final Pattern SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)");
     private static final List<File> EXCLUDED_FILES_AND_DIRS = Arrays.asList(
             new File("android.tests.dependencies"),
             new File("dependencies"),
@@ -61,24 +62,46 @@ public class JetCodeConformanceTest extends TestCase {
     }
 
     public void testForAuthorJavadoc() throws IOException {
-        List<File> filesWithAuthorJavadoc = Lists.newArrayList();
-
-        for (File sourceFile : FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, new File("."))) {
-            if (excludeFile(sourceFile)) {
-                continue;
+        List<File> filesWithAuthorJavadoc = filterSourceFiles(new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String source) {
+                // .contains() is invoked for optimization
+                return source.contains("@author") && JAVADOC_PATTERN.matcher(source).find();
             }
-
-            String source = FileUtil.loadFile(sourceFile, true);
-
-            if (source.contains("@author") && JAVADOC_PATTERN.matcher(source).find()) { // .contains() is invoked for optimization
-                filesWithAuthorJavadoc.add(sourceFile);
-            }
-        }
+        });
 
         if (!filesWithAuthorJavadoc.isEmpty()) {
             fail(String.format("%d source files contain @author javadoc tag. Please remove them:\n%s",
                                filesWithAuthorJavadoc.size(), StringUtil.join(filesWithAuthorJavadoc, "\n")));
         }
+    }
+
+    public void testNoJCommanderInternalImports() throws IOException {
+        List<File> filesWithJCommander = filterSourceFiles(new Function1<String, Boolean>() {
+            @Override
+            public Boolean invoke(String source) {
+                return source.contains("com.beust.jcommander.internal");
+            }
+        });
+
+        Assert.assertTrue(
+                "It seems that you've used something from com.beust.jcommander.internal package. This code won't work when there's " +
+                "no TestNG in the classpath of our IDEA plugin, because there's only an optional dependency on testng.jar.\n" +
+                "Most probably you meant to use Guava's Lists, Maps or Sets instead. Please change references in these files to " +
+                "com.google.common.collect: " + filesWithJCommander,
+                filesWithJCommander.isEmpty()
+        );
+    }
+
+    @NotNull
+    private static List<File> filterSourceFiles(@NotNull Function1<String, Boolean> predicate) throws IOException {
+        List<File> result = new ArrayList<File>();
+        for (File sourceFile : FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, new File("."))) {
+            if (!excludeFile(sourceFile) && predicate.invoke(FileUtil.loadFile(sourceFile, true))) {
+                result.add(sourceFile);
+            }
+        }
+        return result;
     }
 
     private static boolean excludeFile(@NotNull File file) {
