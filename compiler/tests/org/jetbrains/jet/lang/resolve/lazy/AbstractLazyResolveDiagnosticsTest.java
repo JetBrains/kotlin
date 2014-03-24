@@ -47,7 +47,7 @@ public abstract class AbstractLazyResolveDiagnosticsTest extends BaseDiagnostics
         PackageViewDescriptor expected = eagerModule.getPackage(FqName.ROOT);
         PackageViewDescriptor actual = lazyModule.getPackage(FqName.ROOT);
 
-        String txtFileRelativePath = path.replaceAll("\\.kt$|\\.ktscript", ".txt");
+        String txtFileRelativePath = path.replaceAll("\\.kt$|\\.kts$", ".txt");
         File txtFile = new File("compiler/testData/lazyResolve/diagnostics/" + txtFileRelativePath);
 
         // Only recurse into those packages mentioned in the files

@@ -40,6 +40,7 @@ import static org.jetbrains.asm4.Opcodes.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 
+// SCRIPT: script code generator
 public class ScriptCodegen extends MemberCodegen {
 
     public static ScriptCodegen createScriptCodegen(

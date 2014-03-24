@@ -1,3 +1,3 @@
 -printArgs
 -script
-$TESTDATA_DIR$/hello.ktscript
+$TESTDATA_DIR$/hello.kts

@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+// SCRIPT: Script declaration descriptor
 public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
     public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
     private static final Name NAME = Name.special("<script>");

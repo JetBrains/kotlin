@@ -116,6 +116,7 @@ public class CodegenTestFiles {
         List<AnalyzerScriptParameter> scriptParameterTypes = Lists.newArrayList();
         List<Object> scriptParameterValues = Lists.newArrayList();
 
+        // SCRIPT: extract script params, move to ScriptingUtil
         if (file.isScript()) {
             Pattern scriptParametersPattern = Pattern.compile("param: (\\S+): (\\S+): (\\S.*)");
             Matcher scriptParametersMatcher = scriptParametersPattern.matcher(file.getText());

@@ -144,9 +144,8 @@ public class JetCoreEnvironment {
         applicationEnvironment.registerFileType(PlainTextFileType.INSTANCE, "xml");
 
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kt");
-        applicationEnvironment.registerFileType(JetFileType.INSTANCE, "kts");
         applicationEnvironment.registerFileType(JetFileType.INSTANCE, "ktm");
-        applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParserDefinition.KTSCRIPT_FILE_SUFFIX); // should be renamed to kts
+        applicationEnvironment.registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX); // should be renamed to kts
         applicationEnvironment.registerParserDefinition(new JavaParserDefinition());
         applicationEnvironment.registerParserDefinition(new JetParserDefinition());
 

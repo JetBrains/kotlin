@@ -209,6 +209,7 @@ public class ExpressionTypingServices {
     ) {
         List<JetElement> block = expression.getStatements();
 
+        // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();
         if (containingDescriptor instanceof ScriptDescriptor) {
             if (!(expression.getParent() instanceof JetScript)) {

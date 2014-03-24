@@ -37,10 +37,12 @@ public class KotlinCodegenFacade {
     ) {
         for (JetFile file : state.getFiles()) {
             if (file.isScript()) {
-                String name = ScriptNameUtil.classNameForScript(file);
+                // SCRIPT: register class name for scripting from this file, move outside of this function
+                FqName name = ScriptNameUtil.classNameForScript(file);
                 JetScript script = file.getScript();
                 assert script != null;
-                registerClassNameForScript(state.getBindingTrace(), script, Type.getObjectType(name));
+                Type type = AsmUtil.asmTypeByFqNameWithoutInnerClasses(name);
+                registerClassNameForScript(state.getBindingTrace(), script, type);
             }
         }
 

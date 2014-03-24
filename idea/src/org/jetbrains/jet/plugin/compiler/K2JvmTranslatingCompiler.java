@@ -177,7 +177,7 @@ public class K2JvmTranslatingCompiler implements TranslatingCompiler {
                 outputDirectoriesToFilter
         ).asText();
 
-        File scriptFile = new File(outputDir, "script.kts");
+        File scriptFile = new File(outputDir, "script.ktm");
         try {
             FileUtil.writeToFile(scriptFile, script.toString());
         }

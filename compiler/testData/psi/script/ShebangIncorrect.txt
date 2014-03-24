@@ -1,4 +1,4 @@
-JetFile: ShebangIncorrect.ktscript
+JetFile: ShebangIncorrect.kts
   PACKAGE_DIRECTIVE
     <empty list>
   SCRIPT

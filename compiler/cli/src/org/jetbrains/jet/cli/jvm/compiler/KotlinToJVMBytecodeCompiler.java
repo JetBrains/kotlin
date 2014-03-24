@@ -226,7 +226,7 @@ public class KotlinToJVMBytecodeCompiler {
             return null;
         }
 
-        GeneratedClassLoader classLoader = null;
+        GeneratedClassLoader classLoader;
         try {
             classLoader = new GeneratedClassLoader(state.getFactory(),
                                                    new URLClassLoader(new URL[] {
@@ -235,16 +235,11 @@ public class KotlinToJVMBytecodeCompiler {
                                                    }, AllModules.class.getClassLoader())
             );
 
-            return classLoader.loadClass(ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0)));
+            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0));
+            return classLoader.loadClass(nameForScript.asString());
         }
         catch (Exception e) {
             throw new RuntimeException("Failed to evaluate script: " + e, e);
-        }
-        finally {
-            if (classLoader != null) {
-                classLoader.dispose();
-            }
-            state.destroy();
         }
     }
 

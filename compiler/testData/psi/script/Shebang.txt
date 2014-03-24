@@ -1,4 +1,4 @@
-JetFile: Shebang.ktscript
+JetFile: Shebang.kts
   PsiComment(SHEBANG_COMMENT)('#!/usr/bin/env kotlin')
   PsiWhiteSpace('\n\n')
   PACKAGE_DIRECTIVE

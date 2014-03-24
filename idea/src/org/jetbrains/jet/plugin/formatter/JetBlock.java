@@ -267,7 +267,7 @@ public class JetBlock extends AbstractBlock {
                     .forType(PROPERTY_ACCESSOR)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("For a single statement if 'for'")
+            ASTIndentStrategy.forNode("For a single statement in 'for'")
                     .in(BODY)
                     .notForType(BLOCK)
                     .set(Indent.getNormalIndent()),
@@ -301,6 +301,13 @@ public class JetBlock extends AbstractBlock {
     protected static Indent createChildIndent(@NotNull ASTNode child) {
         ASTNode childParent = child.getTreeParent();
         IElementType childType = child.getElementType();
+
+        // SCRIPT: Avoid indenting script top BLOCK contents
+        if (childParent != null && childParent.getTreeParent() != null) {
+            if (childParent.getElementType() == BLOCK && childParent.getTreeParent().getElementType() == SCRIPT) {
+                return Indent.getNoneIndent();
+            }
+        }
 
         for (ASTIndentStrategy strategy : INDENT_RULES) {
             Indent indent = strategy.getIndent(child);

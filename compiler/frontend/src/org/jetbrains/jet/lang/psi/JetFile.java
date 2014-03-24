@@ -129,6 +129,7 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @Override
     public void setPackageName(String packageName) { }
 
+    // SCRIPT: find script in file
     @Nullable
     public JetScript getScript() {
         return PsiTreeUtil.getChildOfType(this, JetScript.class);

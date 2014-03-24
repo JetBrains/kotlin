@@ -79,6 +79,7 @@ public class CodegenBinding {
         return Boolean.TRUE.equals(bindingContext.get(ENUM_ENTRY_CLASS_NEED_SUBCLASS, classDescriptor));
     }
 
+    // SCRIPT: Generate asmType for script, move to ScriptingUtil
     @NotNull
     public static Type asmTypeForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
@@ -86,6 +87,7 @@ public class CodegenBinding {
         return asmType(bindingContext, classDescriptor);
     }
 
+    // SCRIPT: Generate asmType for script, move to ScriptingUtil
     @NotNull
     public static Type asmTypeForScriptPsi(BindingContext bindingContext, @NotNull JetScript script) {
         ScriptDescriptor scriptDescriptor = bindingContext.get(SCRIPT, script);
@@ -138,6 +140,7 @@ public class CodegenBinding {
         return asmType(bindingContext, classDescriptor);
     }
 
+    // SCRIPT: register asmType for script descriptor, move to ScriptingUtil
     public static void registerClassNameForScript(
             BindingTrace bindingTrace,
             @NotNull ScriptDescriptor scriptDescriptor,
@@ -217,6 +220,7 @@ public class CodegenBinding {
         innerClasses.add(inner);
     }
 
+    // SCRIPT: register asmType for script, move to ScriptingUtil
     public static void registerClassNameForScript(
             BindingTrace bindingTrace,
             @NotNull JetScript jetScript,
@@ -234,6 +238,7 @@ public class CodegenBinding {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 
+        // SCRIPT: collect fq names for files that are not scripts
         HashSet<FqName> names = new HashSet<FqName>();
         for (JetFile file : files) {
             if (!file.isScript()) {

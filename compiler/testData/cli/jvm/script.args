@@ -1,4 +1,4 @@
 -script
-$TESTDATA_DIR$/script.ktscript
+$TESTDATA_DIR$/script.kts
 hi
 there

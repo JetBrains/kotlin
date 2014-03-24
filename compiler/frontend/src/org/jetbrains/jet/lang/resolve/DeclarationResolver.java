@@ -79,6 +79,7 @@ public class DeclarationResolver {
         this.trace = trace;
     }
 
+    // SCRIPT: inject script header resolver
     @Inject
     public void setScriptHeaderResolver(@NotNull ScriptHeaderResolver scriptHeaderResolver) {
         this.scriptHeaderResolver = scriptHeaderResolver;
@@ -149,6 +150,7 @@ public class DeclarationResolver {
                     classDescriptor.getBuilder());
         }
 
+        // SCRIPT: Resolve script declarations, move outside of this function
         scriptHeaderResolver.resolveScriptDeclarations(c);
 
         // TODO : Extensions
