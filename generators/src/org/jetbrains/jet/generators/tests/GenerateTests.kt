@@ -380,6 +380,7 @@ fun main(args: Array<String>) {
             model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
             model("intentions/simplifyNegatedBinaryExpressionIntention", testMethod = "doTestSimplifyNegatedBinaryExpressionIntention")
             model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
+            model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {

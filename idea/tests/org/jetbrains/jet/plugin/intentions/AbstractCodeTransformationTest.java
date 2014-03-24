@@ -163,6 +163,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReplaceExplicitFunctionLiteralParamWithItIntention());
     }
 
+    public void doTestConvertNegatedExpressionWithDemorgansLaw(@NotNull String path) throws Exception {
+        doTestIntention(path, new ConvertNegatedExpressionWithDemorgansLawIntention());
+    }
+
     public void doTestReplaceItWithExplicitFunctionLiteralParam(@NotNull String path) throws Exception {
         doTestIntention(path, new ReplaceItWithExplicitFunctionLiteralParamIntention());
     }
