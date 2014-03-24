@@ -70,7 +70,7 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
     JetNodeType FUNCTION_TYPE_RECEIVER = new JetNodeType("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
-    JetNodeType NULLABLE_TYPE             = new JetNodeType("NULLABLE_TYPE", JetNullableType.class);
+    IElementType NULLABLE_TYPE            = JetStubElementTypes.NULLABLE_TYPE;
     JetNodeType TYPE_PROJECTION           = new JetNodeType("TYPE_PROJECTION", JetTypeProjection.class);
 
     // TODO: review
