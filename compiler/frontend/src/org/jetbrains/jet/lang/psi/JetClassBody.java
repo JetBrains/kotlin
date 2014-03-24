@@ -23,18 +23,18 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetClassBodyStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.List;
 
-public class JetClassBody extends JetElementImplStub<PsiJetClassBodyStub> implements JetDeclarationContainer {
+public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {
     public JetClassBody(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetClassBody(@NotNull PsiJetClassBodyStub stub) {
+    public JetClassBody(@NotNull PsiJetPlaceHolderStub<JetClassBody> stub) {
         super(stub, JetStubElementTypes.CLASS_BODY);
     }
 

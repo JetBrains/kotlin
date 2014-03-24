@@ -1,5 +1,5 @@
 PsiJetFileStubImpl[package=]
   CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]
-    TYPE_PARAMETER_LIST:PsiJetTypeParameterListStubImpl
+    TYPE_PARAMETER_LIST
       TYPE_PARAMETER:PsiJetTypeParameterStubImpl[name=T extendText=null]
-    CLASS_BODY:PsiJetClassBodyStubImpl
+    CLASS_BODY

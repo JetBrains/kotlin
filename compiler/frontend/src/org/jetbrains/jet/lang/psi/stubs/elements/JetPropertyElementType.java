@@ -37,17 +37,7 @@ import java.io.IOException;
 
 public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStub, JetProperty> {
     public JetPropertyElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetProperty createPsiFromAst(@NotNull ASTNode node) {
-        return new JetProperty(node);
-    }
-
-    @Override
-    public JetProperty createPsi(@NotNull PsiJetPropertyStub stub) {
-        return new JetProperty(stub);
+        super(debugName, JetProperty.class, PsiJetPropertyStub.class);
     }
 
     @Override

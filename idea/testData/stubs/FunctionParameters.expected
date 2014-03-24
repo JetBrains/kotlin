@@ -1,5 +1,5 @@
 PsiJetFileStubImpl[package=]
   FUN:PsiJetFunctionStubImpl[top fqName=some name=some]
-    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
+    VALUE_PARAMETER_LIST
       VALUE_PARAMETER:PsiJetParameterStubImpl[val name=t typeText=Int defaultValue=null]
       VALUE_PARAMETER:PsiJetParameterStubImpl[val name=other typeText=String defaultValue="hello"]

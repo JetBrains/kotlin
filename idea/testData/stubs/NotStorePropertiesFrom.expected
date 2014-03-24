@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=]
   CLASS:PsiJetClassStubImpl[name=Test fqn=Test superNames=[]]
-    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
-    CLASS_BODY:PsiJetClassBodyStubImpl
+    VALUE_PARAMETER_LIST
+    CLASS_BODY
       PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=null bodyText=12]
       FUN:PsiJetFunctionStubImpl[name=more]
-        VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
+        VALUE_PARAMETER_LIST

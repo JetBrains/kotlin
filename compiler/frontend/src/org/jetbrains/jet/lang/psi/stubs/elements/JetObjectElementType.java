@@ -38,17 +38,7 @@ import java.util.List;
 
 public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, JetObjectDeclaration> {
     public JetObjectElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetObjectDeclaration createPsiFromAst(@NotNull ASTNode node) {
-        return new JetObjectDeclaration(node);
-    }
-
-    @Override
-    public JetObjectDeclaration createPsi(@NotNull PsiJetObjectStub stub) {
-        return new JetObjectDeclaration(stub);
+        super(debugName, JetObjectDeclaration.class, PsiJetObjectStub.class);
     }
 
     @Override

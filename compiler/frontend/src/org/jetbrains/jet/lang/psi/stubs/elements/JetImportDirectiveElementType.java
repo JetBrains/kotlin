@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
@@ -31,46 +29,23 @@ import java.io.IOException;
 
 public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImportDirectiveStub, JetImportDirective> {
     public JetImportDirectiveElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
+        super(debugName, JetImportDirective.class, PsiJetImportDirectiveStub.class);
     }
 
     @Override
-    public JetImportDirective createPsiFromAst(@NotNull ASTNode node) {
-        return new JetImportDirective(node);
-    }
-
-    @Override
-    public JetImportDirective createPsi(@NotNull PsiJetImportDirectiveStub stub) {
-        return new JetImportDirective(stub);
-    }
-
-    @Override
-    public PsiJetImportDirectiveStub createStub(
-            @NotNull JetImportDirective psi, StubElement parentStub
-    ) {
+    public PsiJetImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
         return new PsiJetImportDirectiveStubImpl(parentStub);
     }
 
     @Override
-    public void serialize(
-            @NotNull PsiJetImportDirectiveStub stub, @NotNull StubOutputStream dataStream
-    ) throws IOException {
+    public void serialize(@NotNull PsiJetImportDirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         //TODO:
     }
 
     @NotNull
     @Override
-    public PsiJetImportDirectiveStub deserialize(
-            @NotNull StubInputStream dataStream, StubElement parentStub
-    ) throws IOException {
+    public PsiJetImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         //TODO
         return new PsiJetImportDirectiveStubImpl(parentStub);
-    }
-
-    @Override
-    public void indexStub(
-            @NotNull PsiJetImportDirectiveStub stub, @NotNull IndexSink sink
-    ) {
-        // do nothing
     }
 }

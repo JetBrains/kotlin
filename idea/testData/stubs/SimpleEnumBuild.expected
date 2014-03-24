@@ -1,5 +1,5 @@
 PsiJetFileStubImpl[package=]
   CLASS:PsiJetClassStubImpl[enumClass name=Test fqn=Test superNames=[]]
-    CLASS_BODY:PsiJetClassBodyStubImpl
+    CLASS_BODY
       ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=First fqn=Test.First superNames=[]]
       ENUM_ENTRY:PsiJetClassStubImpl[enumEntry name=Second fqn=Test.Second superNames=[]]

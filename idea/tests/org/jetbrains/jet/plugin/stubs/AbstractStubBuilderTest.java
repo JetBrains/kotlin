@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder;
+import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPlaceHolderStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 
 import java.io.File;
@@ -35,7 +36,9 @@ public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTes
         JetFile file = (JetFile) myFixture.configureByFile(sourcePath);
         JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
-        String stubTree = DebugUtil.stubTreeToString(lighterTree).replace(NO_NAME_FOR_LAZY_RESOLVE.asString(), "<no name>");
+        String stubTree = DebugUtil.stubTreeToString(lighterTree)
+                .replace(NO_NAME_FOR_LAZY_RESOLVE.asString(), "<no name>")
+                .replace(":" + PsiJetPlaceHolderStubImpl.class.getSimpleName(), "");
         String expectedFile = sourcePath.replace(".kt", ".expected");
         JetTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
     }

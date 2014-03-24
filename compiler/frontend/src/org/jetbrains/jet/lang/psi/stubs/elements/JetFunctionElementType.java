@@ -37,17 +37,7 @@ import java.io.IOException;
 public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStub, JetNamedFunction> {
 
     public JetFunctionElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
-    }
-
-    @Override
-    public JetNamedFunction createPsiFromAst(@NotNull ASTNode node) {
-        return new JetNamedFunction(node);
-    }
-
-    @Override
-    public JetNamedFunction createPsi(@NotNull PsiJetFunctionStub stub) {
-        return new JetNamedFunction(stub);
+        super(debugName, JetNamedFunction.class, PsiJetFunctionStub.class);
     }
 
     @Override

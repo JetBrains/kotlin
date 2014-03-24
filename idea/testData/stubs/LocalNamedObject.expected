@@ -2,5 +2,5 @@ PsiJetFileStubImpl[package=]
   CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]
   CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]
   FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]
-    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
+    VALUE_PARAMETER_LIST
     OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=O fqName=null superNames=[AT]]

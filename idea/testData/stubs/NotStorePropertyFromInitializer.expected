@@ -1,3 +1,3 @@
 PsiJetFileStubImpl[package=]
   FUN:PsiJetFunctionStubImpl[top fqName=some ext name=some]
-    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
+    VALUE_PARAMETER_LIST

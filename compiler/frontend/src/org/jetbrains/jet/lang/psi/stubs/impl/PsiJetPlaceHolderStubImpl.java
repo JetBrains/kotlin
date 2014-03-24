@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi.stubs;
+package org.jetbrains.jet.lang.psi.stubs.impl;
 
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.jet.lang.psi.JetImportList;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-public interface PsiJetImportListStub extends StubElement<JetImportList> {
+public class PsiJetPlaceHolderStubImpl<T extends JetElement> extends StubBase<T> implements PsiJetPlaceHolderStub<T> {
+    public PsiJetPlaceHolderStubImpl(StubElement parent, IStubElementType elementType) {
+        super(parent, elementType);
+    }
 }

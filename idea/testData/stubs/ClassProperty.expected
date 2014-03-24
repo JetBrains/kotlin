@@ -1,4 +1,4 @@
 PsiJetFileStubImpl[package=]
   CLASS:PsiJetClassStubImpl[name=More fqn=More superNames=[]]
-    CLASS_BODY:PsiJetClassBodyStubImpl
+    CLASS_BODY
       PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=Int bodyText=11]

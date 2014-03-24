@@ -38,14 +38,16 @@ import java.util.List;
 
 public class JetClassElementType extends JetStubElementType<PsiJetClassStub, JetClass> {
     public JetClassElementType(@NotNull @NonNls String debugName) {
-        super(debugName);
+        super(debugName, JetClass.class, PsiJetClassStub.class);
     }
 
+    @NotNull
     @Override
     public JetClass createPsi(@NotNull PsiJetClassStub stub) {
         return !stub.isEnumEntry() ? new JetClass(stub) : new JetEnumEntry(stub);
     }
 
+    @NotNull
     @Override
     public JetClass createPsiFromAst(@NotNull ASTNode node) {
         return node.getElementType() != JetStubElementTypes.ENUM_ENTRY ? new JetClass(node) : new JetEnumEntry(node);

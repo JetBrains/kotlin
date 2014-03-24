@@ -1,4 +1,4 @@
 PsiJetFileStubImpl[package=]
   FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]
-    ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]
-    VALUE_PARAMETER_LIST:PsiJetParameterListStubImpl
+      ANNOTATION_ENTRY:PsiJetAnnotationStubImpl[shortName=Deprecated]
+    VALUE_PARAMETER_LIST

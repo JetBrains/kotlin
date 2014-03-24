@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.jet.lang.psi.JetParameterList;
+import org.jetbrains.jet.lang.psi.JetElement;
 
-public interface PsiJetParameterListStub extends StubElement<JetParameterList> {
+public interface PsiJetPlaceHolderStub<T extends JetElement> extends StubElement<T> {
 }

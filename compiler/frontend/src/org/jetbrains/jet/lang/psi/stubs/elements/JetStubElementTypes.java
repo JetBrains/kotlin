@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import org.jetbrains.jet.lang.psi.*;
+
 public interface JetStubElementTypes {
     JetFileElementType FILE = new JetFileElementType();
 
@@ -26,17 +28,26 @@ public interface JetStubElementTypes {
     JetObjectElementType OBJECT_DECLARATION = new JetObjectElementType("OBJECT_DECLARATION");
 
     JetParameterElementType VALUE_PARAMETER = new JetParameterElementType("VALUE_PARAMETER");
-    JetParameterListElementType VALUE_PARAMETER_LIST = new JetParameterListElementType("VALUE_PARAMETER_LIST");
+    JetPlaceHolderStubElementType<JetParameterList> VALUE_PARAMETER_LIST =
+            new JetPlaceHolderStubElementType<JetParameterList>("VALUE_PARAMETER_LIST", JetParameterList.class);
 
     JetTypeParameterElementType TYPE_PARAMETER = new JetTypeParameterElementType("TYPE_PARAMETER");
-    JetTypeParameterListElementType TYPE_PARAMETER_LIST = new JetTypeParameterListElementType("TYPE_PARAMETER_LIST");
+    JetPlaceHolderStubElementType<JetTypeParameterList> TYPE_PARAMETER_LIST =
+            new JetPlaceHolderStubElementType<JetTypeParameterList>("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
+
     JetAnnotationElementType ANNOTATION_ENTRY = new JetAnnotationElementType("ANNOTATION_ENTRY");
-    JetClassBodyElementType CLASS_BODY = new JetClassBodyElementType("CLASS_BODY");
-    JetImportListElementType IMPORT_LIST = new JetImportListElementType("IMPORT_LIST");
+
+    JetPlaceHolderStubElementType<JetClassBody> CLASS_BODY =
+            new JetPlaceHolderStubElementType<JetClassBody>("CLASS_BODY", JetClassBody.class);
+
+    JetPlaceHolderStubElementType<JetImportList> IMPORT_LIST =
+            new JetPlaceHolderStubElementType<JetImportList>("IMPORT_LIST", JetImportList.class);
+
     JetImportDirectiveElementType IMPORT_DIRECTIVE = new JetImportDirectiveElementType("IMPORT_DIRECTIVE");
 
     JetModifierListElementType MODIFIER_LIST = new JetModifierListElementType("MODIFIER_LIST");
     JetModifierListElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST = new JetModifierListElementType("PRIMARY_CONSTRUCTOR_MODIFIER_LIST");
 
-    JetTypeConstraintListElementType TYPE_CONSTRAINT_LIST = new JetTypeConstraintListElementType("TYPE_CONSTRAINT_LIST");
+    JetPlaceHolderStubElementType<JetTypeConstraintList> TYPE_CONSTRAINT_LIST =
+            new JetPlaceHolderStubElementType<JetTypeConstraintList>("TYPE_CONSTRAINT_LIST", JetTypeConstraintList.class);
 }
