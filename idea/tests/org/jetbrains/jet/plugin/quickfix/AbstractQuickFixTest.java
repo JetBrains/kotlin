@@ -31,12 +31,15 @@ import com.intellij.psi.PsiElement;
 import junit.framework.Assert;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
     @Override
@@ -65,7 +68,8 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
     }
 
     private void checkForUnexpectedActions() throws ClassNotFoundException {
-        Pair<String, Boolean> pair = parseActionHintImpl(getFile(), getEditor().getDocument().getText());
+        String text = getEditor().getDocument().getText();
+        Pair<String, Boolean> pair = parseActionHintImpl(getFile(), text);
         if (!pair.second) {
             List<IntentionAction> actions = getAvailableActions();
 
@@ -74,8 +78,11 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
                 String className = pair.first.substring(prefix.length());
                 Class<?> aClass = Class.forName(className);
                 assert IntentionAction.class.isAssignableFrom(aClass) : className + " should be inheritor of IntentionAction";
+
+                Set<String> validActions = new HashSet<String>(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"));
+
                 for (IntentionAction action : actions) {
-                    if (aClass.isAssignableFrom(action.getClass())) {
+                    if (aClass.isAssignableFrom(action.getClass()) && !validActions.contains(action.getText())) {
                         Assert.fail("Unexpected intention action " + action.getClass() + " found");
                     }
                 }
