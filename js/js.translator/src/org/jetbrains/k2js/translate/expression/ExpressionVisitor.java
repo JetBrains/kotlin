@@ -191,8 +191,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (shouldBeInlined(expression, context) &&
             BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext())) {
             TemporaryVariable temporaryVariable = context.declareTemporary(null);
-            JsExpression callResult = CallExpressionTranslator.translate(expression, null, context).source(expression);
-            context.addStatementToCurrentBlock(JsAstUtils.assignment(temporaryVariable.reference(), callResult).makeStmt());
+
+            JsNode callResult = CallExpressionTranslator.translate(expression, null, context).source(expression);
+            assert callResult instanceof JsExpression;
+
+            JsExpression assignment = JsAstUtils.assignment(temporaryVariable.reference(), (JsExpression) callResult);
+            context.addStatementToCurrentBlock(assignment.makeStmt());
             return temporaryVariable.reference();
         } else {
             return CallExpressionTranslator.translate(expression, null, context).source(expression);

@@ -16,32 +16,51 @@
 
 package org.jetbrains.k2js.translate.reference;
 
-import com.google.dart.compiler.backend.js.ast.JsExpression;
-import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import com.google.dart.compiler.common.SourceInfoImpl;
+import com.google.gwt.dev.js.JsParser;
+import com.google.gwt.dev.js.JsParserException;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.DescriptorPredicate;
+import org.jetbrains.k2js.translate.intrinsic.functions.patterns.PatternBuilder;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.k2js.translate.utils.BindingUtils;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.calls.callUtil.CallUtilPackage.getFunctionResolvedCallWithAssert;
 
 public final class CallExpressionTranslator extends AbstractCallExpressionTranslator {
 
     @NotNull
-    public static JsExpression translate(
+    private final static DescriptorPredicate JSCODE_PATTERN = PatternBuilder.pattern("kotlin.js.js(String)");
+
+    @NotNull
+    public static JsNode translate(
             @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
             @NotNull TranslationContext context
     ) {
+        if (matchesJsCode(expression, context)) {
+            return (new CallExpressionTranslator(expression, receiver, context)).translateJsCode();
+        }
+        
         JsExpression callExpression = (new CallExpressionTranslator(expression, receiver, context)).translate();
 
         if (shouldBeInlined(expression, context)
@@ -80,6 +99,16 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
         return false;
     }
 
+    private static boolean matchesJsCode(
+            @NotNull JetCallExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        FunctionDescriptor descriptor = getFunctionResolvedCallWithAssert(expression, context.bindingContext())
+                                            .getResultingDescriptor();
+
+        return JSCODE_PATTERN.apply(descriptor) && expression.getValueArguments().size() == 1;
+    }
+
     private CallExpressionTranslator(
             @NotNull JetCallExpression expression,
             @Nullable JsExpression receiver,
@@ -91,5 +120,48 @@ public final class CallExpressionTranslator extends AbstractCallExpressionTransl
     @NotNull
     private JsExpression translate() {
         return CallTranslator.INSTANCE$.translate(context(), resolvedCall, receiver);
+    }
+
+    @NotNull
+    private JsNode translateJsCode() {
+        List<? extends ValueArgument> arguments = expression.getValueArguments();
+        JetExpression argumentExpression = arguments.get(0).getArgumentExpression();
+        assert argumentExpression != null;
+
+        Object jsCode = BindingUtils.getCompileTimeValue(bindingContext(), argumentExpression);
+        assert jsCode instanceof String: "jsCode must be compile time string";
+        List<JsStatement> statements = parseJsCode((String) jsCode);
+        int size = statements.size();
+
+        if (size == 0) {
+            return program().getEmptyStatement();
+        } else if (size > 1) {
+            return new JsBlock(statements);
+        } else {
+            JsStatement resultStatement = statements.get(0);
+            if (resultStatement instanceof JsExpressionStatement) {
+                return ((JsExpressionStatement) resultStatement).getExpression();
+            }
+
+            return resultStatement;
+        }
+    }
+
+    @NotNull
+    private List<JsStatement> parseJsCode(@NotNull String jsCode) {
+        List<JsStatement> statements = new ArrayList<JsStatement>();
+
+        try {
+            SourceInfoImpl info = new SourceInfoImpl(null, 0, 0, 0, 0);
+            JsScope scope = context().scope();
+            StringReader reader = new StringReader(jsCode);
+            statements.addAll(JsParser.parse(info, scope, reader, /* insideFunction= */ true));
+        } catch (JsParserException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return statements;
     }
 }
