@@ -19,7 +19,7 @@ package org.jetbrains.jet.plugin.debugger
 import com.intellij.debugger.SourcePosition
 import com.intellij.psi.PsiElement
 import com.intellij.debugger.actions.SmartStepTarget
-import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.debugger.actions.MethodSmartStepTarget
@@ -28,7 +28,7 @@ import com.intellij.psi.util.PsiFormatUtil
 import com.intellij.psi.PsiSubstitutor
 import com.intellij.psi.util.PsiFormatUtilBase
 
-abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTestCase() {
+abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
         get() = myFixture!!
 
