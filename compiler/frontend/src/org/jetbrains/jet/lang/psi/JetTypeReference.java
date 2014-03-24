@@ -20,6 +20,8 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,9 +31,13 @@ import java.util.List;
  * Type reference element.
  * Underlying token is {@link org.jetbrains.jet.JetNodeTypes#TYPE_REFERENCE}
  */
-public class JetTypeReference extends JetElementImpl {
+public class JetTypeReference extends JetElementImplStub<PsiJetPlaceHolderStub<JetTypeReference>> {
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetTypeReference(PsiJetPlaceHolderStub<JetTypeReference> stub) {
+        super(stub, JetStubElementTypes.TYPE_REFERENCE);
     }
 
     @Override

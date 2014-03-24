@@ -19,7 +19,6 @@ package org.jetbrains.jet;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -63,7 +62,7 @@ public interface JetNodeTypes {
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
     JetNodeType VALUE_ARGUMENT_NAME                 = new JetNodeType("VALUE_ARGUMENT_NAME", JetValueArgumentName.class);
-    JetNodeType TYPE_REFERENCE                      = new JetNodeType("TYPE_REFERENCE", JetTypeReference.class);
+    IElementType TYPE_REFERENCE                     = JetStubElementTypes.TYPE_REFERENCE;
 
     JetNodeType USER_TYPE     = new JetNodeType("USER_TYPE", JetUserType.class);
 
