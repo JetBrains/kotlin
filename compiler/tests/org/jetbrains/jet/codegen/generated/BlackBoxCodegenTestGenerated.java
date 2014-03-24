@@ -4253,6 +4253,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/package/incrementProperty.kt");
         }
         
+        @TestMetadata("initializationOrder.kt")
+        public void testInitializationOrder() throws Exception {
+            doTest("compiler/testData/codegen/box/package/initializationOrder.kt");
+        }
+        
         @TestMetadata("invokespecial.kt")
         public void testInvokespecial() throws Exception {
             doTest("compiler/testData/codegen/box/package/invokespecial.kt");
