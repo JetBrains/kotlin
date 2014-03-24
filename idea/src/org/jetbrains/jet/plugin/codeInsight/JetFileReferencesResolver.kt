@@ -63,7 +63,6 @@ object JetFileReferencesResolver {
 
         public val result: Map<JetReferenceExpression, BindingContext> = resolveMap
 
-        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
         override fun visitUserType(userType: JetUserType) {
             if (visitReceivers) {
                 userType.acceptChildren(this)

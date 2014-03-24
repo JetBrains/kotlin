@@ -26,7 +26,6 @@ import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.ide.hierarchy.method.MethodHierarchyBrowser
 import org.jetbrains.jet.asJava.getRepresentativeLightMethod
 import com.intellij.psi.PsiMethod
-import java.text.MessageFormat
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
 import org.jetbrains.jet.lang.psi.JetDeclaration
@@ -45,7 +44,6 @@ class KotlinOverrideHierarchyBrowser(
     override fun isApplicableElement(psiElement: PsiElement): Boolean =
             HierarchyUtils.IS_OVERRIDE_HIERARCHY_ELEMENT(psiElement)
 
-    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun createHierarchyTreeStructure(typeName: String, psiElement: PsiElement): HierarchyTreeStructure? =
             if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement) else null
 

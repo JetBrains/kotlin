@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
 
-[suppress("DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES")]
 public class KotlinSafeDeleteOverrideAnnotation(
         element: PsiElement, referencedElement: PsiElement
 ) : SafeDeleteUsageInfo(element, referencedElement), SafeDeleteCustomUsageInfo {

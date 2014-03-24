@@ -21,7 +21,6 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteCustomUsageInfo
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteUsageInfo
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 
-[suppress("DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES")]
 public class KotlinSafeDeleteOverridingUsageInfo(
         overridingElement: PsiElement, superElement: PsiElement
 ) : SafeDeleteUsageInfo(overridingElement, superElement), SafeDeleteCustomUsageInfo {

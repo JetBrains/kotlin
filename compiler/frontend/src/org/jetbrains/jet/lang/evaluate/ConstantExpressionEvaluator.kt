@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.evaluate
 
-import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.constants.*
-import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
@@ -36,7 +34,6 @@ import java.math.BigInteger
 import org.jetbrains.jet.lang.diagnostics.Errors
 import com.intellij.psi.util.PsiTreeUtil
 
-[suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
 public class ConstantExpressionEvaluator private (val trace: BindingTrace) : JetVisitor<CompileTimeConstant<*>, JetType>() {
 
     class object {
@@ -166,16 +163,15 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             return createCompileTimeConstant(result, expectedType)
         }
         else {
-            return evaluateCall(expression, expression.getOperationReference(), leftExpression, expectedType)
+            return evaluateCall(expression.getOperationReference(), leftExpression, expectedType)
         }
     }
 
-    private fun evaluateCall(fullExpression: JetExpression, callExpression: JetExpression, receiverExpression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
+    private fun evaluateCall(callExpression: JetExpression, receiverExpression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
         val resolvedCall = trace.getBindingContext().get(BindingContext.RESOLVED_CALL, callExpression)
         if (resolvedCall == null) return null
 
-        val resultingDescriptorName = resolvedCall.getResultingDescriptor()?.getName()
-        if (resultingDescriptorName == null) return null
+        val resultingDescriptorName = resolvedCall.getResultingDescriptor().getName()
 
         val argumentForReceiver = createOperationArgumentForReceiver(resolvedCall, receiverExpression)
         if (argumentForReceiver == null) return null
@@ -285,7 +281,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         val leftExpression = expression.getBaseExpression()
         if (leftExpression == null) return null
 
-        return evaluateCall(expression, expression.getOperationReference(), leftExpression, expectedType)
+        return evaluateCall(expression.getOperationReference(), leftExpression, expectedType)
     }
 
     override fun visitSimpleNameExpression(expression: JetSimpleNameExpression, expectedType: JetType?): CompileTimeConstant<*>? {
@@ -323,7 +319,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             }
 
             val receiverExpression = expression.getReceiverExpression()
-            return evaluateCall(expression, calleeExpression, receiverExpression, expectedType)
+            return evaluateCall(calleeExpression, receiverExpression, expectedType)
         }
 
         // MyEnum.A, Integer.MAX_VALUE
@@ -339,7 +335,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         if (call == null) return null
 
         val resultingDescriptor = call.getResultingDescriptor()
-        if (resultingDescriptor == null) return null
 
         // array()
         if (CompileTimeConstantUtils.isArrayMethodCall(call)) {

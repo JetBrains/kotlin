@@ -5,7 +5,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
@@ -14,13 +13,11 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import java.util.Collections;
 import java.util.HashSet;
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.HashMap
 import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentForJavaClass
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
-import kotlin.support.AbstractIterator
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -60,7 +57,6 @@ public object ShortenReferences {
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext = resolveMap[expression]!!
 
-        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
         override fun visitUserType(userType: JetUserType) {
             userType.getTypeArgumentList()?.accept(this)
 
