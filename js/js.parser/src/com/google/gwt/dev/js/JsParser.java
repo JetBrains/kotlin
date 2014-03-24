@@ -182,8 +182,11 @@ public class JsParser {
             case TokenStream.STRING:
                 return new JsStringLiteral(node.getString());
 
+            case TokenStream.NUMBER_INT:
+                return mapIntNumber(node);
+
             case TokenStream.NUMBER:
-                return mapNumber(node);
+                return mapDoubleNumber(node);
 
             case TokenStream.CALL:
                 return mapCall(node);
@@ -751,7 +754,11 @@ public class JsParser {
         return newExpr;
     }
 
-    private JsExpression mapNumber(Node numberNode) {
+    private JsExpression mapIntNumber(Node numberNode) {
+        return new JsNumberLiteral.JsIntLiteral((int) numberNode.getDouble());
+    }
+
+    private JsExpression mapDoubleNumber(Node numberNode) {
         return new JsNumberLiteral.JsDoubleLiteral(numberNode.getDouble());
     }
 
@@ -1111,7 +1118,7 @@ public class JsParser {
                 return mapPrefixOperation(JsUnaryOperator.TYPEOF, unOp);
 
             case TokenStream.ADD:
-                if (unOp.getFirstChild().getType() != TokenStream.NUMBER) {
+                if (!isJsNumber(unOp.getFirstChild())) {
                     return mapPrefixOperation(JsUnaryOperator.POS, unOp);
                 }
                 else {
@@ -1170,5 +1177,10 @@ public class JsParser {
 
     private void pushScope(JsScope scope) {
         scopeStack.push(scope);
+    }
+
+    private boolean isJsNumber(Node jsNode) {
+        int type = jsNode.getType();
+        return type == TokenStream.NUMBER || type == TokenStream.NUMBER;
     }
 }

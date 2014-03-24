@@ -116,6 +116,10 @@ public class IRFactory {
     /**
      * Number (for literals)
      */
+    public Object createNumber(int number) {
+        return Node.newNumber(number);
+    }
+
     public Object createNumber(double number) {
         return Node.newNumber(number);
     }

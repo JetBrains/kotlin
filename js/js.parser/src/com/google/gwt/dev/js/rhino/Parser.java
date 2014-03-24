@@ -1284,10 +1284,15 @@ public class Parser {
                 sourceAddString(ts.NAME, s);
                 property = nf.createString(ts.getString());
                 break;
-              case TokenStream.NUMBER:
-                double n = ts.getNumber();
+              case TokenStream.NUMBER_INT:
+                int n = (int) ts.getNumber();
                 sourceAddNumber(n);
                 property = nf.createNumber(n);
+                break;
+              case TokenStream.NUMBER:
+                double d = ts.getNumber();
+                sourceAddNumber(d);
+                property = nf.createNumber(d);
                 break;
               case TokenStream.RC:
                 // trailing comma is OK.
@@ -1332,10 +1337,15 @@ public class Parser {
         sourceAddString(ts.NAME, name);
         return nf.createName(name);
 
-      case TokenStream.NUMBER:
-        double n = ts.getNumber();
+      case TokenStream.NUMBER_INT:
+        int n = (int)ts.getNumber();
         sourceAddNumber(n);
         return nf.createNumber(n);
+
+    case TokenStream.NUMBER:
+        double d = ts.getNumber();
+        sourceAddNumber(d);
+        return nf.createNumber(d);
 
       case TokenStream.STRING:
         String s = ts.getString();
@@ -1449,34 +1459,33 @@ public class Parser {
      * could take up to 12 bytes.
      */
 
-    long lbits = (long) n;
-    if (lbits != n) {
-      // if it's floating point, save as a Double bit pattern.
-      // (12/15/97 our scanner only returns Double for f.p.)
-      lbits = Double.doubleToLongBits(n);
-      sourceAdd('D');
-      sourceAdd((char) (lbits >> 48));
-      sourceAdd((char) (lbits >> 32));
-      sourceAdd((char) (lbits >> 16));
-      sourceAdd((char) lbits);
-    } else {
-      // we can ignore negative values, bc they're already prefixed
-      // by UNARYOP SUB
-      if (Context.check && lbits < 0)
-        Context.codeBug();
+    long lbits = Double.doubleToLongBits(n);
+    sourceAdd('D');
+    sourceAdd((char) (lbits >> 48));
+    sourceAdd((char) (lbits >> 32));
+    sourceAdd((char) (lbits >> 16));
+    sourceAdd((char) lbits);
+  }
 
-      // will it fit in a char?
-      // this gives a short encoding for integer values up to 2^16.
-      if (lbits <= Character.MAX_VALUE) {
-        sourceAdd('S');
-        sourceAdd((char) lbits);
-      } else { // Integral, but won't fit in a char. Store as a long.
-        sourceAdd('J');
-        sourceAdd((char) (lbits >> 48));
-        sourceAdd((char) (lbits >> 32));
-        sourceAdd((char) (lbits >> 16));
-        sourceAdd((char) lbits);
-      }
+  private void sourceAddNumber(int n) {
+    sourceAdd((char) TokenStream.NUMBER_INT);
+
+    // we can ignore negative values, bc they're already prefixed
+    // by UNARYOP SUB
+    if (Context.check && (long) n < 0)
+      Context.codeBug();
+
+    // will it fit in a char?
+    // this gives a short encoding for integer values up to 2^16.
+    if ((long) n <= Character.MAX_VALUE) {
+      sourceAdd('S');
+      sourceAdd((char) (long) n);
+    } else { // Integral, but won't fit in a char. Store as a long.
+      sourceAdd('J');
+      sourceAdd((char) ((long) n >> 48));
+      sourceAdd((char) ((long) n >> 32));
+      sourceAdd((char) ((long) n >> 16));
+      sourceAdd((char) (long) n);
     }
   }
 

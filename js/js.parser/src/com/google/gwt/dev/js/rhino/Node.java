@@ -49,6 +49,11 @@ public class Node implements Cloneable {
 
     private static class NumberNode extends Node {
 
+        NumberNode(int number) {
+            super(TokenStream.NUMBER_INT);
+            this.number = number;
+        }
+
         NumberNode(double number) {
             super(TokenStream.NUMBER);
             this.number = number;
@@ -182,6 +187,10 @@ public class Node implements Cloneable {
     public Node(int nodeType, Node left, Node mid, Node right, int value) {
         this(nodeType, left, mid, right);
         intDatum = value;
+    }
+
+    public static Node newNumber(int number) {
+        return new NumberNode(number);
     }
 
     public static Node newNumber(double number) {
@@ -598,6 +607,10 @@ public class Node implements Cloneable {
                     case TokenStream.TARGET:
                         sb.append(' ');
                         sb.append(hashCode());
+                        break;
+                    case TokenStream.NUMBER_INT:
+                        sb.append(' ');
+                        sb.append((int) getDouble());
                         break;
                     case TokenStream.NUMBER:
                         sb.append(' ');
