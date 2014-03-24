@@ -19,6 +19,9 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
+import com.intellij.util.ArrayUtil;
+import com.intellij.util.Function;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -38,9 +41,15 @@ import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -108,7 +117,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
-                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
+                                       getThrownExceptions(functionDescriptor, typeMapper));
 
         if (owner instanceof PackageFacadeContext) {
             Type ownerType = ((PackageFacadeContext) owner).getDelegateToClassType();
@@ -449,6 +458,35 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
     }
 
+    @NotNull
+    private static String[] getThrownExceptions(@NotNull FunctionDescriptor function, @NotNull final JetTypeMapper mapper) {
+        AnnotationDescriptor annotation = function.getAnnotations().findAnnotation(new FqName("kotlin.throws"));
+        if (annotation == null) return ArrayUtil.EMPTY_STRING_ARRAY;
+
+        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        if (values.isEmpty()) return ArrayUtil.EMPTY_STRING_ARRAY;
+
+        Object value = values.iterator().next();
+        if (!(value instanceof ArrayValue)) return ArrayUtil.EMPTY_STRING_ARRAY;
+        ArrayValue arrayValue = (ArrayValue) value;
+
+        List<String> strings = ContainerUtil.mapNotNull(
+                arrayValue.getValue(),
+                new Function<CompileTimeConstant<?>, String>() {
+                    @Override
+                    public String fun(CompileTimeConstant<?> constant) {
+                        if (constant instanceof JavaClassValue) {
+                            JavaClassValue classValue = (JavaClassValue) constant;
+                            ClassDescriptor classDescriptor = DescriptorUtils.getClassDescriptorForType(classValue.getValue());
+                            return mapper.mapClass(classDescriptor).getInternalName();
+                        }
+                        return null;
+                    }
+                }
+        );
+        return strings.toArray(new String[strings.size()]);
+    }
+
     static void generateConstructorWithoutParametersIfNeeded(
             @NotNull GenerationState state,
             @NotNull CallableMethod method,
@@ -460,7 +498,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
         MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null,
-                                                  CodegenUtil.getExceptions(constructorDescriptor, state.getTypeMapper()));
+                                                  getThrownExceptions(constructorDescriptor, state.getTypeMapper()));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
@@ -530,7 +568,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
                                        isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
                                        descriptor, null,
-                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
+                                       getThrownExceptions(functionDescriptor, typeMapper));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             generateDefaultImpl(owner, signature, functionDescriptor, isStatic, mv, loadStrategy);
@@ -739,7 +777,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         int flags = ACC_PUBLIC;
 
         MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
-                                       CodegenUtil.getExceptions(functionDescriptor, typeMapper));
+                                       getThrownExceptions(functionDescriptor, typeMapper));
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
