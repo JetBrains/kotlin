@@ -2210,6 +2210,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         throw new UnsupportedOperationException();
     }
 
+    @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
         boolean isSingleton = calleeContainingClass.getKind().isSingleton();
         if (isSingleton) {
@@ -2227,8 +2228,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
         while (cur != null) {
             ClassDescriptor thisDescriptor = cur.getThisDescriptor();
-            if (!isSuper && thisDescriptor.equals(calleeContainingClass)
-                || isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
+
+            if (!isSuper && thisDescriptor == calleeContainingClass) {
+                return result;
+            }
+
+            if (isSuper && DescriptorUtils.isSubclass(thisDescriptor, calleeContainingClass)) {
                 return castToRequiredTypeOfInterfaceIfNeeded(result, thisDescriptor, calleeContainingClass);
             }
 

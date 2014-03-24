@@ -20,7 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.Pair;
-import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +63,6 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -1464,21 +1462,28 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateTraitMethods() {
-        if (JetPsiUtil.isTrait(myClass)) {
-            return;
-        }
+        if (JetPsiUtil.isTrait(myClass)) return;
 
-        for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> needDelegates : getTraitImplementations(descriptor)) {
-            if (needDelegates.second instanceof SimpleFunctionDescriptor) {
-                generateDelegationToTraitImpl((FunctionDescriptor) needDelegates.second, (FunctionDescriptor) needDelegates.first);
+        for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> pair : getTraitImplementations(descriptor)) {
+            CallableMemberDescriptor inheritedMember = pair.first;
+            CallableMemberDescriptor traitMember = pair.second;
+
+            assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + pair;
+
+            // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
+            // with traitMember's modality
+            CallableMemberDescriptor copy =
+                    inheritedMember.copy(inheritedMember.getContainingDeclaration(), traitMember.getModality(), Visibilities.PUBLIC,
+                                         CallableMemberDescriptor.Kind.DECLARATION, true);
+
+            if (traitMember instanceof SimpleFunctionDescriptor) {
+                generateDelegationToTraitImpl((FunctionDescriptor) traitMember, (FunctionDescriptor) copy);
             }
-            else if (needDelegates.second instanceof PropertyDescriptor) {
-                PropertyDescriptor property = (PropertyDescriptor) needDelegates.second;
-                List<PropertyAccessorDescriptor> inheritedAccessors = ((PropertyDescriptor) needDelegates.first).getAccessors();
-                for (PropertyAccessorDescriptor accessor : property.getAccessors()) {
-                    for (PropertyAccessorDescriptor inheritedAccessor : inheritedAccessors) {
-                        if (inheritedAccessor.getClass() == accessor.getClass()) { // same accessor kind
-                            generateDelegationToTraitImpl(accessor, inheritedAccessor);
+            else if (traitMember instanceof PropertyDescriptor) {
+                for (PropertyAccessorDescriptor traitAccessor : ((PropertyDescriptor) traitMember).getAccessors()) {
+                    for (PropertyAccessorDescriptor inheritedAccessor : ((PropertyDescriptor) copy).getAccessors()) {
+                        if (inheritedAccessor.getClass() == traitAccessor.getClass()) { // same accessor kind
+                            generateDelegationToTraitImpl(traitAccessor, inheritedAccessor);
                         }
                     }
                 }
@@ -1486,58 +1491,42 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    private void generateDelegationToTraitImpl(@NotNull final FunctionDescriptor traitFun, @NotNull FunctionDescriptor inheritedFun) {
+        functionCodegen.generateMethod(
+                descriptorToDeclaration(bindingContext, traitFun),
+                typeMapper.mapSignature(inheritedFun),
+                inheritedFun,
+                new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, inheritedFun) {
+            @Override
+            public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
+                if (!(containingDeclaration instanceof ClassDescriptor)) return;
+                ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
+                if (containingTrait.getKind() != ClassKind.TRAIT) return;
 
-    private void generateDelegationToTraitImpl(@NotNull FunctionDescriptor fun, @NotNull FunctionDescriptor inheritedFun) {
-        DeclarationDescriptor containingDeclaration = fun.getContainingDeclaration();
-        if (!(containingDeclaration instanceof ClassDescriptor)) {
-            return;
-        }
+                Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal()).getAsmMethod();
 
-        ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
-        if (containingClass.getKind() != ClassKind.TRAIT) {
-            return;
-        }
+                Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
+                Type[] originalArgTypes = traitMethod.getArgumentTypes();
 
-        int flags = ACC_PUBLIC; // TODO.
+                InstructionAdapter iv = codegen.v;
+                iv.load(0, OBJECT_TYPE);
+                for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                    StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+                    //noinspection AssignmentToForLoopParameter
+                    reg += argTypes[i].getSize();
+                }
 
-        Method methodToGenerate = typeMapper.mapSignature(fun).getAsmMethod();
-        Method methodInTrait = typeMapper.mapSignature(fun.getOriginal()).getAsmMethod();
+                Type type = getTraitImplThisParameterType(containingTrait, typeMapper);
+                String desc = traitMethod.getDescriptor().replace("(", "(" + type.getDescriptor());
 
-        PsiElement origin = descriptorToDeclaration(bindingContext, fun);
-        MethodVisitor mv = v.newMethod(origin, flags, methodToGenerate.getName(), methodToGenerate.getDescriptor(), null,
-                                       CodegenUtil.getExceptions(fun, typeMapper));
-        AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(fun);
+                iv.invokestatic(typeMapper.mapTraitImpl(containingTrait).getInternalName(), traitMethod.getName(), desc);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            Type returnType = methodToGenerate.getReturnType();
-
-            mv.visitCode();
-            FrameMap frameMap = context.prepareFrame(typeMapper);
-            ExpressionCodegen codegen = new ExpressionCodegen(mv, frameMap, returnType, context.intoFunction(inheritedFun), state, this);
-            codegen.generateThisOrOuter(descriptor, false);    // ??? wouldn't it be addClosureToConstructorParameters good idea to put it?
-
-            Type[] argTypes = methodToGenerate.getArgumentTypes();
-            Type[] originalArgTypes = methodInTrait.getArgumentTypes();
-
-            InstructionAdapter iv = new InstructionAdapter(mv);
-            iv.load(0, OBJECT_TYPE);
-            for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                //noinspection AssignmentToForLoopParameter
-                reg += argTypes[i].getSize();
+                Type returnType = signature.getReturnType();
+                StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
+                iv.areturn(returnType);
             }
-
-            Type type = getTraitImplThisParameterType(containingClass, typeMapper);
-            String functionDescriptor = methodInTrait.getDescriptor().replace("(", "(" + type.getDescriptor());
-
-            iv.invokestatic(typeMapper.mapTraitImpl(containingClass).getInternalName(), methodToGenerate.getName(), functionDescriptor);
-            StackValue.onStack(methodInTrait.getReturnType()).put(returnType, iv);
-            iv.areturn(returnType);
-
-            FunctionCodegen.endVisit(iv, "trait method", callableDescriptorToDeclaration(bindingContext, fun));
-        }
-
-        FunctionCodegen.generateBridgeIfNeeded(context, state, v, fun);
+        });
     }
 
     private void generateDelegatorToConstructorCall(

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,10 +31,7 @@ import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
@@ -162,11 +158,11 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     @NotNull
     private Collection<T> generateDelegationCandidates(@NotNull JetType delegatedTraitType) {
         Collection<T> descriptorsToDelegate = overridableMembersNotFromSuperClassOfTrait(delegatedTraitType);
-        Collection<T> result = Lists.newArrayList();
+        Collection<T> result = new ArrayList<T>(descriptorsToDelegate.size());
         for (T memberDescriptor : descriptorsToDelegate) {
-            Modality modality = DescriptorUtils.convertModality(memberDescriptor.getModality(), true);
+            Modality newModality = memberDescriptor.getModality() == Modality.ABSTRACT ? Modality.OPEN : memberDescriptor.getModality();
             @SuppressWarnings("unchecked")
-            T copy = (T) memberDescriptor.copy(ownerDescriptor, modality, memberDescriptor.getVisibility(),
+            T copy = (T) memberDescriptor.copy(ownerDescriptor, newModality, memberDescriptor.getVisibility(),
                                                CallableMemberDescriptor.Kind.DELEGATION, false);
             result.add(copy);
         }

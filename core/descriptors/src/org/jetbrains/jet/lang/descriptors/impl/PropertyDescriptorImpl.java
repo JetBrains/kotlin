@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DescriptorSubstitutor;
@@ -243,16 +242,17 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         substitutedDescriptor.setType(outType, substitutedTypeParameters, substitutedExpectedThisObject, substitutedReceiverType);
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
-                substitutedDescriptor, getter.getAnnotations(),
-                DescriptorUtils.convertModality(getter.getModality(), false), convertVisibility(getter.getVisibility(), newVisibility),
-                getter.hasBody(), getter.isDefault(), kind, getter.getOriginal());
+                substitutedDescriptor, getter.getAnnotations(), newModality, convertVisibility(getter.getVisibility(), newVisibility),
+                getter.hasBody(), getter.isDefault(), kind, getter.getOriginal()
+        );
         if (newGetter != null) {
             JetType returnType = getter.getReturnType();
             newGetter.initialize(returnType != null ? substitutor.substitute(returnType, Variance.OUT_VARIANCE) : null);
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
-                substitutedDescriptor, setter.getAnnotations(), DescriptorUtils.convertModality(setter.getModality(), false),
-                convertVisibility(setter.getVisibility(), newVisibility), setter.hasBody(), setter.isDefault(), kind, setter.getOriginal());
+                substitutedDescriptor, setter.getAnnotations(), newModality, convertVisibility(setter.getVisibility(), newVisibility),
+                setter.hasBody(), setter.isDefault(), kind, setter.getOriginal()
+        );
         if (newSetter != null) {
             List<ValueParameterDescriptor> substitutedValueParameters = FunctionDescriptorImpl.getSubstitutedValueParameters(newSetter, setter, substitutor);
             if (substitutedValueParameters == null) {

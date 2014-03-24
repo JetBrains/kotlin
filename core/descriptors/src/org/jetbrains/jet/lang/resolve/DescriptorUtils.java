@@ -57,12 +57,6 @@ public class DescriptorUtils {
         return substitutedFunction;
     }
 
-    @NotNull
-    public static Modality convertModality(@NotNull Modality modality, boolean makeNonAbstract) {
-        if (makeNonAbstract && modality == Modality.ABSTRACT) return Modality.OPEN;
-        return modality;
-    }
-
     @Nullable
     public static ReceiverParameterDescriptor getExpectedThisObjectIfNeeded(@NotNull DeclarationDescriptor containingDeclaration) {
         if (containingDeclaration instanceof ClassDescriptor) {

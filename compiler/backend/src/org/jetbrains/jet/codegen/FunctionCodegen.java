@@ -142,7 +142,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         endVisit(mv, null, origin);
 
-        generateBridgeIfNeeded(owner, state, v, functionDescriptor);
+        generateBridgeIfNeeded(functionDescriptor);
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
     }
@@ -404,12 +404,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         return bytecode;
     }
 
-    static void generateBridgeIfNeeded(
-            CodegenContext owner,
-            GenerationState state,
-            ClassBuilder v,
-            FunctionDescriptor functionDescriptor
-    ) {
+    private void generateBridgeIfNeeded(@NotNull FunctionDescriptor functionDescriptor) {
         if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) {
             return;
         }
@@ -775,6 +770,6 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
                  descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
 
-        generateBridgeIfNeeded(owner, state, v, functionDescriptor);
+        generateBridgeIfNeeded(functionDescriptor);
     }
 }
