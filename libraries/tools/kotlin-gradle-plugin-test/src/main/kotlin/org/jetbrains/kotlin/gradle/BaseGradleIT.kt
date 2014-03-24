@@ -9,10 +9,10 @@ import kotlin.test.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-open class BaseGradleIT(val resourcesRoot: String = "src/test/resources") {
+open class BaseGradleIT(resourcesRoot: String = "src/test/resources") {
 
-    val resourcesRootFile: File = File(resourcesRoot)
-    var workingDir: File = File(".")
+    private val resourcesRootFile = File(resourcesRoot)
+    private var workingDir = File(".")
 
     Before fun setUp() {
         workingDir = Files.createTempDir()
