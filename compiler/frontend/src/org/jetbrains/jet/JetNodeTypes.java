@@ -64,8 +64,7 @@ public interface JetNodeTypes {
     JetNodeType VALUE_ARGUMENT_NAME                 = new JetNodeType("VALUE_ARGUMENT_NAME", JetValueArgumentName.class);
     IElementType TYPE_REFERENCE                     = JetStubElementTypes.TYPE_REFERENCE;
 
-    JetNodeType USER_TYPE     = new JetNodeType("USER_TYPE", JetUserType.class);
-
+    IElementType USER_TYPE                = JetStubElementTypes.USER_TYPE;
     JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
     JetNodeType FUNCTION_TYPE_RECEIVER = new JetNodeType("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);

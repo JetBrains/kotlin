@@ -18,17 +18,24 @@ package org.jetbrains.jet.lang.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetUserTypeStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetUserType extends JetElementImpl implements JetTypeElement {
+public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implements JetTypeElement {
     public JetUserType(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetUserType(@NotNull PsiJetUserTypeStub stub) {
+        super(stub, JetStubElementTypes.USER_TYPE);
     }
 
     public boolean isAbsoluteInRootPackage() {
