@@ -89,8 +89,8 @@ public class DescriptorFactory {
             @NotNull JetType returnType
     ) {
         SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Annotations.EMPTY, VALUES_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
+                SimpleFunctionDescriptorImpl.create(classObject, Annotations.EMPTY, VALUES_METHOD_NAME,
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED);
         return values.initialize(null, classObject.getThisAsReceiverParameter(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  returnType, Modality.FINAL,
@@ -103,8 +103,8 @@ public class DescriptorFactory {
             @NotNull JetType returnType
     ) {
         SimpleFunctionDescriptorImpl values =
-                new SimpleFunctionDescriptorImpl(classObject, Annotations.EMPTY, VALUE_OF_METHOD_NAME,
-                                                 CallableMemberDescriptor.Kind.SYNTHESIZED);
+                SimpleFunctionDescriptorImpl.create(classObject, Annotations.EMPTY, VALUE_OF_METHOD_NAME,
+                                                    CallableMemberDescriptor.Kind.SYNTHESIZED);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
                 0,

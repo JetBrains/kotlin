@@ -174,9 +174,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             MethodVisitor method = createOrGetClInitMethod();
             method.visitCode();
             SimpleFunctionDescriptorImpl clInit =
-                    new SimpleFunctionDescriptorImpl(descriptor, Annotations.EMPTY,
-                                                     Name.special("<clinit>"),
-                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
+                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY,
+                                                        Name.special("<clinit>"),
+                                                        CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
 

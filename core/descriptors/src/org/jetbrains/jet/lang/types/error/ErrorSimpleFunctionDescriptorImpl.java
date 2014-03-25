@@ -30,7 +30,7 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
     private final ErrorUtils.ErrorScope ownerScope;
 
     public ErrorSimpleFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
-        super(ErrorUtils.getErrorClass(), Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
+        super(ErrorUtils.getErrorClass(), null, Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
 

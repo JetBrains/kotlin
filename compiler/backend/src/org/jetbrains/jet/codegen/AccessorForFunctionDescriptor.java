@@ -36,7 +36,7 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
             @NotNull DeclarationDescriptor containingDeclaration,
             int index
     ) {
-        super(containingDeclaration, Annotations.EMPTY,
+        super(containingDeclaration, null, Annotations.EMPTY,
               Name.identifier((descriptor instanceof ConstructorDescriptor ? "$init" : descriptor.getName()) + "$b$" + index),
               Kind.DECLARATION);
 

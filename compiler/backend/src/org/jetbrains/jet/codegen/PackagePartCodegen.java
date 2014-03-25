@@ -99,9 +99,9 @@ public class PackagePartCodegen extends MemberCodegen {
             FrameMap frameMap = new FrameMap();
 
             SimpleFunctionDescriptorImpl clInit =
-                    new SimpleFunctionDescriptorImpl(this.descriptor, Annotations.EMPTY,
-                                                     Name.special("<clinit>"),
-                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
+                    SimpleFunctionDescriptorImpl.create(this.descriptor, Annotations.EMPTY,
+                                                        Name.special("<clinit>"),
+                                                        CallableMemberDescriptor.Kind.SYNTHESIZED);
             clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                               Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
 

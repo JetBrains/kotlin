@@ -90,7 +90,7 @@ public class ControlStructureTypingUtils {
 
         Name specialFunctionName = Name.identifierNoValidate("<SPECIAL-FUNCTION-FOR-" + constructionName + "-RESOLVE>");
 
-        SimpleFunctionDescriptorImpl function = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl function = SimpleFunctionDescriptorImpl.create(
                 ErrorUtils.getErrorModule(),//todo hack to avoid returning true in 'isError(DeclarationDescriptor)'
                 Annotations.EMPTY, specialFunctionName, CallableMemberDescriptor.Kind.DECLARATION);
 

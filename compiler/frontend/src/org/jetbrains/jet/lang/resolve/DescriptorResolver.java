@@ -293,7 +293,7 @@ public class DescriptorResolver {
             @NotNull final DataFlowInfo dataFlowInfo,
             @NotNull Annotations annotations
     ) {
-        final SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
+        final SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 containingDescriptor,
                 annotations,
                 JetPsiUtil.safeName(function.getName()),
@@ -379,7 +379,7 @@ public class DescriptorResolver {
         String functionName = COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex;
         JetType returnType = property.getType();
 
-        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
                 Annotations.EMPTY,
                 Name.identifier(functionName),
@@ -409,7 +409,7 @@ public class DescriptorResolver {
     ) {
         JetType returnType = classDescriptor.getDefaultType();
 
-        SimpleFunctionDescriptorImpl functionDescriptor = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl functionDescriptor = SimpleFunctionDescriptorImpl.create(
                 classDescriptor,
                 Annotations.EMPTY,
                 COPY_METHOD_NAME,

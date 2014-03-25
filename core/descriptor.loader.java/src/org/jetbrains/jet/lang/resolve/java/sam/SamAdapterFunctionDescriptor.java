@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
     private final SimpleFunctionDescriptor declaration;
 
     public SamAdapterFunctionDescriptor(@NotNull SimpleFunctionDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), declaration.getAnnotations(), declaration.getName(), Kind.SYNTHESIZED);
+        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(), declaration.getName(), Kind.SYNTHESIZED);
         this.declaration = declaration;
     }
 

@@ -74,12 +74,13 @@ public class CodegenUtil {
 
     public static SimpleFunctionDescriptor createInvoke(FunctionDescriptor fd) {
         int arity = fd.getValueParameters().size();
-        SimpleFunctionDescriptorImpl invokeDescriptor = new SimpleFunctionDescriptorImpl(
+        SimpleFunctionDescriptorImpl invokeDescriptor = SimpleFunctionDescriptorImpl.create(
                 fd.getExpectedThisObject() != null
                 ? KotlinBuiltIns.getInstance().getExtensionFunction(arity) : KotlinBuiltIns.getInstance().getFunction(arity),
                 Annotations.EMPTY,
                 Name.identifier("invoke"),
-                CallableMemberDescriptor.Kind.DECLARATION);
+                CallableMemberDescriptor.Kind.DECLARATION
+        );
 
         invokeDescriptor.initialize(DescriptorUtils.getReceiverParameterType(fd.getReceiverParameter()),
                                     fd.getExpectedThisObject(),

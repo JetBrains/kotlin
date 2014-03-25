@@ -118,7 +118,7 @@ public class FunctionDescriptorUtil {
             @NotNull FunctionDescriptor function,
             @NotNull List<ValueParameterDescriptor> newParameters
     ) {
-        FunctionDescriptorImpl descriptor = new SimpleFunctionDescriptorImpl(
+        FunctionDescriptorImpl descriptor = SimpleFunctionDescriptorImpl.create(
                 function.getContainingDeclaration(),
                 function.getAnnotations(),
                 function.getName(),

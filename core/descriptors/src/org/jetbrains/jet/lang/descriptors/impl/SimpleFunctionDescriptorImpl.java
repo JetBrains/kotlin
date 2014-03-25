@@ -32,15 +32,6 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
 
     private InlineStrategy inlineStrategy;
 
-    public SimpleFunctionDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            @NotNull Name name,
-            @NotNull Kind kind
-    ) {
-        this(containingDeclaration, null, annotations, name, kind);
-    }
-
     protected SimpleFunctionDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @Nullable SimpleFunctionDescriptor original,
@@ -48,6 +39,16 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             @NotNull Name name,
             @NotNull Kind kind) {
         super(containingDeclaration, original, annotations, name, kind);
+    }
+
+    @NotNull
+    public static SimpleFunctionDescriptorImpl create(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            @NotNull Name name,
+            @NotNull Kind kind
+    ) {
+        return new SimpleFunctionDescriptorImpl(containingDeclaration, null, annotations, name, kind);
     }
 
 

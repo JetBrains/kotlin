@@ -27,6 +27,6 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
             @NotNull Annotations annotations,
             @NotNull Kind kind
     ) {
-        super(containingDeclaration, annotations, Name.special("<anonymous>"), kind);
+        super(containingDeclaration, null, annotations, Name.special("<anonymous>"), kind);
     }
 }

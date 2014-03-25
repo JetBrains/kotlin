@@ -29,7 +29,7 @@ public class SamConstructorDescriptor extends SimpleFunctionDescriptorImpl
             @NotNull ClassOrPackageFragmentDescriptor containingDeclaration,
             @NotNull JavaClassDescriptor samInterface
     ) {
-        super(containingDeclaration, samInterface.getAnnotations(), samInterface.getName(), Kind.SYNTHESIZED);
+        super(containingDeclaration, null, samInterface.getAnnotations(), samInterface.getName(), Kind.SYNTHESIZED);
         this.samInterface = samInterface;
     }
 
