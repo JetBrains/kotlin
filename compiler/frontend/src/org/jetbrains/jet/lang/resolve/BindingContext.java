@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.TailRecursionKind;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -73,8 +72,8 @@ public interface BindingContext {
     };
 
     WritableSlice<AnnotationDescriptor, JetAnnotationEntry> ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT = Slices.createSimpleSlice();
-    WritableSlice<JetAnnotationEntry, AnnotationDescriptorImpl> ANNOTATION =
-            Slices.<JetAnnotationEntry, AnnotationDescriptorImpl>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
+    WritableSlice<JetAnnotationEntry, AnnotationDescriptor> ANNOTATION =
+            Slices.<JetAnnotationEntry, AnnotationDescriptor>sliceBuilder().setOpposite(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT).build();
 
     WritableSlice<JetExpression, CompileTimeConstant<?>> COMPILE_TIME_VALUE = Slices.createSimpleSlice();
 

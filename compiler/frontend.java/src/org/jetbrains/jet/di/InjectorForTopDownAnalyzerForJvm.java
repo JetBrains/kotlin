@@ -219,6 +219,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         bodyResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setStorageManager(storageManager);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

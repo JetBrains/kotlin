@@ -106,6 +106,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
 
         annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setStorageManager(storageManager);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

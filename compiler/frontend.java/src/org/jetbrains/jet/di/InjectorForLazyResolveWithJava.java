@@ -174,6 +174,7 @@ public class InjectorForLazyResolveWithJava {
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setStorageManager(lockBasedStorageManager);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

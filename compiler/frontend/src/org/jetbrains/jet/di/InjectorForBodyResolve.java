@@ -120,6 +120,7 @@ public class InjectorForBodyResolve {
         this.bodyResolver.setTrace(bindingTrace);
 
         annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setStorageManager(storageManager);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

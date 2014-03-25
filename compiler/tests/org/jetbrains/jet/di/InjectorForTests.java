@@ -108,6 +108,7 @@ public class InjectorForTests {
         this.typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         annotationResolver.setCallResolver(callResolver);
+        annotationResolver.setStorageManager(storageManager);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);
