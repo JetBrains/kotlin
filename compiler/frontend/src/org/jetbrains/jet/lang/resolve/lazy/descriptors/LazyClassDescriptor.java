@@ -60,7 +60,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isSyntheticClassObj
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lang.resolve.name.SpecialNames.getClassObjectName;
 
-public class LazyClassDescriptor extends ClassDescriptorBase implements LazyEntity, ClassDescriptorWithResolutionScopes {
+public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Predicate<JetType> VALID_SUPERTYPE = new Predicate<JetType>() {
         @Override
         public boolean apply(JetType type) {
