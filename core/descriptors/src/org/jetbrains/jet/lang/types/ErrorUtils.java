@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
@@ -243,18 +242,29 @@ public class ErrorUtils {
     }
 
     private static final JetType ERROR_PROPERTY_TYPE = createErrorType("<ERROR PROPERTY TYPE>");
-    private static final VariableDescriptor ERROR_PROPERTY = new PropertyDescriptorImpl(
-            ERROR_CLASS,
-            Annotations.EMPTY,
-            Modality.OPEN,
-            Visibilities.INTERNAL,
-            true,
-            null,
-            ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
-            Name.special("<ERROR PROPERTY>"),
-            ERROR_PROPERTY_TYPE,
-            CallableMemberDescriptor.Kind.DECLARATION);
+    private static final VariableDescriptor ERROR_PROPERTY = createErrorProperty();
+
     private static final Set<VariableDescriptor> ERROR_PROPERTY_GROUP = Collections.singleton(ERROR_PROPERTY);
+
+    @NotNull
+    private static PropertyDescriptorImpl createErrorProperty() {
+        PropertyDescriptorImpl descriptor = PropertyDescriptorImpl.create(
+                ERROR_CLASS,
+                Annotations.EMPTY,
+                Modality.OPEN,
+                Visibilities.INTERNAL,
+                true,
+                Name.special("<ERROR PROPERTY>"),
+                CallableMemberDescriptor.Kind.DECLARATION
+        );
+        descriptor.setType(ERROR_PROPERTY_TYPE,
+                           Collections.<TypeParameterDescriptor>emptyList(),
+                           ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
+                           (JetType) null
+        );
+
+        return descriptor;
+    }
 
     @NotNull
     private static SimpleFunctionDescriptor createErrorFunction(@NotNull ErrorScope ownerScope) {

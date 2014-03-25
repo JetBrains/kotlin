@@ -43,7 +43,7 @@ public class AccessorForPropertyDescriptor extends PropertyDescriptorImpl {
             @NotNull DeclarationDescriptor containingDeclaration,
             int index
     ) {
-        super(containingDeclaration, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
+        super(null, containingDeclaration, Annotations.EMPTY, Modality.FINAL, Visibilities.LOCAL,
               original.isVar(), Name.identifier(original.getName() + "$b$" + index),
               Kind.DECLARATION);
 

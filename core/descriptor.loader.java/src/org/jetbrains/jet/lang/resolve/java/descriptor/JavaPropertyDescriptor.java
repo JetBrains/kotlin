@@ -32,6 +32,6 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             boolean isVar,
             @NotNull Name name
     ) {
-        super(containingDeclaration, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION);
+        super(null, containingDeclaration, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION);
     }
 }

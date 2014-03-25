@@ -821,7 +821,7 @@ public class DescriptorResolver {
     ) {
         DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
         if (JetPsiUtil.isScriptDeclaration(variable)) {
-            PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+            PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                     containingDeclaration,
                     annotationResolver.resolveAnnotationsWithArguments(scope, variable.getModifierList(), trace),
                     Modality.FINAL,
@@ -883,7 +883,7 @@ public class DescriptorResolver {
                             ? resolveModalityFromModifiers(property, getDefaultModality(containingDeclaration, hasBody))
                             : Modality.FINAL;
         Visibility visibility = resolveVisibilityFromModifiers(property, getDefaultVisibility(property, containingDeclaration));
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 containingDeclaration,
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
                 modality,
@@ -1287,7 +1287,7 @@ public class DescriptorResolver {
             }
         }
 
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                 classDescriptor,
                 valueParameter.getAnnotations(),
                 resolveModalityFromModifiers(parameter, Modality.FINAL),

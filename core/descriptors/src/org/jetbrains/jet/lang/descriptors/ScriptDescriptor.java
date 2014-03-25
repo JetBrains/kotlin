@@ -80,13 +80,13 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         this.returnType = returnType;
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
-        PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(classDescriptor,
-                                                               Annotations.EMPTY,
-                                                               Modality.FINAL,
-                                                               Visibilities.PUBLIC,
-                                                               false,
-                                                               Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
-                                                               CallableMemberDescriptor.Kind.DECLARATION);
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
+                                                                                  Annotations.EMPTY,
+                                                                                  Modality.FINAL,
+                                                                                  Visibilities.PUBLIC,
+                                                                                  false,
+                                                                                  Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
+                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
         propertyDescriptor.setType(
                 returnType,
                 Collections.<TypeParameterDescriptor>emptyList(),
@@ -164,13 +164,13 @@ public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
         classDescriptor.setPrimaryConstructor(constructorDescriptor);
 
         for (ValueParameterDescriptor parameter : valueParameters) {
-            PropertyDescriptorImpl propertyDescriptor = new PropertyDescriptorImpl(classDescriptor,
-                                                                   Annotations.EMPTY,
-                                                                   Modality.FINAL,
-                                                                   Visibilities.PUBLIC,
-                                                                   false,
-                                                                   parameter.getName(),
-                                                                   CallableMemberDescriptor.Kind.DECLARATION);
+            PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
+                                                                                      Annotations.EMPTY,
+                                                                                      Modality.FINAL,
+                                                                                      Visibilities.PUBLIC,
+                                                                                      false,
+                                                                                      parameter.getName(),
+                                                                                      CallableMemberDescriptor.Kind.DECLARATION);
             propertyDescriptor.setType(
                     parameter.getType(),
                     Collections.<TypeParameterDescriptor>emptyList(),

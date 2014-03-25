@@ -70,7 +70,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         this.kind = kind;
     }
 
-    public PropertyDescriptorImpl(
+    public static PropertyDescriptorImpl create(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
@@ -79,23 +79,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Name name,
             @NotNull Kind kind
     ) {
-        this(null, containingDeclaration, annotations, modality, visibility, isVar, name, kind);
-    }
-
-    public PropertyDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean isVar,
-            @Nullable JetType receiverType,
-            @Nullable ReceiverParameterDescriptor expectedThisObject,
-            @NotNull Name name,
-            @NotNull JetType outType,
-            @NotNull Kind kind
-    ) {
-        this(containingDeclaration, annotations, modality, visibility, isVar, name, kind);
-        setType(outType, Collections.<TypeParameterDescriptor>emptyList(), expectedThisObject, receiverType);
+        return new PropertyDescriptorImpl(null, containingDeclaration, annotations, modality, visibility, isVar, name, kind);
     }
 
     public void setType(
