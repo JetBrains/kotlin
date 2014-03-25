@@ -18,9 +18,9 @@ package org.jetbrains.jet.jps.build
 
 import java.io.File
 import org.junit.Assert.*
-import org.jetbrains.asm4.util.TraceClassVisitor
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import java.io.PrintWriter
-import org.jetbrains.asm4.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.StringWriter
 import org.jetbrains.jet.utils.Printer
 import com.google.common.io.Files

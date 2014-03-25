@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Label;
+import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;

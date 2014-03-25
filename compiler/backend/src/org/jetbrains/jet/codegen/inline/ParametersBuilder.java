@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;

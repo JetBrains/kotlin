@@ -17,7 +17,7 @@
 package org.jetbrains.jet.cli.jvm.repl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 
 public class EarlierLine {

@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 
 public interface CapturedParamOwner  {
 

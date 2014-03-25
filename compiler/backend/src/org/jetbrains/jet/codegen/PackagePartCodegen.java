@@ -19,8 +19,8 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 

@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen.inline;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.AnnotationVisitor;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.FieldVisitor;
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.commons.*;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.commons.*;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.JvmSerializationBindings;
 

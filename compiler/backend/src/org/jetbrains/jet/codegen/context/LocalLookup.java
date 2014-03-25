@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.codegen.context;
 
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;

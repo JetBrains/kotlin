@@ -16,11 +16,11 @@
 
 package org.jetbrains.jet.codegen.inline;
 
-import org.jetbrains.asm4.MethodVisitor;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.tree.AbstractInsnNode;
-import org.jetbrains.asm4.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.util.ListIterator;
 

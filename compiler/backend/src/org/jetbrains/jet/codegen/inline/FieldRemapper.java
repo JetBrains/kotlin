@@ -18,10 +18,10 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Opcodes;
-import org.jetbrains.asm4.tree.AbstractInsnNode;
-import org.jetbrains.asm4.tree.FieldInsnNode;
-import org.jetbrains.asm4.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.jet.codegen.StackValue;
 
 import java.util.Collection;

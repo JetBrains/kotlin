@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 
 class FieldData extends MemberData {
 

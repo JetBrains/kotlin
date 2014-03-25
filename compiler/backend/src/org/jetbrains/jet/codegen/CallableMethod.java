@@ -18,10 +18,10 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.util.Printer;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.util.Printer;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterKind;
 import org.jetbrains.jet.codegen.signature.JvmMethodParameterSignature;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -32,8 +32,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.INVOKESPECIAL;
-import static org.jetbrains.asm4.Opcodes.INVOKESTATIC;
+import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.jetbrains.org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 public class CallableMethod implements Callable {
     private final Type owner;

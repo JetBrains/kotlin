@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;

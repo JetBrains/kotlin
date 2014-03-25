@@ -19,11 +19,11 @@ package org.jetbrains.jet.codegen.signature;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.signature.SignatureVisitor;
-import org.jetbrains.asm4.signature.SignatureWriter;
-import org.jetbrains.asm4.util.CheckSignatureAdapter;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor;
+import org.jetbrains.org.objectweb.asm.signature.SignatureWriter;
+import org.jetbrains.org.objectweb.asm.util.CheckSignatureAdapter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.Variance;
 

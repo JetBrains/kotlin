@@ -18,8 +18,8 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class InnerClassInfoGenTest extends CodegenTestCase {
     private ClassFileFactory factory;

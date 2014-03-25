@@ -24,7 +24,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.state.GenerationState;

@@ -15,9 +15,9 @@
  */
 package org.jetbrains.jet.codegen;
 
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.OutputFile;
 
