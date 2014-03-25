@@ -16,25 +16,17 @@
 
 package org.jetbrains.jet.plugin.refactoring
 
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElement
-import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.resolve.name.isOneSegmentFQN
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDirectory
-import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiMember
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.asJava.namedUnwrappedElement
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
 import org.jetbrains.jet.lang.psi.psiUtil.getPackage
@@ -46,6 +38,17 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.jet.lang.psi.*
+import java.util.ArrayList
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.refactoring.ui.ConflictsDialog
+import com.intellij.util.containers.MultiMap
+import com.intellij.openapi.command.CommandProcessor
+import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.plugin.codeInsight.TipsManager
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -121,3 +124,10 @@ public fun PsiElement.getUsageContext(): PsiElement {
 
 public fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
+
+public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
+    val tmpFile = JetPsiFactory.createFile(getProject(), getName(), textTransform(getText() ?: ""))
+    tmpFile.setOriginalFile(this)
+    return tmpFile
+}
+

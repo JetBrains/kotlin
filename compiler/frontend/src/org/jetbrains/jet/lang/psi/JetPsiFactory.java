@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetFileType;
 
 import java.util.Collections;
@@ -132,7 +131,7 @@ public class JetPsiFactory {
     }
 
     @NotNull
-    private static PsiElement createWhiteSpace(Project project, String text) {
+    public static PsiElement createWhiteSpace(Project project, String text) {
         JetProperty property = createProperty(project, "val" + text + "x");
         return property.findElementAt(3);
     }
@@ -520,6 +519,135 @@ public class JetPsiFactory {
                 frozen = true;
             }
             return (JetWhenExpression) createExpression(project, sb.toString());
+        }
+    }
+
+    public static class FunctionBuilder {
+        static enum State {
+            MODIFIERS,
+            NAME,
+            FIRST_PARAM,
+            REST_PARAMS,
+            BODY,
+            DONE
+        }
+
+        private final StringBuilder sb = new StringBuilder();
+        private State state = State.MODIFIERS;
+
+        public FunctionBuilder() {
+        }
+
+        private void closeParams() {
+            assert state == State.FIRST_PARAM || state == State.REST_PARAMS;
+
+            sb.append(")");
+
+            state = State.BODY;
+        }
+
+        private void placeFun() {
+            assert state == State.MODIFIERS;
+
+            if (sb.length() != 0) {
+                sb.append(" ");
+            }
+            sb.append("fun ");
+
+            state = State.NAME;
+        }
+
+        @NotNull
+        public FunctionBuilder modifier(@NotNull String modifier) {
+            assert state == State.MODIFIERS;
+
+            sb.append(modifier);
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder receiver(@NotNull String receiverType) {
+            placeFun();
+            sb.append(receiverType).append(".");
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder noReceiver() {
+            placeFun();
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder name(@NotNull String name) {
+            assert state == State.NAME;
+
+            sb.append(name).append("(");
+            state = State.FIRST_PARAM;
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder param(@NotNull String name, @NotNull String type) {
+            assert state == State.FIRST_PARAM || state == State.REST_PARAMS;
+
+            if (state == State.REST_PARAMS) {
+                sb.append(", ");
+            }
+            sb.append(name).append(": ").append(type);
+            if (state == State.FIRST_PARAM) {
+                state = State.REST_PARAMS;
+            }
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder returnType(@NotNull String type) {
+            closeParams();
+            sb.append(": ").append(type);
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder noReturnType() {
+            closeParams();
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder simpleBody(@NotNull String body) {
+            assert state == State.BODY;
+
+            sb.append(" = ").append(body);
+            state = State.DONE;
+
+            return this;
+        }
+
+        @NotNull
+        public FunctionBuilder blockBody(@NotNull String body) {
+            assert state == State.BODY;
+
+            sb.append(" {\n").append(body).append("\n}");
+            state = State.DONE;
+
+            return this;
+        }
+
+        @NotNull
+        public String toFunctionText() {
+            if (state != State.DONE) {
+                state = State.DONE;
+            }
+
+            return sb.toString();
         }
     }
 

@@ -104,6 +104,9 @@ public fun JetElement.outermostLastBlockElement(predicate: (JetElement) -> Boole
 public fun JetBlockExpression.appendElement(element: JetElement): JetElement =
         addAfter(element, getRBrace()!!.getPrevSibling()!!)!! as JetElement
 
+public fun JetBlockExpression.prependElement(element: JetElement): JetElement =
+        addBefore(element, getLBrace()!!.getNextSibling()!!)!! as JetElement
+
 public fun JetElement.wrapInBlock(): JetBlockExpression {
     val block = JetPsiFactory.createEmptyBody(getProject()) as JetBlockExpression
     block.appendElement(this)
@@ -257,3 +260,8 @@ public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInst
 public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
 
 public fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elements.any { it.isAncestor(this) }
+
+public tailRecursive fun PsiElement.getOutermostParentContainedIn(container: PsiElement): PsiElement? {
+    val parent = getParent()
+    return if (parent == container) this else parent?.getOutermostParentContainedIn(container)
+}

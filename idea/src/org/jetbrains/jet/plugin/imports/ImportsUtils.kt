@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.types.JetType
 
 public val DeclarationDescriptor.importableFqName: FqName?
     get() {
@@ -51,6 +52,11 @@ public fun DeclarationDescriptor.canBeReferencedViaImport(): Boolean {
         return false
     }
     return this is ClassDescriptor || this is ConstructorDescriptor
+}
+
+public fun JetType.canBeReferencedViaImport(): Boolean {
+    val descriptor = getConstructor().getDeclarationDescriptor()
+    return descriptor != null && descriptor.canBeReferencedViaImport()
 }
 
 public fun isInReceiverScope(referenceElement: PsiElement, referencedDescriptor: DeclarationDescriptor): Boolean {

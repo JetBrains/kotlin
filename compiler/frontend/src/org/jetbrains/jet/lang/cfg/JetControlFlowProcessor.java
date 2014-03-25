@@ -67,12 +67,14 @@ public class JetControlFlowProcessor {
         this.trace = trace;
     }
 
+    @NotNull
     public Pseudocode generatePseudocode(@NotNull JetElement subroutine) {
         Pseudocode pseudocode = generate(subroutine);
         ((PseudocodeImpl) pseudocode).postProcess();
         return pseudocode;
     }
 
+    @NotNull
     private Pseudocode generate(@NotNull JetElement subroutine) {
         builder.enterSubroutine(subroutine);
         CFPVisitor cfpVisitor = new CFPVisitor(builder);
