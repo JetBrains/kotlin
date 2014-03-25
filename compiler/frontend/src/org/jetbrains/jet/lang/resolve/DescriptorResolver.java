@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
@@ -54,9 +55,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.CONSTRUCTOR;
-import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
-import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLUTION_SCOPE;
+import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
@@ -1468,5 +1467,17 @@ public class DescriptorResolver {
             assert parentPackageView != null : "package has no parent: " + packageView;
             trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
         }
+    }
+
+    public static void registerFileInPackage(@NotNull BindingTrace trace, @NotNull JetFile file) {
+        // Register files corresponding to this package
+        // The trace currently does not support bi-di multimaps that would handle this task nicer
+        FqName fqName = file.getPackageFqName();
+        Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);
+        if (files == null) {
+            files = Sets.newIdentityHashSet();
+        }
+        files.add(file);
+        trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
     }
 }

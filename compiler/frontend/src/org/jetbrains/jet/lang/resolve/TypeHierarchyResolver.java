@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
@@ -41,7 +39,8 @@ import javax.inject.Inject;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.FQNAME_TO_CLASS_DESCRIPTOR;
+import static org.jetbrains.jet.lang.resolve.BindingContext.TYPE;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.getDefaultClassVisibility;
@@ -428,19 +427,10 @@ public class TypeHierarchyResolver {
             MutablePackageFragmentDescriptor fragment = packageFragmentProvider.getOrCreateFragment(packageDirective.getFqName());
 
             ModuleDescriptor module = packageFragmentProvider.getModule();
-            DescriptorResolver.resolvePackageHeader(packageDirective, module, TypeHierarchyResolver.this.trace);
-
+            DescriptorResolver.resolvePackageHeader(packageDirective, module, trace);
+            DescriptorResolver.registerFileInPackage(trace, file);
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file, fragment);
 
-            // Register files corresponding to this package
-            // The trace currently does not support bi-di multimaps that would handle this task nicer
-            FqName fqName = fragment.getFqName();
-            Collection<JetFile> files = trace.get(PACKAGE_TO_FILES, fqName);
-            if (files == null) {
-                files = Sets.newIdentityHashSet();
-            }
-            files.add(file);
-            trace.record(BindingContext.PACKAGE_TO_FILES, fqName, files);
             return fragment;
         }
 
