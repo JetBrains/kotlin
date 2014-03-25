@@ -159,7 +159,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             v.anew(asmType);
             v.dup();
 
-            codegen.pushClosureOnStack(closure, false, codegen.defaulCallGenerator);
+            codegen.pushClosureOnStack(closure, false, codegen.defaultCallGenerator);
             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor());
         }
         return StackValue.onStack(asmType);

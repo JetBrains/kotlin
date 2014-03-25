@@ -109,7 +109,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     private final TailRecursionCodegen tailRecursionCodegen;
 
-    public final CallGenerator defaulCallGenerator;
+    public final CallGenerator defaultCallGenerator;
 
     public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
@@ -180,7 +180,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         this.context = context;
         this.statementVisitor = new CodegenStatementVisitor(this);
         this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
-        this.defaulCallGenerator = new CallGenerator.DefaultCallGenerator(this);
+        this.defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
     }
 
     public GenerationState getState() {
@@ -1342,7 +1342,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         v.anew(type);
         v.dup();
 
-        pushClosureOnStack(closure, false, defaulCallGenerator);
+        pushClosureOnStack(closure, false, defaultCallGenerator);
 
         JetDelegatorToSuperCall superCall = closure.getSuperCall();
         if (superCall != null) {
@@ -1356,7 +1356,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
-            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), defaulCallGenerator);
+            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), defaultCallGenerator);
         }
 
         v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
@@ -2105,7 +2105,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
 
-        CallGenerator callGenerator = !isInline ? defaulCallGenerator :
+        CallGenerator callGenerator = !isInline ? defaultCallGenerator :
                           new InlineCodegen(this, state, (SimpleFunctionDescriptor) DescriptorUtils.unwrapFakeOverride(
                                   (CallableMemberDescriptor) descriptor.getOriginal()), call);
 
@@ -2118,7 +2118,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             receiver.put(receiver.type, v);
         }
 
-        assert callGenerator == defaulCallGenerator || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
+        assert callGenerator == defaultCallGenerator || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Method with defaults or tail recursive couldn't be inlined " + descriptor;
 
         pushArgumentsAndInvoke(resolvedCall, callableMethod, callGenerator);
@@ -3278,7 +3278,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
         //so we need generate closure on stack
         //See StackValue.receiver for more info
-        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists(), defaulCallGenerator);
+        pushClosureOnStack(closure, resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists(),
+                           defaultCallGenerator);
 
         ConstructorDescriptor originalOfSamAdapter = (ConstructorDescriptor) SamCodegenUtil.getOriginalIfSamAdapter(constructorDescriptor);
         CallableMethod method = typeMapper.mapToCallableMethod(originalOfSamAdapter == null ? constructorDescriptor : originalOfSamAdapter);
@@ -3395,7 +3396,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (callable instanceof CallableMethod) {
                 genThisAndReceiverFromResolvedCall(receiver, resolvedCall, (CallableMethod) callable);
                 boolean skipLast = !isGetter;
-                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), skipLast, defaulCallGenerator);
+                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), skipLast, defaultCallGenerator);
             }
             else {
                 gen(array, arrayType); // intrinsic method
