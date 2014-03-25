@@ -175,6 +175,7 @@ public class InjectorForLazyResolveWithJava {
 
         annotationResolver.setCallResolver(callResolver);
         annotationResolver.setStorageManager(lockBasedStorageManager);
+        annotationResolver.setTypeResolver(typeResolver);
 
         callResolver.setArgumentTypeResolver(argumentTypeResolver);
         callResolver.setCandidateResolver(candidateResolver);

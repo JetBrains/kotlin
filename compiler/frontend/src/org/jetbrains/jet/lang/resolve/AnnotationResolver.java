@@ -57,6 +57,7 @@ public class AnnotationResolver {
 
     private CallResolver callResolver;
     private StorageManager storageManager;
+    private TypeResolver typeResolver;
 
     @Inject
     public void setCallResolver(CallResolver callResolver) {
@@ -66,6 +67,11 @@ public class AnnotationResolver {
     @Inject
     public void setStorageManager(StorageManager storageManager) {
         this.storageManager = storageManager;
+    }
+
+    @Inject
+    public void setTypeResolver(TypeResolver typeResolver) {
+        this.typeResolver = typeResolver;
     }
 
     @NotNull
@@ -128,7 +134,7 @@ public class AnnotationResolver {
                 }
                 else {
                     descriptor = new AnnotationDescriptorImpl();
-                    ((AnnotationDescriptorImpl) descriptor).setAnnotationType(resolveAnnotationType(scope, entryElement, trace));
+                    ((AnnotationDescriptorImpl) descriptor).setAnnotationType(resolveAnnotationType(scope, entryElement));
                 }
                 trace.record(BindingContext.ANNOTATION, entryElement, descriptor);
             }
@@ -142,44 +148,33 @@ public class AnnotationResolver {
     }
 
     @NotNull
-    private JetType resolveAnnotationType(
-            JetScope scope,
-            JetAnnotationEntry entryElement,
-            BindingTrace trace
-    ) {
-        TemporaryBindingTrace temporaryBindingTrace = new TemporaryBindingTrace(trace, "Trace for resolve annotation type");
-        OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(entryElement, scope, temporaryBindingTrace);
-        return getAnnotationTypeFromResolutionResults(entryElement, trace, results);
+    public JetType resolveAnnotationType(@NotNull JetScope scope, @NotNull JetAnnotationEntry entryElement) {
+        JetTypeReference typeReference = entryElement.getTypeReference();
+        if (typeReference == null) {
+            return ErrorUtils.createErrorType("No type reference: " + entryElement.getText());
+        }
+
+        return typeResolver.resolveType(scope, typeReference, new BindingTraceContext(), true);
     }
 
-    @NotNull
-    public static JetType getAnnotationTypeFromResolutionResults(
-            JetAnnotationEntry entryElement,
-            BindingTrace trace,
-            OverloadResolutionResults<FunctionDescriptor> results
+    public static void checkAnnotationType(
+            @NotNull JetAnnotationEntry entryElement,
+            @NotNull BindingTrace trace,
+            @NotNull OverloadResolutionResults<FunctionDescriptor> results
     ) {
-        if (results.isSingleResult()) {
-            FunctionDescriptor descriptor = results.getResultingDescriptor();
-            if (!ErrorUtils.isError(descriptor)) {
-                if (descriptor instanceof ConstructorDescriptor) {
-                    ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
-                    ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
-                    if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
-                        trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName().asString()));
-                    }
-                }
-                else {
-                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().asString()));
+        if (!results.isSingleResult()) return;
+        FunctionDescriptor descriptor = results.getResultingDescriptor();
+        if (!ErrorUtils.isError(descriptor)) {
+            if (descriptor instanceof ConstructorDescriptor) {
+                ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
+                ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
+                if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
+                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName().asString()));
                 }
             }
-            JetType type = results.getResultingDescriptor().getReturnType();
-            assert type != null : "No return type for " + results.getResultingDescriptor();
-            return type;
-        }
-        else {
-            JetConstructorCalleeExpression calleeExpression = entryElement.getCalleeExpression();
-            return ErrorUtils.createErrorType("Unresolved annotation type: " +
-                                              (calleeExpression == null ? "null" : calleeExpression.getText()));
+            else {
+                trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().asString()));
+            }
         }
     }
 
@@ -230,6 +225,7 @@ public class AnnotationResolver {
 
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(annotationEntry, scope, trace);
         if (results.isSingleResult()) {
+            checkAnnotationType(annotationEntry, trace, results);
             resolveAnnotationArguments(annotationDescriptor, results.getResultingCall(), trace);
         }
     }
