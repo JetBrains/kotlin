@@ -222,6 +222,7 @@ public class SignaturesPropagationData {
 
                 resultParameters.add(new ValueParameterDescriptorImpl(
                         originalParam.getContainingDeclaration(),
+                        null,
                         shouldBeExtension ? originalIndex - 1 : originalIndex,
                         originalParam.getAnnotations(),
                         stableName != null ? stableName : originalParam.getName(),

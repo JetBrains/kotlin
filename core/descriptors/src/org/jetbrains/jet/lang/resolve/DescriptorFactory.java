@@ -53,10 +53,10 @@ public class DescriptorFactory {
 
     @NotNull
     public static PropertySetterDescriptorImpl createSetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
-        PropertySetterDescriptorImpl setterDescriptor = new PropertySetterDescriptorImpl(
-                propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
-                propertyDescriptor.getVisibility(),
-                !isDefault, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
+        PropertySetterDescriptorImpl setterDescriptor =
+                new PropertySetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
+                                                 propertyDescriptor.getVisibility(), !isDefault, isDefault,
+                                                 CallableMemberDescriptor.Kind.DECLARATION, null);
         setterDescriptor.initializeDefault();
         return setterDescriptor;
     }
@@ -68,10 +68,9 @@ public class DescriptorFactory {
 
     @NotNull
     public static PropertyGetterDescriptorImpl createGetter(@NotNull PropertyDescriptor propertyDescriptor, boolean isDefault) {
-        return new PropertyGetterDescriptorImpl(
-                propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
-                propertyDescriptor.getVisibility(),
-                !isDefault, isDefault, CallableMemberDescriptor.Kind.DECLARATION);
+        return new PropertyGetterDescriptorImpl(propertyDescriptor, Annotations.EMPTY, propertyDescriptor.getModality(),
+                                                propertyDescriptor.getVisibility(), !isDefault, isDefault,
+                                                CallableMemberDescriptor.Kind.DECLARATION, null);
     }
 
     @NotNull
@@ -107,6 +106,7 @@ public class DescriptorFactory {
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED);
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 values,
+                null,
                 0,
                 Annotations.EMPTY,
                 Name.identifier("value"),

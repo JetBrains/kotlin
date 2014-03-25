@@ -62,7 +62,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Name name,
             @NotNull Kind kind
     ) {
-        super(containingDeclaration, annotations, name);
+        super(containingDeclaration, annotations, name, null);
         this.isVar = isVar;
         this.modality = modality;
         this.visibility = visibility;
@@ -70,6 +70,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         this.kind = kind;
     }
 
+    @NotNull
     public static PropertyDescriptorImpl create(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,

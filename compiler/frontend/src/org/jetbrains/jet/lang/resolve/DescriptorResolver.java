@@ -423,7 +423,7 @@ public class DescriptorResolver {
             // If parameter hasn't corresponding property, so it mustn't have default value as a parameter in copy function for data class
             boolean declaresDefaultValue = propertyDescriptor != null;
             ValueParameterDescriptorImpl parameterDescriptor =
-                    new ValueParameterDescriptorImpl(functionDescriptor, parameter.getIndex(), parameter.getAnnotations(),
+                    new ValueParameterDescriptorImpl(functionDescriptor, null, parameter.getIndex(), parameter.getAnnotations(),
                                                      parameter.getName(), parameter.getType(),
                                                      declaresDefaultValue,
                                                      parameter.getVarargElementType());
@@ -546,6 +546,7 @@ public class DescriptorResolver {
         }
         ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
                 declarationDescriptor,
+                null,
                 index,
                 annotations,
                 JetPsiUtil.safeName(valueParameter.getName()),
@@ -1127,11 +1128,11 @@ public class DescriptorResolver {
                     annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace);
             JetParameter parameter = setter.getParameter();
 
-            setterDescriptor = new PropertySetterDescriptorImpl(
-                    propertyDescriptor, annotations,
-                    resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
-                    resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
-                    setter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
+            setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
+                                                                resolveModalityFromModifiers(setter, propertyDescriptor.getModality()),
+                                                                resolveVisibilityFromModifiers(setter, propertyDescriptor.getVisibility()),
+                                                                setter.getBodyExpression() != null, false,
+                                                                CallableMemberDescriptor.Kind.DECLARATION, null);
             if (parameter != null) {
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
@@ -1204,11 +1205,11 @@ public class DescriptorResolver {
                 }
             }
 
-            getterDescriptor = new PropertyGetterDescriptorImpl(
-                    propertyDescriptor, annotations,
-                    resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
-                    resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
-                    getter.getBodyExpression() != null, false, CallableMemberDescriptor.Kind.DECLARATION);
+            getterDescriptor = new PropertyGetterDescriptorImpl(propertyDescriptor, annotations,
+                                                                resolveModalityFromModifiers(getter, propertyDescriptor.getModality()),
+                                                                resolveVisibilityFromModifiers(getter, propertyDescriptor.getVisibility()),
+                                                                getter.getBodyExpression() != null, false,
+                                                                CallableMemberDescriptor.Kind.DECLARATION, null);
             getterDescriptor.initialize(returnType);
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }

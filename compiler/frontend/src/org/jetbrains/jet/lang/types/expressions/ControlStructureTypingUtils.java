@@ -106,7 +106,7 @@ public class ControlStructureTypingUtils {
         for (int i = 0; i < argumentNames.size(); i++) {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(
-                    function, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)), argumentType, false, null);
+                    function, null, i, Annotations.EMPTY, Name.identifier(argumentNames.get(i)), argumentType, false, null);
             valueParameters.add(valueParameter);
         }
         function.initialize(

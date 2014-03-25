@@ -42,6 +42,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
 
     public ValueParameterDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
+            @Nullable ValueParameterDescriptor original,
             int index,
             @NotNull Annotations annotations,
             @NotNull Name name,
@@ -50,23 +51,9 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
             @Nullable JetType varargElementType
     ) {
         super(containingDeclaration, annotations, name, outType);
-        this.original = this;
+        this.original = original == null ? this : original;
         this.index = index;
         this.declaresDefaultValue = declaresDefaultValue;
-        this.varargElementType = varargElementType;
-    }
-
-    public ValueParameterDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull ValueParameterDescriptor original,
-            @NotNull Annotations annotations,
-            @NotNull JetType outType,
-            @Nullable JetType varargElementType
-    ) {
-        super(containingDeclaration, annotations, original.getName(), outType);
-        this.original = original;
-        this.index = original.getIndex();
-        this.declaresDefaultValue = original.declaresDefaultValue();
         this.varargElementType = varargElementType;
     }
 
@@ -138,7 +125,7 @@ public class ValueParameterDescriptorImpl extends VariableDescriptorImpl impleme
     @NotNull
     @Override
     public ValueParameterDescriptor copy(@NotNull DeclarationDescriptor newOwner, @NotNull Name newName) {
-        return new ValueParameterDescriptorImpl(newOwner, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType);
+        return new ValueParameterDescriptorImpl(newOwner, null, index, getAnnotations(), newName, getType(), declaresDefaultValue(), varargElementType);
     }
 
     @NotNull

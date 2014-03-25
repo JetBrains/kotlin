@@ -265,10 +265,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             result.add(new ValueParameterDescriptorImpl(
                     substitutedDescriptor,
                     unsubstitutedValueParameter,
+                    unsubstitutedValueParameter.getIndex(),
                     unsubstitutedValueParameter.getAnnotations(),
+                    unsubstitutedValueParameter.getName(),
                     substitutedType,
-                    substituteVarargElementType
-            ));
+                    unsubstitutedValueParameter.declaresDefaultValue(),
+                    substituteVarargElementType)
+            );
         }
         return result;
     }

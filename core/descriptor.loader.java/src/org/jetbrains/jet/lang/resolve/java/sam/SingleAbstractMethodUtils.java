@@ -147,7 +147,7 @@ public class SingleAbstractMethodUtils {
         assert parameterType != null : "couldn't substitute type: " + parameterTypeUnsubstituted +
                                        ", substitutor = " + typeParameters.substitutor;
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
-                result, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null);
+                result, null, 0, Annotations.EMPTY, Name.identifier("function"), parameterType, false, null);
 
         JetType returnType = typeParameters.substitutor.substitute(samInterface.getDefaultType(), Variance.OUT_VARIANCE);
         assert returnType != null : "couldn't substitute type: " + samInterface.getDefaultType() +
@@ -251,7 +251,7 @@ public class SingleAbstractMethodUtils {
             assert newType != null : "couldn't substitute type: " + newTypeUnsubstituted + ", substitutor = " + typeParameters.substitutor;
 
             ValueParameterDescriptor newParam = new ValueParameterDescriptorImpl(
-                    adapter, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
+                    adapter, null, originalParam.getIndex(), originalParam.getAnnotations(), originalParam.getName(), newType, false, null);
             valueParameters.add(newParam);
         }
 

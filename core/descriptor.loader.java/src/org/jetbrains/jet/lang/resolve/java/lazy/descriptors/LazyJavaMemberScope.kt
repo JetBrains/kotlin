@@ -210,6 +210,7 @@ public abstract class LazyJavaMemberScope(
 
             ValueParameterDescriptorImpl(
                     function,
+                    null,
                     index,
                     c.resolveAnnotations(javaParameter),
                     name,

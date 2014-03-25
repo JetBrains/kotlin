@@ -207,6 +207,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
 
             altParamDescriptors.add(new ValueParameterDescriptorImpl(
                     originalParameterDescriptor.getContainingDeclaration(),
+                    null,
                     originalParameterDescriptor.getIndex(),
                     originalParameterDescriptor.getAnnotations(),
                     altName != null ? altName : originalParameterDescriptor.getName(),

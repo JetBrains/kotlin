@@ -131,6 +131,7 @@ public class FunctionDescriptorUtil {
 
             parameters.add(new ValueParameterDescriptorImpl(
                     descriptor,
+                    null,
                     idx,
                     parameter.getAnnotations(),
                     parameter.getName(),

@@ -853,7 +853,7 @@ public class KotlinBuiltIns {
         for (int i = 0; i < parameterTypes.size(); i++) {
             TypeProjection parameterType = parameterTypes.get(i);
             ValueParameterDescriptorImpl valueParameterDescriptor = new ValueParameterDescriptorImpl(
-                    functionDescriptor, i, Annotations.EMPTY,
+                    functionDescriptor, null, i, Annotations.EMPTY,
                     Name.identifier("p" + (i + 1)), parameterType.getType(), false, null);
             valueParameters.add(valueParameterDescriptor);
         }

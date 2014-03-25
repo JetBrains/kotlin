@@ -40,18 +40,6 @@ public class PropertyGetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull Visibility visibility,
             boolean hasBody,
             boolean isDefault,
-            @NotNull Kind kind
-    ) {
-        this(correspondingProperty, annotations, modality, visibility, hasBody, isDefault, kind, null);
-    }
-
-    public PropertyGetterDescriptorImpl(
-            @NotNull PropertyDescriptor correspondingProperty,
-            @NotNull Annotations annotations,
-            @NotNull Modality modality,
-            @NotNull Visibility visibility,
-            boolean hasBody,
-            boolean isDefault,
             @NotNull Kind kind,
             @Nullable PropertyGetterDescriptor original
     )

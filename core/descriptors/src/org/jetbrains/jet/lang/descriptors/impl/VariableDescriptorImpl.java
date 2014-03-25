@@ -43,15 +43,6 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         this.outType = outType;
     }
 
-    protected VariableDescriptorImpl(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            @NotNull Name name
-    )
-    {
-        this(containingDeclaration, annotations, name, null);
-    }
-
     @NotNull
     @Override
     public JetType getType() {

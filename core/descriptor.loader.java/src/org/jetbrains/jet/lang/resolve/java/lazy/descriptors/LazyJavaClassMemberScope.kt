@@ -148,6 +148,7 @@ public class LazyJavaClassMemberScope(
 
             result.add(ValueParameterDescriptorImpl(
                     constructor,
+                    null,
                     index,
                     Annotations.EMPTY,
                     method.getName(),
