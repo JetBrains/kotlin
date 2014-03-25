@@ -30,7 +30,7 @@ public class CliSourcesMemberFilter(environment: JetCoreEnvironment): MemberFilt
     override fun acceptPackagePartClass(container: PackageFragmentDescriptor, member: ProtoBuf.Callable, nameResolver: NameResolver): Boolean {
         if (member.hasExtension(JavaProtoBuf.implClassName)) {
             val shortName = nameResolver.getName(member.getExtension(JavaProtoBuf.implClassName)!!)
-            val fqName = container.getFqName().child(shortName)
+            val fqName = container.fqName.child(shortName)
             val internalName = JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName()
             return internalName !in packagePartClassNames
         }

@@ -54,5 +54,5 @@ abstract class LazyJavaPackageFragment(
     private val _memberScope = createMemberScope()
     override fun getMemberScope(): LazyJavaPackageFragmentScope = _memberScope
 
-    override fun toString() = "lazy java package fragment: " + getFqName()
+    override fun toString() = "lazy java package fragment: " + fqName
 }

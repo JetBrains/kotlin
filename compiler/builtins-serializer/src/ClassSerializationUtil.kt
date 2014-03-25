@@ -52,7 +52,7 @@ public object ClassSerializationUtil {
     public fun getClassId(classDescriptor: ClassDescriptor): ClassId {
         val owner = classDescriptor.getContainingDeclaration()
         if (owner is PackageFragmentDescriptor) {
-            return ClassId(owner.getFqName(), FqNameUnsafe.topLevel(classDescriptor.getName()))
+            return ClassId(owner.fqName, FqNameUnsafe.topLevel(classDescriptor.getName()))
         }
         return getClassId(owner as ClassDescriptor).createNestedClassId(classDescriptor.getName())
     }

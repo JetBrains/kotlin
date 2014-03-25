@@ -77,7 +77,7 @@ public abstract class LazyJavaMemberScope(
                       }.toList())
 
         if (_containingDeclaration is JavaPackageFragmentDescriptor) {
-            val klass = c.javaClassResolver.resolveClassByFqName(_containingDeclaration.getFqName().child(name))
+            val klass = c.javaClassResolver.resolveClassByFqName(_containingDeclaration.fqName.child(name))
             if (klass is LazyJavaClassDescriptor && klass.getFunctionTypeForSamInterface() != null) {
                 functions.add(SingleAbstractMethodUtils.createSamConstructorFunction(_containingDeclaration, klass))
             }

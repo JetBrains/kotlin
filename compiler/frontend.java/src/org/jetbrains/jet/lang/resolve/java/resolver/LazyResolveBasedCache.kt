@@ -58,7 +58,7 @@ public class LazyResolveBasedCache() : JavaResolverCache {
         return resolveSession.findInPackageFragments(fqName) { packageFragmentDescriptor ->
             ResolveSessionUtils.findByQualifiedName(
                     packageFragmentDescriptor.getMemberScope(),
-                    fqName.tail(packageFragmentDescriptor.getFqName()))
+                    fqName.tail(packageFragmentDescriptor.fqName))
         }
     }
 
