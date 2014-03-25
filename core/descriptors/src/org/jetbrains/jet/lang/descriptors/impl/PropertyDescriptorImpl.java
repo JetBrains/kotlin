@@ -53,8 +53,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     private boolean setterProjectedOut;
 
     protected PropertyDescriptorImpl(
-            @Nullable PropertyDescriptor original,
             @NotNull DeclarationDescriptor containingDeclaration,
+            @Nullable PropertyDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
             @NotNull Visibility visibility,
@@ -79,7 +79,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @NotNull Name name,
             @NotNull Kind kind
     ) {
-        return new PropertyDescriptorImpl(null, containingDeclaration, annotations, modality, visibility, isVar, name, kind);
+        return new PropertyDescriptorImpl(containingDeclaration, null, annotations, modality, visibility, isVar, name, kind);
     }
 
     public void setType(
@@ -290,8 +290,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
             @Nullable PropertyDescriptor original,
             @NotNull Kind kind
     ) {
-        return new PropertyDescriptorImpl(original, newOwner,
-                getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
+        return new PropertyDescriptorImpl(newOwner, original,
+                                          getAnnotations(), newModality, newVisibility, isVar(), getName(), kind);
     }
 
     @NotNull

@@ -137,8 +137,8 @@ public class DescriptorDeserializer {
         final int flags = proto.getFlags();
 
         DeserializedPropertyDescriptor property = new DeserializedPropertyDescriptor(
-                null,
                 containingDeclaration,
+                null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
