@@ -138,11 +138,12 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     public void doTestMoveLambdaInsideParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new MoveLambdaInsideParenthesesIntention());
     }
-
     public void doTestMoveLambdaOutsideParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new MoveLambdaOutsideParenthesesIntention());
     }
-
+    public void doTestSwapBinaryExpression(@NotNull String path) throws Exception {
+        doTestIntention(path, new SwapBinaryExpression());
+    }
     public void doTestConvertMemberToExtension(@NotNull String path) throws Exception {
         doTestIntention(path, new ConvertMemberToExtension());
     }

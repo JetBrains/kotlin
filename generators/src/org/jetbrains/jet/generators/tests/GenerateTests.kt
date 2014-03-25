@@ -379,6 +379,7 @@ fun main(args: Array<String>) {
             model("intentions/attributeCallReplacements/replaceUnaryPrefixIntention", testMethod = "doTestReplaceUnaryPrefixIntention")
             model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
             model("intentions/simplifyNegatedBinaryExpressionIntention", testMethod = "doTestSimplifyNegatedBinaryExpressionIntention")
+            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
