@@ -33,13 +33,17 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
+import com.intellij.usages.UsageGroup;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.UsageViewPresentation;
 import com.intellij.usages.impl.rules.UsageType;
 import com.intellij.usages.impl.rules.UsageTypeProvider;
 import com.intellij.usages.rules.UsageFilteringRule;
+import com.intellij.usages.rules.UsageGroupingRule;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.CommonProcessors;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
@@ -303,19 +307,38 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
         Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
-        Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(
-                getTestFilteringRules(mainFileText, "// FILTERING_RULES: "),
-                usageInfos);
+        Collection<UsageFilteringRule> filteringRules = instantiateClasses(mainFileText, "// FILTERING_RULES: ");
+        final Collection<UsageGroupingRule> groupingRules = instantiateClasses(mainFileText, "// GROUPING_RULES: ");
+
+        Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filteringRules, usageInfos);
 
         Function<UsageInfo2UsageAdapter, String> convertToString = new Function<UsageInfo2UsageAdapter, String>() {
             @Override
-            public String apply(@Nullable UsageInfo2UsageAdapter usageAdapter) {
+            public String apply(@Nullable final UsageInfo2UsageAdapter usageAdapter) {
                 assert usageAdapter != null;
+
+                String groupAsString = Joiner.on(", ").join(
+                        KotlinPackage.map(
+                                groupingRules,
+                                new Function1<UsageGroupingRule, String>() {
+                                    @Override
+                                    public String invoke(UsageGroupingRule rule) {
+                                        UsageGroup group = rule.groupUsage(usageAdapter);
+                                        return group != null ? group.getText(null) : "";
+                                    }
+                                }
+                        )
+                );
+                if (!groupAsString.isEmpty()) {
+                    groupAsString = "(" + groupAsString + ") ";
+                }
 
                 UsageType usageType = getUsageType(usageAdapter.getElement());
                 String usageTypeAsString = usageType == null ? "null" : usageType.toString(USAGE_VIEW_PRESENTATION);
 
-                return usageTypeAsString + " " + Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
+                return usageTypeAsString + " " +
+                       groupAsString +
+                       Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
             }
         };
 
@@ -386,14 +409,14 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
         return UsageType.UNCLASSIFIED;
     }
 
-    private static Collection<UsageFilteringRule> getTestFilteringRules(String mainFileText, String directive)
+    private static <T> Collection<T> instantiateClasses(String mainFileText, String directive)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         List<String> filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, directive);
 
-        Collection<UsageFilteringRule> filters = new ArrayList<UsageFilteringRule>();
+        Collection<T> filters = new ArrayList<T>();
         for (String filteringRuleClassName : filteringRuleClassNames) {
             //noinspection unchecked
-            Class<UsageFilteringRule> klass = (Class<UsageFilteringRule>) Class.forName(filteringRuleClassName);
+            Class<T> klass = (Class<T>) Class.forName(filteringRuleClassName);
             filters.add(klass.newInstance());
         }
 

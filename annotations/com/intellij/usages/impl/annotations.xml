@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.usages.impl.FileStructureGroupRuleProvider com.intellij.usages.rules.UsageGroupingRule getUsageGroupingRule(com.intellij.openapi.project.Project) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>
