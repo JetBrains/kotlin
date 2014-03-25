@@ -18,8 +18,10 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
+import java.util.Collections;
 import java.util.List;
 
 public class JetNullableType extends JetTypeElement {
@@ -35,7 +37,8 @@ public class JetNullableType extends JetTypeElement {
     @NotNull
     @Override
     public List<JetTypeReference> getTypeArgumentsAsTypes() {
-        return getInnerType().getTypeArgumentsAsTypes();
+        JetTypeElement innerType = getInnerType();
+        return innerType == null ? Collections.<JetTypeReference>emptyList() : innerType.getTypeArgumentsAsTypes();
     }
 
     @Override
@@ -43,7 +46,8 @@ public class JetNullableType extends JetTypeElement {
         return visitor.visitNullableType(this, data);
     }
 
-    @NotNull
+    @Nullable
+    @IfNotParsed
     public JetTypeElement getInnerType() {
         return findChildByClass(JetTypeElement.class);
     }

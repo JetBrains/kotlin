@@ -96,7 +96,9 @@ public class MemberMatching {
 
             @Override
             public String visitNullableType(@NotNull JetNullableType nullableType, Void data) {
-                return nullableType.getInnerType().accept(this, null);
+                JetTypeElement innerType = nullableType.getInnerType();
+                assert innerType != null : "No inner type: " + nullableType;
+                return innerType.accept(this, null);
             }
         }, null);
     }

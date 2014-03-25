@@ -241,7 +241,7 @@ public class DescriptorResolver {
             JetNullableType nullableType = (JetNullableType) typeElement;
             typeElement = nullableType.getInnerType();
             // report only for innermost '?', the rest gets a 'redundant' warning
-            if (!(typeElement instanceof JetNullableType)) {
+            if (!(typeElement instanceof JetNullableType) && typeElement != null) {
                 trace.report(NULLABLE_SUPERTYPE.on(nullableType));
             }
         }

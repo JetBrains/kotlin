@@ -76,7 +76,9 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
                  DescriptorRenderer.TEXT.renderType(originalType), nullableType.getText());
         }
-        return TypeUtils.makeNullable(computeType(nullableType.getInnerType(), originalType, originalToAltTypeParameters, typeUsage));
+        JetTypeElement innerType = nullableType.getInnerType();
+        assert innerType != null : "Syntax error: " + nullableType.getText();
+        return TypeUtils.makeNullable(computeType(innerType, originalType, originalToAltTypeParameters, typeUsage));
     }
 
     @Override

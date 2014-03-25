@@ -59,6 +59,7 @@ public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetTypeElement type = super.element.getInnerType();
+        assert type != null : "No inner type " + element.getText() + ", should have been rejected in createFactory()";
         super.element.replace(type);
     }
 
@@ -67,7 +68,7 @@ public class RemoveNullableFix extends JetIntentionAction<JetNullableType> {
             @Override
             public JetIntentionAction<JetNullableType> createAction(Diagnostic diagnostic) {
                 JetNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, JetNullableType.class);
-                if (nullType == null) return null;
+                if (nullType == null || nullType.getInnerType() == null) return null;
                 return new RemoveNullableFix(nullType, typeOfError);
             }
         };
