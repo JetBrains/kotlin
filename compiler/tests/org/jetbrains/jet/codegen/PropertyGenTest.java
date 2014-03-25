@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Opcodes;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 
 import java.lang.reflect.*;

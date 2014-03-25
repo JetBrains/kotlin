@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.context.EnclosedValueDescriptor;
 
 public class CapturedParamDesc {

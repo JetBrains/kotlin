@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.preloading.instrumentation;
 
-import org.jetbrains.asm4.*;
-import org.jetbrains.asm4.commons.InstructionAdapter;
-import org.jetbrains.asm4.util.Textifier;
-import org.jetbrains.asm4.util.TraceMethodVisitor;
+import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.util.Textifier;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import org.jetbrains.jet.preloading.instrumentation.annotations.*;
 
 import java.io.PrintStream;
@@ -31,7 +31,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.regex.Pattern;
 
-import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class InterceptionInstrumenter {
     private static final Pattern ANYTHING = Pattern.compile(".*");
@@ -384,7 +384,7 @@ public class InterceptionInstrumenter {
                     List<MethodData> enterData,
                     List<MethodData> exceptionData
             ) {
-                org.jetbrains.asm4.commons.Method methodBeingInstrumented = new org.jetbrains.asm4.commons.Method(name, desc);
+                org.jetbrains.org.objectweb.asm.commons.Method methodBeingInstrumented = new org.jetbrains.org.objectweb.asm.commons.Method(name, desc);
 
                 List<MethodData> allData = new ArrayList<MethodData>();
                 allData.addAll(enterData);
@@ -400,8 +400,8 @@ public class InterceptionInstrumenter {
                 return maxStackDepth;
             }
 
-            private int stackDepth(MethodData methodData, org.jetbrains.asm4.commons.Method methodBeingInstrumented) {
-                org.jetbrains.asm4.commons.Method method = getAsmMethod(methodData);
+            private int stackDepth(MethodData methodData, org.jetbrains.org.objectweb.asm.commons.Method methodBeingInstrumented) {
+                org.jetbrains.org.objectweb.asm.commons.Method method = getAsmMethod(methodData);
 
                 // array * 2 (dup) + index + value (may be long/double)
                 int allArgsStackDepth = methodData.getAllArgsParameterIndex() >= 0 ? 5 : 0;
@@ -448,8 +448,8 @@ public class InterceptionInstrumenter {
         return cw.toByteArray();
     }
 
-    private static org.jetbrains.asm4.commons.Method getAsmMethod(MethodData methodData) {
-        return new org.jetbrains.asm4.commons.Method(methodData.getName(), methodData.getDesc());
+    private static org.jetbrains.org.objectweb.asm.commons.Method getAsmMethod(MethodData methodData) {
+        return new org.jetbrains.org.objectweb.asm.commons.Method(methodData.getName(), methodData.getDesc());
     }
 
     private static void invokeMethod(
@@ -465,7 +465,7 @@ public class InterceptionInstrumenter {
         ia.getstatic(field.getDeclaringClass(), field.getName(), field.getDesc());
         ia.checkcast(Type.getObjectType(methodData.getDeclaringClass()));
 
-        org.jetbrains.asm4.commons.Method asmMethod = getAsmMethod(methodData);
+        org.jetbrains.org.objectweb.asm.commons.Method asmMethod = getAsmMethod(methodData);
 
         Type[] interceptingMethodParameterTypes = asmMethod.getArgumentTypes();
         int parameterCount = interceptingMethodParameterTypes.length;

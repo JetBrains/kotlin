@@ -17,10 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.mapping;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType;
 
-import static org.jetbrains.asm4.Type.*;
+import static org.jetbrains.org.objectweb.asm.Type.*;
 
 public class PrimitiveTypesUtil {
     private PrimitiveTypesUtil() {

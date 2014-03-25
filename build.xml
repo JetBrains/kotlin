@@ -48,7 +48,7 @@
       <then>
         <path id="javac2.classpath">
           <pathelement location="${idea.sdk}/lib/javac2.jar"/>
-          <pathelement location="${idea.sdk}/lib/jetbrains-asm-debug-all-4.0.jar"/>
+          <pathelement location="${idea.sdk}/lib/asm4-all.jar"/>
         </path>
         <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
         <echo message="Use javac2 from Idea lib"/>

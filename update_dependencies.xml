@@ -165,8 +165,10 @@
         <!-- Guava 14 sources-->
         <get-maven-library prefix="com/google/guava" lib="guava" version="14.0.1" bin="false"/>
 
-        <!-- ASM 4 -->
-        <get-asm4-and-rename-packages/>
+        <!-- ASM -->
+        <get src="https://raw.github.com/JetBrains/intellij-community/master/lib/src/asm5-src.zip"
+             dest="dependencies/asm5-src.zip" />
+        <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
         <!-- Protocol Buffers -->
         <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
@@ -204,30 +206,30 @@
         <unzip src="dependencies/download/bootstrap-compiler.zip" dest="dependencies/bootstrap-compiler"/>
     </target>
 
-    <macrodef name="get-asm4-and-rename-packages">
+    <macrodef name="get-asm-sources-and-rename-packages">
+        <attribute name="asm.version" />
         <sequential>
-            <!-- Download vanilla ASM 4.0 & unzip the needed jars and sources from idea13 build (with debug info and patched for java 8) -->
-            <get src="http://teamcity.jetbrains.com/guestAuth/repository/download/bt410/83470:id/jps/asm4-all.jar" dest="dependencies/jetbrains-asm-debug-all-4.0.jar" usetimestamp="true"/>
-            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="4.0" bin="false"/>
+            <!-- Download ASM sources -->
+            <get-maven-library prefix="org/ow2/asm" lib="asm-debug-all" version="@{asm.version}" bin="false"/>
 
             <!-- Rename packages in the sources -->
             <delete dir="dependencies/download/asm-src" failonerror="false"/>
-            <unzip src="dependencies/download/asm-debug-all-4.0-sources.jar" dest="dependencies/download/asm-src">
+            <unzip src="dependencies/download/asm-debug-all-@{asm.version}-sources.jar" dest="dependencies/download/asm-src">
                 <patternset>
                     <include name="**/*"/>
                 </patternset>
             </unzip>
 
-            <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.asm4" flags="g">
+            <replaceregexp match="org\.objectweb\.asm" replace="org.jetbrains.org.objectweb.asm" flags="g">
                 <fileset dir="dependencies/download/asm-src/">
                     <include name="**/*.java"/>
                 </fileset>
             </replaceregexp>
 
             <move file="dependencies/download/asm-src/org/objectweb/asm"
-                    tofile="dependencies/download/asm-src/org/jetbrains/asm4"/>
+                    tofile="dependencies/download/asm-src/org/jetbrains/org/objectweb/asm"/>
 
-            <zip destfile="dependencies/jetbrains-asm-all-4.0-src.zip" basedir="dependencies/download/asm-src"/>
+            <zip destfile="dependencies/jetbrains-asm-all-@{asm.version}-src.zip" basedir="dependencies/download/asm-src"/>
         </sequential>
     </macrodef>
 
@@ -262,7 +264,6 @@
                     <get src="@{base.url}/core/trove4j.jar" dest="${core}/trove4j.jar" usetimestamp="true"/>
                     <!--<get src="@{base.url}/core/snappy-java-1.0.5.jar" dest="${core}/snappy-java-1.0.5.jar" usetimestamp="true"/>-->
 
-                    <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${jps}"/>
                     <get src="@{base.url}/jps/groovy-jps-plugin.jar" dest="${jps}/groovy-jps-plugin.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/groovy_rt.jar" dest="${jps}/groovy_rt.jar" usetimestamp="true"/>
                     <get src="@{base.url}/jps/jdom.jar" dest="${jps}/jdom.jar" usetimestamp="true"/>
@@ -323,7 +324,7 @@
             </if>
 
             <mkdir dir="ideaSDK/sources"/>
-            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip"/>
+            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip" overwrite="true"/>
 
             <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
@@ -331,8 +332,7 @@
             <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
             <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}" />
-            <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="${core}"/>
-            <copy file="dependencies/jetbrains-asm-debug-all-4.0.jar" todir="ideaSDK/lib"/>
+            <copy file="ideaSDK/lib/asm-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
             <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
@@ -343,13 +343,6 @@
                  many nice features of IDEA including diffs in the test console.
             -->
             <delete file="ideaSDK/lib/junit.jar"/>
-
-            <!--
-                The asm4-all.jar bundled with IDEA has no debug information in it, and we replace it
-                with jetbrains-asm-debug-all-4.0.jar
-            -->
-            <delete file="ideaSDK/lib/asm4-all.jar"/>
-
         </sequential>
     </macrodef>
 

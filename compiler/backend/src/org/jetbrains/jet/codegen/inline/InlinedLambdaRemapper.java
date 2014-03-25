@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
 import java.util.Collection;
 

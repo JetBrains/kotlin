@@ -20,12 +20,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.*;
-import org.jetbrains.asm4.commons.Method;
-import org.jetbrains.asm4.tree.AbstractInsnNode;
-import org.jetbrains.asm4.tree.FieldInsnNode;
-import org.jetbrains.asm4.tree.MethodNode;
-import org.jetbrains.asm4.tree.VarInsnNode;
+import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -34,8 +34,8 @@ import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.asm4.Opcodes.ASM4;
-import static org.jetbrains.asm4.Opcodes.V1_6;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ASM4;
+import static org.jetbrains.org.objectweb.asm.Opcodes.V1_6;
 
 public class LambdaTransformer {
 

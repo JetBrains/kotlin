@@ -18,7 +18,7 @@ package org.jetbrains.jet.codegen.flags;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
-import org.jetbrains.asm4.*;
+import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.OutputFile;

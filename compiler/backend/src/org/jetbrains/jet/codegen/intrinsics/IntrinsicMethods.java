@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.types.lang.PrimitiveType;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.asm4.Opcodes.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
 

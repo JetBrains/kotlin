@@ -19,8 +19,8 @@ package org.jetbrains.jet.cli.jvm.repl;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.util.TraceClassVisitor;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.PrintWriter;
 import java.util.Map;

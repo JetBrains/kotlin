@@ -19,7 +19,7 @@ package org.jetbrains.jet.codegen.context;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
@@ -397,7 +397,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
 
             flag |= (getter == null ? 0 : getVisibilityAccessFlag(getter)) |
-                (setter == null ? 0 : getVisibilityAccessFlag(setter));
+                    (setter == null ? 0 : getVisibilityAccessFlag(setter));
         }
         return flag;
     }
@@ -454,7 +454,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         DeclarationDescriptor childContextDescriptor = child.contextDescriptor;
         if (childContextDescriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) childContextDescriptor).getKind();
-                return kind == ClassKind.CLASS_OBJECT;
+            return kind == ClassKind.CLASS_OBJECT;
         }
         return false;
     }

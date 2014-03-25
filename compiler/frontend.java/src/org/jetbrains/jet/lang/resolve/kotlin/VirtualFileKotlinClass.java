@@ -17,22 +17,23 @@
 package org.jetbrains.jet.lang.resolve.kotlin;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.ClassReader;
-import org.jetbrains.asm4.ClassVisitor;
-import org.jetbrains.asm4.FieldVisitor;
-import org.jetbrains.asm4.MethodVisitor;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader;
 import org.jetbrains.jet.lang.resolve.kotlin.header.ReadKotlinClassHeaderAnnotationVisitor;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
-import static org.jetbrains.asm4.ClassReader.*;
-import static org.jetbrains.asm4.Opcodes.ASM4;
+import static org.jetbrains.org.objectweb.asm.ClassReader.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ASM5;
 
 public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     private final static Logger LOG = Logger.getInstance(VirtualFileKotlinClass.class);
@@ -48,39 +49,56 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Nullable
+    private static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
+        final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
+        final Ref<JvmClassName> classNameRef = Ref.create();
+        new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {
+            @Override
+            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                classNameRef.set(JvmClassName.byInternalName(name));
+            }
+
+            @Override
+            public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                return convertAnnotationVisitor(readHeaderVisitor, desc);
+            }
+
+            @Override
+            public void visitEnd() {
+                readHeaderVisitor.visitEnd();
+            }
+        }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
+
+        JvmClassName className = classNameRef.get();
+        if (className == null) return null;
+
+        KotlinClassHeader header = readHeaderVisitor.createHeader();
+        if (header == null) return null;
+
+        return Pair.create(className, header);
+    }
+
+    @Nullable
     /* package */ static VirtualFileKotlinClass create(@NotNull VirtualFile file) {
         try {
-            final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
-            final Ref<JvmClassName> classNameRef = Ref.create();
-            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
-                @Override
-                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                    classNameRef.set(JvmClassName.byInternalName(name));
-                }
+            byte[] fileContents = file.contentsToByteArray();
+            Pair<JvmClassName, KotlinClassHeader> nameAndHeader = readClassNameAndHeader(fileContents);
+            if (nameAndHeader == null) {
+                return null;
+            }
 
-                @Override
-                public org.jetbrains.asm4.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-                    return convertAnnotationVisitor(readHeaderVisitor, desc);
-                }
-
-                @Override
-                public void visitEnd() {
-                    readHeaderVisitor.visitEnd();
-                }
-            }, SKIP_CODE | SKIP_DEBUG | SKIP_FRAMES);
-
-            JvmClassName className = classNameRef.get();
-            if (className == null) return null;
-
-            KotlinClassHeader header = readHeaderVisitor.createHeader();
-            if (header == null) return null;
-
-            return new VirtualFileKotlinClass(file, className, header);
+            return new VirtualFileKotlinClass(file, nameAndHeader.first, nameAndHeader.second);
         }
         catch (Throwable e) {
             LOG.warn(renderFileReadingErrorMessage(file), e);
             return null;
         }
+    }
+
+    @Nullable
+    public static KotlinClassHeader readClassHeader(@NotNull byte[] fileContents) {
+        Pair<JvmClassName, KotlinClassHeader> pair = readClassNameAndHeader(fileContents);
+        return pair == null ? null : pair.second;
     }
 
     @NotNull
@@ -103,9 +121,9 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public void loadClassAnnotations(@NotNull final AnnotationVisitor annotationVisitor) {
         try {
-            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
+            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM5) {
                 @Override
-                public org.jetbrains.asm4.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                     return convertAnnotationVisitor(annotationVisitor, desc);
                 }
 
@@ -122,21 +140,21 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Nullable
-    private static org.jetbrains.asm4.AnnotationVisitor convertAnnotationVisitor(@NotNull AnnotationVisitor visitor, @NotNull String desc) {
+    private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(@NotNull AnnotationVisitor visitor, @NotNull String desc) {
         AnnotationArgumentVisitor v = visitor.visitAnnotation(classNameFromAsmDesc(desc));
         return v == null ? null : convertAnnotationVisitor(v);
     }
 
     @NotNull
-    private static org.jetbrains.asm4.AnnotationVisitor convertAnnotationVisitor(@NotNull final AnnotationArgumentVisitor v) {
-        return new org.jetbrains.asm4.AnnotationVisitor(ASM4) {
+    private static org.jetbrains.org.objectweb.asm.AnnotationVisitor convertAnnotationVisitor(@NotNull final AnnotationArgumentVisitor v) {
+        return new org.jetbrains.org.objectweb.asm.AnnotationVisitor(ASM5) {
             @Override
             public void visit(String name, Object value) {
                 v.visit(name == null ? null : Name.identifier(name), value);
             }
 
             @Override
-            public org.jetbrains.asm4.AnnotationVisitor visitArray(String name) {
+            public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(String name) {
                 AnnotationArgumentVisitor av = v.visitArray(Name.guess(name));
                 return av == null ? null : convertAnnotationVisitor(av);
             }
@@ -156,15 +174,15 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     @Override
     public void visitMembers(@NotNull final MemberVisitor memberVisitor) {
         try {
-            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM4) {
+            new ClassReader(file.contentsToByteArray()).accept(new ClassVisitor(ASM5) {
                 @Override
                 public FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
                     final AnnotationVisitor v = memberVisitor.visitField(Name.guess(name), desc, value);
                     if (v == null) return null;
 
-                    return new FieldVisitor(ASM4) {
+                    return new FieldVisitor(ASM5) {
                         @Override
-                        public org.jetbrains.asm4.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                             return convertAnnotationVisitor(v, desc);
                         }
 
@@ -180,14 +198,14 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
                     final MethodAnnotationVisitor v = memberVisitor.visitMethod(Name.guess(name), desc);
                     if (v == null) return null;
 
-                    return new MethodVisitor(ASM4) {
+                    return new MethodVisitor(ASM5) {
                         @Override
-                        public org.jetbrains.asm4.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
+                        public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                             return convertAnnotationVisitor(v, desc);
                         }
 
                         @Override
-                        public org.jetbrains.asm4.AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
+                        public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int parameter, String desc, boolean visible) {
                             AnnotationArgumentVisitor av = v.visitParameterAnnotation(parameter, classNameFromAsmDesc(desc));
                             return av == null ? null : convertAnnotationVisitor(av);
                         }

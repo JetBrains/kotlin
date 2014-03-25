@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Trinity;
 import gnu.trove.TObjectIntHashMap;
 import gnu.trove.TObjectIntIterator;
-import org.jetbrains.asm4.Type;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 import java.util.ArrayList;

@@ -17,7 +17,7 @@
 package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.asm4.commons.Remapper;
+import org.jetbrains.org.objectweb.asm.commons.Remapper;
 
 import java.util.Map;
 
