@@ -37,13 +37,10 @@ public final class ErrorClassDescriptor extends ClassDescriptorImpl {
         super(getErrorModule(), Name.special("<ERROR CLASS: " + debugMessage + ">"), Modality.OPEN, Collections.<JetType>emptyList());
 
         ConstructorDescriptorImpl errorConstructor =
-                new ConstructorDescriptorImpl(this, Annotations.EMPTY, true);
+                ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true);
 
-        errorConstructor.initialize(
-                Collections.<TypeParameterDescriptor>emptyList(), // TODO
-                Collections.<ValueParameterDescriptor>emptyList(), // TODO
-                Visibilities.INTERNAL
-        );
+        errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                                    Visibilities.INTERNAL, false);
         errorConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"));
 
         initialize(createErrorScope("ERROR_CLASS"), Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);

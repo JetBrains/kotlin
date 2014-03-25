@@ -250,7 +250,7 @@ public class DescriptorDeserializer {
     @NotNull
     private CallableMemberDescriptor loadConstructor(@NotNull Callable proto) {
         ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-        ConstructorDescriptorImpl descriptor = new ConstructorDescriptorImpl(
+        ConstructorDescriptorImpl descriptor = ConstructorDescriptorImpl.create(
                 classDescriptor,
                 getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 // TODO: primary

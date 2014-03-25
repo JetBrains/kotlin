@@ -1228,7 +1228,7 @@ public class DescriptorResolver {
             @NotNull JetDeclaration declarationToTrace,
             List<TypeParameterDescriptor> typeParameters, @NotNull List<JetParameter> valueParameters, BindingTrace trace
     ) {
-        ConstructorDescriptorImpl constructorDescriptor = new ConstructorDescriptorImpl(
+        ConstructorDescriptorImpl constructorDescriptor = ConstructorDescriptorImpl.create(
                 classDescriptor,
                 annotationResolver.resolveAnnotationsWithoutArguments(scope, modifierList, trace),
                 isPrimary

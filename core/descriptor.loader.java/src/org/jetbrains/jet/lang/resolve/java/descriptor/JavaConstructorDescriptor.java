@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve.java.descriptor;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -25,21 +26,22 @@ import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 public class JavaConstructorDescriptor extends ConstructorDescriptorImpl {
     private Boolean hasStableParameterNames;
 
-    public JavaConstructorDescriptor(
-            @NotNull ClassDescriptor containingDeclaration,
-            @NotNull Annotations annotations,
-            boolean isPrimary
-    ) {
-        super(containingDeclaration, annotations, isPrimary);
-    }
-
     private JavaConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
-            @NotNull JavaConstructorDescriptor original,
+            @Nullable JavaConstructorDescriptor original,
             @NotNull Annotations annotations,
             boolean isPrimary
     ) {
-        super(containingDeclaration, original, annotations, isPrimary);
+        super(containingDeclaration, original, annotations, isPrimary, Kind.DECLARATION);
+    }
+
+    @NotNull
+    public static JavaConstructorDescriptor createJavaConstructor(
+            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            boolean isPrimary
+    ) {
+        return new JavaConstructorDescriptor(containingDeclaration, null, annotations, isPrimary);
     }
 
     @Override

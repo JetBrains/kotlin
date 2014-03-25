@@ -35,26 +35,34 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
 
     private static final Name NAME = Name.special("<init>");
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull Annotations annotations, boolean isPrimary) {
-        this(containingDeclaration, annotations, isPrimary, Kind.DECLARATION);
-    }
-
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull Annotations annotations, boolean isPrimary, Kind kind) {
-        super(containingDeclaration, null, annotations, NAME, kind);
+    protected ConstructorDescriptorImpl(
+            @NotNull ClassDescriptor containingDeclaration,
+            @Nullable ConstructorDescriptor original,
+            @NotNull Annotations annotations,
+            boolean isPrimary,
+            @NotNull Kind kind
+    ) {
+        super(containingDeclaration, original, annotations, NAME, kind);
         this.isPrimary = isPrimary;
     }
 
-    public ConstructorDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ConstructorDescriptor original, @NotNull Annotations annotations, boolean isPrimary) {
-        super(containingDeclaration, original, annotations, NAME, Kind.DECLARATION);
-        this.isPrimary = isPrimary;
+    @NotNull
+    public static ConstructorDescriptorImpl create(
+            @NotNull ClassDescriptor containingDeclaration,
+            @NotNull Annotations annotations,
+            boolean isPrimary
+    ) {
+        return new ConstructorDescriptorImpl(containingDeclaration, null, annotations, isPrimary, Kind.DECLARATION);
     }
 
-    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Visibility visibility) {
-        return initialize(typeParameters, unsubstitutedValueParameters, visibility, false);
-    }
-
-    public ConstructorDescriptorImpl initialize(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters, Visibility visibility, boolean isStatic) {
-        super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters, unsubstitutedValueParameters, null, Modality.FINAL, visibility);
+    public ConstructorDescriptorImpl initialize(
+            @NotNull List<TypeParameterDescriptor> typeParameters,
+            @NotNull List<ValueParameterDescriptor> unsubstitutedValueParameters,
+            @NotNull Visibility visibility,
+            boolean isStatic
+    ) {
+        super.initialize(null, isStatic ? NO_RECEIVER_PARAMETER : getExpectedThisObject(getContainingDeclaration()), typeParameters,
+                         unsubstitutedValueParameters, null, Modality.FINAL, visibility);
         return this;
     }
 
@@ -105,11 +113,13 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
                                             "newOwner: " + newOwner + "\n" +
                                             "kind: " + kind);
         }
+        assert preserveOriginal : "Attempt to create copy of constructor without preserving original: " + this;
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
                 Annotations.EMPTY, // TODO
-                isPrimary);
+                isPrimary,
+                Kind.DECLARATION);
     }
 
     @NotNull

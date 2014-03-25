@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor;
     private final ConstructorDescriptor declaration;
 
     public SamAdapterConstructorDescriptor(@NotNull ConstructorDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), declaration.getAnnotations(), declaration.isPrimary(), Kind.SYNTHESIZED);
+        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(), declaration.isPrimary(), Kind.SYNTHESIZED);
         this.declaration = declaration;
     }
 

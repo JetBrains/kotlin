@@ -190,9 +190,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     public ConstructorContext intoConstructor(@Nullable ConstructorDescriptor descriptor, @Nullable MutableClosure closure) {
         if (descriptor == null) {
-            descriptor = new ConstructorDescriptorImpl(getThisDescriptor(), Annotations.EMPTY, true)
+            descriptor = ConstructorDescriptorImpl.create(getThisDescriptor(), Annotations.EMPTY, true)
                     .initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
-                                Visibilities.PUBLIC);
+                                Visibilities.PUBLIC, false);
         }
         return new ConstructorContext(descriptor, getContextKind(), this, closure);
     }

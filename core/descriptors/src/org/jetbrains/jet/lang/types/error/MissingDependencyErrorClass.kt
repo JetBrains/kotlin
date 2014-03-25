@@ -58,8 +58,8 @@ public class MissingDependencyErrorClassDescriptor(override val fullFqName: FqNa
     }
 
     {
-        val emptyConstructor = ConstructorDescriptorImpl(this, Annotations.EMPTY, true)
-        emptyConstructor.initialize(Collections.emptyList<TypeParameterDescriptor>(), Collections.emptyList<ValueParameterDescriptor>(), Visibilities.INTERNAL)
+        val emptyConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true)
+        emptyConstructor.initialize(Collections.emptyList<TypeParameterDescriptor>(), Collections.emptyList<ValueParameterDescriptor>(), Visibilities.INTERNAL, false)
         emptyConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"))
         initialize(JetScope.EMPTY, Collections.singleton<ConstructorDescriptor>(emptyConstructor), emptyConstructor)
     }

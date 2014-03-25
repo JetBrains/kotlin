@@ -37,7 +37,7 @@ public class DescriptorFactory {
 
     private static class DefaultConstructorDescriptor extends ConstructorDescriptorImpl {
         public DefaultConstructorDescriptor(@NotNull ClassDescriptor containingClass) {
-            super(containingClass, Annotations.EMPTY, true);
+            super(containingClass, null, Annotations.EMPTY, true, Kind.DECLARATION);
             initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                        getDefaultConstructorVisibility(containingClass), true);
         }

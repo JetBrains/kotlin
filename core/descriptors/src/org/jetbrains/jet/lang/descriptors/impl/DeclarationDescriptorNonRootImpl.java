@@ -29,7 +29,7 @@ public abstract class DeclarationDescriptorNonRootImpl
     @NotNull
     private final DeclarationDescriptor containingDeclaration;
 
-    public DeclarationDescriptorNonRootImpl(
+    protected DeclarationDescriptorNonRootImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Name name) {
