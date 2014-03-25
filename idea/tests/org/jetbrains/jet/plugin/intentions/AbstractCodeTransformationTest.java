@@ -163,6 +163,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ReplaceExplicitFunctionLiteralParamWithItIntention());
     }
 
+    public void doTestConvertNegatedExpressionWithDemorgansLaw(@NotNull String path) throws Exception {
+        doTestIntention(path, new ConvertNegatedExpressionWithDemorgansLawIntention());
+    }
+
     public void doTestReplaceItWithExplicitFunctionLiteralParam(@NotNull String path) throws Exception {
         doTestIntention(path, new ReplaceItWithExplicitFunctionLiteralParamIntention());
     }
@@ -173,6 +177,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
 
     public void doTestAddBraces(@NotNull String path) throws Exception {
         doTestIntention(path, new AddBracesIntention());
+    }
+
+    public void doTestConvertNegatedBooleanSequence(@NotNull String path) throws Exception {
+		 doTestIntention(path, new ConvertNegatedBooleanSequenceIntention());
     }
 
     public void doTestReplaceGetIntention(@NotNull String path) throws Exception {
