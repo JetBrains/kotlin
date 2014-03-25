@@ -17,6 +17,7 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl
 
 class LazyPackageFragmentForJavaPackage(
         c: LazyJavaResolverContext,
@@ -45,19 +46,13 @@ class LazyPackageFragmentForJavaClass(
 abstract class LazyJavaPackageFragment(
         protected val c: LazyJavaResolverContext,
         containingDeclaration: ModuleDescriptor,
-        private val _fqName: FqName,
+        fqName: FqName,
         createMemberScope: LazyJavaPackageFragment.() -> LazyJavaPackageFragmentScope
-) : DeclarationDescriptorNonRootImpl(containingDeclaration, Annotations.EMPTY, _fqName.shortNameOrSpecial()),
+) : PackageFragmentDescriptorImpl(containingDeclaration, fqName),
     JavaPackageFragmentDescriptor, LazyJavaDescriptor
 {
     private val _memberScope = createMemberScope()
     override fun getMemberScope(): LazyJavaPackageFragmentScope = _memberScope
-
-    override fun getFqName() = _fqName
-
-    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D) = visitor.visitPackageFragmentDescriptor(this, data) as R
-
-    override fun substitute(substitutor: TypeSubstitutor) = this
 
     override fun toString() = "lazy java package fragment: " + getFqName()
 }

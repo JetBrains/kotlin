@@ -31,11 +31,9 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements LazyEntity, PackageFragmentDescriptor {
+public class LazyPackageDescriptor extends PackageFragmentDescriptorImpl implements LazyEntity {
     private final ResolveSession resolveSession;
-    private final ModuleDescriptor module;
     private final JetScope memberScope;
-    private final FqName fqName;
     private final PackageMemberDeclarationProvider declarationProvider;
 
     public LazyPackageDescriptor(
@@ -44,10 +42,8 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
             @NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider
     ) {
-        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
+        super(module, fqName);
         this.resolveSession = resolveSession;
-        this.module = module;
-        this.fqName = fqName;
         this.declarationProvider = declarationProvider;
 
         this.memberScope = new LazyPackageMemberScope(resolveSession, declarationProvider, this);
@@ -61,29 +57,6 @@ public class LazyPackageDescriptor extends DeclarationDescriptorImpl implements 
     @Override
     public JetScope getMemberScope() {
         return memberScope;
-    }
-
-    @NotNull
-    @Override
-    public ModuleDescriptor getContainingDeclaration() {
-        return module;
-    }
-
-    @Nullable
-    @Override
-    public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        return this;
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitPackageFragmentDescriptor(this, data);
-    }
-
-    @NotNull
-    @Override
-    public FqName getFqName() {
-        return fqName;
     }
 
     @Override
