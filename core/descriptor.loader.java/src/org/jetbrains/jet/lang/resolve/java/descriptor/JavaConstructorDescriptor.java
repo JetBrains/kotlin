@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 
@@ -54,8 +55,13 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl {
         this.hasStableParameterNames = hasStableParameterNames;
     }
 
+    @NotNull
     @Override
-    protected JavaConstructorDescriptor createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected JavaConstructorDescriptor createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         if (kind != Kind.DECLARATION) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
                                             "copy from: " + this + "\n" +

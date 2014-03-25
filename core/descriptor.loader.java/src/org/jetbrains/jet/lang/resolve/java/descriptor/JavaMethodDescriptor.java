@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
@@ -57,11 +58,16 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         this.hasStableParameterNames = hasStableParameterNames;
     }
 
+    @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         JavaMethodDescriptor result = new JavaMethodDescriptor(
                 newOwner,
-                preserveOriginal ? getOriginal() : null,
+                (SimpleFunctionDescriptor) original,
                 getAnnotations(),
                 getName(),
                 kind

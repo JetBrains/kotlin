@@ -75,11 +75,16 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         return (SimpleFunctionDescriptor) super.getOriginal();
     }
 
+    @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         return new SimpleFunctionDescriptorImpl(
                 newOwner,
-                preserveOriginal ? getOriginal() : null,
+                (SimpleFunctionDescriptor) original,
                 // TODO : safeSubstitute
                 getAnnotations(),
                 getName(),
@@ -89,7 +94,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
     @NotNull
     @Override
     public SimpleFunctionDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
-        return (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
+        return (SimpleFunctionDescriptorImpl)doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, null, copyOverrides, kind);
     }
 
     @NotNull

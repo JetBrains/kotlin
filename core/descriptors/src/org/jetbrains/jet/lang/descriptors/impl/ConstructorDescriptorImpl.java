@@ -105,15 +105,20 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         throw new UnsupportedOperationException("Constructors cannot override anything");
     }
 
+    @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         if (kind != Kind.DECLARATION) {
             throw new IllegalStateException("Attempt at creating a constructor that is not a declaration: \n" +
                                             "copy from: " + this + "\n" +
                                             "newOwner: " + newOwner + "\n" +
                                             "kind: " + kind);
         }
-        assert preserveOriginal : "Attempt to create copy of constructor without preserving original: " + this;
+        assert original != null : "Attempt to create copy of constructor without preserving original: " + this;
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,

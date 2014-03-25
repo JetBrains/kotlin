@@ -23,6 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.Flags;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
@@ -47,11 +48,16 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
         this.nameResolver = nameResolver;
     }
 
+    @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         return new DeserializedSimpleFunctionDescriptor(
                 newOwner,
-                preserveOriginal ? getOriginal() : null,
+                (DeserializedSimpleFunctionDescriptor) original,
                 getAnnotations(),
                 getName(),
                 kind,

@@ -195,12 +195,20 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         if (originalSubstitutor.isEmpty()) {
             return this;
         }
-        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, true, true, getKind());
+        return doSubstitute(originalSubstitutor, getContainingDeclaration(), modality, visibility, getOriginal(), true, getKind());
     }
 
-    private PropertyDescriptor doSubstitute(TypeSubstitutor originalSubstitutor,
-            DeclarationDescriptor newOwner, Modality newModality, Visibility newVisibility, boolean preserveOriginal, boolean copyOverrides, Kind kind) {
-        PropertyDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, newModality, newVisibility, preserveOriginal ? getOriginal() : null, kind);
+    @Nullable
+    private PropertyDescriptor doSubstitute(
+            @NotNull TypeSubstitutor originalSubstitutor,
+            @NotNull DeclarationDescriptor newOwner,
+            @NotNull Modality newModality,
+            @NotNull Visibility newVisibility,
+            @Nullable PropertyDescriptor original,
+            boolean copyOverrides,
+            @NotNull Kind kind
+    ) {
+        PropertyDescriptorImpl substitutedDescriptor = createSubstitutedCopy(newOwner, newModality, newVisibility, original, kind);
 
         List<TypeParameterDescriptor> substitutedTypeParameters = Lists.newArrayList();
         TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(getTypeParameters(), originalSubstitutor, substitutedDescriptor, substitutedTypeParameters);
@@ -326,6 +334,6 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
     @NotNull
     @Override
     public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
-        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, false, copyOverrides, kind);
+        return doSubstitute(TypeSubstitutor.EMPTY, newOwner, modality, visibility, null, copyOverrides, kind);
     }
 }

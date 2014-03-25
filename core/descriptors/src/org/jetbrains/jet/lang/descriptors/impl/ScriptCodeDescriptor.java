@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -39,8 +40,13 @@ public class ScriptCodeDescriptor extends FunctionDescriptorImpl {
         super.initialize(null, expectedThisObject, Collections.<TypeParameterDescriptor>emptyList(), valueParameters, returnType, Modality.FINAL, Visibilities.LOCAL);
     }
 
+    @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(DeclarationDescriptor newOwner, boolean preserveOriginal, Kind kind) {
+    protected FunctionDescriptorImpl createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
         throw new IllegalStateException("no need to copy script code descriptor");
     }
 
