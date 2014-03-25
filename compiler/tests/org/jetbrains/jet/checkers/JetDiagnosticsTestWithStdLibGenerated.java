@@ -44,6 +44,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("ClassObjectAnnotatedWithItsClass.kt")
+        public void testClassObjectAnnotatedWithItsClass() throws Exception {
+            doTest("compiler/testData/diagnostics/testsWithStdLib/annotations/ClassObjectAnnotatedWithItsClass.kt");
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
         public static class AnnotationParameterMustBeConstant extends AbstractJetDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationParameterMustBeConstant() throws Exception {
