@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.introduceVariable;
+package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 
-public class JetChangePropertyActions {
-    private JetChangePropertyActions() {
+public class KotlinChangePropertyActions {
+    private KotlinChangePropertyActions() {
     }
 
     public static void declareValueOrVariable(Project project, boolean isVariable, JetProperty property) {

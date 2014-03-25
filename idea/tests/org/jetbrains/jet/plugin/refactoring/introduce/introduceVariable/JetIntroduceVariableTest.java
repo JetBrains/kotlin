@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.introduceVariable;
+package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.application.ApplicationManager;
@@ -160,7 +160,7 @@ public class JetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                new JetIntroduceVariableHandler().invoke(getProject(), myFixture.getEditor(), file,
+                new KotlinIntroduceVariableHandler().invoke(getProject(), myFixture.getEditor(), file,
                                                          DataManager.getInstance().getDataContext(myFixture.getEditor().
                                                                  getComponent()));
             }

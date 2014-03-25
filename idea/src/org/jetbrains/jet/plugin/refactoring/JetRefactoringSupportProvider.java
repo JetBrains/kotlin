@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureHandler;
-import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler;
+import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.jet.plugin.refactoring.safeDelete.SafeDeletePackage;
 
 public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
@@ -35,7 +35,7 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
 
     @Override
     public RefactoringActionHandler getIntroduceVariableHandler() {
-        return new JetIntroduceVariableHandler();
+        return new KotlinIntroduceVariableHandler();
     }
 
     @Override

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring;
+package org.jetbrains.jet.plugin.refactoring.introduce;
 
 import com.intellij.refactoring.RefactoringActionHandler;
 
-public abstract class JetIntroduceHandlerBase implements RefactoringActionHandler {
+public abstract class KotlinIntroduceHandlerBase implements RefactoringActionHandler {
 }

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.introduceVariable;
+package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
-import com.intellij.codeInsight.template.impl.TemplateState;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
@@ -45,7 +43,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetExpression> {
+public class KotlinInplaceVariableIntroducer extends InplaceVariableIntroducer<JetExpression> {
 
     private final boolean myReplaceOccurrence;
     private final JetProperty myProperty;
@@ -56,11 +54,13 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
     private JCheckBox myVarCheckbox;
     private JCheckBox myExprTypeCheckbox;
 
-    public JetInplaceVariableIntroducer(PsiNamedElement elementToRename, Editor editor, Project project,
-                                        String title, JetExpression[] occurrences,
-                                        @Nullable JetExpression expr, boolean replaceOccurrence,
-                                        JetProperty property, boolean isVar, boolean doNotChangeVar,
-                                        @Nullable JetType exprType, boolean noTypeInference) {
+    public KotlinInplaceVariableIntroducer(
+            PsiNamedElement elementToRename, Editor editor, Project project,
+            String title, JetExpression[] occurrences,
+            @Nullable JetExpression expr, boolean replaceOccurrence,
+            JetProperty property, boolean isVar, boolean doNotChangeVar,
+            @Nullable JetType exprType, boolean noTypeInference
+    ) {
         super(elementToRename, editor, project, title, occurrences, expr);
         this.myReplaceOccurrence = replaceOccurrence;
         myProperty = property;
@@ -84,8 +84,8 @@ public class JetInplaceVariableIntroducer extends InplaceVariableIntroducer<JetE
                         @Override
                         protected void run(Result result) throws Throwable {
                             PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
-                            JetChangePropertyActions.declareValueOrVariable(myProject, myVarCheckbox.isSelected(),
-                                                                            myProperty);
+                            KotlinChangePropertyActions.declareValueOrVariable(myProject, myVarCheckbox.isSelected(),
+                                                                               myProperty);
                         }
                     }.execute();
                 }

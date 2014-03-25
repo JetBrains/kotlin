@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.refactoring.introduceVariable;
+package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.codeInsight.PsiEquivalenceUtil;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -52,11 +52,12 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.refactoring.*;
+import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.*;
 
-public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
+public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     private static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
 
@@ -211,8 +212,8 @@ public class JetIntroduceVariableHandler extends JetIntroduceHandlerBase {
                                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                                 PsiDocumentManager.getInstance(project).
                                     doPostponedOperationsAndUnblockDocument(editor.getDocument());
-                                JetInplaceVariableIntroducer variableIntroducer =
-                                    new JetInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
+                                KotlinInplaceVariableIntroducer variableIntroducer =
+                                    new KotlinInplaceVariableIntroducer(property, editor, project, INTRODUCE_VARIABLE,
                                                                      references.toArray(new JetExpression[references.size()]),
                                                                      reference.get(), finalReplaceOccurrence,
                                                                      property, /*todo*/false, /*todo*/false,

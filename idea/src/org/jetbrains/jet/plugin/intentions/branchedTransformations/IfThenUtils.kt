@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.plugin.refactoring.introduceVariable.JetIntroduceVariableHandler
+import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
@@ -107,7 +107,7 @@ fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, then
 fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpression, editor: Editor) {
     val project = this.getProject()
     val occurrenceInConditional = (this.getCondition() as JetBinaryExpression).getLeft()!!
-    JetIntroduceVariableHandler.doRefactoring(project, editor, occurrenceInConditional, listOf(occurrenceInConditional, occurrenceInThenClause))
+    KotlinIntroduceVariableHandler.doRefactoring(project, editor, occurrenceInConditional, listOf(occurrenceInConditional, occurrenceInThenClause))
 }
 
 fun PsiElement.replace(expressionAsString: String): PsiElement =
