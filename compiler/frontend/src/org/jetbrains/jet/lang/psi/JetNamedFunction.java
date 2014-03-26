@@ -59,6 +59,10 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
 
     @Override
     public boolean hasBlockBody() {
+        PsiJetFunctionStub stub = getStub();
+        if (stub != null) {
+            return stub.hasBlockBody();
+        }
         return getEqualsToken() == null;
     }
 
