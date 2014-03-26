@@ -56,7 +56,8 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
         boolean isExtension = psi.getReceiverTypeRef() != null;
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
-        return new PsiJetFunctionStubImpl(parentStub, psi.getName(), isTopLevel, fqName, isExtension, hasBlockBody);
+        boolean hasBody = psi.hasBody();
+        return new PsiJetFunctionStubImpl(parentStub, psi.getName(), isTopLevel, fqName, isExtension, hasBlockBody, hasBody);
     }
 
     @Override
@@ -69,6 +70,7 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
         dataStream.writeBoolean(stub.isExtension());
         dataStream.writeBoolean(stub.hasBlockBody());
+        dataStream.writeBoolean(stub.hasBody());
     }
 
     @NotNull
@@ -82,8 +84,9 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
         boolean isExtension = dataStream.readBoolean();
         boolean hasBlockBody = dataStream.readBoolean();
+        boolean hasBody = dataStream.readBoolean();
 
-        return new PsiJetFunctionStubImpl(parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody);
+        return new PsiJetFunctionStubImpl(parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody);
     }
 
     @Override

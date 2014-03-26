@@ -34,6 +34,7 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     private final boolean isExtension;
     private final FqName fqName;
     private final boolean hasBlockBody;
+    private final boolean hasBody;
 
     public PsiJetFunctionStubImpl(
             @NotNull StubElement parent,
@@ -41,9 +42,10 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
             boolean isTopLevel,
             @Nullable FqName fqName,
             boolean isExtension,
-            boolean hasBlockBody
+            boolean hasBlockBody,
+            boolean hasBody
     ) {
-        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension, hasBlockBody);
+        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension, hasBlockBody, hasBody);
     }
 
     public PsiJetFunctionStubImpl(
@@ -52,7 +54,8 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
             boolean isTopLevel,
             @Nullable FqName fqName,
             boolean isExtension,
-            boolean hasBlockBody
+            boolean hasBlockBody,
+            boolean hasBody
     ) {
         super(parent, JetStubElementTypes.FUNCTION);
 
@@ -65,6 +68,7 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
         this.isTopLevel = isTopLevel;
         this.isExtension = isExtension;
         this.hasBlockBody = hasBlockBody;
+        this.hasBody = hasBody;
     }
 
     @Override
@@ -85,6 +89,11 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public boolean hasBlockBody() {
         return hasBlockBody;
+    }
+
+    @Override
+    public boolean hasBody() {
+        return hasBody;
     }
 
     @NotNull

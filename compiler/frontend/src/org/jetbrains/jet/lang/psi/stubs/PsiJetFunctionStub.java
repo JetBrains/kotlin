@@ -26,6 +26,8 @@ public interface PsiJetFunctionStub extends PsiJetStubWithFqName<JetNamedFunctio
 
     boolean hasBlockBody();
 
+    boolean hasBody();
+
     @NotNull
     String[] getAnnotations();
 }
