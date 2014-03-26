@@ -41,7 +41,7 @@ public class HashCode extends IntrinsicMethod {
             StackValue receiver
     ) {
         receiver.put(AsmTypeConstants.OBJECT_TYPE, v);
-        v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I");
+        v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false);
         return Type.INT_TYPE;
     }
 }

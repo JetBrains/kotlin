@@ -180,7 +180,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
         protected boolean isExists;
 
         public TestClassVisitor() {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
         }
 
         abstract public int getAccess();

@@ -31,7 +31,7 @@ public class MaxCalcNode extends MethodVisitor {
     private final MethodNode node;
 
     public MaxCalcNode(MethodNode node) {
-        super(Opcodes.ASM4, node);
+        super(InlineCodegenUtil.API, node);
         this.node = node;
         int paramsSize = (node.access & Opcodes.ACC_STATIC) == 0 ? 1 : 0;
 

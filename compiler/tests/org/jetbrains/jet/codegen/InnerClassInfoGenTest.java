@@ -97,7 +97,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         ClassReader reader = new ClassReader(bytes);
         final List<InnerClassAttribute> result = new ArrayList<InnerClassAttribute>();
 
-        reader.accept(new ClassVisitor(ASM4) {
+        reader.accept(new ClassVisitor(ASM5) {
             @Override
             public void visitInnerClass(String name, String outerName, String innerName, int access) {
                 result.add(new InnerClassAttribute(name, outerName, innerName, access));

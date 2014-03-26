@@ -110,7 +110,7 @@ public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
                 ActualSignature readSignature;
 
                 public Visitor() {
-                    super(Opcodes.ASM4);
+                    super(Opcodes.ASM5);
                 }
 
                 @Override
@@ -126,7 +126,7 @@ public abstract class AbstractWriteSignatureTest extends TestCaseWithTmpdir {
                 public MethodVisitor visitMethod(int access, String name, final String desc, final String signature, String[] exceptions) {
                     if (name.equals(methodName)) {
 
-                        return new MethodVisitor(Opcodes.ASM4) {
+                        return new MethodVisitor(Opcodes.ASM5) {
                             @Override
                             public void visitEnd() {
                                 Assert.assertNull(readSignature);

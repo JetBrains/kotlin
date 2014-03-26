@@ -181,13 +181,13 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
             List<LocalVariable> readVariables = new ArrayList<LocalVariable>();
 
             public Visitor() {
-                super(Opcodes.ASM4);
+                super(Opcodes.ASM5);
             }
 
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
                 if (methodName.equals(name + desc)) {
-                    return new MethodVisitor(Opcodes.ASM4) {
+                    return new MethodVisitor(Opcodes.ASM5) {
                         @Override
                         public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
                             readVariables.add(new LocalVariable(name, desc, index));

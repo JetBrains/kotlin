@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.*;
 
 public abstract class AbstractClassBuilder implements ClassBuilder {
-    protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.ASM4) {};
-    protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.ASM4) {};
+    protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.ASM5) {};
+    protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.ASM5) {};
 
     private String thisName;
 

@@ -20,13 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.Method;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.util.Textifier;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -48,6 +41,13 @@ import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.util.Textifier;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -176,7 +176,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
             JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
             Method asmMethod = jvmSignature.getAsmMethod();
-            node = new MethodNode(Opcodes.ASM4,
+            node = new MethodNode(InlineCodegenUtil.API,
                                            getMethodAsmFlags(functionDescriptor, context.getContextKind()),
                                            asmMethod.getName(),
                                            asmMethod.getDescriptor(),
@@ -236,7 +236,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
-        MethodNode methodNode = new MethodNode(Opcodes.ASM4, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), jvmMethodSignature.getGenericsSignature(), null);
+        MethodNode methodNode = new MethodNode(InlineCodegenUtil.API, getMethodAsmFlags(descriptor, context.getContextKind()), asmMethod.getName(), asmMethod.getDescriptor(), jvmMethodSignature.getGenericsSignature(), null);
 
         MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
 

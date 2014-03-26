@@ -35,7 +35,7 @@ public class InlineAdapter extends InstructionAdapter {
     private int nextLocalIndexBeforeInline = -1;
 
     public InlineAdapter(MethodVisitor mv, int localsSize) {
-        super(mv);
+        super(InlineCodegenUtil.API, mv);
         nextLocalIndex = localsSize;
     }
 

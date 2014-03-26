@@ -125,7 +125,7 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     public OuterClassInfo getOuterClassInfo(ClassReader reader) {
         final OuterClassInfo info = new OuterClassInfo();
-        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+        reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public void visitOuterClass(String owner, String name, String desc) {
                 info.owner = owner;

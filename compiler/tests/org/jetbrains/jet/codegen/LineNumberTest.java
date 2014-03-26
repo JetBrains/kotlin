@@ -175,14 +175,14 @@ public class LineNumberTest extends TestCaseWithTmpdir {
         final List<Label> labels = Lists.newArrayList();
         final Map<Label, Integer> labels2LineNumbers = Maps.newHashMap();
 
-        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM4) {
+        ClassVisitor visitor = new ClassVisitor(Opcodes.ASM5) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                return new MethodVisitor(Opcodes.ASM4) {
+                return new MethodVisitor(Opcodes.ASM5) {
                     private Label lastLabel;
 
                     @Override
-                    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                         if (LINE_NUMBER_FUN.equals(name)) {
                             assert lastLabel != null : "A function call with no preceding label";
                             labels.add(lastLabel);
@@ -218,10 +218,10 @@ public class LineNumberTest extends TestCaseWithTmpdir {
     @NotNull
     private static List<Integer> readAllLineNumbers(@NotNull ClassReader reader) {
         final List<Integer> result = new ArrayList<Integer>();
-        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+        reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                return new MethodVisitor(Opcodes.ASM4) {
+                return new MethodVisitor(Opcodes.ASM5) {
                     @Override
                     public void visitLineNumber(int line, Label label) {
                         result.add(line);

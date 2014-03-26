@@ -970,7 +970,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         mv.visitCode();
         mv.visitFieldInsn(GETSTATIC, classAsmType.getInternalName(), VALUES, type.getDescriptor());
-        mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;");
+        mv.visitMethodInsn(INVOKEVIRTUAL, type.getInternalName(), "clone", "()Ljava/lang/Object;", false);
         mv.visitTypeInsn(CHECKCAST, type.getInternalName());
         mv.visitInsn(ARETURN);
         FunctionCodegen.endVisit(mv, "values()", myClass);
@@ -984,7 +984,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         mv.visitCode();
         mv.visitLdcInsn(classAsmType);
         mv.visitVarInsn(ALOAD, 0);
-        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;");
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Enum", "valueOf", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;", false);
         mv.visitTypeInsn(CHECKCAST, classAsmType.getInternalName());
         mv.visitInsn(ARETURN);
         FunctionCodegen.endVisit(mv, "valueOf()", myClass);

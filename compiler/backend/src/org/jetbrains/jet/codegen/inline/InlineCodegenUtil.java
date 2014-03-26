@@ -53,7 +53,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
 
-    public final static int API = Opcodes.ASM4;
+    public final static int API = Opcodes.ASM5;
 
     public final static String INVOKE = "invoke";
 
