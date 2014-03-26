@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.types.JetType
 

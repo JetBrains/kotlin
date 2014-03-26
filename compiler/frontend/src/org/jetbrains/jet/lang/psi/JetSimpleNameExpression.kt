@@ -25,46 +25,8 @@ import org.jetbrains.jet.lang.parsing.JetExpressionParsing
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lexer.JetTokens.*
-import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 
 public trait JetSimpleNameExpression : JetReferenceExpression {
-
-    public fun getReceiverExpression(): JetExpression? {
-        val parent = getParent()
-        when {
-            parent is JetQualifiedExpression && !isImportDirectiveExpression() -> {
-                val receiverExpression = parent.getReceiverExpression()
-                // Name expression can't be receiver for itself
-                if (receiverExpression != this) {
-                    return receiverExpression
-                }
-            }
-            parent is JetCallExpression -> {
-                //This is in case `a().b()`
-                val callExpression = (parent as JetCallExpression)
-                val grandParent = callExpression.getParent()
-                if (grandParent is JetQualifiedExpression) {
-                    val parentsReceiver = grandParent.getReceiverExpression()
-                    if (parentsReceiver != callExpression) {
-                        return parentsReceiver
-                    }
-                }
-            }
-            parent is JetBinaryExpression && parent.getOperationReference() == this -> {
-                return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.getRight() else parent.getLeft()
-            }
-            parent is JetUnaryExpression && parent.getOperationReference() == this -> {
-                return parent.getBaseExpression()!!
-            }
-            parent is JetUserType -> {
-                val qualifier = parent.getQualifier()
-                if (qualifier != null) {
-                    return qualifier.getReferenceExpression()!!
-                }
-            }
-        }
-        return null
-    }
 
     public fun isImportDirectiveExpression(): Boolean {
         val parent = getParent()

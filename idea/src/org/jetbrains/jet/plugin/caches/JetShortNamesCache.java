@@ -36,6 +36,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.asJava.JavaElementFinder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -289,7 +290,7 @@ public class JetShortNamesCache extends PsiShortNamesCache {
             @NotNull GlobalSearchScope searchScope
     ) {
         BindingContext context = resolveSession.resolveToElement(expression);
-        JetExpression receiverExpression = expression.getReceiverExpression();
+        JetExpression receiverExpression = PsiUtilPackage.getReceiverExpression(expression);
         if (receiverExpression == null) {
             return Collections.emptyList();
         }

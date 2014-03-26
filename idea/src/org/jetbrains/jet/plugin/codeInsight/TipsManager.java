@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -51,7 +52,7 @@ public final class TipsManager {
             @NotNull JetSimpleNameExpression expression,
             @NotNull BindingContext context
     ) {
-        JetExpression receiverExpression = expression.getReceiverExpression();
+        JetExpression receiverExpression = PsiUtilPackage.getReceiverExpression(expression);
         PsiElement parent = expression.getParent();
         boolean inPositionForCompletionWithReceiver = parent instanceof JetCallExpression || parent instanceof JetQualifiedExpression;
         if (receiverExpression != null && inPositionForCompletionWithReceiver) {
