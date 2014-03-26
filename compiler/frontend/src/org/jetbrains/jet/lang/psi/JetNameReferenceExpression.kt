@@ -18,4 +18,4 @@ package org.jetbrains.jet.lang.psi
 
 import com.intellij.lang.ASTNode
 
-public class JetNameReferenceExpression(node: ASTNode) : JetSimpleNameExpression(node)
+public class JetNameReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node)
