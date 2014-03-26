@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi;
+package org.jetbrains.jet.lang.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.ASTNode
 
-public class JetLabelReferenceExpression extends JetSimpleNameExpression {
-    public JetLabelReferenceExpression(@NotNull ASTNode node) {
-        super(node);
-    }
-}
+public class JetNameReferenceExpression(node: ASTNode) : JetSimpleNameExpression(node)
