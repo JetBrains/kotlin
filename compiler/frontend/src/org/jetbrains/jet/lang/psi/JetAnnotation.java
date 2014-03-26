@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import java.util.List;
 
 public class JetAnnotation extends JetElementImplStub<PsiJetPlaceHolderStub<JetAnnotation>> {
+
     public JetAnnotation(@NotNull ASTNode node) {
         super(node);
     }
