@@ -77,14 +77,14 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
 
             try {
                 ClassReader classReader = new ClassReader(inputData.getContent());
-                classReader.accept(new ClassVisitor(Opcodes.ASM4) {
+                classReader.accept(new ClassVisitor(Opcodes.ASM5) {
                     @Override
                     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
                         if (!kotlinAnnotationsDesc.contains(desc)) {
                             return null;
                         }
                         annotationPresent.set(true);
-                        return new AnnotationVisitor(Opcodes.ASM4) {
+                        return new AnnotationVisitor(Opcodes.ASM5) {
                             @Override
                             public void visit(String name, Object value) {
                                 if (ABI_VERSION_FIELD_NAME.equals(name)) {

@@ -144,7 +144,7 @@ public class MethodInliner {
             }
 
             @Override
-            public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+            public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                 if (/*INLINE_RUNTIME.equals(owner) &&*/ isInvokeOnLambda(owner, name)) { //TODO add method
                     assert !currentInvokes.isEmpty();
                     InvokeCall invokeCall = currentInvokes.remove();
@@ -152,7 +152,7 @@ public class MethodInliner {
 
                     if (info == null) {
                         //noninlinable lambda
-                        super.visitMethodInsn(opcode, owner, name, desc);
+                        super.visitMethodInsn(opcode, owner, name, desc, itf);
                         return;
                     }
 
@@ -187,14 +187,14 @@ public class MethodInliner {
                         for (CapturedParamInfo capturedParamInfo : invocation.getAllRecapturedParameters()) {
                             visitFieldInsn(Opcodes.GETSTATIC, capturedParamInfo.getContainingLambdaName(), "$$$" + capturedParamInfo.getOriginalFieldName(), capturedParamInfo.getType().getDescriptor());
                         }
-                        super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor());
+                        super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor(), itf);
                         invocation = null;
                     } else {
-                        super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc);
+                        super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                     }
                 }
                 else {
-                    super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc);
+                    super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
                 }
             }
 
@@ -227,7 +227,7 @@ public class MethodInliner {
         Type[] allTypes = ArrayUtil.mergeArrays(types, capturedTypes.toArray(new Type[capturedTypes.size()]));
 
         node.instructions.resetLabels();
-        MethodNode transformedNode = new MethodNode(node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
+        MethodNode transformedNode = new MethodNode(InlineCodegenUtil.API, node.access, node.name, Type.getMethodDescriptor(returnType, allTypes), node.signature, null) {
 
             private final boolean isInliningLambda = nodeRemapper.isInsideInliningLambda();
 

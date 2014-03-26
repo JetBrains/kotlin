@@ -20,21 +20,20 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.OutputFile;
+import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
-import org.jetbrains.jet.OutputFile;
-import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.ASM4;
 import static org.jetbrains.org.objectweb.asm.Opcodes.V1_6;
 
 public class LambdaTransformer {
@@ -139,13 +138,13 @@ public class LambdaTransformer {
 
         if (bridge != null) {
             MethodVisitor invokeBridge = newMethod(classBuilder, bridge);
-            bridge.accept(new MethodVisitor(ASM4, invokeBridge) {
+            bridge.accept(new MethodVisitor(InlineCodegenUtil.API, invokeBridge) {
                 @Override
-                public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                     if (owner.equals(oldLambdaType.getInternalName())) {
-                        super.visitMethodInsn(opcode, newLambdaType.getInternalName(), name, desc);
+                        super.visitMethodInsn(opcode, newLambdaType.getInternalName(), name, desc, itf);
                     } else {
-                        super.visitMethodInsn(opcode, owner, name, desc);
+                        super.visitMethodInsn(opcode, owner, name, desc, itf);
                     }
                 }
             });

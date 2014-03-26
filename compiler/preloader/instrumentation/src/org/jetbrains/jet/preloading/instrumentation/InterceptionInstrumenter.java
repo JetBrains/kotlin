@@ -275,7 +275,7 @@ public class InterceptionInstrumenter {
     private byte[] instrument(byte[] classData, final List<MethodInstrumenter> instrumenters) {
         final ClassReader cr = new ClassReader(classData);
         ClassWriter cw = new ClassWriter(cr, 0);
-        cr.accept(new ClassVisitor(ASM4, cw) {
+        cr.accept(new ClassVisitor(ASM5, cw) {
             private final Map<MethodInstrumenter, String> matchedMethods = new HashMap<MethodInstrumenter, String>();
 
             @Override
@@ -326,7 +326,7 @@ public class InterceptionInstrumenter {
                 final int maxStackDepth = getMaxStackDepth(name, desc, normalReturnData, enterData, exceptionData);
                 final boolean isConstructor = "<init>".equals(name);
 
-                return new MethodVisitor(ASM4, mv) {
+                return new MethodVisitor(ASM5, mv) {
 
                     private InstructionAdapter ia = null;
 

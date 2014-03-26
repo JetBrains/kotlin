@@ -48,7 +48,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDec
 public abstract class AnnotationCodegen {
     public static final FqName VOLATILE_FQ_NAME = new FqName("kotlin.volatile");
 
-    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM4) {};
+    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};
 
     private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;

@@ -164,14 +164,14 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNotNull(file);
         ClassReader reader = new ClassReader(file.asByteArray());
 
-        reader.accept(new ClassVisitor(Opcodes.ASM4) {
+        reader.accept(new ClassVisitor(Opcodes.ASM5) {
             @Override
             public MethodVisitor visitMethod(
                     int access, final String callerName, final String callerDesc, String signature, String[] exceptions
             ) {
-                return new MethodVisitor(Opcodes.ASM4) {
+                return new MethodVisitor(Opcodes.ASM5) {
                     @Override
-                    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+                    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
                         assertFalse(
                                 "Intrinsics method is called: " + name + desc + "  Caller: " + callerName + callerDesc,
                                 "kotlin/jvm/internal/Intrinsics".equals(owner)
