@@ -625,8 +625,7 @@ public class BodyResolver {
 
         if (!needCompleteAnalysis) return;
 
-        JetExpression bodyExpression = function.getBodyExpression();
-        if (bodyExpression != null) {
+        if (function.hasBody()) {
             expressionTypingServices.checkFunctionReturnType(functionInnerScope, function, functionDescriptor, c.getOuterDataFlowInfo(), null, trace);
         }
 

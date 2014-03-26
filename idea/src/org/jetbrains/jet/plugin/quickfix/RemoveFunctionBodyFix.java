@@ -52,8 +52,7 @@ public class RemoveFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) &&
-                element.getBodyExpression() != null;
+        return super.isAvailable(project, editor, file) && element.hasBody();
     }
 
     @Override

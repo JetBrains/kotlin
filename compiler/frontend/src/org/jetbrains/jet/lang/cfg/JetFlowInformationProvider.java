@@ -202,8 +202,7 @@ public class JetFlowInformationProvider {
         assert subroutine instanceof JetDeclarationWithBody;
         JetDeclarationWithBody function = (JetDeclarationWithBody) subroutine;
 
-        JetExpression bodyExpression = function.getBodyExpression();
-        if (bodyExpression == null) return;
+        if (!function.hasBody()) return;
 
         List<JetElement> returnedExpressions = Lists.newArrayList();
         collectReturnExpressions(returnedExpressions);

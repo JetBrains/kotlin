@@ -102,6 +102,11 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     }
 
     @Override
+    public boolean hasBody() {
+        return getBodyExpression() != null;
+    }
+
+    @Override
     public boolean hasDeclaredReturnType() {
         return getReturnTypeRef() != null;
     }

@@ -87,8 +87,7 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkFunction(@NotNull BodiesResolveContext c, @NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
-        JetExpression bodyExpression = function.getBodyExpression();
-        if (bodyExpression == null) return;
+        if (!function.hasBody()) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
         if (c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();

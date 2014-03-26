@@ -73,4 +73,9 @@ public class JetFunctionLiteral extends JetFunctionNotStubbed {
     public FqName getFqName() {
         return null;
     }
+
+    @Override
+    public boolean hasBody() {
+        return getBodyExpression() != null;
+    }
 }

@@ -100,8 +100,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitFunctionLiteralExpression(@NotNull JetFunctionLiteralExpression expression, ExpressionTypingContext context) {
-        JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
-        if (bodyExpression == null) return null;
+        if (!expression.getFunctionLiteral().hasBody()) return null;
 
         JetType expectedType = context.expectedType;
         boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(

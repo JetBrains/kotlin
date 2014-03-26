@@ -110,8 +110,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private void translateBody() {
-        JetExpression jetBodyExpression = functionDeclaration.getBodyExpression();
-        if (jetBodyExpression == null) {
+        if (!functionDeclaration.hasBody()) {
             assert descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }

@@ -26,7 +26,6 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetFunction;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -51,18 +50,16 @@ public class AddFunctionBodyFix extends JetIntentionAction<JetFunction> {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return super.isAvailable(project, editor, file) &&
-                element.getBodyExpression() == null;
+        return super.isAvailable(project, editor, file) && !element.hasBody();
     }
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         JetFunction newElement = (JetFunction) element.copy();
-        JetExpression bodyExpression = newElement.getBodyExpression();
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
             newElement.add(JetPsiFactory.createWhiteSpace(project));
         }
-        if (bodyExpression == null) {
+        if (!newElement.hasBody()) {
             newElement.add(JetPsiFactory.createEmptyBody(project));
         }
         element.replace(newElement);

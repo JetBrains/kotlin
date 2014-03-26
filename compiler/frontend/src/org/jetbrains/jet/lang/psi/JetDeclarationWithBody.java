@@ -31,6 +31,8 @@ public interface JetDeclarationWithBody extends JetDeclaration {
 
     boolean hasBlockBody();
 
+    boolean hasBody();
+
     boolean hasDeclaredReturnType();
 
     @NotNull

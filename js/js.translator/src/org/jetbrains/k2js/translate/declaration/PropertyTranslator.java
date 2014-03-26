@@ -102,11 +102,11 @@ public final class PropertyTranslator extends AbstractTranslator {
     }
 
     private boolean hasCustomGetter() {
-        return declaration != null && declaration.getGetter() != null && getCustomGetterDeclaration().getBodyExpression() != null;
+        return declaration != null && declaration.getGetter() != null && getCustomGetterDeclaration().hasBody();
     }
 
     private boolean hasCustomSetter() {
-        return declaration != null && declaration.getSetter() != null && getCustomSetterDeclaration().getBodyExpression() != null;
+        return declaration != null && declaration.getSetter() != null && getCustomSetterDeclaration().hasBody();
     }
 
     @NotNull

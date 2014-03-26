@@ -76,6 +76,11 @@ public class JetPropertyAccessor extends JetDeclarationImpl
         return getEqualsToken() == null;
     }
 
+    @Override
+    public boolean hasBody() {
+        return getBodyExpression() != null;
+    }
+
     @Nullable
     public PsiElement getEqualsToken() {
         return findChildByType(JetTokens.EQ);
