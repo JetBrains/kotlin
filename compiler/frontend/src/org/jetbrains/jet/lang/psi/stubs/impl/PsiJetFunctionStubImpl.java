@@ -33,15 +33,17 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     private final boolean isTopLevel;
     private final boolean isExtension;
     private final FqName fqName;
+    private final boolean hasBlockBody;
 
     public PsiJetFunctionStubImpl(
             @NotNull StubElement parent,
             @Nullable String name,
             boolean isTopLevel,
             @Nullable FqName fqName,
-            boolean isExtension
+            boolean isExtension,
+            boolean hasBlockBody
     ) {
-        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension);
+        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension, hasBlockBody);
     }
 
     public PsiJetFunctionStubImpl(
@@ -49,7 +51,8 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
             @Nullable StringRef nameRef,
             boolean isTopLevel,
             @Nullable FqName fqName,
-            boolean isExtension
+            boolean isExtension,
+            boolean hasBlockBody
     ) {
         super(parent, JetStubElementTypes.FUNCTION);
 
@@ -61,6 +64,7 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
         this.fqName = fqName;
         this.isTopLevel = isTopLevel;
         this.isExtension = isExtension;
+        this.hasBlockBody = hasBlockBody;
     }
 
     @Override
@@ -76,6 +80,11 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public boolean isExtension() {
         return isExtension;
+    }
+
+    @Override
+    public boolean hasBlockBody() {
+        return hasBlockBody;
     }
 
     @NotNull
@@ -97,6 +106,10 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
 
         if (isExtension()) {
             builder.append("ext ");
+        }
+
+        if (!hasBlockBody) {
+            builder.append("no block body ");
         }
 
         builder.append("name=").append(getName());
