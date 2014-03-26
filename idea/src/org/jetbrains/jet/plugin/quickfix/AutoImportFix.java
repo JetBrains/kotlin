@@ -43,6 +43,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
+import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
@@ -113,7 +114,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
     }
 
     private static boolean isSuppressedTopLevelImportInPosition(@NotNull JetSimpleNameExpression element) {
-        return element.isImportDirectiveExpression() || JetPsiUtil.isSelectorInQualified(element);
+        return PsiUtilPackage.isImportDirectiveExpression(element) || JetPsiUtil.isSelectorInQualified(element);
     }
 
     private static Collection<FqName> getJetTopLevelFunctions(

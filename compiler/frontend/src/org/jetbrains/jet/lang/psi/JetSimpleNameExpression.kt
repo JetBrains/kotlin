@@ -28,16 +28,6 @@ import org.jetbrains.jet.lexer.JetTokens.*
 
 public trait JetSimpleNameExpression : JetReferenceExpression {
 
-    public fun isImportDirectiveExpression(): Boolean {
-        val parent = getParent()
-        if (parent == null) {
-            return false
-        }
-        else {
-            return parent is JetImportDirective || parent.getParent() is JetImportDirective
-        }
-    }
-
     public fun getReferencedName(): String {
         val text = getReferencedNameElement().getNode()!!.getText()
         return JetPsiUtil.unquoteIdentifierOrFieldReference(text)
