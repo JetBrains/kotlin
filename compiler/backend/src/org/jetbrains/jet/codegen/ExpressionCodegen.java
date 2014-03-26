@@ -1657,11 +1657,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
 
-        int index = lookupLocalIndex(descriptor);
-        if (index >= 0) {
-            return stackValueForLocal(descriptor, index);
-        }
-
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
 
@@ -1708,6 +1703,32 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return StackValue.onStack(OBJECT_TYPE);
         }
 
+        StackValue localOrCaptured = findLocalOrCapturedValue(descriptor);
+        if (localOrCaptured != null) {
+            return localOrCaptured;
+        }
+
+        if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
+            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
+            Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
+            ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
+            ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
+            StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
+            script.put(script.type, v);
+            Type fieldType = typeMapper.mapType(valueParameterDescriptor);
+            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false);
+        }
+
+        throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+    }
+
+    @Nullable
+    public StackValue findLocalOrCapturedValue(@NotNull DeclarationDescriptor descriptor) {
+        int index = lookupLocalIndex(descriptor);
+        if (index >= 0) {
+            return stackValueForLocal(descriptor, index);
+        }
+
         StackValue value = context.lookupInContext(descriptor, StackValue.local(0, OBJECT_TYPE), state, false);
         if (value != null) {
             if (context.isSpecialStackValue(value)) {
@@ -1729,20 +1750,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             return value;
         }
-
-        if (descriptor instanceof ValueParameterDescriptor && descriptor.getContainingDeclaration() instanceof ScriptDescriptor) {
-            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) descriptor.getContainingDeclaration();
-            Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
-            ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
-            ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
-            StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
-            script.put(script.type, v);
-            Type fieldType = typeMapper.mapType(valueParameterDescriptor);
-            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false);
-        }
-
-        throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
+        return null;
     }
+
 
     private StackValue stackValueForLocal(DeclarationDescriptor descriptor, int index) {
         if (descriptor instanceof VariableDescriptor) {
@@ -2010,20 +2020,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         Callable callable = resolveToCallable(accessibleFunctionDescriptor(fd), superCall);
 
-        if (callable instanceof CallableMethod) {
-            CallableMethod callableMethod = (CallableMethod) callable;
-            Type calleeType = callableMethod.getGenerateCalleeType();
-            if (calleeType != null) {
-                assert !callableMethod.isNeedsThis() : "Method should have a receiver: " + resolvedCall.getResultingDescriptor();
-                gen(call.getCalleeExpression(), calleeType);
-            }
-        }
-
-        return invokeFunctionWithCalleeOnStack(call, receiver, resolvedCall, callable);
+        return invokeFunction(call, receiver, resolvedCall, callable);
     }
 
     @NotNull
-    private StackValue invokeFunctionWithCalleeOnStack(
+    private StackValue invokeFunction(
             @NotNull Call call,
             @NotNull StackValue receiver,
             @NotNull ResolvedCall<?> resolvedCall,
@@ -2287,6 +2288,15 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
+        //generate callee for local function
+        Type calleeType = callableMethod.getGenerateCalleeType();
+        if (calleeType != null) {
+            StackValue value = findLocalOrCapturedValue(resolvedCall.getCandidateDescriptor());
+            assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
+            value.put(calleeType, v);
+        }
+
+        //generate this (absent for local fun) and receiver
         if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
@@ -2531,43 +2541,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             else {
                 Call call = CallMaker.makeCall(fakeExpression, NO_RECEIVER, null, fakeExpression, fakeArguments);
                 Callable callable = codegen.resolveToCallable(codegen.accessibleFunctionDescriptor(referencedFunction), false);
-                StackValue receiver = generateCallee(codegen, callable);
-                if (extensionReceiver.exists()) {
-                    receiver = StackValue.composed(receiver, receiverParameterStackValue(signature));
-                }
-                result = codegen.invokeFunctionWithCalleeOnStack(call, receiver, fakeResolvedCall, callable);
+                result = codegen.invokeFunction(call, StackValue.none(), fakeResolvedCall, callable);
             }
 
             InstructionAdapter v = codegen.v;
             result.put(returnType, v);
             v.areturn(returnType);
-        }
-
-        @NotNull
-        private StackValue generateCallee(@NotNull ExpressionCodegen codegen, @NotNull Callable callable) {
-            if (!(callable instanceof CallableMethod) || ((CallableMethod) callable).getGenerateCalleeType() == null) {
-                return StackValue.none();
-            }
-
-            // If referenced method is a CallableMethod with generateCalleeType != null, this means it's some kind of a closure
-            // (e.g. a local named function) and a non-trivial callee should be generated before calling invoke()
-
-            BindingContext bindingContext = codegen.bindingContext;
-            ClassDescriptor closureClassOfReferenced = bindingContext.get(CLASS_FOR_FUNCTION, referencedFunction);
-            MutableClosure closureOfReferenced = bindingContext.get(CLOSURE, closureClassOfReferenced);
-            assert closureOfReferenced != null :
-                    "Function mapped to CallableMethod with generateCalleeType != null must be a closure: " + referencedFunction;
-            if (isConst(closureOfReferenced)) {
-                // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
-                // (instead of passing this instance to the constructor and storing as a field)
-                Type asmType = asmTypeForAnonymousClass(bindingContext, referencedFunction);
-                codegen.v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-                return StackValue.onStack(asmType);
-            }
-            else {
-                Type asmCallRefType = asmTypeForAnonymousClass(bindingContext, callableDescriptor);
-                return codegen.context.lookupInContext(referencedFunction, StackValue.local(0, asmCallRefType), state, false);
-            }
         }
 
         @NotNull
