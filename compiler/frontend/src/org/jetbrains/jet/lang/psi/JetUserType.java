@@ -69,8 +69,8 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
     }
 
     @Nullable @IfNotParsed
-    public JetSimpleNameExpression getReferenceExpression() {
-        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    public JetNameReferenceExpression getReferenceExpression() {
+        return (JetNameReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable
@@ -80,7 +80,7 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
 
     @Nullable
     public String getReferencedName() {
-        JetSimpleNameExpression referenceExpression = getReferenceExpression();
+        JetNameReferenceExpression referenceExpression = getReferenceExpression();
         return referenceExpression == null ? null : referenceExpression.getReferencedName();
     }
 }
