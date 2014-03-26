@@ -380,13 +380,13 @@ fun main(args: Array<String>) {
             model("intentions/attributeCallReplacements/replaceUnaryPrefixIntention", testMethod = "doTestReplaceUnaryPrefixIntention")
             model("intentions/attributeCallReplacements/replaceInvokeIntention", testMethod = "doTestReplaceInvokeIntention")
             model("intentions/simplifyNegatedBinaryExpressionIntention", testMethod = "doTestSimplifyNegatedBinaryExpressionIntention")
+            model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
+            model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
+            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
             model("codeInsight/inspections", extension = null, recursive = false)
-            model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
-            model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
-            model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
