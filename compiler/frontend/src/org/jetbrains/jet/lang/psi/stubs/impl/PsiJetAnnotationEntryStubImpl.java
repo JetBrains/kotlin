@@ -21,17 +21,17 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetAnnotationStubImpl extends StubBase<JetAnnotationEntry> implements PsiJetAnnotationStub  {
+public class PsiJetAnnotationEntryStubImpl extends StubBase<JetAnnotationEntry> implements PsiJetAnnotationEntryStub {
     private final StringRef shortName;
 
-    public PsiJetAnnotationStubImpl(StubElement parent, @NotNull String shortName) {
+    public PsiJetAnnotationEntryStubImpl(StubElement parent, @NotNull String shortName) {
         this(parent, StringRef.fromString(shortName));
     }
 
-    public PsiJetAnnotationStubImpl(StubElement parent, StringRef shortName) {
+    public PsiJetAnnotationEntryStubImpl(StubElement parent, StringRef shortName) {
         super(parent, JetStubElementTypes.ANNOTATION_ENTRY);
         this.shortName = shortName;
     }
@@ -44,7 +44,7 @@ public class PsiJetAnnotationStubImpl extends StubBase<JetAnnotationEntry> imple
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetAnnotationStubImpl[");
+        builder.append("PsiJetAnnotationEntryStubImpl[");
         builder.append("shortName=").append(getShortName());
         builder.append("]");
         return builder.toString();

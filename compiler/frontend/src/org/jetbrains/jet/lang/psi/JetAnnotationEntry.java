@@ -20,18 +20,18 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationStub;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationStub> implements JetCallElement {
+public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntryStub> implements JetCallElement {
     public JetAnnotationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public JetAnnotationEntry(@NotNull PsiJetAnnotationStub stub) {
+    public JetAnnotationEntry(@NotNull PsiJetAnnotationEntryStub stub) {
         super(stub, JetStubElementTypes.ANNOTATION_ENTRY);
     }
 

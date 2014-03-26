@@ -35,7 +35,7 @@ public interface JetStubElementTypes {
     JetPlaceHolderStubElementType<JetTypeParameterList> TYPE_PARAMETER_LIST =
             new JetPlaceHolderStubElementType<JetTypeParameterList>("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
 
-    JetAnnotationElementType ANNOTATION_ENTRY = new JetAnnotationElementType("ANNOTATION_ENTRY");
+    JetAnnotationEntryElementType ANNOTATION_ENTRY = new JetAnnotationEntryElementType("ANNOTATION_ENTRY");
 
     JetPlaceHolderStubElementType<JetClassBody> CLASS_BODY =
             new JetPlaceHolderStubElementType<JetClassBody>("CLASS_BODY", JetClassBody.class);
@@ -56,6 +56,6 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetTypeReference> TYPE_REFERENCE =
                 new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);;
-    
+
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
 }

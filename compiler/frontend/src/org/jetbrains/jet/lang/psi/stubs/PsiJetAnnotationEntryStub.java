@@ -19,6 +19,6 @@ package org.jetbrains.jet.lang.psi.stubs;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 
-public interface PsiJetAnnotationStub extends StubElement<JetAnnotationEntry> {
+public interface PsiJetAnnotationEntryStub extends StubElement<JetAnnotationEntry> {
      String getShortName();
 }
