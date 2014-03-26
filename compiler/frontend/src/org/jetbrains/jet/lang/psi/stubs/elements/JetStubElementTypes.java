@@ -36,6 +36,8 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetTypeParameterList>("TYPE_PARAMETER_LIST", JetTypeParameterList.class);
 
     JetAnnotationEntryElementType ANNOTATION_ENTRY = new JetAnnotationEntryElementType("ANNOTATION_ENTRY");
+    JetPlaceHolderStubElementType<JetAnnotation> ANNOTATION =
+                new JetPlaceHolderStubElementType<JetAnnotation>("ANNOTATION", JetAnnotation.class);
 
     JetPlaceHolderStubElementType<JetClassBody> CLASS_BODY =
             new JetPlaceHolderStubElementType<JetClassBody>("CLASS_BODY", JetClassBody.class);

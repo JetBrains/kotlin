@@ -55,8 +55,8 @@ public interface JetNodeTypes {
     IElementType IMPORT_DIRECTIVE                   = JetStubElementTypes.IMPORT_DIRECTIVE;
     IElementType MODIFIER_LIST                      = JetStubElementTypes.MODIFIER_LIST;
     IElementType PRIMARY_CONSTRUCTOR_MODIFIER_LIST  = JetStubElementTypes.PRIMARY_CONSTRUCTOR_MODIFIER_LIST;
-    JetNodeType ANNOTATION = new JetNodeType("ANNOTATION", JetAnnotation.class);
-    IElementType ANNOTATION_ENTRY = JetStubElementTypes.ANNOTATION_ENTRY;
+    IElementType ANNOTATION                         = JetStubElementTypes.ANNOTATION;
+    IElementType ANNOTATION_ENTRY                   = JetStubElementTypes.ANNOTATION_ENTRY;
 
     JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
