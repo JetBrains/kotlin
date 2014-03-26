@@ -29,7 +29,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import java.util.Collections;
 import java.util.List;
 
-public class JetArrayAccessExpression extends JetReferenceExpression {
+public class JetArrayAccessExpression extends JetExpressionImpl implements JetReferenceExpression {
     public JetArrayAccessExpression(@NotNull ASTNode node) {
         super(node);
     }

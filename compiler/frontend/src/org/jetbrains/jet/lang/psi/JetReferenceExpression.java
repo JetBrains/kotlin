@@ -16,11 +16,5 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-
-public abstract class JetReferenceExpression extends JetExpressionImpl {
-    public JetReferenceExpression(@NotNull ASTNode node) {
-        super(node);
-    }
+public interface JetReferenceExpression extends JetExpression {
 }

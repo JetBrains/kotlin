@@ -29,7 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import java.util.Collections;
 import java.util.List;
 
-public class JetPackageDirective extends JetReferenceExpression {
+public class JetPackageDirective extends JetExpressionImpl implements JetReferenceExpression {
     private String qualifiedNameCache = null;
 
     public JetPackageDirective(@NotNull ASTNode node) {

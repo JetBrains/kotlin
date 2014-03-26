@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-public class JetThisReferenceExpression extends JetReferenceExpression {
+public class JetThisReferenceExpression extends JetExpressionImpl implements JetReferenceExpression {
     public JetThisReferenceExpression(@NotNull ASTNode node) {
         super(node);
     }

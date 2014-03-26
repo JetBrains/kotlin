@@ -215,7 +215,7 @@ public fun PsiElement.parameterIndex(): Int {
  * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
  */
 public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
-    val baseExpression = (getParent() as? JetCallExpression) ?: this
+    val baseExpression: JetElement = (getParent() as? JetCallExpression) ?: this
     val parent = baseExpression.getParent()
     return when (parent) {
         is JetQualifiedExpression -> if (parent.getSelectorExpression().isAncestor(baseExpression)) parent else baseExpression
