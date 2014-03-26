@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.ArrayList;
@@ -33,6 +35,9 @@ import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.ANNO
  * Underlying token is {@link org.jetbrains.jet.JetNodeTypes#TYPE_REFERENCE}
  */
 public class JetTypeReference extends JetElementImplStub<PsiJetPlaceHolderStub<JetTypeReference>> {
+
+    public static final TokenSet TYPE_ELEMENTS = TokenSet.create(JetStubElementTypes.USER_TYPE, JetStubElementTypes.NULLABLE_TYPE);
+
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);
     }
@@ -53,7 +58,12 @@ public class JetTypeReference extends JetElementImplStub<PsiJetPlaceHolderStub<J
 
     @Nullable
     public JetTypeElement getTypeElement() {
-        return findChildByClass(JetTypeElement.class);
+        //TODO:
+        JetTypeElement[] typeElements = getStubOrPsiChildren(TYPE_ELEMENTS, new JetTypeElement[] {});
+        if (typeElements.length == 0) {
+            return null;
+        }
+        return typeElements[0];
     }
 
     public List<JetAnnotationEntry> getAnnotations() {
