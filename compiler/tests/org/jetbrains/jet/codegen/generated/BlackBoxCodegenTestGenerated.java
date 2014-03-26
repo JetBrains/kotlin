@@ -5020,6 +5020,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/traits/inheritedVar.kt");
         }
         
+        @TestMetadata("kt1936.kt")
+        public void testKt1936() throws Exception {
+            doTest("compiler/testData/codegen/box/traits/kt1936.kt");
+        }
+        
         @TestMetadata("kt1936_1.kt")
         public void testKt1936_1() throws Exception {
             doTest("compiler/testData/codegen/box/traits/kt1936_1.kt");
