@@ -55,7 +55,7 @@ fun qualifiedName(descriptor: DeclarationDescriptor?): String {
         return ""
     }
     else if (descriptor is PackageFragmentDescriptor) {
-        return descriptor.getFqName().asString()
+        return descriptor.fqName.asString()
     }
     else {
         val parent = containerName(descriptor)
