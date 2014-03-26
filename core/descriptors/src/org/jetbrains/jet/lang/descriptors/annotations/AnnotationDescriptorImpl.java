@@ -30,6 +30,7 @@ import java.util.Map;
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     private JetType annotationType;
     private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments = Maps.newHashMap();
+    private boolean valueArgumentsResolved = false;
 
     @Override
     @NotNull
@@ -40,12 +41,14 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     @Override
     @Nullable
     public CompileTimeConstant<?> getValueArgument(@NotNull ValueParameterDescriptor valueParameterDescriptor) {
-        return valueArguments.get(valueParameterDescriptor);
+        return getAllValueArguments().get(valueParameterDescriptor);
     }
-    
+
     @Override
     @NotNull
     public Map<ValueParameterDescriptor, CompileTimeConstant<?>> getAllValueArguments() {
+        // TODO: this assertion does not hold now, but this whole class will be gone before long, so I'm not fixing it
+        //assert valueArgumentsResolved : "Value arguments are not resolved yet for [" + getType() + "]";
         return Collections.unmodifiableMap(valueArguments);
     }
 
@@ -54,7 +57,16 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     }
 
     public void setValueArgument(@NotNull ValueParameterDescriptor name, @NotNull CompileTimeConstant<?> value) {
+        assert !valueArgumentsResolved : "Value arguments are already resolved for " + this;
         valueArguments.put(name, value);
+    }
+
+    public void markValueArgumentsResolved() {
+        this.valueArgumentsResolved = true;
+    }
+
+    public boolean areValueArgumentsResolved() {
+        return valueArgumentsResolved;
     }
 
     @Override

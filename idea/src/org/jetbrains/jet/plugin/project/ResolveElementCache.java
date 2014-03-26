@@ -207,10 +207,16 @@ public class ResolveElementCache {
         }
     }
 
-    private static void annotationAdditionalResolve(KotlinCodeAnalyzer analyzer, JetAnnotationEntry jetAnnotationEntry) {
+    private static void annotationAdditionalResolve(ResolveSession resolveSession, JetAnnotationEntry jetAnnotationEntry) {
         JetDeclaration declaration = PsiTreeUtil.getParentOfType(jetAnnotationEntry, JetDeclaration.class);
         if (declaration != null) {
-            Annotated descriptor = analyzer.resolveToDescriptor(declaration);
+            Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
+
+            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(
+                    descriptor,
+                    resolveSession.getTrace(),
+                    resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
+            );
 
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
         }

@@ -223,10 +223,16 @@ public class AnnotationResolver {
             return;
         }
 
+        AnnotationDescriptorImpl annotationDescriptorImpl = (AnnotationDescriptorImpl) annotationDescriptor;
+        if (annotationDescriptorImpl.areValueArgumentsResolved()) return;
+
         OverloadResolutionResults<FunctionDescriptor> results = resolveAnnotationCall(annotationEntry, scope, trace);
         if (results.isSingleResult()) {
             checkAnnotationType(annotationEntry, trace, results);
             resolveAnnotationArguments(annotationDescriptor, results.getResultingCall(), trace);
+        }
+        else {
+            annotationDescriptorImpl.markValueArgumentsResolved();
         }
     }
 
@@ -240,15 +246,19 @@ public class AnnotationResolver {
             return;
         }
 
+        AnnotationDescriptorImpl annotationDescriptorImpl = (AnnotationDescriptorImpl) annotationDescriptor;
+
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> descriptorToArgument : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = descriptorToArgument.getKey();
             ResolvedValueArgument resolvedArgument = descriptorToArgument.getValue();
 
             CompileTimeConstant<?> value = getAnnotationArgumentValue(trace, parameterDescriptor, resolvedArgument);
             if (value != null) {
-                ((AnnotationDescriptorImpl) annotationDescriptor).setValueArgument(parameterDescriptor, value);
+                annotationDescriptorImpl.setValueArgument(parameterDescriptor, value);
             }
         }
+
+        annotationDescriptorImpl.markValueArgumentsResolved();
     }
 
     @Nullable

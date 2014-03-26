@@ -157,6 +157,7 @@ public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer
 
             @Override
             public void visitEnd() {
+                annotation.markValueArgumentsResolved();
                 result.add(annotation);
             }
 
