@@ -107,12 +107,12 @@ public class ScriptHeaderResolver {
 
         FqName nameForScript = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile());
         Name className = nameForScript.shortName();
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
+        ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
 
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
+        scriptDescriptor.setScopeForBodyResolution(scriptScope);
 
-        c.getScriptScopes().put(script, scriptScope);
         c.getScripts().put(script, scriptDescriptor);
 
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
@@ -129,7 +129,7 @@ public class ScriptHeaderResolver {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
-            WritableScope scope = c.getScriptScopes().get(declaration);
+            WritableScope scope = descriptor.getScopeForBodyResolution();
 
             List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
 

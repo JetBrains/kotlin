@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -56,8 +55,6 @@ public interface BodiesResolveContext extends GlobalContext {
     Function<JetDeclaration, JetScope> getDeclaringScopes();
     @Mutable
     Map<JetScript, ScriptDescriptor> getScripts();
-    @Mutable
-    Map<JetScript, WritableScope> getScriptScopes();
     DataFlowInfo getOuterDataFlowInfo();
 
     @NotNull

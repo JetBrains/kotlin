@@ -69,7 +69,7 @@ public class ScriptBodyResolver {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
-            WritableScope scope = c.getScriptScopes().get(declaration);
+            WritableScope scope = descriptor.getScopeForBodyResolution();
 
             // TODO: lock in resolveScriptDeclarations
             scope.changeLockLevel(WritableScope.LockLevel.READING);

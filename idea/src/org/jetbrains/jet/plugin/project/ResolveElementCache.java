@@ -483,11 +483,6 @@ public class ResolveElementCache {
         }
 
         @Override
-        public Map<JetScript, WritableScope> getScriptScopes() {
-            return Collections.emptyMap();
-        }
-
-        @Override
         public DataFlowInfo getOuterDataFlowInfo() {
             return DataFlowInfo.EMPTY;
         }

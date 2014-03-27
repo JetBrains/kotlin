@@ -46,7 +46,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
     private final Function<JetDeclaration, JetScope> declaringScopes;
     private final Map<JetScript, ScriptDescriptor> scripts;
-    private final Map<JetScript, WritableScope> scriptScopes;
     private final DataFlowInfo outerDataFlowInfo;
 
     private @NotNull TopDownAnalysisParameters topDownAnalysisParameters;
@@ -58,7 +57,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
         functions = Collections.unmodifiableMap(context.getFunctions());
         declaringScopes = context.getDeclaringScopes();
         scripts = Collections.unmodifiableMap(context.getScripts());
-        scriptScopes = Collections.unmodifiableMap(context.getScriptScopes());
         outerDataFlowInfo = context.getOuterDataFlowInfo();
 
         topDownAnalysisParameters = context.getTopDownAnalysisParameters();
@@ -104,11 +102,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public Map<JetScript, ScriptDescriptor> getScripts() {
         return scripts;
-    }
-
-    @Override
-    public Map<JetScript, WritableScope> getScriptScopes() {
-        return scriptScopes;
     }
 
     @Override

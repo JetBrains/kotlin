@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, DeclarationDescriptorNonRoot {
     String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
@@ -35,4 +36,7 @@ public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, Decl
 
     @NotNull
     ClassDescriptor getClassDescriptor();
+
+    @NotNull
+    JetScope getScopeForBodyResolution();
 }

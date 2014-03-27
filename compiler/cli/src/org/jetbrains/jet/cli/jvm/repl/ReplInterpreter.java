@@ -131,7 +131,6 @@ public class ReplInterpreter {
     }
 
     private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
-        c.getScriptScopes().clear();
         c.getScripts().clear();
     }
 
