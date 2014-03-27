@@ -115,9 +115,9 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteral.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
 
-    JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetSimpleNameExpression.class);
-    JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetSimpleNameExpression.class);
-    JetNodeType LABEL                     = new JetNodeType("LABEL", JetSimpleNameExpression.class);
+    JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetNameReferenceExpression.class);
+    JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetOperationReferenceExpression.class);
+    JetNodeType LABEL                     = new JetNodeType("LABEL", JetLabelReferenceExpression.class);
 
     JetNodeType LABEL_QUALIFIER           = new JetNodeType("LABEL_QUALIFIER", JetContainerNode.class);
 
