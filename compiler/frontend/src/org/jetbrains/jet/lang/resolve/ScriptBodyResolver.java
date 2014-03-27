@@ -56,22 +56,11 @@ public class ScriptBodyResolver {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
-            WritableScope scope = descriptor.getScopeForBodyResolution();
 
             // TODO: lock in resolveScriptDeclarations
-            scope.changeLockLevel(WritableScope.LockLevel.READING);
+            descriptor.getScopeForBodyResolution().changeLockLevel(WritableScope.LockLevel.READING);
 
-            ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                    expressionTypingServices,
-                    trace,
-                    scope,
-                    DataFlowInfo.EMPTY,
-                    NO_EXPECTED_TYPE
-            );
-            JetType returnType = expressionTypingServices.getBlockReturnedType(declaration.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
-            if (returnType == null) {
-                returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
-            }
+            JetType returnType = resolveScriptReturnType(declaration, descriptor, trace);
 
             List<PropertyDescriptorImpl> properties = new ArrayList<PropertyDescriptorImpl>();
             List<SimpleFunctionDescriptor> functions = new ArrayList<SimpleFunctionDescriptor>();
@@ -95,6 +84,26 @@ public class ScriptBodyResolver {
 
             descriptor.initialize(returnType, properties, functions);
         }
+    }
+
+    private JetType resolveScriptReturnType(
+            @NotNull JetScript script,
+            @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull BindingTrace trace
+    ) {
+        // Resolve all contents of the script
+        ExpressionTypingContext context = ExpressionTypingContext.newContext(
+                expressionTypingServices,
+                trace,
+                scriptDescriptor.getScopeForBodyResolution(),
+                DataFlowInfo.EMPTY,
+                NO_EXPECTED_TYPE
+        );
+        JetType returnType = expressionTypingServices.getBlockReturnedType(script.getBlockExpression(), CoercionStrategy.NO_COERCION, context).getType();
+        if (returnType == null) {
+            returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
+        }
+        return returnType;
     }
 
     public static boolean shouldBeScriptClassMember(@NotNull JetDeclaration declaration) {
