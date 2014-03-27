@@ -7,5 +7,5 @@ fun fib(n: Int): Int {
     return v
 }
 
-val result = fib(num)
+val result: Int = fib(num)
 12
