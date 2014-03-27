@@ -57,6 +57,7 @@ import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
+import org.jetbrains.jet.lang.resolve.ScriptParameterResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
@@ -115,6 +116,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final ImportsResolver importsResolver;
     private final JetImportsFactory jetImportsFactory;
     private final ScriptHeaderResolver scriptHeaderResolver;
+    private final ScriptParameterResolver scriptParameterResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
@@ -177,6 +179,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.importsResolver = new ImportsResolver();
         this.jetImportsFactory = new JetImportsFactory();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
+        this.scriptParameterResolver = new ScriptParameterResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
@@ -289,9 +292,11 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
 
         jetImportsFactory.setProject(project);
 
-        scriptHeaderResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
         scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
+        scriptHeaderResolver.setScriptParameterResolver(scriptParameterResolver);
         scriptHeaderResolver.setTrace(bindingTrace);
+
+        scriptParameterResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
 
         overloadResolver.setTrace(bindingTrace);
 

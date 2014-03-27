@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
-import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -31,13 +29,8 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +42,7 @@ public class ScriptHeaderResolver {
     @NotNull
     private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
-    private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
+    private ScriptParameterResolver scriptParameterResolver;
     @NotNull
     private BindingTrace trace;
 
@@ -59,8 +52,8 @@ public class ScriptHeaderResolver {
     }
 
     @Inject
-    public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver) {
-        this.dependencyClassByQualifiedNameResolver = dependencyClassByQualifiedNameResolver;
+    public void setScriptParameterResolver(@NotNull ScriptParameterResolver scriptParameterResolver) {
+        this.scriptParameterResolver = scriptParameterResolver;
     }
 
     @Inject
@@ -69,34 +62,6 @@ public class ScriptHeaderResolver {
     }
 
 
-    @NotNull
-    private ClassDescriptor resolveClass(@NotNull FqName className) {
-        ClassDescriptor classDescriptor = dependencyClassByQualifiedNameResolver.resolveClass(className);
-        if (classDescriptor == null) {
-            throw new IllegalStateException("dependency class not found by name: " + className);
-        }
-        return classDescriptor;
-    }
-
-    @NotNull
-    public JetType resolveTypeName(@NotNull JetTypeName typeName) {
-        List<JetType> typeArguments = new ArrayList<JetType>();
-        for (JetTypeName typeArgumentName : typeName.getArguments()) {
-            typeArguments.add(resolveTypeName(typeArgumentName));
-        }
-        ClassDescriptor classDescriptor = resolveClass(typeName.getClassName());
-        return TypeUtils.substituteParameters(classDescriptor, typeArguments);
-    }
-
-
-    @NotNull
-    private ValueParameterDescriptor resolveScriptParameter(
-            @NotNull AnalyzerScriptParameter scriptParameter,
-            int index,
-            @NotNull ScriptDescriptor script) {
-        JetType type = resolveTypeName(scriptParameter.getType());
-        return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
-    }
 
     public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull WritableScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
@@ -130,7 +95,7 @@ public class ScriptHeaderResolver {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
 
-            List<ValueParameterDescriptor> valueParameters = resolveScriptParameters(c, declaration, descriptor);
+            List<ValueParameterDescriptor> valueParameters = scriptParameterResolver.resolveScriptParameters(c, declaration, descriptor);
 
             descriptor.setValueParameters(valueParameters);
 
@@ -142,27 +107,4 @@ public class ScriptHeaderResolver {
         }
     }
 
-    @NotNull
-    public List<ValueParameterDescriptor> resolveScriptParameters(
-            @NotNull TopDownAnalysisContext c,
-            @NotNull JetScript declaration,
-            @NotNull ScriptDescriptor scriptDescriptor
-    ) {
-        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-
-        JetFile file = (JetFile) declaration.getContainingFile();
-        JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
-
-        int index = 0;
-        List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
-                                                   ? scriptDefinition.getScriptParameters()
-                                                   : c.getTopDownAnalysisParameters().getScriptParameters();
-
-        for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
-            ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, scriptDescriptor);
-            valueParameters.add(parameter);
-            ++index;
-        }
-        return valueParameters;
-    }
 }
