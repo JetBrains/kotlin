@@ -19,6 +19,7 @@ package org.jetbrains.jet.cli.common.messages;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiModifierListOwner;
 import com.intellij.psi.util.PsiFormatUtil;
 import kotlin.Function0;
@@ -93,8 +94,9 @@ public final class AnalyzerWithCompilerReport {
         else {
             render = DefaultErrorMessages.RENDERER.render(diagnostic);
         }
+        PsiFile file = diagnostic.getPsiFile();
         messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,
-                MessageUtil.psiFileToMessageLocation(diagnostic.getPsiFile(), null, lineAndColumn.getLine(), lineAndColumn.getColumn()));
+                MessageUtil.psiFileToMessageLocation(file, file.getName(), lineAndColumn.getLine(), lineAndColumn.getColumn()));
         return diagnostic.getSeverity() == Severity.ERROR;
     }
 

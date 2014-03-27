@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.jps.build;
 
+import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -198,7 +200,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
     private static boolean hasKotlinFiles(@NotNull ModuleChunk chunk) {
         boolean hasKotlinFiles = false;
         for (ModuleBuildTarget target : chunk.getTargets()) {
-            List<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
+            Collection<File> sourceFiles = KotlinSourceFileCollector.getAllKotlinSourceFiles(target);
             if (!sourceFiles.isEmpty()) {
                 hasKotlinFiles = true;
                 break;
@@ -247,12 +249,22 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             context.processMessage(new CompilerMessage(
                     CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
                     kind(severity),
-                    prefix + message,
+                    prefix + message + renderLocationIfNeeded(location),
                     location.getPath(),
                     -1, -1, -1,
                     location.getLine(),
                     location.getColumn()
             ));
+        }
+
+        private static String renderLocationIfNeeded(@NotNull CompilerMessageLocation location) {
+            if (location == NO_LOCATION) return "";
+
+            // Sometimes we report errors in JavaScript library stubs, i.e. files like core/javautil.kt
+            // IDEA can't find these files, and does not display paths in Messages View, so we add the position information
+            // to the error message itself:
+            String pathname = String.valueOf(location.getPath());
+            return new File(pathname).exists() ? "" : " (" + location + ")";
         }
 
         @NotNull
