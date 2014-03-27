@@ -129,28 +129,40 @@ public class ScriptHeaderResolver {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
-            WritableScope scope = descriptor.getScopeForBodyResolution();
 
-            List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
-
-            scope.setImplicitReceiver(descriptor.getThisAsReceiverParameter());
-
-            JetFile file = (JetFile) declaration.getContainingFile();
-            JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
-
-            int index = 0;
-            List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
-                                                       ? scriptDefinition.getScriptParameters()
-                                                       : c.getTopDownAnalysisParameters().getScriptParameters();
-
-            for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
-                ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, descriptor);
-                valueParameters.add(parameter);
-                scope.addVariableDescriptor(parameter);
-                ++index;
-            }
+            List<ValueParameterDescriptor> valueParameters = resolveScriptParameters(c, declaration, descriptor);
 
             descriptor.setValueParameters(valueParameters);
+
+            WritableScope scope = descriptor.getScopeForBodyResolution();
+            scope.setImplicitReceiver(descriptor.getThisAsReceiverParameter());
+            for (ValueParameterDescriptor valueParameterDescriptor : valueParameters) {
+                scope.addVariableDescriptor(valueParameterDescriptor);
+            }
         }
+    }
+
+    @NotNull
+    public List<ValueParameterDescriptor> resolveScriptParameters(
+            @NotNull TopDownAnalysisContext c,
+            @NotNull JetScript declaration,
+            @NotNull ScriptDescriptor scriptDescriptor
+    ) {
+        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+
+        JetFile file = (JetFile) declaration.getContainingFile();
+        JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
+
+        int index = 0;
+        List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
+                                                   ? scriptDefinition.getScriptParameters()
+                                                   : c.getTopDownAnalysisParameters().getScriptParameters();
+
+        for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
+            ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, scriptDescriptor);
+            valueParameters.add(parameter);
+            ++index;
+        }
+        return valueParameters;
     }
 }
