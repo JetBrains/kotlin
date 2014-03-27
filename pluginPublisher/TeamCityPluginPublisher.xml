@@ -78,11 +78,12 @@
   <target name="ideaDownload" depends="setEapDownload, setReleasedDownload" if="is.expected.branch">
     <echo message="From external parameters: ${download.eap} Release ${download.release} Version ${version}" />
 
+    <delete dir="${verify.dir}" />
     <mkdir dir="${verify.dir}" />
 
     <!-- Download and extract IDEA -->
     <echo message="Downloading IDEA from ${download.url}"/>
-    <get src="${download.url}" dest="${verify.dir}/ideaIC.tar.gz" verbose="on" usetimestamp="true"/>
+    <get src="${download.url}" dest="${verify.dir}/ideaIC.tar.gz" usetimestamp="true"/>
     <untar src="${verify.dir}/ideaIC.tar.gz" dest="${verify.dir}" overwrite="on" compression="gzip"/>
 
     <!-- Get extracted IDEA directory -->
