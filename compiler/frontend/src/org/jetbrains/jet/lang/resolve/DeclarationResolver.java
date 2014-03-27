@@ -92,6 +92,10 @@ public class DeclarationResolver {
         resolveConstructorHeaders(c);
         resolveAnnotationStubsOnClassesAndConstructors(c);
         resolveFunctionAndPropertyHeaders(c);
+
+        // SCRIPT: Resolve script declarations
+        scriptHeaderResolver.resolveScriptDeclarations(c);
+
         createFunctionsForDataClasses(c);
         importsResolver.processMembersImports(c);
         checkRedeclarationsInPackages(c);
@@ -149,9 +153,6 @@ public class DeclarationResolver {
                     classDescriptor.getScopeForInitializerResolution(), classDescriptor.getScopeForMemberDeclarationResolution(),
                     classDescriptor.getBuilder());
         }
-
-        // SCRIPT: Resolve script declarations, move outside of this function
-        scriptHeaderResolver.resolveScriptDeclarations(c);
 
         // TODO : Extensions
     }
