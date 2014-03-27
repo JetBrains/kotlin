@@ -258,6 +258,14 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new SimplifyBooleanWithConstantsIntention());
     }
 
+    public void doTestMakeTypeExplicitInLambda(@NotNull String path) throws Exception {
+        doTestIntention(path, new MakeTypeExplicitInLambdaIntention());
+    }
+
+    public void doTestMakeTypeImplicitInLambda(@NotNull String path) throws Exception {
+        doTestIntention(path, new MakeTypeImplicitInLambdaIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
