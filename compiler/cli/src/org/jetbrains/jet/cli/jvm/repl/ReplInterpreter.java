@@ -130,6 +130,11 @@ public class ReplInterpreter {
         classLoader = new ReplClassLoader(new URLClassLoader(classpath.toArray(new URL[0])));
     }
 
+    private static void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
+        c.getScriptScopes().clear();
+        c.getScripts().clear();
+    }
+
     public enum LineResultType {
         SUCCESS,
         ERROR,
@@ -229,7 +234,7 @@ public class ReplInterpreter {
             return LineResult.error(errorCollector.getString());
         }
 
-        injector.getTopDownAnalyzer().prepareForTheNextReplLine(topDownAnalysisContext);
+        prepareForTheNextReplLine(topDownAnalysisContext);
         trace.clearDiagnostics();
 
         psiFile.getScript().putUserData(ScriptHeaderResolver.PRIORITY_KEY, lineNumber);

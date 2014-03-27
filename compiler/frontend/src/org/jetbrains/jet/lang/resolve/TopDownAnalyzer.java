@@ -441,12 +441,6 @@ public class TopDownAnalyzer {
     }
 
 
-    public void prepareForTheNextReplLine(@NotNull TopDownAnalysisContext c) {
-        c.getScriptScopes().clear();
-        c.getScripts().clear();
-    }
-
-
     @NotNull
     public MutablePackageFragmentProvider getPackageFragmentProvider() {
         return packageFragmentProvider;
