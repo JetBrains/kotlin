@@ -386,6 +386,8 @@ fun main(args: Array<String>) {
             model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
             model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
             model("intentions/splitIf", testMethod = "doTestSplitIf")
+            model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
+            model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
