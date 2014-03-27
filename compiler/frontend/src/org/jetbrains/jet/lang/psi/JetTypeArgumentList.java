@@ -17,14 +17,22 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetPlaceHolderStubElementType;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetTypeArgumentList extends JetElementImpl {
+public class JetTypeArgumentList extends JetElementImplStub<PsiJetPlaceHolderStub<JetTypeArgumentList>> {
     public JetTypeArgumentList(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetTypeArgumentList(@NotNull PsiJetPlaceHolderStub<JetTypeArgumentList> stub) {
+        super(stub, JetStubElementTypes.TYPE_ARGUMENT_LIST);
     }
 
     @Override

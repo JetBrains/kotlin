@@ -59,7 +59,7 @@ public interface JetNodeTypes {
     IElementType ANNOTATION                         = JetStubElementTypes.ANNOTATION;
     IElementType ANNOTATION_ENTRY                   = JetStubElementTypes.ANNOTATION_ENTRY;
 
-    JetNodeType TYPE_ARGUMENT_LIST                  = new JetNodeType("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
+    IElementType TYPE_ARGUMENT_LIST                 = JetStubElementTypes.TYPE_ARGUMENT_LIST;
     JetNodeType VALUE_ARGUMENT_LIST                 = new JetNodeType("VALUE_ARGUMENT_LIST", JetValueArgumentList.class);
     JetNodeType VALUE_ARGUMENT                      = new JetNodeType("VALUE_ARGUMENT", JetValueArgument.class);
     JetNodeType VALUE_ARGUMENT_NAME                 = new JetNodeType("VALUE_ARGUMENT_NAME", JetValueArgumentName.class);
