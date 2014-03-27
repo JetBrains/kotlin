@@ -236,10 +236,10 @@ public class LambdaTransformer {
         for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamInfo var : info.getCapturedVars()) {
                 CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(var, getNewFieldName(var.getOriginalFieldName()));
-                StackValue composed = StackValue.composed(StackValue.local(0, oldLambdaType),
-                                                          StackValue.field(var.getType(),
-                                                                           oldLambdaType, /*TODO owner type*/
-                                                                           recapturedParamInfo.getNewFieldName(), false)
+                StackValue composed = StackValue.composedOrStatic(StackValue.local(0, oldLambdaType),
+                                                                  StackValue.field(var.getType(),
+                                                                                   oldLambdaType, /*TODO owner type*/
+                                                                                   recapturedParamInfo.getNewFieldName(), false)
                 );
                 recapturedParamInfo.setRemapValue(composed);
                 allRecapturedParameters.add(var);

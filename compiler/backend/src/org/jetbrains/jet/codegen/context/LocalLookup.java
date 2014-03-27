@@ -17,16 +17,18 @@
 package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.asm4.Type;
+import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_RECEIVER_FIELD;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 
 public interface LocalLookup {
     boolean lookupLocal(DeclarationDescriptor descriptor);
@@ -87,6 +89,18 @@ public interface LocalLookup {
                 if (!idx) return null;
 
                 Type localType = asmTypeForAnonymousClass(state.getBindingContext(), vd);
+
+                BindingContext bindingContext = state.getBindingContext();
+                ClassDescriptor closureClassOfReferenced = bindingContext.get(CLASS_FOR_FUNCTION, vd);
+                MutableClosure closureOfReferenced = bindingContext.get(CLOSURE, closureClassOfReferenced);
+                assert closureOfReferenced != null :
+                        "Function mapped to CallableMethod with generateCalleeType != null must be a closure: " + vd;
+                if (CodegenUtil.isConst(closureOfReferenced)) {
+                    // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
+                    // (instead of passing this instance to the constructor and storing as a field)
+                    Type asmType = asmTypeForAnonymousClass(bindingContext, vd);
+                    return StackValue.field(asmType, asmType, JvmAbi.INSTANCE_FIELD, true);
+                }
 
                 String fieldName = "$" + vd.getName();
                 StackValue innerValue = StackValue.field(localType, classType, fieldName, false);

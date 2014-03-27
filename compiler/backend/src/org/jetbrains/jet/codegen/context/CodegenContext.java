@@ -145,7 +145,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
             closure.setCaptureThis();
         }
-        return prefix != null ? StackValue.composed(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
+        return prefix != null ? StackValue.composedOrStatic(prefix, lazyOuterExpression.invoke()) : lazyOuterExpression.invoke();
     }
 
     @NotNull
@@ -322,7 +322,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             EnclosedValueDescriptor answer = closure.getCaptureVariables().get(d);
             if (answer != null) {
                 StackValue innerValue = answer.getInnerValue();
-                return result == null ? innerValue : StackValue.composed(result, innerValue);
+                return result == null ? innerValue : StackValue.composedOrStatic(result, innerValue);
             }
 
             for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
@@ -333,13 +333,13 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
                         break;
                     }
                     else {
-                        return result == null ? innerValue : StackValue.composed(result, innerValue);
+                        return result == null ? innerValue : StackValue.composedOrStatic(result, innerValue);
                     }
                 }
             }
 
             myOuter = getOuterExpression(null, ignoreNoOuter, false);
-            result = result == null || myOuter == null ? myOuter : StackValue.composed(result, myOuter);
+            result = result == null || myOuter == null ? myOuter : StackValue.composedOrStatic(result, myOuter);
         }
 
         StackValue resultValue;

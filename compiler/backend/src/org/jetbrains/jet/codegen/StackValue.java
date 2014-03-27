@@ -304,7 +304,10 @@ public abstract class StackValue {
         return new FieldForSharedVar(localType, classType, fieldName);
     }
 
-    public static StackValue composed(StackValue prefix, StackValue suffix) {
+    public static StackValue composedOrStatic(StackValue prefix, StackValue suffix) {
+        if (suffix instanceof Field && ((Field) suffix).isStatic) {
+            return suffix;
+        }
         return new Composed(prefix, suffix);
     }
 
