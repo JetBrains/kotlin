@@ -3270,11 +3270,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ConstructorDescriptor constructorDescriptor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
         MutableClosure closure = bindingContext.get(CLOSURE, constructorDescriptor.getContainingDeclaration());
 
-        ClassDescriptor descriptor = getExpectedThisObjectForConstructorCall(constructorDescriptor, closure);
-        if (receiver.type.getSort() != Type.VOID && descriptor == null) {
-            v.pop();
-        }
-
         //Resolved call to local class constructor doesn't have resolvedCall.getThisObject() and resolvedCall.getReceiverArgument()
         //so we need generate closure on stack
         //See StackValue.receiver for more info
