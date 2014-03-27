@@ -51,7 +51,7 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
     }
 
     public JetTypeArgumentList getTypeArgumentList() {
-        return (JetTypeArgumentList) findChildByType(JetNodeTypes.TYPE_ARGUMENT_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_ARGUMENT_LIST);
     }
 
     @NotNull
