@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,173 +17,31 @@
 package org.jetbrains.jet.lang.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
-import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-// SCRIPT: Script declaration descriptor
-public class ScriptDescriptor extends DeclarationDescriptorNonRootImpl {
-    public static final String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
-    private static final Name NAME = Name.special("<script>");
-
-    private final int priority;
-
-    private JetType returnType;
-    private List<ValueParameterDescriptor> valueParameters;
-
-    private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
-    private final ReceiverParameterDescriptor implicitReceiver = new ReceiverParameterDescriptorImpl(this,
-                                                                                                     // Putting Any here makes no sense,
-                                                                                                     // it is simply copied from someplace else
-                                                                                                     // during a refactoring
-                                                                                                     KotlinBuiltIns.getInstance().getAnyType(),
-                                                                                                     new ScriptReceiver(this));
-
-    private final ClassDescriptorImpl classDescriptor;
-
-    private final WritableScopeImpl classScope;
-
-    public ScriptDescriptor(
-            @NotNull DeclarationDescriptor containingDeclaration,
-            int priority,
-            @NotNull JetScope scriptScope,
-            @NotNull Name className
-    ) {
-        super(containingDeclaration, Annotations.EMPTY, NAME);
-        this.priority = priority;
-
-        classDescriptor = new ClassDescriptorImpl(containingDeclaration, className, Modality.FINAL,
-                                                  Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
-        classScope = new WritableScopeImpl(scriptScope, containingDeclaration, RedeclarationHandler.DO_NOTHING, "script members");
-        classScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        classDescriptor.initialize(classScope, new HashSet<ConstructorDescriptor>(), null);
-    }
-
-    public void initialize(
-            @NotNull JetType returnType,
-            @NotNull List<? extends PropertyDescriptorImpl> properties,
-            @NotNull List<? extends FunctionDescriptor> functions
-    ) {
-        this.returnType = returnType;
-        scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
-
-        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
-                                                                                  Annotations.EMPTY,
-                                                                                  Modality.FINAL,
-                                                                                  Visibilities.PUBLIC,
-                                                                                  false,
-                                                                                  Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
-                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        propertyDescriptor.setType(
-                returnType,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                classDescriptor.getThisAsReceiverParameter(),
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
-        propertyDescriptor.initialize(null, null);
-        classScope.addPropertyDescriptor(propertyDescriptor);
-
-        for (PropertyDescriptorImpl property : properties) {
-            initializeWithDefaultGetterSetter(property);
-            classScope.addPropertyDescriptor(property);
-        }
-
-        for (FunctionDescriptor function : functions) {
-            classScope.addFunctionDescriptor(function);
-        }
-    }
-
-    public static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
-        PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
-        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
-            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
-            getter.initialize(propertyDescriptor.getType());
-        }
-
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if (setter == null && propertyDescriptor.isVar()) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor);
-        }
-        propertyDescriptor.initialize(getter, setter);
-    }
-
-    public int getPriority() {
-        return priority;
-    }
+public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, DeclarationDescriptorNonRoot {
+    String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
+    Name NAME = Name.special("<script>");
 
     @NotNull
-    public JetType getReturnType() {
-        return returnType;
-    }
+    JetType getReturnType();
+
+    int getPriority();
 
     @NotNull
-    public List<ValueParameterDescriptor> getValueParameters() {
-        return valueParameters;
-    }
+    List<ValueParameterDescriptor> getValueParameters();
 
     @NotNull
-    public ScriptCodeDescriptor getScriptCodeDescriptor() {
-        return scriptCodeDescriptor;
-    }
+    ScriptCodeDescriptor getScriptCodeDescriptor();
 
     @NotNull
-    public ReceiverParameterDescriptor getThisAsReceiverParameter() {
-        return implicitReceiver;
-    }
-
-    @Override
-    public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new IllegalStateException("nothing to substitute in script");
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitScriptDescriptor(this, data);
-    }
-
-    public void setValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
-        this.valueParameters = valueParameters;
-        ConstructorDescriptorImpl constructorDescriptor =
-                ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true)
-                        .initialize(Collections.<TypeParameterDescriptor>emptyList(), valueParameters, Visibilities.PUBLIC, false);
-        constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
-
-        classDescriptor.getConstructors().add(constructorDescriptor);
-        classDescriptor.setPrimaryConstructor(constructorDescriptor);
-
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
-                                                                                      Annotations.EMPTY,
-                                                                                      Modality.FINAL,
-                                                                                      Visibilities.PUBLIC,
-                                                                                      false,
-                                                                                      parameter.getName(),
-                                                                                      CallableMemberDescriptor.Kind.DECLARATION);
-            propertyDescriptor.setType(
-                    parameter.getType(),
-                    Collections.<TypeParameterDescriptor>emptyList(),
-                    classDescriptor.getThisAsReceiverParameter(), ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
-            //PropertyGetterDescriptor getter = DescriptorResolver.createDefaultGetter(propertyDescriptor);
-            //getter.initialize(propertyDescriptor.getType());
-            propertyDescriptor.initialize(null, null);
-            classScope.addPropertyDescriptor(propertyDescriptor);
-        }
-    }
+    ReceiverParameterDescriptor getThisAsReceiverParameter();
 
     @NotNull
-    public ClassDescriptor getClassDescriptor() {
-        return classDescriptor;
-    }
+    ClassDescriptor getClassDescriptor();
 }

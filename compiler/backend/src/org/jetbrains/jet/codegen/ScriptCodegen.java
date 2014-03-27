@@ -30,7 +30,9 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetScript;
+import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.Collections;
@@ -63,13 +65,13 @@ public class ScriptCodegen extends MemberCodegen {
     }
 
     @NotNull
-    private JetScript scriptDeclaration;
+    private final JetScript scriptDeclaration;
 
     @NotNull
     private final ScriptContext context;
 
     @NotNull
-    private List<ScriptDescriptor> earlierScripts;
+    private final List<ScriptDescriptor> earlierScripts;
 
     private ScriptCodegen(
             @NotNull JetScript scriptDeclaration,

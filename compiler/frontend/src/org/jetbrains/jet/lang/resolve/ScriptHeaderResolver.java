@@ -19,16 +19,12 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPackageDirective;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -115,7 +111,7 @@ public class ScriptHeaderResolver {
 
         FqName nameForScript = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile());
         Name className = nameForScript.shortName();
-        ScriptDescriptor scriptDescriptor = new ScriptDescriptor(ns, priority, outerScope, className);
+        ScriptDescriptor scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
 
         //WriteThroughScope scriptScope = new WriteThroughScope(
         //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
@@ -133,7 +129,7 @@ public class ScriptHeaderResolver {
     public void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
-            ScriptDescriptor descriptor = e.getValue();
+            ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
             WritableScope scope = c.getScriptScopes().get(declaration);
 
             List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();

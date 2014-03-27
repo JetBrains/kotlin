@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -67,7 +68,7 @@ public class ScriptBodyResolver {
     public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
-            ScriptDescriptor descriptor = e.getValue();
+            ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
             WritableScope scope = c.getScriptScopes().get(declaration);
 
             // TODO: lock in resolveScriptDeclarations
