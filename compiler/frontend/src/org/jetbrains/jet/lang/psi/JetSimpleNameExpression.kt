@@ -28,41 +28,46 @@ import org.jetbrains.jet.lexer.JetTokens.*
 
 public trait JetSimpleNameExpression : JetReferenceExpression {
 
-    public fun getReferencedName(): String {
-        val text = getReferencedNameElement().getNode()!!.getText()
-        return JetPsiUtil.unquoteIdentifierOrFieldReference(text)
-    }
+    public fun getReferencedName(): String
 
-    public fun getReferencedNameAsName(): Name {
-        val name = getReferencedName()
-        return Name.identifierNoValidate(name)
-    }
+    public fun getReferencedNameAsName(): Name
 
     public fun getReferencedNameElement(): PsiElement
 
     public fun getIdentifier(): PsiElement?
 
-    public fun getReferencedNameElementType(): IElementType {
-        return getReferencedNameElement().getNode()!!.getElementType()!!
-    }
+    public fun getReferencedNameElementType(): IElementType
 }
 
 abstract class JetSimpleNameExpressionImpl(node: ASTNode) : JetExpressionImpl(node), JetSimpleNameExpression {
-    public override fun getIdentifier(): PsiElement? {
-        return findChildByType(JetTokens.IDENTIFIER)
-    }
+
+    override fun getIdentifier(): PsiElement? = findChildByType(JetTokens.IDENTIFIER)
+
+    override fun getReferencedNameElementType() = getReferencedNameElementTypeImpl()
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D?): R {
         return visitor.visitSimpleNameExpression(this, data) as R
     }
 
-    public override fun getReferencedNameElement(): PsiElement {
-        return findChildByType(REFERENCE_TOKENS) ?:
-               findChildByType(JetExpressionParsing.ALL_OPERATIONS) ?:
-               this
-    }
+    override fun getReferencedNameAsName() = getReferencedNameAsNameImpl()
 
+    override fun getReferencedName() = getReferencedNameImpl()
+
+    //NOTE: an unfortunate way to share an implementation between stubbed and not stubbed tree
     class object {
-        public val REFERENCE_TOKENS: TokenSet = TokenSet.create(LABEL_IDENTIFIER, IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD)
+
+        fun JetSimpleNameExpression.getReferencedNameElementTypeImpl(): IElementType {
+            return this.getReferencedNameElement().getNode()!!.getElementType()!!
+        }
+
+        fun JetSimpleNameExpression.getReferencedNameAsNameImpl(): Name {
+            val name = this.getReferencedName()
+            return Name.identifierNoValidate(name)
+        }
+
+        fun JetSimpleNameExpression.getReferencedNameImpl(): String {
+            val text = this.getReferencedNameElement().getNode()!!.getText()
+            return JetPsiUtil.unquoteIdentifierOrFieldReference(text)
+        }
     }
 }

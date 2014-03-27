@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.psi
+package org.jetbrains.jet.lang.psi.stubs;
 
-import com.intellij.lang.ASTNode
+import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class JetNameReferenceExpression(node: ASTNode) : JetSimpleNameExpressionImpl(node)
+public interface PsiJetNameReferenceExpressionStub extends StubElement<JetNameReferenceExpression> {
+    @NotNull
+    String getReferencedName();
+}

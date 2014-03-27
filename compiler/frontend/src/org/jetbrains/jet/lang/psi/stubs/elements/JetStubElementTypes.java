@@ -60,4 +60,6 @@ public interface JetStubElementTypes {
                 new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);;
 
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
+
+    JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
 }

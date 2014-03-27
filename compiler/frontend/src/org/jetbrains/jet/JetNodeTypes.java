@@ -19,6 +19,7 @@ package org.jetbrains.jet;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -114,7 +115,7 @@ public interface JetNodeTypes {
     JetNodeType FUNCTION_LITERAL          = new JetNodeType("FUNCTION_LITERAL", JetFunctionLiteral.class);
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
 
-    JetNodeType REFERENCE_EXPRESSION      = new JetNodeType("REFERENCE_EXPRESSION", JetNameReferenceExpression.class);
+    IElementType REFERENCE_EXPRESSION     = JetStubElementTypes.REFERENCE_EXPRESSION;
     JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetOperationReferenceExpression.class);
     JetNodeType LABEL                     = new JetNodeType("LABEL", JetLabelReferenceExpression.class);
 
