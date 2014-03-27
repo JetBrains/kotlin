@@ -103,10 +103,7 @@ public class ScriptHeaderResolver {
         FqName fqName = file.getPackageFqName();
         PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 
-        Integer priority = script.getUserData(PRIORITY_KEY);
-        if (priority == null) {
-            priority = 0;
-        }
+        Integer priority = getScriptPriority(script);
 
         FqName nameForScript = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile());
         Name className = nameForScript.shortName();
@@ -121,6 +118,11 @@ public class ScriptHeaderResolver {
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
 
         outerScope.addClassifierDescriptor(scriptDescriptor.getClassDescriptor());
+    }
+
+    public static int getScriptPriority(@NotNull JetScript script) {
+        Integer priority = script.getUserData(PRIORITY_KEY);
+        return priority == null ? 0 : priority;
     }
 
     public void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
