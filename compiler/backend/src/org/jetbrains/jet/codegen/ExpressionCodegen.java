@@ -1356,7 +1356,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
             assert resolvedCall != null;
-            pushMethodArguments(resolvedCall, Arrays.asList(argumentTypes), defaultCallGenerator);
+            pushMethodArgumentsWithoutCallReceiver(resolvedCall, Arrays.asList(argumentTypes), false, defaultCallGenerator);
         }
 
         v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor());
@@ -2113,33 +2113,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
 
-        if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
-            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
-            receiver.put(receiver.type, v);
-        }
-
         assert callGenerator == defaultCallGenerator || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
                 "Method with defaults or tail recursive couldn't be inlined " + descriptor;
 
-        pushArgumentsAndInvoke(resolvedCall, callableMethod, callGenerator);
-    }
-
-    private void pushArgumentsAndInvoke(@NotNull ResolvedCall<?> resolvedCall, @NotNull CallableMethod callable, @NotNull CallGenerator callGenerator) {
-        callGenerator.putHiddenParams();
-
-        int mask = pushMethodArguments(resolvedCall, callable.getValueParameterTypes(), callGenerator);
+        int mask = pushMethodArgumentsWithCallReceiver(receiver, resolvedCall, callableMethod, false, callGenerator);
 
         if (tailRecursionCodegen.isTailRecursion(resolvedCall)) {
             tailRecursionCodegen.generateTailRecursion(resolvedCall);
             return;
         }
 
-        callGenerator.genCall(callable, resolvedCall, mask, this);
-    }
-
-    private void genThisAndReceiverFromResolvedCall(StackValue receiver, ResolvedCall<?> resolvedCall, CallableMethod callableMethod) {
-        receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
-        receiver.put(receiver.type, v);
+        callGenerator.genCall(callableMethod, resolvedCall, mask, this);
     }
 
     public void generateFromResolvedCall(@NotNull ReceiverValue descriptor, @NotNull Type type) {
@@ -2294,11 +2278,31 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return false;
     }
 
-    public int pushMethodArguments(@NotNull ResolvedCall<?> resolvedCall, List<Type> valueParameterTypes, @NotNull CallGenerator callGenerator) {
-        return pushMethodArguments(resolvedCall, valueParameterTypes, false, callGenerator);
+    public int pushMethodArgumentsWithCallReceiver(
+            @Nullable StackValue receiver,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull CallableMethod callableMethod,
+            boolean skipLast,
+            @NotNull CallGenerator callGenerator
+    ) {
+        CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
+
+        if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
+            receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
+            receiver.put(receiver.type, v);
+        }
+
+        callGenerator.putHiddenParams();
+
+        return pushMethodArgumentsWithoutCallReceiver(resolvedCall, callableMethod.getValueParameterTypes(), skipLast, callGenerator);
     }
 
-    private int pushMethodArguments(@NotNull ResolvedCall<?> resolvedCall, List<Type> valueParameterTypes, boolean skipLast, @NotNull CallGenerator callGenerator) {
+    public int pushMethodArgumentsWithoutCallReceiver(
+            @NotNull ResolvedCall<?> resolvedCall,
+            List<Type> valueParameterTypes,
+            boolean skipLast,
+            @NotNull CallGenerator callGenerator
+    ) {
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         CallableDescriptor fd = resolvedCall.getResultingDescriptor();
         if (valueArguments == null) {
@@ -3389,9 +3393,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Type[] argumentTypes = asmMethod.getArgumentTypes();
 
             if (callable instanceof CallableMethod) {
-                genThisAndReceiverFromResolvedCall(receiver, resolvedCall, (CallableMethod) callable);
                 boolean skipLast = !isGetter;
-                pushMethodArguments(resolvedCall, ((CallableMethod) callable).getValueParameterTypes(), skipLast, defaultCallGenerator);
+                pushMethodArgumentsWithCallReceiver(receiver, resolvedCall, (CallableMethod) callable, skipLast, defaultCallGenerator);
             }
             else {
                 gen(array, arrayType); // intrinsic method
