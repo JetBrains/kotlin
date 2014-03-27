@@ -22,6 +22,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -50,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.utils.DFS;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -63,6 +66,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
+import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
 
@@ -110,10 +114,11 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull MethodContext methodContext,
             @NotNull FunctionGenerationStrategy strategy
     ) {
+        OwnerKind methodContextKind = methodContext.getContextKind();
         Method asmMethod = jvmSignature.getAsmMethod();
 
         MethodVisitor mv = v.newMethod(origin,
-                                       getMethodAsmFlags(functionDescriptor, methodContext.getContextKind()),
+                                       getMethodAsmFlags(functionDescriptor, methodContextKind),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
                                        jvmSignature.getGenericsSignature(),
@@ -133,27 +138,26 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
-        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES ||
-            isAbstractMethod(functionDescriptor, methodContext.getContextKind())) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
             generateLocalVariableTable(
                     mv,
                     jvmSignature,
                     functionDescriptor,
-                    getThisTypeForFunction(functionDescriptor, methodContext, state.getTypeMapper()),
+                    getThisTypeForFunction(functionDescriptor, methodContext, typeMapper),
                     new Label(),
                     new Label(),
-                    methodContext.getContextKind()
+                    methodContextKind
             );
-            return;
+        }
+        else {
+            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
+
+            endVisit(mv, null, origin);
+
+            methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
         }
 
-        generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
-
-        endVisit(mv, null, origin);
-
-        generateBridgeIfNeeded(functionDescriptor);
-
-        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
+        generateBridges(functionDescriptor);
     }
 
     private void generateParameterAnnotations(
@@ -413,47 +417,106 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         return bytecode;
     }
 
-    private void generateBridgeIfNeeded(@NotNull FunctionDescriptor functionDescriptor) {
-        if (functionDescriptor instanceof ConstructorDescriptor) return;
+    private void generateBridges(@NotNull FunctionDescriptor descriptor) {
+        if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
+        if (isTrait(descriptor.getContainingDeclaration())) return;
 
-        Method method = typeMapper.mapSignature(functionDescriptor).getAsmMethod();
+        Set<Method> bridgesToGenerate = findAllReachableDeclarations(descriptor);
 
-        Queue<FunctionDescriptor> bfsQueue = new LinkedList<FunctionDescriptor>();
-        Set<FunctionDescriptor> visited = new HashSet<FunctionDescriptor>();
-
-        for (FunctionDescriptor overriddenDescriptor : functionDescriptor.getOverriddenDescriptors()) {
-            FunctionDescriptor orig = overriddenDescriptor.getOriginal();
-            if (visited.add(orig)) {
-                bfsQueue.offer(orig);
-            }
-        }
-
-        Set<Method> bridgesToGenerate = new HashSet<Method>();
-        while (!bfsQueue.isEmpty()) {
-            FunctionDescriptor descriptor = bfsQueue.poll();
-            if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-                Method overridden = typeMapper.mapSignature(descriptor).getAsmMethod();
-                if (differentMethods(method, overridden)) {
-                    bridgesToGenerate.add(overridden);
-                }
-                continue;
-            }
-
-            for (FunctionDescriptor overriddenDescriptor : descriptor.getOverriddenDescriptors()) {
-                FunctionDescriptor orig = overriddenDescriptor.getOriginal();
-                if (visited.add(orig)) {
-                    bfsQueue.offer(orig);
-                }
-            }
-        }
+        Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+        bridgesToGenerate.remove(method);
 
         if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = callableDescriptorToDeclaration(bindingContext, functionDescriptor);
+            PsiElement origin = callableDescriptorToDeclaration(bindingContext, descriptor);
             for (Method bridge : bridgesToGenerate) {
                 generateBridge(origin, bridge, method);
             }
         }
+    }
+
+    public void generateBridgesForFakeOverride(@NotNull FunctionDescriptor descriptor) {
+        if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
+
+        // If it's an abstract fake override, no bridges are needed: when an implementation will appear in some subclass, all necessary
+        // bridges will be generated there
+        if (descriptor.getModality() == Modality.ABSTRACT) return;
+
+        // If it's a concrete fake override and all of its super-functions are non-abstract, then every possible bridge is already generated
+        // into some of the super-classes and will be inherited in this class
+        if (!hasAbstractSuperFunction(descriptor)) return;
+
+        FunctionDescriptor implementation = findNonAbstractDeclaration(descriptor);
+
+        Set<Method> bridgesToGenerate = findAllReachableDeclarations(descriptor);
+        // TODO: remove also all declarations reachable from all reachable non-abstract fake overrides in classes
+        bridgesToGenerate.removeAll(findAllReachableDeclarations(implementation));
+
+        Method method = typeMapper.mapSignature(implementation).getAsmMethod();
+        for (Method bridge : bridgesToGenerate) {
+            generateBridge(null, bridge, method);
+        }
+    }
+
+    private static boolean hasAbstractSuperFunction(@NotNull FunctionDescriptor descriptor) {
+        for (FunctionDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+            if (overridden.getOriginal().getModality() == Modality.ABSTRACT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @NotNull
+    private Set<Method> findAllReachableDeclarations(@NotNull FunctionDescriptor descriptor) {
+        DFS.Neighbors<FunctionDescriptor> neighbors = new DFS.Neighbors<FunctionDescriptor>() {
+            @NotNull
+            @Override
+            public Iterable<FunctionDescriptor> getNeighbors(FunctionDescriptor current) {
+                return KotlinPackage.map(current.getOverriddenDescriptors(), new Function1<FunctionDescriptor, FunctionDescriptor>() {
+                    @Override
+                    public FunctionDescriptor invoke(FunctionDescriptor descriptor) {
+                        return descriptor.getOriginal();
+                    }
+                });
+            }
+        };
+        DFS.NodeHandlerWithListResult<FunctionDescriptor, Method> collector =
+                new DFS.NodeHandlerWithListResult<FunctionDescriptor, Method>() {
+                    @Override
+                    public void afterChildren(FunctionDescriptor current) {
+                        if (current.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                            result.add(typeMapper.mapSignature(current).getAsmMethod());
+                        }
+                    }
+                };
+        DFS.dfs(Collections.singleton(descriptor), neighbors, collector);
+        return new HashSet<Method>(collector.result());
+    }
+
+    /**
+     * Given a non-abstract function of any kind, finds an implementation (a non-abstract non-fake-override) of this function
+     * in the supertypes. The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract.
+     */
+    @NotNull
+    private static FunctionDescriptor findNonAbstractDeclaration(@NotNull FunctionDescriptor descriptor) {
+        if (descriptor.getModality() == Modality.ABSTRACT) {
+            throw new IllegalArgumentException("Only non-abstract functions have implementations: " + descriptor);
+        }
+
+        if (descriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            return descriptor;
+        }
+
+        for (FunctionDescriptor overriddenSubstituted : descriptor.getOverriddenDescriptors()) {
+            FunctionDescriptor overridden = overriddenSubstituted.getOriginal();
+            if (overridden.getModality() != Modality.ABSTRACT) {
+                return findNonAbstractDeclaration(overridden);
+            }
+        }
+
+        throw new IllegalStateException("No non-abstract declaration found for non-abstract function: " +
+                                        descriptor + "\nOverridden: " + descriptor.getOverriddenDescriptors());
     }
 
     @NotNull
@@ -799,6 +862,6 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
                  descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
 
-        generateBridgeIfNeeded(functionDescriptor);
+        generateBridges(functionDescriptor);
     }
 }

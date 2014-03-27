@@ -279,6 +279,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
     
     @TestMetadata("compiler/testData/codegen/box/bridges")
+    @InnerTestClasses({Bridges.SubstitutionInSuperClass.class})
     public static class Bridges extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInBridges() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -294,14 +295,29 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/delegationProperty.kt");
         }
         
-        @TestMetadata("delegationToTraitImpl.kt")
-        public void testDelegationToTraitImpl() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/delegationToTraitImpl.kt");
-        }
-        
         @TestMetadata("diamond.kt")
         public void testDiamond() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/diamond.kt");
+        }
+        
+        @TestMetadata("fakeCovariantOverride.kt")
+        public void testFakeCovariantOverride() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeCovariantOverride.kt");
+        }
+        
+        @TestMetadata("fakeGenericCovariantOverride.kt")
+        public void testFakeGenericCovariantOverride() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
+        }
+        
+        @TestMetadata("fakeOverrideOfTraitImpl.kt")
+        public void testFakeOverrideOfTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
+        }
+        
+        @TestMetadata("fakeOverrideWithSeveralSuperDeclarations.kt")
+        public void testFakeOverrideWithSeveralSuperDeclarations() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideWithSeveralSuperDeclarations.kt");
         }
         
         @TestMetadata("kt1939.kt")
@@ -404,54 +420,14 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/simpleReturnType.kt");
         }
         
+        @TestMetadata("simpleTraitImpl.kt")
+        public void testSimpleTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/simpleTraitImpl.kt");
+        }
+        
         @TestMetadata("simpleUpperBound.kt")
         public void testSimpleUpperBound() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClass.kt")
-        public void testSubstitutionInSuperClass() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassAbstractFun.kt")
-        public void testSubstitutionInSuperClassAbstractFun() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassAbstractFun.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassBoundedTypeArguments.kt")
-        public void testSubstitutionInSuperClassBoundedTypeArguments() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassBoundedTypeArguments.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassDelegation.kt")
-        public void testSubstitutionInSuperClassDelegation() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassDelegation.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassEnum.kt")
-        public void testSubstitutionInSuperClassEnum() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassEnum.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassGenericMethod.kt")
-        public void testSubstitutionInSuperClassGenericMethod() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassGenericMethod.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassObject.kt")
-        public void testSubstitutionInSuperClassObject() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassObject.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassProperty.kt")
-        public void testSubstitutionInSuperClassProperty() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassProperty.kt");
-        }
-        
-        @TestMetadata("substitutionInSuperClassUpperBound.kt")
-        public void testSubstitutionInSuperClassUpperBound() throws Exception {
-            doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClassUpperBound.kt");
         }
         
         @TestMetadata("twoParentsWithDifferentMethodsTwoBridges.kt")
@@ -464,6 +440,65 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/twoParentsWithTheSameMethodOneBridge.kt");
         }
         
+        @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
+        public static class SubstitutionInSuperClass extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("abstractFun.kt")
+            public void testAbstractFun() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/abstractFun.kt");
+            }
+            
+            public void testAllFilesPresentInSubstitutionInSuperClass() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/bridges/substitutionInSuperClass"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("boundedTypeArguments.kt")
+            public void testBoundedTypeArguments() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/boundedTypeArguments.kt");
+            }
+            
+            @TestMetadata("delegation.kt")
+            public void testDelegation() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/delegation.kt");
+            }
+            
+            @TestMetadata("enum.kt")
+            public void testEnum() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/enum.kt");
+            }
+            
+            @TestMetadata("genericMethod.kt")
+            public void testGenericMethod() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/genericMethod.kt");
+            }
+            
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/object.kt");
+            }
+            
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/property.kt");
+            }
+            
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/simple.kt");
+            }
+            
+            @TestMetadata("upperBound.kt")
+            public void testUpperBound() throws Exception {
+                doTest("compiler/testData/codegen/box/bridges/substitutionInSuperClass/upperBound.kt");
+            }
+            
+        }
+        
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("Bridges");
+            suite.addTestSuite(Bridges.class);
+            suite.addTestSuite(SubstitutionInSuperClass.class);
+            return suite;
+        }
     }
     
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
@@ -5475,7 +5510,7 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         suite.addTestSuite(BlackBoxCodegenTestGenerated.class);
         suite.addTestSuite(Arrays.class);
         suite.addTestSuite(BinaryOp.class);
-        suite.addTestSuite(Bridges.class);
+        suite.addTest(Bridges.innerSuite());
         suite.addTestSuite(BuiltinStubMethods.class);
         suite.addTest(CallableReference.innerSuite());
         suite.addTestSuite(Casts.class);
