@@ -29,8 +29,7 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     private final StringRef name;
     private final boolean isMutable;
     private final boolean isVarArg;
-    private final StringRef typeText;
-    private final StringRef defaultValueText;
+    //TODO: store as StringRef
     private final FqName fqName;
     private final boolean hasValOrValNode;
 
@@ -39,30 +38,14 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
             FqName fqName, StringRef name,
             boolean isMutable,
             boolean isVarArg,
-            StringRef typeText, StringRef defaultValueText,
             boolean hasValOrValNode
     ) {
         super(parent, JetStubElementTypes.VALUE_PARAMETER);
         this.name = name;
         this.isMutable = isMutable;
         this.isVarArg = isVarArg;
-        this.typeText = typeText;
-        this.defaultValueText = defaultValueText;
         this.fqName = fqName;
         this.hasValOrValNode = hasValOrValNode;
-    }
-
-    public PsiJetParameterStubImpl(
-            StubElement parent,
-            FqName fqName, String name,
-            boolean isMutable,
-            boolean isVarArg,
-            String typeText,
-            String defaultValueText,
-            boolean hasValOrValNode
-    ) {
-        this(parent, fqName, StringRef.fromString(name), isMutable, isVarArg,
-             StringRef.fromString(typeText), StringRef.fromString(defaultValueText), hasValOrValNode);
     }
 
     @Override
@@ -78,17 +61,6 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     @Override
     public boolean isVarArg() {
         return isVarArg;
-    }
-
-    @Nullable
-    @Override
-    public String getTypeText() {
-        return StringRef.toString(typeText);
-    }
-
-    @Override
-    public String getDefaultValueText() {
-        return StringRef.toString(defaultValueText);
     }
 
     @Override
@@ -111,8 +83,6 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
         if (fqName != null) {
             builder.append(" fqName=").append(fqName.toString()).append(" ");
         }
-        builder.append(" typeText=").append(getTypeText());
-        builder.append(" defaultValue=").append(getDefaultValueText());
 
         builder.append("]");
 

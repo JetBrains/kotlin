@@ -40,14 +40,8 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
 
     @Override
     public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
-        JetTypeReference typeReference = psi.getTypeReference();
-        JetExpression defaultValue = psi.getDefaultValue();
-
-        return new PsiJetParameterStubImpl(parentStub, psi.getFqName(),
-                psi.getName(), psi.isMutable(), psi.isVarArg(),
-                typeReference != null ? typeReference.getText() : null,
-                defaultValue != null ? defaultValue.getText() : null,
-                psi.getValOrVarNode() != null);
+        return new PsiJetParameterStubImpl(parentStub, psi.getFqName(), StringRef.fromString(psi.getName()),
+                                           psi.isMutable(), psi.isVarArg(), psi.getValOrVarNode() != null);
     }
 
     @Override
@@ -65,8 +59,6 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         dataStream.writeBoolean(stub.isMutable());
         dataStream.writeBoolean(stub.isVarArg());
         dataStream.writeBoolean(stub.hasValOrValNode());
-        dataStream.writeName(stub.getTypeText());
-        dataStream.writeName(stub.getDefaultValueText());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
     }
@@ -78,12 +70,9 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         boolean isMutable = dataStream.readBoolean();
         boolean isVarArg = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
-        StringRef typeText = dataStream.readName();
-        StringRef defaultValueText = dataStream.readName();
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg,
-                                           typeText, defaultValueText, hasValOrValNode);
+         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg, hasValOrValNode);
     }
 }
