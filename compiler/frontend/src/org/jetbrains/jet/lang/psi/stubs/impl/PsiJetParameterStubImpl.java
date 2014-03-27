@@ -32,13 +32,15 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     private final StringRef typeText;
     private final StringRef defaultValueText;
     private final FqName fqName;
+    private final boolean hasValOrValNode;
 
     public PsiJetParameterStubImpl(
             StubElement parent,
             FqName fqName, StringRef name,
             boolean isMutable,
             boolean isVarArg,
-            StringRef typeText, StringRef defaultValueText
+            StringRef typeText, StringRef defaultValueText,
+            boolean hasValOrValNode
     ) {
         super(parent, JetStubElementTypes.VALUE_PARAMETER);
         this.name = name;
@@ -47,6 +49,7 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
         this.typeText = typeText;
         this.defaultValueText = defaultValueText;
         this.fqName = fqName;
+        this.hasValOrValNode = hasValOrValNode;
     }
 
     public PsiJetParameterStubImpl(
@@ -55,10 +58,11 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
             boolean isMutable,
             boolean isVarArg,
             String typeText,
-            String defaultValueText
+            String defaultValueText,
+            boolean hasValOrValNode
     ) {
         this(parent, fqName, StringRef.fromString(name), isMutable, isVarArg,
-             StringRef.fromString(typeText), StringRef.fromString(defaultValueText));
+             StringRef.fromString(typeText), StringRef.fromString(defaultValueText), hasValOrValNode);
     }
 
     @Override
@@ -85,6 +89,11 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     @Override
     public String getDefaultValueText() {
         return StringRef.toString(defaultValueText);
+    }
+
+    @Override
+    public boolean hasValOrValNode() {
+        return hasValOrValNode;
     }
 
     @Override

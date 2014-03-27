@@ -26,4 +26,5 @@ public interface PsiJetParameterStub extends PsiJetStubWithFqName<JetParameter> 
     String getTypeText();
     @Nullable
     String getDefaultValueText();
+    boolean hasValOrValNode();
 }
