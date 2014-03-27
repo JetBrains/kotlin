@@ -186,6 +186,31 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NotSillyAssignment.kt");
     }
     
+    @TestMetadata("OverloadedConstructorArgument.kt")
+    public void testOverloadedConstructorArgument() throws Exception {
+        doTest("idea/testData/completion/smart/OverloadedConstructorArgument.kt");
+    }
+    
+    @TestMetadata("OverloadedMethodCallArgument1.kt")
+    public void testOverloadedMethodCallArgument1() throws Exception {
+        doTest("idea/testData/completion/smart/OverloadedMethodCallArgument1.kt");
+    }
+    
+    @TestMetadata("OverloadedMethodCallArgument2.kt")
+    public void testOverloadedMethodCallArgument2() throws Exception {
+        doTest("idea/testData/completion/smart/OverloadedMethodCallArgument2.kt");
+    }
+    
+    @TestMetadata("QualifiedOverloadedMethodCallArgument1.kt")
+    public void testQualifiedOverloadedMethodCallArgument1() throws Exception {
+        doTest("idea/testData/completion/smart/QualifiedOverloadedMethodCallArgument1.kt");
+    }
+    
+    @TestMetadata("QualifiedOverloadedMethodCallArgument2.kt")
+    public void testQualifiedOverloadedMethodCallArgument2() throws Exception {
+        doTest("idea/testData/completion/smart/QualifiedOverloadedMethodCallArgument2.kt");
+    }
+    
     @TestMetadata("QualifiedThis.kt")
     public void testQualifiedThis() throws Exception {
         doTest("idea/testData/completion/smart/QualifiedThis.kt");

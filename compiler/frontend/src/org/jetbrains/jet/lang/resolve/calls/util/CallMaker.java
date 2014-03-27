@@ -23,6 +23,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.psi.Call.CallType;
 
@@ -159,12 +161,14 @@ public class CallMaker {
         }
     }
 
+    @NotNull
     public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions) {
         return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
     }
 
+    @NotNull
     public static Call makeCallWithExpressions(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull JetExpression calleeExpression,
                                                @NotNull List<JetExpression> argumentExpressions, @NotNull CallType callType) {
@@ -175,23 +179,28 @@ public class CallMaker {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
+    @NotNull
     public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, JetExpression calleeExpression, List<? extends ValueArgument> arguments) {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
     }
 
+    @NotNull
     public static Call makeCall(JetElement callElement, ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode,
             JetExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
         return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
 
+    @NotNull
     public static Call makeCall(@NotNull ReceiverValue leftAsReceiver, JetBinaryExpression expression) {
         return makeCallWithExpressions(expression, leftAsReceiver, null, expression.getOperationReference(), Collections.singletonList(expression.getRight()));
     }
 
+    @NotNull
     public static Call makeCall(@NotNull ReceiverValue baseAsReceiver, JetUnaryExpression expression) {
         return makeCall(expression, baseAsReceiver, null, expression.getOperationReference(), Collections.<ValueArgument>emptyList());
     }
 
+    @NotNull
     public static Call makeArraySetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
             @NotNull JetExpression rightHandSide, @NotNull CallType callType) {
         List<JetExpression> arguments = Lists.newArrayList(arrayAccessExpression.getIndexExpressions());
@@ -199,23 +208,28 @@ public class CallMaker {
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arguments, callType);
     }
 
+    @NotNull
     public static Call makeArrayGetCall(@NotNull ReceiverValue arrayAsReceiver, @NotNull JetArrayAccessExpression arrayAccessExpression,
             @NotNull CallType callType) {
         return makeCallWithExpressions(arrayAccessExpression, arrayAsReceiver, null, arrayAccessExpression, arrayAccessExpression.getIndexExpressions(), callType);
     }
 
+    @NotNull
     public static ValueArgument makeValueArgument(@NotNull JetExpression expression) {
         return makeValueArgument(expression, expression);
     }
 
+    @NotNull
     public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
         return new ExpressionValueArgument(expression, reportErrorsOn);
     }
 
+    @NotNull
     public static Call makePropertyCall(@NotNull ReceiverValue explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull JetSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<JetExpression>emptyList());
     }
 
+    @NotNull
     public static Call makeCall(@NotNull final ReceiverValue explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final JetCallElement callElement) {
         return new Call() {
             @Override
@@ -290,6 +304,7 @@ public class CallMaker {
         };
     }
 
+    @NotNull
     public static Call makeCall(@NotNull JetElement callElement, @NotNull ReceiverValue explicitReceiver) {
         return new CallImpl(callElement, explicitReceiver, null, null, Collections.<ValueArgument>emptyList());
     }

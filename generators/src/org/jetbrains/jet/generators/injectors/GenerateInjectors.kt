@@ -34,6 +34,7 @@ import org.jetbrains.jet.di.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
+import org.jetbrains.jet.lang.resolve.calls.CallResolver
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -174,6 +175,7 @@ private fun generatorForMacro() =
 
             publicField(javaClass<ExpressionTypingServices>())
             publicField(javaClass<ExpressionTypingComponents>())
+            publicField(javaClass<CallResolver>())
 
             field(javaClass<GlobalContext>(), useAsContext = true,
                   init = GivenExpression("org.jetbrains.jet.context.ContextPackage.GlobalContext()"))

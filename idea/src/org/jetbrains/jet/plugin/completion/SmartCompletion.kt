@@ -33,6 +33,18 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.utils.*
+import org.jetbrains.jet.di.InjectorForMacros
+import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext
+import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
+import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
+import org.jetbrains.jet.lang.resolve.calls.CompositeExtension
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import com.intellij.lang.ASTNode
 
 trait SmartCompletionData{
     fun accepts(descriptor: DeclarationDescriptor): Boolean
@@ -53,17 +65,25 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     }
 
     val bindingContext = resolveSession.resolveToElement(expressionWithType)
-    val expectedType: JetType? = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType)
-    if (expectedType == null || expectedType.isError()) return null
+
+    val allExpectedTypes = calcExpectedTypes(expressionWithType, bindingContext, resolveSession.getModuleDescriptor()) ?: return null
+    val expectedTypes = allExpectedTypes.filter { !it.isError() }
+    if (expectedTypes.isEmpty()) return null
 
     val itemsToSkip = calcItemsToSkip(expressionWithType, resolveSession)
 
     val additionalElements = ArrayList<LookupElement>()
 
     if (receiver == null) {
-        typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
-        thisItems(expressionWithType, expectedType, bindingContext).toCollection(additionalElements)
-        staticMembers(expressionWithType, expectedType, resolveSession, bindingContext).toCollection(additionalElements)
+        for (expectedType in expectedTypes) {
+            //TODO: there can be duplicates here for multiple expected types
+            typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
+
+            //TODO: there can be duplicates here for multiple expected types
+            staticMembers(expressionWithType, expectedType, resolveSession, bindingContext).toCollection(additionalElements)
+        }
+
+        thisItems(expressionWithType, expectedTypes, bindingContext).toCollection(additionalElements)
     }
 
     val dataFlowInfo = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType)
@@ -97,10 +117,72 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
 
     return object: SmartCompletionData {
         override fun accepts(descriptor: DeclarationDescriptor)
-                = !itemsToSkip.contains(descriptor) && typesOf(descriptor).any { isSubtypeOf(it, expectedType) }
+                = !itemsToSkip.contains(descriptor)
+                      && typesOf(descriptor).any {
+                          descriptorType -> expectedTypes.any { expectedType -> isSubtypeOf(descriptorType, expectedType) }
+                         }
 
         override val additionalElements = additionalElements
     }
+}
+
+private fun calcExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<JetType>? {
+    val expectedTypes = calcArgumentExpectedTypes(expressionWithType, bindingContext, moduleDescriptor)
+    if (expectedTypes != null) {
+        return expectedTypes
+    }
+    else{
+        val expectedType = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType) ?: return null
+        return listOf(expectedType)
+    }
+}
+
+private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<JetType>? {
+    val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
+    if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
+    val argumentList = argument.getParent() as JetValueArgumentList
+    val argumentIndex = argumentList.getArguments().indexOf(argument)
+    val callExpression = argumentList.getParent() as? JetCallExpression ?: return null
+    val calleeExpression = callExpression.getCalleeExpression()
+
+    val parent = callExpression.getParent()
+    val receiver: ReceiverValue
+    val callOperationNode: ASTNode?
+    if (parent is JetQualifiedExpression && callExpression == parent.getSelectorExpression()) {
+        val receiverExpression = parent.getReceiverExpression()
+        val expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiverExpression) ?: return null
+        receiver = ExpressionReceiver(receiverExpression, expressionType)
+        callOperationNode = parent.getOperationTokenNode()
+    }
+    else {
+        receiver = ReceiverValue.NO_RECEIVER
+        callOperationNode = null
+    }
+    val call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
+
+    val resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, calleeExpression) ?: return null //TODO: discuss it
+
+    val callResolutionContext = BasicCallResolutionContext.create(
+            DelegatingBindingTrace(bindingContext, "Temporary trace for smart completion"),
+            resolutionScope,
+            call,
+            bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression) ?: TypeUtils.NO_EXPECTED_TYPE,
+            bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression) ?: DataFlowInfo.EMPTY,
+            ContextDependency.INDEPENDENT,
+            CheckValueArgumentsMode.ENABLED,
+            CompositeExtension(listOf()),
+            false).replaceCollectAllCandidates(true)
+    val callResolver = InjectorForMacros(expressionWithType.getProject(), moduleDescriptor).getCallResolver()!!
+    val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
+
+    val expectedTypes = HashSet<JetType>()
+    for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
+        val parameters = candidate.getResultingDescriptor().getValueParameters()
+        if (parameters.size <= argumentIndex) continue
+        val parameterDescriptor = parameters[argumentIndex]
+        expectedTypes.add(parameterDescriptor.getType())
+    }
+    return expectedTypes
 }
 
 private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSessionForBodies): Collection<DeclarationDescriptor> {
@@ -215,7 +297,7 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Resolv
     }
 }
 
-private fun thisItems(context: JetExpression, expectedType: JetType, bindingContext: BindingContext): Iterable<LookupElement> {
+private fun thisItems(context: JetExpression, expectedTypes: Collection<JetType>, bindingContext: BindingContext): Iterable<LookupElement> {
     val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, context)
     if (scope == null) return listOf()
 
@@ -224,7 +306,7 @@ private fun thisItems(context: JetExpression, expectedType: JetType, bindingCont
     for (i in 0..receivers.size - 1) {
         val receiver = receivers[i]
         val thisType = receiver.getType()
-        if (isSubtypeOf(thisType, expectedType)) {
+        if (expectedTypes.any { isSubtypeOf(thisType, it) }) {
             //TODO: use this code when KT-4258 fixed
             //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
             val qualifier = if (i == 0) null else thisQualifierName(receiver, bindingContext) ?: continue

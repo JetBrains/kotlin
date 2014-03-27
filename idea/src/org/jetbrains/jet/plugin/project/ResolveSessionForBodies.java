@@ -54,6 +54,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
         return resolveElementCache.resolveToElement(element);
     }
 
+    @NotNull
     @Override
     public ModuleDescriptor getModuleDescriptor() {
         return resolveSession.getModuleDescriptor();

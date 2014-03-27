@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 public interface KotlinCodeAnalyzer {
+    @NotNull
     ModuleDescriptor getModuleDescriptor();
 
     @NotNull
