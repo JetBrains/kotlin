@@ -280,7 +280,12 @@ public class ReplInterpreter {
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
-            return LineResult.successful(rv, scriptDescriptor.getReturnType().equals(KotlinBuiltIns.getInstance().getUnitType()));
+            return LineResult.successful(
+                        rv,
+                        KotlinBuiltIns.getInstance().getUnitType().equals(
+                                scriptDescriptor.getScriptCodeDescriptor().getReturnType()
+                        )
+            );
         } catch (Throwable e) {
             PrintWriter writer = new PrintWriter(System.err);
             classLoader.dumpClasses(writer);

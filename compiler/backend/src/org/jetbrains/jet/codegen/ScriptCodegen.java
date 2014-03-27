@@ -116,7 +116,7 @@ public class ScriptCodegen extends MemberCodegen {
             @NotNull MethodContext context
     ) {
 
-        Type blockType = typeMapper.mapType(scriptDescriptor.getReturnType());
+        Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
 
         classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME,
                               blockType.getDescriptor(), null, null);

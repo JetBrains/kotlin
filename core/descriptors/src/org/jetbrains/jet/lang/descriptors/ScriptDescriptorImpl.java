@@ -39,7 +39,6 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
 
     private final int priority;
 
-    private JetType returnType;
     private List<ValueParameterDescriptor> valueParameters;
 
     private final ScriptCodeDescriptor scriptCodeDescriptor = new ScriptCodeDescriptor(this);
@@ -75,7 +74,6 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
             @NotNull List<? extends PropertyDescriptorImpl> properties,
             @NotNull List<? extends FunctionDescriptor> functions
     ) {
-        this.returnType = returnType;
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
@@ -120,12 +118,6 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     @Override
     public int getPriority() {
         return priority;
-    }
-
-    @Override
-    @NotNull
-    public JetType getReturnType() {
-        return returnType;
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor;
-import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.List;
@@ -27,9 +26,6 @@ import java.util.List;
 public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, DeclarationDescriptorNonRoot {
     String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
     Name NAME = Name.special("<script>");
-
-    @NotNull
-    JetType getReturnType();
 
     int getPriority();
 
