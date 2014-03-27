@@ -38,6 +38,10 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
     }
 
     public boolean isAbsoluteInRootPackage() {
+        PsiJetUserTypeStub stub = getStub();
+        if (stub != null) {
+            return stub.isAbsoluteInRootPackage();
+        }
         return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 
