@@ -25,11 +25,11 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolver;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
+import org.jetbrains.jet.lang.resolve.TypeResolver;
+import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
-import org.jetbrains.jet.lang.resolve.TypeResolver;
-import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
@@ -52,11 +52,11 @@ public class InjectorForMacros {
     private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final AnnotationResolver annotationResolver;
+    private final TypeResolver typeResolver;
+    private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final CallExpressionResolver callExpressionResolver;
     private final DescriptorResolver descriptorResolver;
     private final DelegatedPropertyResolver delegatedPropertyResolver;
-    private final TypeResolver typeResolver;
-    private final QualifiedExpressionResolver qualifiedExpressionResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
@@ -77,11 +77,11 @@ public class InjectorForMacros {
         this.globalContext = org.jetbrains.jet.context.ContextPackage.GlobalContext();
         this.storageManager = globalContext.getStorageManager();
         this.annotationResolver = new AnnotationResolver();
+        this.typeResolver = new TypeResolver();
+        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.callExpressionResolver = new CallExpressionResolver();
         this.descriptorResolver = new DescriptorResolver();
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
-        this.typeResolver = new TypeResolver();
-        this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver());
@@ -114,6 +114,10 @@ public class InjectorForMacros {
         annotationResolver.setStorageManager(storageManager);
         annotationResolver.setTypeResolver(typeResolver);
 
+        typeResolver.setAnnotationResolver(annotationResolver);
+        typeResolver.setModuleDescriptor(moduleDescriptor);
+        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
+
         callExpressionResolver.setExpressionTypingServices(expressionTypingServices);
 
         descriptorResolver.setAnnotationResolver(annotationResolver);
@@ -124,10 +128,6 @@ public class InjectorForMacros {
 
         delegatedPropertyResolver.setCallResolver(callResolver);
         delegatedPropertyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        typeResolver.setAnnotationResolver(annotationResolver);
-        typeResolver.setModuleDescriptor(moduleDescriptor);
-        typeResolver.setQualifiedExpressionResolver(qualifiedExpressionResolver);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
         forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
