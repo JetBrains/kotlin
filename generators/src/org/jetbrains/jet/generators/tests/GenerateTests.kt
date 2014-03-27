@@ -408,6 +408,8 @@ fun main(args: Array<String>) {
             model("intentions/insertExplicitTypeArguments", testMethod = "doTestInsertExplicitTypeArguments")
             model("intentions/removeExplicitTypeArguments", testMethod = "doTestRemoveExplicitTypeArguments")
             model("intentions/convertAssertToIf", testMethod = "doTestConvertAssertToIfWithThrowIntention")
+            model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
+            model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
