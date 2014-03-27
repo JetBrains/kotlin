@@ -73,4 +73,9 @@ public class CompilerMessageLocation {
         result = 31 * result + column;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return path + ((line != -1 || column != -1) ? " (" + line + ":" + column + ")" : "");
+    }
 }
