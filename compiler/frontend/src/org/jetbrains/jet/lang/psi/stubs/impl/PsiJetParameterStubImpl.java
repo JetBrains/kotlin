@@ -32,13 +32,15 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     //TODO: store as StringRef
     private final FqName fqName;
     private final boolean hasValOrValNode;
+    private final boolean hasDefaultValue;
 
     public PsiJetParameterStubImpl(
             StubElement parent,
             FqName fqName, StringRef name,
             boolean isMutable,
             boolean isVarArg,
-            boolean hasValOrValNode
+            boolean hasValOrValNode,
+            boolean hasDefaultValue
     ) {
         super(parent, JetStubElementTypes.VALUE_PARAMETER);
         this.name = name;
@@ -46,6 +48,7 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
         this.isVarArg = isVarArg;
         this.fqName = fqName;
         this.hasValOrValNode = hasValOrValNode;
+        this.hasDefaultValue = hasDefaultValue;
     }
 
     @Override
@@ -66,6 +69,11 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     @Override
     public boolean hasValOrValNode() {
         return hasValOrValNode;
+    }
+
+    @Override
+    public boolean hasDefaultValue() {
+        return hasDefaultValue;
     }
 
     @Override
