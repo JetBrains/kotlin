@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -70,7 +69,7 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
 
     @Nullable @IfNotParsed
     public JetNameReferenceExpression getReferenceExpression() {
-        return (JetNameReferenceExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(JetStubElementTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable
