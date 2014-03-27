@@ -44,6 +44,10 @@ public class JetNameReferenceExpression extends JetElementImplStub<PsiJetNameRef
     @Override
     @NotNull
     public String getReferencedName() {
+        PsiJetNameReferenceExpressionStub stub = getStub();
+        if (stub != null) {
+            return stub.getReferencedName();
+        }
         return JetSimpleNameExpressionImpl.object$.getReferencedNameImpl(this);
     }
 
