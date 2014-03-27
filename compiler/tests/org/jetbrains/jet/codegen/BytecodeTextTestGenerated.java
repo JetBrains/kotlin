@@ -57,6 +57,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/componentEvaluatesOnlyOnce.kt");
     }
     
+    @TestMetadata("constClosureOptimization.kt")
+    public void testConstClosureOptimization() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/constClosureOptimization.kt");
+    }
+    
     @TestMetadata("intConstantNotNull.kt")
     public void testIntConstantNotNull() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/intConstantNotNull.kt");

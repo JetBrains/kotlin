@@ -1195,7 +1195,7 @@ public abstract class StackValue {
 
     public abstract static class StackValueWithSimpleReceiver extends StackValue {
 
-        protected final boolean isStatic;
+        public final boolean isStatic;
 
         public StackValueWithSimpleReceiver(@NotNull Type type, boolean isStatic) {
             super(type);
