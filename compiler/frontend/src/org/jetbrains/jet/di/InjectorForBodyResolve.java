@@ -176,7 +176,6 @@ public class InjectorForBodyResolve {
         functionAnalyzerExtension.setTrace(bindingTrace);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
-        scriptBodyResolver.setTrace(bindingTrace);
 
     }
     

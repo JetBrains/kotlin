@@ -47,25 +47,15 @@ public class ScriptBodyResolver {
 
     @NotNull
     private ExpressionTypingServices expressionTypingServices;
-    @NotNull
-    private BindingTrace trace;
-
-    public void setContext(@NotNull TopDownAnalysisContext context) {
-    }
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
-    }
 
 
-
-    public void resolveScriptBodies(@NotNull BodiesResolveContext c) {
+    public void resolveScriptBodies(@NotNull BodiesResolveContext c, @NotNull BindingTrace trace) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
