@@ -178,8 +178,6 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
                     parameter.getType(),
                     Collections.<TypeParameterDescriptor>emptyList(),
                     classDescriptor.getThisAsReceiverParameter(), ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
-            //PropertyGetterDescriptor getter = DescriptorResolver.createDefaultGetter(propertyDescriptor);
-            //getter.initialize(propertyDescriptor.getType());
             propertyDescriptor.initialize(null, null);
             classScope.addPropertyDescriptor(propertyDescriptor);
         }

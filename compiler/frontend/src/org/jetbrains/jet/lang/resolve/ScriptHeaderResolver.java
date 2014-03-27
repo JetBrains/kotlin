@@ -112,8 +112,6 @@ public class ScriptHeaderResolver {
         Name className = nameForScript.shortName();
         ScriptDescriptor scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
 
-        //WriteThroughScope scriptScope = new WriteThroughScope(
-        //        outerScope, ns.getMemberScope(), new TraceBasedRedeclarationHandler(trace));
         WritableScopeImpl scriptScope = new WritableScopeImpl(outerScope, scriptDescriptor, RedeclarationHandler.DO_NOTHING, "script");
         scriptScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
