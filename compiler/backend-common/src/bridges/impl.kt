@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
 import org.jetbrains.jet.lang.types.TypeUtils
-import java.util.LinkedHashSet
 
 public fun <Signature> generateBridgesForFunctionDescriptor(
         descriptor: FunctionDescriptor,
@@ -74,7 +73,7 @@ public fun findTraitImplementation(descriptor: CallableMemberDescriptor): Callab
     // TODO: this logic is quite common for bridge generation, find a way to abstract it to a single place
     // TODO: don't use filterOutOverridden() here, it's an internal front-end utility (see its implementation)
     val overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor)
-    val filteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(LinkedHashSet(overriddenDeclarations))
+    val filteredOverriddenDeclarations = OverridingUtil.filterOutOverridden(overriddenDeclarations)
 
     var implementation: CallableMemberDescriptor? = null
     for (overriddenDeclaration in filteredOverriddenDeclarations) {

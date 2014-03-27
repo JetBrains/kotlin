@@ -5404,6 +5404,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/MultipleDefaultParametersInSupertypesNoOverride.kt");
             }
             
+            @TestMetadata("MultipleDefaultsAndNamesInSupertypes.kt")
+            public void testMultipleDefaultsAndNamesInSupertypes() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/MultipleDefaultsAndNamesInSupertypes.kt");
+            }
+            
             @TestMetadata("MultipleDefaultsInSupertypesNoExplicitOverride.kt")
             public void testMultipleDefaultsInSupertypesNoExplicitOverride() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/MultipleDefaultsInSupertypesNoExplicitOverride.kt");
