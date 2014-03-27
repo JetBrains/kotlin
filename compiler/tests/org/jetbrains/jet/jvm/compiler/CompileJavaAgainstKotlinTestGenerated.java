@@ -73,6 +73,21 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest("compiler/testData/compileJavaAgainstKotlin/class/ImplementsMapPP.kt");
         }
         
+        @TestMetadata("InnerClass.kt")
+        public void testInnerClass() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/InnerClass.kt");
+        }
+        
+        @TestMetadata("InnerClassConstructors.kt")
+        public void testInnerClassConstructors() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/InnerClassConstructors.kt");
+        }
+        
+        @TestMetadata("InnerClassOfGeneric.kt")
+        public void testInnerClassOfGeneric() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/class/InnerClassOfGeneric.kt");
+        }
+        
         @TestMetadata("kt3561.kt")
         public void testKt3561() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/class/kt3561.kt");

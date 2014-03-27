@@ -157,8 +157,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
-            if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
-                markEnumConstructorParameterAsSynthetic(mv, i);
+            if (kind.isSkippedInGenericSignature()) {
+                markEnumOrInnerConstructorParameterAsSynthetic(mv, i);
                 continue;
             }
 
@@ -181,8 +181,8 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         for (int i = 0; i < kotlinParameterTypes.size(); i++) {
             JvmMethodParameterKind kind = kotlinParameterTypes.get(i).getKind();
-            if (kind == JvmMethodParameterKind.ENUM_NAME || kind == JvmMethodParameterKind.ENUM_ORDINAL) {
-                markEnumConstructorParameterAsSynthetic(mv, i);
+            if (kind.isSkippedInGenericSignature()) {
+                markEnumOrInnerConstructorParameterAsSynthetic(mv, i);
                 continue;
             }
 
@@ -223,7 +223,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    private void markEnumConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
+    private void markEnumOrInnerConstructorParameterAsSynthetic(MethodVisitor mv, int i) {
         // IDEA's ClsPsi builder fails to annotate synthetic parameters
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 

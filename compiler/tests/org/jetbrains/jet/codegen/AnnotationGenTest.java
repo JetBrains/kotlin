@@ -146,8 +146,8 @@ public class AnnotationGenTest extends CodegenTestCase {
         Class<?> inner = outer.getDeclaredClasses()[0];
         Constructor constructor = inner.getDeclaredConstructor(outer, int.class);
         assertNotNull(constructor);
-        // Get annotations for first real parameter
-        Annotation[] annotations = constructor.getParameterAnnotations()[1];
+        // Get annotations for first parameter
+        Annotation[] annotations = constructor.getParameterAnnotations()[0];
         assertNotNull(getDeprecatedAnnotationFromList(annotations));
     }
 
