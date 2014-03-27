@@ -74,6 +74,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
             @NotNull List<? extends PropertyDescriptorImpl> properties,
             @NotNull List<? extends FunctionDescriptor> functions
     ) {
+        assert valueParameters != null : "setValueParameters() must be called before this method";
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
         PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
@@ -118,12 +119,6 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
     @Override
     public int getPriority() {
         return priority;
-    }
-
-    @Override
-    @NotNull
-    public List<ValueParameterDescriptor> getValueParameters() {
-        return valueParameters;
     }
 
     @Override

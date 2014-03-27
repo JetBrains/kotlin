@@ -804,7 +804,7 @@ public class JetTypeMapper extends BindingTraceAware {
             signatureWriter.writeParameterTypeEnd();
         }
 
-        for (ValueParameterDescriptor valueParameter : script.getValueParameters()) {
+        for (ValueParameterDescriptor valueParameter : script.getScriptCodeDescriptor().getValueParameters()) {
             writeParameter(signatureWriter, valueParameter.getType());
         }
 
