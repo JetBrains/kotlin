@@ -32,11 +32,11 @@ import java.util.Map;
 class IntrinsicsMap {
     private static final class Key {
         private final FqNameUnsafe owner;
-        private final FqName receiverParameter;
+        private final FqNameUnsafe receiverParameter;
         private final String name;
         private final int valueParameterCount;
 
-        private Key(@NotNull FqNameUnsafe owner, @Nullable FqName receiverParameter, @NotNull String name, int valueParameterCount) {
+        private Key(@NotNull FqNameUnsafe owner, @Nullable FqNameUnsafe receiverParameter, @NotNull String name, int valueParameterCount) {
             this.owner = owner;
             this.receiverParameter = receiverParameter;
             this.name = name;
@@ -85,7 +85,7 @@ class IntrinsicsMap {
      */
     public void registerIntrinsic(
             @NotNull FqName owner,
-            @Nullable FqName receiverParameter,
+            @Nullable FqNameUnsafe receiverParameter,
             @NotNull String name,
             int valueParameterCount,
             @NotNull IntrinsicMethod impl
@@ -105,13 +105,13 @@ class IntrinsicsMap {
     }
 
     @Nullable
-    private static FqName getReceiverParameterFqName(@NotNull CallableMemberDescriptor descriptor) {
+    private static FqNameUnsafe getReceiverParameterFqName(@NotNull CallableMemberDescriptor descriptor) {
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter == null) return null;
 
         ClassifierDescriptor classifier = receiverParameter.getType().getConstructor().getDeclarationDescriptor();
         if (classifier == null) return null;
 
-        return DescriptorUtils.getFqNameSafe(classifier);
+        return DescriptorUtils.getFqName(classifier);
     }
 }
