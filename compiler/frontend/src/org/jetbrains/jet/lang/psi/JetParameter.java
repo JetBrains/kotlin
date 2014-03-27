@@ -81,6 +81,10 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
 
     @Nullable
     public ASTNode getValOrVarNode() {
+        PsiJetParameterStub stub = getStub();
+        if (stub != null && !stub.hasValOrValNode()) {
+            return null;
+        }
         ASTNode val = getNode().findChildByType(JetTokens.VAL_KEYWORD);
         if (val != null) return val;
 
