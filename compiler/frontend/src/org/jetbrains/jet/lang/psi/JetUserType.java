@@ -78,7 +78,7 @@ public class JetUserType extends JetElementImplStub<PsiJetUserTypeStub> implemen
 
     @Nullable
     public JetUserType getQualifier() {
-        return (JetUserType) findChildByType(JetNodeTypes.USER_TYPE);
+        return getStubOrPsiChild(JetStubElementTypes.USER_TYPE);
     }
 
     @Nullable
