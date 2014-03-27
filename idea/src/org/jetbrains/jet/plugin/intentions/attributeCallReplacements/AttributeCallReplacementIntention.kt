@@ -30,10 +30,9 @@ import org.jetbrains.jet.lang.psi.ValueArgument
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.lang.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument
-
-abstract class Maybe<out V, out E>
-public class Value<V, E>(public val value: V) : Maybe<V, E>()
-public class Error<V, E>(public val error: E) : Maybe<V, E>()
+import org.jetbrains.jet.plugin.util.Maybe
+import org.jetbrains.jet.plugin.util.MaybeError
+import org.jetbrains.jet.plugin.util.MaybeValue
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
@@ -56,13 +55,13 @@ public class CallDescription internal (
     public fun getPositionalArguments(): Maybe<List<ValueArgument>, String> {
 
         val resolvedValueArguments = resolved.getValueArgumentsByIndex()
-            ?: return Error("duplicate.or.missing.arguments")
+            ?: return MaybeError("duplicate.or.missing.arguments")
 
         // Check for mixed default and passed arguments and return the passed parameters (or fail)
         val indexOfFirstDefaultArgument = resolvedValueArguments.indexOf(DefaultValueArgument.DEFAULT)
         val valueArgumentGroups = if (indexOfFirstDefaultArgument >= 0) {
             if (resolvedValueArguments.listIterator(indexOfFirstDefaultArgument).any { it != DefaultValueArgument.DEFAULT }) {
-                return Error("skipped.defaults")
+                return MaybeError("skipped.defaults")
             }
             resolvedValueArguments.subList(0, indexOfFirstDefaultArgument)
         } else {
@@ -73,17 +72,17 @@ public class CallDescription internal (
         if (valueArgumentGroups.size > 0) {
             val vararg = valueArgumentGroups.find { it is VarargValueArgument }
             if (vararg != null && vararg != valueArgumentGroups.last) {
-                return Error("vararg.not.last")
+                return MaybeError("vararg.not.last")
             }
         }
 
         val valueArguments = valueArgumentGroups.flatMap { it.getArguments() }
         if (valueArguments.size < argumentCount) {
             // Only happens if invalid arguments were thrown away.
-            return Error("invalid.arguments")
+            return MaybeError("invalid.arguments")
         }
 
-        return Value(valueArguments)
+        return MaybeValue(valueArguments)
     }
 }
 
@@ -129,8 +128,8 @@ public abstract class AttributeCallReplacementIntention(name: String) : JetSelfT
 
     protected fun handleErrors<V: Any>(editor: Editor, maybeValue: Maybe<V, String>): V? {
         return when (maybeValue) {
-            is Value -> maybeValue.value
-            is Error -> {
+            is MaybeValue -> maybeValue.value
+            is MaybeError -> {
                 intentionFailed(editor, maybeValue.error)
                 null
             }
