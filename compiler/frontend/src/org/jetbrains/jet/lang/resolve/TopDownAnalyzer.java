@@ -187,7 +187,11 @@ public class TopDownAnalyzer {
                                 if (file.isScript()) {
                                     JetScript script = file.getScript();
                                     assert script != null;
-                                    scriptHeaderResolver.processScriptHierarchy(c, script, resolveSession.getScopeProvider().getFileScope(file));
+                                    scriptHeaderResolver.processScriptHierarchy(
+                                            c,
+                                            script,
+                                            (WritableScope) resolveSession.getScopeProvider().getFileScope(file)
+                                    );
                                 }
                                 else {
                                     JetPackageDirective packageDirective = file.getPackageDirective();

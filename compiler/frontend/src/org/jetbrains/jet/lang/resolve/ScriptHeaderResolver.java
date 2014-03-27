@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -99,7 +98,7 @@ public class ScriptHeaderResolver {
         return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
     }
 
-    public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull JetScope outerScope) {
+    public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull WritableScope outerScope) {
         JetFile file = (JetFile) script.getContainingFile();
         FqName fqName = file.getPackageFqName();
         PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
@@ -123,7 +122,7 @@ public class ScriptHeaderResolver {
 
         trace.record(BindingContext.SCRIPT, script, scriptDescriptor);
 
-        ((WritableScope)outerScope).addClassifierDescriptor(scriptDescriptor.getClassDescriptor());
+        outerScope.addClassifierDescriptor(scriptDescriptor.getClassDescriptor());
     }
 
     public void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
