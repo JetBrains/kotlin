@@ -36,7 +36,8 @@ import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.ANNO
  */
 public class JetTypeReference extends JetElementImplStub<PsiJetPlaceHolderStub<JetTypeReference>> {
 
-    public static final TokenSet TYPE_ELEMENTS = TokenSet.create(JetStubElementTypes.USER_TYPE, JetStubElementTypes.NULLABLE_TYPE);
+    public static final TokenSet TYPE_ELEMENTS
+            = TokenSet.create(JetStubElementTypes.USER_TYPE, JetStubElementTypes.NULLABLE_TYPE, JetStubElementTypes.FUNCTION_TYPE);
 
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);

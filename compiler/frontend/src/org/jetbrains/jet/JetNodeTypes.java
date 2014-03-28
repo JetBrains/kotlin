@@ -65,7 +65,7 @@ public interface JetNodeTypes {
     IElementType TYPE_REFERENCE                     = JetStubElementTypes.TYPE_REFERENCE;
 
     IElementType USER_TYPE                = JetStubElementTypes.USER_TYPE;
-    JetNodeType FUNCTION_TYPE = new JetNodeType("FUNCTION_TYPE", JetFunctionType.class);
+    IElementType FUNCTION_TYPE            = JetStubElementTypes.FUNCTION_TYPE;
     JetNodeType FUNCTION_TYPE_RECEIVER = new JetNodeType("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
     JetNodeType SELF_TYPE     = new JetNodeType("SELF_TYPE", JetSelfType.class);
     IElementType NULLABLE_TYPE            = JetStubElementTypes.NULLABLE_TYPE;
