@@ -34,18 +34,20 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
 
     @Override
     public PsiJetImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
-        return new PsiJetImportDirectiveStubImpl(parentStub);
+        return new PsiJetImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder());
     }
 
     @Override
     public void serialize(@NotNull PsiJetImportDirectiveStub stub, @NotNull StubOutputStream dataStream) throws IOException {
-        //TODO:
+        dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
+        dataStream.writeBoolean(stub.isAllUnder());
     }
 
     @NotNull
     @Override
     public PsiJetImportDirectiveStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        //TODO
-        return new PsiJetImportDirectiveStubImpl(parentStub);
+        boolean isAbsoluteInRootPackage = dataStream.readBoolean();
+        boolean isAllUnder = dataStream.readBoolean();
+        return new PsiJetImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder);
     }
 }

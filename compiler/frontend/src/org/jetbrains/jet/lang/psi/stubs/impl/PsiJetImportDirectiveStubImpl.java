@@ -23,7 +23,26 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetImportDirectiveStubImpl extends StubBase<JetImportDirective> implements PsiJetImportDirectiveStub {
-    public PsiJetImportDirectiveStubImpl(StubElement parent) {
+    private final boolean isAbsoluteInRootPackage;
+    private final boolean isAllUnder;
+
+    public PsiJetImportDirectiveStubImpl(
+            StubElement parent,
+            boolean isAbsoluteInRootPackage,
+            boolean isAllUnder
+    ) {
         super(parent, JetStubElementTypes.IMPORT_DIRECTIVE);
+        this.isAbsoluteInRootPackage = isAbsoluteInRootPackage;
+        this.isAllUnder = isAllUnder;
+    }
+
+    @Override
+    public boolean isAbsoluteInRootPackage() {
+        return isAbsoluteInRootPackage;
+    }
+
+    @Override
+    public boolean isAllUnder() {
+        return isAllUnder;
     }
 }

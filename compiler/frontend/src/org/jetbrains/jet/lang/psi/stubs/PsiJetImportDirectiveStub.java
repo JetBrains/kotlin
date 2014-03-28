@@ -20,4 +20,6 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 
 public interface PsiJetImportDirectiveStub extends StubElement<JetImportDirective> {
+    boolean isAbsoluteInRootPackage();
+    boolean isAllUnder();
 }
