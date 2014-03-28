@@ -38,6 +38,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     private final boolean isTopLevel;
     private final boolean isClassObject;
     private final boolean isLocal;
+    private final boolean isObjectLiteral;
 
     public PsiJetObjectStubImpl(
             @NotNull StubElement parent,
@@ -46,7 +47,8 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
             @NotNull StringRef[] superNames,
             boolean isTopLevel,
             boolean isClassObject,
-            boolean isLocal
+            boolean isLocal,
+            boolean isObjectLiteral
     ) {
         super(parent, JetStubElementTypes.OBJECT_DECLARATION);
         this.name = name;
@@ -55,6 +57,7 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
         this.isTopLevel = isTopLevel;
         this.isClassObject = isClassObject;
         this.isLocal = isLocal;
+        this.isObjectLiteral = isObjectLiteral;
     }
 
     @Override
@@ -86,6 +89,11 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     @Override
     public boolean isClassObject() {
         return isClassObject;
+    }
+
+    @Override
+    public boolean isObjectLiteral() {
+        return isObjectLiteral;
     }
 
     @Override

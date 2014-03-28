@@ -53,7 +53,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames),
-                                        psi.isTopLevel(), isClassObject(psi), JetPsiUtil.isLocal(psi));
+                                        psi.isTopLevel(), isClassObject(psi), JetPsiUtil.isLocal(psi), psi.isObjectLiteral());
     }
 
     @Override
@@ -66,6 +66,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         dataStream.writeBoolean(stub.isTopLevel());
         dataStream.writeBoolean(stub.isClassObject());
         dataStream.writeBoolean(stub.isLocal());
+        dataStream.writeBoolean(stub.isObjectLiteral());
 
         List<String> superNames = stub.getSuperNames();
         dataStream.writeVarInt(superNames.size());
@@ -84,6 +85,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         boolean isTopLevel = dataStream.readBoolean();
         boolean isClassObject = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
+        boolean isObjectLiteral = dataStream.readBoolean();
 
         int superCount = dataStream.readVarInt();
         StringRef[] superNames = StringRef.createArray(superCount);
@@ -91,7 +93,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
             superNames[i] = dataStream.readName();
         }
 
-        return new PsiJetObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal);
+        return new PsiJetObjectStubImpl(parentStub, name, fqName, superNames, isTopLevel, isClassObject, isLocal, isObjectLiteral);
     }
 
     @Override
