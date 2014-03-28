@@ -17,9 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.asm4.Type;
-import org.jetbrains.asm4.commons.Method;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -58,12 +55,8 @@ public final class JvmAbi {
     }
 
     @NotNull
-    public static Method getSyntheticMethodSignatureForAnnotatedProperty(@NotNull Name propertyName, @Nullable Type receiver) {
-        return new Method(
-                propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX,
-                Type.VOID_TYPE,
-                receiver == null ? new Type[0] : new Type[] {receiver}
-        );
+    public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
+        return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
     }
 
     @NotNull

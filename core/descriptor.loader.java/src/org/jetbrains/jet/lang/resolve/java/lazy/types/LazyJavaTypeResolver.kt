@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.*
 import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.types.Variance.*
 import org.jetbrains.jet.lang.types.*
-import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPrimitiveType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClassifierType
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaTypeParameter
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.utils.*
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaTypeParameterDescriptor
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationOwner
 import org.jetbrains.jet.lang.resolve.java.lazy.*
@@ -42,8 +40,6 @@ import org.jetbrains.jet.storage.*
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import java.util.HashSet
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-
-private val LOG = Logger.getInstance(javaClass<LazyJavaTypeResolver>())
 
 class LazyJavaTypeResolver(
         private val c: LazyJavaResolverContext,
@@ -248,10 +244,7 @@ class LazyJavaTypeResolver(
                 }
                 is JavaClass,
                 null -> attr.howThisTypeIsUsed !in setOf(TYPE_ARGUMENT, SUPERTYPE_ARGUMENT, SUPERTYPE)
-                else -> {
-                    LOG.error("Unknown classifier: ${classifier()}")
-                    true
-                }
+                else -> error("Unknown classifier: ${classifier()}")
             }
         }
         override fun isNullable(): Boolean = _nullable()

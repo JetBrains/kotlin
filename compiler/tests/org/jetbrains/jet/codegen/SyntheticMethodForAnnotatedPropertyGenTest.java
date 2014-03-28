@@ -41,8 +41,7 @@ public class SyntheticMethodForAnnotatedPropertyGenTest extends CodegenTestCase 
         return "properties/syntheticMethod";
     }
 
-    private static final String TEST_SYNTHETIC_METHOD_NAME =
-            JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(Name.identifier("property"), null).getName();
+    private static final String TEST_SYNTHETIC_METHOD_NAME = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(Name.identifier("property"));
 
     public void testInClass() {
         loadFile();

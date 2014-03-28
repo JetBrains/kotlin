@@ -168,16 +168,12 @@ public class PropertyCodegen extends GenerationStateAware {
         if (descriptor.getAnnotations().isEmpty()) return;
 
         ReceiverParameterDescriptor receiver = descriptor.getReceiverParameter();
-        Type receiverAsmType = receiver == null ? null : typeMapper.mapType(receiver.getType());
-        Method method = JvmAbi.getSyntheticMethodSignatureForAnnotatedProperty(descriptor.getName(), receiverAsmType);
+        String name = JvmAbi.getSyntheticMethodNameForAnnotatedProperty(descriptor.getName());
+        String desc = receiver == null ? "()V" : "(" + typeMapper.mapType(receiver.getType()) + ")V";
 
         if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
-            MethodVisitor mv = v.newMethod(null,
-                                           ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC,
-                                           method.getName(),
-                                           method.getDescriptor(),
-                                           null,
-                                           null);
+            int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
+            MethodVisitor mv = v.newMethod(null, flags, name, desc, null, null);
             AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);
@@ -189,7 +185,7 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         if (kind != OwnerKind.TRAIT_IMPL) {
-            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, method);
+            v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, new Method(name, desc));
         }
     }
 
