@@ -49,7 +49,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     @NotNull
     @Override
     public List<JetDeclaration> getDeclarations() {
-        JetClassBody body = (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        JetClassBody body = getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
         if (body == null) return Collections.emptyList();
 
         return body.getDeclarations();
