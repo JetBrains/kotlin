@@ -41,7 +41,7 @@ public interface JetNodeTypes {
 
     IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
-    JetNodeType DELEGATION_SPECIFIER_LIST           = new JetNodeType("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
+    IElementType DELEGATION_SPECIFIER_LIST           = JetStubElementTypes.DELEGATION_SPECIFIER_LIST;
     JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
     JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);

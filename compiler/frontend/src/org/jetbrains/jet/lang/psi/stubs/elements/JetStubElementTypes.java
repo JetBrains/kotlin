@@ -68,4 +68,7 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetTypeArgumentList> TYPE_ARGUMENT_LIST =
                 new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
+
+    JetPlaceHolderStubElementType<JetDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
+            new JetPlaceHolderStubElementType<JetDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
 }
