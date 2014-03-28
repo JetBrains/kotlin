@@ -47,6 +47,10 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
 
     @Nullable
     public JetExpression getDefaultValue() {
+        PsiJetParameterStub stub = getStub();
+        if (stub != null && !stub.hasDefaultValue()) {
+            return null;
+        }
         boolean passedEQ = false;
         ASTNode child = getNode().getFirstChildNode();
         while (child != null) {
