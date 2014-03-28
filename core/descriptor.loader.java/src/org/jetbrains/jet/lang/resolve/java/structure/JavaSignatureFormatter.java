@@ -41,12 +41,4 @@ public abstract class JavaSignatureFormatter {
      */
     @NotNull
     public abstract String formatMethod(@NotNull JavaMethod method);
-
-    /**
-     * @return a formatted signature of a method, showing method's containing class, return type and parameter types, all names are fully
-     * qualified, e.g.:
-     * {@code "java.lang.Class boolean isAnnotationPresent(java.lang.Class&lt;? extends java.lang.annotation.Annotation&gt;)"}
-     */
-    @NotNull
-    public abstract String getExternalName(@NotNull JavaMethod method);
 }
