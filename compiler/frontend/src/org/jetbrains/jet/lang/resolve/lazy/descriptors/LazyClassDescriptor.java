@@ -31,10 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnnotationResolver;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -69,6 +66,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
     };
     private final ResolveSession resolveSession;
+
     private final JetClassLikeInfo originalClassInfo;
     private final ClassMemberDeclarationProvider declarationProvider;
 
@@ -93,7 +91,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull ResolveSession resolveSession,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull JetClassLikeInfo classLikeInfo
+            @NotNull JetClassLikeInfo classLikeInfo,
+            @NotNull BindingTrace traceForMembers // = resolveSession.getTrace()
     ) {
         super(resolveSession.getStorageManager(), containingDeclaration, name);
         this.resolveSession = resolveSession;
@@ -106,7 +105,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.originalClassInfo = classLikeInfo;
         this.declarationProvider = resolveSession.getDeclarationProviderFactory().getClassMemberDeclarationProvider(classLikeInfo);
 
-        this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this);
+        this.unsubstitutedMemberScope = new LazyClassMemberScope(resolveSession, declarationProvider, this, traceForMembers);
 
         this.typeConstructor = new LazyClassTypeConstructor();
 
@@ -163,6 +162,15 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return null;
             }
         }, null);
+    }
+
+    public LazyClassDescriptor(
+            @NotNull ResolveSession resolveSession,
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @NotNull Name name,
+            @NotNull JetClassLikeInfo classLikeInfo
+    ) {
+        this(resolveSession, containingDeclaration, name, classLikeInfo, resolveSession.getTrace());
     }
 
     @NotNull

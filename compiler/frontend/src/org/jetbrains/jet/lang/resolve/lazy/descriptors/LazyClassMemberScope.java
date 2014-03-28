@@ -76,9 +76,10 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     public LazyClassMemberScope(
             @NotNull ResolveSession resolveSession,
             @NotNull ClassMemberDeclarationProvider declarationProvider,
-            @NotNull LazyClassDescriptor thisClass
+            @NotNull LazyClassDescriptor thisClass,
+            @NotNull BindingTrace trace
     ) {
-        super(resolveSession, declarationProvider, thisClass);
+        super(resolveSession, declarationProvider, thisClass, trace);
         this.primaryConstructor = resolveSession.getStorageManager().createNullableLazyValue(new Function0<ConstructorDescriptor>() {
             @Override
             public ConstructorDescriptor invoke() {
@@ -120,7 +121,6 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
                     @Override
                     public void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent) {
-                        BindingTrace trace = resolveSession.getTrace();
                         JetDeclaration declaration = (JetDeclaration) BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(),
                                                                                                                   fromCurrent);
                         assert declaration != null : "fromCurrent can not be a fake override";
@@ -129,7 +129,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                     }
                 }
         );
-        OverrideResolver.resolveUnknownVisibilities(result, resolveSession.getTrace());
+        OverrideResolver.resolveUnknownVisibilities(result, trace);
     }
 
     @NotNull
@@ -139,7 +139,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         Set<FunctionDescriptor> functions = super.getFunctions(name);
         for (FunctionDescriptor functionDescriptor : functions) {
             if (functionDescriptor.getKind() != FAKE_OVERRIDE && functionDescriptor.getKind() != DELEGATION) {
-                OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, resolveSession.getTrace());
+                OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, trace);
             }
         }
         return functions;
@@ -176,7 +176,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             if (name.equals(Name.identifier(DescriptorResolver.COMPONENT_FUNCTION_NAME_PREFIX + parameterIndex))) {
                 SimpleFunctionDescriptor functionDescriptor =
                         DescriptorResolver.createComponentFunctionDescriptor(parameterIndex, property,
-                                                                             parameter, thisDescriptor, resolveSession.getTrace());
+                                                                             parameter, thisDescriptor, trace);
                 result.add(functionDescriptor);
                 break;
             }
@@ -184,7 +184,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         if (!constructor.getValueParameters().isEmpty() && name.equals(DescriptorResolver.COPY_METHOD_NAME)) {
             SimpleFunctionDescriptor copyFunctionDescriptor = DescriptorResolver.createCopyFunctionDescriptor(
                     constructor.getValueParameters(),
-                    thisDescriptor, resolveSession.getTrace());
+                    thisDescriptor, trace);
             result.add(copyFunctionDescriptor);
         }
     }
@@ -194,12 +194,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
         if (name.equals(DescriptorFactory.VALUES_METHOD_NAME)) {
             SimpleFunctionDescriptor valuesMethod = DescriptorResolver
-                    .createEnumClassObjectValuesMethod(thisDescriptor, resolveSession.getTrace());
+                    .createEnumClassObjectValuesMethod(thisDescriptor, trace);
             result.add(valuesMethod);
         }
         else if (name.equals(DescriptorFactory.VALUE_OF_METHOD_NAME)) {
             SimpleFunctionDescriptor valueOfMethod = DescriptorResolver
-                    .createEnumClassObjectValueOfMethod(thisDescriptor, resolveSession.getTrace());
+                    .createEnumClassObjectValueOfMethod(thisDescriptor, trace);
             result.add(valueOfMethod);
         }
     }
@@ -212,7 +212,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         for (VariableDescriptor variableDescriptor : properties) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
             if (propertyDescriptor.getKind() == FAKE_OVERRIDE || propertyDescriptor.getKind() == DELEGATION) continue;
-            OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, resolveSession.getTrace());
+            OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, trace);
         }
         return properties;
     }
@@ -236,7 +236,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                                     thisDescriptor,
                                     valueParameterDescriptor,
                                     thisDescriptor.getScopeForClassHeaderResolution(),
-                                    parameter, resolveSession.getTrace()
+                                    parameter, trace
                             );
                     result.add(propertyDescriptor);
                 }
@@ -271,7 +271,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 return resolveSession.getTypeResolver().resolveType(
                         thisDescriptor.getScopeForClassHeaderResolution(),
                         reference,
-                        resolveSession.getTrace(),
+                        trace,
                         false);
             }
         };
@@ -282,7 +282,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                 return extractor.extract(type, name);
             }
         };
-        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, resolveSession.getTrace(), lazyMemberExtractor,
+        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor,
                                         lazyTypeResolver);
     }
 
@@ -365,13 +365,13 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
                                                              thisDescriptor,
                                                              jetClass,
-                                                             resolveSession.getTrace());
+                                                             trace);
                 primaryConstructor = constructor;
                 setDeferredReturnType(constructor);
             }
             else {
                 ConstructorDescriptorImpl constructor =
-                        DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, resolveSession.getTrace());
+                        DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, trace);
                 setDeferredReturnType(constructor);
                 primaryConstructor = constructor;
             }
@@ -380,7 +380,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
-        descriptor.setReturnType(DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace(),
+        descriptor.setReturnType(DeferredType.create(resolveSession.getStorageManager(), trace,
                 new Function0<JetType>() {
                     @Override
                     public JetType invoke() {

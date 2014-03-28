@@ -16,18 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve;
 
-import com.google.common.base.Predicate;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 public class TemporaryBindingTrace extends DelegatingBindingTrace {
 
+    @NotNull
     public static TemporaryBindingTrace create(@NotNull BindingTrace trace, String debugName) {
         return new TemporaryBindingTrace(trace, debugName);
     }
 
+    @NotNull
     public static TemporaryBindingTrace create(@NotNull BindingTrace trace, String debugName, @Nullable Object resolutionSubjectForMessage) {
         return create(trace, AnalyzingUtils.formDebugNameForBindingTrace(debugName, resolutionSubjectForMessage));
     }

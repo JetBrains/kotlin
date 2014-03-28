@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
@@ -43,6 +44,7 @@ import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameFo
 
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
     protected final ResolveSession resolveSession;
+    protected final BindingTrace trace;
     protected final DP declarationProvider;
     protected final D thisDescriptor;
 
@@ -57,9 +59,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
     protected AbstractLazyMemberScope(
             @NotNull ResolveSession resolveSession,
             @NotNull DP declarationProvider,
-            @NotNull D thisDescriptor
+            @NotNull D thisDescriptor,
+            @NotNull BindingTrace trace
     ) {
         this.resolveSession = resolveSession;
+        this.trace = trace;
         this.declarationProvider = declarationProvider;
         this.thisDescriptor = thisDescriptor;
 
@@ -136,7 +140,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             result.add(resolveSession.getDescriptorResolver().resolveFunctionDescriptorWithAnnotationArguments(
                   thisDescriptor, resolutionScope,
                   functionDeclaration,
-                  resolveSession.getTrace(),
+                  trace,
                   // this relies on the assumption that a lazily resolved declaration is not a local one,
                   // thus doesn't have a surrounding data flow
                   DataFlowInfo.EMPTY)
@@ -170,12 +174,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                     resolveSession.getDescriptorResolver().resolvePropertyDescriptor(
                            thisDescriptor, resolutionScope,
                            propertyDeclaration,
-                           resolveSession.getTrace(),
+                           trace,
                            // this relies on the assumption that a lazily resolved declaration is not a local one,
                            // thus doesn't have a surrounding data flow
                            DataFlowInfo.EMPTY);
             result.add(propertyDescriptor);
-            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, resolveSession.getTrace(), resolutionScope);
+            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, trace, resolutionScope);
         }
 
         getNonDeclaredProperties(name, result);

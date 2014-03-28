@@ -36,7 +36,7 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     public LazyPackageMemberScope(@NotNull ResolveSession resolveSession,
             @NotNull PackageMemberDeclarationProvider declarationProvider,
             @NotNull PackageFragmentDescriptor thisPackage) {
-        super(resolveSession, declarationProvider, thisPackage);
+        super(resolveSession, declarationProvider, thisPackage, resolveSession.getTrace());
     }
 
     @Nullable

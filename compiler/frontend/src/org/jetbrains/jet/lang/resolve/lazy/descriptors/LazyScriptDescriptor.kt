@@ -48,6 +48,8 @@ import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
+import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
 
 public class LazyScriptDescriptor(
         val resolveSession: ResolveSession,
@@ -93,7 +95,8 @@ public class LazyScriptDescriptor(
                     override fun getClassKind() = ClassKind.CLASS
                     override fun getDeclarations() = jetScript.getDeclarations()
                             .filter { ScriptBodyResolver.shouldBeScriptClassMember(it) }
-                }
+                },
+                TemporaryBindingTrace.create(resolveSession.getTrace(), "A trace for script class, needed to avoid rewrites on members")
         )
     }
 
