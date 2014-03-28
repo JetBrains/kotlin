@@ -22,14 +22,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.OutputFileCollection;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.GenerationUtils;
+import org.jetbrains.jet.codegen.InlineTestUtil;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -65,7 +63,13 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         invokeMain();
     }
 
-    public void doBoxTest(@NotNull String folderName) throws Exception {
+    public void doBoxTestWithInlineCheck(@NotNull String folderName) throws Exception {
+        ArrayList<OutputFile> files = doBoxTest(folderName);
+        InlineTestUtil.checkNoCallsToInline(files);
+    }
+
+    @NotNull
+    private ArrayList<OutputFile> doBoxTest(@NotNull String folderName) throws Exception {
         final List<String> files = new ArrayList<String>(2);
         FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
             @Override
@@ -96,6 +100,10 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
             System.out.println(result);
             throw UtilsPackage.rethrow(e);
         }
+
+        ArrayList<OutputFile> allGeneratedFiles = new ArrayList<OutputFile>(factory1.asList());
+        allGeneratedFiles.addAll(factory2.asList());
+        return allGeneratedFiles;
     }
 
     private void invokeMain() throws Exception {
