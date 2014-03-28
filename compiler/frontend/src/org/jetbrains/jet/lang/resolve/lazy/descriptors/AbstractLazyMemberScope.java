@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -104,12 +104,12 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
 
     @Nullable
     private List<ClassDescriptor> resolveClassDescriptor(@NotNull final Name name) {
-        Collection<JetClassOrObject> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
+        Collection<JetClassLikeInfo> classOrObjectDeclarations = declarationProvider.getClassOrObjectDeclarations(name);
 
-        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassOrObject, ClassDescriptor>() {
+        return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
             @Override
-            public ClassDescriptor fun(JetClassOrObject classOrObject) {
-                return new LazyClassDescriptor(resolveSession, thisDescriptor, name, JetClassInfoUtil.createClassLikeInfo(classOrObject));
+            public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
+                return new LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo);
             }
         });
     }

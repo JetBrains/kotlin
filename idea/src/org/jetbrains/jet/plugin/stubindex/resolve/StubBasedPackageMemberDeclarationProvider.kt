@@ -27,6 +27,8 @@ import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -42,8 +44,9 @@ public class StubBasedPackageMemberDeclarationProvider(
         }
     }
 
-    override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassOrObject> {
+    override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
         return JetFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
+                .map { JetClassInfoUtil.createClassLikeInfo(it) }
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<JetNamedFunction> {

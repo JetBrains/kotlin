@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
 public class JetClassInfoUtil {
 
+    @NotNull
     public static JetClassLikeInfo createClassLikeInfo(@NotNull JetClassOrObject classOrObject) {
         if (classOrObject instanceof JetClass) {
             return new JetClassInfo((JetClass) classOrObject);

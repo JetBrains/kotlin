@@ -23,8 +23,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -210,14 +208,17 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName.parent());
         if (provider == null) return Collections.emptyList();
 
-        return KotlinPackage.map(
+        return ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                new Function1<JetClassOrObject, ClassDescriptor>() {
+                new Function<JetClassLikeInfo, ClassDescriptor>() {
                     @Override
-                    public ClassDescriptor invoke(JetClassOrObject classOrObject) {
+                    public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
+                        JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
+                        if (classOrObject == null) return null;
                         return getClassDescriptor(classOrObject);
                     }
-                });
+                }
+        );
     }
 
     @Override

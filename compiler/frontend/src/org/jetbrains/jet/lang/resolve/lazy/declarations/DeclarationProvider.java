@@ -18,10 +18,10 @@ package org.jetbrains.jet.lang.resolve.lazy.declarations;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
@@ -42,5 +42,5 @@ public interface DeclarationProvider {
 
     @ReadOnly
     @NotNull
-    Collection<JetClassOrObject> getClassOrObjectDeclarations(@NotNull Name name);
+    Collection<JetClassLikeInfo> getClassOrObjectDeclarations(@NotNull Name name);
 }
