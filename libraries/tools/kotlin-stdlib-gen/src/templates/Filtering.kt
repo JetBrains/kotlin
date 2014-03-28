@@ -51,9 +51,11 @@ fun filtering(): List<GenericFunction> {
             """
             var count = 0
             val list = ArrayList<T>(n)
-            for (item in this)
+            for (item in this) {
                 if (count++ >= n)
-                    list.add(item)
+                    break
+                list.add(item)
+            }
             return list
             """
         }

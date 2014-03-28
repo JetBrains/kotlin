@@ -1,9 +1,7 @@
 package test.collections
 
-import kotlin.test.*
-
 import java.util.*
-
+import kotlin.test.*
 import org.junit.Test as test
 
 class CollectionTest {
@@ -408,4 +406,15 @@ class CollectionTest {
         expect(3.0.toFloat()) { arrayListOf<Float>(1.0.toFloat(), 2.0.toFloat()).sum() }
     }
 
+    test fun takeReturnsFirstNElements() {
+        expect(listOf(1, 2, 3, 4, 5)) { (1..10) take 5 }
+        expect(listOf(1, 2, 3, 4, 5)) { (1..10).toList().take(5) }
+        expect(listOf(1, 2)) { (1..10) take 2 }
+        expect(listOf(1, 2)) { (1..10).toList().take(2) }
+        expect(listOf<Long>()) { (0L..5L) take 0 }
+        expect(listOf<Long>()) { listOf(1L) take 0 }
+        expect(listOf(1)) { (1..1) take 10 }
+        expect(listOf(1)) { listOf(1) take 10 }
+        expect(setOf(1, 2)) { sortedSetOf(1, 2, 3, 4, 5).take(2).toSet() }
+    }
 }
