@@ -52,7 +52,7 @@ fun filtering(): List<GenericFunction> {
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
-                if (count++ >= n)
+                if (count++ == n)
                     break
                 list.add(item)
             }
