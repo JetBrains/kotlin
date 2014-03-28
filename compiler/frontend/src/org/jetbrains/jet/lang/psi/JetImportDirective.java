@@ -78,6 +78,10 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
 
     @Nullable
     public String getAliasName() {
+        PsiJetImportDirectiveStub stub = getStub();
+        if (stub != null) {
+            return stub.getAliasName();
+        }
         ASTNode aliasNameNode = getAliasNameNode();
         if (aliasNameNode == null) {
             return null;
