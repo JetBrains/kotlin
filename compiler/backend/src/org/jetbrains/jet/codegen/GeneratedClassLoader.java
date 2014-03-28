@@ -21,6 +21,7 @@ import org.jetbrains.jet.OutputFile;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 public class GeneratedClassLoader extends URLClassLoader {
     private ClassFileFactory state;
@@ -46,5 +47,9 @@ public class GeneratedClassLoader extends URLClassLoader {
 
     public void dispose() {
         state = null;
+    }
+
+    public List<OutputFile> getAllGeneratedFiles() {
+        return state.asList();
     }
 }

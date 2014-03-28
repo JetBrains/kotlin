@@ -19,9 +19,7 @@ package org.jetbrains.jet.codegen.generated;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.*;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.CodegenTestCase;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -71,6 +69,10 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         blackBox();
     }
 
+    public void doTestMultiFileWithInlineCheck(@NotNull String folderName) {
+        doTestMultiFile(folderName);
+        InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
+    }
 
     private void blackBoxFileWithJavaByFullPath(@NotNull String ktFileFullPath) {
         String ktFile = ktFileFullPath.substring("compiler/testData/codegen/".length());
