@@ -28,7 +28,11 @@ import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.JetImportList;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Importer;
+import org.jetbrains.jet.lang.resolve.ImportsResolver;
+import org.jetbrains.jet.lang.resolve.JetModuleUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
@@ -87,7 +91,7 @@ public class LazyImportScope implements JetScope, LazyEntity {
 
                     WritableScope directiveImportScope = new WritableScopeImpl(
                             JetScope.EMPTY, packageDescriptor, RedeclarationHandler.DO_NOTHING,
-                            "Scope for import '" + directive.getText() + "' resolve in " + toString());
+                            "Scope for import '" + DebugTextPackage.getDebugText(directive) + "' resolve in " + toString());
                     directiveImportScope.changeLockLevel(WritableScope.LockLevel.BOTH);
 
                     Importer.StandardImporter importer = new Importer.StandardImporter(directiveImportScope);
