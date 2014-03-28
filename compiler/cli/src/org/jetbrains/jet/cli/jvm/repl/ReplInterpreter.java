@@ -83,8 +83,8 @@ public class ReplInterpreter {
     private int lineNumber = 0;
     @Nullable
     private JetScope lastLineScope;
-    private List<EarlierLine> earlierLines = Lists.newArrayList();
-    private List<String> previousIncompleteLines = Lists.newArrayList();
+    private final List<EarlierLine> earlierLines = Lists.newArrayList();
+    private final List<String> previousIncompleteLines = Lists.newArrayList();
     private final ReplClassLoader classLoader;
 
     @NotNull
