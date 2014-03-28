@@ -146,4 +146,9 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/upperBoundViolated.kt");
     }
     
+    @TestMetadata("wrongReturnTypeInImplementation.kt")
+    public void testWrongReturnTypeInImplementation() throws Exception {
+        doTest("idea/testData/diagnosticMessage/wrongReturnTypeInImplementation.kt");
+    }
+    
 }

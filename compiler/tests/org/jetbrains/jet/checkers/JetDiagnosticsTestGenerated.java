@@ -5307,6 +5307,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/FakeOverrideAbstractAndNonAbstractFun.kt");
             }
             
+            @TestMetadata("FakeOverrideDifferentDeclarationSignatures.kt")
+            public void testFakeOverrideDifferentDeclarationSignatures() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/FakeOverrideDifferentDeclarationSignatures.kt");
+            }
+            
             @TestMetadata("Generics.kt")
             public void testGenerics() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/Generics.kt");
@@ -5325,6 +5330,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt2052.kt")
             public void testKt2052() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/kt2052.kt");
+            }
+            
+            @TestMetadata("kt4763.kt")
+            public void testKt4763() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/kt4763.kt");
+            }
+            
+            @TestMetadata("kt4763property.kt")
+            public void testKt4763property() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/kt4763property.kt");
             }
             
             @TestMetadata("kt4785.kt")

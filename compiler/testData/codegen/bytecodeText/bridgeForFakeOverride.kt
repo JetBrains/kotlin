@@ -1,5 +1,5 @@
 trait A {
-    fun foo(): Object
+    fun foo(): Any
 }
 
 open class B {
