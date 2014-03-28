@@ -23,7 +23,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Processor;
-import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -131,6 +132,14 @@ public class TypeUtils {
         }
 
         return nullable ? new NullableType(type) : new NotNullType(type);
+    }
+
+    @NotNull
+    public static JetType makeNullableIfNeeded(@NotNull JetType type, boolean nullable) {
+        if (nullable) {
+            return makeNullable(type);
+        }
+        return type;
     }
 
     public static boolean isIntersectionEmpty(@NotNull JetType typeA, @NotNull JetType typeB) {
@@ -342,13 +351,6 @@ public class TypeUtils {
         return false;
     }
 
-    public static JetType makeNullableIfNeeded(JetType type, boolean nullable) {
-        if (nullable) {
-            return makeNullable(type);
-        }
-        return type;
-    }
-
     @NotNull
     public static JetType makeUnsubstitutedType(ClassDescriptor classDescriptor, JetScope unsubstitutedMemberScope) {
         if (ErrorUtils.isError(classDescriptor)) {
@@ -370,15 +372,6 @@ public class TypeUtils {
         List<TypeProjection> result = new ArrayList<TypeProjection>();
         for (TypeParameterDescriptor parameterDescriptor : parameters) {
             result.add(new TypeProjectionImpl(parameterDescriptor.getDefaultType()));
-        }
-        return result;
-    }
-
-    @NotNull
-    public static List<JetType> getDefaultTypes(List<TypeParameterDescriptor> parameters) {
-        List<JetType> result = Lists.newArrayList();
-        for (TypeParameterDescriptor parameterDescriptor : parameters) {
-            result.add(parameterDescriptor.getDefaultType());
         }
         return result;
     }
@@ -438,14 +431,6 @@ public class TypeUtils {
         return false;
     }
 
-    public static boolean equalClasses(@NotNull JetType type1, @NotNull JetType type2) {
-        DeclarationDescriptor declarationDescriptor1 = type1.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor1 == null) return false; // No class, classes are not equal
-        DeclarationDescriptor declarationDescriptor2 = type2.getConstructor().getDeclarationDescriptor();
-        if (declarationDescriptor2 == null) return false; // Class of type1 is not null
-        return declarationDescriptor1.getOriginal().equals(declarationDescriptor2.getOriginal());
-    }
-
     @Nullable
     public static ClassDescriptor getClassDescriptor(@NotNull JetType type) {
         DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
@@ -457,9 +442,9 @@ public class TypeUtils {
 
     @NotNull
     public static JetType substituteParameters(@NotNull ClassDescriptor clazz, @NotNull List<JetType> typeArguments) {
-        List<TypeProjection> projections = ContainerUtil.map(typeArguments, new com.intellij.util.Function<JetType, TypeProjection>() {
+        List<TypeProjection> projections = KotlinPackage.map(typeArguments, new Function1<JetType, TypeProjection>() {
             @Override
-            public TypeProjection fun(JetType type) {
+            public TypeProjection invoke(JetType type) {
                 return new TypeProjectionImpl(type);
             }
         });
@@ -486,16 +471,6 @@ public class TypeUtils {
 
     public static boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
         return JetTypeChecker.INSTANCE.isSubtypeOf(a, b) && JetTypeChecker.INSTANCE.isSubtypeOf(b, a);
-    }
-
-    public static boolean typeConstructorUsedInType(@NotNull TypeConstructor key, @NotNull JetType value) {
-        if (value.getConstructor() == key) return true;
-        for (TypeProjection projection : value.getArguments()) {
-            if (typeConstructorUsedInType(key, projection.getType())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public static boolean dependsOnTypeParameters(@NotNull JetType type, @NotNull Collection<TypeParameterDescriptor> typeParameters) {
@@ -531,20 +506,6 @@ public class TypeUtils {
             if (equalsOrContainsAsArgument(projection.getType(), possibleArgumentTypes)) return true;
         }
         return false;
-    }
-
-    @NotNull
-    public static String getTypeNameAndStarProjectionsString(@NotNull String name, int size) {
-        StringBuilder builder = new StringBuilder(name);
-        builder.append("<");
-        for (int i = 0; i < size; i++) {
-            builder.append("*");
-            if (i == size - 1) break;
-            builder.append(", ");
-        }
-        builder.append(">");
-
-        return builder.toString();
     }
 
     @NotNull

@@ -23,7 +23,7 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement> {
@@ -34,7 +34,7 @@ public class ChangeToStarProjectionFix extends JetIntentionAction<JetTypeElement
     @NotNull
     @Override
     public String getText() {
-        String stars = TypeUtils.getTypeNameAndStarProjectionsString("", element.getTypeArgumentsAsTypes().size());
+        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", element.getTypeArgumentsAsTypes().size());
         return JetBundle.message("change.to.star.projection", stars);
     }
 

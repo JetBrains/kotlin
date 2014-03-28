@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.types.TypeUtils;
+import org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserType> {
@@ -43,7 +43,7 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
     @NotNull
     @Override
     public String getText() {
-        return JetBundle.message("add.star.projections", TypeUtils.getTypeNameAndStarProjectionsString("", argumentCount));
+        return JetBundle.message("add.star.projections", TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount));
     }
 
     @NotNull
@@ -56,7 +56,7 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         assert element.getTypeArguments().isEmpty();
 
-        String typeString = TypeUtils.getTypeNameAndStarProjectionsString(element.getText(), argumentCount);
+        String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(element.getText(), argumentCount);
         JetTypeElement replacement = JetPsiFactory.createType(project, typeString).getTypeElement();
         assert replacement != null : "No type element after parsing " + typeString;
 
