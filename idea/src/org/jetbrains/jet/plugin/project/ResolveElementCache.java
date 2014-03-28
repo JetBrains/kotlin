@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
@@ -336,7 +335,7 @@ public class ResolveElementCache {
     private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession) {
         return new TopDownAnalysisParameters(
                     resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
-                    Predicates.<PsiFile>alwaysTrue(), false, true, Collections.<AnalyzerScriptParameter>emptyList());
+                    Predicates.<PsiFile>alwaysTrue(), false, true);
     }
 
     @NotNull

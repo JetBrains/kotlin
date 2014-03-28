@@ -28,7 +28,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -37,7 +36,6 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
 import java.util.Collection;
-import java.util.Collections;
 
 public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     public MigrateSureInProjectFix(@NotNull PsiElement element) {
@@ -149,7 +147,6 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
         AnalyzeExhaust analyzeExhaustHeaders = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeFiles(
                 initialFile.getProject(),
                 files,
-                Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysFalse());
 
         BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
@@ -158,7 +155,6 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
         // Need to resolve bodies in given file and all in the same package
         return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeBodiesInFiles(
                 initialFile.getProject(),
-                Collections.<AnalyzerScriptParameter>emptyList(),
                 Predicates.<PsiFile>alwaysTrue(),
                 new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace in migrate sure fix"),
                 context,

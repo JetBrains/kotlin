@@ -108,8 +108,8 @@ public class ReplInterpreter {
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysTrue(),
                 false,
-                true,
-                Collections.<AnalyzerScriptParameter>emptyList());
+                true
+        );
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, MemberFilter.ALWAYS_TRUE);
         topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());

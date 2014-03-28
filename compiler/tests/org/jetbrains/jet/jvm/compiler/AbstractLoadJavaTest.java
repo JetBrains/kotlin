@@ -146,8 +146,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysFalse(),
                 false,
-                false,
-                Collections.<AnalyzerScriptParameter>emptyList()
+                false
         );
         InjectorForTopDownAnalyzerForJvm injectorForAnalyzer = new InjectorForTopDownAnalyzerForJvm(
                 environment.getProject(),

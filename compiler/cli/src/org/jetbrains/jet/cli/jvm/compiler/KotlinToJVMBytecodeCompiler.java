@@ -41,7 +41,10 @@ import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -221,6 +224,12 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static Class<?> compileScript(@NotNull KotlinPaths paths, @NotNull JetCoreEnvironment environment) {
+        List<AnalyzerScriptParameter> scriptParameters = environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS);
+        if (!scriptParameters.isEmpty()) {
+            JetScriptDefinitionProvider.getInstance(environment.getProject()).addScriptDefinition(
+                    new JetScriptDefinition(".kts", scriptParameters)
+            );
+        }
         GenerationState state = analyzeAndGenerate(environment);
         if (state == null) {
             return null;
@@ -272,7 +281,6 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getProject(),
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS),
                                 Predicates.<PsiFile>alwaysTrue(),
                                 false,
                                 sharedModule,

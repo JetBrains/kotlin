@@ -26,7 +26,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), jetFiles, support.getTrace(),
-                Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue(), false, support.getModule(),
+                Predicates.<PsiFile>alwaysTrue(), false, support.getModule(),
                 MemberFilter.ALWAYS_TRUE).getBindingContext();
 
         boolean ok = true;

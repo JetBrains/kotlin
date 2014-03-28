@@ -49,7 +49,6 @@ public class ScriptParameterResolver {
 
     @NotNull
     public List<ValueParameterDescriptor> resolveScriptParameters(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull JetScript declaration,
             @NotNull ScriptDescriptor scriptDescriptor
     ) {
@@ -59,11 +58,7 @@ public class ScriptParameterResolver {
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         int index = 0;
-        List<AnalyzerScriptParameter> scriptParameters = !scriptDefinition.getScriptParameters().isEmpty()
-                                                   ? scriptDefinition.getScriptParameters()
-                                                   : topDownAnalysisParameters.getScriptParameters();
-
-        for (AnalyzerScriptParameter scriptParameter : scriptParameters) {
+        for (AnalyzerScriptParameter scriptParameter : scriptDefinition.getScriptParameters()) {
             ValueParameterDescriptor parameter = resolveScriptParameter(scriptParameter, index, scriptDescriptor);
             valueParameters.add(parameter);
             ++index;

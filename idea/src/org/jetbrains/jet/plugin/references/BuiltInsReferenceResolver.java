@@ -91,7 +91,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),
-                        Predicates.<PsiFile>alwaysFalse(), true, false, Collections.<AnalyzerScriptParameter>emptyList());
+                        Predicates.<PsiFile>alwaysFalse(), true, false);
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<fake_module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY);
                 BindingTraceContext trace = new BindingTraceContext();

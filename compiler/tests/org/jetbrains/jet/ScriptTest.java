@@ -57,13 +57,6 @@ public class ScriptTest {
     }
 
     @Test
-    public void testScriptStandardExt() throws Exception {
-        Class<?> aClass = compileScript("fib.kt", numIntParam(), Collections.<JetScriptDefinition>emptyList());
-        Assert.assertNotNull(aClass);
-        aClass.getConstructor(int.class).newInstance(4);
-    }
-
-    @Test
     public void testScriptWithScriptDefinition() throws Exception {
         Class<?> aClass = compileScript("fib.fib.kt", null,
                                         Collections.singletonList(new JetScriptDefinition(".fib.kt", numIntParam())));

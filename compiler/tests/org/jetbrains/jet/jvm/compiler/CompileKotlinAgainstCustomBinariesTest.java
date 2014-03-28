@@ -32,7 +32,6 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
@@ -84,8 +83,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
         AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt")),
-                Collections.<AnalyzerScriptParameter>emptyList()
+                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
 
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
@@ -177,8 +175,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         Project project = createEnvironment(Collections.singletonList(tmpdir)).getProject();
 
         AnalyzeExhaust exhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(
-                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt")),
-                Collections.<AnalyzerScriptParameter>emptyList()
+                JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
         exhaust.throwIfError();
 

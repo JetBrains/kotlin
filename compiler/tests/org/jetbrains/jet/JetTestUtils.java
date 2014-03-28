@@ -226,14 +226,13 @@ public class JetTestUtils {
 
     @NotNull
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file, Collections.<AnalyzerScriptParameter>emptyList());
+        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file);
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeFileWithoutBody(@NotNull JetFile file) {
         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(file.getProject(),
                                                                     Collections.singleton(file),
-                                                                    Collections.<AnalyzerScriptParameter>emptyList(),
                                                                     Predicates.<PsiFile>alwaysFalse());
     }
 

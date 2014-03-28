@@ -24,7 +24,6 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.util.Collections;
@@ -43,14 +42,14 @@ public class GenerationUtils {
     @NotNull
     public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile, Collections.<AnalyzerScriptParameter>emptyList());
+                psiFile);
         return compileFilesGetGenerationState(psiFile.getProject(), analyzeExhaust, Collections.singletonList(psiFile));
     }
 
     @NotNull
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                project, files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
+                project, files, Predicates.<PsiFile>alwaysTrue());
         return compileFilesGetGenerationState(project,analyzeExhaust, files);
     }
 

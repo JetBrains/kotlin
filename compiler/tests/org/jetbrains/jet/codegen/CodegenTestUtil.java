@@ -52,7 +52,6 @@ public class CodegenTestUtil {
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(),
                 files.getPsiFiles(),
-                files.getScriptParameterTypes(),
                 Predicates.<PsiFile>alwaysTrue());
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());

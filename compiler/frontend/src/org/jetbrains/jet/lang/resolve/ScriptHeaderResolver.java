@@ -96,7 +96,6 @@ public class ScriptHeaderResolver {
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
 
             List<ValueParameterDescriptor> valueParameters = scriptParameterResolver.resolveScriptParameters(
-                    c.getTopDownAnalysisParameters(),
                     declaration,
                     descriptor
             );

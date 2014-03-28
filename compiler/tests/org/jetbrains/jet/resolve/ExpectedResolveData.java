@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -43,7 +42,6 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -148,7 +146,7 @@ public abstract class ExpectedResolveData {
 
         Project project = files.iterator().next().getProject();
         AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                project, files, Collections.<AnalyzerScriptParameter>emptyList(), Predicates.<PsiFile>alwaysTrue());
+                project, files, Predicates.<PsiFile>alwaysTrue());
         return analyzeExhaust.getBindingContext();
     }
 

@@ -51,7 +51,7 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
             val psiFile = JetTestUtils.loadJetFile(getProject(), file)
-            val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile, Collections.emptyList())
+            val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile)
             val bindingContext = analyzeExhaust.getBindingContext()
             return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
         }

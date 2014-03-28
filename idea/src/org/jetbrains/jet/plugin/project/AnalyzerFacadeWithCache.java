@@ -198,7 +198,6 @@ public final class AnalyzerFacadeWithCache {
                                 fileToCache.getProject(),
                                 Collections.singleton(fileToCache),
                                 new BindingTraceContext(),
-                                Collections.<AnalyzerScriptParameter>emptyList(),
                                 Predicates.<PsiFile>alwaysFalse(),
                                 true,
                                 AnalyzerFacadeForJVM.createJavaModule("<module>"),
@@ -218,7 +217,6 @@ public final class AnalyzerFacadeWithCache {
             // Need to resolve bodies in given file and all in the same package
             return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).analyzeBodiesInFiles(
                     file.getProject(),
-                    Collections.<AnalyzerScriptParameter>emptyList(),
                     new JetFilesProvider.SameJetFilePredicate(file),
                     new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(),
                                                "trace to resolve bodies in file", file.getName()),

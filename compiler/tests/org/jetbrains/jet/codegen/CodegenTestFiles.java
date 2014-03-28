@@ -23,6 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.checkers.CheckerTestUtil;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
+import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -42,18 +44,15 @@ public class CodegenTestFiles {
     @NotNull
     private final List<Pair<String, String>> expectedValues;
     @NotNull
-    private final List<AnalyzerScriptParameter> scriptParameterTypes;
-    @NotNull
     private final List<Object> scriptParameterValues;
 
     private CodegenTestFiles(
             @NotNull List<JetFile> psiFiles,
             @NotNull List<Pair<String, String>> expectedValues,
-            @NotNull List<AnalyzerScriptParameter> scriptParameterTypes,
-            @NotNull List<Object> scriptParameterValues) {
+            @NotNull List<Object> scriptParameterValues
+    ) {
         this.psiFiles = psiFiles;
         this.expectedValues = expectedValues;
-        this.scriptParameterTypes = scriptParameterTypes;
         this.scriptParameterValues = scriptParameterValues;
     }
 
@@ -66,11 +65,6 @@ public class CodegenTestFiles {
     @NotNull
     public List<Pair<String, String>> getExpectedValues() {
         return expectedValues;
-    }
-
-    @NotNull
-    public List<AnalyzerScriptParameter> getScriptParameterTypes() {
-        return scriptParameterTypes;
     }
 
     @NotNull
@@ -96,7 +90,7 @@ public class CodegenTestFiles {
                 throw new RuntimeException(e);
             }
         }
-        return new CodegenTestFiles(files, Collections.<Pair<String, String>>emptyList(), Collections.<AnalyzerScriptParameter>emptyList(), Collections.emptyList());
+        return new CodegenTestFiles(files, Collections.<Pair<String, String>>emptyList(), Collections.emptyList());
     }
 
     @NotNull
@@ -146,8 +140,15 @@ public class CodegenTestFiles {
                 scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), JetTypeName.parse(type)));
                 scriptParameterValues.add(value);
             }
+
+            JetScriptDefinitionProvider.getInstance(project).addScriptDefinition(
+                    new JetScriptDefinition(
+                            ".kts",
+                            scriptParameterTypes
+                    )
+            );
         }
 
-        return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterTypes, scriptParameterValues);
+        return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
     }
 }

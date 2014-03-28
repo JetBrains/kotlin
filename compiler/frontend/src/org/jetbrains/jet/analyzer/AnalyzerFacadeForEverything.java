@@ -32,18 +32,18 @@ public class AnalyzerFacadeForEverything {
     }
 
     public static AnalyzeExhaust analyzeBodiesInFilesWithJavaIntegration(
-            Project project, List<AnalyzerScriptParameter> scriptParameters, Predicate<PsiFile> filesToAnalyzeCompletely,
+            Project project, Predicate<PsiFile> filesToAnalyzeCompletely,
             @NotNull BindingTrace traceContext,
             @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module) {
+            @NotNull ModuleDescriptor module
+    ) {
 
         TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
                 bodiesResolveContext.getStorageManager(),
                 bodiesResolveContext.getExceptionTracker(),
                 filesToAnalyzeCompletely,
                 false,
-                false,
-                scriptParameters
+                false
         );
 
         bodiesResolveContext.setTopDownAnalysisParameters(topDownAnalysisParameters);
