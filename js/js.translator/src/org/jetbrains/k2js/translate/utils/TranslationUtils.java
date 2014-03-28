@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
@@ -465,7 +465,7 @@ public final class TranslationUtils {
         private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {
             if (AnnotationsUtils.isNativeObject(descriptor)) return true;
 
-            Set<FunctionDescriptor> declarations = BindingContextUtils.getAllOverriddenDeclarations(descriptor);
+            Set<FunctionDescriptor> declarations = OverridingUtil.getAllOverriddenDeclarations(descriptor);
             for (FunctionDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -80,7 +80,7 @@ public final class AnnotationsUtils {
             isOverride((CallableMemberDescriptor) declarationDescriptor)) {
 
             Set<CallableMemberDescriptor> overriddenDeclarations =
-                    BindingContextUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
+                    OverridingUtil.getAllOverriddenDeclarations((CallableMemberDescriptor) declarationDescriptor);
 
             descriptors = ContainerUtil.mapNotNull(overriddenDeclarations, new Function<CallableMemberDescriptor, DeclarationDescriptor>() {
                 @Override

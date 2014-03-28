@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.jet.lang.resolve.BindingContextUtils.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
@@ -105,7 +104,7 @@ public class JetChangeSignature(val project: Project,
                 Collections.singleton(functionDescriptor)
             }
             DELEGATION, FAKE_OVERRIDE -> {
-                getDirectlyOverriddenDeclarations(functionDescriptor)
+                OverridingUtil.getDirectlyOverriddenDeclarations(functionDescriptor)
             }
             else -> {
                 throw IllegalStateException("Unexpected callable kind: ${functionDescriptor.getKind()}")
@@ -114,7 +113,7 @@ public class JetChangeSignature(val project: Project,
     }
 
     fun getDeepestSuperDeclarations(): Set<FunctionDescriptor> {
-        val overriddenDeclarations = getAllOverriddenDeclarations(functionDescriptor)
+        val overriddenDeclarations = OverridingUtil.getAllOverriddenDeclarations(functionDescriptor)
         if (overriddenDeclarations.isEmpty()) {
             return Collections.singleton(functionDescriptor)
         }

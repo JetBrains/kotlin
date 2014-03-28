@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -43,8 +44,6 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 import java.util.List;
-
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getDirectlyOverriddenDeclarations;
 
 public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Override
@@ -84,7 +83,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             message = JetBundle.message("goto.super.class.chooser.title");
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
-            superDescriptors = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+            superDescriptors = OverridingUtil.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             if (descriptor instanceof PropertyDescriptor) {
                 message = JetBundle.message("goto.super.property.chooser.title");
             }

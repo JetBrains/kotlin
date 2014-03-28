@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -69,8 +70,6 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.util.*;
-
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getDirectlyOverriddenDeclarations;
 
 public class JetLineMarkerProvider implements LineMarkerProvider {
     public static final Icon OVERRIDING_MARK = AllIcons.Gutter.OverridingMethod;
@@ -247,7 +246,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return null;
         }
 
-        Set<? extends CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations(
+        Set<? extends CallableMemberDescriptor> overriddenMembers = OverridingUtil.getDirectlyOverriddenDeclarations(
                 (CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return null;
@@ -290,7 +289,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+        Set<CallableMemberDescriptor> overriddenMembers = OverridingUtil
+                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return;
         }
@@ -334,7 +334,8 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return "";
         }
 
-        Set<CallableMemberDescriptor> overriddenMembers = getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+        Set<CallableMemberDescriptor> overriddenMembers = OverridingUtil
+                .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return "";
         }
