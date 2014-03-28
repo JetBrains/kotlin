@@ -29,7 +29,7 @@ public class JetClassInfoUtil {
             return new JetClassInfo((JetClass) classOrObject);
         }
         if (classOrObject instanceof JetObjectDeclaration) {
-            return new JetObjectInfo(classOrObject);
+            return new JetObjectInfo((JetObjectDeclaration) classOrObject);
         }
         throw new IllegalArgumentException("Unknown declaration type: " + classOrObject + classOrObject.getText());
     }

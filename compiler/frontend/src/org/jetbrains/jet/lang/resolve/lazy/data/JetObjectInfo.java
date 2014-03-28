@@ -18,23 +18,19 @@ package org.jetbrains.jet.lang.resolve.lazy.data;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassKind;
-import org.jetbrains.jet.lang.psi.JetClassObject;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
-import org.jetbrains.jet.lang.psi.JetParameter;
-import org.jetbrains.jet.lang.psi.JetTypeParameter;
+import org.jetbrains.jet.lang.psi.*;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetObjectInfo extends JetClassOrObjectInfo<JetClassOrObject> {
+public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
 
     @NotNull
     private final ClassKind kind;
 
-    protected JetObjectInfo(@NotNull JetClassOrObject element) {
+    protected JetObjectInfo(@NotNull JetObjectDeclaration element) {
         super(element);
-        boolean isClassObject = element.getParent() instanceof JetClassObject;
-        this.kind = isClassObject ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT;
+        this.kind = element.isClassObject() ? ClassKind.CLASS_OBJECT : ClassKind.OBJECT;
     }
 
     @Override
