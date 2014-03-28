@@ -62,7 +62,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
 
     @Nullable
     public JetParameterList getPrimaryConstructorParameterList() {
-        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @NotNull
