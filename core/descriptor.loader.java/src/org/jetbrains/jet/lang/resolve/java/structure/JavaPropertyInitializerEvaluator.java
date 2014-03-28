@@ -21,23 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
-public abstract class JavaPropertyInitializerEvaluator {
-    private static JavaPropertyInitializerEvaluator instance;
-
-    @NotNull
-    public static JavaPropertyInitializerEvaluator getInstance() {
-        if (instance == null) {
-            Iterator<JavaPropertyInitializerEvaluator> iterator =
-                    ServiceLoader.load(JavaPropertyInitializerEvaluator.class, JavaPropertyInitializerEvaluator.class.getClassLoader()).iterator();
-            assert iterator.hasNext() : "No service found: " + JavaPropertyInitializerEvaluator.class.getName();
-            instance = iterator.next();
-        }
-        return instance;
-    }
-
+public interface JavaPropertyInitializerEvaluator {
     @Nullable
-    public abstract CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
+    CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor);
 }
