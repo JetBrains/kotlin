@@ -70,7 +70,7 @@ public class ScriptHeaderResolver {
 
         Integer priority = getScriptPriority(script);
 
-        FqName nameForScript = ScriptNameUtil.classNameForScript((JetFile) script.getContainingFile());
+        FqName nameForScript = ScriptNameUtil.classNameForScript(script);
         Name className = nameForScript.shortName();
         ScriptDescriptorImpl scriptDescriptor = new ScriptDescriptorImpl(ns, priority, outerScope, className);
 

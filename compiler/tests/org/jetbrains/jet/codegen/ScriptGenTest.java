@@ -53,7 +53,7 @@ public class ScriptGenTest extends CodegenTestCase {
         loadFile(filename);
 
         try {
-            FqName fqName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile());
+            FqName fqName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile().getScript());
             Class<?> scriptClass = generateClass(fqName.asString());
 
             Constructor constructor = getConstructor(scriptClass);

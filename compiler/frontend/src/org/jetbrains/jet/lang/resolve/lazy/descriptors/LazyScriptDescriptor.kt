@@ -78,7 +78,7 @@ public class LazyScriptDescriptor(
     override fun getPriority() = _priority
 
     private val _classDescriptor = resolveSession.getStorageManager().createLazyValue {
-        val nameForScript = ScriptNameUtil.classNameForScript(jetScript.getContainingFile() as JetFile)
+        val nameForScript = ScriptNameUtil.classNameForScript(jetScript)
         val className = nameForScript.shortName()
         LazyClassDescriptor(
                 resolveSession,

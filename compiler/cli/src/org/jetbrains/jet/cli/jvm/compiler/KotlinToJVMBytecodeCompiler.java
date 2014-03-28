@@ -235,7 +235,7 @@ public class KotlinToJVMBytecodeCompiler {
                                                    }, AllModules.class.getClassLoader())
             );
 
-            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0));
+            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0).getScript());
             return classLoader.loadClass(nameForScript.asString());
         }
         catch (Exception e) {
