@@ -16,5 +16,17 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.util.ArrayFactory;
+import org.jetbrains.annotations.NotNull;
+
 public interface JetDeclaration extends JetExpression, JetModifierListOwner {
+    JetDeclaration[] EMPTY_ARRAY = new JetDeclaration[0];
+
+    ArrayFactory<JetDeclaration> ARRAY_FACTORY = new ArrayFactory<JetDeclaration>() {
+        @NotNull
+        @Override
+        public JetDeclaration[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new JetDeclaration[count];
+        }
+    };
 }
