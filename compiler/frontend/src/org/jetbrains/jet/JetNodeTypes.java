@@ -19,7 +19,6 @@ package org.jetbrains.jet;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.IFileElementType;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.plugin.JetLanguage;
 
@@ -132,7 +131,7 @@ public interface JetNodeTypes {
     JetNodeType CALL_EXPRESSION           = new JetNodeType("CALL_EXPRESSION", JetCallExpression.class);
     JetNodeType ARRAY_ACCESS_EXPRESSION   = new JetNodeType("ARRAY_ACCESS_EXPRESSION", JetArrayAccessExpression.class);
     JetNodeType INDICES                   = new JetNodeType("INDICES", JetContainerNode.class);
-    JetNodeType DOT_QUALIFIED_EXPRESSION  = new JetNodeType("DOT_QUALIFIED_EXPRESSION", JetDotQualifiedExpression.class);
+    IElementType DOT_QUALIFIED_EXPRESSION = JetStubElementTypes.DOT_QUALIFIED_EXPRESSION;
     JetNodeType CALLABLE_REFERENCE_EXPRESSION = new JetNodeType("CALLABLE_REFERENCE_EXPRESSION", JetCallableReferenceExpression.class);
     JetNodeType SAFE_ACCESS_EXPRESSION    = new JetNodeType("SAFE_ACCESS_EXPRESSION", JetSafeQualifiedExpression.class);
 

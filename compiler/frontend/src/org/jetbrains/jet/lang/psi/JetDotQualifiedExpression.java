@@ -17,14 +17,20 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
-public class JetDotQualifiedExpression<T extends StubElement> extends JetExpressionImplStub<T> implements JetQualifiedExpression {
+public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlaceHolderStub<JetDotQualifiedExpression>>
+        implements JetQualifiedExpression {
     public JetDotQualifiedExpression(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDotQualifiedExpression(@NotNull PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub) {
+        super(stub, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
     }
 
     @Override

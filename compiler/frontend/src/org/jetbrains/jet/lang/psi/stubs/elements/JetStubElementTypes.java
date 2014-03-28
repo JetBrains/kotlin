@@ -64,6 +64,7 @@ public interface JetStubElementTypes {
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
+    JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
 
     JetPlaceHolderStubElementType<JetTypeArgumentList> TYPE_ARGUMENT_LIST =
                 new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
