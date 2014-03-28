@@ -62,9 +62,11 @@ public interface JetStubElementTypes {
                 new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);;
 
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
-    
+
     JetPlaceHolderStubElementType<JetFunctionType> FUNCTION_TYPE =
                 new JetPlaceHolderStubElementType<JetFunctionType>("FUNCTION_TYPE", JetFunctionType.class);
+    JetPlaceHolderStubElementType<JetFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
+            new JetPlaceHolderStubElementType<JetFunctionTypeReceiver>("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
