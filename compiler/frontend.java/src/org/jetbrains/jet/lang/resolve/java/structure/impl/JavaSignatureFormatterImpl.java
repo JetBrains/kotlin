@@ -31,11 +31,4 @@ public class JavaSignatureFormatterImpl extends JavaSignatureFormatter {
         return PsiFormatUtil.formatMethod(((JavaMethodImpl) method).getPsi(), PsiSubstitutor.EMPTY, SHOW_NAME | SHOW_PARAMETERS,
                                           SHOW_TYPE | SHOW_FQ_CLASS_NAMES);
     }
-
-    @NotNull
-    @Override
-    public String getExternalName(@NotNull JavaMethod method) {
-        String result = PsiFormatUtil.getExternalName(((JavaMethodImpl) method).getPsi());
-        return result == null ? "null" : result;
-    }
 }
