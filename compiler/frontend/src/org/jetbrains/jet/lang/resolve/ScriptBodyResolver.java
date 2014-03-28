@@ -70,7 +70,8 @@ public class ScriptBodyResolver {
                 if (jetDeclaration instanceof JetProperty) {
                     if (!shouldBeScriptClassMember(jetDeclaration)) continue;
 
-                    properties.add((PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration));
+                    PropertyDescriptorImpl propertyDescriptor = (PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
+                    properties.add(propertyDescriptor);
                 }
                 else if (jetDeclaration instanceof JetNamedFunction) {
                     if (!shouldBeScriptClassMember(jetDeclaration)) continue;

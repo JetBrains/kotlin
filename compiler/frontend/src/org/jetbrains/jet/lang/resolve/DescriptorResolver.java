@@ -820,6 +820,7 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         DeclarationDescriptor containingDeclaration = scope.getContainingDeclaration();
+        // SCRIPT: Create property descriptors
         if (JetPsiUtil.isScriptDeclaration(variable)) {
             PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(
                     containingDeclaration,
@@ -836,6 +837,7 @@ public class DescriptorResolver {
 
             ReceiverParameterDescriptor receiverParameter = ((ScriptDescriptor) containingDeclaration).getThisAsReceiverParameter();
             propertyDescriptor.setType(type, Collections.<TypeParameterDescriptor>emptyList(), receiverParameter, (JetType) null);
+            initializeWithDefaultGetterSetter(propertyDescriptor);
             trace.record(BindingContext.VARIABLE, variable, propertyDescriptor);
             return propertyDescriptor;
         }
@@ -848,6 +850,20 @@ public class DescriptorResolver {
             variableDescriptor.setOutType(type);
             return variableDescriptor;
         }
+    }
+
+    private static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
+        PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
+        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
+            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
+            getter.initialize(propertyDescriptor.getType());
+        }
+
+        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        if (setter == null && propertyDescriptor.isVar()) {
+            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor);
+        }
+        propertyDescriptor.initialize(getter, setter);
     }
 
     @NotNull

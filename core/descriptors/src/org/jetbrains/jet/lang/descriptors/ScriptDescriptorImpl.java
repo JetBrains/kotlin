@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
-import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler;
@@ -94,27 +93,12 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         classScope.addPropertyDescriptor(propertyDescriptor);
 
         for (PropertyDescriptorImpl property : properties) {
-            initializeWithDefaultGetterSetter(property);
             classScope.addPropertyDescriptor(property);
         }
 
         for (FunctionDescriptor function : functions) {
             classScope.addFunctionDescriptor(function);
         }
-    }
-
-    public static void initializeWithDefaultGetterSetter(PropertyDescriptorImpl propertyDescriptor) {
-        PropertyGetterDescriptorImpl getter = propertyDescriptor.getGetter();
-        if (getter == null && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
-            getter = DescriptorFactory.createDefaultGetter(propertyDescriptor);
-            getter.initialize(propertyDescriptor.getType());
-        }
-
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-        if (setter == null && propertyDescriptor.isVar()) {
-            setter = DescriptorFactory.createDefaultSetter(propertyDescriptor);
-        }
-        propertyDescriptor.initialize(getter, setter);
     }
 
     @Override
