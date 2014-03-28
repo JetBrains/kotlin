@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.structure.impl;
 import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaArrayType;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaType;
 
 public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
@@ -66,6 +67,12 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType {
                 return new JavaWildcardTypeImpl(wildcardType);
             }
         });
+    }
+
+    @NotNull
+    @Override
+    public JavaArrayType createArrayType() {
+        return new JavaArrayTypeImpl(getPsi().createArrayType());
     }
 
     @Override

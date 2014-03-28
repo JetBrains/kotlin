@@ -16,5 +16,9 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface JavaType {
+    @NotNull
+    JavaArrayType createArrayType();
 }

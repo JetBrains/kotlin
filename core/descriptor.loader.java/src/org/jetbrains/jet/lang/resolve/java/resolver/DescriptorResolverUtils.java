@@ -183,7 +183,7 @@ public final class DescriptorResolverUtils {
         }
         else if (type instanceof JavaArrayType) {
             JavaType erasure = erasure(((JavaArrayType) type).getComponentType(), substitutor);
-            return erasure == null ? null : JavaElementFactory.getInstance().createArrayType(erasure);
+            return erasure == null ? null : erasure.createArrayType();
         }
         else if (type instanceof JavaWildcardType) {
             JavaWildcardType wildcardType = (JavaWildcardType) type;
