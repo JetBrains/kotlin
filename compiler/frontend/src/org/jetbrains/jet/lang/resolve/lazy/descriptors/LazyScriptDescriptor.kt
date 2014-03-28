@@ -77,30 +77,7 @@ public class LazyScriptDescriptor(
 
     override fun getPriority() = _priority
 
-    private val _classDescriptor = resolveSession.getStorageManager().createLazyValue {
-        val nameForScript = ScriptNameUtil.classNameForScript(jetScript)
-        val className = nameForScript.shortName()
-        LazyClassDescriptor(
-                resolveSession,
-                getContainingDeclaration(),
-                className,
-                object: JetClassLikeInfo {
-                    override fun getContainingPackageFqName() = nameForScript.parent()
-                    override fun getModifierList() = null
-                    override fun getClassObject() = null
-                    override fun getScopeAnchor() = jetScript
-                    override fun getCorrespondingClassOrObject() = null
-                    override fun getTypeParameters() = listOf<JetTypeParameter>()
-                    override fun getPrimaryConstructorParameters() = listOf<JetParameter>()
-                    override fun getClassKind() = ClassKind.CLASS
-                    override fun getDeclarations() = jetScript.getDeclarations()
-                            .filter { ScriptBodyResolver.shouldBeScriptClassMember(it) }
-                },
-                TemporaryBindingTrace.create(resolveSession.getTrace(), "A trace for script class, needed to avoid rewrites on members")
-        )
-    }
-
-    override fun getClassDescriptor(): ClassDescriptor = _classDescriptor()
+    override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript)
 
     private val _scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
         val result = ScriptCodeDescriptor(this)

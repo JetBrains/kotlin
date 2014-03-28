@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
@@ -63,10 +64,17 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
                         JetClassInfoUtil.createClassLikeInfo(classOrObject)
                 );
             }
+            else if (declaration instanceof JetScript) {
+                JetScript script = (JetScript) declaration;
+                JetScriptInfo scriptInfo = new JetScriptInfo(script);
+                classesAndObjects.put(
+                        scriptInfo.getFqName().shortName(),
+                        scriptInfo
+                );
+            }
             else if (declaration instanceof JetParameter ||
                      declaration instanceof JetTypedef ||
-                     declaration instanceof JetMultiDeclaration ||
-                     declaration instanceof JetScript) {
+                     declaration instanceof JetMultiDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough
             }
             else {

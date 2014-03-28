@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
+import org.jetbrains.jet.lang.resolve.lazy.data.DataPackage;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -76,13 +77,13 @@ public class ScriptBodyResolver {
             BindingContext bindingContext = trace.getBindingContext();
             for (JetDeclaration jetDeclaration : declaration.getDeclarations()) {
                 if (jetDeclaration instanceof JetProperty) {
-                    if (!shouldBeScriptClassMember(jetDeclaration)) continue;
+                    if (!DataPackage.shouldBeScriptClassMember(jetDeclaration)) continue;
 
                     PropertyDescriptorImpl propertyDescriptor = (PropertyDescriptorImpl) bindingContext.get(BindingContext.VARIABLE, jetDeclaration);
                     properties.add(propertyDescriptor);
                 }
                 else if (jetDeclaration instanceof JetNamedFunction) {
-                    if (!shouldBeScriptClassMember(jetDeclaration)) continue;
+                    if (!DataPackage.shouldBeScriptClassMember(jetDeclaration)) continue;
 
                     SimpleFunctionDescriptor function = bindingContext.get(BindingContext.FUNCTION, jetDeclaration);
                     assert function != null;
@@ -114,13 +115,5 @@ public class ScriptBodyResolver {
             returnType = ErrorUtils.createErrorType("getBlockReturnedType returned null");
         }
         return returnType;
-    }
-
-    public static boolean shouldBeScriptClassMember(@NotNull JetDeclaration declaration) {
-        // To avoid the necessity to always analyze the whole body of a script even if just its class descriptor is needed
-        // we only add those vals, vars and funs that have explicitly specified return types
-        // (or implicit Unit for function with block body)
-        return declaration instanceof JetCallableDeclaration && ((JetCallableDeclaration) declaration).getReturnTypeRef() != null ||
-               declaration instanceof JetNamedFunction && ((JetNamedFunction) declaration).hasBlockBody();
     }
 }

@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
@@ -213,6 +214,9 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                 new Function<JetClassLikeInfo, ClassDescriptor>() {
                     @Override
                     public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
+                        if (classLikeInfo instanceof JetScriptInfo) {
+                            return getClassDescriptorForScript(((JetScriptInfo) classLikeInfo).getScript());
+                        }
                         JetClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
                         if (classOrObject == null) return null;
                         return getClassDescriptor(classOrObject);
@@ -247,6 +251,15 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         }
 
         return (ClassDescriptor) descriptor;
+    }
+
+    @NotNull
+    public ClassDescriptor getClassDescriptorForScript(@NotNull JetScript script) {
+        JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(script);
+        FqName fqName = ScriptNameUtil.classNameForScript(script);
+        ClassifierDescriptor classifier = resolutionScope.getClassifier(fqName.shortName());
+        assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull
