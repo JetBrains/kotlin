@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,17 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeType;
 
-public abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
-    public JetExpressionImpl(@NotNull ASTNode node) {
+public abstract class JetExpressionImplStub<T extends StubElement> extends JetElementImplStub<T> implements JetExpression {
+    public JetExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
+    }
+
+    public JetExpressionImplStub(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -32,14 +37,7 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
         return visitor.visitExpression(this, data);
     }
 
-    protected JetExpression findExpressionUnder(JetNodeType type) {
-        JetContainerNode containerNode = (JetContainerNode) findChildByType(type);
-        if (containerNode == null) return null;
-
-        return containerNode.findChildByClass(JetExpression.class);
-    }
-
-    //NOTE: duplicate with JetExpressionImplStub
+    //NOTE: duplicate with JetExpressionImpl
     @NotNull
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {

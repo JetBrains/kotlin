@@ -29,7 +29,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
-public class JetNameReferenceExpression extends JetElementImplStub<PsiJetNameReferenceExpressionStub> implements JetSimpleNameExpression {
+public class JetNameReferenceExpression extends JetExpressionImplStub<PsiJetNameReferenceExpressionStub> implements JetSimpleNameExpression {
 
     private static final TokenSet NAME_REFERENCE_EXPRESSIONS = TokenSet.create(IDENTIFIER, FIELD_IDENTIFIER, THIS_KEYWORD, SUPER_KEYWORD);
 
