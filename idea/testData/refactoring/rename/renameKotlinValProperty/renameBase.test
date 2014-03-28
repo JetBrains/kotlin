@@ -1,0 +1,6 @@
+{
+  "type": "KOTLIN_PROPERTY",
+  "classFQN": "testing.rename.AP",
+  "oldName": "first",
+  "newName": "second"
+}

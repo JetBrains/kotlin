@@ -1,0 +1,10 @@
+<root>
+  <item
+      name='com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler boolean isAvailable(com.intellij.psi.PsiElement, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiFile) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler boolean isAvailable(com.intellij.psi.PsiElement, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiFile) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

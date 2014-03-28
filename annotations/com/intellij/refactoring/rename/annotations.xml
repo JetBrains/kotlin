@@ -14,4 +14,8 @@
       name='com.intellij.refactoring.rename.RenamePsiElementProcessor void prepareRenaming(com.intellij.psi.PsiElement, java.lang.String, java.util.Map&lt;com.intellij.psi.PsiElement,java.lang.String&gt;, com.intellij.psi.search.SearchScope) 3'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.refactoring.rename.RenamePsiElementProcessor void renameElement(com.intellij.psi.PsiElement, java.lang.String, com.intellij.usageView.UsageInfo[], com.intellij.refactoring.listeners.RefactoringElementListener) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>

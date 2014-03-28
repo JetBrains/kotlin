@@ -70,7 +70,7 @@ public class JetChangeSignature(val project: Project,
 
         val closestModifiableDescriptors = getClosestModifiableDescriptors()
         assert(!closestModifiableDescriptors.isEmpty(), "Should contain functionDescriptor itself or some of its super declarations")
-        val deepestSuperDeclarations = getDeepestSuperDeclarations()
+        val deepestSuperDeclarations = OverridingUtil.getDeepestSuperDeclarations(functionDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
             showChangeSignatureDialog(deepestSuperDeclarations)
             return
@@ -110,15 +110,6 @@ public class JetChangeSignature(val project: Project,
                 throw IllegalStateException("Unexpected callable kind: ${functionDescriptor.getKind()}")
             }
         }
-    }
-
-    fun getDeepestSuperDeclarations(): Set<FunctionDescriptor> {
-        val overriddenDeclarations = OverridingUtil.getAllOverriddenDeclarations(functionDescriptor)
-        if (overriddenDeclarations.isEmpty()) {
-            return Collections.singleton(functionDescriptor)
-        }
-
-        return OverridingUtil.filterOutOverriding(overriddenDeclarations)
     }
 
     private fun showChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>) {
@@ -238,5 +229,5 @@ TestOnly public fun getChangeSignatureDialog(project: Project,
                                              bindingContext: BindingContext,
                                              defaultValueContext: PsiElement): JetChangeSignatureDialog? {
     val jetChangeSignature = JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, null)
-    return jetChangeSignature.createChangeSignatureDialog(jetChangeSignature.getDeepestSuperDeclarations())
+    return jetChangeSignature.createChangeSignatureDialog(OverridingUtil.getDeepestSuperDeclarations(functionDescriptor))
 }

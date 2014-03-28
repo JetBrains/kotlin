@@ -22,6 +22,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyAccessorDescriptorImpl;
@@ -747,5 +748,16 @@ public class OverridingUtil {
             result.addAll(getAllOverriddenDeclarations((T) overriddenDeclaration));
         }
         return result;
+    }
+
+    @NotNull
+    @ReadOnly
+    public static <T extends CallableMemberDescriptor> Set<T> getDeepestSuperDeclarations(T functionDescriptor) {
+        Set<T> overriddenDeclarations = getAllOverriddenDeclarations(functionDescriptor);
+        if (overriddenDeclarations.isEmpty()) {
+            return Collections.singleton(functionDescriptor);
+        }
+
+        return filterOutOverriding(overriddenDeclarations);
     }
 }
