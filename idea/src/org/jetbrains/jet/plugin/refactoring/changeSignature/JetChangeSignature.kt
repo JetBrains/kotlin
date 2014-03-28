@@ -25,7 +25,6 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.plugin.JetBundle
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import java.util.*
@@ -35,6 +34,7 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.quickfix.QuickFixUtil
 import com.intellij.CommonBundle
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.jet.lang.resolve.OverrideResolver
 
 public trait JetChangeSignatureConfiguration {
     fun configure(changeSignatureData: JetChangeSignatureData, bindingContext: BindingContext)
@@ -70,7 +70,7 @@ public class JetChangeSignature(val project: Project,
 
         val closestModifiableDescriptors = getClosestModifiableDescriptors()
         assert(!closestModifiableDescriptors.isEmpty(), "Should contain functionDescriptor itself or some of its super declarations")
-        val deepestSuperDeclarations = OverridingUtil.getDeepestSuperDeclarations(functionDescriptor)
+        val deepestSuperDeclarations = OverrideResolver.getDeepestSuperDeclarations(functionDescriptor)
         if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
             showChangeSignatureDialog(deepestSuperDeclarations)
             return
@@ -104,7 +104,7 @@ public class JetChangeSignature(val project: Project,
                 Collections.singleton(functionDescriptor)
             }
             DELEGATION, FAKE_OVERRIDE -> {
-                OverridingUtil.getDirectlyOverriddenDeclarations(functionDescriptor)
+                OverrideResolver.getDirectlyOverriddenDeclarations(functionDescriptor)
             }
             else -> {
                 throw IllegalStateException("Unexpected callable kind: ${functionDescriptor.getKind()}")
@@ -229,5 +229,5 @@ TestOnly public fun getChangeSignatureDialog(project: Project,
                                              bindingContext: BindingContext,
                                              defaultValueContext: PsiElement): JetChangeSignatureDialog? {
     val jetChangeSignature = JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, null)
-    return jetChangeSignature.createChangeSignatureDialog(OverridingUtil.getDeepestSuperDeclarations(functionDescriptor))
+    return jetChangeSignature.createChangeSignatureDialog(OverrideResolver.getDeepestSuperDeclarations(functionDescriptor))
 }

@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.Namer;
 
@@ -175,14 +175,14 @@ public final class PatternBuilder {
                 return matches(functionDescriptor);
             }
 
-            for (CallableMemberDescriptor real : OverridingUtil.getOverriddenDeclarations(functionDescriptor)) {
+            for (CallableMemberDescriptor real : OverrideResolver.getOverriddenDeclarations(functionDescriptor)) {
                 if (matches(real)) {
                     return true;
                 }
             }
 
             if (checkOverridden) {
-                for (CallableDescriptor overridden : OverridingUtil.getAllOverriddenDescriptors(functionDescriptor)) {
+                for (CallableDescriptor overridden : OverrideResolver.getAllOverriddenDescriptors(functionDescriptor)) {
                     if (matches(overridden)) {
                         return true;
                     }

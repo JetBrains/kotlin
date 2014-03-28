@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
@@ -134,7 +134,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
                 @Override
                 public Boolean invoke(CallableMemberDescriptor descriptor) {
                     ClassDescriptor any = KotlinBuiltIns.getInstance().getAny();
-                    for (CallableMemberDescriptor overridden : OverridingUtil.getOverriddenDeclarations(descriptor)) {
+                    for (CallableMemberDescriptor overridden : OverrideResolver.getOverriddenDeclarations(descriptor)) {
                         if (overridden.getContainingDeclaration().equals(any)) {
                             return false;
                         }

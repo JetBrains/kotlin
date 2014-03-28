@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.types.JetType;
@@ -67,7 +68,7 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
         }
 
         // Only those actually inherited
-        Set<CallableMemberDescriptor> filteredMembers = OverridingUtil.filterOutOverridden(inheritedFunctions);
+        Set<CallableMemberDescriptor> filteredMembers = OverrideResolver.filterOutOverridden(inheritedFunctions);
 
         // Group members with "the same" signature
         Multimap<CallableMemberDescriptor, CallableMemberDescriptor> factoredMembers = LinkedHashMultimap.create();

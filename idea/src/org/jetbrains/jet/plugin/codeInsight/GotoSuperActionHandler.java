@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
@@ -83,7 +83,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             message = JetBundle.message("goto.super.class.chooser.title");
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
-            superDescriptors = OverridingUtil.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
+            superDescriptors = OverrideResolver.getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             if (descriptor instanceof PropertyDescriptor) {
                 message = JetBundle.message("goto.super.property.chooser.title");
             }

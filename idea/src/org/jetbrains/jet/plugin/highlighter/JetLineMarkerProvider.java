@@ -58,7 +58,7 @@ import org.jetbrains.jet.lang.descriptors.Modality;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetPluginUtil;
@@ -246,7 +246,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return null;
         }
 
-        Set<? extends CallableMemberDescriptor> overriddenMembers = OverridingUtil.getDirectlyOverriddenDeclarations(
+        Set<? extends CallableMemberDescriptor> overriddenMembers = OverrideResolver.getDirectlyOverriddenDeclarations(
                 (CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return null;
@@ -289,7 +289,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Set<CallableMemberDescriptor> overriddenMembers = OverridingUtil
+        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
                 .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return;
@@ -334,7 +334,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
             return "";
         }
 
-        Set<CallableMemberDescriptor> overriddenMembers = OverridingUtil
+        Set<CallableMemberDescriptor> overriddenMembers = OverrideResolver
                 .getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
         if (overriddenMembers.size() == 0) {
             return "";

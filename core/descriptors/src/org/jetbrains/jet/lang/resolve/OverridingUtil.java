@@ -18,22 +18,20 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.*;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.CONFLICT;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
@@ -46,96 +44,6 @@ public class OverridingUtil {
             );
 
     private OverridingUtil() {
-    }
-
-    private static enum Filtering {
-        RETAIN_OVERRIDING,
-        RETAIN_OVERRIDDEN
-    }
-
-    @NotNull
-    public static <D extends CallableDescriptor> Set<D> filterOutOverridden(@NotNull Set<D> candidateSet) {
-        //noinspection unchecked
-        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDING);
-    }
-
-    @NotNull
-    public static <D> Set<D> filterOutOverriding(@NotNull Set<D> candidateSet) {
-        //noinspection unchecked
-        return filterOverrides(candidateSet, Function.ID, Filtering.RETAIN_OVERRIDDEN);
-    }
-
-    @NotNull
-    public static <D> Set<D> filterOutOverridden(
-            @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform
-    ) {
-        return filterOverrides(candidateSet, transform, Filtering.RETAIN_OVERRIDING);
-    }
-
-    @NotNull
-    private static <D> Set<D> filterOverrides(
-            @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform,
-            @NotNull Filtering filtering
-    ) {
-        Set<D> candidates = Sets.newLinkedHashSet();
-        outerLoop:
-        for (D meD : candidateSet) {
-            CallableDescriptor me = transform.fun(meD);
-            for (D otherD : candidateSet) {
-                CallableDescriptor other = transform.fun(otherD);
-                if (me == other) continue;
-                if (filtering == Filtering.RETAIN_OVERRIDING) {
-                    if (overrides(other, me)) {
-                        continue outerLoop;
-                    }
-                }
-                else if (filtering == Filtering.RETAIN_OVERRIDDEN) {
-                    if (overrides(me, other)) {
-                        continue outerLoop;
-                    }
-                }
-                else {
-                    throw new AssertionError("Unexpected Filtering object: " + filtering);
-                }
-            }
-            for (D otherD : candidates) {
-                CallableDescriptor other = transform.fun(otherD);
-                if (me.getOriginal() == other.getOriginal()
-                    && isOverridableBy(other, me).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
-                    && isOverridableBy(me, other).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE) {
-                    continue outerLoop;
-                }
-            }
-            candidates.add(meD);
-        }
-        return candidates;
-    }
-
-    public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
-        CallableDescriptor originalG = g.getOriginal();
-        for (CallableDescriptor overriddenFunction : getAllOverriddenDescriptors(f)) {
-            if (originalG.equals(overriddenFunction.getOriginal())) return true;
-        }
-        return false;
-    }
-
-    public static Set<CallableDescriptor> getAllOverriddenDescriptors(CallableDescriptor f) {
-        Set<CallableDescriptor> overriddenDescriptors = Sets.newHashSet();
-        collectAllOverriddenDescriptors(f.getOriginal(), overriddenDescriptors);
-        return overriddenDescriptors;
-    }
-
-    private static void collectAllOverriddenDescriptors(
-            @NotNull CallableDescriptor current,
-            @NotNull Set<CallableDescriptor> result
-    ) {
-        if (result.contains(current)) return;
-        for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
-            collectAllOverriddenDescriptors(descriptor, result);
-            result.add(descriptor);
-        }
     }
 
     @NotNull
@@ -268,77 +176,6 @@ public class OverridingUtil {
         }
         else {
             throw new IllegalStateException("unknown type constructor: " + type.getConstructor().getClass().getName());
-        }
-    }
-
-    public static boolean isReturnTypeOkForOverride(@NotNull JetTypeChecker typeChecker, @NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
-        if (typeSubstitutor == null) return false;
-
-        JetType superReturnType = superDescriptor.getReturnType();
-        assert superReturnType != null;
-
-        JetType subReturnType = subDescriptor.getReturnType();
-        assert subReturnType != null;
-
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superReturnType, Variance.OUT_VARIANCE);
-        assert substitutedSuperReturnType != null;
-
-        return typeChecker.isSubtypeOf(subReturnType, substitutedSuperReturnType);
-    }
-
-    @Nullable
-    private static TypeSubstitutor prepareTypeSubstitutor(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
-        List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
-        if (subTypeParameters.size() != superTypeParameters.size()) return null;
-
-        Map<TypeConstructor, TypeProjection> substitutionContext = Maps.newHashMap();
-        for (int i = 0; i < superTypeParameters.size(); i++) {
-            substitutionContext.put(
-                    superTypeParameters.get(i).getTypeConstructor(),
-                    new TypeProjectionImpl(subTypeParameters.get(i).getDefaultType())
-            );
-        }
-        return TypeSubstitutor.create(substitutionContext);
-    }
-
-    public static boolean isPropertyTypeOkForOverride(
-            @NotNull JetTypeChecker typeChecker,
-            @NotNull PropertyDescriptor superDescriptor,
-            @NotNull PropertyDescriptor subDescriptor
-    ) {
-        TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
-        if (typeSubstitutor == null) return false;
-        JetType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
-        assert substitutedSuperReturnType != null;
-        return !superDescriptor.isVar() || typeChecker.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
-    }
-
-    /**
-     * Get overridden descriptors that are declarations, delegations or synthesized and are not dominated by any other such descriptor
-     */
-    @NotNull
-    public static Set<CallableMemberDescriptor> getOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
-        Set<CallableMemberDescriptor> result = new LinkedHashSet<CallableMemberDescriptor>();
-        getOverriddenDeclarations(descriptor, result);
-        return result;
-    }
-
-    private static void getOverriddenDeclarations(
-            @NotNull CallableMemberDescriptor descriptor,
-            @NotNull Set<CallableMemberDescriptor> result
-    ) {
-        if (descriptor.getKind().isReal()) {
-            result.add(descriptor);
-        }
-        else {
-            if (descriptor.getOverriddenDescriptors().isEmpty()) {
-                throw new IllegalStateException("No overridden descriptors found for (fake override) " + descriptor);
-            }
-            for (CallableMemberDescriptor overridden : descriptor.getOverriddenDescriptors()) {
-                getOverriddenDeclarations(overridden, result);
-            }
         }
     }
 
@@ -593,6 +430,8 @@ public class OverridingUtil {
                 maxVisibility = visibility;
             }
         }
+        // TODO: IDEA seems to issue an incorrect warning here
+        //noinspection ConstantConditions
         if (maxVisibility == null) {
             return null;
         }
@@ -697,71 +536,5 @@ public class OverridingUtil {
         public String getMessage() {
             return message;
         }
-    }
-
-    @NotNull
-    public static Set<CallableMemberDescriptor> getDirectlyOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
-        Set<CallableMemberDescriptor> result = Sets.newHashSet();
-        Set<? extends CallableMemberDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
-        for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
-            CallableMemberDescriptor.Kind kind = overriddenDescriptor.getKind();
-            if (kind == DECLARATION) {
-                result.add(overriddenDescriptor);
-            }
-            else if (kind == FAKE_OVERRIDE || kind == DELEGATION) {
-                result.addAll(getDirectlyOverriddenDeclarations(overriddenDescriptor));
-            }
-            else if (kind == SYNTHESIZED) {
-                //do nothing
-            }
-            else {
-                throw new AssertionError("Unexpected callable kind " + kind);
-            }
-        }
-        return filterOutOverridden(result);
-    }
-
-    @NotNull
-    public static Set<FunctionDescriptor> getDirectlyOverriddenDeclarations(@NotNull FunctionDescriptor descriptor) {
-        //noinspection unchecked
-        return (Set) getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-    }
-
-    @NotNull
-    public static Set<PropertyDescriptor> getDirectlyOverriddenDeclarations(@NotNull PropertyDescriptor descriptor) {
-        //noinspection unchecked
-        return (Set) getDirectlyOverriddenDeclarations((CallableMemberDescriptor) descriptor);
-    }
-
-    @NotNull
-    public static <T extends CallableMemberDescriptor> Set<T> getAllOverriddenDeclarations(@NotNull T memberDescriptor) {
-        Set<T> result = Sets.newHashSet();
-        for (CallableMemberDescriptor overriddenDeclaration : memberDescriptor.getOverriddenDescriptors()) {
-            CallableMemberDescriptor.Kind kind = overriddenDeclaration.getKind();
-            if (kind == DECLARATION) {
-                //noinspection unchecked
-                result.add((T) overriddenDeclaration);
-            }
-            else if (kind == DELEGATION || kind == FAKE_OVERRIDE || kind == SYNTHESIZED) {
-                //do nothing
-            }
-            else {
-                throw new AssertionError("Unexpected callable kind " + kind);
-            }
-            //noinspection unchecked
-            result.addAll(getAllOverriddenDeclarations((T) overriddenDeclaration));
-        }
-        return result;
-    }
-
-    @NotNull
-    @ReadOnly
-    public static <T extends CallableMemberDescriptor> Set<T> getDeepestSuperDeclarations(T functionDescriptor) {
-        Set<T> overriddenDeclarations = getAllOverriddenDeclarations(functionDescriptor);
-        if (overriddenDeclarations.isEmpty()) {
-            return Collections.singleton(functionDescriptor);
-        }
-
-        return filterOutOverriding(overriddenDeclarations);
     }
 }

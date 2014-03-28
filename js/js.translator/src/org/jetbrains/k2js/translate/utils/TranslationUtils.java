@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.k2js.translate.context.TemporaryConstVariable;
@@ -465,7 +465,7 @@ public final class TranslationUtils {
         private static boolean isNativeOrOverrideNative(FunctionDescriptor descriptor) {
             if (AnnotationsUtils.isNativeObject(descriptor)) return true;
 
-            Set<FunctionDescriptor> declarations = OverridingUtil.getAllOverriddenDeclarations(descriptor);
+            Set<FunctionDescriptor> declarations = OverrideResolver.getAllOverriddenDeclarations(descriptor);
             for (FunctionDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
             }

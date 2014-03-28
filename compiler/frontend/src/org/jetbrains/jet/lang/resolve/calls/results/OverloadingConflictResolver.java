@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
@@ -135,8 +135,8 @@ public class OverloadingConflictResolver {
         }
 
 
-        if (OverridingUtil.overrides(f, g)) return true;
-        if (OverridingUtil.overrides(g, f)) return false;
+        if (OverrideResolver.overrides(f, g)) return true;
+        if (OverrideResolver.overrides(g, f)) return false;
 
         ReceiverParameterDescriptor receiverOfF = f.getReceiverParameter();
         ReceiverParameterDescriptor receiverOfG = g.getReceiverParameter();

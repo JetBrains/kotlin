@@ -20,7 +20,7 @@ import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 
@@ -142,7 +142,7 @@ public class ResolutionResultsHandler {
 
             assert false : "Should not be reachable, cause every status must belong to some level";
 
-            Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
+            Set<ResolvedCallWithTrace<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
             if (noOverrides.size() != 1) {
                 tracing.noneApplicable(trace, noOverrides);
                 tracing.recordAmbiguity(trace, noOverrides);
@@ -203,7 +203,7 @@ public class ResolutionResultsHandler {
             }
         }
 
-        Set<ResolvedCallWithTrace<D>> noOverrides = OverridingUtil.filterOutOverridden(candidates, MAP_TO_RESULT);
+        Set<ResolvedCallWithTrace<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
         if (noOverrides.size() == 1) {
                 return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }

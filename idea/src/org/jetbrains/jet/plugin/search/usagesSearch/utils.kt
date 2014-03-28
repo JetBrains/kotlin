@@ -16,11 +16,8 @@
 
 package org.jetbrains.jet.plugin.search.usagesSearch
 
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiConstructorCall
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.psi.*
@@ -29,21 +26,17 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.PsiReference
-import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
-import org.jetbrains.jet.lang.resolve.OverridingUtil
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.plugin.findUsages.JetUsageTypeProvider
-import org.jetbrains.jet.plugin.findUsages.JetUsageTypes
 import com.intellij.usages.impl.rules.UsageType
-import org.jetbrains.jet.asJava.LightClassUtil
-import org.jetbrains.jet.lang.resolve.java.JvmAbi
 import org.jetbrains.jet.codegen.PropertyCodegen
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
 import org.jetbrains.jet.asJava.unwrapped
+import org.jetbrains.jet.lang.resolve.OverrideResolver
 
 // Navigation element of the resolved reference
 // For property accessor return enclosing property
@@ -151,7 +144,7 @@ fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Bool
 
     return checkUsageVsOriginalDescriptor(declaration, decl2Desc) { (usageDescriptor, targetDescriptor) ->
         usageDescriptor is CallableDescriptor && targetDescriptor is CallableDescriptor
-            && OverridingUtil.overrides(usageDescriptor, targetDescriptor)
+            && OverrideResolver.overrides(usageDescriptor, targetDescriptor)
     }
 }
 

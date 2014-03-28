@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.SignaturesUtil;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
@@ -34,14 +35,12 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.SubstitutionUtils;
 import org.jetbrains.jet.lang.types.TypeSubstitution;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.isOverridableBy;
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.isReturnTypeOkForOverride;
 
 public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
     private static final Logger LOG = Logger.getInstance(PsiBasedMethodSignatureChecker.class);
@@ -80,7 +79,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
 
         OverridingUtil.OverrideCompatibilityInfo.Result overridableResult = isOverridableBy(superFunctionSubstituted, function).getResult();
         boolean paramsOk = overridableResult == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
-        boolean returnTypeOk = isReturnTypeOkForOverride(JetTypeChecker.INSTANCE, superFunctionSubstituted, function);
+        boolean returnTypeOk = OverrideResolver.isReturnTypeOkForOverride(superFunctionSubstituted, function);
         if (!paramsOk || !returnTypeOk) {
             // This should be a LOG.error, but happens a lot of times incorrectly (e.g. on Kotlin project), because somewhere in the
             // type checker we compare two types which seem the same but have different instances of class descriptors. It happens
