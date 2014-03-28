@@ -75,7 +75,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     @Override
     @Nullable
     public JetDelegationSpecifierList getDelegationSpecifierList() {
-        return (JetDelegationSpecifierList) findChildByType(JetNodeTypes.DELEGATION_SPECIFIER_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST);
     }
 
     @Override
