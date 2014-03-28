@@ -769,7 +769,7 @@ public class JetTypeMapper extends BindingTraceAware {
             }
 
             if (type != null) {
-                signatureWriter.writeParameterType(JvmMethodParameterKind.SHARED_VAR);
+                signatureWriter.writeParameterType(JvmMethodParameterKind.CAPTURED_LOCAL_VARIABLE);
                 signatureWriter.writeAsmType(type);
                 signatureWriter.writeParameterTypeEnd();
             }
@@ -782,7 +782,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
             if (superDescriptor instanceof ConstructorDescriptor && isAnonymousObject(descriptor.getContainingDeclaration())) {
                 for (JvmMethodParameterSignature parameter : mapSignature((ConstructorDescriptor) superDescriptor).getValueParameters()) {
-                    signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_CALL_PARAM);
+                    signatureWriter.writeParameterType(JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM);
                     signatureWriter.writeAsmType(parameter.getAsmType());
                     signatureWriter.writeParameterTypeEnd();
                 }

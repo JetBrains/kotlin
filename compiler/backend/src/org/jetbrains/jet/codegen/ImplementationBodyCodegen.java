@@ -1577,7 +1577,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static int findFirstSuperArgument(@NotNull CallableMethod method) {
         int i = 0;
         for (JvmMethodParameterSignature type : method.getValueParameters()) {
-            if (type.getKind() == JvmMethodParameterKind.SUPER_CALL_PARAM) {
+            if (type.getKind() == JvmMethodParameterKind.SUPER_OF_ANONYMOUS_CALL_PARAM) {
                 return i + 1; // because of this
             }
             i += type.getAsmType().getSize();
