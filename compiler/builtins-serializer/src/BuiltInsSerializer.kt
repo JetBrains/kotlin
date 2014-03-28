@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.utils.recursePostOrder
 
@@ -67,11 +66,9 @@ public class BuiltInsSerializer(val out: PrintStream?) {
 
         val environment = JetCoreEnvironment.createForTests(disposable, configuration)
 
-        val files = environment.getSourceFiles() ?: error("No source files in $sourceRoots")
+        val files = environment.getSourceFiles()
 
-        val project = environment.getProject()
-
-        val session = AnalyzerFacadeForJVM.createLazyResolveSession(project, files, BindingTraceContext(), false)
+        val session = AnalyzerFacadeForJVM.createLazyResolveSession(environment.getProject(), files, BindingTraceContext(), false)
         val module = session.getModuleDescriptor()
 
         // We don't use FileUtil because it spawns JNA initialization, which fails because we don't have (and don't want to have) its
