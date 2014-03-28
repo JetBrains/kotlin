@@ -33,6 +33,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
+import com.intellij.debugger.engine.MethodFilter
+import com.intellij.debugger.engine.BasicStepMethodFilter
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.sun.jdi.Location
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiFile
+import com.intellij.openapi.editor.Editor
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -122,19 +129,19 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                val resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression)
+                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, expression]
                 if (resolvedCall != null) {
                     val propertyDescriptor = resolvedCall.getResultingDescriptor()
                     if (propertyDescriptor is PropertyDescriptor) {
                         val getterDescriptor = propertyDescriptor.getGetter()
                         if (getterDescriptor != null && !getterDescriptor.isDefault()) {
-                            val delegatedResolvedCall = bindingContext.get(BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor)
+                            val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
                                 val getter = BindingContextUtils.callableDescriptorToDeclaration(bindingContext, getterDescriptor)
                                 if (getter is JetPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
                                     val psiMethod = LightClassUtil.getLightClassAccessorMethod(getter)
                                     if (psiMethod != null) {
-                                        result.add(MethodSmartStepTarget(psiMethod, null, expression, false, lines))
+                                        result.add(KotlinMethodSmartStepTarget(getter, psiMethod, null, expression, false, lines))
                                     }
                                 }
                             }
@@ -145,7 +152,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                                     if (function is JetNamedFunction) {
                                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                                         if (psiMethod != null) {
-                                            result.add(MethodSmartStepTarget(psiMethod, "${propertyDescriptor.getName()}.", expression, false, lines))
+                                            result.add(KotlinMethodSmartStepTarget(function, psiMethod, "${propertyDescriptor.getName()}.", expression, false, lines))
                                         }
                                     }
                                 }
@@ -157,7 +164,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             private fun recordFunction(expression: JetExpression) {
-                val resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression)
+                val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, expression]
                 if (resolvedCall == null) return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
@@ -166,7 +173,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                     if (function is JetNamedFunction) {
                         val psiMethod = LightClassUtil.getLightClassMethod(function)
                         if (psiMethod != null) {
-                            result.add(MethodSmartStepTarget(psiMethod, null, expression, false, lines))
+                            result.add(KotlinMethodSmartStepTarget(function, psiMethod, null, expression, false, lines))
                         }
                     }
                 }
@@ -174,6 +181,32 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         }, null)
 
         return result
+    }
+
+    override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
+        if (stepTarget is KotlinMethodSmartStepTarget) {
+            return KotlinBasicStepMethodFilter(stepTarget)
+        }
+        return super.createMethodFilter(stepTarget)
+    }
+
+    class KotlinBasicStepMethodFilter(val stepTarget: KotlinMethodSmartStepTarget): BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines()) {
+        override fun locationMatches(process: DebugProcessImpl, location: Location): Boolean {
+            if (super.locationMatches(process, location)) return true
+
+            val containingFile = stepTarget.resolvedElement.getContainingFile()
+            if (containingFile !is JetFile) return false
+
+            val positionManager = process.getPositionManager()
+            if (positionManager == null) return false
+
+            val classes = positionManager.getAllClasses(MockSourcePosition(_file = containingFile, _elementAt = stepTarget.resolvedElement))
+
+            val method = location.method()
+            return stepTarget.getMethod().getName() == method.name() &&
+                myTargetMethodSignature?.getName(process) == method.signature() &&
+                classes.contains(location.declaringType())
+        }
     }
 
     private fun getTopmostElementAtOffset(element: PsiElement, offset: Int): PsiElement? {
@@ -185,4 +218,12 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
         return resultElement
     }
+
+    class KotlinMethodSmartStepTarget(val resolvedElement: JetElement,
+                                      psiMethod: PsiMethod,
+                                      label: String?,
+                                      highlightElement: PsiElement,
+                                      needBreakpointRequest: Boolean,
+                                      lines: Range<Int>
+    ): MethodSmartStepTarget(psiMethod, label, highlightElement, needBreakpointRequest, lines)
 }

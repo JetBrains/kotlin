@@ -48,7 +48,7 @@ public class MockLibraryUtil {
             File contentDir = JetTestUtils.tmpDir("lib-content");
 
             File classesDir = new File(contentDir, "classes");
-            compile(sourcesPath, classesDir);
+            compileKotlin(sourcesPath, classesDir);
 
             List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(sourcesPath));
             if (!javaFiles.isEmpty()) {
@@ -88,7 +88,7 @@ public class MockLibraryUtil {
     }
 
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
-    private static void compile(String sourcesPath, File outDir) {
+    public static void compileKotlin(@NotNull String sourcesPath, @NotNull File outDir) {
         try {
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
             Class<?> compilerClass = getCompilerClass();

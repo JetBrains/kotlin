@@ -1,0 +1,8 @@
+LineBreakpoint created at classObjectFunFromTopLevel.kt:13
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! classObjectFunFromTopLevel.ClassObjectFunFromTopLevelPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+classObjectFunFromTopLevel.kt:12
+classObjectFunFromTopLevel.kt:5
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

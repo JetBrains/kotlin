@@ -38,17 +38,7 @@ abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
         val offset = fixture.getCaretOffset()
         val line = fixture.getDocument(fixture.getFile())!!.getLineNumber(offset)
 
-        val position = object: SourcePosition() {
-            override fun getFile() = fixture.getFile()!!
-            override fun getElementAt(): PsiElement? = throw UnsupportedOperationException()
-            override fun getLine() = line
-            override fun getOffset() = offset
-            override fun openEditor(requestFocus: Boolean) = fixture.getEditor()
-            override fun navigate(requestFocus: Boolean) {
-            }
-            override fun canNavigate() = false
-            override fun canNavigateToSource() = false
-        }
+        val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 
         val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { renderTarget(it) }
 

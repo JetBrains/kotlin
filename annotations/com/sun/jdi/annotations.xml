@@ -1,0 +1,5 @@
+<root>
+  <item name='com.sun.jdi.Location com.sun.jdi.Method method()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

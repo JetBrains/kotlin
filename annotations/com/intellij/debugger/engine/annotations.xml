@@ -1,0 +1,16 @@
+<root>
+  <item
+      name='com.intellij.debugger.engine.MethodFilter boolean locationMatches(com.intellij.debugger.engine.DebugProcessImpl, com.sun.jdi.Location) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.MethodFilter boolean locationMatches(com.intellij.debugger.engine.DebugProcessImpl, com.sun.jdi.Location) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.SuspendContextImpl'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.SuspendContextRunnable void run(com.intellij.debugger.engine.SuspendContextImpl) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

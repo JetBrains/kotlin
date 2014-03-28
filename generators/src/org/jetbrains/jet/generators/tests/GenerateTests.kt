@@ -102,6 +102,7 @@ import org.jetbrains.jet.plugin.imports.AbstractOptimizeImportsTest
 import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
+import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -538,6 +539,11 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartStepIntoTest>()) {
             model("debugger/smartStepInto")
+        }
+
+        testClass(javaClass<AbstractKotlinSteppingTest>()) {
+            model("debugger/tinyApp/src/stepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
+            model("debugger/tinyApp/src/stepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
