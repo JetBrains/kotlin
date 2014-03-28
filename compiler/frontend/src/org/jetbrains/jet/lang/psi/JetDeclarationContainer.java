@@ -17,10 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.List;
 
 public interface JetDeclarationContainer {
     @NotNull
+    @ReadOnly
     List<JetDeclaration> getDeclarations();
 }

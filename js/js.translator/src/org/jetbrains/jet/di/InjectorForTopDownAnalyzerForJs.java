@@ -149,7 +149,8 @@ public class InjectorForTopDownAnalyzerForJs {
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
         this.topDownAnalyzer.setPackageFragmentProvider(mutablePackageFragmentProvider);
         this.topDownAnalyzer.setProject(project);
-        this.topDownAnalyzer.setScriptHeaderResolver(scriptHeaderResolver);
+        this.topDownAnalyzer.setScriptBodyResolver(scriptBodyResolver);
+        this.topDownAnalyzer.setScriptParameterResolver(scriptParameterResolver);
         this.topDownAnalyzer.setTrace(bindingTrace);
         this.topDownAnalyzer.setTypeHierarchyResolver(typeHierarchyResolver);
 

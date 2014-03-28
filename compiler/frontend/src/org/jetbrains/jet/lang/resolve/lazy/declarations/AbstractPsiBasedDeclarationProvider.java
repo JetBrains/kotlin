@@ -58,7 +58,10 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
                 classesAndObjects.put(safeNameForLazyResolve(classOrObject.getNameAsName()), classOrObject);
             }
-            else if (declaration instanceof JetParameter || declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
+            else if (declaration instanceof JetParameter ||
+                     declaration instanceof JetTypedef ||
+                     declaration instanceof JetMultiDeclaration ||
+                     declaration instanceof JetScript) {
                 // Do nothing, just put it into allDeclarations is enough
             }
             else {
@@ -82,6 +85,7 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
 
     protected abstract void doCreateIndex(@NotNull Index index);
 
+    @NotNull
     @Override
     public List<JetDeclaration> getAllDeclarations() {
         return index.invoke().allDeclarations;

@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -26,6 +27,7 @@ public class ScriptNameUtil {
     private ScriptNameUtil() {
     }
 
+    @NotNull
     public static FqName classNameForScript(JetFile file) {
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 

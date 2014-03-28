@@ -95,7 +95,11 @@ public class ScriptHeaderResolver {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
 
-            List<ValueParameterDescriptor> valueParameters = scriptParameterResolver.resolveScriptParameters(c, declaration, descriptor);
+            List<ValueParameterDescriptor> valueParameters = scriptParameterResolver.resolveScriptParameters(
+                    c.getTopDownAnalysisParameters(),
+                    declaration,
+                    descriptor
+            );
 
             descriptor.setValueParameters(valueParameters);
 

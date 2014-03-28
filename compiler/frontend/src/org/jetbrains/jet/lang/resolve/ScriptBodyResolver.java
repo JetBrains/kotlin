@@ -24,6 +24,7 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
@@ -55,10 +56,17 @@ public class ScriptBodyResolver {
     public void resolveScriptBodies(@NotNull BodiesResolveContext c, @NotNull BindingTrace trace) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
-            ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
+            ScriptDescriptor descriptor = e.getValue();
+
+            if (TopDownAnalyzer.LAZY && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+                ForceResolveUtil.forceResolveAllContents(descriptor);
+                continue;
+            }
+
+            ScriptDescriptorImpl descriptorImpl = (ScriptDescriptorImpl) descriptor;
 
             // TODO: lock in resolveScriptDeclarations
-            descriptor.getScopeForBodyResolution().changeLockLevel(WritableScope.LockLevel.READING);
+            descriptorImpl.getScopeForBodyResolution().changeLockLevel(WritableScope.LockLevel.READING);
 
             JetType returnType = resolveScriptReturnType(declaration, descriptor, trace);
 
@@ -83,11 +91,12 @@ public class ScriptBodyResolver {
                 }
             }
 
-            descriptor.initialize(returnType, properties, functions);
+            descriptorImpl.initialize(returnType, properties, functions);
         }
     }
 
-    private JetType resolveScriptReturnType(
+    @NotNull
+    public JetType resolveScriptReturnType(
             @NotNull JetScript script,
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull BindingTrace trace
