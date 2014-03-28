@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.resolve.calls.CallResolver
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -106,7 +107,8 @@ private fun generatorForTopDownAnalyzerForJvm() =
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
-                    javaClass<MutablePackageFragmentProvider>()
+                    javaClass<MutablePackageFragmentProvider>(),
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
             )
             field(javaClass<VirtualFileFinder>(), init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
         }
@@ -130,7 +132,8 @@ private fun generatorForJavaDescriptorResolver() =
                     javaClass<TraceBasedJavaResolverCache>(),
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
-                    javaClass<PsiBasedExternalAnnotationResolver>()
+                    javaClass<PsiBasedExternalAnnotationResolver>(),
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
@@ -164,7 +167,8 @@ private fun generatorForLazyResolveWithJava() =
                     javaClass<LazyResolveBasedCache>(),
                     javaClass<TraceBasedErrorReporter>(),
                     javaClass<PsiBasedMethodSignatureChecker>(),
-                    javaClass<PsiBasedExternalAnnotationResolver>()
+                    javaClass<PsiBasedExternalAnnotationResolver>(),
+                    javaClass<JavaPropertyInitializerEvaluatorImpl>()
             )
         }
 
