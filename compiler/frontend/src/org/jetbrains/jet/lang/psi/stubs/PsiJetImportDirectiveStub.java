@@ -17,9 +17,13 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.resolve.name.Name;
 
 public interface PsiJetImportDirectiveStub extends StubElement<JetImportDirective> {
     boolean isAbsoluteInRootPackage();
     boolean isAllUnder();
+    @Nullable
+    String getAliasName();
 }
