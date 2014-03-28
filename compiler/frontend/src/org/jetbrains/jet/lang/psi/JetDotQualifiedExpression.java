@@ -17,9 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetToken;
 
-public class JetDotQualifiedExpression extends JetQualifiedExpressionImpl {
+public class JetDotQualifiedExpression<T extends StubElement> extends JetExpressionImplStub<T> implements JetQualifiedExpression {
     public JetDotQualifiedExpression(@NotNull ASTNode node) {
         super(node);
     }
@@ -27,5 +30,30 @@ public class JetDotQualifiedExpression extends JetQualifiedExpressionImpl {
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitDotQualifiedExpression(this, data);
+    }
+
+    @NotNull
+    @Override
+    public JetExpression getReceiverExpression() {
+        return JetQualifiedExpressionImpl.instance$.getReceiverExpression(this);
+    }
+
+
+    @Nullable
+    @Override
+    public JetExpression getSelectorExpression() {
+        return JetQualifiedExpressionImpl.instance$.getSelectorExpression(this);
+    }
+
+    @NotNull
+    @Override
+    public ASTNode getOperationTokenNode() {
+        return JetQualifiedExpressionImpl.instance$.getOperationTokenNode(this);
+    }
+
+    @NotNull
+    @Override
+    public JetToken getOperationSign() {
+        return JetQualifiedExpressionImpl.instance$.getOperationSign(this);
     }
 }

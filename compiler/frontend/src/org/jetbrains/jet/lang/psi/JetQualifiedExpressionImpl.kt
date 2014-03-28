@@ -21,29 +21,24 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.lexer.JetTokens
+import com.intellij.psi.util.PsiTreeUtil
 
-public trait JetQualifiedExpression : JetExpression {
-    public fun getReceiverExpression(): JetExpression
-
-    public fun getSelectorExpression(): JetExpression?
-
-    public fun getOperationTokenNode(): ASTNode {
-        val operationNode = getNode()!!.findChildByType(JetTokens.OPERATIONS)
+object JetQualifiedExpressionImpl {
+    public fun JetQualifiedExpression.getOperationTokenNode(): ASTNode {
+        val operationNode = this.getNode()!!.findChildByType(JetTokens.OPERATIONS)
         return operationNode!!
     }
 
-    public fun getOperationSign(): JetToken {
-        return getOperationTokenNode().getElementType() as JetToken
+    public fun JetQualifiedExpression.getOperationSign(): JetToken {
+        return this.getOperationTokenNode().getElementType() as JetToken
     }
-}
 
-public abstract class JetQualifiedExpressionImpl(node: ASTNode) : JetExpressionImpl(node), JetQualifiedExpression {
-    public override fun getReceiverExpression(): JetExpression {
-        val left = findChildByClass(javaClass<JetExpression>())
+    public fun JetQualifiedExpression.getReceiverExpression(): JetExpression {
+        val left = PsiTreeUtil.findChildOfType(this, javaClass<JetExpression>())
         return left!!
     }
 
-    public override fun getSelectorExpression(): JetExpression? {
+    public fun JetQualifiedExpression.getSelectorExpression(): JetExpression? {
         var node: ASTNode? = getOperationTokenNode()
         while (node != null) {
             val psi = node!!.getPsi()
