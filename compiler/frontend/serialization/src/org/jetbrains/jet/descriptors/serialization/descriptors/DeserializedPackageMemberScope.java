@@ -16,16 +16,19 @@
 
 package org.jetbrains.jet.descriptors.serialization.descriptors;
 
-import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.StorageManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -97,7 +100,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
             @NotNull MemberFilter memberFilter,
             @NotNull NameResolver nameResolver
     ) {
-        List<ProtoBuf.Callable> result = Lists.newArrayList();
+        List<ProtoBuf.Callable> result = new ArrayList<ProtoBuf.Callable>();
         for (ProtoBuf.Callable member : packageProto.getMemberList()) {
             if (memberFilter.acceptPackagePartClass(packageDescriptor, member, nameResolver)) {
                 result.add(member);

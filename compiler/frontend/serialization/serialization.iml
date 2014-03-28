@@ -10,7 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="protobuf-java" level="project" />
     <orderEntry type="library" name="trove4j" level="project" />
-    <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="util.runtime" exported="" />
     <orderEntry type="module" module-name="descriptors" exported="" />
   </component>
