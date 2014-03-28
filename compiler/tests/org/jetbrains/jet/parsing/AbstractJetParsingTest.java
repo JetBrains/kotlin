@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.IfNotParsed;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -73,6 +72,7 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     protected void doParsingTest(@NotNull String filePath) throws Exception {
+        myFileExt = FileUtil.getExtension(PathUtil.getFileName(filePath));
         myFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath));
 
         myFile.acceptChildren(new JetVisitorVoid() {
@@ -88,6 +88,6 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
             }
         });
 
-        doCheckResult(myFullDataPath, filePath.replace(".kt", ".txt"), toParseTreeText(myFile, false, false).trim());
+        doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), toParseTreeText(myFile, false, false).trim());
     }
 }

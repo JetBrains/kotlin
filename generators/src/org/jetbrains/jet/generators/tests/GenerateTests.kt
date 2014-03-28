@@ -132,7 +132,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetParsingTest>()) {
-            model("psi", testMethod = "doParsingTest")
+            model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
         }
 
         GenerateRangesCodegenTestData.main(array<String>())

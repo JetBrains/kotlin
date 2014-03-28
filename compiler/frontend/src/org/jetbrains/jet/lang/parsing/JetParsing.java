@@ -93,7 +93,7 @@ public class JetParsing extends AbstractJetParsing {
     void parseFile() {
         PsiBuilder.Marker fileMarker = mark();
 
-        parsePreamble(true);
+        parsePreamble();
 
         while (!eof()) {
             parseTopLevelObject();
@@ -129,10 +129,9 @@ public class JetParsing extends AbstractJetParsing {
     void parseScript() {
         PsiBuilder.Marker fileMarker = mark();
 
-        parsePreamble(false);
+        parsePreamble();
 
         PsiBuilder.Marker scriptMarker = mark();
-        parseImportDirectives();
 
         PsiBuilder.Marker blockMarker = mark();
 
@@ -148,7 +147,7 @@ public class JetParsing extends AbstractJetParsing {
      *  : packageDirective? import*
      *  ;
      */
-    private void parsePreamble(boolean imports) {
+    private void parsePreamble() {
         /*
          * packageDirective
          *   : modifiers "package" SimpleName{"."} SEMI?
@@ -180,8 +179,7 @@ public class JetParsing extends AbstractJetParsing {
         }
         packageDirective.done(PACKAGE_DIRECTIVE);
 
-        if(imports)
-            parseImportDirectives();
+        parseImportDirectives();
     }
 
     /* SimpleName{"."} */

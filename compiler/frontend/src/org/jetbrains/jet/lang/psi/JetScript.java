@@ -19,9 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 // SCRIPT: Script declaration
@@ -34,17 +32,6 @@ public class JetScript extends JetDeclarationImpl {
     @NotNull
     public JetBlockExpression getBlockExpression() {
         return findNotNullChildByClass(JetBlockExpression.class);
-    }
-
-    @Nullable
-    public JetImportList getImportList() {
-        return findChildByClass(JetImportList.class);
-    }
-
-    @NotNull
-    public List<JetImportDirective> getImportDirectives() {
-        JetImportList importList = getImportList();
-        return importList != null ? importList.getImports() : Collections.<JetImportDirective>emptyList();
     }
 
     @NotNull
