@@ -803,7 +803,7 @@ public class JetParsing extends AbstractJetParsing {
      *   : modifiers "class" object
      *   ;
      */
-    private JetNodeType parseClassObject() {
+    private IElementType parseClassObject() {
         assert _at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
 
         advance(); // CLASS_KEYWORD
