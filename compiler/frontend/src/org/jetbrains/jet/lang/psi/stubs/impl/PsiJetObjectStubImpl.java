@@ -41,18 +41,6 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
 
     public PsiJetObjectStubImpl(
             @NotNull StubElement parent,
-            @Nullable String name,
-            @Nullable FqName fqName,
-            @NotNull List<String> superNames,
-            boolean isTopLevel,
-            boolean isClassObject,
-            boolean isLocal
-    ) {
-        this(parent, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames), isTopLevel, isClassObject, isLocal);
-    }
-
-    public PsiJetObjectStubImpl(
-            @NotNull StubElement parent,
             @Nullable StringRef name,
             @Nullable FqName fqName,
             @NotNull StringRef[] superNames,
