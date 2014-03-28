@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.util.ArrayFactory;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
@@ -27,6 +27,9 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
 
+    public static final TokenSet IMPORT_DIRECTIVE_EXPRESSIONS =
+               TokenSet.create(JetStubElementTypes.REFERENCE_EXPRESSION, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
+    
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
     }
@@ -41,12 +44,20 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isAbsoluteInRootPackage() {
+        PsiJetImportDirectiveStub stub = getStub();
+        if (stub != null) {
+            return stub.isAbsoluteInRootPackage();
+        }
         return findChildByType(JetTokens.PACKAGE_KEYWORD) != null;
     }
 
     @Nullable @IfNotParsed
     public JetExpression getImportedReference() {
-        return findChildByClass(JetExpression.class);
+        JetExpression[] references = getStubOrPsiChildren(IMPORT_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
+        if (references.length > 0) {
+            return references[0];
+        }
+        return null;
     }
 
     @Nullable
@@ -75,6 +86,10 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isAllUnder() {
+        PsiJetImportDirectiveStub stub = getStub();
+        if (stub != null) {
+            return stub.isAllUnder();
+        }
         return getNode().findChildByType(JetTokens.MUL) != null;
     }
 }
