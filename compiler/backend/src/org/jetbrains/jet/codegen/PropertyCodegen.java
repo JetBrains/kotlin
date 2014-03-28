@@ -83,7 +83,7 @@ public class PropertyCodegen extends GenerationStateAware {
 
     public void gen(@NotNull JetProperty property) {
         VariableDescriptor variableDescriptor = bindingContext.get(BindingContext.VARIABLE, property);
-        assert variableDescriptor instanceof PropertyDescriptor : "Property should have a property descriptor: " + variableDescriptor;
+        assert variableDescriptor instanceof PropertyDescriptor : "Property " + property.getText() + " should have a property descriptor: " + variableDescriptor;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
         gen(property, propertyDescriptor, property.getGetter(), property.getSetter());
