@@ -16,9 +16,8 @@
 
 package org.jetbrains.jet.plugin.libraries;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -34,9 +33,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.utils.CommonSuppliers;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -198,8 +195,7 @@ public class MemberMatching {
             return false;
         }
 
-        Multimap<Name, String> decompiledParameterToBounds = Multimaps.newSetMultimap(
-                Maps.<Name, Collection<String>>newHashMap(), CommonSuppliers.<String>getHashSetSupplier());
+        Multimap<Name, String> decompiledParameterToBounds = HashMultimap.create();
         for (JetTypeParameter parameter : decompiledParameters) {
             JetTypeReference extendsBound = parameter.getExtendsBound();
             if (extendsBound != null) {

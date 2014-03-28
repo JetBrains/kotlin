@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.utils.CommonSuppliers;
 import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
@@ -256,7 +255,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     private SetMultimap<Name, VariableDescriptor> getPropertyGroups() {
         if (propertyGroups == null) {
-            propertyGroups = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+            propertyGroups = LinkedHashMultimap.create();
         }
         return propertyGroups;
     }
@@ -264,7 +263,7 @@ public class WritableScopeImpl extends WritableScopeWithImports {
     @NotNull
     private SetMultimap<Name, FunctionDescriptor> getFunctionGroups() {
         if (functionGroups == null) {
-            functionGroups = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+            functionGroups = LinkedHashMultimap.create();
         }
         return functionGroups;
     }

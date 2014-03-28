@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.util.slicedmap;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.utils.CommonSuppliers;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -43,7 +41,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
     
     private final Map<SlicedMapKey<?, ?>, Object> map;
-    private final Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = Multimaps.newListMultimap(new HashMap<WritableSlice<?, ?>, Collection<Object>>(), CommonSuppliers.getArrayListSupplier());
+    private final Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = ArrayListMultimap.create();
 
     protected SlicedMapImpl(Map<SlicedMapKey<?, ?>, Object> map) {
         this.map = map;

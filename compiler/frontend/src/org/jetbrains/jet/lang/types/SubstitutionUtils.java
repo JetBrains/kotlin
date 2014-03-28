@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.lang.types;
 
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.utils.CommonSuppliers;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +58,7 @@ public class SubstitutionUtils {
      */
     @NotNull
     public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull JetType type) {
-        Multimap<TypeConstructor, TypeProjection> fullSubstitution = CommonSuppliers.newLinkedHashSetHashSetMultimap();
+        Multimap<TypeConstructor, TypeProjection> fullSubstitution = LinkedHashMultimap.create();
         Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here

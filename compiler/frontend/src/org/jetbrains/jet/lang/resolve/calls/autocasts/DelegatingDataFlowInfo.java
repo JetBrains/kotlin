@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.utils.CommonSuppliers;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NULL;
 
@@ -228,8 +228,7 @@ import static org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability.NOT_NUL
 
     @NotNull
     /* package */ static SetMultimap<DataFlowValue, JetType> newTypeInfo() {
-        return Multimaps.newSetMultimap(Maps.<DataFlowValue, Collection<JetType>>newHashMap(),
-                                        CommonSuppliers.<JetType>getLinkedHashSetSupplier());
+        return LinkedHashMultimap.create();
     }
 
     @Override
