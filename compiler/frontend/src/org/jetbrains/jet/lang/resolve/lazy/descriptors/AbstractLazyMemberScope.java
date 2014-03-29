@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -111,13 +110,11 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         return ContainerUtil.mapNotNull(classOrObjectDeclarations, new Function<JetClassLikeInfo, ClassDescriptor>() {
             @Override
             public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
-                BindingTrace traceForMembers = classLikeInfo instanceof JetScriptInfo
-                                                  ? TemporaryBindingTrace.create(
-                                                        resolveSession.getTrace(),
-                                                        "A trace for script class, needed to avoid rewrites on members"
-                                                    )
-                                                  : resolveSession.getTrace();
-                return new LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo, traceForMembers);
+                // SCRIPT: Creating a script class
+                if (classLikeInfo instanceof JetScriptInfo) {
+                    return new LazyScriptClassDescriptor(resolveSession, thisDescriptor, name, (JetScriptInfo) classLikeInfo);
+                }
+                return new LazyClassDescriptor(resolveSession, thisDescriptor, name, classLikeInfo);
             }
         });
     }

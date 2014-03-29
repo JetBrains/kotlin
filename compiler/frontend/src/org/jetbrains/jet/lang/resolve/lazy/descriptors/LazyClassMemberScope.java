@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
-import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -221,44 +220,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     @Override
     @SuppressWarnings("unchecked")
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
-        JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-
-        // From primary constructor parameters
-        ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
-        if (primaryConstructor != null) {
-            List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
-            List<? extends JetParameter> primaryConstructorParameters = classInfo.getPrimaryConstructorParameters();
-            for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
-                if (!name.equals(valueParameterDescriptor.getName())) continue;
-
-                // SCRIPT: Adding script parameters as properties
-                if (classInfo instanceof JetScriptInfo) {
-                    result.add(ScriptDescriptorImpl.createPropertyFromScriptParameter(
-                            resolveSession.getScriptDescriptor(((JetScriptInfo) classInfo).getScript()), valueParameterDescriptor)
-                    );
-                    continue;
-                }
-
-                assert valueParameterDescriptors.size() == primaryConstructorParameters.size() : "From descriptor: " + valueParameterDescriptors.size() + " but from PSI: " + primaryConstructorParameters.size();
-                JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
-                if (parameter.getValOrVarNode() != null) {
-                    PropertyDescriptor propertyDescriptor =
-                            resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
-                                    thisDescriptor,
-                                    valueParameterDescriptor,
-                                    thisDescriptor.getScopeForClassHeaderResolution(),
-                                    parameter, trace
-                            );
-                    result.add(propertyDescriptor);
-                }
-            }
-        }
-
-        // SCRIPT: Adding script result
-        if (classInfo instanceof JetScriptInfo && name.asString().equals(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME)) {
-            JetScriptInfo scriptInfo = (JetScriptInfo) classInfo;
-            result.add(ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.getScript())));
-        }
+        createPropertiesFromPrimaryConstructorParameters(name, result);
 
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
@@ -267,6 +229,35 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         }
         result.addAll(generateDelegatingDescriptors(name, MemberExtractor.EXTRACT_PROPERTIES, result));
         generateFakeOverrides(name, fromSupertypes, (Collection) result, PropertyDescriptor.class);
+    }
+
+    protected void createPropertiesFromPrimaryConstructorParameters(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
+        JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+
+        // From primary constructor parameters
+        ConstructorDescriptor primaryConstructor = getPrimaryConstructor();
+        if (primaryConstructor == null) return;
+
+        List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
+        List<? extends JetParameter> primaryConstructorParameters = classInfo.getPrimaryConstructorParameters();
+        assert valueParameterDescriptors.size() == primaryConstructorParameters.size()
+                : "From descriptor: " + valueParameterDescriptors.size() + " but from PSI: " + primaryConstructorParameters.size();
+
+        for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
+            if (!name.equals(valueParameterDescriptor.getName())) continue;
+
+            JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
+            if (parameter.getValOrVarNode() != null) {
+                PropertyDescriptor propertyDescriptor =
+                        resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
+                                thisDescriptor,
+                                valueParameterDescriptor,
+                                thisDescriptor.getScopeForClassHeaderResolution(),
+                                parameter, trace
+                        );
+                result.add(propertyDescriptor);
+            }
+        }
     }
 
     @NotNull
@@ -372,26 +363,19 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     }
 
     @Nullable
-    private ConstructorDescriptor resolvePrimaryConstructor() {
+    protected ConstructorDescriptor resolvePrimaryConstructor() {
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
             JetClassLikeInfo ownerInfo = declarationProvider.getOwnerInfo();
             JetClassOrObject classOrObject = ownerInfo.getCorrespondingClassOrObject();
-            // SCRIPT: Creating a primary constructor for a script class
-            if (ownerInfo instanceof JetScriptInfo) {
-                ScriptDescriptor scriptDescriptor = resolveSession.getScriptDescriptor(((JetScriptInfo) ownerInfo).getScript());
-                ConstructorDescriptorImpl constructor = ScriptDescriptorImpl.createConstructor(scriptDescriptor,
-                                                                                               scriptDescriptor.getScriptCodeDescriptor()
-                                                                                                       .getValueParameters());
-                setDeferredReturnType(constructor);
-                return constructor;
-            }
-            else if (!thisDescriptor.getKind().isSingleton() && classOrObject instanceof JetClass) {
+            if (!thisDescriptor.getKind().isSingleton()) {
                 JetClass jetClass = (JetClass) classOrObject;
+                assert jetClass != null : "No JetClass for " + thisDescriptor;
                 ConstructorDescriptorImpl constructor = resolveSession.getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
                                                              thisDescriptor,
                                                              jetClass,
                                                              trace);
+                assert constructor != null : "No constructor created for " + thisDescriptor;
                 setDeferredReturnType(constructor);
                 return constructor;
             }
@@ -405,7 +389,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         return null;
     }
 
-    private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
+    protected void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {
         descriptor.setReturnType(DeferredType.create(resolveSession.getStorageManager(), trace,
                 new Function0<JetType>() {
                     @Override
