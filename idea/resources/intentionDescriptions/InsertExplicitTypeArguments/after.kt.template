@@ -1,0 +1,5 @@
+fun foo() {
+    <spot>bar<String>("x")</spot>
+}
+
+fun bar<T>(t: T) : T = t
