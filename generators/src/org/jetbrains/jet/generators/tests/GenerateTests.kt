@@ -390,6 +390,7 @@ fun main(args: Array<String>) {
             model("intentions/replaceWithOperatorAssign", testMethod = "doTestReplaceWithOperatorAssign")
             model("intentions/replaceWithTraditionalAssignment", testMethod = "doTestReplaceWithTraditionalAssignment")
             model("intentions/simplifyBooleanWithConstants", testMethod = "doTestSimplifyBooleanWithConstants")
+            model("intentions/insertExplicitTypeArguments", testMethod = "doTestInsertExplicitTypeArguments")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

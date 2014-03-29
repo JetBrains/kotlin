@@ -1,0 +1,10 @@
+// IS_APPLICABLE: true
+class Array
+
+fun test() {
+    bar<kotlin.Array<String>>(foo(""))
+}
+
+fun foo(vararg x: String) = x
+
+fun bar<T>(vararg ts: T) {}
