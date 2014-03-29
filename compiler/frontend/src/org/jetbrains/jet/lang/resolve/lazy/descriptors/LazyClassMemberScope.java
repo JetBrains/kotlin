@@ -254,6 +254,12 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             }
         }
 
+        // SCRIPT: Adding script result
+        if (classInfo instanceof JetScriptInfo && name.asString().equals(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME)) {
+            JetScriptInfo scriptInfo = (JetScriptInfo) classInfo;
+            result.add(ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.getScript())));
+        }
+
         // Members from supertypes
         Collection<PropertyDescriptor> fromSupertypes = Lists.newArrayList();
         for (JetType supertype : thisDescriptor.getTypeConstructor().getSupertypes()) {

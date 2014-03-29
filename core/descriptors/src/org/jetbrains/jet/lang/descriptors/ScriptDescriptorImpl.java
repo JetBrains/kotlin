@@ -77,20 +77,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         assert valueParameters != null : "setValueParameters() must be called before this method";
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
-        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
-                                                                                  Annotations.EMPTY,
-                                                                                  Modality.FINAL,
-                                                                                  Visibilities.PUBLIC,
-                                                                                  false,
-                                                                                  Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
-                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
-        propertyDescriptor.setType(
-                returnType,
-                Collections.<TypeParameterDescriptor>emptyList(),
-                classDescriptor.getThisAsReceiverParameter(),
-                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
-        propertyDescriptor.initialize(null, null);
-        classScope.addPropertyDescriptor(propertyDescriptor);
+        classScope.addPropertyDescriptor(createScriptResultProperty(this));
 
         for (PropertyDescriptorImpl property : properties) {
             classScope.addPropertyDescriptor(property);
@@ -99,6 +86,26 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         for (FunctionDescriptor function : functions) {
             classScope.addFunctionDescriptor(function);
         }
+    }
+
+    @NotNull
+    public static PropertyDescriptor createScriptResultProperty(@NotNull ScriptDescriptor scriptDescriptor) {
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(scriptDescriptor.getClassDescriptor(),
+                                                                                  Annotations.EMPTY,
+                                                                                  Modality.FINAL,
+                                                                                  Visibilities.PUBLIC,
+                                                                                  false,
+                                                                                  Name.identifier(LAST_EXPRESSION_VALUE_FIELD_NAME),
+                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
+        JetType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
+        assert returnType != null : "Return type not initialized for " + scriptDescriptor;
+        propertyDescriptor.setType(
+                returnType,
+                Collections.<TypeParameterDescriptor>emptyList(),
+                scriptDescriptor.getThisAsReceiverParameter(),
+                ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
+        propertyDescriptor.initialize(null, null);
+        return propertyDescriptor;
     }
 
     @Override
