@@ -21,8 +21,12 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetUnaryExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.callTranslator.CallTranslator;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -45,8 +49,12 @@ public final class UnaryOperationTranslator {
     ) {
         IElementType operationToken = expression.getOperationReference().getReferencedNameElementType();
         if (operationToken == JetTokens.EXCLEXCL) {
-            return sure(translateAsExpression(getBaseExpression(expression), context), context);
+            JetExpression baseExpression = getBaseExpression(expression);
+            JetType type = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.EXPRESSION_TYPE, baseExpression);
+            JsExpression translatedExpression = translateAsExpression(baseExpression, context);
+            return type.isNullable() ? sure(translatedExpression, context) : translatedExpression;
         }
+
         if (IncrementTranslator.isIncrement(operationToken)) {
             return IncrementTranslator.translate(expression, context);
         }

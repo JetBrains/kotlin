@@ -2,6 +2,8 @@ package foo
 
 class A
 
+fun <T> Any.cast() = this!! as T
+
 fun box(): String {
     val a = null
     val s = a as A?
