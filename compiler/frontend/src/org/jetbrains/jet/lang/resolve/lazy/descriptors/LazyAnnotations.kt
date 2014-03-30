@@ -20,30 +20,31 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity
-import org.jetbrains.jet.lang.psi.JetAnnotated
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.AnnotationResolver
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.storage.StorageManager
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.AnnotationResolver
 import org.jetbrains.jet.lang.resolve.BindingTrace
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.utils.keysToMapExceptNulls
+import org.jetbrains.jet.lang.resolve.BindingContext
 
-class LazyAnnotationsContext(
+abstract class LazyAnnotationsContext(
          val annotationResolver: AnnotationResolver,
          val storageManager: StorageManager,
-         val scope: JetScope,
          val trace: BindingTrace
- )
+) {
+    abstract val scope: JetScope
+}
 
 public class LazyAnnotations(
         val c: LazyAnnotationsContext,
-        val annotatedElement: JetAnnotated
+        val annotationEntries: List<JetAnnotationEntry>
 ) : Annotations, LazyEntity {
-    override fun isEmpty() = annotatedElement.getAnnotationEntries().isEmpty()
+    override fun isEmpty() = annotationEntries.isEmpty()
 
     val _annotation = c.storageManager.createMemoizedFunction {
         (entry: JetAnnotationEntry) ->
@@ -69,7 +70,7 @@ public class LazyAnnotations(
     }
 
     override fun iterator(): Iterator<AnnotationDescriptor> {
-        return annotatedElement.getAnnotationEntries().stream().map(_annotation).iterator()
+        return annotationEntries.stream().map(_annotation).iterator()
     }
 
     override fun forceResolveAllContents() {
@@ -82,6 +83,10 @@ public class LazyAnnotationDescriptor(
         val c: LazyAnnotationsContext,
         val annotationEntry: JetAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
+
+    {
+        c.trace.record(BindingContext.ANNOTATION, annotationEntry, this)
+    }
 
     private val _resolutionResults = c.storageManager.createLazyValue {
         val results = c.annotationResolver.resolveAnnotationCall(

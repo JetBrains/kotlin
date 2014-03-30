@@ -76,7 +76,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final ClassKind kind;
     private final boolean isInner;
 
-    private final NotNullLazyValue<Annotations> annotations;
+    private final Annotations annotations;
     private final NullableLazyValue<ClassDescriptorWithResolutionScopes> classObjectDescriptor;
 
     private final LazyClassMemberScope unsubstitutedMemberScope;
@@ -88,7 +88,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NullableLazyValue<Void> forceResolveAllContents;
 
     public LazyClassDescriptor(
-            @NotNull ResolveSession resolveSession,
+            @NotNull final ResolveSession resolveSession,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
@@ -124,12 +124,30 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.isInner = isInnerClass(modifierList);
 
         StorageManager storageManager = resolveSession.getStorageManager();
-        this.annotations = storageManager.createLazyValue(new Function0<Annotations>() {
-            @Override
-            public Annotations invoke() {
-                return resolveAnnotations();
-            }
-        });
+
+
+        if (modifierList != null) {
+            this.annotations = new LazyAnnotations(
+                    new LazyAnnotationsContext(
+                            resolveSession.getAnnotationResolver(),
+                            resolveSession.getStorageManager(),
+                            resolveSession.getTrace()
+                    ) {
+                        @NotNull
+                        @Override
+                        public JetScope getScope() {
+                            JetClassLikeInfo ownerInfo = declarationProvider.getOwnerInfo();
+                            return resolveSession.getScopeProvider().getResolutionScopeForDeclaration(ownerInfo.getScopeAnchor());
+                        }
+                    },
+                    modifierList.getAnnotationEntries()
+                );
+
+        }
+        else {
+            this.annotations = Annotations.EMPTY;
+        }
+
         this.classObjectDescriptor = storageManager.createNullableLazyValue(new Function0<ClassDescriptorWithResolutionScopes>() {
             @Override
             public ClassDescriptorWithResolutionScopes invoke() {
@@ -341,21 +359,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @NotNull
     @Override
     public Annotations getAnnotations() {
-        return annotations.invoke();
-    }
-
-    @NotNull
-    private Annotations resolveAnnotations() {
-        JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-        JetModifierList modifierList = classInfo.getModifierList();
-        if (modifierList != null) {
-            AnnotationResolver annotationResolver = resolveSession.getAnnotationResolver();
-            JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(classInfo.getScopeAnchor());
-            return annotationResolver.resolveAnnotationsWithArguments(scopeForDeclaration, modifierList, resolveSession.getTrace());
-        }
-        else {
-            return Annotations.EMPTY;
-        }
+        return annotations;
     }
 
     @Override
