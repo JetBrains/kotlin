@@ -20,7 +20,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -59,7 +58,7 @@ public class JetTypeProjection extends JetModifierListOwnerStub<PsiJetTypeProjec
 
     @Nullable
     public JetTypeReference getTypeReference() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable
