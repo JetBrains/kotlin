@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import org.jetbrains.jet.plugin.JetPluginUtil
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.openapi.vfs.LocalFileSystem
 import java.io.File
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -33,6 +32,10 @@ import com.intellij.openapi.application.ApplicationManager
 
 private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
 
+/**
+ * Component forces update for built-in libraries in plugin directory. They are ignored because of
+ * com.intellij.util.indexing.FileBasedIndex.isUnderConfigOrSystem()
+ */
 class KotlinUpdatePluginComponent : ApplicationComponent {
     override fun initComponent() {
         if (ApplicationManager.getApplication()?.isUnitTestMode() == true) {
@@ -77,7 +80,8 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
         VfsUtilCore.visitChildrenRecursively(jarFile!!, object : VirtualFileVisitor<Any?>() {})
         ((jarFile as NewVirtualFile)).markDirtyRecursively()
 
-        jarFile.refresh(false, true)
-        VfsUtil.markDirtyAndRefresh(false, false, true, localVirtualFile)
+        // Synchronous refresh lead to deadlocks during components initialization KT-4584
+        // jarFile.refresh(true, true)
+        // VfsUtil.markDirtyAndRefresh(true, false, true, localVirtualFile)
     }
 }
