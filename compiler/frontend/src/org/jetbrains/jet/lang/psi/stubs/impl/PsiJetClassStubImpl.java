@@ -45,17 +45,6 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     public PsiJetClassStubImpl(
             JetClassElementType type,
             StubElement parent,
-            @Nullable String qualifiedName,
-            String name,
-            List<String> superNames,
-            boolean isTrait, boolean isEnumClass, boolean isEnumEntry, boolean isAnnotation, boolean isInner, boolean isLocal) {
-        this(type, parent, StringRef.fromString(qualifiedName), StringRef.fromString(name), wrapStrings(superNames),
-             isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner, isLocal);
-    }
-
-    public PsiJetClassStubImpl(
-            JetClassElementType type,
-            StubElement parent,
             StringRef qualifiedName,
             StringRef name,
             StringRef[] superNames,
@@ -64,7 +53,8 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             boolean isEnumEntry,
             boolean isAnnotation,
             boolean isInner,
-            boolean isLocal) {
+            boolean isLocal
+    ) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
         this.name = name;
@@ -75,14 +65,6 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         this.isAnnotation = isAnnotation;
         this.isInner = isInner;
         this.isLocal = isLocal;
-    }
-
-    private static StringRef[] wrapStrings(List<String> names) {
-        StringRef[] refs = new StringRef[names.size()];
-        for (int i = 0; i < names.size(); i++) {
-            refs[i] = StringRef.fromString(names.get(i));
-        }
-        return refs;
     }
 
     @Override

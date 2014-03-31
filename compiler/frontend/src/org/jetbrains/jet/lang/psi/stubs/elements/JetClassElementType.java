@@ -30,6 +30,7 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
+import org.jetbrains.jet.lang.psi.stubs.impl.Utils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -64,17 +65,9 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         boolean isEnumEntry = psi instanceof JetEnumEntry;
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetClassStubImpl(
-                getStubType(isEnumEntry),
-                parentStub,
-                fqName != null ? fqName.asString() : null,
-                psi.getName(),
-                superNames,
-                psi.isTrait(),
-                psi.isEnum(),
-                isEnumEntry,
-                psi.isAnnotation(),
-                psi.isInner(),
-                JetPsiUtil.isLocal(psi)
+                getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
+                StringRef.fromString(psi.getName()), Utils.instance$.wrapStrings(superNames), psi.isTrait(), psi.isEnum(), isEnumEntry,
+                psi.isAnnotation(), psi.isInner(), JetPsiUtil.isLocal(psi)
         );
     }
 
