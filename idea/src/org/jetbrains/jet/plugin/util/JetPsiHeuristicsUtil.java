@@ -41,7 +41,7 @@ public class JetPsiHeuristicsUtil {
             // It is a Kotlin class already, we need to properly check visibility?
             JetClassOrObject classOrObject = lightClass.getOrigin();
 
-            if (isTopLevelDeclaration(classOrObject) && classOrObject.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
+            if (classOrObject.isTopLevel() && classOrObject.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 // The class is declared private in the targetPackage
                 // It is visible in this package and all of its subpackages
                 JetFile targetFile = classOrObject.getContainingJetFile();
@@ -52,9 +52,5 @@ public class JetPsiHeuristicsUtil {
             }
         }
         return member.hasModifierProperty(PsiModifier.PUBLIC) || member.hasModifierProperty(PsiModifier.PROTECTED);
-    }
-
-    public static boolean isTopLevelDeclaration(@NotNull JetClassOrObject classOrObject) {
-        return classOrObject.getContainingFile() == classOrObject.getParent();
     }
 }

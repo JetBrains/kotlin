@@ -210,4 +210,9 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }
+
+    @Override
+    public boolean isTopLevel() {
+        return getContainingFile() == getParent();
+    }
 }

@@ -397,7 +397,6 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @NotNull
     private String[] computeModifiers() {
-        boolean nestedClass = classOrObject.getParent() != classOrObject.getContainingFile();
         Collection<String> psiModifiers = Sets.newHashSet();
 
         // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
@@ -417,7 +416,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         if (classOrObject.hasModifier(PRIVATE_KEYWORD)) {
             // Top-level private class has PUBLIC visibility in Java
             // Nested private class has PRIVATE visibility
-            psiModifiers.add(nestedClass ? PsiModifier.PRIVATE : PsiModifier.PUBLIC);
+            psiModifiers.add(classOrObject.isTopLevel() ? PsiModifier.PUBLIC : PsiModifier.PRIVATE);
         }
 
         if (!psiModifiers.contains(PsiModifier.PRIVATE) && !psiModifiers.contains(PsiModifier.PROTECTED)) {
@@ -433,7 +432,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
             psiModifiers.add(PsiModifier.FINAL);
         }
 
-        if (nestedClass && !classOrObject.hasModifier(INNER_KEYWORD)) {
+        if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(INNER_KEYWORD)) {
             psiModifiers.add(PsiModifier.STATIC);
         }
 

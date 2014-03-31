@@ -53,6 +53,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         return nameAsDeclaration == null ? null : nameAsDeclaration.getName();
     }
 
+    @Override
     public boolean isTopLevel() {
         PsiJetObjectStub stub = getStub();
         if (stub != null) {

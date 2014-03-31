@@ -49,4 +49,6 @@ public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclaration
 
     @Nullable
     JetClassBody getBody();
+
+    boolean isTopLevel();
 }
