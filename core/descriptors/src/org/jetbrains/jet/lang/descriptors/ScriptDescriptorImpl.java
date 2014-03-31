@@ -130,29 +130,48 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
 
     public void setValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
         this.valueParameters = valueParameters;
-        ConstructorDescriptorImpl constructorDescriptor =
-                ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true)
-                        .initialize(Collections.<TypeParameterDescriptor>emptyList(), valueParameters, Visibilities.PUBLIC, false);
-        constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
 
+        ConstructorDescriptorImpl constructorDescriptor = createConstructor(this, valueParameters);
+        constructorDescriptor.setReturnType(classDescriptor.getDefaultType());
         classDescriptor.getConstructors().add(constructorDescriptor);
         classDescriptor.setPrimaryConstructor(constructorDescriptor);
 
-        for (ValueParameterDescriptor parameter : valueParameters) {
-            PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(classDescriptor,
-                                                                                      Annotations.EMPTY,
-                                                                                      Modality.FINAL,
-                                                                                      Visibilities.PUBLIC,
-                                                                                      false,
-                                                                                      parameter.getName(),
-                                                                                      CallableMemberDescriptor.Kind.DECLARATION);
-            propertyDescriptor.setType(
-                    parameter.getType(),
-                    Collections.<TypeParameterDescriptor>emptyList(),
-                    classDescriptor.getThisAsReceiverParameter(), ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
-            propertyDescriptor.initialize(null, null);
-            classScope.addPropertyDescriptor(propertyDescriptor);
+        for (ValueParameterDescriptor valueParameter : valueParameters) {
+            classScope.addPropertyDescriptor(createPropertyFromScriptParameter(this, valueParameter));
         }
+    }
+
+    @NotNull
+    public static ConstructorDescriptorImpl createConstructor(
+            @NotNull ScriptDescriptor scriptDescriptor, @NotNull List<ValueParameterDescriptor> valueParameters
+    ) {
+        return ConstructorDescriptorImpl.create(scriptDescriptor.getClassDescriptor(), Annotations.EMPTY, true)
+                .initialize(
+                        Collections.<TypeParameterDescriptor>emptyList(),
+                        valueParameters,
+                        Visibilities.PUBLIC,
+                        false
+                );
+    }
+
+    @NotNull
+    public static PropertyDescriptor createPropertyFromScriptParameter(
+            @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull ValueParameterDescriptor parameter
+    ) {
+        PropertyDescriptorImpl propertyDescriptor = PropertyDescriptorImpl.create(scriptDescriptor.getClassDescriptor(),
+                                                                                  Annotations.EMPTY,
+                                                                                  Modality.FINAL,
+                                                                                  Visibilities.PUBLIC,
+                                                                                  false,
+                                                                                  parameter.getName(),
+                                                                                  CallableMemberDescriptor.Kind.DECLARATION);
+        propertyDescriptor.setType(
+                parameter.getType(),
+                Collections.<TypeParameterDescriptor>emptyList(),
+                scriptDescriptor.getThisAsReceiverParameter(), ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
+        propertyDescriptor.initialize(null, null);
+        return propertyDescriptor;
     }
 
     @Override

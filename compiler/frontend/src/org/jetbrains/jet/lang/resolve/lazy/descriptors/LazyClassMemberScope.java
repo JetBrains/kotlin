@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -227,10 +228,20 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
         if (primaryConstructor != null) {
             List<ValueParameterDescriptor> valueParameterDescriptors = primaryConstructor.getValueParameters();
             List<? extends JetParameter> primaryConstructorParameters = classInfo.getPrimaryConstructorParameters();
-            assert valueParameterDescriptors.size() == primaryConstructorParameters.size() : "From descriptor: " + valueParameterDescriptors.size() + " but from PSI: " + primaryConstructorParameters.size();
             for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
+                if (!name.equals(valueParameterDescriptor.getName())) continue;
+
+                // SCRIPT: Adding script parameters as properties
+                if (classInfo instanceof JetScriptInfo) {
+                    result.add(ScriptDescriptorImpl.createPropertyFromScriptParameter(
+                            resolveSession.getScriptDescriptor(((JetScriptInfo) classInfo).getScript()), valueParameterDescriptor)
+                    );
+                    continue;
+                }
+
+                assert valueParameterDescriptors.size() == primaryConstructorParameters.size() : "From descriptor: " + valueParameterDescriptors.size() + " but from PSI: " + primaryConstructorParameters.size();
                 JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
-                if (parameter.getValOrVarNode() != null && name.equals(parameter.getNameAsName())) {
+                if (parameter.getValOrVarNode() != null) {
                     PropertyDescriptor propertyDescriptor =
                             resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                                     thisDescriptor,
@@ -356,27 +367,36 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @Nullable
     private ConstructorDescriptor resolvePrimaryConstructor() {
-        ConstructorDescriptor primaryConstructor = null;
         if (GENERATE_CONSTRUCTORS_FOR.contains(thisDescriptor.getKind())) {
-            JetClassOrObject classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject();
-            if (!thisDescriptor.getKind().isSingleton()) {
+            JetClassLikeInfo ownerInfo = declarationProvider.getOwnerInfo();
+            JetClassOrObject classOrObject = ownerInfo.getCorrespondingClassOrObject();
+            // SCRIPT: Creating a primary constructor for a script class
+            if (ownerInfo instanceof JetScriptInfo) {
+                ScriptDescriptor scriptDescriptor = resolveSession.getScriptDescriptor(((JetScriptInfo) ownerInfo).getScript());
+                ConstructorDescriptorImpl constructor = ScriptDescriptorImpl.createConstructor(scriptDescriptor,
+                                                                                               scriptDescriptor.getScriptCodeDescriptor()
+                                                                                                       .getValueParameters());
+                setDeferredReturnType(constructor);
+                return constructor;
+            }
+            else if (!thisDescriptor.getKind().isSingleton() && classOrObject instanceof JetClass) {
                 JetClass jetClass = (JetClass) classOrObject;
                 ConstructorDescriptorImpl constructor = resolveSession.getDescriptorResolver()
                         .resolvePrimaryConstructorDescriptor(thisDescriptor.getScopeForClassHeaderResolution(),
                                                              thisDescriptor,
                                                              jetClass,
                                                              trace);
-                primaryConstructor = constructor;
                 setDeferredReturnType(constructor);
+                return constructor;
             }
             else {
                 ConstructorDescriptorImpl constructor =
                         DescriptorResolver.createAndRecordPrimaryConstructorForObject(classOrObject, thisDescriptor, trace);
                 setDeferredReturnType(constructor);
-                primaryConstructor = constructor;
+                return constructor;
             }
         }
-        return primaryConstructor;
+        return null;
     }
 
     private void setDeferredReturnType(@NotNull ConstructorDescriptorImpl descriptor) {

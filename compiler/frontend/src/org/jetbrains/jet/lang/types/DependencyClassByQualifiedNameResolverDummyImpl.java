@@ -19,10 +19,15 @@ package org.jetbrains.jet.lang.types;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class DependencyClassByQualifiedNameResolverDummyImpl implements DependencyClassByQualifiedNameResolver {
     @Override
     public ClassDescriptor resolveClass(@NotNull FqName qualifiedName) {
+        if (qualifiedName.isRoot()) return null;
+        if (KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(qualifiedName.parent())) {
+            return KotlinBuiltIns.getInstance().getBuiltInClassByName(qualifiedName.shortName());
+        }
         return null;
     }
 }

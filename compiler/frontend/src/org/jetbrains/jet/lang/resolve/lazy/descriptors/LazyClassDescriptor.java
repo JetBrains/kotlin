@@ -252,10 +252,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         if (primaryConstructor == null) return getScopeForMemberDeclarationResolution();
 
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.EMPTY, primaryConstructor, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
-        for (ValueParameterDescriptor valueParameterDescriptor : primaryConstructor.getValueParameters()) {
-            JetParameter jetParameter = originalClassInfo.getPrimaryConstructorParameters().get(valueParameterDescriptor.getIndex());
+        for (int i = 0; i < originalClassInfo.getPrimaryConstructorParameters().size(); i++) {
+            JetParameter jetParameter = originalClassInfo.getPrimaryConstructorParameters().get(i);
             if (jetParameter.getValOrVarNode() == null) {
-                scope.addVariableDescriptor(valueParameterDescriptor);
+                scope.addVariableDescriptor(primaryConstructor.getValueParameters().get(i));
             }
         }
         scope.changeLockLevel(WritableScope.LockLevel.READING);

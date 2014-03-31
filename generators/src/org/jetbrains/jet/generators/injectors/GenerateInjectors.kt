@@ -216,6 +216,8 @@ private fun generatorForLazyResolve() =
             parameter(javaClass<BindingTrace>())
 
             publicField(javaClass<ResolveSession>())
+
+            field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
         }
 
 private fun generator(
