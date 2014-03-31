@@ -57,7 +57,8 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean hasBlockBody = psi.hasBlockBody();
         boolean hasBody = psi.hasBody();
-        return new PsiJetFunctionStubImpl(parentStub, psi.getName(), isTopLevel, fqName, isExtension, hasBlockBody, hasBody);
+        return new PsiJetFunctionStubImpl(parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
+                                          isExtension, hasBlockBody, hasBody);
     }
 
     @Override

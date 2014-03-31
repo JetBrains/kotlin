@@ -38,18 +38,6 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
 
     public PsiJetFunctionStubImpl(
             @NotNull StubElement parent,
-            @Nullable String name,
-            boolean isTopLevel,
-            @Nullable FqName fqName,
-            boolean isExtension,
-            boolean hasBlockBody,
-            boolean hasBody
-    ) {
-        this(parent, StringRef.fromString(name), isTopLevel, fqName, isExtension, hasBlockBody, hasBody);
-    }
-
-    public PsiJetFunctionStubImpl(
-            @NotNull StubElement parent,
             @Nullable StringRef nameRef,
             boolean isTopLevel,
             @Nullable FqName fqName,
