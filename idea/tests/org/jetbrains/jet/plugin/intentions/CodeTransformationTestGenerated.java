@@ -357,6 +357,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     }
     
     @TestMetadata("idea/testData/intentions/branched/ifThenToSafeAccess")
+    @InnerTestClasses({})
     public static class IfThenToSafeAccess extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInIfThenToSafeAccess() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/branched/ifThenToSafeAccess"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -532,6 +533,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestIfThenToSafeAccess("idea/testData/intentions/branched/ifThenToSafeAccess/willNotInlineClassProperty.kt");
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("IfThenToSafeAccess");
+            suite.addTestSuite(IfThenToSafeAccess.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/intentions/branched/folding/ifToAssignment")
@@ -3420,7 +3426,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ElvisToIfThen.class);
         suite.addTestSuite(IfThenToElvis.class);
         suite.addTestSuite(SafeAccessToIfThen.class);
-        suite.addTestSuite(IfThenToSafeAccess.class);
+        suite.addTest(IfThenToSafeAccess.innerSuite());
         suite.addTestSuite(IfToAssignment.class);
         suite.addTestSuite(IfToReturn.class);
         suite.addTestSuite(IfToReturnAsymmetrically.class);
