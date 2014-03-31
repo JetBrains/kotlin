@@ -145,24 +145,30 @@ public class PositioningStrategies {
                         property.getTextRange().getStartOffset(), endOfSignatureElement.getTextRange().getEndOffset()));
             }
             else if (element instanceof JetClass) {
-                // primary constructor
-                JetClass klass = (JetClass)element;
-                PsiElement nameAsDeclaration = klass.getNameIdentifier();
+                PsiElement nameAsDeclaration = element.getNameIdentifier();
                 if (nameAsDeclaration == null) {
-                    return markElement(klass);
+                    return markElement(element);
                 }
-                PsiElement primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
+                PsiElement primaryConstructorParameterList = ((JetClass) element).getPrimaryConstructorParameterList();
                 if (primaryConstructorParameterList == null) {
                     return markRange(nameAsDeclaration.getTextRange());
                 }
                 return markRange(new TextRange(
                         nameAsDeclaration.getTextRange().getStartOffset(), primaryConstructorParameterList.getTextRange().getEndOffset()));
             }
+            else if (element instanceof JetObjectDeclaration) {
+                PsiElement nameAsDeclaration = element.getNameIdentifier();
+                if (nameAsDeclaration == null) {
+                    return markElement(((JetObjectDeclaration) element).getObjectKeyword());
+                }
+                return markRange(nameAsDeclaration.getTextRange());
+            }
             return super.mark(element);
         }
+
         @Override
         public boolean isValid(@NotNull PsiNameIdentifierOwner element) {
-            return element.getNameIdentifier() != null && super.isValid(element);
+            return (element.getNameIdentifier() != null || element instanceof JetObjectDeclaration) && super.isValid(element);
         }
     };
 

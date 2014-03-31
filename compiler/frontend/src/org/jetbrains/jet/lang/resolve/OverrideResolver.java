@@ -174,7 +174,11 @@ public class OverrideResolver {
         OverridingUtil.resolveUnknownVisibilityForMember(descriptor, new OverridingUtil.NotInferredVisibilitySink() {
             @Override
             public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
-                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
+                DeclarationDescriptor reportOn = descriptor.getKind() == FAKE_OVERRIDE
+                                                 ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class)
+                                                 : descriptor;
+                //noinspection ConstantConditions
+                PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), reportOn);
                 if (element instanceof JetDeclaration) {
                     trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
                 }
