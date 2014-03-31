@@ -84,11 +84,11 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     @Nullable
     public JetModifierList getModifierList() {
         if (isClassObject()) {
-            PsiElement parent = getParent();
+            PsiElement parent = getParentByStub();
             assert parent instanceof JetDeclaration;
             return ((JetDeclaration)parent).getModifierList();
         }
-        return (JetModifierList) findChildByType(JetNodeTypes.MODIFIER_LIST);
+        return super.getModifierList();
     }
 
     public boolean isClassObject() {
