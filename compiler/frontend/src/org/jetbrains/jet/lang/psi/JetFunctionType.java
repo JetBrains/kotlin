@@ -67,7 +67,7 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
 
     @Nullable
     public JetParameterList getParameterList() {
-        return (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
     }
 
     @NotNull
