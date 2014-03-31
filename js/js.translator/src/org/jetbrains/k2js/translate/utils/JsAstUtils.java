@@ -232,7 +232,8 @@ public final class JsAstUtils {
     @NotNull
     public static JsFunction createPackage(@NotNull List<JsStatement> to, @NotNull JsScope scope) {
         JsFunction packageBlockFunction = createFunctionWithEmptyBody(scope);
-        to.add(new JsInvocation(EMPTY_REF, new JsInvocation(packageBlockFunction)).makeStmt());
+        packageBlockFunction.getParameters().add(new JsParameter(scope.findName("Kotlin")));
+        to.add(new JsInvocation(EMPTY_REF, new JsInvocation(packageBlockFunction, new JsNameRef("Kotlin"))).makeStmt());
         return packageBlockFunction;
     }
 
