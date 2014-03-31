@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.NullValue;
+import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.k2js.translate.context.TemporaryVariable;
 import org.jetbrains.k2js.translate.context.TranslationContext;
@@ -360,10 +361,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expression.getOperationReference().getReferencedNameElementType() != JetTokens.AS_KEYWORD)
             return jsExpression.source(expression);
 
-        JetTypeReference type = expression.getRight();
-        assert type != null;
-        if (BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, type).isNullable())
+        JetType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, expression.getRight());
+        JetType leftType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.EXPRESSION_TYPE, expression.getLeft());
+        if (rightType.isNullable() || !leftType.isNullable()) {
             return jsExpression.source(expression);
+        }
 
         // KT-2670
         // we actually do not care for types in js
