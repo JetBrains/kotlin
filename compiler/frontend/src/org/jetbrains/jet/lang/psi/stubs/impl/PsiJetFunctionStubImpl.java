@@ -35,6 +35,7 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     private final FqName fqName;
     private final boolean hasBlockBody;
     private final boolean hasBody;
+    private final boolean hasTypeParameterListBeforeFunctionName;
 
     public PsiJetFunctionStubImpl(
             @NotNull StubElement parent,
@@ -43,7 +44,8 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
             @Nullable FqName fqName,
             boolean isExtension,
             boolean hasBlockBody,
-            boolean hasBody
+            boolean hasBody,
+            boolean hasTypeParameterListBeforeFunctionName
     ) {
         super(parent, JetStubElementTypes.FUNCTION);
 
@@ -57,6 +59,7 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
         this.isExtension = isExtension;
         this.hasBlockBody = hasBlockBody;
         this.hasBody = hasBody;
+        this.hasTypeParameterListBeforeFunctionName = hasTypeParameterListBeforeFunctionName;
     }
 
     @Override
@@ -82,6 +85,11 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public boolean hasBody() {
         return hasBody;
+    }
+
+    @Override
+    public boolean hasTypeParameterListBeforeFunctionName() {
+        return hasTypeParameterListBeforeFunctionName;
     }
 
     @NotNull

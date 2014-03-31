@@ -28,6 +28,8 @@ public interface PsiJetFunctionStub extends PsiJetStubWithFqName<JetNamedFunctio
 
     boolean hasBody();
 
+    boolean hasTypeParameterListBeforeFunctionName();
+
     @NotNull
     String[] getAnnotations();
 }
