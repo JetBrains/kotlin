@@ -1957,6 +1957,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/dataFlow/IsExpression.kt");
             }
             
+            @TestMetadata("nothingLikeDot.kt")
+            public void testNothingLikeDot() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlow/nothingLikeDot.kt");
+            }
+            
             @TestMetadata("WhenSubject.kt")
             public void testWhenSubject() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlow/WhenSubject.kt");
