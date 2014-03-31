@@ -65,6 +65,9 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetFunctionType> FUNCTION_TYPE =
                 new JetPlaceHolderStubElementType<JetFunctionType>("FUNCTION_TYPE", JetFunctionType.class);
+    
+    JetTypeProjectionElementType TYPE_PROJECTION = new JetTypeProjectionElementType("TYPE_PROJECTION");
+    
     JetPlaceHolderStubElementType<JetFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
             new JetPlaceHolderStubElementType<JetFunctionTypeReceiver>("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
 

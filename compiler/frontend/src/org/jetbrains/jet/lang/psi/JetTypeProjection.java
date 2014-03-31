@@ -21,15 +21,21 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetTypeProjection extends JetElementImpl implements JetModifierListOwner {
+public class JetTypeProjection extends JetElementImplStub<PsiJetTypeProjectionStub> implements JetModifierListOwner {
     public JetTypeProjection(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetTypeProjection(@NotNull PsiJetTypeProjectionStub stub) {
+        super(stub, JetStubElementTypes.TYPE_PROJECTION);
     }
 
     @Override
