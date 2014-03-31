@@ -46,6 +46,14 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     }
 
     public boolean hasTypeParameterListBeforeFunctionName() {
+        PsiJetFunctionStub stub = getStub();
+        if (stub != null) {
+            return stub.hasTypeParameterListBeforeFunctionName();
+        }
+        return hasTypeParameterListBeforeFunctionNameByTree();
+    }
+
+    private boolean hasTypeParameterListBeforeFunctionNameByTree() {
         JetTypeParameterList typeParameterList = getTypeParameterList();
         if (typeParameterList == null) {
             return false;
