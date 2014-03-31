@@ -338,7 +338,14 @@ public class OverrideResolver {
         }
     }
 
-    public static void collectMissingImplementations(
+    @NotNull
+    public static Set<CallableMemberDescriptor> getMissingImplementations(@NotNull ClassDescriptor classDescriptor) {
+        Set<CallableMemberDescriptor> result = new LinkedHashSet<CallableMemberDescriptor>();
+        collectMissingImplementations(classDescriptor, result, result);
+        return result;
+    }
+
+    private static void collectMissingImplementations(
             @NotNull ClassDescriptor classDescriptor,
             @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
             @NotNull Set<CallableMemberDescriptor> manyImpl

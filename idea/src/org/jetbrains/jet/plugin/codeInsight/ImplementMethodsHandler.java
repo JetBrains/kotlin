@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
-import com.google.common.collect.Sets;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
@@ -30,12 +29,9 @@ import org.jetbrains.jet.plugin.JetBundle;
 import java.util.Set;
 
 public class ImplementMethodsHandler extends OverrideImplementMethodsHandler implements IntentionAction {
-
     @Override
     protected Set<CallableMemberDescriptor> collectMethodsToGenerate(ClassDescriptor descriptor) {
-        Set<CallableMemberDescriptor> missingImplementations = Sets.newLinkedHashSet();
-        OverrideResolver.collectMissingImplementations(descriptor, missingImplementations, missingImplementations);
-        return missingImplementations;
+        return OverrideResolver.getMissingImplementations(descriptor);
     }
 
     @Override
