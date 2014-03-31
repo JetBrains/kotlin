@@ -1,0 +1,10 @@
+fun foo() {
+    val a = true
+    val b = false
+    val c = true
+    if (a && b) {
+        if (c) {
+            println("test")
+        }
+    }
+}
