@@ -1,0 +1,82 @@
+<problems>
+  <problem>
+    <file>willNotInlineClassProperty.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/willNotInlineClassProperty.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>rhsNotEqualsNull.kt</file>
+    <line>9</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsNotEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>rhsEqualsNull.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>lhsNotEqualsNull.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsNotEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>lhsEqualsNull.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>ifAsExpression.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAsExpression.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>ifAndElseNotInBlocks.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseNotInBlocks.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>ifAndElseBothInBlocks.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseBothInBlocks.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>doesNotinlineValueOutsideOfScope.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotinlineValueOutsideOfScope.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+  <problem>
+    <file>doesNotinlineValueIfUsedMoreThanOnce.kt</file>
+    <line>11</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotinlineValueIfUsedMoreThanOnce.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?:'.</problem_class>
+    <description>Replace 'if' expression with elvis expression</description>
+  </problem>
+</problems>
