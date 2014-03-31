@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kind.PACKAGE_FACADE;
 
 public final class DeserializedDescriptorResolver {
-    private DescriptorDeserializers annotationDeserializer;
+    private DescriptorDeserializers deserializers;
 
     private MemberFilter memberFilter;
 
@@ -72,8 +72,8 @@ public final class DeserializedDescriptorResolver {
     };
 
     @Inject
-    public void setAnnotationDeserializer(DescriptorDeserializers annotationDeserializer) {
-        this.annotationDeserializer = annotationDeserializer;
+    public void setDeserializers(DescriptorDeserializers deserializers) {
+        this.deserializers = deserializers;
     }
 
     @Inject
@@ -106,7 +106,7 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
-            return new DeserializedClassDescriptor(storageManager, annotationDeserializer, javaDescriptorFinder,
+            return new DeserializedClassDescriptor(storageManager, deserializers, javaDescriptorFinder,
                                                    javaPackageFragmentProvider, classData.getNameResolver(), classData.getClassProto());
         }
         return null;
@@ -116,7 +116,7 @@ public final class DeserializedDescriptorResolver {
     public JetScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull KotlinJvmBinaryClass kotlinClass) {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
-            return new DeserializedPackageMemberScope(storageManager, descriptor, annotationDeserializer,
+            return new DeserializedPackageMemberScope(storageManager, descriptor, deserializers,
                                                       memberFilter, javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
         }
         return null;

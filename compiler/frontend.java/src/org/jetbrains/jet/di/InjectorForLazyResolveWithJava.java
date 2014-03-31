@@ -224,7 +224,7 @@ public class InjectorForLazyResolveWithJava {
 
         jetImportsFactory.setProject(project);
 
-        deserializedDescriptorResolver.setAnnotationDeserializer(descriptorDeserializers);
+        deserializedDescriptorResolver.setDeserializers(descriptorDeserializers);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);

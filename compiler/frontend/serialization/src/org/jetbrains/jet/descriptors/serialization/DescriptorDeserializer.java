@@ -46,12 +46,12 @@ public class DescriptorDeserializer {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
             @NotNull DescriptorFinder descriptorFinder,
-            @NotNull Deserializers annotationDeserializer
+            @NotNull Deserializers deserializers
     ) {
         return new DescriptorDeserializer(storageManager,
                 new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder,
                                      "Deserializer for " + containingDeclaration.getName(), NONE),
-                containingDeclaration, nameResolver, annotationDeserializer);
+                containingDeclaration, nameResolver, deserializers);
     }
 
     @NotNull
@@ -60,9 +60,9 @@ public class DescriptorDeserializer {
             @NotNull TypeDeserializer typeDeserializer,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull NameResolver nameResolver,
-            @NotNull Deserializers annotationDeserializer
+            @NotNull Deserializers deserializers
     ) {
-        return new DescriptorDeserializer(storageManager, typeDeserializer, containingDeclaration, nameResolver, annotationDeserializer);
+        return new DescriptorDeserializer(storageManager, typeDeserializer, containingDeclaration, nameResolver, deserializers);
     }
 
     private final DeclarationDescriptor containingDeclaration;
