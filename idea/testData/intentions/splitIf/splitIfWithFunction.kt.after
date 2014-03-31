@@ -1,0 +1,9 @@
+fun foo() {
+    fun test(): Boolean { return false }
+    val a = true
+    if (test()) {
+        if (a) {
+            println("test")
+        }
+    }
+}

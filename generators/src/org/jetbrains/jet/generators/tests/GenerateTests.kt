@@ -383,6 +383,7 @@ fun main(args: Array<String>) {
             model("intentions/convertNegatedBooleanSequence", testMethod="doTestConvertNegatedBooleanSequence")
             model("intentions/convertNegatedExpressionWithDemorgansLaw", testMethod = "doTestConvertNegatedExpressionWithDemorgansLaw")
             model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
+            model("intentions/splitIf", testMethod = "doTestSplitIf")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
