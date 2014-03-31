@@ -41,6 +41,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final boolean isAnnotation;
     private final boolean isInner;
     private final boolean isLocal;
+    private final boolean isTopLevel;
 
     public PsiJetClassStubImpl(
             JetClassElementType type,
@@ -53,7 +54,8 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             boolean isEnumEntry,
             boolean isAnnotation,
             boolean isInner,
-            boolean isLocal
+            boolean isLocal,
+            boolean isTopLevel
     ) {
         super(parent, type);
         this.qualifiedName = qualifiedName;
@@ -65,6 +67,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         this.isAnnotation = isAnnotation;
         this.isInner = isInner;
         this.isLocal = isLocal;
+        this.isTopLevel = isTopLevel;
     }
 
     @Override
@@ -119,6 +122,11 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             result.add(ref.toString());
         }
         return result;
+    }
+
+    @Override
+    public boolean isTopLevel() {
+        return isTopLevel;
     }
 
     @Override

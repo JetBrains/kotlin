@@ -26,4 +26,6 @@ public interface PsiJetClassOrObjectStub<T extends JetClassOrObject> extends Psi
 
     @NotNull
     List<String> getSuperNames();
+
+    boolean isTopLevel();
 }

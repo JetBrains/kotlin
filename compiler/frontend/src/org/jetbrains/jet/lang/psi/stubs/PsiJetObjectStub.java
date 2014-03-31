@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi.stubs;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
 
 public interface PsiJetObjectStub extends PsiJetClassOrObjectStub<JetObjectDeclaration> {
-    boolean isTopLevel();
     boolean isClassObject();
     boolean isObjectLiteral();
 }
