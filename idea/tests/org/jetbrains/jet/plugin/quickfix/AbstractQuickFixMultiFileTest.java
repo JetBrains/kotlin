@@ -29,6 +29,7 @@ import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -76,7 +77,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
 
                     boolean actionShouldBeAvailable = pair.getSecond();
 
-                    QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
+                    DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
 
                     doAction(text, actionShouldBeAvailable, beforeFileName);
                 }
@@ -107,7 +108,7 @@ public abstract class AbstractQuickFixMultiFileTest extends DaemonAnalyzerTestCa
                      "Infos:" + infos);
             }
             else {
-                QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), availableActions);
+                DirectiveBasedActionUtils.checkAvailableActionsAreExpected((JetFile) getFile(), availableActions);
             }
         }
         else {

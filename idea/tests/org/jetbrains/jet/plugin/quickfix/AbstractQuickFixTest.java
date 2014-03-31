@@ -33,6 +33,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.test.TestMetadata;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
@@ -89,13 +90,13 @@ public abstract class AbstractQuickFixTest extends LightQuickFixTestCase {
             }
             else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                QuickFixActionsUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
+                DirectiveBasedActionUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
             }
         }
     }
 
     public static void checkForUnexpectedErrors() {
-        QuickFixActionsUtils.checkForUnexpectedErrors((JetFile) getFile());
+        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
     }
 
     @Override

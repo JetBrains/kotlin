@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.quickfix;
+package org.jetbrains.jet.plugin;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -36,8 +36,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class QuickFixActionsUtils {
-    private QuickFixActionsUtils() {
+public class DirectiveBasedActionUtils {
+    private DirectiveBasedActionUtils() {
     }
 
     public static void checkForUnexpectedErrors(JetFile file) {

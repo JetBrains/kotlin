@@ -23,6 +23,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
 import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
 import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
@@ -214,6 +216,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
 
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
+
+        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
 
         String fileText = FileUtil.loadFile(new File(path), true);
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
