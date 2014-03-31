@@ -16,12 +16,39 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.stubs.StubInputStream;
+import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetModifierList;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetModifierListStub;
+import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetModifierListStubImpl;
 
-public class JetModifierListElementType extends JetPlaceHolderStubElementType<JetModifierList> {
-    public JetModifierListElementType(@NotNull @NonNls String debugName) {
-        super(debugName, JetModifierList.class);
+import java.io.IOException;
+
+import static org.jetbrains.jet.lang.psi.stubs.impl.PsiJetModifierListStubImpl.computeMaskFromPsi;
+
+public class JetModifierListElementType<T extends JetModifierList> extends JetStubElementType<PsiJetModifierListStub, T> {
+    public JetModifierListElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
+        super(debugName, psiClass, PsiJetModifierListStub.class);
+    }
+
+    @Override
+    public PsiJetModifierListStub createStub(@NotNull T psi, StubElement parentStub) {
+        return new PsiJetModifierListStubImpl(parentStub, computeMaskFromPsi(psi), this);
+    }
+
+    @Override
+    public void serialize(@NotNull PsiJetModifierListStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+        int mask = ((PsiJetModifierListStubImpl) stub).getMask();
+        dataStream.writeVarInt(mask);
+    }
+
+    @NotNull
+    @Override
+    public PsiJetModifierListStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+        int mask = dataStream.readVarInt();
+        return new PsiJetModifierListStubImpl(parentStub, mask, this);
     }
 }

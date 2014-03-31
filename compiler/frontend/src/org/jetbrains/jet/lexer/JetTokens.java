@@ -169,6 +169,11 @@ public interface JetTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD
     );
 
+    /*
+        This array is used in stub serialization:
+        1. Do not change order.
+        2. If you add an entry or change order, increase stub version.
+     */
     JetModifierKeywordToken[] MODIFIER_KEYWORDS_ARRAY =
             new JetModifierKeywordToken[] {
                     ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
