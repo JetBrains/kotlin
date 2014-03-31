@@ -330,10 +330,14 @@ public abstract class StackValue {
             ExpressionCodegen codegen,
             @Nullable CallableMethod callableMethod
     ) {
-        if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists()) {
+        if (resolvedCall.getThisObject().exists() || resolvedCall.getReceiverArgument().exists() || isLocalFunCall(callableMethod)) {
             return new CallReceiver(resolvedCall, receiver, codegen, callableMethod, true);
         }
         return receiver;
+    }
+
+    private static boolean isLocalFunCall(@Nullable CallableMethod callableMethod) {
+        return callableMethod != null && callableMethod.getGenerateCalleeType() != null;
     }
 
     public static StackValue receiverWithoutReceiverArgument(StackValue receiverWithParameter) {
@@ -1139,7 +1143,11 @@ public abstract class StackValue {
                 else {
                     return codegen.typeMapper.mapType(descriptor.getExpectedThisObject().getType());
                 }
-            } else {
+            }
+            else if (isLocalFunCall(callableMethod)) {
+                return callableMethod.getGenerateCalleeType();
+            }
+            else {
                 return Type.VOID_TYPE;
             }
         }
@@ -1161,6 +1169,13 @@ public abstract class StackValue {
                 else {
                     genReceiver(v, thisObject, type, null, 0);
                 }
+
+                depth = 1;
+            } else if (isLocalFunCall(callableMethod)) {
+                assert receiver == none() || receiverArgument.exists(): "Receiver should be present only for local extension function: " + callableMethod;
+                StackValue value = codegen.findLocalOrCapturedValue(descriptor.getOriginal());
+                assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
+                value.put(callableMethod.getGenerateCalleeType(), v);
 
                 depth = 1;
             }

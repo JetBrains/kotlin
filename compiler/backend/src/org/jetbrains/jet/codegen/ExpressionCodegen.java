@@ -2277,15 +2277,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     ) {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-        //generate callee for local function
-        Type calleeType = callableMethod.getGenerateCalleeType();
-        if (calleeType != null) {
-            StackValue value = findLocalOrCapturedValue(descriptor.getOriginal());
-            assert value != null : "Local fun should be found in locals or in captured params: " + resolvedCall;
-            value.put(calleeType, v);
-        }
-
-        //generate this (absent for local fun) and receiver
         if (!(descriptor instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
