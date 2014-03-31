@@ -78,7 +78,7 @@ public class JetFunctionType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
 
     @Nullable
     public JetTypeReference getReceiverTypeRef() {
-        JetFunctionTypeReceiver receiverDeclaration = (JetFunctionTypeReceiver) findChildByType(JetNodeTypes.FUNCTION_TYPE_RECEIVER);
+        JetFunctionTypeReceiver receiverDeclaration = getStubOrPsiChild(JetStubElementTypes.FUNCTION_TYPE_RECEIVER);
         if (receiverDeclaration == null) {
             return null;
         }
