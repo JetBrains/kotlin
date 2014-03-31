@@ -32,6 +32,7 @@ import static org.jetbrains.jet.lang.descriptors.ClassKind.TRAIT;
 public final class Namer {
     public static final String KOTLIN_NAME = JetLanguage.NAME;
     public static final String KOTLIN_LOWER_NAME = KOTLIN_NAME.toLowerCase();
+    public static final JsNameRef KOTLIN_OBJECT_REF = new JsNameRef(KOTLIN_NAME);
 
     public static final String CALLEE_NAME = "$fun";
 
