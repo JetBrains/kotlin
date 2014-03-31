@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.jetbrains.asm4.Opcodes.ACC_PRIVATE;
+import static org.jetbrains.asm4.Opcodes.ACC_PROTECTED;
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
@@ -405,8 +406,9 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     private MemberDescriptor accessibleDescriptorIfNeeded(CallableMemberDescriptor descriptor, boolean fromOutsideContext) {
-        int flag = getAccessFlags(descriptor);
-        if ((flag & ACC_PRIVATE) == 0) {
+        CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
+        int flag = getAccessFlags(unwrappedDescriptor);
+        if ((flag & ACC_PRIVATE) == 0 && (flag & ACC_PROTECTED) == 0) {
             return descriptor;
         }
 
@@ -438,7 +440,24 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             }
         }
 
-        return (MemberDescriptor) (descriptorContext != null ? descriptorContext.getAccessor(descriptor) : descriptor);
+        if (descriptorContext == null) {
+            return descriptor;
+        }
+
+        if ((flag & ACC_PROTECTED) != 0) {
+            PackageFragmentDescriptor unwrappedDescriptorPackage =
+                    DescriptorUtils.getParentOfType(unwrappedDescriptor, PackageFragmentDescriptor.class, false);
+            PackageFragmentDescriptor contextDescriptorPackage =
+                    DescriptorUtils.getParentOfType(descriptorContext.getContextDescriptor(), PackageFragmentDescriptor.class, false);
+
+            boolean inSamePackage = contextDescriptorPackage != null && unwrappedDescriptorPackage != null &&
+                                    unwrappedDescriptorPackage.getFqName().equals(contextDescriptorPackage.getFqName());
+            if (inSamePackage) {
+                return descriptor;
+            }
+        }
+
+        return (MemberDescriptor) descriptorContext.getAccessor(descriptor);
     }
 
     private void addChild(@NotNull CodegenContext child) {

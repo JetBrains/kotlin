@@ -33,6 +33,11 @@ import org.jetbrains.jet.codegen.AbstractBytecodeTextTest;
 @TestMetadata("compiler/testData/codegen/bytecodeText")
 @InnerTestClasses({BytecodeTextTestGenerated.Constants.class, BytecodeTextTestGenerated.DirectInvoke.class, BytecodeTextTestGenerated.Statements.class})
 public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
+    @TestMetadata("accessorForProtected.kt")
+    public void testAccessorForProtected() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/accessorForProtected.kt");
+    }
+    
     public void testAllFilesPresentInBytecodeText() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/bytecodeText"), Pattern.compile("^(.+)\\.kt$"), true);
     }
