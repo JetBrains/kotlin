@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.types.Variance;
@@ -59,6 +58,6 @@ public class JetTypeParameter extends JetNamedDeclarationStub<PsiJetTypeParamete
 
     @Nullable
     public JetTypeReference getExtendsBound() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 }
