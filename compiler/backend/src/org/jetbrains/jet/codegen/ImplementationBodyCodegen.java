@@ -1024,9 +1024,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     InstructionAdapter iv = codegen.v;
                     boolean forceField = AsmUtil.isPropertyWithBackingFieldInOuterClass(original) && !isClassObject(bridge.getContainingDeclaration());
                     StackValue property = codegen.intermediateValueForProperty(original, forceField, null, MethodKind.SYNTHETIC_ACCESSOR);
-                    if (!forceField) {
-                        iv.load(0, OBJECT_TYPE);
+
+                    Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
+                    for (int i = 0, reg = 0; i < argTypes.length; i++) {
+                        Type argType = argTypes[i];
+                        iv.load(reg, argType);
+                        //noinspection AssignmentToForLoopParameter
+                        reg += argType.getSize();
                     }
+
                     property.put(property.type, iv);
                     iv.areturn(signature.getReturnType());
                 }
