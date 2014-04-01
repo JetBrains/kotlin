@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
@@ -240,6 +241,9 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
             else if (declaration instanceof JetParameter) {
                 JetParameter parameter = (JetParameter) declaration;
                 result.addAll(getProperties(safeNameForLazyResolve(parameter)));
+            }
+            else if (declaration instanceof JetScript) {
+                result.addAll(classDescriptors.invoke(ScriptNameUtil.classNameForScript((JetScript) declaration).shortName()));
             }
             else if (declaration instanceof JetTypedef || declaration instanceof JetMultiDeclaration) {
                 // Do nothing for typedefs as they are not supported.
