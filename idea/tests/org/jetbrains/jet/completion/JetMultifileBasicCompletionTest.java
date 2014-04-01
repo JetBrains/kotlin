@@ -16,75 +16,60 @@
 
 package org.jetbrains.jet.completion;
 
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
-
 public class JetMultifileBasicCompletionTest extends JetCompletionMultiTestBase {
     public void testCompleteImportedFunction() {
-        doFileTest();
+        doTest();
     }
 
     public void testCompletionOnImportedFunction() {
-        doFileTest();
+        doTest();
     }
 
     public void testDoNotCompleteWithConstraints() {
-        doFileTest();
+        doTest();
     }
 
     public void testTopLevelFunction() throws Exception {
-        doFileTest();
+        doTest();
     }
 
     public void testExtensionFunctionOnImportedFunction() throws Exception {
-        doFileTest(2);
+        doTest();
     }
 
     public void todotestExtensionFunctionOnUnresolved() throws Exception {
-        doFileTest();
+        doTest();
     }
 
     public void testExtensionOnNullable() throws Exception {
-        doFileTest();
+        doTest();
     }
 
     public void todotestExtensionProperty() throws Exception {
-        doFileTest();
+        doTest();
     }
 
     public void testNotImportedJavaClass() throws Exception {
-        String fileName = getTestName(false);
-        doFileTest(2, new String[] {fileName + ".kt", "javapackage/Bar.java"});
+        doTest();
     }
 
     public void testInImportedFunctionLiteralParameter() throws Exception {
-        doFileTest(2);
+        doTest();
     }
 
     public void testJavaInnerClasses() throws Exception {
-        String fileName = getTestName(false);
-        doFileTest(1, new String[] {fileName + ".kt", fileName + ".java"});
+        doTest();
     }
 
     public void testNotImportedExtensionFunction() throws Exception {
-        doFileTest();
+        doTest();
     }
 
     public void testExtensionFunction() throws Exception {
-        doFileTest(2);
+        doTest();
     }
 
     public void testNotImportedObject() throws Exception {
-        doFileTest();
-    }
-
-    @Override
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/";
-    }
-
-    @Override
-    String[] getFileNameList() {
-        String fileName = getTestName(false);
-        return new String[]{fileName + "-1.kt", fileName + "-2.kt"};
+        doTest();
     }
 }

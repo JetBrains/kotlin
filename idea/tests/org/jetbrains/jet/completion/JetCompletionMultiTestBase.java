@@ -17,47 +17,44 @@
 package org.jetbrains.jet.completion;
 
 import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
+
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class JetCompletionMultiTestBase extends JetFixtureCompletionBaseTestCase {
 
-    abstract String[] getFileNameList();
+    public static final String JAVA_FILE = "JAVA_FILE:";
 
-    /**
-     * @param completionLevel {@see CompletionParameters.getInvocationCount()} javadoc
-     * @param fileNameList
-     * @throws Exception
-     */
-    protected void doFileTest(int completionLevel, String[] fileNameList) {
-        try {
-            myFixture.configureByFiles(fileNameList);
-            myFixture.complete(completionType(), completionLevel);
+    protected void doTest() {
+        doTest(getTestName(false));
+    }
 
-            String fileText = myFixture.getFile().getText();
-
-            LookupElement[] lookupElements = myFixture.getLookupElements();
-            ExpectedCompletionUtils.assertContainsRenderedItems(
-                    ExpectedCompletionUtils.itemsShouldExist(fileText), lookupElements, ExpectedCompletionUtils.isWithOrder(fileText));
-
-            ExpectedCompletionUtils.assertNotContainsRenderedItems(ExpectedCompletionUtils.itemsShouldAbsent(fileText), lookupElements);
-
-            Integer itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText);
-            if (itemsNumber != null) {
-                assertEquals(itemsNumber.intValue(), lookupElements.length);
-            }
-        } catch (Exception e) {
-            throw new AssertionError(e);
+    @Override
+    protected void setUpFixture(@NotNull String testPath) {
+        myFixture.configureByFiles(getFileNameList(testPath));
+        PsiFile testFile = myFixture.getFile();
+        String text = testFile.getText();
+        String javaFilePath = InTextDirectivesUtils.findStringWithPrefixes(text, JAVA_FILE);
+        if (javaFilePath != null) {
+            myFixture.configureByFile(javaFilePath);
+            myFixture.configureByFiles(getFileNameList(testPath));
         }
     }
 
-    protected void doFileTest(int completionLevel) {
-        doFileTest(completionLevel, getFileNameList());
-    }
-
-    protected void doFileTest() {
-        doFileTest(0, getFileNameList());
+    @NotNull
+    private String[] getFileNameList(@NotNull String testPath) {
+        String baseFile = testPath + "-1.kt";
+        String secondaryFile = testPath + "-2.kt";
+        if (new File(getTestDataPath() + "/" + secondaryFile).exists()) {
+            return new String[] {baseFile, secondaryFile};
+        }
+        return new String[] {baseFile};
     }
 
     @Override
@@ -69,5 +66,16 @@ public abstract class JetCompletionMultiTestBase extends JetFixtureCompletionBas
     @Override
     protected CompletionType completionType() {
         return CompletionType.BASIC;
+    }
+
+    @NotNull
+    @Override
+    protected List<String> getAdditionalDirectives() {
+        return Collections.singletonList(JAVA_FILE);
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/";
     }
 }
