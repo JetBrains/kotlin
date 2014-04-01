@@ -8,4 +8,5 @@ fun firstFun() {
     a.<caret>
 }
 
+// INVOCATION_COUNT: 2
 // EXIST: secondExtension

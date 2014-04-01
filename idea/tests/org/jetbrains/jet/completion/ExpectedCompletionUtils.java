@@ -219,8 +219,10 @@ public class ExpectedCompletionUtils {
         return InTextDirectivesUtils.getPrefixedInt(fileText, WITH_ORDER_PREFIX) != null;
     }
 
-    public static void assertDirectivesValid(String fileText) {
-        InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, KNOWN_PREFIXES);
+    public static void assertDirectivesValid(String fileText, List<String> additionalPrefixes) {
+        List<String> allowedPrefixes = new ArrayList<String>(KNOWN_PREFIXES);
+        allowedPrefixes.addAll(additionalPrefixes);
+        InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, allowedPrefixes);
     }
 
     public static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder) {
