@@ -1,3 +1,3 @@
 abstract class Owner<T> {
-    fun <caret>f<R>(t: T, r: R): R = t
+    fun <caret>f<R>(t: T, r: R): R = r
 }

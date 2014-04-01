@@ -1,4 +1,4 @@
 // IS_APPLICABLE: false
-fun foo(x: foo) {
-    x.<caret>foo
+fun foo(x: String) {
+    x.<caret>length
 }

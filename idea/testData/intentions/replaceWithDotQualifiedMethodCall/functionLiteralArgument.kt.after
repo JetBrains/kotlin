@@ -1,3 +1,6 @@
+trait Foo {
+    fun foo(f: (Int) -> Unit)
+}
 fun foo(x: Foo) {
     x.foo { it * 2 }
 }

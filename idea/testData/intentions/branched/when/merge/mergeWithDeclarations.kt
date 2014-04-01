@@ -1,3 +1,5 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     val res: String
 
@@ -5,32 +7,32 @@ fun test(n: Int) {
         1 -> {
             res = "one"
             val x = "A"
-            println(x)
+            doSomething(x)
         }
         2 -> {
             res = "two"
             val x = "B"
-            println(x)
+            doSomething(x)
         }
         else -> {
             res = "unknown"
             val x = "C"
-            println(x)
+            doSomething(x)
         }
     }
 
     when (n) {
         1 -> {
             val y = "AA"
-            println(y)
+            doSomething(y)
         }
         2 -> {
             val y = "BB"
-            println(y)
+            doSomething(y)
         }
         else -> {
             val y = "CC"
-            println(y)
+            doSomething(y)
         }
     }
 }

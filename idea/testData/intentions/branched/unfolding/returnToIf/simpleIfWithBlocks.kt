@@ -1,9 +1,11 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int): String {
     <caret>return if (n == 1) {
-        println("***")
+        doSomething("***")
         "one"
     } else {
-        println("***")
+        doSomething("***")
         "two"
     }
 }

@@ -1,5 +1,7 @@
 // IS_APPLICABLE: false
+fun doSomething<T>(a: T) {}
+
 fun main() {
     val c = 500
-    println(<caret>"Today is Friday")
+    doSomething(<caret>"Today is Friday")
 }

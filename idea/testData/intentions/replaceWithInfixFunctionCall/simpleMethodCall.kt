@@ -1,3 +1,3 @@
-fun foo(x: Foo) {
-    x.<caret>foo(1)
+fun foo(x: Int) {
+    x.<caret>times(1)
 }

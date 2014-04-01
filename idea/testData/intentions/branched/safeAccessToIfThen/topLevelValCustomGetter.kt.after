@@ -1,7 +1,9 @@
+fun doSomething<T>(a: T) {}
+
 val a: String?
     get() = ""
 
 fun main(args: Array<String>) {
     val s = a
-    println(if (s != null) s.length else null)
+    doSomething(if (s != null) s.length else null)
 }

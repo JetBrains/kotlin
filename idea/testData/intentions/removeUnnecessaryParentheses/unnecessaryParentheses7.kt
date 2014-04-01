@@ -1,3 +1,3 @@
 fun foo(i: Int) {
-    array(42)[(i + i<caret>)]
+    Array(1, { 42 })[(i + i<caret>)]
 }

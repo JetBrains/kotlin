@@ -3,5 +3,5 @@ fun maybeFoo(): String? {
 }
 
 fun main(args: Array<String>) {
-    maybeFoo()?.length()
+    maybeFoo()?.length
 }

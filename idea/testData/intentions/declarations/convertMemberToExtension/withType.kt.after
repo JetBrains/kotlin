@@ -2,4 +2,5 @@ class Owner {
 }
 
 fun Owner.f(): Int {
+    return 1
 }

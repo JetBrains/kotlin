@@ -1,4 +1,6 @@
+fun doSomething<T>(a: T) {}
+
 fun foo() {
-    if (true) println("test")
-    <caret>else println("test2")
+    if (true) doSomething("test")
+    <caret>else doSomething("test2")
 }

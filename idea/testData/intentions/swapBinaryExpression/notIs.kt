@@ -1,6 +1,8 @@
 // IS_APPLICABLE: false
-fun main() {
+fun doSomething<T>(a: T) {}
+
+fun main(x: Int) {
     if (x !is Int) {
-        println("test")
+        doSomething("test")
     }
 }

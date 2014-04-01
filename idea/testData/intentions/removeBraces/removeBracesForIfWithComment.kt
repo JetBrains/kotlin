@@ -1,6 +1,8 @@
+fun doSomething<T>(a: T) {}
+
 fun foo() {
     <caret>if (true) {
         //comment
-        println("test")
+        doSomething("test")
     }
 }

@@ -1,7 +1,9 @@
+fun doSomething<T>(a: T) {}
+
 fun foo() {
     if (true) {
-        println("test")
+        doSomething("test")
     } <caret>else {
-        println("test2")
+        doSomething("test2")
     }
 }

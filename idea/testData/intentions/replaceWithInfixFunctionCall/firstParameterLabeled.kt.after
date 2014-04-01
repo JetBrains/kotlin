@@ -1,6 +1,8 @@
+fun doSomething<T>(a: T) {}
+
 class Foo {
     fun foo(x: Int) {
-        println("lol")
+        doSomething("lol")
     }
 }
 

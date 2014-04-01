@@ -1,3 +1,3 @@
-fun foo(x: Foo) {
-    (<caret>x foo 1).bar()
+fun foo(x: Int) {
+    (<caret>x shl 1).minus()
 }

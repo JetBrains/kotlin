@@ -1,11 +1,11 @@
-fun bar1() {
+fun bar1(): Boolean {
     return true
 }
 
-fun bar2() {
+fun bar2(): Boolean {
     return false
 }
 
-fun foo() {
+fun foo(): Boolean {
     return <caret>!bar1() && !bar2()
 }

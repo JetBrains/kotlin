@@ -1,4 +1,6 @@
+fun doSomething<T>(a: T) {}
+
 fun main(args: Array<String>) {
     val a: String? = "A"
-    println(if (a != null) a.length else null)
+    doSomething(if (a != null) a.length else null)
 }

@@ -2,8 +2,10 @@ fun maybeFoo(): String? {
     return "foo"
 }
 
+fun doSomething<T>(a: T) {}
+
 fun main(args: Array<String>) {
     val foo = maybeFoo()
-    print(foo)
-    foo?.length()
+    doSomething(foo)
+    foo?.length
 }

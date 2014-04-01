@@ -1,24 +1,26 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     val res: String
 
     <caret>when (n) {
         1 -> {
             res = "one"
-            println("A")
+            doSomething("A")
         }
         2 -> {
             res = "two"
-            println("B")
+            doSomething("B")
         }
         else -> {
             res = "unknown"
-            println("C")
+            doSomething("C")
         }
     }
 
     when (n) {
-        1 -> println("AA")
-        2 -> println("BB")
-        else -> println("CC")
+        1 -> doSomething("AA")
+        2 -> doSomething("BB")
+        else -> doSomething("CC")
     }
 }

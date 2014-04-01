@@ -1,17 +1,19 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     var res: String = ""
 
     <caret>when (n) {
         1 -> {
-            println("A")
+            doSomething("A")
             res = "one"
         }
         2 -> {
-            println("B")
+            doSomething("B")
             res = "two"
         }
         else -> {
-            println("C")
+            doSomething("C")
             res = "unknown"
             return
         }

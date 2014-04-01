@@ -1,3 +1,3 @@
 abstract class Owner {
-    public fun <caret>f() = 1
+    public fun <caret>f(): Int = 1
 }

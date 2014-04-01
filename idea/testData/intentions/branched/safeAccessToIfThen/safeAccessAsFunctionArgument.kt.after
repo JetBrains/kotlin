@@ -1,5 +1,4 @@
 fun f(s: Int?) {
-    println(s)
 }
 
 fun main(args: Array<String>) {

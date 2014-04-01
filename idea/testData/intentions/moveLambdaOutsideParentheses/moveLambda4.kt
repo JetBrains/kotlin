@@ -6,6 +6,6 @@ fun foo() {
     })
 }
 
-fun bar(a: Int, b: Int->Int) {
-    return b(a)
+fun bar(a: Int, b: (Int) -> Int) {
+    b(a)
 }

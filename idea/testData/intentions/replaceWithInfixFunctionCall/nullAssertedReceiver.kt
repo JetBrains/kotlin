@@ -1,3 +1,3 @@
-fun foo(x: Foo) {
-    x!!.<caret>foo(1)
+fun foo(x: String?) {
+    x!!.<caret>plus(1)
 }

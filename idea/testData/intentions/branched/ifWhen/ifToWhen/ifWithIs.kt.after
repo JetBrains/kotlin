@@ -1,8 +1,10 @@
+class Klass<T>
+
 fun test(obj: Any): String {
-    return <caret>when (obj) {
+    return when (obj) {
         is String -> "string"
         is Int -> "int"
-        is Class<*> -> "class"
+        is Klass<*> -> "class"
         else -> "unknown"
     }
 }

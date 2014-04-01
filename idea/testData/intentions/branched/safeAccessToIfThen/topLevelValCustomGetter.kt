@@ -1,6 +1,8 @@
+fun doSomething<T>(a: T) {}
+
 val a: String?
     get() = ""
 
 fun main(args: Array<String>) {
-    println(a?.<caret>length)
+    doSomething(a?.<caret>length)
 }

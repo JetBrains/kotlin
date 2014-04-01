@@ -1,5 +1,7 @@
+fun doSomething<T>(a: T) {}
+
 fun main(args: Array<String>) {
     var a: String? = "A"
-    println(a?.<caret>length)
+    doSomething(a?.<caret>length)
 }
 

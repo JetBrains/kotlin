@@ -1,7 +1,9 @@
+fun doSomething<T>(a: T) {}
+
 fun test() {
     class Test{
         fun contains(a: Int) : Boolean = true
     }
     val test = Test()
-    println((0 in test).toString())
+    doSomething((0 in test).toString())
 }

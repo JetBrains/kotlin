@@ -1,3 +1,3 @@
-fun neq(a: Int, b: Int) {
+fun neq(a: Boolean, b: Boolean) {
     if (a &&<caret> b) {}
 }

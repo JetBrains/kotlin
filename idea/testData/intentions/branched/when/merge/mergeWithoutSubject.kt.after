@@ -1,18 +1,20 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     val res: String
 
     <caret>when {
         n == 1 -> {
             res = "one"
-            println("A")
+            doSomething("A")
         }
         n == 2 -> {
             res = "two"
-            println("B")
+            doSomething("B")
         }
         else -> {
             res = "unknown"
-            println("C")
+            doSomething("C")
         }
     }
 }

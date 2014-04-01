@@ -1,4 +1,6 @@
 // IS_APPLICABLE: false
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     val res: String
 
@@ -9,7 +11,7 @@ fun test(n: Int) {
     }
 
     when {
-        n == 1 -> println("A")
-        else -> println("C")
+        n == 1 -> doSomething("A")
+        else -> doSomething("C")
     }
 }

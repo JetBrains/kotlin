@@ -1,6 +1,8 @@
 // IS_APPLICABLE: false
+fun doSomething<T>(a: T) {}
+
 fun main() {
-    for (elt<caret> in array(1, 2, 3)) {
-        println("Hello")
+    for (elt<caret> in 0..3) {
+        doSomething("Hello")
     }
 }

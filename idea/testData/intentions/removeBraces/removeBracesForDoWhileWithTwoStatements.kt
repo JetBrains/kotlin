@@ -1,7 +1,9 @@
 // IS_APPLICABLE: false
+fun doSomething<T>(a: T) {}
+
 fun foo() {
     do {
-        println("test")
-        println("test2")
+        doSomething("test")
+        doSomething("test2")
     <caret>} while(true)
 }

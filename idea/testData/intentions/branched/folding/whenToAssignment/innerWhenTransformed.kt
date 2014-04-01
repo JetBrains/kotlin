@@ -1,19 +1,21 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int): String {
     var res: String
 
     if (3 > 2) {
         <caret>when(n) {
             1 -> {
-                println("***")
+                doSomething("***")
                 res = "one"
             }
             else -> {
-                println("***")
+                doSomething("***")
                 res = "two"
             }
         }
     } else {
-        println("***")
+        doSomething("***")
         res = "???"
     }
 

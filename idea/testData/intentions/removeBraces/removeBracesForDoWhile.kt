@@ -1,5 +1,7 @@
+fun doSomething<T>(a: T) {}
+
 fun foo() {
     do {
-        println("test")
+        doSomething("test")
     <caret>} while(true)
 }

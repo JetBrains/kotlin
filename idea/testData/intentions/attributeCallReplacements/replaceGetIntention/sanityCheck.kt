@@ -1,4 +1,5 @@
 // IS_APPLICABLE: false
+// ERROR: Unresolved reference: got
 fun test() {
     class Test{
         fun get(i: Int) : Int = 0

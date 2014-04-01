@@ -1,7 +1,6 @@
 // IS_APPLICABLE: false
 class Foo {
     fun foo(x: Int = 0, y: Int = 0) {
-        println("lol")
     }
 }
 

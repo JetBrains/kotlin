@@ -1,3 +1,3 @@
-fun foo(x: Foo) {
-    <caret>x foo 1
+fun foo(x: Int) {
+    <caret>x compareTo 1
 }

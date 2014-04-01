@@ -1,5 +1,7 @@
+fun doSomething<T>(a: T) {}
+
 fun foo() {
     if (true) {
-        println("test")
-    } else println("test2")
+        doSomething("test")
+    } else doSomething("test2")
 }

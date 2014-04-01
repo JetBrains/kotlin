@@ -1,5 +1,5 @@
-fun test(n: Int) {
-    val s = "test"
+fun test(n: Int): String {
+    var s = "test"
     <caret>if (n == 0)
         s = "zero"
     else if (n == 1)

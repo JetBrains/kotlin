@@ -7,6 +7,6 @@ fun main(args: Array<String>) {
     if (foo == null<caret>) {
     }
     else {
-        foo.length()
+        foo.length
     }
 }

@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    bar<String>({ it })
+    bar<String>({ it.toString() })
 }
 
 fun bar<T>(a: (Int)->T): T {

@@ -1,3 +1,5 @@
+fun doSomething<T>(a: T) {}
+
 fun test() {
     class Test {
         fun plus(): Test = Test()
@@ -5,5 +7,5 @@ fun test() {
         fun minus(): Test = Test()
     }
     val test = Test()
-    println(-(+(test + test)).toString())
+    doSomething((-(+(test + test))).toString())
 }

@@ -1,13 +1,15 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int): String {
     var res: String
 
     <caret>res = when (n) {
         1 -> {
-            println("***")
+            doSomething("***")
             "one"
         }
         else -> {
-            println("***")
+            doSomething("***")
             "two"
         }
     }

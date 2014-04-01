@@ -1,3 +1,3 @@
-fun foo(x: Foo) {
-    <caret>x foo (1 + 2)
+fun foo(x: String) {
+    <caret>x plus ("1" + "2")
 }

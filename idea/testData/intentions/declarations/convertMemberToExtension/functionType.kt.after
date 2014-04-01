@@ -2,4 +2,5 @@ class Owner {
 }
 
 fun Owner.f(p: () -> Unit): (Int) -> String {
+    return { it.toString() }
 }

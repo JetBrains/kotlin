@@ -1,5 +1,5 @@
 fun String.not(): Boolean {
-    return isEmpty()
+    return length == 0
 }
 
 fun foo(a: Boolean, b: Boolean) : Boolean {

@@ -1,11 +1,13 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int): String {
     <caret>when(n) {
     1 -> {
-        println("***")
+        doSomething("***")
         return "one"
     }
     else -> {
-        println("***")
+        doSomething("***")
         return "two"
     }
 }

@@ -1,3 +1,3 @@
 class Owner {
-    fun <caret>f(): Int {}
+    fun <caret>f(): Int { return 1 }
 }

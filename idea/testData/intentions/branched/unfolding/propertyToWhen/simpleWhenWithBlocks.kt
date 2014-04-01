@@ -1,11 +1,13 @@
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int): String {
     val res<caret> = when (n) {
         1 -> {
-            println("***")
+            doSomething("***")
             "one"
         }
         else -> {
-            println("***")
+            doSomething("***")
             "two"
         }
     }

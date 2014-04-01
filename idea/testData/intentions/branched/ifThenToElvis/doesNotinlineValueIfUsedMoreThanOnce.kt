@@ -1,10 +1,12 @@
+fun doSomething<T>(a: T) {}
+
 fun maybeFoo(): String? {
     return "foo"
 }
 
 fun main(args: Array<String>) {
     val foo = maybeFoo()
-    print(foo)
+    doSomething(foo)
     val bar = "bar"
     if (foo != null<caret>) {
         foo

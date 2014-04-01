@@ -1,4 +1,7 @@
 // IS_APPLICABLE: false
+
+fun doSomething<T>(a: T) {}
+
 fun test(n: Int) {
     val res: String
 
@@ -6,32 +9,32 @@ fun test(n: Int) {
         1 -> {
             res = "one"
             val x = "A"
-            println(x)
+            doSomething(x)
         }
         2 -> {
             res = "two"
             val x = "B"
-            println(x)
+            doSomething(x)
         }
         else -> {
             res = "unknown"
             val x = "C"
-            println(x)
+            doSomething(x)
         }
     }
 
     when (n) {
         1 -> {
             val x = "AA"
-            println(x)
+            doSomething(x)
         }
         2 -> {
             val x = "BB"
-            println(x)
+            doSomething(x)
         }
         else -> {
             val x = "CC"
-            println(x)
+            doSomething(x)
         }
     }
 }

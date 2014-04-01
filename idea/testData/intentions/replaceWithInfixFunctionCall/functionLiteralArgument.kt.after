@@ -1,3 +1,7 @@
 fun foo(x: Foo) {
     x foo { it * 2 }
 }
+
+trait Foo {
+    fun foo(f: (Int) -> Int)
+}
