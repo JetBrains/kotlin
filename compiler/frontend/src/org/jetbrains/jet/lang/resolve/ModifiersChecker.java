@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 import java.util.Collection;
@@ -135,7 +134,7 @@ public class ModifiersChecker {
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {
         if (modifierList == null) return;
-        Collection<JetKeywordToken> presentModifiers = Sets.newLinkedHashSet();
+        Collection<JetModifierKeywordToken> presentModifiers = Sets.newLinkedHashSet();
         for (JetModifierKeywordToken modifier : availableModifiers) {
             if (modifierList.hasModifier(modifier)) {
                 presentModifiers.add(modifier);
@@ -149,7 +148,7 @@ public class ModifiersChecker {
                 return;
             }
         }
-        for (JetKeywordToken token : presentModifiers) {
+        for (JetModifierKeywordToken token : presentModifiers) {
             trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
         }
     }
@@ -174,8 +173,8 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    public static Map<JetKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, @NotNull Collection<JetModifierKeywordToken> possibleModifiers) {
-        Map<JetKeywordToken, ASTNode> nodes = Maps.newHashMap();
+    public static Map<JetModifierKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, @NotNull Collection<JetModifierKeywordToken> possibleModifiers) {
+        Map<JetModifierKeywordToken, ASTNode> nodes = Maps.newHashMap();
         for (JetModifierKeywordToken modifier : possibleModifiers) {
             if (modifierList.hasModifier(modifier)) {
                 nodes.put(modifier, modifierList.getModifierNode(modifier));

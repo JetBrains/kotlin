@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,7 @@ public class JetModifierList extends JetElementImpl {
 
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
-            if (node.getElementType() instanceof JetKeywordToken) {
+            if (node.getElementType() instanceof JetModifierKeywordToken) {
                 modifierNodes.add(node);
             }
             node = node.getTreeNext();
