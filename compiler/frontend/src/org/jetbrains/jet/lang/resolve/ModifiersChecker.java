@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,7 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
-import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,10 +39,10 @@ import java.util.Map;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class ModifiersChecker {
-    private static final Collection<JetKeywordToken> MODALITY_MODIFIERS =
+    private static final Collection<JetModifierKeywordToken> MODALITY_MODIFIERS =
             Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD);
 
-    private static final Collection<JetKeywordToken> VISIBILITY_MODIFIERS =
+    private static final Collection<JetModifierKeywordToken> VISIBILITY_MODIFIERS =
             Lists.newArrayList(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD);
 
     @NotNull
@@ -82,7 +81,7 @@ public class ModifiersChecker {
         checkRedundantModifier(modifierList, Pair.create(OPEN_KEYWORD, ABSTRACT_KEYWORD), Pair.create(OPEN_KEYWORD, OVERRIDE_KEYWORD));
 
         checkCompatibility(modifierList, Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD),
-                           Lists.<JetToken>newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
+                           Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD));
     }
 
     private void checkVisibilityModifiers(@Nullable JetModifierList modifierList, @NotNull DeclarationDescriptor descriptor) {
@@ -133,10 +132,10 @@ public class ModifiersChecker {
         return containingClass.isInner() || containingClass.getContainingDeclaration() instanceof FunctionDescriptor;
     }
 
-    private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetKeywordToken> availableModifiers, Collection<JetToken>... availableCombinations) {
+    private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {
         if (modifierList == null) return;
-        Collection<JetKeywordToken> presentModifiers = Sets.newLinkedHashSet();
-        for (JetKeywordToken modifier : availableModifiers) {
+        Collection<JetModifierKeywordToken> presentModifiers = Sets.newLinkedHashSet();
+        for (JetModifierKeywordToken modifier : availableModifiers) {
             if (modifierList.hasModifier(modifier)) {
                 presentModifiers.add(modifier);
             }
@@ -144,29 +143,29 @@ public class ModifiersChecker {
         if (presentModifiers.size() == 1) {
             return;
         }
-        for (Collection<JetToken> combination : availableCombinations) {
+        for (Collection<JetModifierKeywordToken> combination : availableCombinations) {
             if (presentModifiers.containsAll(combination) && combination.containsAll(presentModifiers)) {
                 return;
             }
         }
-        for (JetKeywordToken token : presentModifiers) {
+        for (JetModifierKeywordToken token : presentModifiers) {
             trace.report(Errors.INCOMPATIBLE_MODIFIERS.on(modifierList.getModifierNode(token).getPsi(), presentModifiers));
         }
     }
 
-    private void checkRedundantModifier(@NotNull JetModifierList modifierList, Pair<JetKeywordToken, JetKeywordToken>... redundantBundles) {
-        for (Pair<JetKeywordToken, JetKeywordToken> tokenPair : redundantBundles) {
-            JetKeywordToken redundantModifier = tokenPair.getFirst();
-            JetKeywordToken sufficientModifier = tokenPair.getSecond();
+    private void checkRedundantModifier(@NotNull JetModifierList modifierList, Pair<JetModifierKeywordToken, JetModifierKeywordToken>... redundantBundles) {
+        for (Pair<JetModifierKeywordToken, JetModifierKeywordToken> tokenPair : redundantBundles) {
+            JetModifierKeywordToken redundantModifier = tokenPair.getFirst();
+            JetModifierKeywordToken sufficientModifier = tokenPair.getSecond();
             if (modifierList.hasModifier(redundantModifier) && modifierList.hasModifier(sufficientModifier)) {
                 trace.report(Errors.REDUNDANT_MODIFIER.on(modifierList.getModifierNode(redundantModifier).getPsi(), redundantModifier, sufficientModifier));
             }
         }
     }
 
-    public void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, @NotNull Collection<JetKeywordToken> illegalModifiers) {
+    public void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, @NotNull Collection<JetModifierKeywordToken> illegalModifiers) {
         if (modifierList == null) return;
-        for (JetKeywordToken modifier : illegalModifiers) {
+        for (JetModifierKeywordToken modifier : illegalModifiers) {
             if (modifierList.hasModifier(modifier)) {
                 trace.report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier).getPsi(), modifier));
             }
@@ -174,9 +173,9 @@ public class ModifiersChecker {
     }
 
     @NotNull
-    public static Map<JetKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, @NotNull Collection<JetKeywordToken> possibleModifiers) {
-        Map<JetKeywordToken, ASTNode> nodes = Maps.newHashMap();
-        for (JetKeywordToken modifier : possibleModifiers) {
+    public static Map<JetModifierKeywordToken, ASTNode> getNodesCorrespondingToModifiers(@NotNull JetModifierList modifierList, @NotNull Collection<JetModifierKeywordToken> possibleModifiers) {
+        Map<JetModifierKeywordToken, ASTNode> nodes = Maps.newHashMap();
+        for (JetModifierKeywordToken modifier : possibleModifiers) {
             if (modifierList.hasModifier(modifier)) {
                 nodes.put(modifier, modifierList.getModifierNode(modifier));
             }

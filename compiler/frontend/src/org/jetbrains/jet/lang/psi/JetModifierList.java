@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class JetModifierList extends JetElementImpl {
 
         ASTNode node = getNode().getFirstChildNode();
         while (node != null) {
-            if (node.getElementType() instanceof JetKeywordToken) {
+            if (node.getElementType() instanceof JetModifierKeywordToken) {
                 modifierNodes.add(node);
             }
             node = node.getTreeNext();
@@ -69,12 +70,12 @@ public class JetModifierList extends JetElementImpl {
         return modifierNodes;
     }
 
-    public boolean hasModifier(JetToken token) {
+    public boolean hasModifier(JetModifierKeywordToken token) {
         return getModifierNode(token) != null;
     }
 
     @Nullable
-    public PsiElement getModifier(JetToken token) {
+    public PsiElement getModifier(JetModifierKeywordToken token) {
         return findChildByType(token);
     }
 

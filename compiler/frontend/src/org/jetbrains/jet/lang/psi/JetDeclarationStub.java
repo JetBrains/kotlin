@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +43,7 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetElementImplS
     }
 
     @Override
-    public boolean hasModifier(JetToken modifier) {
+    public boolean hasModifier(JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
     }

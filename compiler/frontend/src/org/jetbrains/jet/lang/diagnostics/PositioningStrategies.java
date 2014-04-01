@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
@@ -258,10 +259,10 @@ public class PositioningStrategies {
         @NotNull
         @Override
         public List<TextRange> mark(@NotNull JetModifierListOwner element) {
-            List<JetKeywordToken> visibilityTokens = Lists.newArrayList(
+            List<JetModifierKeywordToken> visibilityTokens = Lists.newArrayList(
                     JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PUBLIC_KEYWORD, JetTokens.INTERNAL_KEYWORD);
             List<TextRange> result = Lists.newArrayList();
-            for (JetKeywordToken token : visibilityTokens) {
+            for (JetModifierKeywordToken token : visibilityTokens) {
                 if (element.hasModifier(token)) {
                     //noinspection ConstantConditions
                     result.add(element.getModifierList().getModifierNode(token).getTextRange());

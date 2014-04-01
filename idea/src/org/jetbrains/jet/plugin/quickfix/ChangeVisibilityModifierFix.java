@@ -32,14 +32,15 @@ import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 
 public class ChangeVisibilityModifierFix extends JetIntentionAction<JetModifierListOwner> {
-    public static final JetKeywordToken[] VISIBILITY_TOKENS =
-            new JetKeywordToken[] {JetTokens.PUBLIC_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD};
+    public static final JetModifierKeywordToken[] VISIBILITY_TOKENS =
+            new JetModifierKeywordToken[] {JetTokens.PUBLIC_KEYWORD, JetTokens.PRIVATE_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.INTERNAL_KEYWORD};
 
     public ChangeVisibilityModifierFix(@NotNull JetModifierListOwner element) {
         super(element);

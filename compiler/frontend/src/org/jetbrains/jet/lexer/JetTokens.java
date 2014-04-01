@@ -60,7 +60,7 @@ public interface JetTokens {
     JetKeywordToken TRUE_KEYWORD             = JetKeywordToken.keyword("true");
     JetKeywordToken FALSE_KEYWORD            = JetKeywordToken.keyword("false");
     JetKeywordToken IS_KEYWORD               = JetKeywordToken.keyword("is");
-    JetKeywordToken IN_KEYWORD               = JetKeywordToken.keyword("in");
+    JetModifierKeywordToken IN_KEYWORD       = JetModifierKeywordToken.keywordModifier("in");
     JetKeywordToken THROW_KEYWORD            = JetKeywordToken.keyword("throw");
     JetKeywordToken RETURN_KEYWORD           = JetKeywordToken.keyword("return");
     JetKeywordToken BREAK_KEYWORD            = JetKeywordToken.keyword("break");
@@ -140,23 +140,23 @@ public interface JetTokens {
     JetKeywordToken BY_KEYWORD        = JetKeywordToken.softKeyword("by");
     JetKeywordToken GET_KEYWORD       = JetKeywordToken.softKeyword("get");
     JetKeywordToken SET_KEYWORD       = JetKeywordToken.softKeyword("set");
-    JetKeywordToken ABSTRACT_KEYWORD  = JetKeywordToken.softKeyword("abstract");
-    JetKeywordToken ENUM_KEYWORD      = JetKeywordToken.softKeyword("enum");
-    JetKeywordToken OPEN_KEYWORD      = JetKeywordToken.softKeyword("open");
-    JetKeywordToken INNER_KEYWORD     = JetKeywordToken.softKeyword("inner");
-    JetKeywordToken ANNOTATION_KEYWORD = JetKeywordToken.softKeyword("annotation");
-    JetKeywordToken OVERRIDE_KEYWORD  = JetKeywordToken.softKeyword("override");
-    JetKeywordToken PRIVATE_KEYWORD   = JetKeywordToken.softKeyword("private");
-    JetKeywordToken PUBLIC_KEYWORD    = JetKeywordToken.softKeyword("public");
-    JetKeywordToken INTERNAL_KEYWORD  = JetKeywordToken.softKeyword("internal");
-    JetKeywordToken PROTECTED_KEYWORD = JetKeywordToken.softKeyword("protected");
+    JetModifierKeywordToken ABSTRACT_KEYWORD  = JetModifierKeywordToken.softKeywordModifier("abstract");
+    JetModifierKeywordToken ENUM_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("enum");
+    JetModifierKeywordToken OPEN_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("open");
+    JetModifierKeywordToken INNER_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("inner");
+    JetModifierKeywordToken ANNOTATION_KEYWORD = JetModifierKeywordToken.softKeywordModifier("annotation");
+    JetModifierKeywordToken OVERRIDE_KEYWORD  = JetModifierKeywordToken.softKeywordModifier("override");
+    JetModifierKeywordToken PRIVATE_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("private");
+    JetModifierKeywordToken PUBLIC_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("public");
+    JetModifierKeywordToken INTERNAL_KEYWORD  = JetModifierKeywordToken.softKeywordModifier("internal");
+    JetModifierKeywordToken PROTECTED_KEYWORD = JetModifierKeywordToken.softKeywordModifier("protected");
     JetKeywordToken CATCH_KEYWORD     = JetKeywordToken.softKeyword("catch");
-    JetKeywordToken OUT_KEYWORD       = JetKeywordToken.softKeyword("out");
-    JetKeywordToken VARARG_KEYWORD       = JetKeywordToken.softKeyword("vararg");
-    JetKeywordToken REIFIED_KEYWORD = JetKeywordToken.softKeyword("reified");
+    JetModifierKeywordToken OUT_KEYWORD       = JetModifierKeywordToken.softKeywordModifier("out");
+    JetModifierKeywordToken VARARG_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("vararg");
+    JetModifierKeywordToken REIFIED_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("reified");
 
     JetKeywordToken FINALLY_KEYWORD   = JetKeywordToken.softKeyword("finally");
-    JetKeywordToken FINAL_KEYWORD   = JetKeywordToken.softKeyword("final");
+    JetModifierKeywordToken FINAL_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("final");
 
     TokenSet KEYWORDS = TokenSet.create(PACKAGE_KEYWORD, AS_KEYWORD, TYPE_KEYWORD, CLASS_KEYWORD, TRAIT_KEYWORD,
                                         THIS_KEYWORD, SUPER_KEYWORD, VAL_KEYWORD, VAR_KEYWORD, FUN_KEYWORD, FOR_KEYWORD,
@@ -173,10 +173,14 @@ public interface JetTokens {
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD
     );
 
-    TokenSet MODIFIER_KEYWORDS = TokenSet.create(ABSTRACT_KEYWORD, ENUM_KEYWORD,
-                                                 OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD,
-                                                 PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD
-    );
+    JetModifierKeywordToken[] MODIFIER_KEYWORDS_ARRAY =
+            new JetModifierKeywordToken[] {
+                    ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
+                    PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
+                    REIFIED_KEYWORD
+            };
+
+    TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);
 
     TokenSet VISIBILITY_MODIFIERS = TokenSet.create(PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD);
 

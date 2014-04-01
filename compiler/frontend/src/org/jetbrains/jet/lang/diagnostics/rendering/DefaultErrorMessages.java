@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
@@ -58,10 +59,10 @@ public class DefaultErrorMessages {
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", NAME);
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(INCOMPATIBLE_MODIFIERS, "Incompatible modifiers: ''{0}''", new Renderer<Collection<JetKeywordToken>>() {
+        MAP.put(INCOMPATIBLE_MODIFIERS, "Incompatible modifiers: ''{0}''", new Renderer<Collection<JetModifierKeywordToken>>() {
             @NotNull
             @Override
-            public String render(@NotNull Collection<JetKeywordToken> tokens) {
+            public String render(@NotNull Collection<JetModifierKeywordToken> tokens) {
                 StringBuilder sb = new StringBuilder();
                 for (JetKeywordToken token : tokens) {
                     if (sb.length() != 0) {

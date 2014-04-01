@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
@@ -133,7 +134,7 @@ public class DeclarationsChecker {
         }
 
         for (ASTNode node : modifierList.getModifierNodes()) {
-            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetKeywordToken) node.getElementType()));
+            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetModifierKeywordToken) node.getElementType()));
         }
     }
 
@@ -505,7 +506,7 @@ public class DeclarationsChecker {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         JetModifierList getterModifierList = getter != null ? getter.getModifierList() : null;
         if (getterModifierList != null && getterDescriptor != null) {
-            Map<JetKeywordToken, ASTNode> nodes = ModifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
+            Map<JetModifierKeywordToken, ASTNode> nodes = ModifiersChecker.getNodesCorrespondingToModifiers(getterModifierList, Sets
                     .newHashSet(JetTokens.PUBLIC_KEYWORD, JetTokens.PROTECTED_KEYWORD, JetTokens.PRIVATE_KEYWORD,
                                 JetTokens.INTERNAL_KEYWORD));
             if (getterDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {

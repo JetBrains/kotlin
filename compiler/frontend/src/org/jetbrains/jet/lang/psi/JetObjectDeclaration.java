@@ -27,8 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetObjectStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -98,7 +97,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     @Override
-    public boolean hasModifier(JetToken modifier) {
+    public boolean hasModifier(JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
     }

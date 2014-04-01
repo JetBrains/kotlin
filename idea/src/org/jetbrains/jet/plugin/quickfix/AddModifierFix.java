@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
@@ -38,9 +38,9 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     private final JetKeywordToken modifier;
-    private final JetToken[] modifiersThanCanBeReplaced;
+    private final JetModifierKeywordToken[] modifiersThanCanBeReplaced;
 
-    private AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThanCanBeReplaced) {
+    private AddModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, @Nullable JetModifierKeywordToken[] modifiersThanCanBeReplaced) {
         super(element);
         this.modifier = modifier;
         this.modifiersThanCanBeReplaced = modifiersThanCanBeReplaced;
@@ -85,7 +85,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     }
 
     @NotNull
-    /*package*/ static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetToken[] modifiersThatCanBeReplaced, @NotNull Project project, boolean toBeginning) {
+    /*package*/ static JetModifierListOwner addModifier(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @Nullable JetModifierKeywordToken[] modifiersThatCanBeReplaced, @NotNull Project project, boolean toBeginning) {
         JetModifierListOwner newElement = (JetModifierListOwner) (element.copy());
         changeModifier(newElement, newElement.getModifierList(), newElement.getFirstChild(),
                        modifiersThatCanBeReplaced, project, toBeginning, JetPsiFactory.createModifierList(project, modifier));
@@ -94,7 +94,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
 
     public static void changeModifier(
             PsiElement element, @Nullable JetModifierList modifierList, @Nullable PsiElement insertAnchor,
-            JetToken[] modifiersThatCanBeReplaced, Project project, boolean toBeginning, JetModifierList listWithModifier
+            JetModifierKeywordToken[] modifiersThatCanBeReplaced, Project project, boolean toBeginning, JetModifierList listWithModifier
     ) {
         PsiElement whiteSpace = JetPsiFactory.createWhiteSpace(project);
         if (modifierList == null) {
@@ -116,7 +116,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
             if (modifiersThatCanBeReplaced != null) {
                 PsiElement toBeReplaced = null;
                 PsiElement toReplace = null;
-                for (JetToken modifierThatCanBeReplaced : modifiersThatCanBeReplaced) {
+                for (JetModifierKeywordToken modifierThatCanBeReplaced : modifiersThatCanBeReplaced) {
                     if (modifierList.hasModifier(modifierThatCanBeReplaced)) {
                         PsiElement modifierElement = modifierList.getModifierNode(modifierThatCanBeReplaced).getPsi();
                         assert modifierElement != null;
@@ -151,7 +151,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
     }
 
     @NotNull
-    /*package*/ static JetModifierListOwner addModifierWithDefaultReplacement(@NotNull PsiElement element, @NotNull JetKeywordToken modifier, @NotNull Project project, boolean toBeginning) {
+    /*package*/ static JetModifierListOwner addModifierWithDefaultReplacement(@NotNull PsiElement element, @NotNull JetModifierKeywordToken modifier, @NotNull Project project, boolean toBeginning) {
         return addModifier(element, modifier, MODIFIERS_THAT_CAN_BE_REPLACED.get(modifier), project, toBeginning);
     }
 
@@ -160,7 +160,7 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         return true;
     }
 
-    public static <T extends JetModifierListOwner> JetSingleIntentionActionFactory createFactory(final JetKeywordToken modifier, final Class<T> modifierOwnerClass) {
+    public static <T extends JetModifierListOwner> JetSingleIntentionActionFactory createFactory(final JetModifierKeywordToken modifier, final Class<T> modifierOwnerClass) {
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
@@ -171,14 +171,14 @@ public class AddModifierFix extends JetIntentionAction<JetModifierListOwner> {
         };
     }
 
-    public static JetSingleIntentionActionFactory createFactory(JetKeywordToken modifier) {
+    public static JetSingleIntentionActionFactory createFactory(JetModifierKeywordToken modifier) {
         return createFactory(modifier, JetModifierListOwner.class);
     }
 
-    private static Map<JetToken, JetToken[]> MODIFIERS_THAT_CAN_BE_REPLACED = new HashMap<JetToken, JetToken[]>();
+    private static Map<JetModifierKeywordToken, JetModifierKeywordToken[]> MODIFIERS_THAT_CAN_BE_REPLACED = new HashMap<JetModifierKeywordToken, JetModifierKeywordToken[]>();
     static {
-        MODIFIERS_THAT_CAN_BE_REPLACED.put(ABSTRACT_KEYWORD, new JetToken[]{OPEN_KEYWORD, FINAL_KEYWORD});
-        MODIFIERS_THAT_CAN_BE_REPLACED.put(OVERRIDE_KEYWORD, new JetToken[]{OPEN_KEYWORD});
-        MODIFIERS_THAT_CAN_BE_REPLACED.put(OPEN_KEYWORD, new JetToken[]{FINAL_KEYWORD});
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(ABSTRACT_KEYWORD, new JetModifierKeywordToken[]{OPEN_KEYWORD, FINAL_KEYWORD});
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(OVERRIDE_KEYWORD, new JetModifierKeywordToken[]{OPEN_KEYWORD});
+        MODIFIERS_THAT_CAN_BE_REPLACED.put(OPEN_KEYWORD, new JetModifierKeywordToken[]{FINAL_KEYWORD});
     }
 }

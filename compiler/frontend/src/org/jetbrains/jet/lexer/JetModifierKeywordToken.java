@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,34 +19,25 @@ package org.jetbrains.jet.lexer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-public class JetKeywordToken extends JetSingleValueToken {
+
+/* Modifier keyword is a keyword that can be used in annotation position as part of modifier list.*/
+public final class JetModifierKeywordToken extends JetKeywordToken {
 
     /**
      * Generate keyword (identifier that has a keyword meaning in all possible contexts)
      */
-    public static JetKeywordToken keyword(String value) {
-        return keyword(value, value);
-    }
-
-    public static JetKeywordToken keyword(String debugName, String value) {
-        return new JetKeywordToken(debugName, value, false);
+    public static JetModifierKeywordToken keywordModifier(String value) {
+        return new JetModifierKeywordToken(value, value, false);
     }
 
     /**
      * Generate soft keyword (identifier that has a keyword meaning only in some contexts)
      */
-    public static JetKeywordToken softKeyword(String value) {
-        return new JetKeywordToken(value, value, true);
+    public static JetModifierKeywordToken softKeywordModifier(String value) {
+        return new JetModifierKeywordToken(value, value, true);
     }
 
-    private final boolean myIsSoft;
-
-    protected JetKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft) {
-        super(debugName, value);
-        myIsSoft = isSoft;
-    }
-
-    public boolean isSoft() {
-        return myIsSoft;
+    private JetModifierKeywordToken(@NotNull @NonNls String debugName, @NotNull @NonNls String value, boolean isSoft) {
+        super(debugName, value, isSoft);
     }
 }
