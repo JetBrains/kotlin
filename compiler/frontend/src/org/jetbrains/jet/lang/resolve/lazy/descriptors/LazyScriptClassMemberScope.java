@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,22 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
     protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
         return KotlinPackage.plus(
                 super.computeExtraDescriptors(),
-                getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME))
+                KotlinPackage.plus(
+                    getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME)),
+                    getPropertiesForScriptParameters()
+                )
+        );
+    }
+
+    private Collection<VariableDescriptor> getPropertiesForScriptParameters() {
+        return KotlinPackage.flatMap(
+                getPrimaryConstructor().getValueParameters(),
+                new Function1<ValueParameterDescriptor, Iterable<? extends VariableDescriptor>>() {
+                    @Override
+                    public Iterable<? extends VariableDescriptor> invoke(ValueParameterDescriptor descriptor) {
+                        return getProperties(descriptor.getName());
+                    }
+                }
         );
     }
 
