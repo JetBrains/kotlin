@@ -16,9 +16,12 @@
 
 package org.jetbrains.jet.completion;
 
-import com.intellij.codeInsight.completion.CompletionTestCase;
+import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.lookup.LookupElement;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
+public abstract class JetCompletionMultiTestBase extends JetFixtureCompletionBaseTestCase {
 
     abstract String[] getFileNameList();
 
@@ -29,19 +32,20 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
      */
     protected void doFileTest(int completionLevel, String[] fileNameList) {
         try {
-            configureByFiles(null, fileNameList);
-            complete(completionLevel);
+            myFixture.configureByFiles(fileNameList);
+            myFixture.complete(completionType(), completionLevel);
 
-            String fileText = getFile().getText();
+            String fileText = myFixture.getFile().getText();
 
+            LookupElement[] lookupElements = myFixture.getLookupElements();
             ExpectedCompletionUtils.assertContainsRenderedItems(
-                    ExpectedCompletionUtils.itemsShouldExist(fileText), myItems, ExpectedCompletionUtils.isWithOrder(fileText));
+                    ExpectedCompletionUtils.itemsShouldExist(fileText), lookupElements, ExpectedCompletionUtils.isWithOrder(fileText));
 
-            ExpectedCompletionUtils.assertNotContainsRenderedItems(ExpectedCompletionUtils.itemsShouldAbsent(fileText), myItems);
+            ExpectedCompletionUtils.assertNotContainsRenderedItems(ExpectedCompletionUtils.itemsShouldAbsent(fileText), lookupElements);
 
             Integer itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText);
             if (itemsNumber != null) {
-                assertEquals(itemsNumber.intValue(), myItems.length);
+                assertEquals(itemsNumber.intValue(), lookupElements.length);
             }
         } catch (Exception e) {
             throw new AssertionError(e);
@@ -54,5 +58,16 @@ public abstract class JetCompletionMultiTestBase extends CompletionTestCase {
 
     protected void doFileTest() {
         doFileTest(0, getFileNameList());
+    }
+
+    @Override
+    public TargetPlatform getPlatform() {
+        return TargetPlatform.JVM;
+    }
+
+    @NotNull
+    @Override
+    protected CompletionType completionType() {
+        return CompletionType.BASIC;
     }
 }
