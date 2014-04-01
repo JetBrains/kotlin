@@ -285,6 +285,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("complexMultiInheritance.kt")
+        public void testComplexMultiInheritance() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
+        }
+        
         @TestMetadata("delegation.kt")
         public void testDelegation() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/delegation.kt");

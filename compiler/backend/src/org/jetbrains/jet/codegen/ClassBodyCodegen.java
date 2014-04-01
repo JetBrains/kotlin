@@ -18,8 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -29,13 +27,15 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.jetbrains.org.objectweb.asm.Opcodes.RETURN;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
@@ -104,7 +104,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
                 if (memberDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor member = (FunctionDescriptor) memberDescriptor;
                     if (member.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                        functionCodegen.generateBridgesForFakeOverride(member);
+                        functionCodegen.generateBridges(member);
                     }
                 }
             }

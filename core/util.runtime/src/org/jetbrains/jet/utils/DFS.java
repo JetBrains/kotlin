@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.utils;
 
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -87,6 +88,7 @@ public class DFS {
     }
 
     public interface Neighbors<N> {
+        @KotlinSignature("fun getNeighbors(current: N?): Iterable<N>")
         @NotNull
         Iterable<N> getNeighbors(N current);
     }
@@ -123,9 +125,11 @@ public class DFS {
     }
 
     public static abstract class NodeHandlerWithListResult<N, R> extends AbstractNodeHandler<N, List<R>> {
+        @NotNull
         protected final LinkedList<R> result = new LinkedList<R>();
 
         @Override
+        @NotNull
         public List<R> result() {
             return result;
         }
