@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,13 +78,14 @@ public class KotlinRuntimeLibraryUtil {
         ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
         for (Integer version : badAbiVersions) {
-            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(id, version, ProjectScope.getLibrariesScope(project));
+            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
+                    id, version, ProjectScope.getLibrariesScope(project));
 
             for (VirtualFile indexedFile : indexedFiles) {
                 VirtualFile libraryRoot = fileIndex.getClassRootForFile(indexedFile);
                 assert libraryRoot != null : "Only library roots were requested, " +
                                              "and only class files should be indexed with KotlinAbiVersionIndex key. " +
-                                             "File: " + libraryRoot;
+                                             "File: " + indexedFile.getPath();
                 badRoots.add(getLocalFile(libraryRoot));
             }
         }
