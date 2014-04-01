@@ -6,4 +6,4 @@ class Some {
   fun testFunction2() : Int = 12
 }
 
-fun someWithLiteral(body: (Some) -> Unit) = 12
+fun someWithLiteral(body: (Some) -> Unit): Int = 12
