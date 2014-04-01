@@ -21,6 +21,8 @@ import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
@@ -197,5 +199,20 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     public void setOuterDataFlowInfo(@NotNull DataFlowInfo outerDataFlowInfo) {
         this.outerDataFlowInfo = outerDataFlowInfo;
+    }
+
+    @NotNull
+    public Collection<ClassDescriptorWithResolutionScopes> getAllClasses() {
+        // SCRIPT: all classes are declared classes + script classes
+        Collection<ClassDescriptorWithResolutionScopes> scriptClasses = KotlinPackage.map(
+                getScripts().values(),
+                new Function1<ScriptDescriptor, ClassDescriptorWithResolutionScopes>() {
+                    @Override
+                    public ClassDescriptorWithResolutionScopes invoke(ScriptDescriptor scriptDescriptor) {
+                        return (ClassDescriptorWithResolutionScopes) scriptDescriptor.getClassDescriptor();
+                    }
+                }
+        );
+        return KotlinPackage.plus(getClasses().values(), scriptClasses);
     }
 }

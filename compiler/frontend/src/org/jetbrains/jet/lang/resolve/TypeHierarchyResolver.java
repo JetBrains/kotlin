@@ -218,12 +218,12 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private List<MutableClassDescriptorLite> topologicallySortClassesAndObjects(@NotNull TopDownAnalysisContext c) {
+    private static List<MutableClassDescriptorLite> topologicallySortClassesAndObjects(@NotNull TopDownAnalysisContext c) {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
         //noinspection unchecked
         return DFS.topologicalOrder(
-                (Iterable) c.getClasses().values(),
+                (Iterable) c.getAllClasses(),
                 new DFS.Neighbors<MutableClassDescriptorLite>() {
                     @NotNull
                     @Override
