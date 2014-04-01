@@ -57,7 +57,10 @@ public final class TipsManager {
         if (receiverExpression != null && inPositionForCompletionWithReceiver) {
             // Process as call expression
             JetScope resolutionScope = context.get(BindingContext.RESOLUTION_SCOPE, expression);
-            JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            JetType expressionType = context.get(BindingContext.DOTTED_EXPRESSION_TYPE, receiverExpression);
+            if (expressionType == null) {
+                expressionType = context.get(BindingContext.EXPRESSION_TYPE, receiverExpression);
+            }
 
             if (expressionType != null && resolutionScope != null && !expressionType.isError()) {
                 if (!(expressionType instanceof PackageType)) {

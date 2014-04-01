@@ -32,10 +32,10 @@ import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
+import org.jetbrains.jet.lang.resolve.calls.model.DottedCallInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -450,6 +450,52 @@ public class CallExpressionResolver {
         if (receiverType == null) receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
 
         context = context.replaceDataFlowInfo(receiverTypeInfo.getDataFlowInfo());
+
+        if (PsiTreeUtil.getParentOfType(expression, JetAnnotationEntry.class) == null) {
+            TemporaryTraceAndCache temporaryForDotOperation = TemporaryTraceAndCache.create(
+                    context, "trace to check dot operation", expression
+            );
+
+            JetCallExpression fakeOperation = (JetCallExpression) JetPsiFactory.createExpression(expression.getProject(), "dot()");
+            Call dotCall = CallMaker.makeCall(
+                    fakeOperation,
+                    new ExpressionReceiver(receiverExpression, receiverType),
+                    null,
+                    fakeOperation.getCalleeExpression(),
+                    Collections.<ValueArgument>emptyList()
+            );
+            OverloadResolutionResults<FunctionDescriptor> dotOperationDescriptors =
+                    expressionTypingServices.getCallResolver().resolveCallWithGivenName(
+                            context.replaceTraceAndCache(temporaryForDotOperation),
+                            dotCall,
+                            fakeOperation, Name.identifier("dot")
+                    );
+            JetType dotOperationType =
+                    OverloadResolutionResultsUtil.getResultingType(dotOperationDescriptors, context.contextDependency);
+
+            if (dotOperationDescriptors.isSingleResult() && dotOperationType != null) {
+                ResolvedCall<FunctionDescriptor> resolvedDotCall = dotOperationDescriptors.getResultingCall();
+                ((ResolvedCallWithTrace) resolvedDotCall).markCallAsCompleted();
+
+                DottedCallInfo dottedCallInfo = new DottedCallInfo(dotCall, resolvedDotCall);
+
+                context.trace.record(DOTTED_EXPRESSION_TYPE, receiverExpression, dotOperationType);
+                context.trace.record(DOTTED_CALL_INFO, selectorExpression, dottedCallInfo);
+                context.trace.record(RESOLVED_CALL, dotCall.getCalleeExpression(), resolvedDotCall);
+
+                if (!KotlinBuiltIns.getInstance().isUnit(dotOperationType)) {
+                    receiverType = dotOperationType;
+                    context = context.replaceDataFlowInfo(resolvedDotCall.getDataFlowInfoForArguments().getResultInfo());
+                }
+            }
+            else if (dotOperationDescriptors.isAmbiguity()) {
+                context.trace.report(
+                        OVERLOAD_RESOLUTION_AMBIGUITY.on(
+                                expression.getOperationTokenNode().getPsi(), dotOperationDescriptors.getResultingCalls()
+                        )
+                );
+            }
+        }
 
         JetTypeInfo selectorReturnTypeInfo = getSelectorReturnTypeInfo(
                 new ExpressionReceiver(receiverExpression, receiverType),

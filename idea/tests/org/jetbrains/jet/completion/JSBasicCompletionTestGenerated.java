@@ -309,6 +309,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest("idea/testData/completion/basic/common/InTypeAnnotation.kt");
         }
         
+        @TestMetadata("javaDotNet.kt")
+        public void testJavaDotNet() throws Exception {
+            doTest("idea/testData/completion/basic/common/javaDotNet.kt");
+        }
+        
         @TestMetadata("JavaPackage.kt")
         public void testJavaPackage() throws Exception {
             doTest("idea/testData/completion/basic/common/JavaPackage.kt");
@@ -372,6 +377,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("ObjectRedeclaration2.kt")
         public void testObjectRedeclaration2() throws Exception {
             doTest("idea/testData/completion/basic/common/ObjectRedeclaration2.kt");
+        }
+        
+        @TestMetadata("onlyDotSurvives.kt")
+        public void testOnlyDotSurvives() throws Exception {
+            doTest("idea/testData/completion/basic/common/onlyDotSurvives.kt");
         }
         
         @TestMetadata("OnlyScopedClassesWithoutExplicit.kt")

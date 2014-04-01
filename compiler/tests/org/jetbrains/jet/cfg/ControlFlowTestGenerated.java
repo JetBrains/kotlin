@@ -86,6 +86,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/basic/EmptyFunction.kt");
         }
         
+        @TestMetadata("humbleSimplicityOfDots.kt")
+        public void testHumbleSimplicityOfDots() throws Exception {
+            doTest("compiler/testData/cfg/basic/humbleSimplicityOfDots.kt");
+        }
+        
         @TestMetadata("ShortFunction.kt")
         public void testShortFunction() throws Exception {
             doTest("compiler/testData/cfg/basic/ShortFunction.kt");
