@@ -30,7 +30,6 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 // SCRIPT: Script declaration descriptor
@@ -48,7 +47,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
                                                                                                      KotlinBuiltIns.getInstance().getAnyType(),
                                                                                                      new ScriptReceiver(this));
 
-    private final ClassDescriptorImpl classDescriptor;
+    private final MutableClassDescriptor classDescriptor;
 
     private final WritableScopeImpl classScope;
     private WritableScope scopeForBodyResolution;
@@ -62,11 +61,16 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         super(containingDeclaration, Annotations.EMPTY, NAME);
         this.priority = priority;
 
-        classDescriptor = new ClassDescriptorImpl(containingDeclaration, className, Modality.FINAL,
-                                                  Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
-        classScope = new WritableScopeImpl(scriptScope, containingDeclaration, RedeclarationHandler.DO_NOTHING, "script members");
+        classDescriptor = new MutableClassDescriptor(containingDeclaration, scriptScope, ClassKind.CLASS, false, className);
+        classDescriptor.addSupertype(KotlinBuiltIns.getInstance().getAnyType());
+        classDescriptor.setModality(Modality.FINAL);
+        classDescriptor.setVisibility(Visibilities.PUBLIC);
+        classDescriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
+
+        classScope = new WritableScopeImpl(JetScope.EMPTY, classDescriptor, RedeclarationHandler.DO_NOTHING, "script members");
         classScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        classDescriptor.initialize(classScope, new HashSet<ConstructorDescriptor>(), null);
+        classDescriptor.setScopeForMemberLookup(classScope);
+        classDescriptor.createTypeConstructor();
     }
 
     public void initialize(
