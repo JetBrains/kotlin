@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -26,6 +27,7 @@ import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
+import java.util.Collection;
 import java.util.Set;
 
 // SCRIPT: Members of a script class
@@ -37,6 +39,15 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
             @NotNull BindingTrace trace
     ) {
         super(resolveSession, declarationProvider, thisClass, trace);
+    }
+
+    @NotNull
+    @Override
+    protected Collection<DeclarationDescriptor> computeExtraDescriptors() {
+        return KotlinPackage.plus(
+                super.computeExtraDescriptors(),
+                getProperties(Name.identifier(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME))
+        );
     }
 
     @Override
