@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetKeywordToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetToken;
 
 import java.util.ArrayList;
@@ -69,12 +70,12 @@ public class JetModifierList extends JetElementImpl {
         return modifierNodes;
     }
 
-    public boolean hasModifier(JetToken token) {
+    public boolean hasModifier(JetModifierKeywordToken token) {
         return getModifierNode(token) != null;
     }
 
     @Nullable
-    public PsiElement getModifier(JetToken token) {
+    public PsiElement getModifier(JetModifierKeywordToken token) {
         return findChildByType(token);
     }
 

@@ -35,7 +35,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
@@ -148,7 +148,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
         JetModifierList modifierList = member.getModifierList();
         if (modifierList == null) return "";
         for (IElementType modifierType : JetTokens.VISIBILITY_MODIFIERS.getTypes()) {
-            PsiElement modifier = modifierList.getModifier((JetToken) modifierType);
+            PsiElement modifier = modifierList.getModifier((JetModifierKeywordToken) modifierType);
             if (modifier != null) {
                 return modifierType == JetTokens.PROTECTED_KEYWORD ? "" : modifier.getText() + " ";
             }

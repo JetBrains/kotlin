@@ -18,11 +18,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 public interface JetModifierListOwner extends PsiElement, JetAnnotated {
     @Nullable
     JetModifierList getModifierList();
 
-    boolean hasModifier(JetToken modifier);
+    boolean hasModifier(JetModifierKeywordToken modifier);
 }

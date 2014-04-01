@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -38,7 +38,7 @@ public class JetTypeProjection extends JetElementImpl implements JetModifierList
     }
 
     @Override
-    public boolean hasModifier(JetToken modifier) {
+    public boolean hasModifier(JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
         return modifierList != null && modifierList.hasModifier(modifier);
     }

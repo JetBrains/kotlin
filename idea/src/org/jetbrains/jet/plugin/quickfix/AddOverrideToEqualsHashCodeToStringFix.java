@@ -30,7 +30,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
@@ -40,7 +40,7 @@ import java.util.List;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<PsiElement> {
-    private static final JetToken[] MODIFIERS_TO_REPLACE = {PUBLIC_KEYWORD, OPEN_KEYWORD};
+    private static final JetModifierKeywordToken[] MODIFIERS_TO_REPLACE = {PUBLIC_KEYWORD, OPEN_KEYWORD};
 
     public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {
         super(element);

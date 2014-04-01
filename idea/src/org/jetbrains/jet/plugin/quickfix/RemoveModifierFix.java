@@ -29,15 +29,15 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lexer.JetKeywordToken;
-import org.jetbrains.jet.lexer.JetToken;
+import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetBundle;
 
 public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> {
-    private final JetKeywordToken modifier;
+    private final JetModifierKeywordToken modifier;
     private final boolean isRedundant;
 
-    public RemoveModifierFix(@NotNull JetModifierListOwner element, @NotNull JetKeywordToken modifier, boolean isRedundant) {
+    public RemoveModifierFix(@NotNull JetModifierListOwner element, @NotNull JetModifierKeywordToken modifier, boolean isRedundant) {
         super(element);
         this.modifier = modifier;
         this.isRedundant = isRedundant;
@@ -60,7 +60,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
     }
 
     @NotNull
-    private static <T extends JetModifierListOwner> T removeModifier(T element, JetToken modifier) {
+    private static <T extends JetModifierListOwner> T removeModifier(T element, JetModifierKeywordToken modifier) {
         JetModifierList modifierList = element.getModifierList();
         assert modifierList != null;
         removeModifierFromList(modifierList, modifier);
@@ -74,7 +74,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
     }
 
     @NotNull
-    private static JetModifierList removeModifierFromList(@NotNull JetModifierList modifierList, JetToken modifier) {
+    private static JetModifierList removeModifierFromList(@NotNull JetModifierList modifierList, JetModifierKeywordToken modifier) {
         assert modifierList.hasModifier(modifier);
         ASTNode modifierNode = modifierList.getModifierNode(modifier);
         PsiElement whiteSpace = modifierNode.getPsi().getNextSibling();
@@ -99,11 +99,11 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
     }
 
 
-    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(JetKeywordToken modifier) {
+    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(JetModifierKeywordToken modifier) {
         return createRemoveModifierFromListOwnerFactory(modifier, false);
     }
 
-    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetKeywordToken modifier, final boolean isRedundant) {
+    public static JetSingleIntentionActionFactory createRemoveModifierFromListOwnerFactory(final JetModifierKeywordToken modifier, final boolean isRedundant) {
         return new JetSingleIntentionActionFactory() {
             @Nullable
             @Override
@@ -128,8 +128,8 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 if (modifierListOwner == null) return null;
                 PsiElement psiElement = diagnostic.getPsiElement();
                 IElementType elementType = psiElement.getNode().getElementType();
-                if (!(elementType instanceof JetKeywordToken)) return null;
-                JetKeywordToken modifier = (JetKeywordToken) elementType;
+                if (!(elementType instanceof JetModifierKeywordToken)) return null;
+                JetModifierKeywordToken modifier = (JetModifierKeywordToken) elementType;
                 return new RemoveModifierFix(modifierListOwner, modifier, isRedundant);
             }
         };
@@ -145,8 +145,8 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 ASTNode projectionAstNode = projection.getProjectionNode();
                 if (projectionAstNode == null) return null;
                 IElementType elementType = projectionAstNode.getElementType();
-                if (!(elementType instanceof JetKeywordToken)) return null;
-                JetKeywordToken variance = (JetKeywordToken) elementType;
+                if (!(elementType instanceof JetModifierKeywordToken)) return null;
+                JetModifierKeywordToken variance = (JetModifierKeywordToken) elementType;
                 return new RemoveModifierFix(projection, variance, isRedundant);
             }
         };
@@ -163,7 +163,7 @@ public class RemoveModifierFix extends JetIntentionAction<JetModifierListOwner> 
                 if (!(psiElement instanceof JetTypeParameter)) return null;
                 JetTypeParameter parameter = (JetTypeParameter) psiElement;
                 Variance variance = parameter.getVariance();
-                JetKeywordToken modifier;
+                JetModifierKeywordToken modifier;
                 switch (variance) {
                     case IN_VARIANCE:
                         modifier = JetTokens.IN_KEYWORD;
