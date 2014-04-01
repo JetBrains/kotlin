@@ -18,6 +18,8 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.Visibilities;
+import org.jetbrains.jet.lang.descriptors.Visibility;
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
@@ -45,5 +47,11 @@ public class LazyScriptClassDescriptor extends LazyClassDescriptor {
                 this,
                 TemporaryBindingTrace.create(resolveSession.getTrace(), "A trace for script class, needed to avoid rewrites on members")
         );
+    }
+
+    @NotNull
+    @Override
+    public Visibility getVisibility() {
+        return Visibilities.PUBLIC;
     }
 }
