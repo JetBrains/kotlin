@@ -27,34 +27,31 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class JetCompletionMultiTestBase extends JetFixtureCompletionBaseTestCase {
+public abstract class AbstractMultiFileJvmBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
 
-    public static final String JAVA_FILE = "JAVA_FILE:";
-
-    protected void doTest() {
-        doTest(getTestName(false));
-    }
+    private static final String JAVA_FILE = "JAVA_FILE:";
 
     @Override
     protected void setUpFixture(@NotNull String testPath) {
-        myFixture.configureByFiles(getFileNameList(testPath));
+        String[] kotlinTestFiles = getKotlinFiles(testPath);
+        myFixture.configureByFiles(kotlinTestFiles);
         PsiFile testFile = myFixture.getFile();
         String text = testFile.getText();
         String javaFilePath = InTextDirectivesUtils.findStringWithPrefixes(text, JAVA_FILE);
         if (javaFilePath != null) {
             myFixture.configureByFile(javaFilePath);
-            myFixture.configureByFiles(getFileNameList(testPath));
+            myFixture.configureByFiles(kotlinTestFiles);
         }
     }
 
     @NotNull
-    private String[] getFileNameList(@NotNull String testPath) {
-        String baseFile = testPath + "-1.kt";
-        String secondaryFile = testPath + "-2.kt";
+    private String[] getKotlinFiles(@NotNull String testPath) {
+        String testFileName = testPath.substring(testPath.lastIndexOf("/") + 1, testPath.length());
+        String secondaryFile = testFileName.replace(".kt", ".dependency.kt");
         if (new File(getTestDataPath() + "/" + secondaryFile).exists()) {
-            return new String[] {baseFile, secondaryFile};
+            return new String[] {testFileName, secondaryFile};
         }
-        return new String[] {baseFile};
+        return new String[] {testFileName};
     }
 
     @Override

@@ -103,6 +103,7 @@ import org.jetbrains.jet.plugin.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
+import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -548,6 +549,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
             model("stubs", extension = "kt")
+        }
+
+        testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
+            model("completion/basic/multifile", pattern = """^([^\.]+)\.kt$""")
         }
     }
 
