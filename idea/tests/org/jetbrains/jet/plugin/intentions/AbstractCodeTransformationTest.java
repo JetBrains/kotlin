@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
+import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -240,7 +241,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
                 intentionAction.invoke(getProject(), getEditor(), getFile());
                 // Don't bother checking if it should have failed.
                 if (shouldFailString == null) {
-                    checkResultByFile(path + ".after");
+                    String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(path + ".after");
+                    checkResultByFile(canonicalPathToExpectedFile);
                 }
             }
             assertNull("Expected test to fail.", shouldFailString);
