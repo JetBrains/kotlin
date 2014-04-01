@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
+import org.jetbrains.jet.lang.resolve.calls.model.DottedCallInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -783,6 +784,11 @@ public class JetControlFlowProcessor {
             }
 
             generateInstructions(selectorExpression, NOT_IN_CONDITION);
+
+            DottedCallInfo dottedCallInfo = trace.get(BindingContext.DOTTED_CALL_INFO, selectorExpression);
+            if (dottedCallInfo != null) {
+                generateInstructions((JetCallExpression) dottedCallInfo.getCall().getCallElement(), NOT_IN_CONDITION);
+            }
 
             // receiver was generated for resolvedCall
             JetExpression calleeExpression = JetPsiUtil.getCalleeExpressionIfAny(selectorExpression);

@@ -1,0 +1,124 @@
+== dot ==
+fun Int.dot(): Int {
+    return this + 1
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ return this + 1 })
+    mark(this + 1)
+    r(this)
+    r(1)
+    call(+, plus)
+    ret(*) L1
+L1:
+  1 <END>                        NEXT:[<SINK>]
+error:
+    <ERROR>                      PREV:[]
+sink:
+    <SINK>                       PREV:[<ERROR>, <END>]
+=====================
+== dot ==
+fun String?.dot(): String = this ?: ""
+---------------------
+L0:
+  1 <START>
+    r(this)
+    jt(L2)      NEXT:[mark(""), <END>]
+    mark("")
+    r("")
+L1:
+L2:
+    <END>       NEXT:[<SINK>]             PREV:[jt(L2), r("")]
+error:
+    <ERROR>     PREV:[]
+sink:
+    <SINK>      PREV:[<ERROR>, <END>]
+=====================
+== i ==
+fun i(): Int? = null
+---------------------
+L0:
+  1 <START>
+    r(null)
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== s ==
+fun s(): String? = null
+---------------------
+L0:
+  1 <START>
+    r(null)
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== f ==
+fun f() : Unit {
+    2.toLong()
+    3.equals(4)
+    i()?.toLong()
+
+    "test".length
+    s().length()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ 2.toLong() 3.equals(4) i()?.toLong() "test".length s().length() })
+    mark(2.toLong())
+    mark(toLong())
+    r(2)
+    call(toLong, toLong)
+    mark(dot())
+    r(2)
+    call(dot, dot)
+    mark(3.equals(4))
+    mark(equals(4))
+    r(3)
+    r(4)
+    call(equals, equals)
+    mark(dot())
+    r(3)
+    call(dot, dot)
+    mark(i()?.toLong())
+    mark(toLong())
+    mark(i())
+    call(i, i)
+    call(toLong, toLong)
+    mark(dot())
+    mark(i())
+    call(i, i)
+    call(dot, dot)
+    mark("test".length)
+    mark("test")
+    r("test")
+    r(length)
+    mark(dot())
+    mark("test")
+    r("test")
+    call(dot, dot)
+    mark(s().length())
+    mark(length())
+    mark(s())
+    call(s, s)
+    r(length)
+    mark(dot())
+    mark(s())
+    call(s, s)
+    call(dot, dot)
+L1:
+  1 <END>                                                                        NEXT:[<SINK>]
+error:
+    <ERROR>                                                                      PREV:[]
+sink:
+    <SINK>                                                                       PREV:[<ERROR>, <END>]
+=====================

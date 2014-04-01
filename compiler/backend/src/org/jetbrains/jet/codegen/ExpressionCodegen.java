@@ -1902,6 +1902,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         JetExpression callee = expression.getCalleeExpression();
         assert callee != null;
 
+        DottedCallInfo dottedCallInfo = bindingContext.get(BindingContext.DOTTED_CALL_INFO, expression);
+        if (dottedCallInfo != null) {
+            ResolvedCall<? extends FunctionDescriptor> resolvedDotCall = dottedCallInfo.getResolvedCall();
+            FunctionDescriptor dotFunDescriptor = accessibleFunctionDescriptor(resolvedDotCall.getResultingDescriptor());
+
+            JetType dotType = dotFunDescriptor.getReturnType();
+            assert dotType != null : "can't resolve type of dot operation: " + dotFunDescriptor;
+
+            StackValue newReceiver = invokeFunction(dottedCallInfo.getCall(), receiver, resolvedDotCall);
+            if (!KotlinBuiltIns.getInstance().isUnit(dotType)) {
+                receiver = newReceiver;
+            }
+        }
+
         ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, callee);
         if (resolvedCall == null) {
             throw new CompilationException("Cannot resolve: " + callee.getText(), null, expression);
