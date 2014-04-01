@@ -46,13 +46,6 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         finish()
     }
 
-    // Workaround for KT-4617 - Start
-    override fun resume(context: SuspendContextImpl?) = super.resume(context)
-    override fun printContext(context: StackFrameContext?) = super.printContext(context)
-    override fun printFrameProxy(frameProxy: StackFrameProxyImpl?) = super.printFrameProxy(frameProxy)
-    override fun getDebugProcess() = super.getDebugProcess()
-    // Workaround for KT-4617 - End
-
     private val dp: DebugProcessImpl
         get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
 
