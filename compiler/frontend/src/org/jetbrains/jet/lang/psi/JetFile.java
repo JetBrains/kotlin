@@ -35,6 +35,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,6 +71,10 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     @NotNull
     @Override
     public List<JetDeclaration> getDeclarations() {
+        PsiJetFileStub stub = getStub();
+        if (stub != null) {
+            return Arrays.asList(stub.getChildrenByType(JetStubElementTypes.DECLARATION_TYPES, JetDeclaration.ARRAY_FACTORY));
+        }
         return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDeclaration.class);
     }
 
