@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
 import org.jetbrains.jet.lang.resolve.ScriptParameterResolver;
+import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
@@ -94,6 +95,7 @@ public class InjectorForTopDownAnalyzerForJs {
     private final JetImportsFactory jetImportsFactory;
     private final ScriptHeaderResolver scriptHeaderResolver;
     private final ScriptParameterResolver scriptParameterResolver;
+    private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
@@ -138,12 +140,14 @@ public class InjectorForTopDownAnalyzerForJs {
         this.jetImportsFactory = new JetImportsFactory();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
         this.scriptParameterResolver = new ScriptParameterResolver();
+        this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
 
         this.topDownAnalyzer.setBodyResolver(bodyResolver);
         this.topDownAnalyzer.setDeclarationResolver(declarationResolver);
+        this.topDownAnalyzer.setLazyTopDownAnalyzer(lazyTopDownAnalyzer);
         this.topDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         this.topDownAnalyzer.setOverloadResolver(overloadResolver);
         this.topDownAnalyzer.setOverrideResolver(overrideResolver);
@@ -238,6 +242,13 @@ public class InjectorForTopDownAnalyzerForJs {
         scriptHeaderResolver.setTrace(bindingTrace);
 
         scriptParameterResolver.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
+
+        lazyTopDownAnalyzer.setBodyResolver(bodyResolver);
+        lazyTopDownAnalyzer.setDeclarationResolver(declarationResolver);
+        lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
+        lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
+        lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
+        lazyTopDownAnalyzer.setTrace(bindingTrace);
 
         overloadResolver.setTrace(bindingTrace);
 
