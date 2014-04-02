@@ -5,8 +5,16 @@ import kotlin.test.*
 import java.util.*
 import org.junit.Test as test
 
-// TODO: Write test generator for testing `Map` implementations.
-class MapJsTest {
+class ComplexMapJsTest : MapJsTest() {
+    // hashMapOf returns ComlpexHashMap because it is Generic
+    override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf<String, Int>()
+}
+
+class PrimitiveMapJsTest : MapJsTest() {
+    override fun emptyMutableMap(): MutableMap<String, Int> = HashMap<String, Int>()
+}
+
+abstract class MapJsTest {
     //TODO: replace `array(...).toList()` to `listOf(...)`
     val KEYS = array("zero", "one", "two", "three").toList()
     val VALUES = array(0, 1, 2, 3).toList()
@@ -305,13 +313,12 @@ class MapJsTest {
     // Helpers
 
     fun emptyMap(): Map<String, Int> = HashMap<String, Int>()
-    fun emptyMutableMap(): MutableMap<String, Int> = HashMap<String, Int>()
+    abstract fun emptyMutableMap(): MutableMap<String, Int>
 
-    fun createTestMap(): Map<String, Int> = createTestHashMap()
-    fun createTestMutableMap(): MutableMap<String, Int> = createTestHashMap()
+    fun createTestMap(): Map<String, Int> = createTestMutableMap()
 
-    fun createTestHashMap(): HashMap<String, Int> {
-        val map = HashMap<String, Int>()
+    fun createTestMutableMap(): MutableMap<String, Int> {
+        val map = emptyMutableMap()
         for (i in KEYS.indices) {
             map.put(KEYS[i], VALUES[i])
         }
