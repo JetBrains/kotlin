@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.descriptors.annotations;
 
-import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -28,9 +27,16 @@ import java.util.Collections;
 import java.util.Map;
 
 public class AnnotationDescriptorImpl implements AnnotationDescriptor {
-    private JetType annotationType;
-    private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments = Maps.newHashMap();
-    private boolean valueArgumentsResolved = false;
+    private final JetType annotationType;
+    private final Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments;
+
+    public AnnotationDescriptorImpl(
+            @NotNull JetType annotationType,
+            @NotNull Map<ValueParameterDescriptor, CompileTimeConstant<?>> valueArguments
+    ) {
+        this.annotationType = annotationType;
+        this.valueArguments = Collections.unmodifiableMap(valueArguments);
+    }
 
     @Override
     @NotNull
@@ -47,26 +53,7 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
     @Override
     @NotNull
     public Map<ValueParameterDescriptor, CompileTimeConstant<?>> getAllValueArguments() {
-        // TODO: this assertion does not hold now, but this whole class will be gone before long, so I'm not fixing it
-        //assert valueArgumentsResolved : "Value arguments are not resolved yet for [" + getType() + "]";
-        return Collections.unmodifiableMap(valueArguments);
-    }
-
-    public void setAnnotationType(@NotNull JetType annotationType) {
-        this.annotationType = annotationType;
-    }
-
-    public void setValueArgument(@NotNull ValueParameterDescriptor name, @NotNull CompileTimeConstant<?> value) {
-        assert !valueArgumentsResolved : "Value arguments are already resolved for " + this;
-        valueArguments.put(name, value);
-    }
-
-    public void markValueArgumentsResolved() {
-        this.valueArgumentsResolved = true;
-    }
-
-    public boolean areValueArgumentsResolved() {
-        return valueArgumentsResolved;
+        return valueArguments;
     }
 
     @Override
