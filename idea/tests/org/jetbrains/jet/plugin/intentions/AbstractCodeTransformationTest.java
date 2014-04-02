@@ -19,9 +19,12 @@ package org.jetbrains.jet.plugin.intentions;
 import com.intellij.codeInsight.editorActions.JoinLinesHandler;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.PathUtil;
+import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -29,6 +32,7 @@ import org.jetbrains.jet.plugin.DirectiveBasedActionUtils;
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.*;
 import org.jetbrains.jet.plugin.intentions.declarations.ConvertMemberToExtension;
 import org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 import org.junit.Assert;
 
 import java.io.File;
@@ -218,9 +222,26 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
-        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
-
         String fileText = FileUtil.loadFile(new File(path), true);
+        boolean isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null;
+
+        try {
+            if (isWithRuntime) {
+                ConfigLibraryUtil.configureKotlinRuntime(getModule(), getFullJavaJDK());
+            }
+
+            DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
+
+            doTestFor(path, intentionAction, fileText);
+        }
+        finally {
+            if (isWithRuntime) {
+                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getProjectJDK());
+            }
+        }
+    }
+
+    private void doTestFor(String path, IntentionAction intentionAction, String fileText) {
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
@@ -246,7 +267,8 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
                 }
             }
             assertNull("Expected test to fail.", shouldFailString);
-        } catch (IntentionTestException e) {
+        }
+        catch (IntentionTestException e) {
             assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
         }
     }
@@ -261,5 +283,9 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     @Override
     protected String getTestDataPath() {
         return "";
+    }
+
+    protected static Sdk getFullJavaJDK() {
+        return JavaSdk.getInstance().createJdk("JDK", SystemUtils.getJavaHome().getAbsolutePath());
     }
 }
