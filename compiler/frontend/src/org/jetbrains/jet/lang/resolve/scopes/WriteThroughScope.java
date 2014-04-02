@@ -56,8 +56,6 @@ public class WriteThroughScope extends WritableScopeWithImports {
     @Override
     @NotNull
     public DeclarationDescriptor getContainingDeclaration() {
-        checkMayRead();
-
         return writableWorker.getContainingDeclaration();
     }
 
