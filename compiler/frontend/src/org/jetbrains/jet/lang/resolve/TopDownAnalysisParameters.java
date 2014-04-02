@@ -46,6 +46,15 @@ public class TopDownAnalysisParameters implements GlobalContext {
     }
 
     @NotNull
+    public static TopDownAnalysisParameters createForLocalDeclarations(
+            @NotNull StorageManager storageManager,
+            @NotNull ExceptionTracker exceptionTracker,
+            @NotNull Predicate<PsiFile> analyzeCompletely
+    ) {
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, false, true, false);
+    }
+
+    @NotNull
     private final StorageManager storageManager;
     @NotNull
     private final ExceptionTracker exceptionTracker;

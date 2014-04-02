@@ -129,7 +129,7 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis() && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
             final ResolveSession resolveSession = new InjectorForLazyResolve(
                     project,
                     new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
@@ -356,12 +356,10 @@ public class TopDownAnalyzer {
                                                                          PlatformToKotlinClassMap.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
-                TopDownAnalysisParameters.create(
+                TopDownAnalysisParameters.createForLocalDeclarations(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),
-                        Predicates.equalTo(object.getContainingFile()),
-                        false,
-                        true
+                        Predicates.equalTo(object.getContainingFile())
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(

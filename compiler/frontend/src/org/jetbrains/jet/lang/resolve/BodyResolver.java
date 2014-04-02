@@ -590,7 +590,7 @@ public class BodyResolver {
             JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
-            if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis() || c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+            if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
                 resolveAnnotationArguments(declaringScope, declaration);
             }
             resolveFunctionBody(c, trace, declaration, descriptor, declaringScope);

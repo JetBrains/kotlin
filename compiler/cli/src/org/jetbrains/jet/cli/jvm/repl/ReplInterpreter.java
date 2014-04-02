@@ -103,12 +103,10 @@ public class ReplInterpreter {
         Project project = jetCoreEnvironment.getProject();
         trace = new BindingTraceContext();
         module = AnalyzerFacadeForJVM.createJavaModule("<repl>");
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.createForLocalDeclarations(
                 new LockBasedStorageManager(),
                 new ExceptionTracker(), // dummy
-                Predicates.<PsiFile>alwaysTrue(),
-                false,
-                true
+                Predicates.<PsiFile>alwaysTrue()
         );
         injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, MemberFilter.ALWAYS_TRUE);
         topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
