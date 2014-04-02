@@ -1,12 +1,21 @@
 package test.collections
 
 import kotlin.test.*
-import java.util.*
 import org.junit.Test
+import java.util.HashSet
 
-class SetJsTest {
+class ComplexSetJsTest : SetJsTest() {
+    // hashSetOf returns ComlpexHashSet because it is Generic
+    override fun createEmptyMutableSet(): MutableSet<String> = hashSetOf<String>()
+}
+
+class PrimitiveSetJsTest : SetJsTest() {
+    override fun createEmptyMutableSet(): MutableSet<String> = HashSet<String>()
+}
+
+abstract class SetJsTest {
     val data: Set<String> = createTestMutableSet()
-    val empty: Set<String> = hashSetOf<String>()
+    val empty: Set<String> = createEmptyMutableSet()
 
     Test fun size() {
         assertEquals(2, data.size())
@@ -109,5 +118,12 @@ class SetJsTest {
     }
 
     //Helpers
-    fun createTestMutableSet(): MutableSet<String> = hashSetOf("foo", "bar")
+    abstract fun createEmptyMutableSet(): MutableSet<String>
+
+    fun createTestMutableSet(): MutableSet<String> {
+        val set = createEmptyMutableSet()
+        set.add("foo")
+        set.add("bar")
+        return set
+    }
 }

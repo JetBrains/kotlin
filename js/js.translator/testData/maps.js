@@ -593,7 +593,10 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
     },
     /** @lends {Kotlin.PrimitiveHashSet.prototype} */
     {
-        contains_s9cetl$: function (key) {
+        size: function () {
+            return this.$size;
+        },
+        contains_za3rmp$: function (key) {
             return this.map[key] === true;
         },
         iterator: function () {
