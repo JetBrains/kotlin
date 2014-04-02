@@ -59,7 +59,7 @@ public class ScriptBodyResolver {
             JetScript declaration = e.getKey();
             ScriptDescriptor descriptor = e.getValue();
 
-            if (TopDownAnalyzer.LAZY && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+            if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis() && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
                 ForceResolveUtil.forceResolveAllContents(descriptor);
                 continue;
             }

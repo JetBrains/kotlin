@@ -190,7 +190,9 @@ public class TypeHierarchyResolver {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = (MutableClassDescriptor) entry.getValue();
             if (classOrObject instanceof JetClass) {
-                descriptorResolver.resolveMutableClassDescriptor((JetClass) classOrObject, descriptor, trace);
+                descriptorResolver.resolveMutableClassDescriptor(
+                        c.getTopDownAnalysisParameters(),
+                        (JetClass) classOrObject, descriptor, trace);
             }
             else if (classOrObject instanceof JetObjectDeclaration) {
                 descriptor.setModality(Modality.FINAL);

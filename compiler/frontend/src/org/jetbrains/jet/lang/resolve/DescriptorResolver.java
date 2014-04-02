@@ -103,6 +103,7 @@ public class DescriptorResolver {
     }
 
     public void resolveMutableClassDescriptor(
+            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull JetClass classElement,
             @NotNull MutableClassDescriptor descriptor,
             BindingTrace trace
@@ -111,7 +112,7 @@ public class DescriptorResolver {
         List<TypeParameterDescriptor> typeParameters = Lists.newArrayList();
         int index = 0;
         for (JetTypeParameter typeParameter : classElement.getTypeParameters()) {
-            if (!TopDownAnalyzer.LAZY) {
+            if (!topDownAnalysisParameters.isLazyTopDownAnalysis()) {
                 // TODO: Support
                 AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(typeParameter, trace);
             }

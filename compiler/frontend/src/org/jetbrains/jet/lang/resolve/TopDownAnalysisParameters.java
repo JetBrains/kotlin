@@ -27,6 +27,12 @@ import org.jetbrains.jet.storage.StorageManager;
  * Various junk that cannot be placed into context (yet).
  */
 public class TopDownAnalysisParameters implements GlobalContext {
+    private static boolean LAZY;
+
+    static {
+        LAZY = "true".equals(System.getProperty("lazy.tda"));
+    }
+
     @NotNull
     public static TopDownAnalysisParameters create(
             @NotNull StorageManager storageManager,
@@ -36,7 +42,7 @@ public class TopDownAnalysisParameters implements GlobalContext {
             boolean declaredLocally
     ) {
         return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
-                                             declaredLocally);
+                                             declaredLocally, LAZY);
     }
 
     @NotNull
@@ -47,19 +53,22 @@ public class TopDownAnalysisParameters implements GlobalContext {
     private final Predicate<PsiFile> analyzeCompletely;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
+    private final boolean lazyTopDownAnalysis;
 
     private TopDownAnalysisParameters(
             @NotNull StorageManager storageManager,
             @NotNull ExceptionTracker exceptionTracker,
             @NotNull Predicate<PsiFile> analyzeCompletely,
             boolean analyzingBootstrapLibrary,
-            boolean declaredLocally
+            boolean declaredLocally,
+            boolean lazyTopDownAnalysis
     ) {
         this.storageManager = storageManager;
         this.exceptionTracker = exceptionTracker;
         this.analyzeCompletely = analyzeCompletely;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
+        this.lazyTopDownAnalysis = lazyTopDownAnalysis;
     }
 
     @Override
@@ -85,5 +94,11 @@ public class TopDownAnalysisParameters implements GlobalContext {
 
     public boolean isDeclaredLocally() {
         return declaredLocally;
+    }
+
+    // Used temporarily while we are transitioning from eager to lazy analysis of headers in the IDE
+    @Deprecated
+    public boolean isLazyTopDownAnalysis() {
+        return lazyTopDownAnalysis;
     }
 }

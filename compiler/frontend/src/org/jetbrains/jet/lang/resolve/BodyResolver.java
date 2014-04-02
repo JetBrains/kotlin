@@ -121,7 +121,7 @@ public class BodyResolver {
 
         resolvePropertyDeclarationBodies(c);
 
-        if (!TopDownAnalyzer.LAZY) {
+        if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
             resolveClassAnnotations(c);
         }
         resolveAnonymousInitializers(c);
@@ -590,7 +590,7 @@ public class BodyResolver {
             JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
             assert declaringScope != null;
 
-            if (!TopDownAnalyzer.LAZY || c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+            if (!c.getTopDownAnalysisParameters().isLazyTopDownAnalysis() || c.getTopDownAnalysisParameters().isDeclaredLocally()) {
                 resolveAnnotationArguments(declaringScope, declaration);
             }
             resolveFunctionBody(c, trace, declaration, descriptor, declaringScope);

@@ -73,7 +73,7 @@ public class DeclarationsChecker {
 
             if (classOrObject instanceof JetClass) {
                 JetClass jetClass = (JetClass) classOrObject;
-                checkClass(jetClass, classDescriptor);
+                checkClass(bodiesResolveContext, jetClass, classDescriptor);
                 descriptorResolver.checkNamesInConstraints(
                         jetClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
             }
@@ -255,9 +255,9 @@ public class DeclarationsChecker {
         reportErrorIfHasIllegalModifier(declaration);
     }
 
-    private void checkClass(JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
+    private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         checkOpenMembers(classDescriptor);
-        if (TopDownAnalyzer.LAZY) {
+        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
             checkTypeParameters(aClass);
         }
         if (aClass.isTrait()) {

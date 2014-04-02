@@ -56,12 +56,6 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
 
 public class TopDownAnalyzer {
 
-    public static boolean LAZY;
-
-    static {
-        LAZY = "true".equals(System.getProperty("lazy.tda"));
-    }
-
     @NotNull
     private BindingTrace trace;
     @NotNull
@@ -135,7 +129,7 @@ public class TopDownAnalyzer {
 //        c.enableDebugOutput();
         c.debug("Enter");
 
-        if (LAZY && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis() && !c.getTopDownAnalysisParameters().isDeclaredLocally()) {
             final ResolveSession resolveSession = new InjectorForLazyResolve(
                     project,
                     new GlobalContextImpl((LockBasedStorageManager) c.getStorageManager(), c.getExceptionTracker()), // TODO
