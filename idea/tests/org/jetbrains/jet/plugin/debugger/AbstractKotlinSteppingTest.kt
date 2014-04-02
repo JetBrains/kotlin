@@ -78,12 +78,6 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         printContext(this)
     }
 
-    private fun createDebugProcess(pathToFile: String) {
-        val file = File(pathToFile)
-        val packageName = file.name.replace(".kt", "")
-        createLocalProcess(PackageClassUtils.getPackageClassFqName(FqName(packageName)).asString())
-    }
-
     private fun finish() {
         onBreakpoint {
             resume(this)

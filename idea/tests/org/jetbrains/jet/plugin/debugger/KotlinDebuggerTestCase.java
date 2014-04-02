@@ -30,6 +30,8 @@ import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -100,5 +102,12 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
         }
 
         createBreakpoints(psiClass.getContainingFile());
+    }
+
+    @SuppressWarnings("MethodMayBeStatic")
+    protected void createDebugProcess(@NotNull String path) throws Exception {
+        File file = new File(path);
+        String packageName = file.getName().replace(".kt", "");
+        createLocalProcess(PackageClassUtils.getPackageClassFqName(new FqName(packageName)).asString());
     }
 }
