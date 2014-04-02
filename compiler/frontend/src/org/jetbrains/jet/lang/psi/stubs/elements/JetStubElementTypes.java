@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.psi.stubs.elements;
 
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.jet.lang.psi.*;
 
 public interface JetStubElementTypes {
@@ -84,4 +85,7 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
             new JetPlaceHolderStubElementType<JetDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
+    
+    TokenSet DECLARATION_TYPES =
+              TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
 }

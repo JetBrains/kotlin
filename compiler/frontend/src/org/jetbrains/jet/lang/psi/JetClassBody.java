@@ -23,23 +23,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
-import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.*;
+
 public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {
-    private static final TokenSet DECLARATION_TYPES =
-            TokenSet.create(JetStubElementTypes.CLASS, JetStubElementTypes.OBJECT_DECLARATION, JetStubElementTypes.CLASS_OBJECT,
-                            JetStubElementTypes.FUNCTION, JetStubElementTypes.PROPERTY);
 
     public JetClassBody(@NotNull ASTNode node) {
         super(node);
     }
 
     public JetClassBody(@NotNull PsiJetPlaceHolderStub<JetClassBody> stub) {
-        super(stub, JetStubElementTypes.CLASS_BODY);
+        super(stub, CLASS_BODY);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetCl
 
     @Nullable
     public JetClassObject getClassObject() {
-        return getStubOrPsiChild(JetStubElementTypes.CLASS_OBJECT);
+        return getStubOrPsiChild(CLASS_OBJECT);
     }
 
     @NotNull
