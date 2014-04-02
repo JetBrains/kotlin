@@ -1823,6 +1823,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/cyclicHierarchy"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("classIndirectlyInheritsNested.kt")
+            public void testClassIndirectlyInheritsNested() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/classIndirectlyInheritsNested.kt");
+            }
+            
+            @TestMetadata("classInheritsNested.kt")
+            public void testClassInheritsNested() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/classInheritsNested.kt");
+            }
+            
             @TestMetadata("cyclicHierarchy.kt")
             public void testCyclicHierarchy() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/cyclicHierarchy.kt");
@@ -1843,9 +1853,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/kotlinJavaKotlinCycle.kt");
             }
             
+            @TestMetadata("kotlinJavaNestedCycle.kt")
+            public void testKotlinJavaNestedCycle() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/kotlinJavaNestedCycle.kt");
+            }
+            
             @TestMetadata("kt303.kt")
             public void testKt303() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/kt303.kt");
+            }
+            
+            @TestMetadata("twoClassesWithNestedCycle.kt")
+            public void testTwoClassesWithNestedCycle() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/cyclicHierarchy/twoClassesWithNestedCycle.kt");
             }
             
         }
