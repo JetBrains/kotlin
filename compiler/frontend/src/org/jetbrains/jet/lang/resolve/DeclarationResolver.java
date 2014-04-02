@@ -103,7 +103,7 @@ public class DeclarationResolver {
     }
 
     private void resolveAnnotationConstructors(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
@@ -114,7 +114,7 @@ public class DeclarationResolver {
     }
 
     private void resolveConstructorHeaders(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
@@ -125,7 +125,7 @@ public class DeclarationResolver {
     }
 
     private void resolveAnnotationStubsOnClassesAndConstructors(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetModifierList modifierList = entry.getKey().getModifierList();
             if (modifierList != null) {
                 MutableClassDescriptor descriptor = (MutableClassDescriptor) entry.getValue();
@@ -143,7 +143,7 @@ public class DeclarationResolver {
 
             resolveFunctionAndPropertyHeaders(c, file.getDeclarations(), fileScope, fileScope, fileScope, packageBuilder);
         }
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
@@ -206,7 +206,7 @@ public class DeclarationResolver {
     }
 
     private void createFunctionsForDataClasses(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject klass = entry.getKey();
             MutableClassDescriptor classDescriptor = (MutableClassDescriptor) entry.getValue();
 
@@ -337,7 +337,7 @@ public class DeclarationResolver {
     }
 
     public void checkRedeclarationsInInnerClassNames(@NotNull TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
             if (classDescriptor.getKind() == ClassKind.CLASS_OBJECT) {
                 // Class objects should be considered during analysing redeclarations in classes
                 continue;

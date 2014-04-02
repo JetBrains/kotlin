@@ -43,7 +43,7 @@ public class ControlFlowAnalyzer {
             if (!c.completeAnalysisNeeded(file)) continue;
             checkDeclarationContainer(c, file);
         }
-        for (JetClassOrObject aClass : c.getClasses().keySet()) {
+        for (JetClassOrObject aClass : c.getDeclaredClasses().keySet()) {
             if (!c.completeAnalysisNeeded(aClass)) continue;
             checkDeclarationContainer(c, aClass);
         }

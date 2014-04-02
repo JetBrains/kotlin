@@ -208,7 +208,7 @@ public class OverrideResolver {
     }
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             checkOverridesInAClass(c, entry.getValue(), entry.getKey());
         }
     }
@@ -621,7 +621,7 @@ public class OverrideResolver {
     }
 
     private void checkParameterOverridesForAllClasses(@NotNull TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getDeclaredClasses().values()) {
             for (DeclarationDescriptor member : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (member instanceof CallableMemberDescriptor) {
                     checkOverridesForParameters((CallableMemberDescriptor) member);

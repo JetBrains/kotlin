@@ -166,7 +166,7 @@ public class TypeHierarchyResolver {
     }
 
     private void createTypeConstructors(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             MutableClassDescriptor descriptor = (MutableClassDescriptor) entry.getValue();
             if (classOrObject instanceof JetClass) {
@@ -203,7 +203,7 @@ public class TypeHierarchyResolver {
     }
 
     private void resolveTypesInClassHeaders(@NotNull TopDownAnalysisContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             if (classOrObject instanceof JetClass) {
                 ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
@@ -213,7 +213,7 @@ public class TypeHierarchyResolver {
             }
         }
 
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             descriptorResolver.resolveSupertypesForMutableClassDescriptor(entry.getKey(), (MutableClassDescriptor) entry.getValue(), trace);
         }
     }
@@ -467,7 +467,7 @@ public class TypeHierarchyResolver {
             boolean isInner = kind == ClassKind.CLASS && klass.isInner();
             MutableClassDescriptor mutableClassDescriptor = new MutableClassDescriptor(
                     containingDeclaration, outerScope, kind, isInner, JetPsiUtil.safeName(klass.getName()));
-            c.getClasses().put(klass, mutableClassDescriptor);
+            c.getDeclaredClasses().put(klass, mutableClassDescriptor);
             trace.record(FQNAME_TO_CLASS_DESCRIPTOR, JetNamedDeclarationUtil.getUnsafeFQName(klass), mutableClassDescriptor);
 
             createClassObjectForEnumClass(mutableClassDescriptor);
@@ -492,7 +492,7 @@ public class TypeHierarchyResolver {
             createPrimaryConstructorForObject(declaration, descriptor);
             trace.record(BindingContext.CLASS, declaration, descriptor);
 
-            c.getClasses().put(declaration, descriptor);
+            c.getDeclaredClasses().put(declaration, descriptor);
 
             return descriptor;
         }

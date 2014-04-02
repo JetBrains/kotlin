@@ -47,14 +47,16 @@ public interface BodiesResolveContext extends GlobalContext {
     Collection<JetFile> getFiles();
 
     @Mutable
-    Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses();
+    Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses();
+    @Mutable
+    Map<JetScript, ScriptDescriptor> getScripts();
+
     @Mutable
     Map<JetProperty, PropertyDescriptor> getProperties();
     @Mutable
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
+
     Function<JetDeclaration, JetScope> getDeclaringScopes();
-    @Mutable
-    Map<JetScript, ScriptDescriptor> getScripts();
     DataFlowInfo getOuterDataFlowInfo();
 
     @NotNull

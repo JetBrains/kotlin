@@ -54,7 +54,7 @@ public class OverloadResolver {
         MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages = MultiMap.create();
         fillGroupedConstructors(c, inClasses, inPackages);
 
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             checkOverloadsInAClass(entry.getValue(), entry.getKey(), inClasses.get(entry.getValue()));
         }
         checkOverloadsInPackages(c, inPackages);
@@ -65,7 +65,7 @@ public class OverloadResolver {
             @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
-        for (ClassDescriptorWithResolutionScopes klass : c.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes klass : c.getDeclaredClasses().values()) {
             if (klass.getKind().isSingleton()) {
                 // Constructors of singletons aren't callable from the code, so they shouldn't participate in overload name checking
                 continue;

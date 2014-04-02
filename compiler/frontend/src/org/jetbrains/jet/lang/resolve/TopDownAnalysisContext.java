@@ -110,7 +110,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses() {
+    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
     }
 
@@ -213,6 +213,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
                     }
                 }
         );
-        return KotlinPackage.plus(getClasses().values(), scriptClasses);
+        return KotlinPackage.plus(getDeclaredClasses().values(), scriptClasses);
     }
 }

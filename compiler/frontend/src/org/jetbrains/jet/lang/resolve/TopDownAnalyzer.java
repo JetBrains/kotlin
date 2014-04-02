@@ -209,7 +209,7 @@ public class TopDownAnalyzer {
                                         (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject)
                                 );
 
-                                c.getClasses().put(classOrObject, descriptor);
+                                c.getDeclaredClasses().put(classOrObject, descriptor);
                                 registerDeclarations(classOrObject.getDeclarations());
                                 registerTopLevelFqName(classOrObject, descriptor);
 
@@ -328,7 +328,7 @@ public class TopDownAnalyzer {
     }
 
     private void lockScopes(@NotNull TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : c.getClasses().values()) {
+        for (ClassDescriptorWithResolutionScopes mutableClassDescriptor : c.getDeclaredClasses().values()) {
             ((MutableClassDescriptor) mutableClassDescriptor).lockScopes();
         }
 

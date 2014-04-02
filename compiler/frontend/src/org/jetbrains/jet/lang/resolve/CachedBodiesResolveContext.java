@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -52,7 +51,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
 
     public CachedBodiesResolveContext(TopDownAnalysisContext context) {
         files = Collections.unmodifiableCollection(context.getFiles());
-        classes = Collections.unmodifiableMap(context.getClasses());
+        classes = Collections.unmodifiableMap(context.getDeclaredClasses());
         properties = Collections.unmodifiableMap(context.getProperties());
         functions = Collections.unmodifiableMap(context.getFunctions());
         declaringScopes = context.getDeclaringScopes();
@@ -80,7 +79,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     }
 
     @Override
-    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses() {
+    public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
     }
 

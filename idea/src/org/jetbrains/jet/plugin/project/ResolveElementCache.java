@@ -456,7 +456,7 @@ public class ResolveElementCache {
         }
 
         @Override
-        public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getClasses() {
+        public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
             return Collections.emptyMap();
         }
 

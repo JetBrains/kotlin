@@ -146,7 +146,7 @@ public class BodyResolver {
 
     private void resolveDelegationSpecifierLists(@NotNull BodiesResolveContext c) {
         // TODO : Make sure the same thing is not initialized twice
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
 
@@ -329,13 +329,13 @@ public class BodyResolver {
     }
 
     private void resolveClassAnnotations(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             resolveAnnotationArguments(entry.getValue().getScopeForClassHeaderResolution(), entry.getKey());
         }
     }
 
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             JetClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
             resolveAnonymousInitializers(c, classOrObject, descriptor.getUnsubstitutedPrimaryConstructor(),
@@ -378,7 +378,7 @@ public class BodyResolver {
     }
 
     private void resolvePrimaryConstructorParameters(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             if (!(entry.getKey() instanceof JetClass)) continue;
             JetClass klass = (JetClass) entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
@@ -414,7 +414,7 @@ public class BodyResolver {
 
         // Member properties
         Set<JetProperty> processed = Sets.newHashSet();
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getClasses().entrySet()) {
+        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             if (!(entry.getKey() instanceof JetClass)) continue;
             JetClass jetClass = (JetClass) entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
