@@ -10,7 +10,6 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.types.TypeConstructor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContextWithTypes
 import org.jetbrains.jet.lang.resolve.java.lazy.child
 import org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage
@@ -24,7 +23,6 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaEnumClassObjectDescriptor
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
@@ -36,6 +34,8 @@ import java.util.ArrayList
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor
+import org.jetbrains.jet.lang.resolve.name.SpecialNames
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -82,12 +82,14 @@ class LazyJavaClassDescriptor(
 
     private val _classObjectDescriptor = c.storageManager.createNullableLazyValue {
         if (jClass.isEnum()) {
-            val classObject = JavaEnumClassObjectDescriptor(this)
-            classObject.setSupertypes(Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()))
+            val classObject = MutableClassDescriptor(this, this.getUnsubstitutedInnerClassesScope(), ClassKind.CLASS_OBJECT, false,
+                                                     SpecialNames.getClassObjectName(this.getName()))
+            classObject.setSupertypes(listOf(KotlinBuiltIns.getInstance().getAnyType()))
             classObject.setModality(Modality.FINAL)
             classObject.setVisibility(jClass.getVisibility())
-            classObject.setTypeParameterDescriptors(Collections.emptyList<TypeParameterDescriptor>())
+            classObject.setTypeParameterDescriptors(listOf())
             classObject.createTypeConstructor()
+            classObject.setPrimaryConstructor(DescriptorFactory.createPrimaryConstructorForObject(classObject))
 
             val scope = LazyJavaClassMemberScope(c, classObject, jClass, enumClassObject = true)
             val writableScope = WritableScopeImpl(scope, classObject, RedeclarationHandler.THROW_EXCEPTION, "Enum class object scope")
@@ -102,7 +104,7 @@ class LazyJavaClassDescriptor(
         else null
     }
 
-    private fun createEnumSyntheticMethods(classObject: JavaEnumClassObjectDescriptor, enumType: JetType) {
+    private fun createEnumSyntheticMethods(classObject: MutableClassDescriptor, enumType: JetType) {
         val valuesReturnType = KotlinBuiltIns.getInstance().getArrayType(enumType)
         val valuesMethod = DescriptorFactory.createEnumClassObjectValuesMethod(classObject, valuesReturnType)
         classObject.getBuilder().addFunctionDescriptor(valuesMethod)

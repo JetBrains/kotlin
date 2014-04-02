@@ -21,7 +21,10 @@ import com.intellij.psi.PsiNameIdentifierOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
@@ -122,12 +125,12 @@ public class TypeHierarchyResolver {
                 JetScope scope = c.normalScope.get(declarationContainer);
 
                 // Even more temp code
-                if (descriptorForDeferredResolve instanceof MutableClassDescriptorLite) {
+                if (descriptorForDeferredResolve instanceof MutableClassDescriptor) {
                     forDeferredResolve.addAll(
                             collectPackageFragmentsAndClassifiers(
                                     c,
                                     scope,
-                                    ((MutableClassDescriptorLite) descriptorForDeferredResolve).getBuilder(),
+                                    ((MutableClassDescriptor) descriptorForDeferredResolve).getBuilder(),
                                     declarationContainer.getDeclarations()));
                 }
                 else if (descriptorForDeferredResolve instanceof MutablePackageFragmentDescriptor) {
@@ -199,7 +202,7 @@ public class TypeHierarchyResolver {
 
             ClassKind kind = descriptor.getKind();
             if (kind == ClassKind.ENUM_ENTRY || kind == ClassKind.OBJECT || kind == ClassKind.ENUM_CLASS) {
-                MutableClassDescriptorLite classObject = descriptor.getClassObjectDescriptor();
+                MutableClassDescriptor classObject = descriptor.getClassObjectDescriptor();
                 assert classObject != null : "Enum entries and named objects should have class objects: " + classOrObject.getText();
 
                 JetType supertype;

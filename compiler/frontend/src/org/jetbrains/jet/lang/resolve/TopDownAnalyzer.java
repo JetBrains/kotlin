@@ -32,7 +32,10 @@ import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
+import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilderDummy;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
@@ -386,7 +389,7 @@ public class TopDownAnalyzer {
                    }
 
                    @Override
-                   public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+                   public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
                        if (scope != null) {
                            scope.addClassifierDescriptor(classDescriptor);
                        }
@@ -403,7 +406,7 @@ public class TopDownAnalyzer {
                    }
 
                    @Override
-                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+                   public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
                        return ClassObjectStatus.NOT_ALLOWED;
                    }
                },

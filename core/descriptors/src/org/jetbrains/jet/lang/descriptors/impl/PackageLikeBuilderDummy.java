@@ -29,7 +29,7 @@ public class PackageLikeBuilderDummy implements PackageLikeBuilder {
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         throw new IllegalStateException();
     }
 
@@ -44,7 +44,7 @@ public class PackageLikeBuilderDummy implements PackageLikeBuilder {
     }
 
     @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         throw new IllegalStateException();
     }
 }

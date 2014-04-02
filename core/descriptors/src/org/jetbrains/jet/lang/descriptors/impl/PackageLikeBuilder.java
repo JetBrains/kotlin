@@ -22,11 +22,10 @@ import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 
 public interface PackageLikeBuilder {
-
     @NotNull
     DeclarationDescriptor getOwnerForChildren();
 
-    void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor);
+    void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor);
 
     void addFunctionDescriptor(@NotNull SimpleFunctionDescriptor functionDescriptor);
 
@@ -38,5 +37,5 @@ public interface PackageLikeBuilder {
         NOT_ALLOWED
     }
 
-    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor);
+    ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor);
 }

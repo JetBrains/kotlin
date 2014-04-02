@@ -41,7 +41,7 @@ public class ScopeBasedPackageLikeBuilder implements PackageLikeBuilder {
     }
 
     @Override
-    public void addClassifierDescriptor(@NotNull MutableClassDescriptorLite classDescriptor) {
+    public void addClassifierDescriptor(@NotNull MutableClassDescriptor classDescriptor) {
         scope.addClassifierDescriptor(classDescriptor);
     }
 
@@ -56,7 +56,7 @@ public class ScopeBasedPackageLikeBuilder implements PackageLikeBuilder {
     }
 
     @Override
-    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptorLite classObjectDescriptor) {
+    public ClassObjectStatus setClassObjectDescriptor(@NotNull MutableClassDescriptor classObjectDescriptor) {
         throw new IllegalStateException("Must be guaranteed not to happen by the parser");
     }
 }
