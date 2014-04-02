@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -218,38 +219,38 @@ public class TypeHierarchyResolver {
         }
     }
 
-    private static List<MutableClassDescriptorLite> topologicallySortClassesAndObjects(@NotNull TopDownAnalysisContext c) {
+    @NotNull
+    private static List<MutableClassDescriptor> topologicallySortClassesAndObjects(@NotNull TopDownAnalysisContext c) {
         // A topsort is needed only for better diagnostics:
         //    edges that get removed to disconnect loops are more reasonable in this case
         //noinspection unchecked
-        return DFS.topologicalOrder(
+        List<ClassDescriptor> orderedClasses = DFS.topologicalOrder(
                 (Iterable) c.getAllClasses(),
-                new DFS.Neighbors<MutableClassDescriptorLite>() {
+                new DFS.Neighbors<ClassDescriptor>() {
                     @NotNull
                     @Override
-                    public Iterable<MutableClassDescriptorLite> getNeighbors(MutableClassDescriptorLite current) {
-                        List<MutableClassDescriptorLite> result = Lists.newArrayList();
-                        for (JetType supertype : current.getSupertypes()) {
-                            DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                            if (declarationDescriptor instanceof MutableClassDescriptorLite) {
-                                MutableClassDescriptorLite classDescriptor = (MutableClassDescriptorLite) declarationDescriptor;
-                                result.add(classDescriptor);
+                    public Iterable<ClassDescriptor> getNeighbors(ClassDescriptor current) {
+                        List<ClassDescriptor> result = Lists.newArrayList();
+                        for (JetType supertype : current.getDefaultType().getConstructor().getSupertypes()) {
+                            DeclarationDescriptor descriptor = supertype.getConstructor().getDeclarationDescriptor();
+                            if (descriptor instanceof ClassDescriptor) {
+                                result.add((ClassDescriptor) descriptor);
                             }
                         }
                         return result;
                     }
-                });
-
+                }
+        );
+        return KotlinPackage.filterIsInstance(orderedClasses, MutableClassDescriptor.class);
     }
 
     private void detectAndDisconnectLoops(@NotNull TopDownAnalysisContext c) {
-        // Loop detection and disconnection
         List<Runnable> tasks = new ArrayList<Runnable>();
-        for (final MutableClassDescriptorLite klass : c.getClassesTopologicalOrder()) {
+        for (final MutableClassDescriptor klass : c.getClassesTopologicalOrder()) {
             for (final JetType supertype : klass.getSupertypes()) {
                 ClassifierDescriptor supertypeDescriptor = supertype.getConstructor().getDeclarationDescriptor();
-                if (supertypeDescriptor instanceof MutableClassDescriptorLite) {
-                    MutableClassDescriptorLite superclass = (MutableClassDescriptorLite) supertypeDescriptor;
+                if (supertypeDescriptor instanceof ClassDescriptor) {
+                    ClassDescriptor superclass = (ClassDescriptor) supertypeDescriptor;
                     if (isReachable(superclass, klass, new HashSet<ClassDescriptor>())) {
                         tasks.add(new Runnable() {
                             @Override
@@ -269,15 +270,19 @@ public class TypeHierarchyResolver {
     }
 
     // Temporary. Duplicates logic from LazyClassTypeConstructor.isReachable
-    private static boolean isReachable(MutableClassDescriptorLite from, MutableClassDescriptorLite to, Set<ClassDescriptor> visited) {
+    private static boolean isReachable(
+            @NotNull ClassDescriptor from,
+            @NotNull MutableClassDescriptor to,
+            @NotNull Set<ClassDescriptor> visited
+    ) {
         if (!visited.add(from)) return false;
-        for (JetType supertype : from.getSupertypes()) {
+        for (JetType supertype : from.getDefaultType().getConstructor().getSupertypes()) {
             TypeConstructor supertypeConstructor = supertype.getConstructor();
             if (supertypeConstructor.getDeclarationDescriptor() == to) {
                 return true;
             }
             ClassifierDescriptor superclass = supertypeConstructor.getDeclarationDescriptor();
-            if (superclass instanceof MutableClassDescriptorLite && isReachable((MutableClassDescriptorLite) superclass, to, visited)) {
+            if (superclass instanceof ClassDescriptor && isReachable((ClassDescriptor) superclass, to, visited)) {
                 return true;
             }
         }

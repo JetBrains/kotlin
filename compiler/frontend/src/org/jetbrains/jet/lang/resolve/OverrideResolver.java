@@ -29,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptorLite;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
@@ -77,13 +76,13 @@ public class OverrideResolver {
         Set<ClassDescriptorWithResolutionScopes> ourClasses = new HashSet<ClassDescriptorWithResolutionScopes>(c.getAllClasses());
         Set<ClassifierDescriptor> processed = new HashSet<ClassifierDescriptor>();
 
-        for (MutableClassDescriptorLite klass : ContainerUtil.reverse(c.getClassesTopologicalOrder())) {
-            if (klass instanceof MutableClassDescriptor && ourClasses.contains(klass)) {
-                generateOverridesAndDelegationInAClass((MutableClassDescriptor) klass, processed, ourClasses);
+        for (MutableClassDescriptor klass : ContainerUtil.reverse(c.getClassesTopologicalOrder())) {
+            if (ourClasses.contains(klass)) {
+                generateOverridesAndDelegationInAClass(klass, processed, ourClasses);
 
-                MutableClassDescriptorLite classObject = klass.getClassObjectDescriptor();
-                if (classObject instanceof MutableClassDescriptor) {
-                    generateOverridesAndDelegationInAClass((MutableClassDescriptor) classObject, processed, ourClasses);
+                MutableClassDescriptor classObject = klass.getClassObjectDescriptor();
+                if (classObject != null) {
+                    generateOverridesAndDelegationInAClass(classObject, processed, ourClasses);
                 }
             }
         }
