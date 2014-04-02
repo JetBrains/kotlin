@@ -362,7 +362,7 @@ public class TopDownAnalyzer {
                                                                          PlatformToKotlinClassMap.EMPTY);
 
         TopDownAnalysisParameters topDownAnalysisParameters =
-                new TopDownAnalysisParameters(
+                TopDownAnalysisParameters.create(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),
                         Predicates.equalTo(object.getContainingFile()),

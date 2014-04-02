@@ -49,7 +49,7 @@ public class LazyResolveTestUtil {
         JetTestUtils.newTrace(environment);
 
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        TopDownAnalysisParameters params = new TopDownAnalysisParameters(
+        TopDownAnalysisParameters params = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(), globalContext.getExceptionTracker(), Predicates.<PsiFile>alwaysTrue(), false, false);
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(environment.getProject());
         BindingTrace sharedTrace = support.getTrace();

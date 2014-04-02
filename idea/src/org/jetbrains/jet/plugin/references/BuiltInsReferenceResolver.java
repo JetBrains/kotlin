@@ -88,7 +88,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             @Override
             public void run() {
                 GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-                TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+                TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                         globalContext.getStorageManager(),
                         globalContext.getExceptionTracker(),
                         Predicates.<PsiFile>alwaysFalse(), true, false);

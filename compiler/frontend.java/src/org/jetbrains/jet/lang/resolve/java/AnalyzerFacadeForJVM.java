@@ -215,7 +215,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             GlobalContext globalContext,
             MemberFilter memberFilter
     ) {
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),
                 filesToAnalyzeCompletely,

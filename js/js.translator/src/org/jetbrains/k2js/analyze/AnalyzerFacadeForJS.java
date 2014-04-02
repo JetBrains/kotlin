@@ -91,7 +91,7 @@ public final class AnalyzerFacadeForJS {
         Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
 
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(), globalContext.getExceptionTracker(), completely, false, false);
 
         ModuleDescriptor libraryModule = config.getLibraryModule();

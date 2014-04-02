@@ -24,8 +24,6 @@ import org.jetbrains.jet.di.InjectorForBodyResolve;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.*;
 
-import java.util.List;
-
 public class AnalyzerFacadeForEverything {
 
     private AnalyzerFacadeForEverything() {
@@ -38,7 +36,7 @@ public class AnalyzerFacadeForEverything {
             @NotNull ModuleDescriptor module
     ) {
 
-        TopDownAnalysisParameters topDownAnalysisParameters = new TopDownAnalysisParameters(
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 bodiesResolveContext.getStorageManager(),
                 bodiesResolveContext.getExceptionTracker(),
                 filesToAnalyzeCompletely,

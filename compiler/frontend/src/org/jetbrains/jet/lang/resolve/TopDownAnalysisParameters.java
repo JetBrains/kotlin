@@ -28,6 +28,18 @@ import org.jetbrains.jet.storage.StorageManager;
  */
 public class TopDownAnalysisParameters implements GlobalContext {
     @NotNull
+    public static TopDownAnalysisParameters create(
+            @NotNull StorageManager storageManager,
+            @NotNull ExceptionTracker exceptionTracker,
+            @NotNull Predicate<PsiFile> analyzeCompletely,
+            boolean analyzingBootstrapLibrary,
+            boolean declaredLocally
+    ) {
+        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzeCompletely, analyzingBootstrapLibrary,
+                                             declaredLocally);
+    }
+
+    @NotNull
     private final StorageManager storageManager;
     @NotNull
     private final ExceptionTracker exceptionTracker;
@@ -36,7 +48,7 @@ public class TopDownAnalysisParameters implements GlobalContext {
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
 
-    public TopDownAnalysisParameters(
+    private TopDownAnalysisParameters(
             @NotNull StorageManager storageManager,
             @NotNull ExceptionTracker exceptionTracker,
             @NotNull Predicate<PsiFile> analyzeCompletely,

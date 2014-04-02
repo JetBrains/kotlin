@@ -333,9 +333,9 @@ public class ResolveElementCache {
     }
 
     private static TopDownAnalysisParameters createParameters(@NotNull ResolveSession resolveSession) {
-        return new TopDownAnalysisParameters(
-                    resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
-                    Predicates.<PsiFile>alwaysTrue(), false, true);
+        return TopDownAnalysisParameters.create(
+                resolveSession.getStorageManager(), resolveSession.getExceptionTracker(),
+                Predicates.<PsiFile>alwaysTrue(), false, true);
     }
 
     @NotNull

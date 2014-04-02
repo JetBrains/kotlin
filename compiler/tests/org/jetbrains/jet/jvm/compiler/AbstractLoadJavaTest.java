@@ -141,7 +141,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         BindingTrace trace = support.getTrace();
         ModuleDescriptorImpl module = support.getModule();
 
-        TopDownAnalysisParameters parameters = new TopDownAnalysisParameters(
+        TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
                 new LockBasedStorageManager(),
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysFalse(),
