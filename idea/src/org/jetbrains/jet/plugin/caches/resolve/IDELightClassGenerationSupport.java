@@ -97,7 +97,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
         ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(classOrObject);
 
-        if (JetPsiUtil.isLocal(classOrObject)) {
+        if (classOrObject.isLocal()) {
             BindingContext bindingContext = session.resolveToElement(classOrObject);
             ClassDescriptor descriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
 

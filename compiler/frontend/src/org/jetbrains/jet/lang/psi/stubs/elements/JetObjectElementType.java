@@ -53,7 +53,7 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetObjectStubImpl(parentStub, StringRef.fromString(name), fqName, Utils.instance$.wrapStrings(superNames),
-                                        psi.isTopLevel(), isClassObject(psi), JetPsiUtil.isLocal(psi), psi.isObjectLiteral());
+                                        psi.isTopLevel(), isClassObject(psi), psi.isLocal(), psi.isObjectLiteral());
     }
 
     @Override

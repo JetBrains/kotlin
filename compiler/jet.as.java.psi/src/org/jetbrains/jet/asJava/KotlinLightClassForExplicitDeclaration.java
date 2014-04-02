@@ -82,7 +82,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     }
 
     private static String getJvmInternalName(JetClassOrObject classOrObject) {
-        if (JetPsiUtil.isLocal(classOrObject)) {
+        if (classOrObject.isLocal()) {
             LightClassDataForKotlinClass data = getLightClassDataExactly(classOrObject);
             return data != null ? data.getJvmInternalName() : "";
         }
@@ -97,7 +97,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
         @Nullable
         @Override
         protected PsiElement compute() {
-            if (JetPsiUtil.isLocal(classOrObject)) {
+            if (classOrObject.isLocal()) {
                 //noinspection unchecked
                 PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(
                         classOrObject,

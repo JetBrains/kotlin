@@ -49,7 +49,6 @@ import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -120,7 +119,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
     public static KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData> createForDeclaredClass(@NotNull final JetClassOrObject classOrObject) {
         return new KotlinJavaFileStubProvider<OutermostKotlinClassLightClassData>(
                 classOrObject.getProject(),
-                JetPsiUtil.isLocal(classOrObject),
+                classOrObject.isLocal(),
                 new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
                     private JetFile getFile() {
                         return classOrObject.getContainingJetFile();
@@ -198,7 +197,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                                     return true;
                                 }
 
-                                if (JetPsiUtil.isLocal(generatedClassOrObject) && JetPsiUtil.isLocal(classOrObject)) {
+                                if (generatedClassOrObject.isLocal() && classOrObject.isLocal()) {
                                     // Local classes should be process by CodegenAnnotatingVisitor to
                                     // decide what class they should be placed in.
                                     //

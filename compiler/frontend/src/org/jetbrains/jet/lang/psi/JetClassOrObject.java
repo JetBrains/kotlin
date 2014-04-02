@@ -51,4 +51,6 @@ public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclaration
     JetClassBody getBody();
 
     boolean isTopLevel();
+
+    boolean isLocal();
 }

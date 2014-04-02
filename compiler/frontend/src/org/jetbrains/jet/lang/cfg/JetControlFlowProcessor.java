@@ -983,7 +983,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(specifier, context);
             }
             List<JetDeclaration> declarations = classOrObject.getDeclarations();
-            if (JetPsiUtil.isLocal(classOrObject)) {
+            if (classOrObject.isLocal()) {
                 for (JetDeclaration declaration : declarations) {
                     generateInstructions(declaration, context);
                 }

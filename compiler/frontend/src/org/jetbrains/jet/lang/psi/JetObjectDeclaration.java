@@ -140,6 +140,11 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
     }
 
     @Override
+    public boolean isLocal() {
+        return JetPsiUtil.isLocal(this);
+    }
+
+    @Override
     @NotNull
     public List<JetDeclaration> getDeclarations() {
         JetClassBody body = getBody();

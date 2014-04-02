@@ -67,7 +67,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         return new PsiJetClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
                 StringRef.fromString(psi.getName()), Utils.instance$.wrapStrings(superNames), psi.isTrait(), psi.isEnum(), isEnumEntry,
-                psi.isAnnotation(), psi.isInner(), JetPsiUtil.isLocal(psi), psi.isTopLevel());
+                psi.isAnnotation(), psi.isInner(), psi.isLocal(), psi.isTopLevel());
     }
 
     @Override

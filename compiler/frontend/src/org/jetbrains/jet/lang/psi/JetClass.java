@@ -215,4 +215,9 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     public boolean isTopLevel() {
         return getContainingFile() == getParent();
     }
+
+    @Override
+    public boolean isLocal() {
+        return JetPsiUtil.isLocal(this);
+    }
 }
