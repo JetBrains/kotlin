@@ -71,7 +71,7 @@ class JSDeclarationsCacheProvider extends DeclarationsCacheProvider {
     }
 
     @Override
-    public KotlinDeclarationsCache getDeclarations(boolean allowIncomplete) {
+    public KotlinDeclarationsCache getDeclarations() {
         synchronized (declarationAnalysisLock) {
             return CachedValuesManager.getManager(project).getCachedValue(
                     project,

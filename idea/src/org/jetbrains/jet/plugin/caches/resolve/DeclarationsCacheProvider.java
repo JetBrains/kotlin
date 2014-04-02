@@ -47,7 +47,7 @@ public abstract class DeclarationsCacheProvider {
                 new CancelableResolveSessionValueProvider(project, platform), true);
     }
 
-    public abstract KotlinDeclarationsCache getDeclarations(boolean allowIncomplete);
+    public abstract KotlinDeclarationsCache getDeclarations();
 
     @NotNull
     public ResolveSessionForBodies getLazyResolveSession() {

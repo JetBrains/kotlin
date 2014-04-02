@@ -49,30 +49,7 @@ public class KotlinCacheManager {
     public KotlinDeclarationsCache getDeclarationsFromProject(@NotNull TargetPlatform platform) {
         // Computing declarations should be performed under read lock
         ApplicationManager.getApplication().assertReadAccessAllowed();
-        return getRegisteredProvider(platform).getDeclarations(false);
-    }
-
-    @NotNull
-    public KotlinDeclarationsCache getPossiblyIncompleteDeclarationsForLightClassGeneration() {
-        // Computing declarations should be performed under read lock
-        ApplicationManager.getApplication().assertReadAccessAllowed();
-
-        /*
-         * If we have the following classes
-         *
-         *     class A // Kotlin
-         *     class B extends A {} // Java
-         *     class C : B() // Kotlin
-         *
-         *  The analysis runs into infinite recursion, because
-         *      C needs all members of B (to compute overrides),
-         *      and B needs all members of A,
-         *      and A is not available from KotlinCacheManager.getDeclarationsFromProject() -- it is being computed right now,
-         *      so the analysis runs again...
-         *
-         *  Our workaround is to return partially complete results when we generate light classes
-         */
-        return getRegisteredProvider(TargetPlatform.JVM).getDeclarations(true);
+        return getRegisteredProvider(platform).getDeclarations();
     }
 
     @NotNull

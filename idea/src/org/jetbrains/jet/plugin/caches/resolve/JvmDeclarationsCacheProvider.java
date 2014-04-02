@@ -81,22 +81,8 @@ class JvmDeclarationsCacheProvider extends DeclarationsCacheProvider {
 
     @Override
     @NotNull
-    public KotlinDeclarationsCache getDeclarations(boolean allowIncomplete) {
+    public KotlinDeclarationsCache getDeclarations() {
         synchronized (declarationAnalysisLock) {
-            if (allowIncomplete) {
-                if (incompleteTrace != null) {
-                    // saving context to local variable to avoid race condition
-                    final BindingContext context = incompleteTrace.getBindingContext();
-                    return new KotlinDeclarationsCache() {
-                        @NotNull
-                        @Override
-                        public BindingContext getBindingContext() {
-                            return context;
-                        }
-                    };
-                }
-            }
-
             return CachedValuesManager.getManager(project).getCachedValue(
                     project,
                     cachedKey,
