@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.ExitCode;
 import org.jetbrains.jet.cli.js.K2JSCompiler;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.test.Tmpdir;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Rule;
@@ -65,7 +66,9 @@ public class CliBaseTest {
     static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
+                .replace("expected ABI version is " + Integer.toString(JvmAbi.VERSION), "expected ABI version is $ABI_VERSION$")
                 .replace("\\", "/");
+
         return normalizedOutputWithoutExitCode + exitCode;
     }
 
