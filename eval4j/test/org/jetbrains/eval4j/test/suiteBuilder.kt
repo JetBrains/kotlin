@@ -24,10 +24,10 @@ fun buildTestSuite(
     val ownerClass = javaClass<TestData>()
     val inputStream = ownerClass.getClassLoader()!!.getResourceAsStream(ownerClass.getInternalName() + ".class")!!
 
-    ClassReader(inputStream).accept(object : ClassVisitor(ASM4) {
+    ClassReader(inputStream).accept(object : ClassVisitor(ASM5) {
 
         override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-            return object : MethodNode(access, name, desc, signature, exceptions) {
+            return object : MethodNode(ASM5, access, name, desc, signature, exceptions) {
                 override fun visitEnd() {
                     val testCase = buildTestCase(ownerClass, this, create)
                     if (testCase != null) {

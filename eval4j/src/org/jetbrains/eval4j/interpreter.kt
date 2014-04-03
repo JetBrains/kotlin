@@ -37,7 +37,7 @@ trait Eval {
     fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean = false): Value
 }
 
-class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM4) {
+class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(ASM5) {
     override fun newValue(`type`: Type?): Value? {
         if (`type` == null) {
             return NOT_A_VALUE
