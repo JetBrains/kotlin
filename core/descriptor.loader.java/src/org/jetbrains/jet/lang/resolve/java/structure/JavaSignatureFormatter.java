@@ -18,19 +18,18 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.List;
 
-public abstract class JavaSignatureFormatter {
+public class JavaSignatureFormatter {
     private static JavaSignatureFormatter instance;
+
+    private JavaSignatureFormatter() {
+    }
 
     @NotNull
     public static JavaSignatureFormatter getInstance() {
         if (instance == null) {
-            Iterator<JavaSignatureFormatter> iterator =
-                    ServiceLoader.load(JavaSignatureFormatter.class, JavaSignatureFormatter.class.getClassLoader()).iterator();
-            assert iterator.hasNext() : "No service found: " + JavaSignatureFormatter.class.getName();
-            instance = iterator.next();
+            instance = new JavaSignatureFormatter();
         }
         return instance;
     }
@@ -40,5 +39,75 @@ public abstract class JavaSignatureFormatter {
      * {@code "foo(double, java.lang.String)"}
      */
     @NotNull
-    public abstract String formatMethod(@NotNull JavaMethod method);
+    public String formatMethod(@NotNull JavaMethod method) {
+        StringBuilder buffer = new StringBuilder();
+
+        buffer.append(method.getName());
+
+        buffer.append('(');
+        boolean firstParameter = true;
+        for (JavaValueParameter parameter : method.getValueParameters()) {
+            if (!firstParameter) buffer.append(", ");
+            firstParameter = false;
+
+            buffer.append(getFqName(parameter.getType()));
+        }
+
+        buffer.append(')');
+
+        return buffer.toString();
+    }
+
+    @NotNull
+    private String getFqName(@NotNull JavaType type) {
+        if (type instanceof JavaPrimitiveType) {
+            return ((JavaPrimitiveType) type).getCanonicalText();
+        }
+        else if (type instanceof JavaArrayType) {
+            return getFqName(((JavaArrayType) type).getComponentType()) + "[]";
+        }
+        else if (type instanceof JavaClassifierType) {
+            return getFqNameOfClassifierType((JavaClassifierType) type);
+        }
+        else if (type instanceof JavaWildcardType) {
+            JavaWildcardType wildcardType = (JavaWildcardType) type;
+            if (wildcardType.isExtends()) {
+                //noinspection ConstantConditions
+                return "? extends " + getFqName(wildcardType.getBound());
+            } else {
+                return "?";
+            }
+        } else {
+            throw new IllegalArgumentException("Wrong type: " + type);
+        }
+    }
+
+    @NotNull
+    private String getFqNameOfClassifierType(@NotNull JavaClassifierType type) {
+        JavaClassifier classifier = type.getClassifier();
+
+        if (classifier == null) return "[UNRESOLVED: " + type + "]";
+
+        if (classifier instanceof JavaTypeParameter) {
+            return classifier.getName().asString();
+        }
+
+        //noinspection ConstantConditions
+        StringBuilder buffer = new StringBuilder(((JavaClass) classifier).getFqName().asString());
+
+        List<JavaType> typeArguments = type.getTypeArguments();
+        if (!typeArguments.isEmpty()) {
+            buffer.append("<");
+            boolean firstArgument = true;
+            for (JavaType typeArgument : typeArguments) {
+                if (!firstArgument) buffer.append(",");
+                firstArgument = false;
+
+                buffer.append(getFqName(typeArgument));
+            }
+            buffer.append(">");
+        }
+
+        return buffer.toString();
+    }
 }
