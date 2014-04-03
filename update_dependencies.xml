@@ -170,6 +170,10 @@
              dest="dependencies/asm5-src.zip" />
         <!-- <get-asm-sources-and-rename-packages asm.version="5.0.1"/> -->
 
+        <!-- Junit Sources -->
+        <get-maven-library prefix="junit" lib="junit" version="4.11" bin="false"/>
+        <get-maven-library prefix="org/hamcrest" lib="hamcrest-core" version="1.3" bin="false"/>
+
         <!-- Protocol Buffers -->
         <get-maven-library prefix="com/google/protobuf" lib="protobuf-java" version="2.5.0" bin="false"/>
 
