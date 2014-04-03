@@ -252,6 +252,9 @@
       <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/.jps-build-data/groovyStubs/jps-standalone-builder/java-production" />
       <root url="jar://$PROJECT_DIR$/dependencies/guava-14.0.1-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/dependencies/asm5-src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/structure-view-api/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/structure-view-impl/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/java/java-structure-view/src" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/lib" recursive="false" />
   </library>
