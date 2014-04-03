@@ -24,9 +24,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.*;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -57,10 +54,12 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
@@ -71,6 +70,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private static final String VALUES = "$VALUES";
@@ -1193,7 +1193,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             lookupConstructorExpressionsInClosureIfPresent(constructorContext);
         }
 
-        assert constructorDescriptor != null;
+        assert constructorDescriptor != null : "Constructor not found for class: " + descriptor;
         final JvmMethodSignature constructorSignature = typeMapper.mapSignature(constructorDescriptor);
 
         functionCodegen.generateMethod(myClass, constructorSignature, constructorDescriptor, constructorContext,
