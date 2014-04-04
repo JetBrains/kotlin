@@ -18,12 +18,24 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.stubs.IStubElementType;
+import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
 public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolderStub<? extends JetDelegationSpecifier>> {
+
+    private static final JetDelegationSpecifier[] EMPTY_ARRAY = new JetDelegationSpecifier[0];
+
+    public static ArrayFactory<JetDelegationSpecifier> ARRAY_FACTORY = new ArrayFactory<JetDelegationSpecifier>() {
+        @NotNull
+        @Override
+        public JetDelegationSpecifier[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new JetDelegationSpecifier[count];
+        }
+    };
+
     public JetDelegationSpecifier(@NotNull ASTNode node) {
         super(node);
     }
