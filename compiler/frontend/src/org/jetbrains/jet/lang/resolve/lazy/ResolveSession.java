@@ -302,7 +302,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @NotNull
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(@NotNull JetClassObject classObject) {
-        JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
+        JetClass aClass = JetStubbedPsiUtil.getContainingDeclaration(classObject, JetClass.class);
 
         LazyClassDescriptor parentClassDescriptor;
 
