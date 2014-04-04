@@ -24,8 +24,10 @@ public abstract class JsVisitor {
     }
 
     public final <T extends JsNode> void acceptWithInsertRemove(List<T> collection) {
-        for (T node : collection) {
-            accept(node);
+         if (collection != null) {
+            for (T node : collection) {
+                accept(node);
+            }
         }
     }
 

@@ -32,8 +32,7 @@ import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
 import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 final class PackageTranslator extends AbstractTranslator {
     static PackageTranslator create(
@@ -110,11 +109,16 @@ final class PackageTranslator extends AbstractTranslator {
     private JsPropertyInitializer getEntry(@NotNull FqName fqName, DefineInvocation defineInvocation) {
         DynamicContext dynamicContext = context().getRootContext().dynamicContext();
         List<JsStatement> rootStatements = dynamicContext.jsBlock().getStatements();
+
+        LinkedList<JsNode> toSubstitute = new LinkedList<JsNode>();
+
+        final HashMap<String, JsNameRef> subsitute = new HashMap<String, JsNameRef>();
         for (JsPropertyInitializer initializer : defineInvocation.getMembers()) {
             if (initializer.getValueExpr() instanceof JsFunction) {
                 JsFunction fun = (JsFunction) initializer.getValueExpr();
                 String labelExpr = ((JsNameRef) initializer.getLabelExpr()).getName().getIdent();
-                JsName longName = dynamicContext.getScope().declareName(labelExpr + "_$" + fqName.toString().replace('.', '$'));
+                String fqNameStr = fqName.toString();
+                JsName longName = dynamicContext.getScope().declareName(labelExpr + "_$" + fqNameStr.replace('.', '$'));
                 JsNameRef longNameRef = longName.makeRef();
                 if (fun.getName() != null) {
                     fun = TranslationUtils.simpleReturnFunction(context().scope(), fun);
@@ -123,13 +127,33 @@ final class PackageTranslator extends AbstractTranslator {
                 else {
                     initializer.setValueExpr(longNameRef);
                 }
+                subsitute.put("_." + fqNameStr + "." + labelExpr, longNameRef);
                 fun.setName(longName);
                 rootStatements.add(fun.makeStmt());
+
+                toSubstitute.add(fun.getBody());
             }
         }
 
-        return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
-                                         new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
+        JsPropertyInitializer initializer = new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
+                                                                      new JsInvocation(context().namer().packageDefinitionMethodReference(),
+                                                                                       defineInvocation.asList()));
+
+        toSubstitute.add(initializer);
+        while (toSubstitute.size() > 0) {
+            toSubstitute.removeFirst().accept(new RecursiveJsVisitor() {
+                @Override
+                public void visitNameRef(JsNameRef nameRef) {
+                    super.visitNameRef(nameRef);
+                    JsNameRef ref = subsitute.get(nameRef.toString());
+                    if (ref != null) {
+                        ref.resolve(ref.getName());
+                    }
+                }
+            });
+        }
+
+        return initializer;
     }
 
     private static boolean addEntryIfParentExists(
