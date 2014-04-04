@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedJavaResolverCache;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedMethodSignatureChecker;
 import org.jetbrains.jet.lang.resolve.java.resolver.PsiBasedExternalAnnotationResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
@@ -56,6 +57,7 @@ public class InjectorForJavaDescriptorResolver {
     private final TraceBasedErrorReporter traceBasedErrorReporter;
     private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
+    private final JavaPropertyInitializerEvaluatorImpl javaPropertyInitializerEvaluator;
     private final VirtualFileFinder virtualFileFinder;
     private final MemberFilter memberFilter;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
@@ -83,7 +85,8 @@ public class InjectorForJavaDescriptorResolver {
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.traceBasedJavaResolverCache = new TraceBasedJavaResolverCache();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(lockBasedStorageManager, getJavaClassFinder(), virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache);
+        this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(lockBasedStorageManager, getJavaClassFinder(), virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, traceBasedJavaResolverCache, javaPropertyInitializerEvaluator);
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.memberFilter = org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter.ALWAYS_TRUE;
@@ -95,6 +98,7 @@ public class InjectorForJavaDescriptorResolver {
         this.javaClassFinder.setProject(project);
 
         traceBasedExternalSignatureResolver.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
+        traceBasedExternalSignatureResolver.setProject(project);
         traceBasedExternalSignatureResolver.setTrace(bindingTrace);
 
         traceBasedJavaResolverCache.setTrace(bindingTrace);

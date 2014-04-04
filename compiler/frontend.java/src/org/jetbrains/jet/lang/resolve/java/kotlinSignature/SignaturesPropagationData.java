@@ -75,7 +75,7 @@ public class SignaturesPropagationData {
             @Nullable JetType receiverType,
             @NotNull List<ValueParameterDescriptor> autoValueParameters, // descriptors built by parameters resolver
             @NotNull List<TypeParameterDescriptor> autoTypeParameters, // descriptors built by signature resolver
-            @NotNull JavaMethodImpl method,
+            @NotNull JavaMethod method,
             @NotNull BindingTrace trace
     ) {
         this.containingClass = containingClass;
@@ -254,7 +254,7 @@ public class SignaturesPropagationData {
     }
 
     private static List<FunctionDescriptor> getSuperFunctionsForMethod(
-            @NotNull JavaMethodImpl method,
+            @NotNull JavaMethod method,
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor containingClass
     ) {
@@ -297,7 +297,7 @@ public class SignaturesPropagationData {
         // sorting for diagnostic stability
         Collections.sort(superFunctions, new Comparator<FunctionDescriptor>() {
             @Override
-            public int compare(FunctionDescriptor fun1, FunctionDescriptor fun2) {
+            public int compare(@NotNull FunctionDescriptor fun1, @NotNull FunctionDescriptor fun2) {
                 FqNameUnsafe fqName1 = getFqName(fun1.getContainingDeclaration());
                 FqNameUnsafe fqName2 = getFqName(fun2.getContainingDeclaration());
                 return fqName1.asString().compareTo(fqName2.asString());
