@@ -21,8 +21,8 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolderStub<? extends JetDelegationSpecifier>> {
 
@@ -53,7 +53,7 @@ public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolder
 
     @Nullable
     public JetTypeReference getTypeReference() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable
