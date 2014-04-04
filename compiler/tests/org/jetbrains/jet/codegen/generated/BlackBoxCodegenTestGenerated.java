@@ -320,6 +320,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/fakeOverrideWithSeveralSuperDeclarations.kt");
         }
         
+        @TestMetadata("fakeOverrideWithSynthesizedImplementation.kt")
+        public void testFakeOverrideWithSynthesizedImplementation() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideWithSynthesizedImplementation.kt");
+        }
+        
         @TestMetadata("kt1939.kt")
         public void testKt1939() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/kt1939.kt");

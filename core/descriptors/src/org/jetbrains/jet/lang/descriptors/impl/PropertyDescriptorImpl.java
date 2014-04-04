@@ -316,6 +316,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorImpl implements Pr
         return original == this ? this : original.getOriginal();
     }
 
+    @NotNull
     @Override
     public Kind getKind() {
         return kind;

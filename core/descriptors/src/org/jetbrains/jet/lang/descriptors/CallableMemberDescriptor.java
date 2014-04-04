@@ -41,13 +41,14 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
         ;
         
         public boolean isReal() {
-            return this == DECLARATION || this == DELEGATION || this == SYNTHESIZED;
+            return this != FAKE_OVERRIDE;
         }
     }
 
     /**
      * Is this a real function or function projection.
      */
+    @NotNull
     Kind getKind();
 
     @NotNull

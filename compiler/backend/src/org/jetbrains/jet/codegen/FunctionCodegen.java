@@ -26,13 +26,6 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -53,12 +46,18 @@ import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.DFS;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.*;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
@@ -69,6 +68,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen extends ParentCodegenAwareImpl {
     private final CodegenContext owner;
@@ -485,7 +485,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                 new DFS.NodeHandlerWithListResult<FunctionDescriptor, Method>() {
                     @Override
                     public void afterChildren(FunctionDescriptor current) {
-                        if (current.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                        if (current.getKind().isReal()) {
                             result.add(typeMapper.mapSignature(current).getAsmMethod());
                         }
                     }
@@ -504,7 +504,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             throw new IllegalArgumentException("Only non-abstract functions have implementations: " + descriptor);
         }
 
-        if (descriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        if (descriptor.getKind().isReal()) {
             return descriptor;
         }
 

@@ -66,6 +66,7 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return isDefault;
     }
 
+    @NotNull
     @Override
     public Kind getKind() {
         return kind;

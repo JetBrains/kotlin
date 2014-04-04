@@ -170,6 +170,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         return original == this ? this : original.getOriginal();
     }
 
+    @NotNull
     @Override
     public Kind getKind() {
         return kind;
