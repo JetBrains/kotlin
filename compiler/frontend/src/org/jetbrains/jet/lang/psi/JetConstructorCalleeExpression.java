@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
@@ -34,7 +33,7 @@ public class JetConstructorCalleeExpression extends JetExpressionImplStub<PsiJet
 
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {
-        return findChildByClass(JetTypeReference.class);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 
     @Nullable @IfNotParsed
