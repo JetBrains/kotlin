@@ -43,9 +43,13 @@ fun specialJVM(): List<GenericFunction> {
     templates add f("fill(element: T)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value" }
-        returns("Unit")
+        returns { "SELF" }
+        returns(ArraysOfObjects) { "Array<out T>" }
         body {
-            "Arrays.fill(this, element)"
+            """
+            Arrays.fill(this, element)
+            return this
+            """
         }
     }
 

@@ -255,64 +255,82 @@ public fun ShortArray.copyOfRange(from: Int, to: Int) : ShortArray {
 /**
  * Fills original array with the provided value
  */
-public fun <T> Array<out T>.fill(element: T) : Unit {
+public fun <T> Array<out T>.fill(element: T) : Array<out T> {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun BooleanArray.fill(element: Boolean) : Unit {
+public fun BooleanArray.fill(element: Boolean) : BooleanArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun ByteArray.fill(element: Byte) : Unit {
+public fun ByteArray.fill(element: Byte) : ByteArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun CharArray.fill(element: Char) : Unit {
+public fun CharArray.fill(element: Char) : CharArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun DoubleArray.fill(element: Double) : Unit {
+public fun DoubleArray.fill(element: Double) : DoubleArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun FloatArray.fill(element: Float) : Unit {
+public fun FloatArray.fill(element: Float) : FloatArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun IntArray.fill(element: Int) : Unit {
+public fun IntArray.fill(element: Int) : IntArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun LongArray.fill(element: Long) : Unit {
+public fun LongArray.fill(element: Long) : LongArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
  * Fills original array with the provided value
  */
-public fun ShortArray.fill(element: Short) : Unit {
+public fun ShortArray.fill(element: Short) : ShortArray {
     Arrays.fill(this, element)
+    return this
+    
 }
 
 /**
