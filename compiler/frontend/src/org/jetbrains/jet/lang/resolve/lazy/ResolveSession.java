@@ -256,8 +256,12 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @Override
     @NotNull
     public ClassDescriptor getClassDescriptor(@NotNull JetClassOrObject classOrObject) {
-        if (classOrObject.getParent() instanceof JetClassObject) {
-            return getClassObjectDescriptor((JetClassObject) classOrObject.getParent());
+        if (classOrObject instanceof JetObjectDeclaration) {
+            JetObjectDeclaration objectDeclaration = (JetObjectDeclaration) classOrObject;
+            JetClassObject classObjectElement = objectDeclaration.getClassObjectElement();
+            if (classObjectElement != null) {
+                return getClassObjectDescriptor(classObjectElement);
+            }
         }
         JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
         Name name = safeNameForLazyResolve(classOrObject.getNameAsName());

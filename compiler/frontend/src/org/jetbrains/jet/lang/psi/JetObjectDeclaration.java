@@ -101,6 +101,14 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
         return parent != null && parent.getNode().getElementType().equals(JetNodeTypes.CLASS_OBJECT);
     }
 
+    @Nullable
+    public JetClassObject getClassObjectElement() {
+        if (!isClassObject()) {
+            return null;
+        }
+        return (JetClassObject) getParentByStub();
+    }
+
     @Override
     public boolean hasModifier(JetModifierKeywordToken modifier) {
         JetModifierList modifierList = getModifierList();
