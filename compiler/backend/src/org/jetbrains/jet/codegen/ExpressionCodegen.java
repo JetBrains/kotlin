@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
@@ -51,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntValue;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -3648,7 +3650,13 @@ The "returned" value of try expression with no finally is either the last expres
         JetExpression expr = expression.getSubjectExpression();
         JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
         Type subjectType = asmTypeOrVoid(subjectJetType);
+
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
+
+        if (canSwitchBeUsedIn(expression, subjectType)) {
+            return generateSwitch(expression, subjectType, resultType, isStatement);
+        }
+
         int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;
         if (subjectLocal != -1) {
             gen(expr, subjectType);
@@ -3729,6 +3737,130 @@ The "returned" value of try expression with no finally is either the last expres
         else {
             throw new UnsupportedOperationException("unsupported kind of when condition");
         }
+    }
+
+    private StackValue generateSwitch(JetWhenExpression expression, Type subjectType, Type resultType, boolean isStatement) {
+        JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getSubjectExpression());
+        assert subjectJetType != null;
+
+        Map<Integer, Label> transitions = Maps.newTreeMap();
+
+        Label[] entryLabels = new Label[expression.getEntries().size()];
+        int entryLabelsCounter = 0;
+
+        Label elseLabel = new Label();
+        Label endLabel = new Label();
+        boolean hasElse = expression.getElseExpression() != null;
+
+        for (JetWhenEntry entry : expression.getEntries()) {
+            Label entryLabel = new Label();
+
+            for (JetWhenCondition condition : entry.getConditions()) {
+                assert condition instanceof JetWhenConditionWithExpression;
+
+                JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+                assert conditionExpression != null;
+
+                CompileTimeConstant constant = getCompileTimeConstant(conditionExpression, bindingContext);
+                assert constant != null && constant instanceof IntValue;
+
+                int value = ((IntValue) constant).getValue();
+
+                if (!transitions.containsKey(value)) {
+                    transitions.put(value, entryLabel);
+                }
+            }
+
+            if (entry.isElse()) {
+                elseLabel = entryLabel;
+            }
+
+            entryLabels[entryLabelsCounter++] = entryLabel;
+        }
+
+        gen(expression.getSubjectExpression(), subjectType);
+        generateSwitchLookupCall(
+            transitions,
+            //if there is no else-entry and it's statement then default --- endLabel
+            (hasElse || !isStatement) ? elseLabel : endLabel
+        );
+
+        //resolving entries' labels
+        int i = 0;
+        for (JetWhenEntry entry : expression.getEntries()) {
+            v.visitLabel(entryLabels[i++]);
+
+            FrameMap.Mark mark = myFrameMap.mark();
+            gen(entry.getExpression(), resultType);
+            mark.dropTo();
+
+            if (!entry.isElse()) {
+                v.goTo(endLabel);
+            }
+        }
+
+        //there is no else-entry but this is not statement, so we should return Unit
+        if (!hasElse && !isStatement) {
+            v.visitLabel(elseLabel);
+            // a result is expected
+            if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
+                // when() is supposed to be exhaustive
+                throwNewException("kotlin/NoWhenBranchMatchedException");
+            }
+            else {
+                // non-exhaustive when() with no else -> Unit must be expected
+                StackValue.putUnitInstance(v);
+            }
+        }
+
+        markLineNumber(expression);
+        v.mark(endLabel);
+
+        return StackValue.onStack(resultType);
+    }
+
+    private void generateSwitchLookupCall(Map<Integer, Label> transitions, Label defaultLabel) {
+        int[] keys = new int[transitions.size()];
+        Label[] labels = new Label[transitions.size()];
+        int i = 0;
+
+        for (Map.Entry<Integer,Label> transition : transitions.entrySet()) {
+            keys[i] = transition.getKey();
+            labels[i] = transition.getValue();
+
+            i++;
+        }
+
+        //switch code
+        v.lookupswitch(defaultLabel, keys, labels);
+    }
+
+    private boolean canSwitchBeUsedIn(JetWhenExpression expression, Type subjectType) {
+        if (subjectType.getSort() != Type.INT) {
+            return false;
+        }
+
+        for (JetWhenEntry entry : expression.getEntries()) {
+            for (JetWhenCondition condition : entry.getConditions()) {
+                if (!(condition instanceof JetWhenConditionWithExpression)) {
+                    return false;
+                }
+
+                //ensure that expression is constant
+                JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
+
+                if (patternExpression == null) {
+                    return false;
+                }
+
+                CompileTimeConstant constant = getCompileTimeConstant(patternExpression, bindingContext);
+                if (constant == null || !(constant instanceof IntValue)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private void invokeFunctionByReference(JetSimpleNameExpression operationReference) {

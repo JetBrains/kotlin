@@ -5463,6 +5463,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/when/range.kt");
         }
         
+        @TestMetadata("switchOptimization.kt")
+        public void testSwitchOptimization() throws Exception {
+            doTest("compiler/testData/codegen/box/when/switchOptimization.kt");
+        }
+        
         @TestMetadata("whenArgumentIsEvaluatedOnlyOnce.kt")
         public void testWhenArgumentIsEvaluatedOnlyOnce() throws Exception {
             doTest("compiler/testData/codegen/box/when/whenArgumentIsEvaluatedOnlyOnce.kt");
