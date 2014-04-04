@@ -19,12 +19,18 @@ package org.jetbrains.jet.plugin.debugger;
 import com.intellij.debugger.DebuggerTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
@@ -33,6 +39,8 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
+import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
 
@@ -50,6 +58,32 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     @Override
     protected String getTestAppPath() {
         return TINY_APP;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+
+        UsefulTestCase.edt(new Runnable() {
+            @Override
+            public void run() {
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
+
+                        NewLibraryEditor editor = new NewLibraryEditor();
+                        editor.setName(JavaRuntimeLibraryDescription.LIBRARY_NAME);
+                        editor.addRoot(VfsUtil.getUrlForLibraryRoot(ForTestCompileRuntime.runtimeJarForTests()), OrderRootType.CLASSES);
+
+                        ConfigLibraryUtil.addLibrary(editor, model);
+
+                        model.commit();
+                    }
+                });
+            }
+        });
+
     }
 
     @Override
