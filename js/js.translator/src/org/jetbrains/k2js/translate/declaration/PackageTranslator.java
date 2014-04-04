@@ -25,10 +25,12 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.k2js.translate.context.DefinitionPlace;
+import org.jetbrains.k2js.translate.context.DynamicContext;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 import org.jetbrains.k2js.translate.utils.AnnotationsUtils;
 import org.jetbrains.k2js.translate.utils.BindingUtils;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -106,6 +108,26 @@ final class PackageTranslator extends AbstractTranslator {
     }
 
     private JsPropertyInitializer getEntry(@NotNull FqName fqName, DefineInvocation defineInvocation) {
+        DynamicContext dynamicContext = context().getRootContext().dynamicContext();
+        List<JsStatement> rootStatements = dynamicContext.jsBlock().getStatements();
+        for (JsPropertyInitializer initializer : defineInvocation.getMembers()) {
+            if (initializer.getValueExpr() instanceof JsFunction) {
+                JsFunction fun = (JsFunction) initializer.getValueExpr();
+                String labelExpr = ((JsNameRef) initializer.getLabelExpr()).getName().getIdent();
+                JsName longName = dynamicContext.getScope().declareName(labelExpr + "_$" + fqName.toString().replace('.', '$'));
+                JsNameRef longNameRef = longName.makeRef();
+                if (fun.getName() != null) {
+                    fun = TranslationUtils.simpleReturnFunction(context().scope(), fun);
+                    initializer.setValueExpr(new JsInvocation(longNameRef));
+                }
+                else {
+                    initializer.setValueExpr(longNameRef);
+                }
+                fun.setName(longName);
+                rootStatements.add(fun.makeStmt());
+            }
+        }
+
         return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
                                          new JsInvocation(context().namer().packageDefinitionMethodReference(), defineInvocation.asList()));
     }

@@ -296,4 +296,12 @@ public class TranslationContext {
 
         return null;
     }
+
+    public TranslationContext getRootContext() {
+        TranslationContext result = this;
+        while( result.parent != null){
+            result = result.parent;
+        }
+        return result;
+    }
 }

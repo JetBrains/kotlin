@@ -15,13 +15,15 @@ native("__proto__") val A.proto: String = noImpl
 fun actual(foo: String, native("boo") bar: String) = foo + bar
 fun expected(foo: String, boo: String) = foo + boo
 
+fun String.onlyBody() = this.substring(this.indexOf("("))  // we ignore function names on comparison
+
 fun box(): String {
     val OK = "OK"
 
     if (foo + bar != OK) return "$foo + $bar != $OK"
 
-    val actualAsString = funToString("actual")
-    val expectedAsString = funToString("expected")
+    val actualAsString = funToString("actual").onlyBody()
+    val expectedAsString = funToString("expected").onlyBody()
     if (actualAsString != expectedAsString) return "$actualAsString != $expectedAsString"
     if (actual("asd", "12345") != "asd12345") return "${actual("asd", "12345")} != \"asd12345\""
 
