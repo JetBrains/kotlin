@@ -95,7 +95,9 @@ public interface JetStubElementTypes {
     JetPlaceHolderStubElementType<JetDelegatorToThisCall> THIS_CALL =
             new JetPlaceHolderStubElementType<JetDelegatorToThisCall>("THIS_CALL", JetDelegatorToThisCall.class);
 
-    
+    JetPlaceHolderStubElementType<JetConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
+            new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
+
     TokenSet DECLARATION_TYPES =
               TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
 

@@ -46,7 +46,7 @@ public interface JetNodeTypes {
     IElementType DELEGATOR_SUPER_CALL                = JetStubElementTypes.DELEGATOR_SUPER_CALL;
     IElementType DELEGATOR_SUPER_CLASS               = JetStubElementTypes.DELEGATOR_SUPER_CLASS;
     JetNodeType PROPERTY_DELEGATE                    = new JetNodeType("PROPERTY_DELEGATE", JetPropertyDelegate.class);
-    JetNodeType CONSTRUCTOR_CALLEE                  = new JetNodeType("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
+    IElementType CONSTRUCTOR_CALLEE                  = JetStubElementTypes.CONSTRUCTOR_CALLEE;
     IElementType VALUE_PARAMETER_LIST               = JetStubElementTypes.VALUE_PARAMETER_LIST;
     IElementType VALUE_PARAMETER                    = JetStubElementTypes.VALUE_PARAMETER;
 
