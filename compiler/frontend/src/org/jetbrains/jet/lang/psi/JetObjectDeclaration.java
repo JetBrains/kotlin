@@ -144,7 +144,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
 
     @Override
     public JetClassBody getBody() {
-        return (JetClassBody) findChildByType(JetNodeTypes.CLASS_BODY);
+        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
     }
 
     @Override
