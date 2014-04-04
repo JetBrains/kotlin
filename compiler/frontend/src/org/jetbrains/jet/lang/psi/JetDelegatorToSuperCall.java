@@ -43,7 +43,7 @@ public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements J
     @NotNull
     @Override
     public JetConstructorCalleeExpression getCalleeExpression() {
-        return (JetConstructorCalleeExpression) findChildByType(JetNodeTypes.CONSTRUCTOR_CALLEE);
+        return getRequiredStubOrPsiChild(JetStubElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Nullable
