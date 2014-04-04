@@ -17,13 +17,21 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-public class JetDelegationSpecifier extends JetElementImpl {
+public class JetDelegationSpecifier extends JetElementImplStub<PsiJetPlaceHolderStub<? extends JetDelegationSpecifier>> {
     public JetDelegationSpecifier(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDelegationSpecifier(
+            @NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub,
+            @NotNull IStubElementType nodeType) {
+        super(stub, nodeType);
     }
 
     @Override

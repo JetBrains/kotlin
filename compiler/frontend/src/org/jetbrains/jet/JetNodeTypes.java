@@ -42,9 +42,9 @@ public interface JetNodeTypes {
     IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
     IElementType DELEGATION_SPECIFIER_LIST           = JetStubElementTypes.DELEGATION_SPECIFIER_LIST;
-    JetNodeType DELEGATOR_BY                        = new JetNodeType("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
-    JetNodeType DELEGATOR_SUPER_CALL                = new JetNodeType("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
-    JetNodeType DELEGATOR_SUPER_CLASS               = new JetNodeType("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
+    IElementType DELEGATOR_BY                        = JetStubElementTypes.DELEGATOR_BY;
+    IElementType DELEGATOR_SUPER_CALL                = JetStubElementTypes.DELEGATOR_SUPER_CALL;
+    IElementType DELEGATOR_SUPER_CLASS               = JetStubElementTypes.DELEGATOR_SUPER_CLASS;
     JetNodeType PROPERTY_DELEGATE                    = new JetNodeType("PROPERTY_DELEGATE", JetPropertyDelegate.class);
     JetNodeType CONSTRUCTOR_CALLEE                  = new JetNodeType("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
     IElementType VALUE_PARAMETER_LIST               = JetStubElementTypes.VALUE_PARAMETER_LIST;
@@ -74,7 +74,7 @@ public interface JetNodeTypes {
     // TODO: review
     JetNodeType PROPERTY_ACCESSOR        = new JetNodeType("PROPERTY_ACCESSOR", JetPropertyAccessor.class);
     JetNodeType INITIALIZER_LIST         = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
-    JetNodeType THIS_CALL                = new JetNodeType("THIS_CALL", JetDelegatorToThisCall.class);
+    IElementType THIS_CALL               = JetStubElementTypes.THIS_CALL;
     JetNodeType THIS_CONSTRUCTOR_REFERENCE = new JetNodeType("THIS_CONSTRUCTOR_REFERENCE", JetThisReferenceExpression.class);
     IElementType TYPE_CONSTRAINT_LIST    = JetStubElementTypes.TYPE_CONSTRAINT_LIST;
     JetNodeType TYPE_CONSTRAINT          = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);

@@ -18,10 +18,16 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class JetDelegatorToSuperClass extends JetDelegationSpecifier {
     public JetDelegatorToSuperClass(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDelegatorToSuperClass(@NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
+        super(stub, JetStubElementTypes.DELEGATOR_SUPER_CLASS);
     }
 
     @Override

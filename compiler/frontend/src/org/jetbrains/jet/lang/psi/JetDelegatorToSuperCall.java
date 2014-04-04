@@ -20,6 +20,8 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +29,10 @@ import java.util.List;
 public class JetDelegatorToSuperCall extends JetDelegationSpecifier implements JetCallElement {
     public JetDelegatorToSuperCall(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDelegatorToSuperCall(@NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
+        super(stub, JetStubElementTypes.DELEGATOR_SUPER_CALL);
     }
 
     @Override

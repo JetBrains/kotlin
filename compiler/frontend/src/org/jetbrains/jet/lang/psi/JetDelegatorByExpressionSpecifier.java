@@ -19,10 +19,16 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class JetDelegatorByExpressionSpecifier extends JetDelegationSpecifier {
     public JetDelegatorByExpressionSpecifier(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDelegatorByExpressionSpecifier(@NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
+        super(stub, JetStubElementTypes.DELEGATOR_BY);
     }
 
     @Override

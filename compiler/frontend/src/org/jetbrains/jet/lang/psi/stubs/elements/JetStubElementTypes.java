@@ -85,6 +85,16 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
             new JetPlaceHolderStubElementType<JetDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
+
+    JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier> DELEGATOR_BY =
+            new JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier>("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
+    JetPlaceHolderStubElementType<JetDelegatorToSuperCall> DELEGATOR_SUPER_CALL =
+            new JetPlaceHolderStubElementType<JetDelegatorToSuperCall>("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
+    JetPlaceHolderStubElementType<JetDelegatorToSuperClass> DELEGATOR_SUPER_CLASS =
+            new JetPlaceHolderStubElementType<JetDelegatorToSuperClass>("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
+    JetPlaceHolderStubElementType<JetDelegatorToThisCall> THIS_CALL =
+            new JetPlaceHolderStubElementType<JetDelegatorToThisCall>("THIS_CALL", JetDelegatorToThisCall.class);
+
     
     TokenSet DECLARATION_TYPES =
               TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);

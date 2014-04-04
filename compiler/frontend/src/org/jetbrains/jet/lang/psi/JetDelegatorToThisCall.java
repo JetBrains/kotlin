@@ -17,9 +17,12 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,10 @@ public class JetDelegatorToThisCall extends JetDelegationSpecifier implements Je
 
     public JetDelegatorToThisCall(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetDelegatorToThisCall(@NotNull PsiJetPlaceHolderStub<? extends JetDelegationSpecifier> stub) {
+        super(stub, JetStubElementTypes.THIS_CALL);
     }
 
     @Override
