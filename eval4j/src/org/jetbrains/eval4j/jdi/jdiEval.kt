@@ -38,7 +38,7 @@ class JDIEval(
     }
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
-        assert(targetType.getSort() == Type.OBJECT, "Can't check isInstanceOf() for non-object type $targetType")
+        assert(targetType.getSort() == Type.OBJECT || targetType.getSort() == Type.ARRAY, "Can't check isInstanceOf() for non-object type $targetType")
 
         val _class = loadClass(targetType)
         return invokeMethod(

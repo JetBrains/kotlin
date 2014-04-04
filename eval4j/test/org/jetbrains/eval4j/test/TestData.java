@@ -459,4 +459,8 @@ class TestData {
             }
         return s;
     }
+
+    static void castToArray() {
+        int[] i = (int[]) null;
+    }
 }
