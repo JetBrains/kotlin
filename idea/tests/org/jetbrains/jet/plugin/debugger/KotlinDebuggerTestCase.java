@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.debugger;
 import com.intellij.debugger.DebuggerTestCase;
 import com.intellij.debugger.impl.OutputChecker;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
@@ -143,5 +144,10 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
         File file = new File(path);
         String packageName = file.getName().replace(".kt", "");
         createLocalProcess(PackageClassUtils.getPackageClassFqName(new FqName(packageName)).asString());
+    }
+
+    @Override
+    protected Sdk getTestProjectJdk() {
+        return PluginTestCaseBase.jdkFromIdeaHome();
     }
 }
