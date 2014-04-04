@@ -18,9 +18,9 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
@@ -55,6 +55,6 @@ public class JetNullableType extends JetElementImplStub<PsiJetPlaceHolderStub<Je
     @Nullable
     @IfNotParsed
     public JetTypeElement getInnerType() {
-        return findChildByClass(JetTypeElement.class);
+        return JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.TYPE_ELEMENT_TYPES, JetTypeElement.ARRAY_FACTORY);
     }
 }
