@@ -18,7 +18,9 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +52,19 @@ public final class JetStubbedPsiUtil {
             }
         }
         return PsiTreeUtil.getParentOfType(element, declarationClass, strict);
+    }
+
+    @Nullable
+    public static <T extends JetElement> T getStubOrPsiChild(
+            @NotNull JetElementImplStub<?> element,
+            @NotNull TokenSet types,
+            @NotNull ArrayFactory<T> factory
+    ) {
+        T[] typeElements = element.getStubOrPsiChildren(types, factory);
+        if (typeElements.length == 0) {
+            return null;
+        }
+        return typeElements[0];
     }
 
     private JetStubbedPsiUtil() {

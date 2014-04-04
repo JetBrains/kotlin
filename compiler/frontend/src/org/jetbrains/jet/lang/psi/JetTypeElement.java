@@ -16,11 +16,22 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface JetTypeElement extends JetElement {
+    JetTypeElement[] EMPTY_ARRAY = new JetTypeElement[0];
+
+    ArrayFactory<JetTypeElement> ARRAY_FACTORY = new ArrayFactory<JetTypeElement>() {
+        @NotNull
+        @Override
+        public JetTypeElement[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new JetTypeElement[count];
+        }
+    };
+
     @NotNull
     List<JetTypeReference> getTypeArgumentsAsTypes();
 }
