@@ -26,8 +26,10 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
+import com.sun.jdi.IntegerValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -3762,9 +3764,9 @@ The "returned" value of try expression with no finally is either the last expres
                 assert conditionExpression != null;
 
                 CompileTimeConstant constant = getCompileTimeConstant(conditionExpression, bindingContext);
-                assert constant != null && constant instanceof IntValue;
+                assert doesConstantFitForSwitch(constant);
 
-                int value = ((IntValue) constant).getValue();
+                int value = (constant.getValue() instanceof Number) ? ((Number)constant.getValue()).intValue() : ((Character)constant.getValue()).charValue();
 
                 if (!transitions.containsKey(value)) {
                     transitions.put(value, entryLabel);
@@ -3835,8 +3837,20 @@ The "returned" value of try expression with no finally is either the last expres
         v.lookupswitch(defaultLabel, keys, labels);
     }
 
+    private boolean doesConstantFitForSwitch(CompileTimeConstant constant) {
+        if (constant == null || !(constant instanceof IntegerValueConstant)) {
+            return false;
+        }
+
+        long value = (constant.getValue() instanceof Number) ? ((Number)constant.getValue()).longValue() : ((Character)constant.getValue()).charValue();
+        return value >= Integer.MIN_VALUE &&
+               value <= Integer.MAX_VALUE;
+    }
+
     private boolean canSwitchBeUsedIn(JetWhenExpression expression, Type subjectType) {
-        if (subjectType.getSort() != Type.INT) {
+        int typeSort = subjectType.getSort();
+
+        if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
             return false;
         }
 
@@ -3854,7 +3868,7 @@ The "returned" value of try expression with no finally is either the last expres
                 }
 
                 CompileTimeConstant constant = getCompileTimeConstant(patternExpression, bindingContext);
-                if (constant == null || !(constant instanceof IntValue)) {
+                if (!doesConstantFitForSwitch(constant)) {
                     return false;
                 }
             }
