@@ -53,12 +53,18 @@ public abstract class DeclarationDescriptorImpl extends AnnotatedImpl implements
 
     @Override
     public String toString() {
+        return toString(this);
+    }
+
+    @NotNull
+    /* package */ static String toString(@NotNull DeclarationDescriptor descriptor) {
         try {
-            return DescriptorRenderer.DEBUG_TEXT.render(this) + "[" + getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + "]";
+            return DescriptorRenderer.DEBUG_TEXT.render(descriptor) +
+                   "[" + descriptor.getClass().getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(descriptor)) + "]";
         } catch (Throwable e) {
             // DescriptionRenderer may throw if this is not yet completely initialized
             // It is very inconvenient while debugging
-            return this.getClass().getName() + "@" + System.identityHashCode(this);
+            return descriptor.getClass().getSimpleName() + " " + descriptor.getName();
         }
     }
 }

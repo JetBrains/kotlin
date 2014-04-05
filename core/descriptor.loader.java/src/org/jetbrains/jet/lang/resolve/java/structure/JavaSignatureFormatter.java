@@ -18,19 +18,18 @@ package org.jetbrains.jet.lang.resolve.java.structure;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.List;
 
-public abstract class JavaSignatureFormatter {
+public class JavaSignatureFormatter {
     private static JavaSignatureFormatter instance;
+
+    private JavaSignatureFormatter() {
+    }
 
     @NotNull
     public static JavaSignatureFormatter getInstance() {
         if (instance == null) {
-            Iterator<JavaSignatureFormatter> iterator =
-                    ServiceLoader.load(JavaSignatureFormatter.class, JavaSignatureFormatter.class.getClassLoader()).iterator();
-            assert iterator.hasNext() : "No service found: " + JavaSignatureFormatter.class.getName();
-            instance = iterator.next();
+            instance = new JavaSignatureFormatter();
         }
         return instance;
     }
@@ -40,13 +39,75 @@ public abstract class JavaSignatureFormatter {
      * {@code "foo(double, java.lang.String)"}
      */
     @NotNull
-    public abstract String formatMethod(@NotNull JavaMethod method);
+    public String formatMethod(@NotNull JavaMethod method) {
+        StringBuilder buffer = new StringBuilder();
 
-    /**
-     * @return a formatted signature of a method, showing method's containing class, return type and parameter types, all names are fully
-     * qualified, e.g.:
-     * {@code "java.lang.Class boolean isAnnotationPresent(java.lang.Class&lt;? extends java.lang.annotation.Annotation&gt;)"}
-     */
+        buffer.append(method.getName());
+
+        buffer.append('(');
+        boolean firstParameter = true;
+        for (JavaValueParameter parameter : method.getValueParameters()) {
+            if (!firstParameter) buffer.append(", ");
+            firstParameter = false;
+
+            buffer.append(formatType(parameter.getType()));
+        }
+
+        buffer.append(')');
+
+        return buffer.toString();
+    }
+
     @NotNull
-    public abstract String getExternalName(@NotNull JavaMethod method);
+    private String formatType(@NotNull JavaType type) {
+        if (type instanceof JavaPrimitiveType) {
+            return ((JavaPrimitiveType) type).getCanonicalText();
+        }
+        else if (type instanceof JavaArrayType) {
+            return formatType(((JavaArrayType) type).getComponentType()) + "[]";
+        }
+        else if (type instanceof JavaClassifierType) {
+            return formatClassifierType((JavaClassifierType) type);
+        }
+        else if (type instanceof JavaWildcardType) {
+            JavaWildcardType wildcardType = (JavaWildcardType) type;
+            if (wildcardType.isExtends()) {
+                //noinspection ConstantConditions
+                return "? extends " + formatType(wildcardType.getBound());
+            } else {
+                return "?";
+            }
+        } else {
+            throw new IllegalArgumentException("Wrong type: " + type);
+        }
+    }
+
+    @NotNull
+    private String formatClassifierType(@NotNull JavaClassifierType type) {
+        JavaClassifier classifier = type.getClassifier();
+
+        if (classifier == null) return "[UNRESOLVED: " + type + "]";
+
+        if (classifier instanceof JavaTypeParameter) {
+            return classifier.getName().asString();
+        }
+
+        //noinspection ConstantConditions
+        StringBuilder buffer = new StringBuilder(((JavaClass) classifier).getFqName().asString());
+
+        List<JavaType> typeArguments = type.getTypeArguments();
+        if (!typeArguments.isEmpty()) {
+            buffer.append("<");
+            boolean firstArgument = true;
+            for (JavaType typeArgument : typeArguments) {
+                if (!firstArgument) buffer.append(",");
+                firstArgument = false;
+
+                buffer.append(formatType(typeArgument));
+            }
+            buffer.append(">");
+        }
+
+        return buffer.toString();
+    }
 }

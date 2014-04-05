@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class JetNameSuggester {
     public static String[] suggestNames(JetExpression expression, JetNameValidator validator, String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) expression.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
         JetType jetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression);
         if (jetType != null) {
             addNamesForType(result, jetType, validator);
@@ -182,7 +182,9 @@ public class JetNameSuggester {
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(jetType);
         if (classDescriptor != null) {
             Name className = classDescriptor.getName();
-            addCamelNames(result, className.asString(), validator);
+            if (!className.isSpecial()) {
+                addCamelNames(result, className.asString(), validator);
+            }
         }
     }
 

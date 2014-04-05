@@ -368,4 +368,9 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         return builder;
     }
+
+    @Override
+    public String toString() {
+        return DeclarationDescriptorImpl.toString(this);
+    }
 }

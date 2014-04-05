@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaField;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPropertyInitializerEvaluator;
 
-public class JavaPropertyInitializerEvaluatorImpl extends JavaPropertyInitializerEvaluator {
+public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitializerEvaluator {
     @Nullable
     @Override
     public CompileTimeConstant<?> getInitializerConstant(@NotNull JavaField field, @NotNull PropertyDescriptor descriptor) {
