@@ -1,0 +1,2 @@
+if (a is Foo)
+  a.methodOfFoo() as Foo

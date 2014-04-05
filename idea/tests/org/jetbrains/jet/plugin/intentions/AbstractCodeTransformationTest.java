@@ -219,6 +219,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new SplitIfIntention());
     }
 
+    public void doRemoveExplicitCast(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveExplicitCastIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 
