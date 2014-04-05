@@ -32,17 +32,24 @@ Then, you need to run
 
     ant -f build.xml
     
-which will build the binaries of the compiler and put them into the 'dist' directory.
+which will build the binaries of the compiler and put them into the 'dist' directory. You may need to increase the **heap size** for Ant using
+[ANT_OPTS](http://www.liferay.com/community/wiki/-/wiki/Main/Ant+opts).
 
-Maven distribution is built separately, run
+**OPTIONAL:** Maven distribution is built separately, run
 
     mvn package
 
-from 'libraries' directory after building the compiler.
+from 'libraries' directory after building the compiler. Refer to `libraries/ReadMe.md` for details.
 
 ## Working with the project in IDEA
 
 The [root kotlin project](https://github.com/JetBrains/kotlin) already has an IDEA project, you can just open it in IDEA.
+
+You may need to set the Project SDK (File -> Project Structure -> Project).
+You may also need to add `tools.jar` to your SDK: File -> Project Structure -> SDKs -> <Your JDK> -> Classpath,
+then choose the `tools.jar` in the JDK's `lib` directory.
+
+If you are not dealing with Android, you may need to disable the Android Plugin in order to compile the project.
 
 Since Kotlin project contains code written in Kotlin itself, you will also need a Kotlin plugin to build the project in IntelliJ IDEA.
 To keep the plugin version in sync with the rest of the team and our [Continuous Integration server](http://teamcity.jetbrains.com/project.html?projectId=Kotlin&tab=projectOverview)
