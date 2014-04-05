@@ -387,6 +387,7 @@ fun main(args: Array<String>) {
             model("intentions/swapBinaryExpression", testMethod = "doTestSwapBinaryExpression")
             model("intentions/splitIf", testMethod = "doTestSplitIf")
             model("intentions/replaceWithOperatorAssign", testMethod = "doTestReplaceWithOperatorAssign")
+            model("intentions/replaceWithTraditionalAssignment", testMethod = "doTestReplaceWithTraditionalAssignment")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
