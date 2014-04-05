@@ -110,9 +110,6 @@ final class PackageTranslator extends AbstractTranslator {
         DynamicContext dynamicContext = context().getRootContext().dynamicContext();
         List<JsStatement> rootStatements = dynamicContext.jsBlock().getStatements();
 
-        LinkedList<JsNode> toSubstitute = new LinkedList<JsNode>();
-
-        final HashMap<String, JsNameRef> subsitute = new HashMap<String, JsNameRef>();
         for (JsPropertyInitializer initializer : defineInvocation.getMembers()) {
             if (initializer.getValueExpr() instanceof JsFunction) {
                 JsFunction fun = (JsFunction) initializer.getValueExpr();
@@ -120,40 +117,25 @@ final class PackageTranslator extends AbstractTranslator {
                 String fqNameStr = fqName.toString();
                 JsName longName = dynamicContext.getScope().declareName(labelExpr + "_$" + fqNameStr.replace('.', '$'));
                 JsNameRef longNameRef = longName.makeRef();
+                String substituteName = "_." + fqNameStr + "." + labelExpr;
                 if (fun.getName() != null) {
                     fun = TranslationUtils.simpleReturnFunction(context().scope(), fun);
-                    initializer.setValueExpr(new JsInvocation(longNameRef));
+                    JsInvocation jsInvocation = new JsInvocation(longNameRef);
+                    initializer.setValueExpr(jsInvocation);
+                    // todo: we for now don't substitute yet recursive or otherwise named functions
                 }
                 else {
                     initializer.setValueExpr(longNameRef);
+                    dynamicContext.addSubstitute(substituteName, longNameRef);
                 }
-                subsitute.put("_." + fqNameStr + "." + labelExpr, longNameRef);
                 fun.setName(longName);
                 rootStatements.add(fun.makeStmt());
-
-                toSubstitute.add(fun.getBody());
             }
         }
 
-        JsPropertyInitializer initializer = new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
+        return new JsPropertyInitializer(context().getNameForPackage(fqName).makeRef(),
                                                                       new JsInvocation(context().namer().packageDefinitionMethodReference(),
                                                                                        defineInvocation.asList()));
-
-        toSubstitute.add(initializer);
-        while (toSubstitute.size() > 0) {
-            toSubstitute.removeFirst().accept(new RecursiveJsVisitor() {
-                @Override
-                public void visitNameRef(JsNameRef nameRef) {
-                    super.visitNameRef(nameRef);
-                    JsNameRef ref = subsitute.get(nameRef.toString());
-                    if (ref != null) {
-                        ref.resolve(ref.getName());
-                    }
-                }
-            });
-        }
-
-        return initializer;
     }
 
     private static boolean addEntryIfParentExists(

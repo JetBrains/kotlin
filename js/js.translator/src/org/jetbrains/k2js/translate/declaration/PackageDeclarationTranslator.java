@@ -73,6 +73,7 @@ public final class PackageDeclarationTranslator extends AbstractTranslator {
         JsVars vars = new JsVars(true);
         vars.addIfHasInitializer(getRootPackageDeclaration(packageFqNameToDefineInvocation.get(FqName.ROOT)));
 
+        context().dynamicContext().substitute();
         return Collections.<JsStatement>singletonList(vars);
     }
 

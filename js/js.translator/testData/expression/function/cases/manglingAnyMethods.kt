@@ -66,12 +66,14 @@ fun test(expected: String, f: () -> Unit) {
     }
 }
 
+fun String.withoutFoo() = substring(0,indexOf("_\$foo"))
+
 val SIMPLE_EQUALS = "equals"
 val SIMPLE_HASH_CODE_1 = "hashCode_1"
 val SIMPLE_TO_STRING_1 = "toString_1"
-val STABLE_EQUALS = { equals(0) }.extractNames()[1]
-val STABLE_HASH_CODE = { hashCode() }.extractNames()[1]
-val STABLE_TO_STRING = { toString() }.extractNames()[1]
+val STABLE_EQUALS = { equals(0) }.extractNames()[1].withoutFoo()
+val STABLE_HASH_CODE = { hashCode() }.extractNames()[1].withoutFoo()
+val STABLE_TO_STRING = { toString() }.extractNames()[1].withoutFoo()
 
 fun box(): String {
     testGroup = "Public Class"

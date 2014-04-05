@@ -21,10 +21,14 @@ import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+
 import static com.google.dart.compiler.backend.js.ast.JsVars.JsVar;
 
 //TODO: consider renaming to scoping context
 public final class DynamicContext {
+    private HashMap<String, JsNameRef> subsitute = null;
+
     @NotNull
     public static DynamicContext rootContext(@NotNull JsScope rootScope, @NotNull JsBlock globalBlock) {
         return new DynamicContext(rootScope, globalBlock);
@@ -86,5 +90,28 @@ public final class DynamicContext {
     @NotNull
     public JsBlock jsBlock() {
         return currentBlock;
+    }
+
+    public final void addSubstitute(String substituteName, JsNameRef longNameRef) {
+        if (subsitute == null) {
+            subsitute = new HashMap<String, JsNameRef>();
+        }
+        subsitute.put(substituteName, longNameRef);
+    }
+
+    public final void substitute() {
+        if (subsitute != null) {
+            currentBlock.accept(new RecursiveJsVisitor() {
+                @Override
+                public void visitNameRef(JsNameRef nameRef) {
+                    super.visitNameRef(nameRef);
+                    JsNameRef ref = subsitute.get(nameRef.toString());
+                    if (ref != null) {
+                        nameRef.resolve(ref.getName());
+                        nameRef.setQualifier(null);
+                    }
+                    }
+                });
+        }
     }
 }

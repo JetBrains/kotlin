@@ -299,7 +299,7 @@ public class TranslationContext {
 
     public TranslationContext getRootContext() {
         TranslationContext result = this;
-        while( result.parent != null){
+        while( result != null && result.parent != null){
             result = result.parent;
         }
         return result;

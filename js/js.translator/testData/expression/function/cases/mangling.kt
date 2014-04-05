@@ -161,11 +161,19 @@ fun Function0<Unit>.extractNames(): Array<String> {
 
 var testGroup = ""
 
+fun String.withoutFoo() : String {
+    var index = indexOf("_\$foo")
+    return if(index == -1) this else substring(0,index)
+}
+
+var count = -1
 fun test(expected: String, f: () -> Unit) {
+    count++
     val actual = f.extractNames()
 
-    if (expected != actual[1]) {
-        throw Exception("Failed on '$testGroup' group: expected = \"$expected\", actual[1] = \"${actual[1]}\"\n actual = $actual")
+    val withoutFoo = actual[1].withoutFoo()
+    if (expected != withoutFoo) {
+        throw Exception("$count Failed on '$testGroup' group: expected = \"$expected\", withoutFoo = \"${withoutFoo}\"\n actual = $actual\n")
     }
 }
 
@@ -175,9 +183,11 @@ public fun stable_mangled_baz(i: Int) {
 val SIMPLE = "baz"
 val SIMPLE1 = "${SIMPLE}_1"
 val NATIVE = SIMPLE
-val STABLE = { stable_mangled_baz(0) }.extractNames()[1]
+val STABLE = { stable_mangled_baz(0) }.extractNames()[1].withoutFoo()
 
 fun box(): String {
+    println("STABLE: $STABLE")
+
     testGroup = "Top Level"
     test(STABLE) { public_baz(0) }
     test(NATIVE) { public_baz("native") }
