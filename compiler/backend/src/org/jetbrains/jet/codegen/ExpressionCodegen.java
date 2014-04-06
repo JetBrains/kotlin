@@ -20,13 +20,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import com.sun.jdi.IntegerValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
@@ -54,7 +52,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.resolve.constants.IntValue;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -3781,10 +3778,10 @@ The "returned" value of try expression with no finally is either the last expres
         }
 
         gen(expression.getSubjectExpression(), subjectType);
-        generateSwitchLookupCall(
-            transitions,
-            //if there is no else-entry and it's statement then default --- endLabel
-            (hasElse || !isStatement) ? elseLabel : endLabel
+        generateSwitchCall(
+                transitions,
+                //if there is no else-entry and it's statement then default --- endLabel
+                (hasElse || !isStatement) ? elseLabel : endLabel
         );
 
         //resolving entries' labels
@@ -3821,7 +3818,7 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.onStack(resultType);
     }
 
-    private void generateSwitchLookupCall(Map<Integer, Label> transitions, Label defaultLabel) {
+    private void generateSwitchCall(Map<Integer, Label> transitions, Label defaultLabel) {
         int[] keys = new int[transitions.size()];
         Label[] labels = new Label[transitions.size()];
         int i = 0;
@@ -3833,8 +3830,26 @@ The "returned" value of try expression with no finally is either the last expres
             i++;
         }
 
-        //switch code
-        v.lookupswitch(defaultLabel, keys, labels);
+        int hi = keys[keys.length-1];
+        int lo = keys[0];
+        long emptyCells = ((long)hi - (long)lo + 1) - keys.length;
+
+        boolean useTableSwitch = keys.length > 0 &&
+                                 10L * emptyCells <= (long) keys.length; // less then 10% of empty cells
+
+        if (!useTableSwitch) {
+            v.lookupswitch(defaultLabel, keys, labels);
+            return;
+        }
+
+        Label[] sparseLabels = new Label[hi-lo + 1];
+        Arrays.fill(sparseLabels, defaultLabel);
+
+        for (i = 0; i < keys.length; i++) {
+            sparseLabels[keys[i] - lo] = labels[i];
+        }
+
+        v.tableswitch(lo, hi, defaultLabel, sparseLabels);
     }
 
     private boolean doesConstantFitForSwitch(CompileTimeConstant constant) {
