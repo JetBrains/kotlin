@@ -1,9 +1,9 @@
 
 fun foo1(x : Int) : Int {
-    return when (x % 10) {
-        1,2,3 -> 1
-        4,5,6 -> 2
-        7,8,9 -> 3
+    return when ((x % 10)*100) {
+        700,800,900 -> 3
+        100,200,300 -> 1
+        400,500,600 -> 2
         else -> 4
     }
 }
@@ -11,8 +11,8 @@ fun foo1(x : Int) : Int {
 fun foo2(x : Short) : Int {
     when ((x % 10).toShort()) {
         1.toShort(),2.toShort(),3.toShort() -> return 1
-        4.toShort(),5.toShort(),6.toShort() -> return 2
         7.toShort(),8.toShort(),9.toShort() -> return 3
+        4.toShort(),5.toShort(),6.toShort() -> return 2
     }
 
     return 4
@@ -21,15 +21,15 @@ fun foo2(x : Short) : Int {
 fun foo3(x : Char) : Int {
 
     when (x) {
-        '1' -> return 1
-        '2' -> return 1
-        '3' -> return 1
-        '4' -> return 2
         '5' -> return 2
         '6' -> return 2
         '7' -> return 3
         '8' -> return 3
         '9' -> return 3
+        '1' -> return 1
+        '2' -> return 1
+        '3' -> return 1
+        '4' -> return 2
     }
 
     return 4
