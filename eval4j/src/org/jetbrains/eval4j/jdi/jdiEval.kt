@@ -94,7 +94,7 @@ class JDIEval(
     }
 
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
-        array.array().setValue(index.int, newValue.asJdiValue(vm))
+        array.array().setValue(index.int, newValue.asJdiValue(vm, array.asmType.arrayElementType))
     }
 
     private fun findField(fieldDesc: FieldDescription): jdi.Field {
@@ -131,7 +131,7 @@ class JDIEval(
             throwEvalException(NoSuchFieldError("Can't a field in a non-class: $field"))
         }
 
-        val jdiValue = newValue.asJdiValue(vm)
+        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
         mayThrow { _class.setValue(field, jdiValue) }
     }
 
@@ -158,7 +158,7 @@ class JDIEval(
         val _class = method.declaringType()
         if (_class !is jdi.ClassType) throwEvalException(NoSuchMethodError("Static method is a non-class type: $method"))
 
-        val args = arguments.map { v -> v.asJdiValue(vm) }
+        val args = mapArguments(arguments, method.argumentTypes())
         val result = mayThrow { _class.invokeMethod(thread, method, args, 0) }
         return result.asValue()
     }
@@ -174,7 +174,7 @@ class JDIEval(
         val field = findField(fieldDesc)
         val obj = instance.jdiObj.checkNull()
 
-        val jdiValue = newValue.asJdiValue(vm)
+        val jdiValue = newValue.asJdiValue(vm, field.`type`().asType())
         mayThrow { obj.setValue(field, jdiValue) }
     }
 
@@ -184,7 +184,7 @@ class JDIEval(
                 // Constructor call
                 val ctor = findMethod(methodDesc)
                 val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
-                val args = arguments.map { v -> v.asJdiValue(vm) }
+                val args = mapArguments(arguments, ctor.argumentTypes())
                 val result = mayThrow { _class.newInstance(thread, ctor, args, 0) }
                 instance.value = result
                 return result.asValue()
@@ -197,9 +197,16 @@ class JDIEval(
         val method = findMethod(methodDesc)
 
         val obj = instance.jdiObj.checkNull()
-        val args = arguments.map { v -> v.asJdiValue(vm) }
+        val args = mapArguments(arguments, method.argumentTypes())
         val result = mayThrow { obj.invokeMethod(thread, method, args, 0) }
         return result.asValue()
+    }
+
+    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi.Type>): List<jdi.Value?> {
+        return arguments.zip(expecetedTypes).map {
+            val (arg, expectedType) = it
+            arg.asJdiValue(vm, expectedType.asType())
+        }
     }
 }
 

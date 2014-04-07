@@ -96,7 +96,7 @@ object REFLECTION_EVAL : Eval {
 
     override fun isInstanceOf(value: Value, targetType: Type): Boolean {
         val _class = findClass(targetType)
-        return _class.isInstance(value.obj)
+        return _class.isInstance(value.obj())
     }
 
     [suppress("UNCHECKED_CAST")]
@@ -109,13 +109,13 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun getArrayLength(array: Value): Value {
-        return int(JArray.getLength(array.obj.checkNull()))
+        return int(JArray.getLength(array.obj().checkNull()))
     }
 
     override fun getArrayElement(array: Value, index: Value): Value {
         val asmType = array.asmType
         val elementType = if (asmType.getDimensions() == 1) asmType.getElementType() else Type.getType(asmType.getDescriptor().substring(1))
-        val arr = array.obj.checkNull()
+        val arr = array.obj().checkNull()
         val ind = index.int
         return when (elementType.getSort()) {
             Type.BOOLEAN -> boolean(JArray.getBoolean(arr, ind))
@@ -136,10 +136,10 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
-        val arr = array.obj.checkNull()
+        val arr = array.obj().checkNull()
         val ind = index.int
         if (array.asmType.getDimensions() > 1) {
-            JArray.set(arr, ind, newValue.obj)
+            JArray.set(arr, ind, newValue.obj())
             return
         }
         val elementType = array.asmType.getElementType()
@@ -154,7 +154,7 @@ object REFLECTION_EVAL : Eval {
             Type.DOUBLE -> JArray.setDouble(arr, ind, newValue.double)
             Type.OBJECT,
             Type.ARRAY -> {
-                JArray.set(arr, ind, newValue.obj)
+                JArray.set(arr, ind, newValue.obj())
             }
             else -> throw UnsupportedOperationException("Unsupported array element type: $elementType")
         }
@@ -183,7 +183,7 @@ object REFLECTION_EVAL : Eval {
 
     override fun setStaticField(fieldDesc: FieldDescription, newValue: Value) {
         val field = findStaticField(fieldDesc)
-        val obj = newValue.obj
+        val obj = newValue.obj(fieldDesc.fieldType)
         mayThrow {field.set(null, obj)}
     }
 
@@ -199,7 +199,7 @@ object REFLECTION_EVAL : Eval {
         assertTrue(methodDesc.isStatic)
         val method = findClass(methodDesc).findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
-        val args = arguments.map { v -> v.obj }.copyToArray()
+        val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
         val result = mayThrow {method!!.invoke(null, *args)}
         return objectToValue(result, methodDesc.returnType)
     }
@@ -213,17 +213,17 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun getField(instance: Value, fieldDesc: FieldDescription): Value {
-        val obj = instance.obj.checkNull()
+        val obj = instance.obj().checkNull()
         val field = findInstanceField(obj, fieldDesc)
 
         return objectToValue(mayThrow {field.get(obj)}, fieldDesc.fieldType)
     }
 
     override fun setField(instance: Value, fieldDesc: FieldDescription, newValue: Value) {
-        val obj = instance.obj.checkNull()
+        val obj = instance.obj().checkNull()
         val field = findInstanceField(obj, fieldDesc)
 
-        val newObj = newValue.obj
+        val newObj = newValue.obj(fieldDesc.fieldType)
         mayThrow {field.set(obj, newObj)}
     }
 
@@ -242,7 +242,7 @@ object REFLECTION_EVAL : Eval {
                 val _class = findClass((instance as NewObjectValue).asmType)
                 val ctor = _class.findConstructor(methodDesc)
                 assertNotNull("Constructor not found: $methodDesc", ctor)
-                val args = arguments.map { v -> v.obj }.copyToArray()
+                val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
                 val result = mayThrow {ctor!!.newInstance(*args)}
                 instance.value = result
                 return objectToValue(result, instance.asmType)
@@ -252,12 +252,19 @@ object REFLECTION_EVAL : Eval {
                 throw UnsupportedOperationException("invokespecial is not suported yet")
             }
         }
-        val obj = instance.obj.checkNull()
+        val obj = instance.obj().checkNull()
         val method = obj.javaClass.findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
-        val args = arguments.map { v -> v.obj }.copyToArray()
+        val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
         val result = mayThrow {method!!.invoke(obj, *args)}
         return objectToValue(result, methodDesc.returnType)
+    }
+
+    private fun mapArguments(arguments: List<Value>, expecetedTypes: List<Type>): List<Any?> {
+        return arguments.zip(expecetedTypes).map {
+            val (arg, expectedType) = it
+            arg.obj(expectedType)
+        }
     }
 }
 

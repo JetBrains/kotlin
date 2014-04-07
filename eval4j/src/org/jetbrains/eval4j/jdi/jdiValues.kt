@@ -52,16 +52,16 @@ fun jdi.Value?.asValue(): Value {
 fun jdi.Type.asType(): Type = Type.getType(this.signature())
 
 val Value.jdiObj: jdi.ObjectReference?
-    get() = this.obj as jdi.ObjectReference?
+    get() = this.obj() as jdi.ObjectReference?
 
 val Value.jdiClass: jdi.ClassObjectReference?
     get() = this.jdiObj as jdi.ClassObjectReference?
 
-fun Value.asJdiValue(vm: jdi.VirtualMachine): jdi.Value? {
+fun Value.asJdiValue(vm: jdi.VirtualMachine, expectedType: Type): jdi.Value? {
     return when (this) {
         NULL_VALUE -> null
         VOID_VALUE -> vm.mirrorOfVoid()
-        is IntValue -> when (asmType) {
+        is IntValue -> when (expectedType) {
             Type.BOOLEAN_TYPE -> vm.mirrorOf(boolean)
             Type.BYTE_TYPE -> vm.mirrorOf(int.toByte())
             Type.SHORT_TYPE -> vm.mirrorOf(int.toShort())
@@ -73,7 +73,7 @@ fun Value.asJdiValue(vm: jdi.VirtualMachine): jdi.Value? {
         is FloatValue -> vm.mirrorOf(value)
         is DoubleValue -> vm.mirrorOf(value)
         is ObjectValue -> value as jdi.ObjectReference
-        is NewObjectValue -> this.obj as jdi.ObjectReference
+        is NewObjectValue -> this.obj() as jdi.ObjectReference
         else -> throw JDIFailureException("Unknown value: $this")
     }
 }

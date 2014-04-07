@@ -151,7 +151,7 @@ fun interpreterLoop(
                             val expectedType = Type.getReturnType(m.desc)
                             if (expectedType.getSort() == Type.OBJECT) {
                                 val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
-                                                    ObjectValue(value.obj, expectedType)
+                                                    ObjectValue(value.obj(), expectedType)
                                               else value
                                 return ValueReturned(coerced)
                             }

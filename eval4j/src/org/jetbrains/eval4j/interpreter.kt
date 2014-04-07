@@ -173,7 +173,7 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             CHECKCAST -> {
                 val targetType = Type.getObjectType((insn as TypeInsnNode).desc)
                 if (eval.isInstanceOf(value, targetType)) {
-                    ObjectValue(value.obj, targetType)
+                    ObjectValue(value.obj(), targetType)
                 }
                 else {
                     throwEvalException(ClassCastException("Value '$value' cannot be cast to $targetType"))
@@ -200,8 +200,8 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             IFGT -> value.int > 0
             IFLE -> value.int <= 0
             IFGE -> value.int >= 0
-            IFNULL -> value.obj == null
-            IFNONNULL -> value.obj != null
+            IFNULL -> value.obj() == null
+            IFNONNULL -> value.obj() != null
             else -> throw UnsupportedByteCodeException("Unknown opcode: $opcode")
         }
     }
@@ -310,8 +310,8 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             IF_ICMPLE -> value1.int <= value2.int
             IF_ICMPGE -> value1.int >= value2.int
 
-            IF_ACMPEQ -> value1.obj == value2.obj
-            IF_ACMPNE -> value1.obj != value2.obj
+            IF_ACMPEQ -> value1.obj() == value2.obj()
+            IF_ACMPNE -> value1.obj() != value2.obj()
             else -> throw UnsupportedByteCodeException("Unknown opcode: $opcode")
         }
     }

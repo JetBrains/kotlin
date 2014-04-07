@@ -115,7 +115,7 @@ fun suite(): TestSuite {
                     }
 
                     if (expected is ValueReturned && value is ValueReturned && value.result is ObjectValue) {
-                        assertEquals(expected.result.obj.toString(), value.result.jdiObj.callToString())
+                        assertEquals(expected.result.obj().toString(), value.result.jdiObj.callToString())
                     }
                     else {
                         assertEquals(expected, value)

@@ -89,15 +89,21 @@ val Value.int: Int get() = (this as IntValue).value
 val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
 val Value.double: Double get() = (this as DoubleValue).value
-val Value.obj: Any?
-    get(): Any? {
-        if (this is NewObjectValue) {
-            val v = value
-            if (v == null) throw IllegalStateException("Trying to access an unitialized object: $this")
-            return v
-        }
-        return (this as AbstractValue<*>).value
+fun Value.obj(expectedType: Type = asmType): Any? {
+    if (this is NewObjectValue) {
+        val v = value
+        if (v == null) throw IllegalStateException("Trying to access an unitialized object: $this")
+        return v
     }
+    return when {
+        expectedType == asmType -> (this as AbstractValue<*>).value
+        expectedType == Type.BOOLEAN_TYPE -> this.boolean
+        expectedType == Type.SHORT_TYPE -> (this as IntValue).int.toShort()
+        expectedType == Type.BYTE_TYPE -> (this as IntValue).int.toByte()
+        expectedType == Type.CHAR_TYPE -> (this as IntValue).int.toChar()
+        else -> (this as AbstractValue<*>).value
+    }
+}
 
 fun <T: Any> T?.checkNull(): T {
     if (this == null) {

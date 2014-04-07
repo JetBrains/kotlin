@@ -48,6 +48,91 @@ class TestData {
         return "str";
     }
 
+    static Integer integerValueOf() { return 1; }
+
+    static Byte byteValueOf() { return 1; }
+
+    static Short shortValueOf() { return 1; }
+
+    static Long longValueOf() { return 1L; }
+
+    static Float floatValueOf() { return 1.0f; }
+
+    static Double doubleValueOf() { return 1.0; }
+
+    static Character charValueOf() { return 1; }
+
+    static Boolean booleanValueOf() { return true; }
+
+    static void castFieldTypes() {
+        CastFieldType.i = 1;
+        CastFieldType.b = 1;
+        CastFieldType.s = 1;
+        CastFieldType.c = 1;
+        CastFieldType.bool = true;
+        CastFieldType.l = 1;
+        CastFieldType.f = 1.0f;
+        CastFieldType.d = 1.0;
+
+        CastFieldType klass = new CastFieldType();
+        klass.im = 1;
+        klass.bm = 1;
+        klass.sm = 1;
+        klass.cm = 1;
+        klass.boolm = true;
+        klass.lm = 1;
+        klass.fm = 1;
+        klass.dm = 1;
+
+        Integer i = klass.im;
+        Byte b = klass.bm;
+        Short s = klass.sm;
+        Character c = klass.cm;
+        Boolean bool = klass.boolm;
+        Long l = klass.lm;
+        Float f = klass.fm;
+        Double d = klass.dm;
+    }
+
+    static class CastFieldType {
+        static int i = 1;
+        static byte b = 1;
+        static short s = 1;
+        static char c = 1;
+        static boolean bool = true;
+        static long l = 1;
+        static float f = 1;
+        static double d = 1;
+
+        int im = 1;
+        byte bm = 1;
+        short sm = 1;
+        char cm = 1;
+        boolean boolm = true;
+        long lm = 1;
+        float fm = 1;
+        double dm = 1;
+    }
+
+    static void castArrayElementType() {
+        int[] i = new int[1];
+        i[0] = 1;
+        short[] s = new short[1];
+        s[0] = 1;
+        byte[] b = new byte[1];
+        b[0] = 1;
+        char[] c = new char[1];
+        c[0] = 1;
+        boolean[] bool = new boolean[1];
+        bool[0] = true;
+        long[] l = new long[1];
+        l[0] = 1;
+        float[] f = new float[1];
+        f[0] = 1;
+        double[] d = new double[1];
+        d[0] = 1;
+    }
+
     static int variable() {
         int i = 153;
         return i;
