@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun main(args: Array<String>) {
+    "abc" ?: throw NullPointerException("'t' must not be null")
+}
