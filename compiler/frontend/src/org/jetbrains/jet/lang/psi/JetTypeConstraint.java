@@ -17,11 +17,8 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -56,15 +53,6 @@ public class JetTypeConstraint extends JetElementImplStub<PsiJetTypeConstraintSt
 
     @Nullable @IfNotParsed
     public JetTypeReference getBoundTypeReference() {
-        boolean passedColon = false;
-        ASTNode node = getNode().getFirstChildNode();
-        while (node != null) {
-            IElementType tt = node.getElementType();
-            if (tt == JetTokens.COLON) passedColon = true;
-            if (passedColon && tt == JetNodeTypes.TYPE_REFERENCE) return (JetTypeReference) node.getPsi();
-            node = node.getTreeNext();
-        }
-
-        return null;
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 }
