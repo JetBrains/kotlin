@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
@@ -40,6 +39,6 @@ public class JetAnnotation extends JetElementImplStub<PsiJetPlaceHolderStub<JetA
     }
 
     public List<JetAnnotationEntry> getEntries() {
-        return findChildrenByType(JetNodeTypes.ANNOTATION_ENTRY);
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION_ENTRY);
     }
 }
