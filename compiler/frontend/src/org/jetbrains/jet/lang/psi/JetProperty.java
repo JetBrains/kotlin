@@ -166,6 +166,10 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), JetExpression.class);
     }
 
+    public boolean hasDelegateExpressionOrInitializer() {
+        return getDelegateExpressionOrInitializer() != null;
+    }
+
     @Nullable
     public JetExpression getDelegateExpressionOrInitializer() {
         JetExpression expression = getDelegateExpression();

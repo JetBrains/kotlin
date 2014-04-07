@@ -417,7 +417,7 @@ public class DeclarationsChecker {
                                             (setter != null && setter.hasBody());
 
         if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            if (property.getDelegateExpressionOrInitializer() == null && property.getTypeRef() == null) {
+            if (!property.hasDelegateExpressionOrInitializer() && property.getTypeRef() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
             return;

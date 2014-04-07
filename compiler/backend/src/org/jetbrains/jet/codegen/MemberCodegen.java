@@ -248,8 +248,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     }
 
     private boolean shouldInitializeProperty(@NotNull JetProperty property) {
-        JetExpression initializer = property.getDelegateExpressionOrInitializer();
-        if (initializer == null) return false;
+        if (!property.hasDelegateExpressionOrInitializer()) return false;
 
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;

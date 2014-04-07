@@ -959,7 +959,7 @@ public class DescriptorResolver {
 
     /*package*/
     static boolean hasBody(JetProperty property) {
-        boolean hasBody = property.getDelegateExpressionOrInitializer() != null;
+        boolean hasBody = property.hasDelegateExpressionOrInitializer();
         if (!hasBody) {
             JetPropertyAccessor getter = property.getGetter();
             if (getter != null && getter.hasBody()) {
