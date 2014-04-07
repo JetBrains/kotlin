@@ -57,6 +57,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/annotationRetentionPolicySource.kt");
     }
     
+    @TestMetadata("bridgeForFakeOverride.kt")
+    public void testBridgeForFakeOverride() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/bridgeForFakeOverride.kt");
+    }
+    
     @TestMetadata("componentEvaluatesOnlyOnce.kt")
     public void testComponentEvaluatesOnlyOnce() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/componentEvaluatesOnlyOnce.kt");
