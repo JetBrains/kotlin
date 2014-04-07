@@ -20,15 +20,6 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.tree.ClassNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
-import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
-import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
-import org.jetbrains.org.objectweb.asm.tree.analysis.SimpleVerifier;
-import org.jetbrains.org.objectweb.asm.util.Textifier;
-import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.JetTestUtils;
@@ -38,6 +29,15 @@ import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.tree.ClassNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer;
+import org.jetbrains.org.objectweb.asm.tree.analysis.AnalyzerException;
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue;
+import org.jetbrains.org.objectweb.asm.tree.analysis.SimpleVerifier;
+import org.jetbrains.org.objectweb.asm.util.Textifier;
+import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 
 import java.io.File;
 import java.io.IOException;
@@ -242,17 +242,19 @@ public abstract class CodegenTestCase extends UsefulTestCase {
             try {
                 analyzer.analyze(classNode.name, method);
             }
-            catch (AnalyzerException e) {
+            catch (Throwable e) {
                 System.out.println(file.asText());
-
                 System.err.println(classNode.name + "::" + method.name + method.desc);
 
-                // Print the erroneous instruction
-                TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
-                e.node.accept(tmv);
-                PrintWriter pw = new PrintWriter(System.err);
-                tmv.p.print(pw);
-                pw.flush();
+                //noinspection InstanceofCatchParameter
+                if (e instanceof AnalyzerException) {
+                    // Print the erroneous instruction
+                    TraceMethodVisitor tmv = new TraceMethodVisitor(new Textifier());
+                    ((AnalyzerException) e).node.accept(tmv);
+                    PrintWriter pw = new PrintWriter(System.err);
+                    tmv.p.print(pw);
+                    pw.flush();
+                }
 
                 e.printStackTrace();
                 noErrors = false;
