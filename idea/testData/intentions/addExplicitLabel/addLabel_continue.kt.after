@@ -1,0 +1,5 @@
+fun foo() {
+    @inner do {
+        cont<caret>inue@inner
+    } while (false)
+}
