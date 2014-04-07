@@ -52,7 +52,7 @@ public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntry
 
     @Override
     public JetConstructorCalleeExpression getCalleeExpression() {
-        return (JetConstructorCalleeExpression) findChildByType(JetNodeTypes.CONSTRUCTOR_CALLEE);
+        return getStubOrPsiChild(JetStubElementTypes.CONSTRUCTOR_CALLEE);
     }
 
     @Override
