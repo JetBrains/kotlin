@@ -20,22 +20,23 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.*;
 
-public class NondeterministicJumpInstruction extends InstructionImpl{
+public class NondeterministicJumpInstruction extends JetElementInstructionImpl implements JumpInstruction {
     private Instruction next;
     private final List<Label> targetLabels;
     private final Map<Label, Instruction> resolvedTargets;
 
-    public NondeterministicJumpInstruction(List<Label> targetLabels, LexicalScope lexicalScope) {
-        super(lexicalScope);
+    public NondeterministicJumpInstruction(@NotNull JetElement element, List<Label> targetLabels, LexicalScope lexicalScope) {
+        super(element, lexicalScope);
         this.targetLabels = Lists.newArrayList(targetLabels);
         resolvedTargets = Maps.newLinkedHashMap();
     }
 
-    public NondeterministicJumpInstruction(Label targetLabel, LexicalScope lexicalScope) {
-        this(Lists.newArrayList(targetLabel), lexicalScope);
+    public NondeterministicJumpInstruction(@NotNull JetElement element, Label targetLabel, LexicalScope lexicalScope) {
+        this(element, Lists.newArrayList(targetLabel), lexicalScope);
     }
 
     public List<Label> getTargetLabels() {
@@ -103,6 +104,6 @@ public class NondeterministicJumpInstruction extends InstructionImpl{
     }
 
     private Instruction createCopy(@NotNull List<Label> newTargetLabels) {
-        return new NondeterministicJumpInstruction(newTargetLabels, lexicalScope);
+        return new NondeterministicJumpInstruction(getElement(), newTargetLabels, lexicalScope);
     }
 }

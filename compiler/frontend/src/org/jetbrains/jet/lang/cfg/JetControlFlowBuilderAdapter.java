@@ -100,33 +100,33 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     }
 
     @Override
-    public void jump(@NotNull Label label) {
-        getDelegateBuilder().jump(label);
+    public void jump(@NotNull Label label, @NotNull JetElement element) {
+        getDelegateBuilder().jump(label, element);
     }
 
     @Override
-    public void jumpOnFalse(@NotNull Label label) {
-        getDelegateBuilder().jumpOnFalse(label);
+    public void jumpOnFalse(@NotNull Label label, @NotNull JetElement element) {
+        getDelegateBuilder().jumpOnFalse(label, element);
     }
 
     @Override
-    public void jumpOnTrue(@NotNull Label label) {
-        getDelegateBuilder().jumpOnTrue(label);
+    public void jumpOnTrue(@NotNull Label label, @NotNull JetElement element) {
+        getDelegateBuilder().jumpOnTrue(label, element);
     }
 
     @Override
-    public void nondeterministicJump(@NotNull Label label) {
-        getDelegateBuilder().nondeterministicJump(label);
+    public void nondeterministicJump(@NotNull Label label, @NotNull JetElement element) {
+        getDelegateBuilder().nondeterministicJump(label, element);
     }
 
     @Override
-    public void nondeterministicJump(@NotNull List<Label> labels) {
-        getDelegateBuilder().nondeterministicJump(labels);
+    public void nondeterministicJump(@NotNull List<Label> labels, @NotNull JetElement element) {
+        getDelegateBuilder().nondeterministicJump(labels, element);
     }
 
     @Override
-    public void jumpToError() {
-        getDelegateBuilder().jumpToError();
+    public void jumpToError(@NotNull JetElement element) {
+        getDelegateBuilder().jumpToError(element);
     }
 
     @Override

@@ -63,12 +63,12 @@ public interface JetControlFlowBuilder {
     void bindLabel(@NotNull Label label);
 
     // Jumps
-    void jump(@NotNull Label label);
-    void jumpOnFalse(@NotNull Label label);
-    void jumpOnTrue(@NotNull Label label);
-    void nondeterministicJump(@NotNull Label label); // Maybe, jump to label
-    void nondeterministicJump(@NotNull List<Label> label);
-    void jumpToError();
+    void jump(@NotNull Label label, @NotNull JetElement element);
+    void jumpOnFalse(@NotNull Label label, @NotNull JetElement element);
+    void jumpOnTrue(@NotNull Label label, @NotNull JetElement element);
+    void nondeterministicJump(@NotNull Label label, @NotNull JetElement element); // Maybe, jump to label
+    void nondeterministicJump(@NotNull List<Label> label, @NotNull JetElement element);
+    void jumpToError(@NotNull JetElement element);
 
     void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine);
     void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine);

@@ -5,7 +5,7 @@ class C {
           @a {
             <!NOT_A_LOOP_LABEL!>break@f<!>
             break
-            break@b
+            <!UNREACHABLE_CODE!>break@b<!>
             <!NOT_A_LOOP_LABEL!>break@a<!>
           })
 
@@ -15,7 +15,7 @@ class C {
           @a {
             <!NOT_A_LOOP_LABEL!>continue@f<!>
             continue
-            continue@b
+            <!UNREACHABLE_CODE!>continue@b<!>
             <!NOT_A_LOOP_LABEL!>continue@a<!>
           })
 

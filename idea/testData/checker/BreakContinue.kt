@@ -5,7 +5,7 @@ class C {
           @a {
             <error>break@f</error>
             break
-            break@b
+            <warning>break@b</warning>
             <error>break@a</error>
           })
 
@@ -15,7 +15,7 @@ class C {
           @a {
             <error>continue@f</error>
             continue
-            continue@b
+            <warning>continue@b</warning>
             <error>continue@a</error>
           })
 

@@ -18,16 +18,17 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public abstract class AbstractJumpInstruction extends InstructionImpl {
+public abstract class AbstractJumpInstruction extends JetElementInstructionImpl implements JumpInstruction {
     private final Label targetLabel;
     private Instruction resolvedTarget;
 
-    public AbstractJumpInstruction(Label targetLabel, LexicalScope lexicalScope) {
-        super(lexicalScope);
+    public AbstractJumpInstruction(@NotNull JetElement element, Label targetLabel, LexicalScope lexicalScope) {
+        super(element, lexicalScope);
         this.targetLabel = targetLabel;
     }
 

@@ -243,10 +243,19 @@ public class JetFlowInformationProvider {
     private Set<JetElement> collectUnreachableCode() {
         Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
-            if (deadInstruction instanceof JetElementInstruction &&
-                !(deadInstruction instanceof LoadUnitValueInstruction)) {
-                unreachableElements.add(((JetElementInstruction) deadInstruction).getElement());
+            if (!(deadInstruction instanceof JetElementInstruction) || deadInstruction instanceof LoadUnitValueInstruction) continue;
+
+            JetElement element = ((JetElementInstruction) deadInstruction).getElement();
+
+            if (deadInstruction instanceof JumpInstruction) {
+                boolean isJumpElement = element instanceof JetBreakExpression
+                                        || element instanceof JetContinueExpression
+                                        || element instanceof JetReturnExpression
+                                        || element instanceof JetThrowExpression;
+                if (!isJumpElement) continue;
             }
+
+            unreachableElements.add(element);
         }
         // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
         return JetPsiUtil.findRootExpressions(unreachableElements);

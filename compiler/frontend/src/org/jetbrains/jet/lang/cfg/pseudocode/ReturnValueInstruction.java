@@ -18,20 +18,18 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
 public class ReturnValueInstruction extends AbstractJumpInstruction implements ReturnInstruction {
-
-    private final JetElement element;
-
-    public ReturnValueInstruction(@NotNull JetExpression returnExpression, @NotNull LexicalScope lexicalScope, @NotNull Label targetLabel) {
-        super(targetLabel, lexicalScope);
-        this.element = returnExpression;
+    public ReturnValueInstruction(
+            @NotNull JetExpression returnExpression,
+            @NotNull LexicalScope lexicalScope,
+            @NotNull Label targetLabel) {
+        super(returnExpression, targetLabel, lexicalScope);
     }
 
     @Override
-    public void accept(InstructionVisitor visitor) {
+    public void accept(@NotNull InstructionVisitor visitor) {
         visitor.visitReturnValue(this);
     }
 
@@ -43,12 +41,6 @@ public class ReturnValueInstruction extends AbstractJumpInstruction implements R
     @Override
     public String toString() {
         return "ret(*) " + getTargetLabel();
-    }
-
-    @NotNull
-    @Override
-    public JetElement getElement() {
-        return element;
     }
 
     @Override

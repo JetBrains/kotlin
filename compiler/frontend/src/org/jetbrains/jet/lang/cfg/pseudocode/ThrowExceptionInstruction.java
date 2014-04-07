@@ -18,26 +18,20 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetThrowExpression;
 
-public class ThrowExceptionInstruction extends AbstractJumpInstruction implements JetElementInstruction {
-    private final JetThrowExpression expression;
-
-    public ThrowExceptionInstruction(@NotNull JetThrowExpression expression, @NotNull LexicalScope lexicalScope, @NotNull Label errorLabel) {
-        super(errorLabel, lexicalScope);
-        this.expression = expression;
-    }
-
-    @NotNull
-    @Override
-    public JetExpression getElement() {
-        return expression;
+public class ThrowExceptionInstruction extends AbstractJumpInstruction {
+    public ThrowExceptionInstruction(
+            @NotNull JetThrowExpression expression,
+            @NotNull LexicalScope lexicalScope,
+            @NotNull Label errorLabel
+    ) {
+        super(expression, errorLabel, lexicalScope);
     }
 
     @Override
     public String toString() {
-        return "throw (" + expression.getText() + ")";
+        return "throw (" + element.getText() + ")";
     }
 
     @Override
@@ -52,6 +46,6 @@ public class ThrowExceptionInstruction extends AbstractJumpInstruction implement
 
     @Override
     protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
-        return new ThrowExceptionInstruction(expression, lexicalScope, newLabel);
+        return new ThrowExceptionInstruction((JetThrowExpression) element, lexicalScope, newLabel);
     }
 }

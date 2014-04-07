@@ -298,21 +298,21 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void jump(@NotNull Label label) {
+        public void jump(@NotNull Label label, @NotNull JetElement element) {
             handleJumpInsideTryFinally(label);
-            add(new UnconditionalJumpInstruction(label, getCurrentScope()));
+            add(new UnconditionalJumpInstruction(element, label, getCurrentScope()));
         }
 
         @Override
-        public void jumpOnFalse(@NotNull Label label) {
+        public void jumpOnFalse(@NotNull Label label, @NotNull JetElement element) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(false, getCurrentScope(), label));
+            add(new ConditionalJumpInstruction(element, false, getCurrentScope(), label));
         }
 
         @Override
-        public void jumpOnTrue(@NotNull Label label) {
+        public void jumpOnTrue(@NotNull Label label, @NotNull JetElement element) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(true, getCurrentScope(), label));
+            add(new ConditionalJumpInstruction(element, true, getCurrentScope(), label));
         }
 
         @Override
@@ -321,22 +321,22 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void nondeterministicJump(@NotNull Label label) {
+        public void nondeterministicJump(@NotNull Label label, @NotNull JetElement element) {
             handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(label, getCurrentScope()));
+            add(new NondeterministicJumpInstruction(element, label, getCurrentScope()));
         }
 
         @Override
-        public void nondeterministicJump(@NotNull List<Label> labels) {
+        public void nondeterministicJump(@NotNull List<Label> labels, @NotNull JetElement element) {
             //todo
             //handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(labels, getCurrentScope()));
+            add(new NondeterministicJumpInstruction(element, labels, getCurrentScope()));
         }
 
         @Override
-        public void jumpToError() {
+        public void jumpToError(@NotNull JetElement element) {
             handleJumpInsideTryFinally(error);
-            add(new UnconditionalJumpInstruction(error, getCurrentScope()));
+            add(new UnconditionalJumpInstruction(element, error, getCurrentScope()));
         }
 
         @Override
@@ -350,6 +350,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             add(new ThrowExceptionInstruction(expression, getCurrentScope(), error));
         }
 
+        @Override
         public void exitTryFinally() {
             BlockInfo pop = allBlocks.pop();
             assert pop instanceof TryFinallyBlockInfo;

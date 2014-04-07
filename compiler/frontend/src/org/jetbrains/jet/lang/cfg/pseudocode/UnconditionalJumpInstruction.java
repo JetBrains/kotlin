@@ -18,12 +18,11 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
+import org.jetbrains.jet.lang.psi.JetElement;
 
 public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
-
-
-    public UnconditionalJumpInstruction(Label targetLabel, @NotNull LexicalScope lexicalScope) {
-        super(targetLabel, lexicalScope);
+    public UnconditionalJumpInstruction(@NotNull JetElement element, Label targetLabel, @NotNull LexicalScope lexicalScope) {
+        super(element, targetLabel, lexicalScope);
     }
 
     @Override
@@ -43,6 +42,6 @@ public class UnconditionalJumpInstruction extends AbstractJumpInstruction {
 
     @Override
     protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
-        return new UnconditionalJumpInstruction(newLabel, lexicalScope);
+        return new UnconditionalJumpInstruction(element, newLabel, lexicalScope);
     }
 }
