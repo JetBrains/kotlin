@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetSuperExpression extends JetLabelQualifiedInstanceExpression implements JetStatementExpression {
+public class JetSuperExpression extends JetLabelQualifiedInstanceExpression {
 
     public JetSuperExpression(@NotNull ASTNode node) {
         super(node);
