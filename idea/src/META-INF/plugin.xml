@@ -730,6 +730,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.UnnecessaryTypeParameterInSuperInspection"
+        displayName="Unnecessary type parameter"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>unnecessary_unlabeled.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="unnecessary_unlabeled.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type parameter</problem_class>
+    <description>Unnecessary type parameter 'A'</description>
+  </problem>
+
+  <problem>
+    <file>unnecessary_labeled.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="unnecessary_labeled.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type parameter</problem_class>
+    <description>Unnecessary type parameter 'A'</description>
+  </problem>
+</problems>

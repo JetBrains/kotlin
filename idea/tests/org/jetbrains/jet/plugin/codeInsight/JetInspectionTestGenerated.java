@@ -56,4 +56,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/intentions/removeUnnecessaryLabel/inspectionData/inspections.test");
     }
     
+    @TestMetadata("removeUnnecessaryTypeParameterFromSuper/inspectionData/inspections.test")
+    public void testRemoveUnnecessaryTypeParameterFromSuper_inspectionData_Inspections_test() throws Exception {
+        doTest("idea/testData/intentions/removeUnnecessaryTypeParameterFromSuper/inspectionData/inspections.test");
+    }
+    
 }

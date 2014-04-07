@@ -147,6 +147,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new AddExplicitLabelIntention());
     }
 
+    public void doTestRemoveUnnecessaryTypeParameterFromSuper(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveUnnecessaryTypeParameterFromSuperIntention());
+    }
+
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
     }
