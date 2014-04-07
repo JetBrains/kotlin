@@ -13,6 +13,7 @@ import org.jetbrains.eval4j.ExceptionThrown
 import org.jetbrains.eval4j.MethodDescription
 import org.jetbrains.eval4j.ValueReturned
 import org.jetbrains.eval4j.jdi.*
+import java.io.File
 
 val DEBUGEE_CLASS = javaClass<Debugee>()
 
@@ -26,7 +27,7 @@ fun suite(): TestSuite {
     val debugeeName = DEBUGEE_CLASS.getName()
     println("Debugee name: $debugeeName")
     connectorArgs["main"]!!.setValue(debugeeName)
-    connectorArgs["options"]!!.setValue("-classpath out/production/eval4j:out/test/eval4j")
+    connectorArgs["options"]!!.setValue("-classpath out/production/eval4j${File.pathSeparator}out/test/eval4j")
     val vm = connector.launch(connectorArgs)!!
 
     val req = vm.eventRequestManager().createClassPrepareRequest()
