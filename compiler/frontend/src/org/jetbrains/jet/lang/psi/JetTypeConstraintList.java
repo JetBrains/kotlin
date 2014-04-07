@@ -40,6 +40,6 @@ public class JetTypeConstraintList extends JetElementImplStub<PsiJetPlaceHolderS
 
     @NotNull
     public List<JetTypeConstraint> getConstraints() {
-        return findChildrenByType(JetNodeTypes.TYPE_CONSTRAINT);
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.TYPE_CONSTRAINT);
     }
 }
