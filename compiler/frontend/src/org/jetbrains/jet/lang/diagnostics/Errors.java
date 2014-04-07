@@ -184,8 +184,10 @@ public interface Errors {
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_UPPER_BOUND = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<JetTypeReference, JetType> FINAL_CLASS_OBJECT_UPPER_BOUND = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<PsiElement, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiNameIdentifierOwner, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS =
+            DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, TypeParameterDescriptor> CONFLICTING_CLASS_OBJECT_UPPER_BOUNDS
+            = DiagnosticFactory1.create(ERROR, NAME_IDENTIFIER);
 
     DiagnosticFactory2<JetSimpleNameExpression, JetTypeConstraint, JetTypeParameterListOwner> NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER =
             DiagnosticFactory2.create(ERROR);
