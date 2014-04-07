@@ -414,6 +414,7 @@ fun main(args: Array<String>) {
             model("intentions/removeUnnecessaryLabel", testMethod = "doTestRemoveUnnecessaryLabel")
             model("intentions/addExplicitLabel", testMethod = "doTestAddExplicitLabel")
             model("intentions/removeUnnecessaryTypeParameterFromSuper", testMethod = "doTestRemoveUnnecessaryTypeParameterFromSuper")
+            model("intentions/addExplicitTypeParameterToSuper", testMethod = "doTestAddExplicitTypeParameterToSuper")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
