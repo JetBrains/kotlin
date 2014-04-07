@@ -697,7 +697,13 @@
       <category>Kotlin</category>
     </intentionAction>
 
-    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ConvertToForEachLoopIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+
+  <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
         enabledByDefault="true"
