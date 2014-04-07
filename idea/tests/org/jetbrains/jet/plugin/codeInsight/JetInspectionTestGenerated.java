@@ -51,4 +51,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
     }
     
+    @TestMetadata("removeUnnecessaryLabel/inspectionData/inspections.test")
+    public void testRemoveUnnecessaryLabel_inspectionData_Inspections_test() throws Exception {
+        doTest("idea/testData/intentions/removeUnnecessaryLabel/inspectionData/inspections.test");
+    }
+    
 }

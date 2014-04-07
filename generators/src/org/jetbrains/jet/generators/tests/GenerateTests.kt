@@ -411,6 +411,7 @@ fun main(args: Array<String>) {
             model("intentions/convertIfToAssert", testMethod = "doTestConvertIfWithThrowToAssertIntention")
             model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
             model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
+            model("intentions/removeUnnecessaryLabel", testMethod = "doTestRemoveUnnecessaryLabel")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

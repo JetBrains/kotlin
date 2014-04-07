@@ -139,6 +139,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestAction(path, new JoinLinesHandler(null));
     }
 
+    public void doTestRemoveUnnecessaryLabel(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveUnnecessaryLabelIntention());
+    }
+
     public void doTestRemoveUnnecessaryParentheses(@NotNull String path) throws Exception {
         doTestIntention(path, new RemoveUnnecessaryParenthesesIntention());
     }

@@ -718,6 +718,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.UnnecessaryLabelInspection"
+        displayName="Unnecessary label"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

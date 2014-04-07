@@ -1,0 +1,7 @@
+open class A() {
+    open fun f() = 43
+}
+
+class B() : A() {
+    override fun f() = super<caret>.f() - 1
+}
