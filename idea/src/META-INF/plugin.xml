@@ -595,7 +595,7 @@
       <className>org.jetbrains.jet.plugin.intentions.MoveLambdaOutsideParenthesesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
-    
+
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.declarations.SplitPropertyDeclarationIntention</className>
       <category>Kotlin</category>
@@ -655,7 +655,7 @@
       <className>org.jetbrains.jet.plugin.intentions.SimplifyBooleanWithConstantsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
-    
+
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
@@ -702,6 +702,10 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.ConvertToForEachFunctionCallIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
   <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
