@@ -412,6 +412,7 @@ fun main(args: Array<String>) {
             model("intentions/convertIfToAssert", testMethod = "doTestConvertIfWithThrowToAssertIntention")
             model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
             model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
+            model("intentions/convertToForEachLoop", testMethod = "doTestConvertToForEachLoop")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

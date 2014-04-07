@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun foo() {
+    val x = 1..4
+
+    for (it in x) {
+        it
+    }
+}
