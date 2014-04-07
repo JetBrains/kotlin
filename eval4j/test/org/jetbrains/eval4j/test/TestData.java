@@ -48,6 +48,22 @@ class TestData {
         return "str";
     }
 
+    static void checkCastNull() {
+        CheckCastToNull klass = new CheckCastToNull();
+        klass.f1(null);
+        klass.f2(null);
+        klass.f3(null);
+
+        Integer integer = (Integer) null;
+        Object object = (Object) null;
+    }
+
+    static class CheckCastToNull {
+        void f1(Integer p) {}
+        void f2(Integer[] p) {}
+        void f3(Integer[][] p) {}
+    }
+
     static Integer integerValueOf() { return 1; }
 
     static Byte byteValueOf() { return 1; }
@@ -549,3 +565,5 @@ class TestData {
         int[] i = (int[]) null;
     }
 }
+
+
