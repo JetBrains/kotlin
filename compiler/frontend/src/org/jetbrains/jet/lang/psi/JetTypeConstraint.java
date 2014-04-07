@@ -17,15 +17,22 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetTypeConstraint extends JetElementImpl {
+public class JetTypeConstraint extends JetElementImplStub<PsiJetTypeConstraintStub> {
     public JetTypeConstraint(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetTypeConstraint(@NotNull PsiJetTypeConstraintStub stub) {
+        super(stub, JetStubElementTypes.TYPE_CONSTRAINT);
     }
 
     @Override

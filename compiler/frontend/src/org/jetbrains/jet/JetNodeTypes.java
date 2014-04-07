@@ -77,7 +77,7 @@ public interface JetNodeTypes {
     IElementType THIS_CALL               = JetStubElementTypes.THIS_CALL;
     JetNodeType THIS_CONSTRUCTOR_REFERENCE = new JetNodeType("THIS_CONSTRUCTOR_REFERENCE", JetThisReferenceExpression.class);
     IElementType TYPE_CONSTRAINT_LIST    = JetStubElementTypes.TYPE_CONSTRAINT_LIST;
-    JetNodeType TYPE_CONSTRAINT          = new JetNodeType("TYPE_CONSTRAINT", JetTypeConstraint.class);
+    IElementType TYPE_CONSTRAINT         = JetStubElementTypes.TYPE_CONSTRAINT;
 
     // TODO: Not sure if we need separate NT for each kind of constants
     JetNodeType NULL               = new JetNodeType("NULL", JetConstantExpression.class);
