@@ -318,7 +318,8 @@ public class OverridingUtil {
      *
      * @see CallableMemberDescriptor.Kind#isReal()
      */
-    public static Collection<CallableMemberDescriptor> getOverriddenDeclarations(CallableMemberDescriptor descriptor) {
+    @NotNull
+    public static Collection<CallableMemberDescriptor> getOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
         Map<ClassDescriptor, CallableMemberDescriptor> result = Maps.newHashMap();
         getOverriddenDeclarations(descriptor, result);
         return result.values();

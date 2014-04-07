@@ -17,15 +17,14 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
+import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.ConstructorContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -1464,11 +1463,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (JetPsiUtil.isTrait(myClass)) return;
 
-        for (Pair<CallableMemberDescriptor, CallableMemberDescriptor> pair : getTraitImplementations(descriptor)) {
-            CallableMemberDescriptor inheritedMember = pair.first;
-            CallableMemberDescriptor traitMember = pair.second;
+        for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(declaration instanceof CallableMemberDescriptor)) continue;
 
-            assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + pair;
+            CallableMemberDescriptor inheritedMember = (CallableMemberDescriptor) declaration;
+            CallableMemberDescriptor traitMember = BridgesPackage.findTraitImplementation(inheritedMember);
+            if (traitMember == null) continue;
+
+            assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + inheritedMember;
 
             // inheritedMember can be abstract here. In order for FunctionCodegen to generate the method body, we're creating a copy here
             // with traitMember's modality
@@ -1808,70 +1810,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
         }
-    }
-
-
-    /**
-     * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
-     * second is member of trait that contain implementation.
-     */
-    @NotNull
-    private static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
-        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> result = Lists.newArrayList();
-
-        for (DeclarationDescriptor declaration : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (!(declaration instanceof CallableMemberDescriptor)) continue;
-
-            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
-
-            CallableMemberDescriptor implementation = findTraitImplementation(callableMemberDescriptor);
-            if (implementation != null) {
-                result.add(Pair.create(callableMemberDescriptor, implementation));
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Given a fake override descriptor, returns an overridden non-abstract descriptor whose container is a trait
-     */
-    @Nullable
-    private static CallableMemberDescriptor findTraitImplementation(@NotNull CallableMemberDescriptor descriptor) {
-        if (descriptor.getKind().isReal()) return null;
-
-        if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return null;
-
-        Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
-
-        Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
-                OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
-
-        int count = 0;
-        CallableMemberDescriptor implementation = null;
-
-        for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
-            if (isTrait(overriddenDeclaration.getContainingDeclaration()) && overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-                implementation = overriddenDeclaration;
-                count++;
-            }
-        }
-        if (implementation == null) {
-            return null;
-        }
-
-        assert count == 1 : "Ambiguous overridden declaration: " + descriptor;
-
-        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
-        for (JetType supertype : containingClass.getDefaultType().getConstructor().getSupertypes()) {
-            //noinspection ConstantConditions
-            if (!isTrait(supertype.getConstructor().getDeclarationDescriptor()) &&
-                TypeUtils.getAllSupertypes(supertype).contains(implementation.getExpectedThisObject().getType())) {
-                return null;
-            }
-        }
-
-        return implementation;
     }
 
     public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor, Object defaultValue) {

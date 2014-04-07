@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
@@ -424,6 +425,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         if (descriptor instanceof ConstructorDescriptor) return;
         if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
         if (isTrait(descriptor.getContainingDeclaration())) return;
+
+        // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
+        if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return;
 
         Set<Bridge<Method>> bridgesToGenerate = BridgesPackage.generateBridgesForFunctionDescriptor(
                 descriptor,

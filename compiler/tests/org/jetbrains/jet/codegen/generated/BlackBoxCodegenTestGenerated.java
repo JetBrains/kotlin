@@ -290,6 +290,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/complexMultiInheritance.kt");
         }
         
+        @TestMetadata("complexTraitImpl.kt")
+        public void testComplexTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/complexTraitImpl.kt");
+        }
+        
         @TestMetadata("delegation.kt")
         public void testDelegation() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/delegation.kt");
@@ -315,9 +320,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/fakeGenericCovariantOverride.kt");
         }
         
+        @TestMetadata("fakeOverrideInTraitWithRequiredFromTraitImpl.kt")
+        public void testFakeOverrideInTraitWithRequiredFromTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideInTraitWithRequiredFromTraitImpl.kt");
+        }
+        
+        @TestMetadata("fakeOverrideOfPropertySetterInTraitImpl.kt")
+        public void testFakeOverrideOfPropertySetterInTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideOfPropertySetterInTraitImpl.kt");
+        }
+        
         @TestMetadata("fakeOverrideOfTraitImpl.kt")
         public void testFakeOverrideOfTraitImpl() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
+        }
+        
+        @TestMetadata("fakeOverrideWithImplementationInTrait.kt")
+        public void testFakeOverrideWithImplementationInTrait() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/fakeOverrideWithImplementationInTrait.kt");
         }
         
         @TestMetadata("fakeOverrideWithSeveralSuperDeclarations.kt")
@@ -360,6 +380,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/kt2920.kt");
         }
         
+        @TestMetadata("kt318.kt")
+        public void testKt318() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/kt318.kt");
+        }
+        
         @TestMetadata("longChainOneBridge.kt")
         public void testLongChainOneBridge() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");
@@ -373,6 +398,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("methodFromTrait.kt")
         public void testMethodFromTrait() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/methodFromTrait.kt");
+        }
+        
+        @TestMetadata("noBridgeOnMutableCollectionInheritance.kt")
+        public void testNoBridgeOnMutableCollectionInheritance() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
         }
         
         @TestMetadata("overrideAbstractProperty.kt")
@@ -438,6 +468,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("simpleUpperBound.kt")
         public void testSimpleUpperBound() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/simpleUpperBound.kt");
+        }
+        
+        @TestMetadata("traitImplInheritsTraitImpl.kt")
+        public void testTraitImplInheritsTraitImpl() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");
+        }
+        
+        @TestMetadata("traitWithRequiredCovariantOverride.kt")
+        public void testTraitWithRequiredCovariantOverride() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/traitWithRequiredCovariantOverride.kt");
         }
         
         @TestMetadata("twoParentsWithDifferentMethodsTwoBridges.kt")
