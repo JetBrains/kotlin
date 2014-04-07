@@ -413,6 +413,7 @@ fun main(args: Array<String>) {
             model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
             model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
             model("intentions/convertToForEachLoop", testMethod = "doTestConvertToForEachLoop")
+            model("intentions/convertToForEachFunctionCall", testMethod = "doTestConvertToForEachFunctionCall")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
