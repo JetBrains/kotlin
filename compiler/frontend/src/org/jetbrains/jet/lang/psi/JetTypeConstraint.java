@@ -41,13 +41,17 @@ public class JetTypeConstraint extends JetElementImplStub<PsiJetTypeConstraintSt
     }
 
     public boolean isClassObjectConstraint() {
+        PsiJetTypeConstraintStub stub = getStub();
+        if (stub != null) {
+            return stub.isClassObjectConstraint();
+        }
         return findChildByType(JetTokens.CLASS_KEYWORD) != null &&
                 findChildByType(JetTokens.OBJECT_KEYWORD) != null;
     }
 
     @Nullable @IfNotParsed
     public JetSimpleNameExpression getSubjectTypeParameterName() {
-        return (JetSimpleNameExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+        return getStubOrPsiChild(JetStubElementTypes.REFERENCE_EXPRESSION);
     }
 
     @Nullable @IfNotParsed
