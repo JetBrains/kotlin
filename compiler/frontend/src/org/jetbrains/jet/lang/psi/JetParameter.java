@@ -83,6 +83,14 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
         return modifierList != null && modifierList.getModifierNode(JetTokens.VARARG_KEYWORD) != null;
     }
 
+    public boolean hasValOrVarNode() {
+        PsiJetParameterStub stub = getStub();
+        if (stub != null) {
+            return stub.hasValOrValNode();
+        }
+        return getValOrVarNode() != null;
+    }
+
     @Nullable
     public ASTNode getValOrVarNode() {
         PsiJetParameterStub stub = getStub();

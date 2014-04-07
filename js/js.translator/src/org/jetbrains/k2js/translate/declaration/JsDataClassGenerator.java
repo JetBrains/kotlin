@@ -63,7 +63,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
             JsExpression argumentValue;
             JsExpression parameterValue = new JsNameRef(paramName);
-            if (constructorParam.getValOrVarNode() == null) {
+            if (!constructorParam.hasValOrVarNode()) {
                 assert !function.getValueParameters().get(i).hasDefaultValue();
                 // Caller cannot rely on default value and pass undefined here.
                 argumentValue = parameterValue;

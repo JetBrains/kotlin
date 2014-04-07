@@ -518,7 +518,7 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetClass getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
-        if (jetParameter.getValOrVarNode() != null) {
+        if (jetParameter.hasValOrVarNode()) {
             PsiElement parent = jetParameter.getParent();
             if (parent instanceof JetParameterList && parent.getParent() instanceof JetClass) {
                 return (JetClass) parent.getParent();

@@ -1193,7 +1193,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int curParam = 0;
         List<JetParameter> constructorParameters = getPrimaryConstructorParameters();
         for (JetParameter parameter : constructorParameters) {
-            if (parameter.getValOrVarNode() != null) {
+            if (parameter.hasValOrVarNode()) {
                 VariableDescriptor descriptor = paramDescrs.get(curParam);
                 Type type = typeMapper.mapType(descriptor);
                 iv.load(0, classAsmType);

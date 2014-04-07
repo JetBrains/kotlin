@@ -180,7 +180,7 @@ public class LazyTopDownAnalyzer {
 
                         private void registerPrimaryConstructorParameters(@NotNull JetClass klass) {
                             for (JetParameter jetParameter : klass.getPrimaryConstructorParameters()) {
-                                if (jetParameter.getValOrVarNode() != null) {
+                                if (jetParameter.hasValOrVarNode()) {
                                     c.getPrimaryConstructorParameterProperties().put(
                                             jetParameter,
                                             (PropertyDescriptor) resolveSession.resolveToDescriptor(jetParameter)

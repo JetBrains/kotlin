@@ -257,7 +257,7 @@ public class DeclarationResolver {
             List<ValueParameterDescriptor> notProperties = new ArrayList<ValueParameterDescriptor>();
             for (ValueParameterDescriptor valueParameterDescriptor : valueParameterDescriptors) {
                 JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
-                if (parameter.getValOrVarNode() != null) {
+                if (parameter.hasValOrVarNode()) {
                     PropertyDescriptor propertyDescriptor = descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                             classDescriptor,
                             valueParameterDescriptor,

@@ -85,7 +85,7 @@ public fun PsiElement.getParentByTypeAndBranch<T: PsiElement>(
 public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
         when(this) {
             is JetClass ->
-                getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.getValOrVarNode() != null }
+                getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVarNode() }
             else ->
                 getDeclarations()
         }

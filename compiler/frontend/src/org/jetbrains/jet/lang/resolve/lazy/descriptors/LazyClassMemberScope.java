@@ -248,7 +248,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
             if (!name.equals(valueParameterDescriptor.getName())) continue;
 
             JetParameter parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex());
-            if (parameter.getValOrVarNode() != null) {
+            if (parameter.hasValOrVarNode()) {
                 PropertyDescriptor propertyDescriptor =
                         resolveSession.getDescriptorResolver().resolvePrimaryConstructorParameterToAProperty(
                                 thisDescriptor,

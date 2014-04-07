@@ -89,7 +89,7 @@ public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, Re
         else if (element instanceof KotlinLightMethod) {
             JetDeclaration declaration = ((KotlinLightMethod) element).getOrigin();
             if (declaration instanceof JetProperty
-                || (declaration instanceof JetParameter && ((JetParameter) declaration).getValOrVarNode() != null)) {
+                || (declaration instanceof JetParameter && ((JetParameter) declaration).hasValOrVarNode())) {
                 searchNamedElement(queryParameters, (PsiNamedElement) declaration);
             }
             else if (declaration instanceof JetPropertyAccessor) {

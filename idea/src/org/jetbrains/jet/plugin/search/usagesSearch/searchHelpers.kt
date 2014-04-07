@@ -61,7 +61,7 @@ fun JetNamedDeclaration.namesWithAccessors(readable: Boolean = true, writable: B
         is JetProperty ->
             return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
         is JetParameter ->
-            if (getValOrVarNode() != null) {
+            if (hasValOrVarNode()) {
                 return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
             }
     }

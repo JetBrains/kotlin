@@ -48,7 +48,7 @@ public class PsiBasedClassMemberDeclarationProvider extends AbstractPsiBasedDecl
         }
 
         for (JetParameter parameter : classInfo.getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() != null) {
+            if (parameter.hasValOrVarNode()) {
                 index.putToIndex(parameter);
             }
         }

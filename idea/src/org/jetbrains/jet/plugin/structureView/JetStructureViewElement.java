@@ -126,7 +126,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
             JetClass jetClass = (JetClass) myElement;
             List<JetDeclaration> declarations = new ArrayList<JetDeclaration>();
             for (JetParameter parameter : jetClass.getPrimaryConstructorParameters()) {
-                if (parameter.getValOrVarNode() != null) {
+                if (parameter.hasValOrVarNode()) {
                     declarations.add(parameter);
                 }
             }
