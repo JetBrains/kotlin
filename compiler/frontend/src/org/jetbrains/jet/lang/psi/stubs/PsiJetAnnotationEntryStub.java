@@ -17,8 +17,12 @@
 package org.jetbrains.jet.lang.psi.stubs;
 
 import com.intellij.psi.stubs.StubElement;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 
 public interface PsiJetAnnotationEntryStub extends StubElement<JetAnnotationEntry> {
-     String getShortName();
+    @NotNull
+    String getShortName();
+
+    boolean hasValueArguments();
 }

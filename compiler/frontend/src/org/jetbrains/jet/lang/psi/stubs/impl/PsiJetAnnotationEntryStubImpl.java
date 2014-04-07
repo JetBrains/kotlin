@@ -26,19 +26,23 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 public class PsiJetAnnotationEntryStubImpl extends StubBase<JetAnnotationEntry> implements PsiJetAnnotationEntryStub {
     private final StringRef shortName;
+    private final boolean hasValueArguments;
 
-    public PsiJetAnnotationEntryStubImpl(StubElement parent, @NotNull String shortName) {
-        this(parent, StringRef.fromString(shortName));
-    }
-
-    public PsiJetAnnotationEntryStubImpl(StubElement parent, StringRef shortName) {
+    public PsiJetAnnotationEntryStubImpl(StubElement parent, @NotNull StringRef shortName, boolean hasValueArguments) {
         super(parent, JetStubElementTypes.ANNOTATION_ENTRY);
         this.shortName = shortName;
+        this.hasValueArguments = hasValueArguments;
     }
 
+    @NotNull
     @Override
     public String getShortName() {
         return shortName.getString();
+    }
+
+    @Override
+    public boolean hasValueArguments() {
+        return hasValueArguments;
     }
 
     @Override

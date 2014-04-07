@@ -41,19 +41,22 @@ public class JetAnnotationEntryElementType extends JetStubElementType<PsiJetAnno
     public PsiJetAnnotationEntryStub createStub(@NotNull JetAnnotationEntry psi, StubElement parentStub) {
         Name shortName = JetPsiUtil.getShortName(psi);
         String resultName = shortName != null ? shortName.asString() : psi.getText();
-        return new PsiJetAnnotationEntryStubImpl(parentStub, resultName);
+        boolean hasValueArguments = psi.getValueArgumentList() != null;
+        return new PsiJetAnnotationEntryStubImpl(parentStub, StringRef.fromString(resultName), hasValueArguments);
     }
 
     @Override
     public void serialize(@NotNull PsiJetAnnotationEntryStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
+        dataStream.writeBoolean(stub.hasValueArguments());
     }
 
     @NotNull
     @Override
     public PsiJetAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
-        return new PsiJetAnnotationEntryStubImpl(parentStub, text);
+        boolean hasValueArguments = dataStream.readBoolean();
+        return new PsiJetAnnotationEntryStubImpl(parentStub, text, hasValueArguments);
     }
 
     @Override
