@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetSuperExpression extends JetLabelQualifiedInstanceExpression implements JetStatementExpression {
 
@@ -43,5 +45,15 @@ public class JetSuperExpression extends JetLabelQualifiedInstanceExpression impl
     @Nullable
     public JetTypeReference getSuperTypeQualifier() {
         return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+    }
+
+    @Nullable
+    public PsiElement getLeftAngleBracketNode() {
+        return findChildByType(JetTokens.LT);
+    }
+
+    @Nullable
+    public PsiElement getRightAngleBracketNode() {
+        return findChildByType(JetTokens.GT);
     }
 }
