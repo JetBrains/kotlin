@@ -99,7 +99,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             }
         }
 
-        if (!DescriptorUtils.isTrait(descriptor)) {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL && !DescriptorUtils.isTrait(descriptor)) {
             for (DeclarationDescriptor memberDescriptor : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
                 if (memberDescriptor instanceof FunctionDescriptor) {
                     FunctionDescriptor member = (FunctionDescriptor) memberDescriptor;

@@ -151,14 +151,14 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                     new Label(),
                     methodContextKind
             );
+            return;
         }
-        else {
-            generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
 
-            endVisit(mv, null, origin);
+        generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
 
-            methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
-        }
+        endVisit(mv, null, origin);
+
+        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
 
         generateBridges(functionDescriptor);
     }
