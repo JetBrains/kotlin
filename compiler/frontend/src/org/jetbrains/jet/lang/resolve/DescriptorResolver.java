@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -60,11 +59,18 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.ModifiersChecker.*;
 import static org.jetbrains.jet.lexer.JetTokens.OVERRIDE_KEYWORD;
+import static org.jetbrains.jet.lexer.JetTokens.VARARG_KEYWORD;
 import static org.jetbrains.jet.storage.LockBasedStorageManager.NO_LOCKS;
 
 public class DescriptorResolver {
     public static final Name COPY_METHOD_NAME = Name.identifier("copy");
     public static final String COMPONENT_FUNCTION_NAME_PREFIX = "component";
+    private static final Set<JetModifierKeywordToken> MODIFIERS_ILLEGAL_ON_PARAMETERS;
+    static {
+        MODIFIERS_ILLEGAL_ON_PARAMETERS = Sets.newHashSet();
+        MODIFIERS_ILLEGAL_ON_PARAMETERS.addAll(Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
+        MODIFIERS_ILLEGAL_ON_PARAMETERS.remove(JetTokens.VARARG_KEYWORD);
+    }
 
     @NotNull
     private TypeResolver typeResolver;
@@ -539,7 +545,7 @@ public class DescriptorResolver {
     ) {
         JetType varargElementType = null;
         JetType variableType = type;
-        if (valueParameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+        if (valueParameter.hasModifier(VARARG_KEYWORD)) {
             varargElementType = type;
             variableType = DescriptorUtils.getVarargParameterType(type);
         }
@@ -785,7 +791,7 @@ public class DescriptorResolver {
             // Error is reported by the parser
             type = ErrorUtils.createErrorType("Annotation is absent");
         }
-        if (parameter.hasModifier(JetTokens.VARARG_KEYWORD)) {
+        if (parameter.hasModifier(VARARG_KEYWORD)) {
             return DescriptorUtils.getVarargParameterType(type);
         }
         return type;
@@ -1447,17 +1453,14 @@ public class DescriptorResolver {
             @NotNull BindingTrace trace,
             @NotNull JetParameter parameter
     ) {
-        JetModifierList modifiers = parameter.getModifierList();
-        if (modifiers != null) {
-            ASTNode node = modifiers.getNode().getFirstChildNode();
-
-            while (node != null) {
-                IElementType elementType = node.getElementType();
-
-                if (elementType != JetTokens.VARARG_KEYWORD && elementType instanceof JetModifierKeywordToken) {
-                    trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetModifierKeywordToken) elementType));
+        JetModifierList modifierList = parameter.getModifierList();
+        if (modifierList != null) {
+            for (JetModifierKeywordToken illegalModifierType : MODIFIERS_ILLEGAL_ON_PARAMETERS) {
+                if (modifierList.hasModifier(illegalModifierType)) {
+                    PsiElement illegalModifier = modifierList.getModifier(illegalModifierType);
+                    assert illegalModifier != null;
+                    trace.report(ILLEGAL_MODIFIER.on(illegalModifier, illegalModifierType));
                 }
-                node = node.getTreeNext();
             }
         }
     }
