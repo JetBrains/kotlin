@@ -30,13 +30,8 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     private final boolean isVar;
     private final boolean isTopLevel;
     private final FqName fqName;
-    private final StringRef typeText;
-    private final StringRef inferenceBodyText;
 
-    public PsiJetPropertyStubImpl(
-            StubElement parent, StringRef name,
-            boolean isVar, boolean isTopLevel, @Nullable FqName fqName, StringRef typeText, StringRef inferenceBodyText
-    ) {
+    public PsiJetPropertyStubImpl( StubElement parent, StringRef name, boolean isVar, boolean isTopLevel, @Nullable FqName fqName) {
         super(parent, JetStubElementTypes.PROPERTY);
 
         if (isTopLevel && fqName == null) {
@@ -47,16 +42,6 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
         this.isVar = isVar;
         this.isTopLevel = isTopLevel;
         this.fqName = fqName;
-        this.typeText = typeText;
-        this.inferenceBodyText = inferenceBodyText;
-    }
-
-    public PsiJetPropertyStubImpl(StubElement parent, String name,
-            boolean isVar, boolean isTopLevel, @Nullable FqName topFQName,
-            String typeText, String inferenceBodyText
-    ) {
-        this(parent, StringRef.fromString(name),
-             isVar, isTopLevel, topFQName, StringRef.fromString(typeText), StringRef.fromString(inferenceBodyText));
     }
 
     @Override
@@ -73,16 +58,6 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     @Override
     public FqName getFqName() {
         return fqName;
-    }
-
-    @Override
-    public String getTypeText() {
-        return StringRef.toString(typeText);
-    }
-
-    @Override
-    public String getInferenceBodyText() {
-        return StringRef.toString(inferenceBodyText);
     }
 
     @Override
@@ -104,8 +79,6 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
         }
 
         builder.append("name=").append(getName());
-        builder.append(" typeText=").append(getTypeText());
-        builder.append(" bodyText=").append(getInferenceBodyText());
 
         builder.append("]");
 

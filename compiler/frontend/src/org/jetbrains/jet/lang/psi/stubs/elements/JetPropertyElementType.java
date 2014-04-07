@@ -25,9 +25,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetProperty;
-import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
@@ -52,17 +50,12 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
 
     @Override
     public PsiJetPropertyStub createStub(@NotNull JetProperty psi, StubElement parentStub) {
-        JetTypeReference typeRef = psi.getTypeRef();
-        JetExpression expression = psi.getInitializer();
-
         assert !psi.isLocal() :
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        return new PsiJetPropertyStubImpl(parentStub,
-            psi.getName(), psi.isVar(), psi.isTopLevel(), ResolveSessionUtils.safeFqNameForLazyResolve(psi),
-            typeRef != null ? typeRef.getText() : null,
-            expression != null ? expression.getText() : null);
+        return new PsiJetPropertyStubImpl(parentStub, StringRef.fromString(psi.getName()),
+                                          psi.isVar(), psi.isTopLevel(), ResolveSessionUtils.safeFqNameForLazyResolve(psi));
     }
 
     @Override
@@ -73,9 +66,6 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
-
-        dataStream.writeName(stub.getTypeText());
-        dataStream.writeName(stub.getInferenceBodyText());
     }
 
     @NotNull
@@ -88,11 +78,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-        StringRef typeText = dataStream.readName();
-        StringRef inferenceBodyText = dataStream.readName();
-
-        return new PsiJetPropertyStubImpl(parentStub,
-                                          name, isVar, isTopLevel, fqName, typeText, inferenceBodyText);
+        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, fqName);
     }
 
     @Override

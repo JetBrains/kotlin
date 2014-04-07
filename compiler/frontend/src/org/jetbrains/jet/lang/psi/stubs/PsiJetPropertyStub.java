@@ -21,6 +21,4 @@ import org.jetbrains.jet.lang.psi.JetProperty;
 public interface PsiJetPropertyStub extends PsiJetStubWithFqName<JetProperty> {
     boolean isVar();
     boolean isTopLevel();
-    String getTypeText();
-    String getInferenceBodyText();
 }
