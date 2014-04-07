@@ -643,6 +643,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.AddExplicitTypeParameterToSuperIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
@@ -651,6 +656,7 @@
         />
 
     <inspectionToolProvider implementation="org.jetbrains.jet.plugin.inspections.UnnecessaryLabelInspection$InspectionProvider"/>
+
     <inspectionToolProvider implementation="org.jetbrains.jet.plugin.inspections.UnnecessaryTypeParameterInSuperInspection$InspectionProvider"/>
 
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
