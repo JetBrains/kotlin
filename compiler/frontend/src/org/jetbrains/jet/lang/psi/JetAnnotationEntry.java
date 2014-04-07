@@ -57,6 +57,10 @@ public class JetAnnotationEntry extends JetElementImplStub<PsiJetAnnotationEntry
 
     @Override
     public JetValueArgumentList getValueArgumentList() {
+        PsiJetAnnotationEntryStub stub = getStub();
+        if (stub != null && !stub.hasValueArguments()) {
+            return null;
+        }
         return (JetValueArgumentList) findChildByType(JetNodeTypes.VALUE_ARGUMENT_LIST);
     }
 
