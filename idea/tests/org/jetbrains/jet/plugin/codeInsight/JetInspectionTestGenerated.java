@@ -41,4 +41,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/codeInsight/inspections/replaceGet");
     }
     
+    @TestMetadata("unnecessaryLabel")
+    public void testUnnecessaryLabel() throws Exception {
+        doTest("idea/testData/codeInsight/inspections/unnecessaryLabel");
+    }
+    
 }

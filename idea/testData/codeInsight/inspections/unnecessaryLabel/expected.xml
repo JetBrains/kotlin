@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+  <problem>
+    <file>unnecessaryLabel.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessaryLabel.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+    <description>Unnecessary label '@loop'</description>
+  </problem>
+
+  <problem>
+    <file>unnecessaryLabel.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessaryLabel.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+    <description>Unnecessary label '@loop'</description>
+  </problem>
+
+  <problem>
+    <file>unnecessaryLabel.kt</file>
+    <line>17</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessaryLabel.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+    <description>Unnecessary label '@UnnecessaryLabel_super'</description>
+  </problem>
+
+  <problem>
+    <file>unnecessaryLabel.kt</file>
+    <line>22</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessaryLabel.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+    <description>Unnecessary label '@UnnecessaryLabel_this'</description>
+  </problem>
+</problems>
