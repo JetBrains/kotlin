@@ -122,6 +122,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/topLevelFunWithDefaultArgs.kt");
     }
     
+    @TestMetadata("traitImplGeneratedOnce.kt")
+    public void testTraitImplGeneratedOnce() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/traitImplGeneratedOnce.kt");
+    }
+    
     @TestMetadata("compiler/testData/codegen/bytecodeText/constants")
     public static class Constants extends AbstractBytecodeTextTest {
         public void testAllFilesPresentInConstants() throws Exception {

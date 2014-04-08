@@ -1815,58 +1815,63 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
      * Return pairs of descriptors. First is member of this that should be implemented by delegating to trait,
      * second is member of trait that contain implementation.
      */
-    private List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
-        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> r = Lists.newArrayList();
+    @NotNull
+    private static List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> getTraitImplementations(@NotNull ClassDescriptor classDescriptor) {
+        List<Pair<CallableMemberDescriptor, CallableMemberDescriptor>> result = Lists.newArrayList();
 
-        for (DeclarationDescriptor decl : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
-            if (!(decl instanceof CallableMemberDescriptor)) {
-                continue;
-            }
+        for (DeclarationDescriptor declaration : classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            if (!(declaration instanceof CallableMemberDescriptor)) continue;
 
-            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) decl;
-            if (callableMemberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                continue;
-            }
+            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
 
-            if (CallResolverUtil.isOrOverridesSynthesized(callableMemberDescriptor)) {
-                continue;
-            }
-
-            Collection<CallableMemberDescriptor> overriddenDeclarations =
-                    OverridingUtil.getOverriddenDeclarations(callableMemberDescriptor);
-
-            Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
-                    OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
-
-            int count = 0;
-            CallableMemberDescriptor candidate = null;
-
-            for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
-                if (isTrait(overriddenDeclaration.getContainingDeclaration()) &&
-                    overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-                    candidate = overriddenDeclaration;
-                    count++;
-                }
-            }
-            if (candidate == null) {
-                continue;
-            }
-
-            assert count == 1 : "Ambiguous overridden declaration: " + callableMemberDescriptor.getName();
-
-
-            Collection<JetType> superTypesOfSuperClass =
-                    superClassType != null ? TypeUtils.getAllSupertypes(superClassType) : Collections.<JetType>emptySet();
-            ReceiverParameterDescriptor expectedThisObject = candidate.getExpectedThisObject();
-            assert expectedThisObject != null;
-            JetType candidateType = expectedThisObject.getType();
-            boolean implementedInSuperClass = superTypesOfSuperClass.contains(candidateType);
-
-            if (!implementedInSuperClass) {
-                r.add(Pair.create(callableMemberDescriptor, candidate));
+            CallableMemberDescriptor implementation = findTraitImplementation(callableMemberDescriptor);
+            if (implementation != null) {
+                result.add(Pair.create(callableMemberDescriptor, implementation));
             }
         }
-        return r;
+
+        return result;
+    }
+
+    /**
+     * Given a fake override descriptor, returns an overridden non-abstract descriptor whose container is a trait
+     */
+    @Nullable
+    private static CallableMemberDescriptor findTraitImplementation(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor.getKind().isReal()) return null;
+
+        if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return null;
+
+        Collection<CallableMemberDescriptor> overriddenDeclarations = OverridingUtil.getOverriddenDeclarations(descriptor);
+
+        Collection<CallableMemberDescriptor> filteredOverriddenDeclarations =
+                OverridingUtil.filterOutOverridden(Sets.newLinkedHashSet(overriddenDeclarations));
+
+        int count = 0;
+        CallableMemberDescriptor implementation = null;
+
+        for (CallableMemberDescriptor overriddenDeclaration : filteredOverriddenDeclarations) {
+            if (isTrait(overriddenDeclaration.getContainingDeclaration()) && overriddenDeclaration.getModality() != Modality.ABSTRACT) {
+                implementation = overriddenDeclaration;
+                count++;
+            }
+        }
+        if (implementation == null) {
+            return null;
+        }
+
+        assert count == 1 : "Ambiguous overridden declaration: " + descriptor;
+
+        ClassDescriptor containingClass = (ClassDescriptor) descriptor.getContainingDeclaration();
+        for (JetType supertype : containingClass.getDefaultType().getConstructor().getSupertypes()) {
+            //noinspection ConstantConditions
+            if (!isTrait(supertype.getConstructor().getDeclarationDescriptor()) &&
+                TypeUtils.getAllSupertypes(supertype).contains(implementation.getExpectedThisObject().getType())) {
+                return null;
+            }
+        }
+
+        return implementation;
     }
 
     public void addClassObjectPropertyToCopy(PropertyDescriptor descriptor, Object defaultValue) {
