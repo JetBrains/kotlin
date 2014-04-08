@@ -29,11 +29,13 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.plugin.caches.resolve.KotlinResolveCache;
 
 public class ResolveSessionForBodies implements KotlinCodeAnalyzer, ModificationTracker {
     private final Object createdForObject;
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
+    private final KotlinResolveCache resolveCache;
 
     public ResolveSessionForBodies(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
         this(file, file.getProject(), resolveSession);
@@ -47,6 +49,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
         this.createdForObject = createdForObject;
         this.resolveSession = resolveSession;
         this.resolveElementCache = new ResolveElementCache(resolveSession, project);
+        this.resolveCache = new KotlinResolveCache(project, resolveSession);
     }
 
     @NotNull
@@ -91,5 +94,10 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
     @Override
     public String toString() {
         return "ResolveSessionForBodies: " + getModificationCount() + " " + createdForObject + " " + createdForObject.hashCode();
+    }
+
+    @NotNull
+    public KotlinResolveCache getResolveCache() {
+        return resolveCache;
     }
 }
