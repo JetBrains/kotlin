@@ -43,8 +43,6 @@ public class OverloadResolver {
         this.trace = trace;
     }
 
-
-
     public void process(@NotNull BodiesResolveContext c) {
         checkOverloads(c);
     }
@@ -60,7 +58,7 @@ public class OverloadResolver {
         checkOverloadsInPackages(c, inPackages);
     }
 
-    private void fillGroupedConstructors(
+    private static void fillGroupedConstructors(
             @NotNull BodiesResolveContext c,
             @NotNull MultiMap<ClassDescriptor, ConstructorDescriptor> inClasses,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
@@ -133,7 +131,7 @@ public class OverloadResolver {
         MultiMap<Name, CallableMemberDescriptor> functionsByName = MultiMap.create();
         
         if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-            ClassDescriptorWithResolutionScopes classObjectDescriptor = (ClassDescriptorWithResolutionScopes) classDescriptor.getClassObjectDescriptor();
+            ClassDescriptorWithResolutionScopes classObjectDescriptor = classDescriptor.getClassObjectDescriptor();
             assert classObjectDescriptor != null;
             for (CallableMemberDescriptor memberDescriptor : classObjectDescriptor.getDeclaredCallableMembers()) {
                 functionsByName.putValue(memberDescriptor.getName(), memberDescriptor);
@@ -164,13 +162,12 @@ public class OverloadResolver {
             // micro-optimization
             return;
         }
-        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = findRedeclarations(functions);
-        reportRedeclarations(functionContainer, redeclarations);
+        reportRedeclarations(functionContainer, findRedeclarations(functions));
     }
 
     @NotNull
     private Set<Pair<JetDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<CallableMemberDescriptor> functions) {
-        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newHashSet();
+        Set<Pair<JetDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
         for (CallableMemberDescriptor member : functions) {
             for (CallableMemberDescriptor member2 : functions) {
                 if (member == member2) {

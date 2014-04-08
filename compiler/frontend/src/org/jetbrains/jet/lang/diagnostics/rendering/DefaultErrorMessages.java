@@ -398,7 +398,7 @@ public class DefaultErrorMessages {
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits many implementations of it",
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.TEXT);
 
-        MAP.put(CONFLICTING_OVERLOADS, "{1} is already defined in ''{0}''", DescriptorRenderer.TEXT, TO_STRING);
+        MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", DescriptorRenderer.COMPACT_WITH_MODIFIERS, TO_STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. The function 'invoke()' is not found", ELEMENT_TEXT, new Renderer<JetType>() {
             @NotNull

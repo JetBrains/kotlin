@@ -60,6 +60,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder().setDebugMode(true).build();
 
+    DescriptorRenderer HTML_COMPACT_WITH_MODIFIERS = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setTextFormat(TextFormat.HTML).build();
+
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
     @NotNull

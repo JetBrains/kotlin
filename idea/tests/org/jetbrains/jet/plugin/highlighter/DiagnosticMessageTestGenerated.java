@@ -36,6 +36,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("conflictingOverloadsClass.kt")
+    public void testConflictingOverloadsClass() throws Exception {
+        doTest("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
+    }
+    
     @TestMetadata("conflictingSubstitutions.kt")
     public void testConflictingSubstitutions() throws Exception {
         doTest("idea/testData/diagnosticMessage/conflictingSubstitutions.kt");

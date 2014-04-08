@@ -17,7 +17,10 @@
 package org.jetbrains.jet.plugin.highlighter;
 
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.rendering.*;
+import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticRenderer;
+import org.jetbrains.jet.lang.diagnostics.rendering.DispatchingDiagnosticRenderer;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
@@ -82,7 +85,8 @@ public class IdeErrorMessages {
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
-        MAP.put(CONFLICTING_OVERLOADS, "<html>{1}<br />is already defined in ''{0}''</html>", DescriptorRenderer.HTML, TO_STRING);
+        MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />is already defined in {1}</html>",
+                DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS, TO_STRING);
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +
