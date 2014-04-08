@@ -1,0 +1,4 @@
+fun foo(x: Int) {
+  var y = 1
+  <spot>y = y + x</spot>
+}
