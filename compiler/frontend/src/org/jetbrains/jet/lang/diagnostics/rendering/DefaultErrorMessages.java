@@ -36,6 +36,7 @@ import java.util.Collection;
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.renderer.DescriptorRenderer.SHORT_NAMES_IN_TYPES;
+import static org.jetbrains.jet.renderer.DescriptorRenderer.TEXT;
 
 public class DefaultErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
@@ -172,7 +173,7 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_PARAMETER, "Parameter ''{0}'' is never used", NAME);
         MAP.put(ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, "Variable ''{0}'' is assigned but never accessed", NAME);
         MAP.put(VARIABLE_WITH_REDUNDANT_INITIALIZER, "Variable ''{0}'' initializer is redundant", NAME);
-        MAP.put(UNUSED_VALUE, "The value ''{0}'' assigned to ''{1}'' is never used", ELEMENT_TEXT, TO_STRING);
+        MAP.put(UNUSED_VALUE, "The value ''{0}'' assigned to ''{1}'' is never used", ELEMENT_TEXT, TEXT);
         MAP.put(UNUSED_CHANGED_VALUE, "The value changed at ''{0}'' is never used", ELEMENT_TEXT);
         MAP.put(UNUSED_EXPRESSION, "The expression is unused");
         MAP.put(UNUSED_FUNCTION_LITERAL, "The function literal is unused. If you mean block, you can use 'run { ... }'");
@@ -468,20 +469,20 @@ public class DefaultErrorMessages {
 
         String multipleDefaultsMessage = "More than one overridden descriptor declares a default value for ''{0}''. " +
                                          "As the compiler can not make sure these values agree, this is not allowed.";
-        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES, multipleDefaultsMessage, TO_STRING);
-        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE, multipleDefaultsMessage, TO_STRING);
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES, multipleDefaultsMessage, TEXT);
+        MAP.put(MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE, multipleDefaultsMessage, TEXT);
 
         MAP.put(PARAMETER_NAME_CHANGED_ON_OVERRIDE, "The corresponding parameter in the supertype ''{0}'' is named ''{1}''. " +
                                                     "This may cause problems when calling this function with named arguments.", NAME, NAME);
 
         MAP.put(DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES,
-                    "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''" +
-                    "This may cause problems when calling this function with named arguments.", commaSeparated(TO_STRING), TO_STRING);
+                    "Names of the parameter #{1} conflict in the following members of supertypes: ''{0}''. " +
+                    "This may cause problems when calling this function with named arguments.", commaSeparated(TEXT), TO_STRING);
 
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
 
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
-                "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", TO_STRING);
+                "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
 
         //Inline

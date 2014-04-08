@@ -51,6 +51,16 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/conflictingSubstitutions.kt");
     }
     
+    @TestMetadata("differentNamesForSameParameter.kt")
+    public void testDifferentNamesForSameParameter() throws Exception {
+        doTest("idea/testData/diagnosticMessage/differentNamesForSameParameter.kt");
+    }
+    
+    @TestMetadata("extensionInClassReference.kt")
+    public void testExtensionInClassReference() throws Exception {
+        doTest("idea/testData/diagnosticMessage/extensionInClassReference.kt");
+    }
+    
     @TestMetadata("functionPlaceholder.kt")
     public void testFunctionPlaceholder() throws Exception {
         doTest("idea/testData/diagnosticMessage/functionPlaceholder.kt");
@@ -64,6 +74,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("invisibleMember.kt")
     public void testInvisibleMember() throws Exception {
         doTest("idea/testData/diagnosticMessage/invisibleMember.kt");
+    }
+    
+    @TestMetadata("multipleDefaultsFromSupertypes.kt")
+    public void testMultipleDefaultsFromSupertypes() throws Exception {
+        doTest("idea/testData/diagnosticMessage/multipleDefaultsFromSupertypes.kt");
     }
     
     @TestMetadata("numberValueTypes.kt")
@@ -84,6 +99,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
     @TestMetadata("typeMismatchWithNothing.kt")
     public void testTypeMismatchWithNothing() throws Exception {
         doTest("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");
+    }
+    
+    @TestMetadata("unusedValue.kt")
+    public void testUnusedValue() throws Exception {
+        doTest("idea/testData/diagnosticMessage/unusedValue.kt");
     }
     
     @TestMetadata("upperBoundViolated.kt")
