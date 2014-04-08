@@ -153,8 +153,7 @@ class JDIEval(
         mayThrow { _class.setValue(field, jdiValue) }
     }
 
-    private fun findMethod(methodDesc: MethodDescription): jdi.Method {
-        val _class = methodDesc.ownerType.asReferenceType()
+    private fun findMethod(methodDesc: MethodDescription, _class: jdi.ReferenceType = methodDesc.ownerType.asReferenceType()): jdi.Method {
         val method = when (_class) {
             is jdi.ClassType -> {
                 val m = _class.concreteMethodByName(methodDesc.name, methodDesc.desc)
@@ -212,9 +211,9 @@ class JDIEval(
                 throw UnsupportedOperationException("invokespecial is not suported yet")
             }
         }
-        val method = findMethod(methodDesc)
 
         val obj = instance.jdiObj.checkNull()
+        val method = findMethod(methodDesc, instance.jdiObj!!.referenceType() ?: methodDesc.ownerType.asReferenceType())
         val args = mapArguments(arguments, method.safeArgumentTypes())
         val result = mayThrow { obj.invokeMethod(thread, method, args, 0) }
         return result.asValue()

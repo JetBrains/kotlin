@@ -656,6 +656,11 @@ class TestData {
         static Class c() { return null; }
     }
 
+
+    static int numberIntValue() {
+        Number n = 1;
+        return n.intValue();
+    }
 }
 
 
