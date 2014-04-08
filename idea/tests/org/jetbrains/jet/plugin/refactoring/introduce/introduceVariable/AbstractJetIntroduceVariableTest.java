@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +32,7 @@ public abstract class AbstractJetIntroduceVariableTest extends LightCodeInsightF
 
         myFixture.setTestDataPath(JetTestCaseBuilder.getHomeDirectory() + "/" + mainFile.getParent());
 
-        final JetFile file = (JetFile) myFixture.configureByFile(mainFile.getName());
+        JetFile file = (JetFile) myFixture.configureByFile(mainFile.getName());
 
         PsiElement lastChild = file.getLastChild();
         assert lastChild != null;
@@ -48,14 +47,9 @@ public abstract class AbstractJetIntroduceVariableTest extends LightCodeInsightF
         }
         assert expectedResultText != null;
 
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
-                new KotlinIntroduceVariableHandler().invoke(getProject(), myFixture.getEditor(), file,
-                                                         DataManager.getInstance().getDataContext(myFixture.getEditor().
-                                                                 getComponent()));
-            }
-        });
+        new KotlinIntroduceVariableHandler().invoke(
+                getProject(), myFixture.getEditor(), file, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent())
+        );
 
         int endOffset = file.getLastChild().getTextRange().getStartOffset();
         assertEquals(expectedResultText, file.getText().substring(0, endOffset).trim());
