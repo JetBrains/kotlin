@@ -199,7 +199,7 @@ public class JetPositionManager implements PositionManager {
                     AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
                     analyzeExhaust.throwIfError();
 
-                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles().fun(file);
+                    Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles(file);
 
                     DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
                     JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);

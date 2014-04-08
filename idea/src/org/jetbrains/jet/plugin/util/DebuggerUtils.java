@@ -63,7 +63,7 @@ public class DebuggerUtils {
             return anyFile;
         }
 
-        Collection<JetFile> allPackageFiles = filesProvider.allPackageFiles().fun(anyFile);
+        Collection<JetFile> allPackageFiles = filesProvider.allPackageFiles(anyFile);
         JetFile file = PsiCodegenPredictor.getFileForPackagePartName(allPackageFiles, className);
         if (file != null) {
             return file;

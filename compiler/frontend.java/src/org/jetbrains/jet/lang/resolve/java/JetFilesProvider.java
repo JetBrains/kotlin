@@ -34,30 +34,18 @@ public abstract class JetFilesProvider {
         return ServiceManager.getService(project, JetFilesProvider.class);
     }
 
-    public final Function<JetFile, Collection<JetFile>> allPackageFiles() {
-        return new Function<JetFile, Collection<JetFile>>() {
+    public final Collection<JetFile> allPackageFiles(@NotNull JetFile file) {
+        final FqName name = file.getPackageFqName();
+        return Collections2.filter(sampleToAllFilesInModule().fun(file), new Predicate<PsiFile>() {
             @Override
-            public Collection<JetFile> fun(JetFile file) {
-                return Collections2.filter(sampleToAllFilesInModule().fun(file), new SameJetFilePredicate(file));
+            public boolean apply(PsiFile psiFile) {
+                return ((JetFile) psiFile).getPackageFqName().equals(name);
             }
-        };
+        });
     }
 
     public abstract Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule();
     @NotNull
     public abstract Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope);
     public abstract boolean isFileInScope(@NotNull JetFile file, @NotNull GlobalSearchScope scope);
-
-    public static class SameJetFilePredicate implements Predicate<PsiFile> {
-        private final FqName name;
-
-        public SameJetFilePredicate(JetFile file) {
-            this.name = file.getPackageFqName();
-        }
-
-        @Override
-        public boolean apply(PsiFile psiFile) {
-            return ((JetFile) psiFile).getPackageFqName().equals(name);
-        }
-    }
 }
