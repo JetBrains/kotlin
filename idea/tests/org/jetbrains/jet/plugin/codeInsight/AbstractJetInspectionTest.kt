@@ -23,24 +23,42 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
-import org.jetbrains.jet.plugin.PluginTestCaseBase
-import com.intellij.codeInspection.InspectionEP
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
+import com.intellij.analysis.AnalysisScope
+import com.intellij.codeInspection.ex.InspectionManagerEx
+import com.intellij.testFramework.InspectionTestUtil
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+import org.jetbrains.jet.JetTestCaseBuilder
 
 public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
 
-    override fun setUp() {
-        super.setUp()
-        myFixture!!.setTestDataPath("${PluginTestCaseBase.getTestDataPathBase()}/codeInsight/inspections")
-    }
-
     protected fun doTest(path: String) {
-        val testDir = File(path).getName()
+        val optionsFile = File(path)
+        val options = FileUtil.loadFile(optionsFile, true)
 
-        val options = FileUtil.loadFile(File(path, "options.test"), true)
         val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
+        val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
 
-        myFixture!!.testInspection(testDir, LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool))
+        val inspectionsTestDir = optionsFile.getParentFile()!!
+        val srcDir = inspectionsTestDir.getParentFile()!!
+
+        with(myFixture!!) {
+            setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/$srcDir")
+
+            val virtualFiles = srcDir
+                    .listFiles { it.getName().endsWith(".kt") }!!
+                    .map { configureByFile(it.getName())!!.getVirtualFile()!! }
+
+            val scope = AnalysisScope(getProject(), virtualFiles)
+            scope.invalidate()
+
+            val inspectionManager = (InspectionManager.getInstance(getProject()) as InspectionManagerEx)
+            val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, toolWrapper)
+
+            InspectionTestUtil.runTool(toolWrapper, scope, globalContext, inspectionManager)
+            InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.getPath())
+        }
     }
 }

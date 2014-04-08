@@ -2193,6 +2193,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     }
     
     @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention")
+    @InnerTestClasses({})
     public static class ReplaceGetIntention extends AbstractCodeTransformationTest {
         @TestMetadata("acceptableVararg.kt")
         public void testAcceptableVararg() throws Exception {
@@ -2278,6 +2279,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestReplaceGetIntention("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/unnamedAndNamed.kt");
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("ReplaceGetIntention");
+            suite.addTestSuite(ReplaceGetIntention.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/intentions/attributeCallReplacements/replaceContainsIntention")
@@ -3210,7 +3216,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ReplaceItWithExplicitFunctionLiteralParam.class);
         suite.addTestSuite(RemoveBraces.class);
         suite.addTestSuite(AddBraces.class);
-        suite.addTestSuite(ReplaceGetIntention.class);
+        suite.addTest(ReplaceGetIntention.innerSuite());
         suite.addTestSuite(ReplaceContainsIntention.class);
         suite.addTestSuite(ReplaceBinaryInfixIntention.class);
         suite.addTestSuite(ReplaceUnaryPrefixIntention.class);

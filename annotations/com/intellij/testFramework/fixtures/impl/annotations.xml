@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl com.intellij.openapi.vfs.VirtualFile copyDirectoryToProject(java.lang.String, java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

@@ -391,7 +391,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
-            model("codeInsight/inspections", extension = null, recursive = false)
+            model("intentions", pattern = "^(inspections\\.test)$", singleClass = true)
         }
 
         testClass(javaClass<AbstractHierarchyTest>()) {
