@@ -21,11 +21,11 @@ import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.JetScript
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.lang.psi.JetClassObject
 
 public class JetScriptInfo(
         val script: JetScript
@@ -34,6 +34,7 @@ public class JetScriptInfo(
     override fun getContainingPackageFqName() = fqName.parent()
     override fun getModifierList() = null
     override fun getClassObject() = null
+    override fun getClassObjects() = listOf<JetClassObject>()
     override fun getScopeAnchor() = script
     override fun getCorrespondingClassOrObject() = null
     override fun getTypeParameters() = listOf<JetTypeParameter>()

@@ -62,6 +62,12 @@ public class SyntheticClassObjectInfo implements JetClassLikeInfo {
 
     @NotNull
     @Override
+    public List<JetClassObject> getClassObjects() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
     public PsiElement getScopeAnchor() {
         return classInfo.getScopeAnchor();
     }

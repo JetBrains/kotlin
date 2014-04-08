@@ -22,7 +22,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
-import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,6 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.storage.*;
@@ -299,7 +297,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     /*package*/ LazyClassDescriptor getClassObjectDescriptor(@NotNull JetClassObject classObject) {
         JetClass aClass = PsiTreeUtil.getParentOfType(classObject, JetClass.class);
 
-        final LazyClassDescriptor parentClassDescriptor;
+        LazyClassDescriptor parentClassDescriptor;
 
         if (aClass != null) {
             parentClassDescriptor = (LazyClassDescriptor) getClassDescriptor(aClass);
@@ -313,27 +311,11 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
         // Activate resolution and writing to trace
         parentClassDescriptor.getClassObjectDescriptor();
-        DeclarationDescriptor declaration = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classObject.getObjectDeclaration());
+        parentClassDescriptor.getDescriptorsForExtraClassObjects();
+        DeclarationDescriptor classObjectDescriptor = getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, classObject.getObjectDeclaration());
+        assert classObjectDescriptor != null : "No descriptor found for " + JetPsiUtil.getElementTextWithContext(classObject);
 
-        if (declaration == null) {
-            // It's possible that there are several class objects and another class object is taking part in lazy resolve. We still want to
-            // build descriptors for such class objects.
-            final JetClassLikeInfo classObjectInfo = parentClassDescriptor.getClassObjectInfo(classObject);
-            assert classObjectInfo != null :
-                    String.format("Failed to find class object info for existent class object declaration: %s",
-                                  JetPsiUtil.getElementTextWithContext(classObject));
-
-            final Name name = SpecialNames.getClassObjectName(parentClassDescriptor.getName());
-            return storageManager.compute(new Function0<LazyClassDescriptor>() {
-                @Override
-                public LazyClassDescriptor invoke() {
-                    // Create under lock to avoid premature access to published 'this'
-                    return new LazyClassDescriptor(ResolveSession.this, parentClassDescriptor, name, classObjectInfo);
-                }
-            });
-        }
-
-        return (LazyClassDescriptor) declaration;
+        return (LazyClassDescriptor) classObjectDescriptor;
     }
 
     @Override

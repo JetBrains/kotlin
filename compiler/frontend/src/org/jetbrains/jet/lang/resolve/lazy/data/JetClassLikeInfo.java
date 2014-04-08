@@ -37,6 +37,10 @@ public interface JetClassLikeInfo extends JetDeclarationContainer {
     @Nullable
     JetClassObject getClassObject();
 
+    @NotNull
+    @ReadOnly
+    List<JetClassObject> getClassObjects();
+
     // This element is used to identify resolution scope for the class
     @NotNull
     PsiElement getScopeAnchor();

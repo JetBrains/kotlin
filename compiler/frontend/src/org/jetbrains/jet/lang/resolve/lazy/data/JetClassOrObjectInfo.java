@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
+import java.util.Collections;
 import java.util.List;
 
 public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implements JetClassLikeInfo {
@@ -47,6 +48,16 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
     @NotNull
     public List<JetDeclaration> getDeclarations() {
         return element.getDeclarations();
+    }
+
+    @NotNull
+    @Override
+    public List<JetClassObject> getClassObjects() {
+        JetClassBody body = element.getBody();
+        if (body == null) {
+            return Collections.emptyList();
+        }
+        return body.getAllClassObjects();
     }
 
     @NotNull
