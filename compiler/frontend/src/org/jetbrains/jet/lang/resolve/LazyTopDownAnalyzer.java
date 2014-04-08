@@ -79,7 +79,8 @@ public class LazyTopDownAnalyzer {
         this.bodyResolver = bodyResolver;
     }
 
-    public void analyzeDeclarations(
+    @NotNull
+    public TopDownAnalysisContext analyzeDeclarations(
             final ResolveSession resolveSession,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<? extends PsiElement> declarations
@@ -252,6 +253,8 @@ public class LazyTopDownAnalyzer {
         overloadResolver.process(c);
 
         bodyResolver.resolveBodies(c);
+
+        return c;
     }
 }
 

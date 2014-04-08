@@ -68,10 +68,11 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
     parameter(javaClass<Project>())
     parameter(javaClass<GlobalContext>(), useAsContext = true)
     parameter(javaClass<BindingTrace>())
-    publicParameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
+    publicParameter(javaClass<ModuleDescriptor>(), useAsContext = true)
 
     publicFields(
-            javaClass<TopDownAnalyzer>()
+            javaClass<TopDownAnalyzer>(),
+            javaClass<LazyTopDownAnalyzer>()
     )
 
     field(javaClass<MutablePackageFragmentProvider>())
