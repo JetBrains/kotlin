@@ -6,6 +6,7 @@ fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("plus(element: T)") {
+        exclude(Strings)
         doc { "Returns a list containing all elements of original collection and then the given element" }
         returns("List<T>")
         body {
@@ -26,7 +27,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(collection: Iterable<T>)") {
-        exclude(Streams)
+        exclude(Strings, Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
         body {
@@ -39,7 +40,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("plus(array: Array<T>)") {
-        exclude(Streams)
+        exclude(Strings, Streams)
         doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
         returns("List<T>")
         body {
@@ -99,9 +100,25 @@ fun generators(): List<GenericFunction> {
                 return Pair(first, second)
             """
         }
+
+        returns(Strings) { "Pair<String, String>" }
+        body(Strings) {
+            """
+                val first = StringBuilder()
+                val second = StringBuilder()
+                for (element in this) {
+                    if (predicate(element)) {
+                        first.append(element)
+                    } else {
+                        second.append(element)
+                    }
+                }
+                return Pair(first.toString(), second.toString())
+            """
+        }
     }
 
-    templates add f("zip(collection: Iterable<R>)") {
+    templates add f("zip(other: Iterable<R>)") {
         exclude(Streams)
         doc {
             """
@@ -113,8 +130,29 @@ fun generators(): List<GenericFunction> {
         body {
             """
                 val first = iterator()
-                val second = collection.iterator()
+                val second = other.iterator()
                 val list = ArrayList<Pair<T,R>>()
+                while (first.hasNext() && second.hasNext()) {
+                    list.add(first.next() to second.next())
+                }
+                return list
+            """
+        }
+    }
+
+    templates add f("zip(other : String)") {
+        only(Strings)
+        doc {
+            """
+            Returns a list of pairs built from characters of both strings with same indexes. List has length of shortest collection.
+            """
+        }
+        returns("List<Pair<Char,Char>>")
+        body {
+            """
+                val first = iterator()
+                val second = other.iterator()
+                val list = ArrayList<Pair<Char,Char>>()
                 while (first.hasNext() && second.hasNext()) {
                     list.add(first.next() to second.next())
                 }

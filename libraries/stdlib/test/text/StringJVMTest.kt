@@ -84,12 +84,6 @@ class StringJVMTest {
         assertEquals("abcd", "a1b2c3d4".filterNot { it.isDigit() })
     }
 
-    test fun reverse() {
-        assertEquals("dcba", "abcd".reverse())
-        assertEquals("4321", "1234".reverse())
-        assertEquals("", "".reverse())
-    }
-
     test fun forEach() {
         val data = "abcd1234"
         var count = 0
@@ -227,11 +221,11 @@ class StringJVMTest {
     }
 
     test fun groupBy() {
-        // collect similar characters by their int code
-        val data = "ababaaabcd"
-        val result = data.groupBy { it.toInt() }
-        assertEquals(4, result.size)
-        assertEquals("bbb", result.get('b'.toInt()))
+        // group characters by their case
+        val data = "abAbaABcD"
+        val result = data.groupBy { it.isLowerCase() }
+        assertEquals(2, result.size)
+        assertEquals(listOf('a','b','b','a','c'), result.get(true))
     }
 
     test fun makeString() {
@@ -368,5 +362,18 @@ class StringJVMTest {
         }
         assertEquals("", result)
 
+    }
+
+    test fun slice() {
+        val iter = listOf(4, 3, 0, 1)
+
+        val builder = StringBuilder()
+        builder.append("ABCD")
+        builder.append("abcd")
+        // ABCDabcd
+        // 01234567
+        assertEquals("BCDabc", builder.slice(1..6))
+        assertEquals("baD", builder.slice(5 downTo 3))
+        assertEquals("aDAB", builder.slice(iter))
     }
 }

@@ -95,7 +95,7 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
-        body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
+        body(Strings, Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
             "return size"
         }
     }
@@ -324,7 +324,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("foldRight(initial: R, operation: (T, R) -> R)") {
         inline(true)
 
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value" }
         typeParam("R")
         returns("R")
@@ -363,7 +363,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("reduceRight(operation: (T, T) -> T)") {
         inline(true)
 
-        only(Lists, ArraysOfObjects, ArraysOfPrimitives)
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
         doc { "Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value" }
         returns("T")
         body {

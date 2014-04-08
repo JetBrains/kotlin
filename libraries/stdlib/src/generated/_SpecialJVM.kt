@@ -358,6 +358,14 @@ public fun <T, R: T> Stream<T>.filterIsInstance(klass: Class<R>) : Stream<T> {
 }
 
 /**
+ * Returns a list containing all elements that are instances of specified class
+ */
+public fun <R: Char> String.filterIsInstance(klass: Class<R>) : List<R> {
+    return filterIsInstanceTo(ArrayList<R>(), klass)
+    
+}
+
+/**
  * Appends all elements that are instances of specified class into the given *collection*
  */
 public fun <T, C: MutableCollection<in R>, R: T> Array<out T>.filterIsInstanceTo(collection: C, klass: Class<R>) : C {
@@ -379,6 +387,15 @@ public fun <T, C: MutableCollection<in R>, R: T> Iterable<T>.filterIsInstanceTo(
  * Appends all elements that are instances of specified class into the given *collection*
  */
 public fun <T, C: MutableCollection<in R>, R: T> Stream<T>.filterIsInstanceTo(collection: C, klass: Class<R>) : C {
+    for (element in this) if (klass.isInstance(element)) collection.add(element as R)
+    return collection
+    
+}
+
+/**
+ * Appends all elements that are instances of specified class into the given *collection*
+ */
+public fun <C: MutableCollection<in R>, R: Char> String.filterIsInstanceTo(collection: C, klass: Class<R>) : C {
     for (element in this) if (klass.isInstance(element)) collection.add(element as R)
     return collection
     

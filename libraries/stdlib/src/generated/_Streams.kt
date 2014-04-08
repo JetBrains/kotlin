@@ -95,3 +95,11 @@ public fun <T> Stream<T>.stream() : Stream<T> {
     
 }
 
+/**
+ * Returns a stream from the given collection
+ */
+public fun String.stream() : Stream<Char> {
+    return object : Stream<Char> { override fun iterator() : Iterator<Char> { return this@stream.iterator() } }
+    
+}
+

@@ -116,6 +116,15 @@ public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean) : Boolean {
 }
 
 /**
+ * Returns *true* if all elements match the given *predicate*
+ */
+public inline fun String.all(predicate: (Char) -> Boolean) : Boolean {
+    for (element in this) if (!predicate(element)) return false
+    return true
+    
+}
+
+/**
  * Returns *true* if collection has at least one element
  */
 public fun <T> Array<out T>.any() : Boolean {
@@ -218,6 +227,15 @@ public fun <K, V> Map<K,V>.any() : Boolean {
  * Returns *true* if collection has at least one element
  */
 public fun <T> Stream<T>.any() : Boolean {
+    for (element in this) return true
+    return false
+    
+}
+
+/**
+ * Returns *true* if collection has at least one element
+ */
+public fun String.any() : Boolean {
     for (element in this) return true
     return false
     
@@ -332,6 +350,15 @@ public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean) : Boolean {
 }
 
 /**
+ * Returns *true* if any element matches the given *predicate*
+ */
+public inline fun String.any(predicate: (Char) -> Boolean) : Boolean {
+    for (element in this) if (predicate(element)) return true
+    return false
+    
+}
+
+/**
  * Returns the number of elements
  */
 public fun <T> Array<out T>.count() : Int {
@@ -426,6 +453,13 @@ public fun <T> Stream<T>.count() : Int {
     for (element in this) count++
     return count
     
+}
+
+/**
+ * Returns the number of elements
+ */
+public fun String.count() : Int {
+    return size
 }
 
 /**
@@ -549,6 +583,16 @@ public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean) : Int {
 }
 
 /**
+ * Returns the number of elements matching the given *predicate*
+ */
+public inline fun String.count(predicate: (Char) -> Boolean) : Int {
+    var count = 0
+    for (element in this) if (predicate(element)) count++
+    return count
+    
+}
+
+/**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
 public inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R) : R {
@@ -652,6 +696,16 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R) : 
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
 public inline fun <T, R> Stream<T>.fold(initial: R, operation: (R, T) -> R) : R {
+    var accumulator = initial
+    for (element in this) accumulator = operation(accumulator, element)
+    return accumulator
+    
+}
+
+/**
+ * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R) : R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
@@ -789,6 +843,19 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R) :
 }
 
 /**
+ * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ */
+public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R) : R {
+    var index = size - 1
+    var accumulator = initial
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    return accumulator
+    
+}
+
+/**
  * Performs the given *operation* on each element
  */
 public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit) : Unit {
@@ -880,6 +947,14 @@ public inline fun <K, V> Map<K,V>.forEach(operation: (Map.Entry<K,V>) -> Unit) :
  * Performs the given *operation* on each element
  */
 public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit) : Unit {
+    for (element in this) operation(element)
+    
+}
+
+/**
+ * Performs the given *operation* on each element
+ */
+public inline fun String.forEach(operation: (Char) -> Unit) : Unit {
     for (element in this) operation(element)
     
 }
@@ -1024,6 +1099,22 @@ public fun <T: Comparable<T>> Iterable<T>.max() : T? {
  * Returns the largest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Stream<T>.max() : T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (max < e) max = e
+    }
+    return max
+    
+}
+
+/**
+ * Returns the largest element or null if there are no elements
+ */
+public fun String.max() : Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     
@@ -1261,6 +1352,27 @@ public inline fun <R: Comparable<R>, T: Any> Stream<T>.maxBy(f: (T) -> R) : T? {
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
+public inline fun <R: Comparable<R>> String.maxBy(f: (Char) -> R) : Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var maxElem = iterator.next()
+    var maxValue = f(maxElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (maxValue < v) {
+           maxElem = e
+           maxValue = v
+        }
+    }
+    return maxElem
+    
+}
+
+/**
+ * Returns the first element yielding the largest value of the given function or null if there are no elements
+ */
 public inline fun <K, V, R: Comparable<R>> Map<K,V>.maxBy(f: (Map.Entry<K,V>) -> R) : Map.Entry<K,V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
@@ -1411,6 +1523,22 @@ public fun <T: Comparable<T>> Iterable<T>.min() : T? {
  * Returns the smallest element or null if there are no elements
  */
 public fun <T: Comparable<T>> Stream<T>.min() : T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (min > e) min = e
+    }
+    return min
+    
+}
+
+/**
+ * Returns the smallest element or null if there are no elements
+ */
+public fun String.min() : Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     
@@ -1648,6 +1776,27 @@ public inline fun <R: Comparable<R>, T: Any> Stream<T>.minBy(f: (T) -> R) : T? {
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
+public inline fun <R: Comparable<R>> String.minBy(f: (Char) -> R) : Char? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    
+    var minElem = iterator.next()
+    var minValue = f(minElem)
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        val v = f(e)
+        if (minValue > v) {
+           minElem = e
+           minValue = v
+        }
+    }
+    return minElem
+    
+}
+
+/**
+ * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ */
 public inline fun <K, V, R: Comparable<R>> Map<K,V>.minBy(f: (Map.Entry<K,V>) -> R) : Map.Entry<K,V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
@@ -1775,6 +1924,15 @@ public fun <T> Stream<T>.none() : Boolean {
 }
 
 /**
+ * Returns *true* if collection has no elements
+ */
+public fun String.none() : Boolean {
+    for (element in this) return false
+    return true
+    
+}
+
+/**
  * Returns *true* if no elements match the given *predicate*
  */
 public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean) : Boolean {
@@ -1877,6 +2035,15 @@ public inline fun <K, V> Map<K,V>.none(predicate: (Map.Entry<K,V>) -> Boolean) :
  * Returns *true* if no elements match the given *predicate*
  */
 public inline fun <T> Stream<T>.none(predicate: (T) -> Boolean) : Boolean {
+    for (element in this) if (predicate(element)) return false
+    return true
+    
+}
+
+/**
+ * Returns *true* if no elements match the given *predicate*
+ */
+public inline fun String.none(predicate: (Char) -> Boolean) : Boolean {
     for (element in this) if (predicate(element)) return false
     return true
     
@@ -2048,6 +2215,21 @@ public inline fun <T> Stream<T>.reduce(operation: (T, T) -> T) : T {
 }
 
 /**
+ * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ */
+public inline fun String.reduce(operation: (Char, Char) -> Char) : Char {
+    val iterator = this.iterator()
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    
+    var accumulator = iterator.next()
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+    }
+    return accumulator
+    
+}
+
+/**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T) : T {
@@ -2195,6 +2377,22 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short) : S
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
 public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T) : T {
+    var index = size - 1
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    
+    var accumulator = get(index--)
+    while (index >= 0) {
+        accumulator = operation(get(index--), accumulator)
+    }
+    
+    return accumulator
+    
+}
+
+/**
+ * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ */
+public inline fun String.reduceRight(operation: (Char, Char) -> Char) : Char {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
     

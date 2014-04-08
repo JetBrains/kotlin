@@ -190,6 +190,13 @@ public fun <T> Stream<T>.drop(n: Int) : Stream<T> {
 }
 
 /**
+ * Returns a list containing all elements except first *n* elements
+ */
+public fun String.drop(n: Int) : String {
+    return substring(Math.min(n, size))
+}
+
+/**
  * Returns a list containing all elements except first elements that satisfy the given *predicate*
  */
 public inline fun <T> Array<out T>.dropWhile(predicate: (T)->Boolean) : List<T> {
@@ -377,6 +384,18 @@ public fun <T> Stream<T>.dropWhile(predicate: (T)->Boolean) : Stream<T> {
 }
 
 /**
+ * Returns a list containing all elements except first elements that satisfy the given *predicate*
+ */
+public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
+    for (index in 0..length)
+        if (!predicate(get(index))) {
+            return substring(index)
+        }
+    return ""
+    
+}
+
+/**
  * Returns a list containing all elements matching the given *predicate*
  */
 public inline fun <T> Array<out T>.filter(predicate: (T)->Boolean) : List<T> {
@@ -473,6 +492,14 @@ public fun <T> Stream<T>.filter(predicate: (T)->Boolean) : Stream<T> {
 }
 
 /**
+ * Returns a list containing all elements matching the given *predicate*
+ */
+public inline fun String.filter(predicate: (Char)->Boolean) : String {
+    return filterTo(StringBuilder(), predicate).toString()
+    
+}
+
+/**
  * Returns a list containing all elements not matching the given *predicate*
  */
 public inline fun <T> Array<out T>.filterNot(predicate: (T)->Boolean) : List<T> {
@@ -565,6 +592,14 @@ public inline fun <K, V> Map<K,V>.filterNot(predicate: (Map.Entry<K,V>)->Boolean
  */
 public fun <T> Stream<T>.filterNot(predicate: (T)->Boolean) : Stream<T> {
     return FilteringStream(this, false, predicate)
+    
+}
+
+/**
+ * Returns a list containing all elements not matching the given *predicate*
+ */
+public inline fun String.filterNot(predicate: (Char)->Boolean) : String {
+    return filterNotTo(StringBuilder(), predicate).toString()
     
 }
 
@@ -728,6 +763,15 @@ public inline fun <T, C: MutableCollection<in T>> Stream<T>.filterNotTo(collecti
 }
 
 /**
+ * Appends all characters not matching the given *predicate* to the given *collection*
+ */
+public inline fun <C: Appendable> String.filterNotTo(collection: C, predicate: (Char) -> Boolean) : C {
+    for (element in this) if (!predicate(element)) collection.append(element)
+    return collection
+    
+}
+
+/**
  * Appends all elements matching the given *predicate* into the given *collection*
  */
 public inline fun <T, C: MutableCollection<in T>> Array<out T>.filterTo(collection: C, predicate: (T) -> Boolean) : C {
@@ -833,6 +877,17 @@ public inline fun <T, C: MutableCollection<in T>> Stream<T>.filterTo(collection:
     for (element in this) if (predicate(element)) collection.add(element)
     return collection
     
+}
+
+/**
+ * Appends all characters matching the given *predicate* to the given *collection*
+ */
+public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (index in 0..length - 1) {
+        val element = get(index)
+        if (predicate(element)) destination.append(element)
+    }
+    return destination
 }
 
 /**
@@ -952,6 +1007,18 @@ public fun <T> List<T>.slice(indices: Iterable<Int>) : List<T> {
         list.add(get(index))
     }
     return list
+    
+}
+
+/**
+ * Returns a list containing elements at specified positions
+ */
+public fun String.slice(indices: Iterable<Int>) : String {
+    val result = StringBuilder()
+    for (i in indices) {
+        result.append(get(i))
+    }
+    return result.toString()
     
 }
 
@@ -1140,6 +1207,13 @@ public fun <T> Stream<T>.take(n: Int) : Stream<T> {
 }
 
 /**
+ * Returns a list containing first *n* elements
+ */
+public fun String.take(n: Int) : String {
+    return substring(0, Math.min(n, size))
+}
+
+/**
  * Returns a list containing first elements satisfying the given *predicate*
  */
 public inline fun <T> Array<out T>.takeWhile(predicate: (T)->Boolean) : List<T> {
@@ -1284,6 +1358,18 @@ public inline fun <T> Iterable<T>.takeWhile(predicate: (T)->Boolean) : List<T> {
  */
 public fun <T> Stream<T>.takeWhile(predicate: (T)->Boolean) : Stream<T> {
     return LimitedStream(this, false, predicate)
+    
+}
+
+/**
+ * Returns a list containing first elements satisfying the given *predicate*
+ */
+public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
+    for (index in 0..length)
+        if (!predicate(get(index))) {
+            return substring(0, index)
+        }
+    return ""
     
 }
 

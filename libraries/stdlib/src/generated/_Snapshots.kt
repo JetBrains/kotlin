@@ -112,6 +112,13 @@ public fun <T> Stream<T>.toArrayList() : ArrayList<T> {
 }
 
 /**
+ * Returns an ArrayList of all elements
+ */
+public fun String.toArrayList() : ArrayList<Char> {
+    return toCollection(ArrayList<Char>())
+}
+
+/**
  * Appends all elements to the given *collection*
  */
 public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(collection : C) : C {
@@ -233,6 +240,17 @@ public fun <T, C : MutableCollection<in T>> Stream<T>.toCollection(collection : 
 }
 
 /**
+ * Appends all elements to the given *collection*
+ */
+public fun <C : MutableCollection<in Char>> String.toCollection(collection : C) : C {
+    for (item in this) {
+        collection.add(item)
+    }
+    return collection
+    
+}
+
+/**
  * Returns a HashSet of all elements
  */
 public fun <T> Array<out T>.toHashSet() : HashSet<T> {
@@ -310,6 +328,13 @@ public fun <T> Stream<T>.toHashSet() : HashSet<T> {
 }
 
 /**
+ * Returns a HashSet of all elements
+ */
+public fun String.toHashSet() : HashSet<Char> {
+    return toCollection(HashSet<Char>())
+}
+
+/**
  * Returns a LinkedList containing all elements
  */
 public fun <T> Array<out T>.toLinkedList() : LinkedList<T> {
@@ -384,6 +409,13 @@ public fun <T> Iterable<T>.toLinkedList() : LinkedList<T> {
  */
 public fun <T> Stream<T>.toLinkedList() : LinkedList<T> {
     return toCollection(LinkedList<T>())
+}
+
+/**
+ * Returns a LinkedList containing all elements
+ */
+public fun String.toLinkedList() : LinkedList<Char> {
+    return toCollection(LinkedList<Char>())
 }
 
 /**
@@ -488,6 +520,13 @@ public fun <T> Stream<T>.toList() : List<T> {
 }
 
 /**
+ * Returns a List containing all elements
+ */
+public fun String.toList() : List<Char> {
+    return toCollection(ArrayList<Char>())
+}
+
+/**
  * Returns a Set of all elements
  */
 public fun <T> Array<out T>.toSet() : Set<T> {
@@ -562,6 +601,13 @@ public fun <T> Iterable<T>.toSet() : Set<T> {
  */
 public fun <T> Stream<T>.toSet() : Set<T> {
     return toCollection(LinkedHashSet<T>())
+}
+
+/**
+ * Returns a Set of all elements
+ */
+public fun String.toSet() : Set<Char> {
+    return toCollection(LinkedHashSet<Char>())
 }
 
 /**
@@ -642,6 +688,13 @@ public fun <T: Comparable<T>> Stream<T>.toSortedList() : List<T> {
 }
 
 /**
+ * Returns a sorted list of all elements
+ */
+public fun String.toSortedList() : List<Char> {
+    return toArrayList().sort()
+}
+
+/**
  * Returns a SortedSet of all elements
  */
 public fun <T> Array<out T>.toSortedSet() : SortedSet<T> {
@@ -716,5 +769,12 @@ public fun <T> Iterable<T>.toSortedSet() : SortedSet<T> {
  */
 public fun <T> Stream<T>.toSortedSet() : SortedSet<T> {
     return toCollection(TreeSet<T>())
+}
+
+/**
+ * Returns a SortedSet of all elements
+ */
+public fun String.toSortedSet() : SortedSet<Char> {
+    return toCollection(TreeSet<Char>())
 }
 

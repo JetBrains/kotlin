@@ -45,7 +45,8 @@ fun mapping(): List<GenericFunction> {
     }
 
     templates add f("mapNotNull(transform : (T) -> R)") {
-        exclude(ArraysOfPrimitives)
+        inline(true)
+        exclude(Strings, ArraysOfPrimitives)
         doc { "Returns a list containing the results of applying the given *transform* function to each non-null element of the original collection" }
         typeParam("T: Any")
         typeParam("R")
@@ -59,6 +60,7 @@ fun mapping(): List<GenericFunction> {
 
         doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each non-null element of the original stream" }
         returns(Streams) { "Stream<R>" }
+        inline(false, Streams)
         body(Streams) {
             """
             return TransformingStream(FilteringStream(this, false, { it != null }) as Stream<T>, transform)
@@ -91,7 +93,7 @@ fun mapping(): List<GenericFunction> {
 
     templates add f("mapNotNullTo(collection: C, transform : (T) -> R)") {
         inline(true)
-        exclude(ArraysOfPrimitives)
+        exclude(Strings, ArraysOfPrimitives)
         doc {
             """
             Appends transformed non-null elements of original collection using the given *transform* function

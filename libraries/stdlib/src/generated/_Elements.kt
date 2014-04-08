@@ -212,6 +212,14 @@ public fun <T> Stream<T>.elementAt(index : Int) : T {
 }
 
 /**
+ * Returns element at given *index*
+ */
+public fun String.elementAt(index : Int) : Char {
+    return get(index)
+    
+}
+
+/**
  * Returns first element
  */
 public fun <T> Array<out T>.first() : T {
@@ -352,6 +360,16 @@ public fun <T> Stream<T>.first(): T {
 }
 
 /**
+ * Returns first element
+ */
+public fun String.first() : Char {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
+    return this[0]
+    
+}
+
+/**
  * Returns first element matching the given *predicate*
  */
 public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean) : T {
@@ -445,6 +463,15 @@ public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean) : T {
  * Returns first element matching the given *predicate*
  */
 public inline fun <T> Stream<T>.first(predicate: (T) -> Boolean) : T {
+    for (element in this) if (predicate(element)) return element
+    throw IllegalArgumentException("No element matching predicate was found")
+    
+}
+
+/**
+ * Returns first element matching the given *predicate*
+ */
+public inline fun String.first(predicate: (Char) -> Boolean) : Char {
     for (element in this) if (predicate(element)) return element
     throw IllegalArgumentException("No element matching predicate was found")
     
@@ -571,6 +598,14 @@ public fun <T> Stream<T>.firstOrNull(): T? {
 }
 
 /**
+ * Returns first elementm, or null if collection is empty
+ */
+public fun String.firstOrNull() : Char? {
+    return if (size > 0) this[0] else null
+    
+}
+
+/**
  * Returns first element matching the given *predicate*, or *null* if element was not found
  */
 public inline fun <T> Array<out T>.firstOrNull(predicate: (T) -> Boolean) : T? {
@@ -664,6 +699,15 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean) : T? {
  * Returns first element matching the given *predicate*, or *null* if element was not found
  */
 public inline fun <T> Stream<T>.firstOrNull(predicate: (T) -> Boolean) : T? {
+    for (element in this) if (predicate(element)) return element
+    return null
+    
+}
+
+/**
+ * Returns first element matching the given *predicate*, or *null* if element was not found
+ */
+public inline fun String.firstOrNull(predicate: (Char) -> Boolean) : Char? {
     for (element in this) if (predicate(element)) return element
     return null
     
@@ -963,6 +1007,16 @@ public fun <T> Stream<T>.last() : T {
             return last
         }
     }
+    
+}
+
+/**
+ * Returns last element
+ */
+public fun String.last() : Char {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
+    return this[size - 1]
     
 }
 
@@ -1465,6 +1519,14 @@ public fun <T> Stream<T>.lastOrNull() : T? {
 }
 
 /**
+ * Returns last element, or null if collection is empty
+ */
+public fun String.lastOrNull() : Char? {
+    return if (size > 0) this[size - 1] else null
+    
+}
+
+/**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
 public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean) : T? {
@@ -1767,6 +1829,16 @@ public fun <T> Stream<T>.single() : T {
             return single
         }
     }
+    
+}
+
+/**
+ * Returns single element, or throws exception if there is no or more than one element
+ */
+public fun String.single() : Char {
+    if (size != 1)
+        throw IllegalArgumentException("Collection has $size elements")
+    return this[0]
     
 }
 
@@ -2141,6 +2213,18 @@ public fun <T> Stream<T>.singleOrNull() : T? {
             return single
         }
     }
+    
+}
+
+/**
+ * Returns single element, or null if collection is empty, or throws exception if there is more than one element
+ */
+public fun String.singleOrNull() : Char? {
+    if (size == 0)
+        return null
+    if (size != 1)
+        throw IllegalArgumentException("Collection has $size elements")
+    return this[0]
     
 }
 

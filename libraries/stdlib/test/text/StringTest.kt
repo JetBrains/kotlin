@@ -47,4 +47,19 @@ class StringTest {
         assertEquals("abcd", "Abcd".decapitalize())
         assertEquals("uRL", "URL".decapitalize())
     }
+
+    test fun slice() {
+        val iter = listOf(4, 3, 0, 1)
+        // abcde
+        // 01234
+        assertEquals("bcd", "abcde".substring(1..3))
+        assertEquals("dcb", "abcde".slice(3 downTo 1))
+        assertEquals("edab", "abcde".slice(iter))
+    }
+
+    test fun reverse() {
+        assertEquals("dcba", "abcd".reverse())
+        assertEquals("4321", "1234".reverse())
+        assertEquals("", "".reverse())
+    }
 }

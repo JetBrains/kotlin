@@ -15,6 +15,7 @@ enum class Family {
     Maps
     ArraysOfObjects
     ArraysOfPrimitives
+    Strings
 }
 
 enum class PrimitiveType(val name: String) {
@@ -30,7 +31,7 @@ enum class PrimitiveType(val name: String) {
 
 
 class GenericFunction(val signature: String) : Comparable<GenericFunction> {
-    val defaultFamilies = array(Iterables, Streams, ArraysOfObjects, ArraysOfPrimitives)
+    val defaultFamilies = array(Iterables, Streams, ArraysOfObjects, ArraysOfPrimitives, Strings)
 
     var toNullableT: Boolean = false
 
@@ -150,9 +151,11 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
             Maps -> "Map<K,V>"
             Streams -> "Stream<T>"
             ArraysOfObjects -> "Array<T>"
+            Strings -> "String"
             ArraysOfPrimitives -> primitive?.let { it.name() + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             else -> throw IllegalStateException("Invalid family")
         }
+
 
         fun String.renderType(): String {
             val t = StringTokenizer(this, " \t\n,:()<>?.", true)
@@ -174,11 +177,18 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                                       PrimitiveType.Float -> "0.0f"
                                       else -> "0"
                                   }
+                                  "TCollection" -> {
+                                      when (f) {
+                                          Strings -> "Appendable"
+                                          else -> "MutableCollection<in T>".renderType()
+                                      }
+                                  }
                                   "T" -> {
-                                      if (f == Maps)
-                                          "Map.Entry<K,V>"
-                                      else
-                                        primitive?.name() ?: token
+                                      when (f) {
+                                          Strings -> "Char"
+                                          Maps -> "Map.Entry<K,V>"
+                                          else -> primitive?.name() ?: token
+                                      }
                                   }
                                   else -> token
                               })
@@ -189,7 +199,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
 
         fun effectiveTypeParams(): List<String> {
             val types = ArrayList(typeParams)
-            if (primitive == null) {
+            if (primitive == null && f != Strings) {
                 val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).takeWhile { it != '>' }.split(",")
                 for (implicit in implicitTypeParameters.reverse()) {
                     if (!types.any { it.startsWith(implicit) }) {

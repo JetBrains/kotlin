@@ -108,6 +108,14 @@ public fun <T> Iterable<T>.reverse() : List<T> {
 }
 
 /**
+ * Returns a string with characters in reversed order
+ */
+public fun String.reverse() : String {
+    return StringBuilder().append(this).reverse().toString()
+    
+}
+
+/**
  * Returns a sorted list of all elements
  */
 public fun <T: Comparable<T>> Iterable<T>.sort() : List<T> {

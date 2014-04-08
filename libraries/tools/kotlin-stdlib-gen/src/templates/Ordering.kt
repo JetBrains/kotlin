@@ -16,6 +16,15 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
+        doc(Strings) { "Returns a string with characters in reversed order" }
+        returns(Strings) { "String"}
+        body(Strings) {
+            // TODO: Replace with StringBuilder(this) when JS can handle it
+            """
+            return StringBuilder().append(this).reverse().toString()
+            """
+        }
+
         exclude(Streams)
     }
 
@@ -38,6 +47,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Streams)
         exclude(ArraysOfPrimitives) // TODO: resolve collision between inplace sort and this function
         exclude(ArraysOfObjects)
+        exclude(Strings)
     }
 
     templates add f("sortDescending()") {
@@ -60,6 +70,7 @@ fun ordering(): List<GenericFunction> {
         exclude(Streams)
         exclude(ArraysOfPrimitives) // TODO: resolve collision between inplace sort and this function
         exclude(ArraysOfObjects)
+        exclude(Strings)
     }
 
     templates add f("sortBy(order: (T) -> R)") {
@@ -83,6 +94,7 @@ fun ordering(): List<GenericFunction> {
 
         exclude(Streams)
         exclude(ArraysOfPrimitives)
+        exclude(Strings)
     }
 
     templates add f("sortDescendingBy(order: (T) -> R)") {
@@ -106,6 +118,7 @@ fun ordering(): List<GenericFunction> {
 
         exclude(Streams)
         exclude(ArraysOfPrimitives)
+        exclude(Strings)
     }
 
     templates add f("sortBy(comparator : Comparator<T>)") {
@@ -125,6 +138,7 @@ fun ordering(): List<GenericFunction> {
 
         exclude(Streams)
         exclude(ArraysOfPrimitives)
+        exclude(Strings)
     }
 
     return templates
