@@ -104,6 +104,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractStubBuilderTest
 import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
+import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetIntroduceVariableTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -560,6 +561,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
             model("completion/basic/multifile", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractJetIntroduceVariableTest>()) {
+            model("refactoring/introduceVariable", extension = "kt")
         }
     }
 
