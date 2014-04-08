@@ -12,6 +12,7 @@ import java.util.*
  */
 public fun <T> Array<out T>.contains(element: T) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -19,6 +20,7 @@ public fun <T> Array<out T>.contains(element: T) : Boolean {
  */
 public fun BooleanArray.contains(element: Boolean) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -26,6 +28,7 @@ public fun BooleanArray.contains(element: Boolean) : Boolean {
  */
 public fun ByteArray.contains(element: Byte) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -33,6 +36,7 @@ public fun ByteArray.contains(element: Byte) : Boolean {
  */
 public fun CharArray.contains(element: Char) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -40,6 +44,7 @@ public fun CharArray.contains(element: Char) : Boolean {
  */
 public fun DoubleArray.contains(element: Double) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -47,6 +52,7 @@ public fun DoubleArray.contains(element: Double) : Boolean {
  */
 public fun FloatArray.contains(element: Float) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -54,6 +60,7 @@ public fun FloatArray.contains(element: Float) : Boolean {
  */
 public fun IntArray.contains(element: Int) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -61,6 +68,7 @@ public fun IntArray.contains(element: Int) : Boolean {
  */
 public fun LongArray.contains(element: Long) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -68,20 +76,27 @@ public fun LongArray.contains(element: Long) : Boolean {
  */
 public fun ShortArray.contains(element: Short) : Boolean {
     return indexOf(element) >= 0
+    
 }
 
 /**
  * Returns true if *element* is found in the collection
  */
 public fun <T> Iterable<T>.contains(element: T) : Boolean {
+    if (this is Collection<*>)
+        return contains(element)
     return indexOf(element) >= 0
+    
 }
 
 /**
  * Returns true if *element* is found in the collection
  */
 public fun <T> Stream<T>.contains(element: T) : Boolean {
+    if (this is Collection<*>)
+        return contains(element)
     return indexOf(element) >= 0
+    
 }
 
 /**
@@ -200,6 +215,8 @@ public fun <T> Stream<T>.elementAt(index : Int) : T {
  * Returns first element
  */
 public fun <T> Array<out T>.first() : T {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -208,6 +225,8 @@ public fun <T> Array<out T>.first() : T {
  * Returns first element
  */
 public fun BooleanArray.first() : Boolean {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -216,6 +235,8 @@ public fun BooleanArray.first() : Boolean {
  * Returns first element
  */
 public fun ByteArray.first() : Byte {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -224,6 +245,8 @@ public fun ByteArray.first() : Byte {
  * Returns first element
  */
 public fun CharArray.first() : Char {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -232,6 +255,8 @@ public fun CharArray.first() : Char {
  * Returns first element
  */
 public fun DoubleArray.first() : Double {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -240,6 +265,8 @@ public fun DoubleArray.first() : Double {
  * Returns first element
  */
 public fun FloatArray.first() : Float {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -248,6 +275,8 @@ public fun FloatArray.first() : Float {
  * Returns first element
  */
 public fun IntArray.first() : Int {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -256,6 +285,8 @@ public fun IntArray.first() : Int {
  * Returns first element
  */
 public fun LongArray.first() : Long {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -264,6 +295,8 @@ public fun LongArray.first() : Long {
  * Returns first element
  */
 public fun ShortArray.first() : Short {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -271,18 +304,29 @@ public fun ShortArray.first() : Short {
 /**
  * Returns first element
  */
-public fun <T> Iterable<T>.first() : T {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        throw IllegalArgumentException("Collection is empty")
-    return iterator.next()
-    
+public fun <T> Iterable<T>.first(): T {
+    when (this) {
+        is List<*> -> {
+            if (size == 0)
+                throw IllegalArgumentException("Collection is empty")
+            else
+                return this[0] as T
+        }
+        else -> {
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                throw IllegalArgumentException("Collection is empty")
+            return iterator.next()
+        }
+    }
 }
 
 /**
  * Returns first element
  */
 public fun <T> List<T>.first() : T {
+    if (size == 0)
+        throw IllegalArgumentException("Collection is empty")
     return this[0]
     
 }
@@ -290,12 +334,21 @@ public fun <T> List<T>.first() : T {
 /**
  * Returns first element
  */
-public fun <T> Stream<T>.first() : T {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        throw IllegalArgumentException("Collection is empty")
-    return iterator.next()
-    
+public fun <T> Stream<T>.first(): T {
+    when (this) {
+        is List<*> -> {
+            if (size == 0)
+                throw IllegalArgumentException("Collection is empty")
+            else
+                return this[0] as T
+        }
+        else -> {
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                throw IllegalArgumentException("Collection is empty")
+            return iterator.next()
+        }
+    }
 }
 
 /**
@@ -472,12 +525,21 @@ public fun ShortArray.firstOrNull() : Short? {
 /**
  * Returns first elementm, or null if collection is empty
  */
-public fun <T> Iterable<T>.firstOrNull() : T? {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        return null
-    return iterator.next()
-    
+public fun <T> Iterable<T>.firstOrNull(): T? {
+    when (this) {
+        is List<*> -> {
+            if (size == 0)
+                return null
+            else
+                return this[0] as T
+        }
+        else -> {
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                return null
+            return iterator.next()
+        }
+    }
 }
 
 /**
@@ -491,12 +553,21 @@ public fun <T> List<T>.firstOrNull() : T? {
 /**
  * Returns first elementm, or null if collection is empty
  */
-public fun <T> Stream<T>.firstOrNull() : T? {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        return null
-    return iterator.next()
-    
+public fun <T> Stream<T>.firstOrNull(): T? {
+    when (this) {
+        is List<*> -> {
+            if (size == 0)
+                return null
+            else
+                return this[0] as T
+        }
+        else -> {
+            val iterator = iterator()
+            if (!iterator.hasNext())
+                return null
+            return iterator.next()
+        }
+    }
 }
 
 /**
@@ -846,7 +917,10 @@ public fun ShortArray.last() : Short {
  */
 public fun <T> Iterable<T>.last() : T {
     when (this) {
-        is List<*> -> return this[size - 1] as T
+        is List<*> -> if (size == 0)
+                throw IllegalArgumentException("Collection is empty")
+            else
+                return this[size - 1] as T
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -875,7 +949,10 @@ public fun <T> List<T>.last() : T {
  */
 public fun <T> Stream<T>.last() : T {
     when (this) {
-        is List<*> -> return this[size - 1] as T
+        is List<*> -> if (size == 0)
+                throw IllegalArgumentException("Collection is empty")
+            else
+                return this[size - 1] as T
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -892,209 +969,204 @@ public fun <T> Stream<T>.last() : T {
 /**
  * Returns last element matching the given *predicate*
  */
-public fun <T> Array<out T>.last(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean) : T {
+    var last: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as T
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun BooleanArray.last(predicate: (Boolean) -> Boolean) : Boolean {
-    fun first(it : Iterator<Boolean>) : Boolean {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean) : Boolean {
+    var last: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Boolean
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun ByteArray.last(predicate: (Byte) -> Boolean) : Byte {
-    fun first(it : Iterator<Byte>) : Byte {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun ByteArray.last(predicate: (Byte) -> Boolean) : Byte {
+    var last: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Byte
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun CharArray.last(predicate: (Char) -> Boolean) : Char {
-    fun first(it : Iterator<Char>) : Char {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun CharArray.last(predicate: (Char) -> Boolean) : Char {
+    var last: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Char
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun DoubleArray.last(predicate: (Double) -> Boolean) : Double {
-    fun first(it : Iterator<Double>) : Double {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun DoubleArray.last(predicate: (Double) -> Boolean) : Double {
+    var last: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Double
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun FloatArray.last(predicate: (Float) -> Boolean) : Float {
-    fun first(it : Iterator<Float>) : Float {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun FloatArray.last(predicate: (Float) -> Boolean) : Float {
+    var last: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Float
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun IntArray.last(predicate: (Int) -> Boolean) : Int {
-    fun first(it : Iterator<Int>) : Int {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun IntArray.last(predicate: (Int) -> Boolean) : Int {
+    var last: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Int
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun LongArray.last(predicate: (Long) -> Boolean) : Long {
-    fun first(it : Iterator<Long>) : Long {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun LongArray.last(predicate: (Long) -> Boolean) : Long {
+    var last: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Long
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun ShortArray.last(predicate: (Short) -> Boolean) : Short {
-    fun first(it : Iterator<Short>) : Short {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun ShortArray.last(predicate: (Short) -> Boolean) : Short {
+    var last: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Short
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun <T> Iterable<T>.last(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean) : T {
+    var last: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as T
     
 }
 
 /**
  * Returns last element matching the given *predicate*
  */
-public fun <T> Stream<T>.last(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Stream<T>.last(predicate: (T) -> Boolean) : T {
+    var last: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+            found = true
+        }
     }
-    return last
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as T
+    
+}
+
+/**
+ * Returns last element matching the given *predicate*
+ */
+public inline fun String.last(predicate: (Char) -> Boolean) : Char {
+    var last: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            last = element
+            found = true
+        }
+    }
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return last as Char
     
 }
 
@@ -1395,19 +1467,12 @@ public fun <T> Stream<T>.lastOrNull() : T? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean) : T? {
+    var last: T? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1416,19 +1481,12 @@ public fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean) : T? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean) : Boolean? {
-    fun first(it : Iterator<Boolean>) : Boolean? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean) : Boolean? {
+    var last: Boolean? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1437,19 +1495,12 @@ public fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean) : Boolean? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean) : Byte? {
-    fun first(it : Iterator<Byte>) : Byte? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean) : Byte? {
+    var last: Byte? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1458,19 +1509,12 @@ public fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean) : Byte? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun CharArray.lastOrNull(predicate: (Char) -> Boolean) : Char? {
-    fun first(it : Iterator<Char>) : Char? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean) : Char? {
+    var last: Char? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1479,19 +1523,12 @@ public fun CharArray.lastOrNull(predicate: (Char) -> Boolean) : Char? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean) : Double? {
-    fun first(it : Iterator<Double>) : Double? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean) : Double? {
+    var last: Double? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1500,19 +1537,12 @@ public fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean) : Double? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun FloatArray.lastOrNull(predicate: (Float) -> Boolean) : Float? {
-    fun first(it : Iterator<Float>) : Float? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean) : Float? {
+    var last: Float? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1521,19 +1551,12 @@ public fun FloatArray.lastOrNull(predicate: (Float) -> Boolean) : Float? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun IntArray.lastOrNull(predicate: (Int) -> Boolean) : Int? {
-    fun first(it : Iterator<Int>) : Int? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean) : Int? {
+    var last: Int? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1542,19 +1565,12 @@ public fun IntArray.lastOrNull(predicate: (Int) -> Boolean) : Int? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun LongArray.lastOrNull(predicate: (Long) -> Boolean) : Long? {
-    fun first(it : Iterator<Long>) : Long? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean) : Long? {
+    var last: Long? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1563,19 +1579,12 @@ public fun LongArray.lastOrNull(predicate: (Long) -> Boolean) : Long? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun ShortArray.lastOrNull(predicate: (Short) -> Boolean) : Short? {
-    fun first(it : Iterator<Short>) : Short? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean) : Short? {
+    var last: Short? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1584,19 +1593,12 @@ public fun ShortArray.lastOrNull(predicate: (Short) -> Boolean) : Short? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean) : T? {
+    var last: T? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
     }
     return last
     
@@ -1605,19 +1607,26 @@ public fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean) : T? {
 /**
  * Returns last element matching the given *predicate*, or null if element was not found
  */
-public fun <T> Stream<T>.lastOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
-    }
-    val iterator = iterator()
-    var last = first(iterator)
-    if (last == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
+public inline fun <T> Stream<T>.lastOrNull(predicate: (T) -> Boolean) : T? {
+    var last: T? = null
+    for (element in this) {
+        if (predicate(element)) {
             last = element
+        }
+    }
+    return last
+    
+}
+
+/**
+ * Returns last element matching the given *predicate*, or null if element was not found
+ */
+public inline fun String.lastOrNull(predicate: (Char) -> Boolean) : Char? {
+    var last: Char? = null
+    for (element in this) {
+        if (predicate(element)) {
+            last = element
+        }
     }
     return last
     
@@ -1735,6 +1744,16 @@ public fun <T> Iterable<T>.single() : T {
 /**
  * Returns single element, or throws exception if there is no or more than one element
  */
+public fun <T> List<T>.single() : T {
+    if (size != 1)
+        throw IllegalArgumentException("Collection has $size elements")
+    return this[0]
+    
+}
+
+/**
+ * Returns single element, or throws exception if there is no or more than one element
+ */
 public fun <T> Stream<T>.single() : T {
     when (this) {
         is List<*> -> return if (size == 1) this[0] as T else throw IllegalArgumentException("Collection has $size elements")
@@ -1754,209 +1773,216 @@ public fun <T> Stream<T>.single() : T {
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun <T> Array<out T>.single(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean) : T {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as T
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun BooleanArray.single(predicate: (Boolean) -> Boolean) : Boolean {
-    fun first(it : Iterator<Boolean>) : Boolean {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean) : Boolean {
+    var single: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Boolean
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun ByteArray.single(predicate: (Byte) -> Boolean) : Byte {
-    fun first(it : Iterator<Byte>) : Byte {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun ByteArray.single(predicate: (Byte) -> Boolean) : Byte {
+    var single: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Byte
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun CharArray.single(predicate: (Char) -> Boolean) : Char {
-    fun first(it : Iterator<Char>) : Char {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun CharArray.single(predicate: (Char) -> Boolean) : Char {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Char
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun DoubleArray.single(predicate: (Double) -> Boolean) : Double {
-    fun first(it : Iterator<Double>) : Double {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun DoubleArray.single(predicate: (Double) -> Boolean) : Double {
+    var single: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Double
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun FloatArray.single(predicate: (Float) -> Boolean) : Float {
-    fun first(it : Iterator<Float>) : Float {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun FloatArray.single(predicate: (Float) -> Boolean) : Float {
+    var single: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Float
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun IntArray.single(predicate: (Int) -> Boolean) : Int {
-    fun first(it : Iterator<Int>) : Int {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun IntArray.single(predicate: (Int) -> Boolean) : Int {
+    var single: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Int
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun LongArray.single(predicate: (Long) -> Boolean) : Long {
-    fun first(it : Iterator<Long>) : Long {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun LongArray.single(predicate: (Long) -> Boolean) : Long {
+    var single: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Long
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun ShortArray.single(predicate: (Short) -> Boolean) : Short {
-    fun first(it : Iterator<Short>) : Short {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun ShortArray.single(predicate: (Short) -> Boolean) : Short {
+    var single: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Short
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun <T> Iterable<T>.single(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean) : T {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as T
     
 }
 
 /**
  * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
  */
-public fun <T> Stream<T>.single(predicate: (T) -> Boolean) : T {
-    fun first(it : Iterator<T>) : T {
-        for (element in it) if (predicate(element)) return element
-        throw IllegalArgumentException("Collection doesn't have matching element")
+public inline fun <T> Stream<T>.single(predicate: (T) -> Boolean) : T {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as T
+    
+}
+
+/**
+ * Returns single element matching the given *predicate*, or throws exception if there is no or more than one element
+ */
+public inline fun String.single(predicate: (Char) -> Boolean) : Char {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    return single
+    if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+    return single as Char
     
 }
 
@@ -2090,6 +2116,18 @@ public fun <T> Iterable<T>.singleOrNull() : T? {
 /**
  * Returns single element, or null if collection is empty, or throws exception if there is more than one element
  */
+public fun <T> List<T>.singleOrNull() : T? {
+    if (size == 0)
+        return null
+    if (size != 1)
+        throw IllegalArgumentException("Collection has $size elements")
+    return this[0]
+    
+}
+
+/**
+ * Returns single element, or null if collection is empty, or throws exception if there is more than one element
+ */
 public fun <T> Stream<T>.singleOrNull() : T? {
     when (this) {
         is List<*> -> return if (size == 1) this[0] as T else if (size == 0) null else throw IllegalArgumentException("Collection has $size elements")
@@ -2109,20 +2147,17 @@ public fun <T> Stream<T>.singleOrNull() : T? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean) : T? {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2130,20 +2165,17 @@ public fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean) : T? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean) : Boolean? {
-    fun first(it : Iterator<Boolean>) : Boolean? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean) : Boolean? {
+    var single: Boolean? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2151,20 +2183,17 @@ public fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean) : Boolean?
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean) : Byte? {
-    fun first(it : Iterator<Byte>) : Byte? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean) : Byte? {
+    var single: Byte? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2172,20 +2201,17 @@ public fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean) : Byte? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun CharArray.singleOrNull(predicate: (Char) -> Boolean) : Char? {
-    fun first(it : Iterator<Char>) : Char? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean) : Char? {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2193,20 +2219,17 @@ public fun CharArray.singleOrNull(predicate: (Char) -> Boolean) : Char? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean) : Double? {
-    fun first(it : Iterator<Double>) : Double? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean) : Double? {
+    var single: Double? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2214,20 +2237,17 @@ public fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean) : Double? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun FloatArray.singleOrNull(predicate: (Float) -> Boolean) : Float? {
-    fun first(it : Iterator<Float>) : Float? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean) : Float? {
+    var single: Float? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2235,20 +2255,17 @@ public fun FloatArray.singleOrNull(predicate: (Float) -> Boolean) : Float? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun IntArray.singleOrNull(predicate: (Int) -> Boolean) : Int? {
-    fun first(it : Iterator<Int>) : Int? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean) : Int? {
+    var single: Int? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2256,20 +2273,17 @@ public fun IntArray.singleOrNull(predicate: (Int) -> Boolean) : Int? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun LongArray.singleOrNull(predicate: (Long) -> Boolean) : Long? {
-    fun first(it : Iterator<Long>) : Long? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean) : Long? {
+    var single: Long? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2277,20 +2291,17 @@ public fun LongArray.singleOrNull(predicate: (Long) -> Boolean) : Long? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun ShortArray.singleOrNull(predicate: (Short) -> Boolean) : Short? {
-    fun first(it : Iterator<Short>) : Short? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean) : Short? {
+    var single: Short? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2298,20 +2309,17 @@ public fun ShortArray.singleOrNull(predicate: (Short) -> Boolean) : Short? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean) : T? {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
-    }
+    if (!found) return null
     return single
     
 }
@@ -2319,20 +2327,35 @@ public fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean) : T? {
 /**
  * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
  */
-public fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean) : T? {
-    fun first(it : Iterator<T>) : T? {
-        for (element in it) if (predicate(element)) return element
-        return null
+public inline fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean) : T? {
+    var single: T? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
-    val iterator = iterator()
-    var single = first(iterator)
-    if (single == null)
-        return null
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (predicate(element))
-            throw IllegalArgumentException("Collection has more than one matching element")
+    if (!found) return null
+    return single
+    
+}
+
+/**
+ * Returns single element matching the given *predicate*, or null if element was not found or more than one elements were found
+ */
+public inline fun String.singleOrNull(predicate: (Char) -> Boolean) : Char? {
+    var single: Char? = null
+    var found = false
+    for (element in this) {
+        if (predicate(element)) {
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            single = element
+            found = true
+        }
     }
+    if (!found) return null
     return single
     
 }
