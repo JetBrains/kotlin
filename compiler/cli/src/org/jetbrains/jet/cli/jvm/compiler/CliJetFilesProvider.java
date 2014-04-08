@@ -17,7 +17,6 @@
 package org.jetbrains.jet.cli.jvm.compiler;
 
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
@@ -28,21 +27,14 @@ import java.util.List;
 
 public class CliJetFilesProvider extends JetFilesProvider {
     private final JetCoreEnvironment environment;
-    private final Function<JetFile,Collection<JetFile>> allFiles = new Function<JetFile, Collection<JetFile>>() {
-        @Override
-        public Collection<JetFile> fun(JetFile file) {
-            return environment.getSourceFiles();
-        }
-
-    };
 
     public CliJetFilesProvider(JetCoreEnvironment environment) {
         this.environment = environment;
     }
 
     @Override
-    public Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule() {
-        return allFiles;
+    protected Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file) {
+        return environment.getSourceFiles();
     }
 
     @NotNull

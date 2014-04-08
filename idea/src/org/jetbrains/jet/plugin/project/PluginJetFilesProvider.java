@@ -67,49 +67,45 @@ public class PluginJetFilesProvider extends JetFilesProvider {
         );
     }
 
-    public static final Function<JetFile, Collection<JetFile>> WHOLE_PROJECT_DECLARATION_PROVIDER = new Function<JetFile, Collection<JetFile>>() {
+    public static Collection<JetFile> allFilesInProject(@NotNull final JetFile rootFile) {
+        final Project project = rootFile.getProject();
+        final Set<JetFile> files = Sets.newLinkedHashSet();
 
-        @Override
-        public Collection<JetFile> fun(final JetFile rootFile) {
-            final Project project = rootFile.getProject();
-            final Set<JetFile> files = Sets.newLinkedHashSet();
+        Module rootModule = ModuleUtil.findModuleForPsiElement(rootFile);
+        if (rootModule != null) {
+            Set<Module> allModules = new HashSet<Module>();
+            ModuleUtil.getDependencies(rootModule, allModules);
 
-            Module rootModule = ModuleUtil.findModuleForPsiElement(rootFile);
-            if (rootModule != null) {
-                Set<Module> allModules = new HashSet<Module>();
-                ModuleUtil.getDependencies(rootModule, allModules);
+            for (Module module : allModules) {
+                final ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
+                index.iterateContent(new ContentIterator() {
+                    @Override
+                    public boolean processFile(VirtualFile file) {
+                        if (file.isDirectory()) return true;
+                        if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
+                        if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) return true;
 
-                for (Module module : allModules) {
-                    final ModuleFileIndex index = ModuleRootManager.getInstance(module).getFileIndex();
-                    index.iterateContent(new ContentIterator() {
-                        @Override
-                        public boolean processFile(VirtualFile file) {
-                            if (file.isDirectory()) return true;
-                            if (!index.isInSourceContent(file) && !index.isInTestSourceContent(file)) return true;
-                            if (JetPluginUtil.isKtFileInGradleProjectInWrongFolder(file, project)) return true;
-
-                            FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
-                            if (fileType != JetFileType.INSTANCE) return true;
-                            PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
-                            if (psiFile instanceof JetFile) {
-                                if (rootFile.getOriginalFile() != psiFile) {
-                                    files.add((JetFile) psiFile);
-                                }
+                        FileType fileType = FileTypeManager.getInstance().getFileTypeByFile(file);
+                        if (fileType != JetFileType.INSTANCE) return true;
+                        PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
+                        if (psiFile instanceof JetFile) {
+                            if (rootFile.getOriginalFile() != psiFile) {
+                                files.add((JetFile) psiFile);
                             }
-                            return true;
                         }
-                    });
-                }
+                        return true;
+                    }
+                });
             }
-
-            files.add(rootFile);
-            return files;
         }
-    };
+
+        files.add(rootFile);
+        return files;
+    }
 
     @Override
-    public Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule() {
-        return WHOLE_PROJECT_DECLARATION_PROVIDER;
+    protected Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file) {
+        return allFilesInProject(file);
     }
 
     private boolean isKotlinSourceVirtualFile(@NotNull VirtualFile virtualFile) {

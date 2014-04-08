@@ -90,7 +90,7 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        Collection<JetFile> files = PluginJetFilesProvider.WHOLE_PROJECT_DECLARATION_PROVIDER.fun(file);
+        Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
 
         AnalyzeExhaust analyzeExhaust = analyzeFiles(file, files);
 

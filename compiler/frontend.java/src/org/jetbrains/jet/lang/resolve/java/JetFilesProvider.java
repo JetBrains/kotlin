@@ -22,7 +22,6 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -36,7 +35,7 @@ public abstract class JetFilesProvider {
 
     public final Collection<JetFile> allPackageFiles(@NotNull JetFile file) {
         final FqName name = file.getPackageFqName();
-        return Collections2.filter(sampleToAllFilesInModule().fun(file), new Predicate<PsiFile>() {
+        return Collections2.filter(sampleToAllFilesInModule(file), new Predicate<PsiFile>() {
             @Override
             public boolean apply(PsiFile psiFile) {
                 return ((JetFile) psiFile).getPackageFqName().equals(name);
@@ -44,7 +43,7 @@ public abstract class JetFilesProvider {
         });
     }
 
-    public abstract Function<JetFile, Collection<JetFile>> sampleToAllFilesInModule();
+    protected abstract Collection<JetFile> sampleToAllFilesInModule(@NotNull JetFile file);
     @NotNull
     public abstract Collection<JetFile> allInScope(@NotNull GlobalSearchScope scope);
     public abstract boolean isFileInScope(@NotNull JetFile file, @NotNull GlobalSearchScope scope);
