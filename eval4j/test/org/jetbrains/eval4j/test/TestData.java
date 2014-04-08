@@ -564,6 +564,98 @@ class TestData {
     static void castToArray() {
         int[] i = (int[]) null;
     }
+
+    static void classNotLoadedException() {
+        ClassNotLoadedExceptionTest klass = new ClassNotLoadedExceptionTest();
+
+        klass.f1(null);
+        klass.f2(null);
+        klass.f3(null);
+        klass.f4(null, 1);
+        klass.f5(null, null);
+        klass.f6(null, null);
+
+        ClassNotLoadedExceptionTest.s1(null);
+        ClassNotLoadedExceptionTest.s2(null);
+        ClassNotLoadedExceptionTest.s3(null);
+        ClassNotLoadedExceptionTest.s4(null, 1);
+        ClassNotLoadedExceptionTest.s5(null, null);
+        ClassNotLoadedExceptionTest.s6(null, null);
+
+        new ClassNotLoadedExceptionTest(null, null, null);
+        new ClassNotLoadedExceptionTest(null, 1, null, null);
+    }
+
+    static class ClassNotLoadedExceptionTest {
+        ClassNotLoadedExceptionTest() {}
+        // instance methods
+        static class F1 {}
+        void f1(F1 p) {}
+
+        static class F2 {}
+        void f2(F2[] p) {}
+
+        static class F3 {}
+        void f3(F3[][] p) {}
+
+        static class F4 {}
+        void f4(F4[] p, int p2) {}
+
+        static class F5 {}
+        void f5(F5[] p, int[] p2) {}
+
+        static class F6 {}
+        void f6(F6[] p, int[][] p2) {}
+
+        // static methods
+        static class S1 {}
+        static void s1(S1 p) {}
+
+        static class S2 {}
+        static void s2(S2[] p) {}
+
+        static class S3 {}
+        static void s3(S3[][] p) {}
+
+        static class S4 {}
+        static void s4(S4[] p, int p2) {}
+
+        static class S5 {}
+        static void s5(S5[] p, int[] p2) {}
+
+        static class S6 {}
+        static void s6(S6[] p, int[][] p2) {}
+
+        // constructor
+        static class C2 {}
+        static class C1 {}
+        static class C3 {}
+        ClassNotLoadedExceptionTest(C1 p, C2[] p2, C3[][] p3) {}
+
+        static class C4 {}
+        ClassNotLoadedExceptionTest(C4 p, int p2, int[] p3, int[][] p4) {}
+    }
+
+    static void loadLibraryClasses() {
+        LoadLibraryClasses klass = new LoadLibraryClasses();
+
+        klass.f1(1);
+        klass.f2(LoadLibraryClasses.str());
+        klass.f3(LoadLibraryClasses.c());
+        klass.f4(LoadLibraryClasses.cl());
+    }
+
+    static class LoadLibraryClasses {
+        void f1(Integer i) {}
+        void f2(String s) {}
+        void f3(Class c) {}
+        void f4(ClassLoader cl) {}
+
+        static ClassLoader cl() { return null; }
+        static String str() { return null; }
+        static Class c() { return null; }
+    }
+
 }
 
 

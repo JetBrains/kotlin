@@ -3,18 +3,36 @@ package org.jetbrains.eval4j.jdi
 import org.jetbrains.eval4j.*
 import org.jetbrains.org.objectweb.asm.Type
 import com.sun.jdi
+import com.sun.jdi.ClassNotLoadedException
+import com.sun.tools.jdi.ReferenceTypeImpl
 
 val CLASS = Type.getType(javaClass<Class<*>>())
+val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
 class JDIEval(
         private val vm: jdi.VirtualMachine,
         private val classLoader: jdi.ClassLoaderReference,
         private val thread: jdi.ThreadReference
 ) : Eval {
+
+    private val primitiveTypes = mapOf(
+            Type.BOOLEAN_TYPE.getClassName() to vm.mirrorOf(true).`type`(),
+            Type.BYTE_TYPE.getClassName() to vm.mirrorOf(1.toByte()).`type`(),
+            Type.SHORT_TYPE.getClassName() to vm.mirrorOf(1.toShort()).`type`(),
+            Type.INT_TYPE.getClassName() to vm.mirrorOf(1.toInt()).`type`(),
+            Type.CHAR_TYPE.getClassName() to vm.mirrorOf('1').`type`(),
+            Type.LONG_TYPE.getClassName() to vm.mirrorOf(1L).`type`(),
+            Type.FLOAT_TYPE.getClassName() to vm.mirrorOf(1.0f).`type`(),
+            Type.DOUBLE_TYPE.getClassName() to vm.mirrorOf(1.0).`type`()
+    )
+
     override fun loadClass(classType: Type): Value {
         val loadedClasses = vm.classesByName(classType.getInternalName())
         if (!loadedClasses.isEmpty()) {
-            return loadedClasses[0].classObject().asValue()
+            val loadedClass = loadedClasses[0]
+            if (classType.getDescriptor() in BOOTSTRAP_CLASS_DESCRIPTORS || loadedClass.classLoader() == classLoader) {
+                return loadedClass.classObject().asValue()
+            }
         }
         return invokeStaticMethod(
                 MethodDescription(
@@ -158,7 +176,7 @@ class JDIEval(
         val _class = method.declaringType()
         if (_class !is jdi.ClassType) throwEvalException(NoSuchMethodError("Static method is a non-class type: $method"))
 
-        val args = mapArguments(arguments, method.argumentTypes())
+        val args = mapArguments(arguments, method.safeArgumentTypes())
         val result = mayThrow { _class.invokeMethod(thread, method, args, 0) }
         return result.asValue()
     }
@@ -184,7 +202,7 @@ class JDIEval(
                 // Constructor call
                 val ctor = findMethod(methodDesc)
                 val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
-                val args = mapArguments(arguments, ctor.argumentTypes())
+                val args = mapArguments(arguments, ctor.safeArgumentTypes())
                 val result = mayThrow { _class.newInstance(thread, ctor, args, 0) }
                 instance.value = result
                 return result.asValue()
@@ -197,7 +215,7 @@ class JDIEval(
         val method = findMethod(methodDesc)
 
         val obj = instance.jdiObj.checkNull()
-        val args = mapArguments(arguments, method.argumentTypes())
+        val args = mapArguments(arguments, method.safeArgumentTypes())
         val result = mayThrow { obj.invokeMethod(thread, method, args, 0) }
         return result.asValue()
     }
@@ -206,6 +224,31 @@ class JDIEval(
         return arguments.zip(expecetedTypes).map {
             val (arg, expectedType) = it
             arg.asJdiValue(vm, expectedType.asType())
+        }
+    }
+
+    private fun jdi.Method.safeArgumentTypes(): List<jdi.Type> {
+        try {
+            return argumentTypes()
+        }
+        catch (e: ClassNotLoadedException) {
+            return argumentTypeNames()!!.map {
+                name ->
+                val dimensions = name.count { it == '[' }
+                val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
+
+                val primitiveType = primitiveTypes[baseTypeName]
+                val baseType = if (primitiveType != null)
+                    primitiveType
+                else {
+                    Type.getType("L$baseTypeName;").asReferenceType()
+                }
+
+                if (dimensions == 0)
+                    baseType
+                else
+                    Type.getType("[".repeat(dimensions) + baseType.asType().getDescriptor()).asReferenceType()
+            }
         }
     }
 }
