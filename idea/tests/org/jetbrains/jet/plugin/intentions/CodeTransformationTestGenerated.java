@@ -3026,9 +3026,49 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSplitIf("idea/testData/intentions/splitIf/splitIfAndOr.kt");
         }
         
+        @TestMetadata("splitIfAndOrWithBraces.kt")
+        public void testSplitIfAndOrWithBraces() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfAndOrWithBraces.kt");
+        }
+        
+        @TestMetadata("splitIfAndWithBraces.kt")
+        public void testSplitIfAndWithBraces() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfAndWithBraces.kt");
+        }
+        
+        @TestMetadata("splitIfCaretOnIf.kt")
+        public void testSplitIfCaretOnIf() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfCaretOnIf.kt");
+        }
+        
+        @TestMetadata("splitIfNestedIf.kt")
+        public void testSplitIfNestedIf() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfNestedIf.kt");
+        }
+        
+        @TestMetadata("splitIfNestedIfNotApplicable.kt")
+        public void testSplitIfNestedIfNotApplicable() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfNestedIfNotApplicable.kt");
+        }
+        
+        @TestMetadata("splitIfNestedInside.kt")
+        public void testSplitIfNestedInside() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfNestedInside.kt");
+        }
+        
+        @TestMetadata("splitIfNestedOutside.kt")
+        public void testSplitIfNestedOutside() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfNestedOutside.kt");
+        }
+        
         @TestMetadata("splitIfNotIf.kt")
         public void testSplitIfNotIf() throws Exception {
             doTestSplitIf("idea/testData/intentions/splitIf/splitIfNotIf.kt");
+        }
+        
+        @TestMetadata("splitIfOnIfWithOr.kt")
+        public void testSplitIfOnIfWithOr() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfOnIfWithOr.kt");
         }
         
         @TestMetadata("splitIfOneAND.kt")
@@ -3049,6 +3089,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("splitIfOrAnd.kt")
         public void testSplitIfOrAnd() throws Exception {
             doTestSplitIf("idea/testData/intentions/splitIf/splitIfOrAnd.kt");
+        }
+        
+        @TestMetadata("splitIfOrWithBraces.kt")
+        public void testSplitIfOrWithBraces() throws Exception {
+            doTestSplitIf("idea/testData/intentions/splitIf/splitIfOrWithBraces.kt");
         }
         
         @TestMetadata("splitIfTwoOperatorsFirst.kt")
