@@ -1,5 +1,6 @@
 package test.text
 
+import java.util.Locale
 import kotlin.test.*
 
 import org.junit.Test as test
@@ -275,6 +276,10 @@ class StringJVMTest {
 
     test fun formatter() {
         assertEquals("12", "%d%d".format(1, 2))
+
+        assertEquals("1,234,567.890", "%,.3f".format(Locale.ENGLISH, 1234567.890))
+        assertEquals("1.234.567,890", "%,.3f".format(Locale.GERMAN, 1234567.890))
+        assertEquals("1 234 567,890", "%,.3f".format(Locale("fr"), 1234567.890))
     }
 
     test fun trimLeading() {
