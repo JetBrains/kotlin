@@ -53,6 +53,11 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
         return null;
     }
 
+    @Override
+    public boolean hasInitializer() {
+        return false;
+    }
+
     @NotNull
     private ASTNode getParentNode() {
         ASTNode parent = getNode().getTreeParent();

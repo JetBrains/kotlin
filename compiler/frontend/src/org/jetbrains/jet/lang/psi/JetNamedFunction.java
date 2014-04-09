@@ -86,6 +86,11 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<PsiJetFuncti
     }
 
     @Override
+    public boolean hasInitializer() {
+        return getInitializer() != null;
+    }
+
+    @Override
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }

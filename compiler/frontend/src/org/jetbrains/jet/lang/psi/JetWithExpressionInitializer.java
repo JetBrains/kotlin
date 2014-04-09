@@ -22,4 +22,6 @@ import org.jetbrains.annotations.Nullable;
 public interface JetWithExpressionInitializer extends PsiElement {
     @Nullable
     JetExpression getInitializer();
+
+    boolean hasInitializer();
 }

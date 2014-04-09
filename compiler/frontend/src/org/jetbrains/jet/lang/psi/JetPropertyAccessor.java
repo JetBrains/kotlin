@@ -122,4 +122,9 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
     public JetExpression getInitializer() {
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
     }
+
+    @Override
+    public boolean hasInitializer() {
+        return getInitializer() != null;
+    }
 }
