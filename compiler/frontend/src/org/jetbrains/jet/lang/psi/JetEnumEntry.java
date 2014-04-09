@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
@@ -62,7 +63,7 @@ public class JetEnumEntry extends JetClass {
     @NotNull
     @Override
     public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        JetInitializerList initializerList = (JetInitializerList) findChildByType(JetNodeTypes.INITIALIZER_LIST);
+        JetInitializerList initializerList = getStubOrPsiChild(JetStubElementTypes.INITIALIZER_LIST);
         if (initializerList == null) {
             return Collections.emptyList();
         }
