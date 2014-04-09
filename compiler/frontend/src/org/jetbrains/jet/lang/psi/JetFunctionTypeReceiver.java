@@ -17,9 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.stubs.IStubElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
@@ -34,6 +32,6 @@ public class JetFunctionTypeReceiver extends JetElementImplStub<PsiJetPlaceHolde
 
     @NotNull
     public JetTypeReference getTypeReference() {
-        return (JetTypeReference) findChildByType(JetNodeTypes.TYPE_REFERENCE);
+        return getRequiredStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 }
