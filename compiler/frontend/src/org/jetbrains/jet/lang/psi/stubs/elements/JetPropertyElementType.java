@@ -58,6 +58,7 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                 parentStub, StringRef.fromString(psi.getName()),
                 psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
                 psi.hasDelegateExpression(), psi.hasInitializer(),
+                psi.getReceiverTypeRef() != null, psi.getReturnTypeRef() != null,
                 ResolveSessionUtils.safeFqNameForLazyResolve(psi)
         );
     }
@@ -70,6 +71,8 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         dataStream.writeBoolean(stub.hasDelegate());
         dataStream.writeBoolean(stub.hasDelegateExpression());
         dataStream.writeBoolean(stub.hasInitializer());
+        dataStream.writeBoolean(stub.hasReceiverTypeRef());
+        dataStream.writeBoolean(stub.hasReturnTypeRef());
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
@@ -84,11 +87,14 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         boolean hasDelegate = dataStream.readBoolean();
         boolean hasDelegateExpression = dataStream.readBoolean();
         boolean hasInitializer = dataStream.readBoolean();
+        boolean hasReceiverTypeRef = dataStream.readBoolean();
+        boolean hasReturnTypeRef = dataStream.readBoolean();
 
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer, fqName);
+        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate,
+                                          hasDelegateExpression, hasInitializer, hasReceiverTypeRef, hasReturnTypeRef, fqName);
     }
 
     @Override

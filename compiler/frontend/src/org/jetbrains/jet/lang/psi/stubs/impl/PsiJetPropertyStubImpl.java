@@ -32,6 +32,8 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     private final boolean hasDelegate;
     private final boolean hasDelegateExpression;
     private final boolean hasInitializer;
+    private final boolean hasReceiverTypeRef;
+    private final boolean hasReturnTypeRef;
     private final FqName fqName;
 
     public PsiJetPropertyStubImpl(
@@ -42,6 +44,8 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
             boolean hasDelegate,
             boolean hasDelegateExpression,
             boolean hasInitializer,
+            boolean hasReceiverTypeRef,
+            boolean hasReturnTypeRef,
             @Nullable FqName fqName
     ) {
         super(parent, JetStubElementTypes.PROPERTY);
@@ -59,6 +63,8 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
         this.hasDelegate = hasDelegate;
         this.hasDelegateExpression = hasDelegateExpression;
         this.hasInitializer = hasInitializer;
+        this.hasReceiverTypeRef = hasReceiverTypeRef;
+        this.hasReturnTypeRef = hasReturnTypeRef;
         this.fqName = fqName;
     }
 
@@ -85,6 +91,16 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     @Override
     public boolean hasInitializer() {
         return hasInitializer;
+    }
+
+    @Override
+    public boolean hasReceiverTypeRef() {
+        return hasReceiverTypeRef;
+    }
+
+    @Override
+    public boolean hasReturnTypeRef() {
+        return hasReturnTypeRef;
     }
 
     @Nullable

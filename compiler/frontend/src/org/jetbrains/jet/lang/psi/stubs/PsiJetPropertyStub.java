@@ -24,4 +24,6 @@ public interface PsiJetPropertyStub extends PsiJetStubWithFqName<JetProperty> {
     boolean hasDelegate();
     boolean hasDelegateExpression();
     boolean hasInitializer();
+    boolean hasReceiverTypeRef();
+    boolean hasReturnTypeRef();
 }
