@@ -388,6 +388,7 @@ fun main(args: Array<String>) {
             model("intentions/splitIf", testMethod = "doTestSplitIf")
             model("intentions/replaceWithOperatorAssign", testMethod = "doTestReplaceWithOperatorAssign")
             model("intentions/replaceWithTraditionalAssignment", testMethod = "doTestReplaceWithTraditionalAssignment")
+            model("intentions/insertExplicitTypeArguments", testMethod = "doTestInsertExplicitTypeArguments")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

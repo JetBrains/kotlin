@@ -215,6 +215,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new SimplifyNegatedBinaryExpressionIntention());
     }
 
+    public void doTestInsertExplicitTypeArguments(@NotNull String path) throws Exception {
+        doTestIntention(path, new InsertExplicitTypeArguments());
+    }
+
     public void doTestSplitIf(@NotNull String path) throws Exception {
         doTestIntention(path, new SplitIfIntention());
     }
