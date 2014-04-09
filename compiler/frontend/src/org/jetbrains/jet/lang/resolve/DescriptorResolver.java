@@ -1041,21 +1041,21 @@ public class DescriptorResolver {
     private void setConstantForVariableIfNeeded(
             @NotNull VariableDescriptorImpl variableDescriptor,
             @NotNull final JetScope scope,
-            @NotNull JetVariableDeclaration variable,
+            @NotNull final JetVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             @NotNull final JetType variableType,
             @NotNull final BindingTrace trace
     ) {
         if (!shouldRecordInitializerForProperty(variableDescriptor, variableType)) return;
 
-        final JetExpression initializer = variable.getInitializer();
-        if (initializer == null) return;
+        if (!variable.hasInitializer()) return;
 
         variableDescriptor.setCompileTimeInitializer(
             storageManager.createRecursionTolerantNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
                 @Nullable
                 @Override
                 public CompileTimeConstant<?> invoke() {
+                    JetExpression initializer = variable.getInitializer();
                     JetType initializerType = expressionTypingServices.safeGetType(scope, initializer, variableType, dataFlowInfo, trace);
                     CompileTimeConstant<?> constant = ConstantExpressionEvaluator.object$.evaluate(initializer, trace, initializerType);
                     if (constant instanceof IntegerValueTypeConstant) {
