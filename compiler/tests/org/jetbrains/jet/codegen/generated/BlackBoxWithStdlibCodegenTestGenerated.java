@@ -1090,6 +1090,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("switchOptimizationDense.kt")
+        public void testSwitchOptimizationDense() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/when/switchOptimizationDense.kt");
+        }
+        
         @TestMetadata("switchOptimizationMultipleConditions.kt")
         public void testSwitchOptimizationMultipleConditions() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/when/switchOptimizationMultipleConditions.kt");
