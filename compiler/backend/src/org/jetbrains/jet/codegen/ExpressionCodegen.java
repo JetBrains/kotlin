@@ -3690,15 +3690,7 @@ The "returned" value of try expression with no finally is either the last expres
         if (!hasElse && nextCondition != null) {
             v.mark(nextCondition);
             if (!isStatement) {
-                // a result is expected
-                if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
-                    // when() is supposed to be exhaustive
-                    throwNewException("kotlin/NoWhenBranchMatchedException");
-                }
-                else {
-                    // non-exhaustive when() with no else -> Unit must be expected
-                    StackValue.putUnitInstance(v);
-                }
+                putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
             }
         }
 
@@ -3708,6 +3700,17 @@ The "returned" value of try expression with no finally is either the last expres
         myFrameMap.leaveTemp(subjectType);
         tempVariables.remove(expr);
         return StackValue.onStack(resultType);
+    }
+
+    private void putUnitInstanceOntoStackForNonExhaustiveWhen(@NotNull JetWhenExpression expression) {
+        if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
+            // when() is supposed to be exhaustive
+            throwNewException("kotlin/NoWhenBranchMatchedException");
+        }
+        else {
+            // non-exhaustive when() with no else -> Unit must be expected
+            StackValue.putUnitInstance(v);
+        }
     }
 
     private StackValue generateWhenCondition(Type subjectType, int subjectLocal, JetWhenCondition condition) {
@@ -3731,9 +3734,9 @@ The "returned" value of try expression with no finally is either the last expres
         }
     }
 
-    private StackValue generateSwitch(JetWhenExpression expression, Type subjectType, Type resultType, boolean isStatement) {
+    private StackValue generateSwitch(@NotNull JetWhenExpression expression, @NotNull Type subjectType, @NotNull Type resultType, boolean isStatement) {
         JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression.getSubjectExpression());
-        assert subjectJetType != null;
+        assert subjectJetType != null : "Subject expression in when should not be null";
 
         Map<Integer, Label> transitions = Maps.newTreeMap();
 
@@ -3748,15 +3751,17 @@ The "returned" value of try expression with no finally is either the last expres
             Label entryLabel = new Label();
 
             for (JetWhenCondition condition : entry.getConditions()) {
-                assert condition instanceof JetWhenConditionWithExpression;
+                assert condition instanceof JetWhenConditionWithExpression : "Condition should be instance of JetWhenConditionWithExpression";
 
                 JetExpression conditionExpression = ((JetWhenConditionWithExpression) condition).getExpression();
-                assert conditionExpression != null;
+                assert conditionExpression != null : "Condition expression in when should not be bull";
 
                 CompileTimeConstant constant = getCompileTimeConstant(conditionExpression, bindingContext);
-                assert doesConstantFitForSwitch(constant);
+                assert doesConstantFitForSwitch(constant) : "Condition should be a constant in when for generating switch-instruction";
 
-                int value = (constant.getValue() instanceof Number) ? ((Number)constant.getValue()).intValue() : ((Character)constant.getValue()).charValue();
+                int value = (constant.getValue() instanceof Number)
+                            ? ((Number) constant.getValue()).intValue()
+                            : ((Character) constant.getValue()).charValue();
 
                 if (!transitions.containsKey(value)) {
                     transitions.put(value, entryLabel);
@@ -3771,7 +3776,7 @@ The "returned" value of try expression with no finally is either the last expres
         }
 
         gen(expression.getSubjectExpression(), subjectType);
-        generateSwitchCall(
+        generateSwitchInstructionByTransitionsTable(
                 transitions,
                 //if there is no else-entry and it's statement then default --- endLabel
                 (hasElse || !isStatement) ? elseLabel : endLabel
@@ -3794,15 +3799,7 @@ The "returned" value of try expression with no finally is either the last expres
         //there is no else-entry but this is not statement, so we should return Unit
         if (!hasElse && !isStatement) {
             v.visitLabel(elseLabel);
-            // a result is expected
-            if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
-                // when() is supposed to be exhaustive
-                throwNewException("kotlin/NoWhenBranchMatchedException");
-            }
-            else {
-                // non-exhaustive when() with no else -> Unit must be expected
-                StackValue.putUnitInstance(v);
-            }
+            putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
         }
 
         markLineNumber(expression);
@@ -3811,21 +3808,21 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.onStack(resultType);
     }
 
-    private void generateSwitchCall(Map<Integer, Label> transitions, Label defaultLabel) {
+    private void generateSwitchInstructionByTransitionsTable(@NotNull Map<Integer, Label> transitions, @NotNull Label defaultLabel) {
         int[] keys = new int[transitions.size()];
         Label[] labels = new Label[transitions.size()];
         int i = 0;
 
-        for (Map.Entry<Integer,Label> transition : transitions.entrySet()) {
+        for (Map.Entry<Integer, Label> transition : transitions.entrySet()) {
             keys[i] = transition.getKey();
             labels[i] = transition.getValue();
 
             i++;
         }
 
-        int hi = keys[keys.length-1];
+        int hi = keys[keys.length - 1];
         int lo = keys[0];
-        long emptyCells = ((long)hi - (long)lo + 1) - keys.length;
+        long emptyCells = ((long) hi - (long) lo + 1) - keys.length;
 
         boolean useTableSwitch = keys.length > 0 &&
                                  10L * emptyCells <= (long) keys.length; // less then 10% of empty cells
@@ -3835,7 +3832,7 @@ The "returned" value of try expression with no finally is either the last expres
             return;
         }
 
-        Label[] sparseLabels = new Label[hi-lo + 1];
+        Label[] sparseLabels = new Label[hi - lo + 1];
         Arrays.fill(sparseLabels, defaultLabel);
 
         for (i = 0; i < keys.length; i++) {
@@ -3845,17 +3842,11 @@ The "returned" value of try expression with no finally is either the last expres
         v.tableswitch(lo, hi, defaultLabel, sparseLabels);
     }
 
-    private boolean doesConstantFitForSwitch(CompileTimeConstant constant) {
-        if (constant == null || !(constant instanceof IntegerValueConstant)) {
-            return false;
-        }
-
-        long value = (constant.getValue() instanceof Number) ? ((Number)constant.getValue()).longValue() : ((Character)constant.getValue()).charValue();
-        return value >= Integer.MIN_VALUE &&
-               value <= Integer.MAX_VALUE;
+    private static boolean doesConstantFitForSwitch(@Nullable CompileTimeConstant constant) {
+        return (constant instanceof IntegerValueConstant);
     }
 
-    private boolean canSwitchBeUsedIn(JetWhenExpression expression, Type subjectType) {
+    private boolean canSwitchBeUsedIn(@NotNull JetWhenExpression expression, @NotNull Type subjectType) {
         int typeSort = subjectType.getSort();
 
         if (typeSort != Type.INT && typeSort != Type.CHAR && typeSort != Type.SHORT && typeSort != Type.BYTE) {
@@ -3871,9 +3862,7 @@ The "returned" value of try expression with no finally is either the last expres
                 //ensure that expression is constant
                 JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
 
-                if (patternExpression == null) {
-                    return false;
-                }
+                assert patternExpression != null : "expression in when should not be null";
 
                 CompileTimeConstant constant = getCompileTimeConstant(patternExpression, bindingContext);
                 if (!doesConstantFitForSwitch(constant)) {
