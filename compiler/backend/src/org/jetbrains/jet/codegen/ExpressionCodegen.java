@@ -3820,12 +3820,22 @@ The "returned" value of try expression with no finally is either the last expres
             i++;
         }
 
-        int hi = keys[keys.length - 1];
+        int nlabels = keys.length;
+        int hi = keys[nlabels - 1];
         int lo = keys[0];
-        long emptyCells = ((long) hi - (long) lo + 1) - keys.length;
 
-        boolean useTableSwitch = keys.length > 0 &&
-                                 10L * emptyCells <= (long) keys.length; // less then 10% of empty cells
+        /*
+         * Heuristic estimation if it's better to use tableswitch or lookupswitch.
+         * From OpenJDK sources
+         */
+        long table_space_cost = 4 + ((long) hi - lo + 1); // words
+        long table_time_cost = 3; // comparisons
+        long lookup_space_cost = 3 + 2 * (long) nlabels;
+        long lookup_time_cost = nlabels;
+
+        boolean useTableSwitch = nlabels > 0 &&
+                                 table_space_cost + 3 * table_time_cost <=
+                                 lookup_space_cost + 3 * lookup_time_cost;
 
         if (!useTableSwitch) {
             v.lookupswitch(defaultLabel, keys, labels);
