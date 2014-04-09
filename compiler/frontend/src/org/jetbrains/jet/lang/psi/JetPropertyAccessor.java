@@ -22,15 +22,21 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyAccessorStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetPropertyAccessor extends JetDeclarationImpl
+public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccessorStub>
         implements JetDeclarationWithBody, JetModifierListOwner, JetWithExpressionInitializer {
     public JetPropertyAccessor(@NotNull ASTNode node) {
         super(node);
+    }
+
+    public JetPropertyAccessor(@NotNull PsiJetPropertyAccessorStub stub) {
+        super(stub, JetStubElementTypes.PROPERTY_ACCESSOR);
     }
 
     @Override
