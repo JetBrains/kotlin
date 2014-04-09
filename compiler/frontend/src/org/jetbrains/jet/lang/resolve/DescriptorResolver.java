@@ -1298,8 +1298,7 @@ public class DescriptorResolver {
         JetModifierList modifierList = parameter.getModifierList();
 
         if (modifierList != null) {
-            ASTNode abstractNode = modifierList.getModifierNode(JetTokens.ABSTRACT_KEYWORD);
-            if (abstractNode != null) {
+            if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
                 trace.report(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS.on(parameter));
             }
         }
