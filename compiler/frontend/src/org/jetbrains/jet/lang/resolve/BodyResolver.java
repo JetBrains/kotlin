@@ -383,7 +383,7 @@ public class BodyResolver {
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
-            annotationResolver.resolveAnnotationsArguments(klass.getPrimaryConstructorModifierList(), trace);
+            AnnotationResolver.resolveAnnotationsArguments(klass.getPrimaryConstructorModifierList(), trace);
 
             if (unsubstitutedPrimaryConstructor != null) {
                 WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
@@ -644,7 +644,7 @@ public class BodyResolver {
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {
-        annotationResolver.resolveAnnotationsArguments(owner.getModifierList(), trace);
+        AnnotationResolver.resolveAnnotationsArguments(owner.getModifierList(), trace);
     }
 
     private static void computeDeferredType(JetType type) {

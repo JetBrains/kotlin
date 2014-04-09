@@ -199,7 +199,7 @@ public class AnnotationResolver {
         );
     }
 
-    public void resolveAnnotationsArguments(@Nullable JetModifierList modifierList, @NotNull BindingTrace trace) {
+    public static void resolveAnnotationsArguments(@Nullable JetModifierList modifierList, @NotNull BindingTrace trace) {
         if (modifierList == null) {
             return;
         }
@@ -209,7 +209,7 @@ public class AnnotationResolver {
         }
     }
 
-    public void resolveAnnotationsArguments(@NotNull Annotated descriptor, @NotNull BindingTrace trace) {
+    public static void resolveAnnotationsArguments(@NotNull Annotated descriptor, @NotNull BindingTrace trace) {
         for (AnnotationDescriptor annotationDescriptor : descriptor.getAnnotations()) {
             JetAnnotationEntry annotationEntry = trace.getBindingContext().get(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotationDescriptor);
             assert annotationEntry != null : "Cannot find annotation entry: " + annotationDescriptor;

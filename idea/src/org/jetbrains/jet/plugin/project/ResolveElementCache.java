@@ -211,7 +211,7 @@ public class ResolveElementCache {
         if (declaration != null) {
             Annotated descriptor = resolveSession.resolveToDescriptor(declaration);
 
-            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(
+            AnnotationResolver.resolveAnnotationsArguments(
                     descriptor,
                     resolveSession.getTrace()
             );

@@ -25,6 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
@@ -185,7 +186,7 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
                            // thus doesn't have a surrounding data flow
                            DataFlowInfo.EMPTY);
             result.add(propertyDescriptor);
-            resolveSession.getAnnotationResolver().resolveAnnotationsArguments(propertyDescriptor, trace);
+            AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor, trace);
         }
 
         getNonDeclaredProperties(name, result);
