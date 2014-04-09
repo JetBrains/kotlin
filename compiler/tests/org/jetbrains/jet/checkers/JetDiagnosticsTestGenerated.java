@@ -3413,6 +3413,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/imports/ImportResolutionOrder.kt");
             }
             
+            @TestMetadata("ImportsHiddenByDefinitionInTheSameFile.kt")
+            public void testImportsHiddenByDefinitionInTheSameFile() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/imports/ImportsHiddenByDefinitionInTheSameFile.kt");
+            }
+            
             @TestMetadata("RenameOnImport.kt")
             public void testRenameOnImport() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/imports/RenameOnImport.kt");
