@@ -556,7 +556,7 @@ public class DescriptorResolver {
                 annotations,
                 JetPsiUtil.safeName(valueParameter.getName()),
                 variableType,
-                valueParameter.getDefaultValue() != null,
+                valueParameter.hasDefaultValue(),
                 varargElementType
         );
 
@@ -1151,9 +1151,8 @@ public class DescriptorResolver {
             if (parameter != null) {
 
                 // This check is redundant: the parser does not allow a default value, but we'll keep it just in case
-                JetExpression defaultValue = parameter.getDefaultValue();
-                if (defaultValue != null) {
-                    trace.report(SETTER_PARAMETER_WITH_DEFAULT_VALUE.on(defaultValue));
+                if (parameter.hasDefaultValue()) {
+                    trace.report(SETTER_PARAMETER_WITH_DEFAULT_VALUE.on(parameter.getDefaultValue()));
                 }
 
                 JetType type;

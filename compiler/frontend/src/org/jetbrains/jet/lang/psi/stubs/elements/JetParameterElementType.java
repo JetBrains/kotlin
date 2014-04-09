@@ -40,7 +40,7 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
         return new PsiJetParameterStubImpl(parentStub, psi.getFqName(), StringRef.fromString(psi.getName()),
                                            psi.isMutable(), psi.isVarArg(), psi.hasValOrVarNode(),
-                                           psi.getDefaultValue() != null);
+                                           psi.hasDefaultValue());
     }
 
     @Override

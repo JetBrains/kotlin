@@ -45,6 +45,14 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 
+    public boolean hasDefaultValue() {
+        PsiJetParameterStub stub = getStub();
+        if (stub != null) {
+            return stub.hasDefaultValue();
+        }
+        return getDefaultValue() != null;
+    }
+
     @Nullable
     public JetExpression getDefaultValue() {
         PsiJetParameterStub stub = getStub();
