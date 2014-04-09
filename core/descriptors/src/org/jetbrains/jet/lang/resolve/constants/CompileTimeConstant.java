@@ -24,15 +24,38 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public abstract class CompileTimeConstant<T> {
     protected final T value;
-    private final boolean canBeUsedInAnnotations;
+    private final int flags;
 
-    protected CompileTimeConstant(T value, boolean canBeUsedInAnnotations) {
+   /*
+    * if is pure is false then constant type cannot be changed
+    * ex1. val a: Long = 1.toInt() (TYPE_MISMATCH error, 1.toInt() isn't pure)
+    * ex2. val b: Int = a (TYPE_MISMATCH error, a isn't pure)
+    *
+    */
+    private static final int IS_PURE_MASK = 1;
+    private static final int CAN_BE_USED_IN_ANNOTATIONS_MASK = 1 << 1;
+    private static final int USES_VARIABLE_AS_CONSTANT_MASK = 1 << 2;
+
+    protected CompileTimeConstant(T value,
+                                  boolean canBeUsedInAnnotations,
+                                  boolean isPure,
+                                  boolean usesVariableAsConstant) {
         this.value = value;
-        this.canBeUsedInAnnotations = canBeUsedInAnnotations;
+        flags = (isPure ? IS_PURE_MASK : 0) |
+                (canBeUsedInAnnotations ? CAN_BE_USED_IN_ANNOTATIONS_MASK : 0) |
+                (usesVariableAsConstant ? USES_VARIABLE_AS_CONSTANT_MASK : 0);
     }
 
     public boolean canBeUsedInAnnotations() {
-        return canBeUsedInAnnotations;
+        return (flags & CAN_BE_USED_IN_ANNOTATIONS_MASK) != 0;
+    }
+
+    public boolean isPure() {
+        return (flags & IS_PURE_MASK) != 0;
+    }
+
+    public boolean usesVariableAsConstant() {
+        return (flags & USES_VARIABLE_AS_CONSTANT_MASK) != 0;
     }
 
     @Nullable

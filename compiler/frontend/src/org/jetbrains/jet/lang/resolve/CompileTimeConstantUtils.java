@@ -18,13 +18,11 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
-import org.jetbrains.jet.lang.psi.JetConstantExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
@@ -129,12 +127,10 @@ public class CompileTimeConstantUtils {
             @NotNull BindingTrace trace,
             @Nullable Boolean expectedValue
     ) {
-        if (!(expression instanceof JetConstantExpression) || expression.getNode().getElementType() != JetNodeTypes.BOOLEAN_CONSTANT) {
-            return false;
-        }
+        if (expression == null) return false;
         CompileTimeConstant<?> compileTimeConstant =
                 ConstantExpressionEvaluator.object$.evaluate(expression, trace, KotlinBuiltIns.getInstance().getBooleanType());
-        if (!(compileTimeConstant instanceof BooleanValue)) return false;
+        if (!(compileTimeConstant instanceof BooleanValue) || compileTimeConstant.usesVariableAsConstant()) return false;
 
         Boolean value = ((BooleanValue) compileTimeConstant).getValue();
         return expectedValue == null || expectedValue.equals(value);

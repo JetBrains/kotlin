@@ -18,19 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 public abstract class IntegerValueConstant<T> extends CompileTimeConstant<T> {
 
-    /*
-    * if false then constant type cannot be changed
-    * ex1. val a: Long = 1.toInt() (TYPE_MISMATCH error, 1.toInt() isn't pure)
-    * ex2. val b: Int = a (TYPE_MISMATCH error, a isn't pure)
-    * */
-    private final boolean isPure;
-
-    protected IntegerValueConstant(T value, boolean canBeUsedInAnnotations, boolean pure) {
-        super(value, canBeUsedInAnnotations);
-        isPure = pure;
-    }
-
-    public boolean isPure() {
-        return isPure;
+    protected IntegerValueConstant(T value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVaraiableAsConstant) {
+        super(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant);
     }
 }

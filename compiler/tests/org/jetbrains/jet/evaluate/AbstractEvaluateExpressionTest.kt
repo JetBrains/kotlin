@@ -20,20 +20,18 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.resolve.annotation.AbstractAnnotationDescriptorResolveTest
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.psi.JetProperty
 import org.jetbrains.jet.InTextDirectivesUtils
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import java.util.regex.Pattern
-import org.intellij.lang.annotations.RegExp
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.util.slicedmap.WritableSlice
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant
 import org.jetbrains.jet.lang.resolve.constants.StringValue
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant
+import java.util.HashMap
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
+import org.jetbrains.jet.lang.types.TypeUtils
 
 abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorResolveTest() {
 
@@ -59,6 +57,19 @@ abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescriptorReso
                 compileTimeConstant.isPure().toString()
             } else {
                 "null"
+            }
+        }
+    }
+
+    // Test directives should look like [// val testedPropertyName: expectedValue]
+    fun doUsesVariableAsConstantTest(path: String) {
+        doTest(path) {
+            property, context ->
+            val compileTimeConstant = property.getCompileTimeInitializer()
+            if (compileTimeConstant == null) {
+                "null"
+            } else {
+                compileTimeConstant.usesVariableAsConstant().toString()
             }
         }
     }

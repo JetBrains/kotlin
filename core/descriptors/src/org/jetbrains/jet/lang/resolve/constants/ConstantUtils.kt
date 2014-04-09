@@ -24,23 +24,24 @@ public fun createCompileTimeConstant(
         value: Any?,
         canBeUsedInAnnotation: Boolean,
         isPureIntConstant: Boolean,
+        usesVariableAsConstant: Boolean = false,
         expectedType: JetType? = null
 ): CompileTimeConstant<*>? {
     if (expectedType == null) {
         when(value) {
-            is Byte -> return ByteValue(value, canBeUsedInAnnotation, isPureIntConstant)
-            is Short -> return ShortValue(value, canBeUsedInAnnotation, isPureIntConstant)
-            is Int -> return IntValue(value, canBeUsedInAnnotation, isPureIntConstant)
-            is Long -> return LongValue(value, canBeUsedInAnnotation, isPureIntConstant)
+            is Byte -> return ByteValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+            is Short -> return ShortValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+            is Int -> return IntValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+            is Long -> return LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
         }
     }
     return when(value) {
-        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), canBeUsedInAnnotation, isPureIntConstant, expectedType)
-        is Char -> CharValue(value, canBeUsedInAnnotation, isPureIntConstant)
-        is Float -> FloatValue(value, canBeUsedInAnnotation)
-        is Double -> DoubleValue(value, canBeUsedInAnnotation)
-        is Boolean -> BooleanValue(value, canBeUsedInAnnotation)
-        is String -> StringValue(value, canBeUsedInAnnotation)
+        is Byte, is Short, is Int, is Long -> getIntegerValue((value as Number).toLong(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant, expectedType)
+        is Char -> CharValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        is Float -> FloatValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
+        is Double -> DoubleValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
+        is Boolean -> BooleanValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
+        is String -> StringValue(value, canBeUsedInAnnotation, usesVariableAsConstant)
         null -> NullValue.NULL
         else -> null
     }
@@ -50,30 +51,31 @@ private fun getIntegerValue(
         value: Long,
         canBeUsedInAnnotation: Boolean,
         isPureIntConstant: Boolean,
+        usesVariableAsConstant: Boolean,
         expectedType: JetType
 ): CompileTimeConstant<*>? {
     fun defaultIntegerValue(value: Long) = when (value) {
-        value.toInt().toLong() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant)
-        else -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant)
+        value.toInt().toLong() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
+        else -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
     }
 
     if (TypeUtils.noExpectedType(expectedType) || expectedType.isError()) {
-        return IntegerValueTypeConstant(value, canBeUsedInAnnotation)
+        return IntegerValueTypeConstant(value, canBeUsedInAnnotation, usesVariableAsConstant)
     }
 
     val builtIns = KotlinBuiltIns.getInstance()
 
     return when (TypeUtils.makeNotNullable(expectedType)) {
-        builtIns.getLongType() -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant)
+        builtIns.getLongType() -> LongValue(value, canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
         builtIns.getShortType() -> when (value) {
-            value.toShort().toLong() -> ShortValue(value.toShort(), canBeUsedInAnnotation, isPureIntConstant)
+            value.toShort().toLong() -> ShortValue(value.toShort(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
             else -> defaultIntegerValue(value)
         }
         builtIns.getByteType() -> when (value) {
-            value.toByte().toLong() -> ByteValue(value.toByte(), canBeUsedInAnnotation, isPureIntConstant)
+            value.toByte().toLong() -> ByteValue(value.toByte(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
             else -> defaultIntegerValue(value)
         }
-        builtIns.getCharType() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant)
+        builtIns.getCharType() -> IntValue(value.toInt(), canBeUsedInAnnotation, isPureIntConstant, usesVariableAsConstant)
         else -> defaultIntegerValue(value)
     }
 }

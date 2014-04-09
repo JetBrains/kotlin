@@ -616,6 +616,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/annotations/onLoops.kt");
             }
             
+            @TestMetadata("onLoopsUnreachable.kt")
+            public void testOnLoopsUnreachable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/annotations/onLoopsUnreachable.kt");
+            }
+            
             @TestMetadata("onMultiDeclaration.kt")
             public void testOnMultiDeclaration() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");

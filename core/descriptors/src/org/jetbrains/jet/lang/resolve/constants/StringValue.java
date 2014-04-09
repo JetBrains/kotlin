@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class StringValue extends CompileTimeConstant<String> {
 
-    public StringValue(String value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations);
+    public StringValue(String value, boolean canBeUsedInAnnotations, boolean usesVariableAsConstant) {
+        super(value, canBeUsedInAnnotations, false, usesVariableAsConstant);
     }
 
     @NotNull

@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class ByteValue extends IntegerValueConstant<Byte> {
 
-    public ByteValue(byte value, boolean canBeUsedInAnnotations, boolean pure) {
-        super(value, canBeUsedInAnnotations, pure);
+    public ByteValue(byte value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVaraiableAsConstant) {
+        super(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant);
     }
 
     @NotNull

@@ -242,6 +242,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractEvaluateExpressionTest>()) {
             model("evaluate/constant", testMethod = "doConstantTest")
             model("evaluate/isPure", testMethod = "doIsPureTest")
+            model("evaluate/usesVariableAsConstant", testMethod = "doUsesVariableAsConstantTest")
         }
     }
 
