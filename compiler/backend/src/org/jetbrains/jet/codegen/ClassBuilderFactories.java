@@ -26,6 +26,7 @@ import java.io.StringWriter;
 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
 
+    @NotNull
     public static ClassBuilderFactory TEST = new ClassBuilderFactory() {
         @NotNull
         @Override
@@ -54,6 +55,7 @@ public class ClassBuilderFactories {
         }
     };
 
+    @NotNull
     public static ClassBuilderFactory BINARIES = new ClassBuilderFactory() {
         @NotNull
         @Override

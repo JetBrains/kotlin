@@ -1,0 +1,29 @@
+<root>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.Evaluator java.lang.Object evaluate(com.intellij.debugger.engine.evaluation.EvaluationContextImpl) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilder com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator build(com.intellij.psi.PsiElement, com.intellij.debugger.SourcePosition)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilder com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator build(com.intellij.psi.PsiElement, com.intellij.debugger.SourcePosition) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilder com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator build(com.intellij.psi.PsiElement, com.intellij.debugger.SourcePosition) 1'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator build(com.intellij.psi.PsiElement, com.intellij.debugger.SourcePosition) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilderImpl.Builder com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator buildElement(com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.expression.ExpressionEvaluator'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

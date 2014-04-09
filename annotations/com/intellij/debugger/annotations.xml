@@ -3,4 +3,7 @@
       name='com.intellij.debugger.ExecutionWithDebuggerToolsTestCase void onBreakpoint(com.intellij.debugger.engine.SuspendContextRunnable) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.debugger.SourcePosition'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
 </root>

@@ -46,5 +46,5 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
 
     override fun getFileType() = JetFileType.INSTANCE
 
-    override fun getEvaluatorBuilder() = null
+    override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 }

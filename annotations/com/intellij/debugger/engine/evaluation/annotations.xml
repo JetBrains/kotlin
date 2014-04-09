@@ -1,0 +1,83 @@
+<root>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 1'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createPresentationCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createPresentationCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createPresentationCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 1'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.CodeFragmentFactory com.intellij.psi.JavaCodeFragment createPresentationCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.DefaultCodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.DefaultCodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 1'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.DefaultCodeFragmentFactory com.intellij.psi.JavaCodeFragment createCodeFragment(com.intellij.debugger.engine.evaluation.TextWithImports, com.intellij.psi.PsiElement, com.intellij.openapi.project.Project) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.EvaluateException'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil com.intellij.debugger.engine.evaluation.EvaluateException createEvaluateException(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil com.intellij.debugger.engine.evaluation.EvaluateException createEvaluateException(java.lang.String, java.lang.Throwable) 0'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil com.intellij.debugger.engine.evaluation.EvaluateException createEvaluateException(java.lang.String, java.lang.Throwable) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil com.intellij.debugger.engine.evaluation.EvaluateException createEvaluateException(java.lang.Throwable)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.EvaluationContextImpl'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.TextWithImports'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.TextWithImports com.intellij.debugger.engine.evaluation.CodeFragmentKind getKind()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.TextWithImports java.lang.String getText()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.TextWithImports java.lang.String toExternalForm()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.debugger.engine.evaluation.TextWithImports void setText(java.lang.String) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

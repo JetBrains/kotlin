@@ -1,4 +1,12 @@
 <root>
+  <item
+      name='com.intellij.debugger.impl.EditorTextProvider com.intellij.debugger.engine.evaluation.TextWithImports getEditorText(com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.debugger.impl.EditorTextProvider com.intellij.openapi.util.Pair&lt;com.intellij.psi.PsiElement,com.intellij.openapi.util.TextRange&gt; findExpression(com.intellij.psi.PsiElement, boolean) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.debugger.impl.OutputChecker'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

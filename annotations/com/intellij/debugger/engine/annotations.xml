@@ -1,4 +1,7 @@
 <root>
+  <item name='com.intellij.debugger.engine.DebugProcessImpl com.intellij.debugger.jdi.VirtualMachineProxyImpl getVirtualMachineProxy()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.debugger.engine.MethodFilter boolean locationMatches(com.intellij.debugger.engine.DebugProcessImpl, com.sun.jdi.Location) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
