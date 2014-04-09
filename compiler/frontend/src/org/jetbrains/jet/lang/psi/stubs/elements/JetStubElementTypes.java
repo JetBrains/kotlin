@@ -90,6 +90,9 @@ public interface JetStubElementTypes {
     JetPlaceHolderStubElementType<JetDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
             new JetPlaceHolderStubElementType<JetDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
 
+    JetPlaceHolderStubElementType<JetInitializerList> INITIALIZER_LIST =
+            new JetPlaceHolderStubElementType<JetInitializerList>("INITIALIZER_LIST", JetInitializerList.class);
+
     JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier> DELEGATOR_BY =
             new JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier>("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
     JetPlaceHolderStubElementType<JetDelegatorToSuperCall> DELEGATOR_SUPER_CALL =

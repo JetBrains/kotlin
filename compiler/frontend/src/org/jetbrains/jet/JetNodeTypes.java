@@ -73,7 +73,7 @@ public interface JetNodeTypes {
 
     // TODO: review
     IElementType PROPERTY_ACCESSOR       = JetStubElementTypes.PROPERTY_ACCESSOR;
-    JetNodeType INITIALIZER_LIST         = new JetNodeType("INITIALIZER_LIST", JetInitializerList.class);
+    IElementType INITIALIZER_LIST        = JetStubElementTypes.INITIALIZER_LIST;
     IElementType THIS_CALL               = JetStubElementTypes.THIS_CALL;
     JetNodeType THIS_CONSTRUCTOR_REFERENCE = new JetNodeType("THIS_CONSTRUCTOR_REFERENCE", JetThisReferenceExpression.class);
     IElementType TYPE_CONSTRAINT_LIST    = JetStubElementTypes.TYPE_CONSTRAINT_LIST;
