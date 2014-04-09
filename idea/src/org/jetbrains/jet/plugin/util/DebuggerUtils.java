@@ -71,7 +71,9 @@ public class DebuggerUtils {
 
         // In the rare case that there's more than one file with this name in this package,
         // we may actually need to analyze the project in order to find a file which produces this class
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(anyFile);
+        // TODO: this code is not entirely correct, because it takes a session for only one file
+        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(anyFile).getResolveCache()
+                .getAnalysisResultsForElements(files);
 
         return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allPackageFiles, className.getInternalName());
     }
