@@ -148,7 +148,7 @@ public class PropertyCodegen {
         if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
             fv = generateBackingFieldAccess(p, descriptor);
         }
-        else if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
+        else if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
             fv = generatePropertyDelegateAccess((JetProperty) p, descriptor);
         }
         else {
@@ -288,7 +288,7 @@ public class PropertyCodegen {
 
         FunctionGenerationStrategy strategy;
         if (isDefaultAccessor) {
-            if (p instanceof JetProperty && ((JetProperty) p).getDelegate() != null) {
+            if (p instanceof JetProperty && ((JetProperty) p).hasDelegate()) {
                 strategy = new DelegatedPropertyAccessorStrategy(state, accessorDescriptor, indexOfDelegatedProperty((JetProperty) p));
             }
             else {
@@ -318,7 +318,7 @@ public class PropertyCodegen {
 
         int index = 0;
         for (JetDeclaration declaration : container.getDeclarations()) {
-            if (declaration instanceof JetProperty && ((JetProperty) declaration).getDelegate() != null) {
+            if (declaration instanceof JetProperty && ((JetProperty) declaration).hasDelegate()) {
                 if (declaration == property) {
                     return index;
                 }

@@ -984,7 +984,7 @@ public class DescriptorResolver {
     ) {
         JetTypeReference propertyTypeRef = variable.getTypeRef();
 
-        boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).getDelegateExpression() != null;
+        boolean hasDelegate = variable instanceof JetProperty && ((JetProperty) variable).hasDelegateExpression();
         if (propertyTypeRef == null) {
             final JetExpression initializer = variable.getInitializer();
             if (initializer == null) {
@@ -1186,7 +1186,7 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, setter, setterDescriptor);
         }
         else if (property.isVar()) {
-            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, property.getDelegateExpression() == null);
+            setterDescriptor = DescriptorFactory.createSetter(propertyDescriptor, !property.hasDelegate());
         }
 
         if (!property.isVar()) {
@@ -1230,7 +1230,7 @@ public class DescriptorResolver {
             trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
-            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, property.getDelegateExpression() == null);
+            getterDescriptor = DescriptorFactory.createGetter(propertyDescriptor, !property.hasDelegate());
             getterDescriptor.initialize(propertyDescriptor.getType());
         }
         return getterDescriptor;

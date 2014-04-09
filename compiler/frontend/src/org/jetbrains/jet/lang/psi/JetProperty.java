@@ -146,9 +146,17 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
         return null;
     }
 
+    public boolean hasDelegate() {
+        return getDelegate() != null;
+    }
+
     @Nullable
     public JetPropertyDelegate getDelegate() {
         return (JetPropertyDelegate) findChildByType(PROPERTY_DELEGATE);
+    }
+
+    public boolean hasDelegateExpression() {
+        return getDelegateExpression() != null;
     }
 
     @Nullable
