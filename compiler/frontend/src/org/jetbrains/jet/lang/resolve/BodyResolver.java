@@ -36,7 +36,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.expressions.DataFlowUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
-import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.util.Box;
@@ -384,7 +383,7 @@ public class BodyResolver {
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
-            annotationResolver.resolveAnnotationsArguments(classDescriptor.getScopeForClassHeaderResolution(), klass.getPrimaryConstructorModifierList(), trace);
+            annotationResolver.resolveAnnotationsArguments(klass.getPrimaryConstructorModifierList(), trace);
 
             if (unsubstitutedPrimaryConstructor != null) {
                 WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
@@ -645,7 +644,7 @@ public class BodyResolver {
     }
 
     private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {
-        annotationResolver.resolveAnnotationsArguments(scope, owner.getModifierList(), trace);
+        annotationResolver.resolveAnnotationsArguments(owner.getModifierList(), trace);
     }
 
     private static void computeDeferredType(JetType type) {

@@ -378,7 +378,7 @@ public class ExpressionTypingServices {
             ValueParameterDescriptor valueParameterDescriptor = valueParameterDescriptors.get(i);
             JetParameter jetParameter = valueParameters.get(i);
 
-            annotationResolver.resolveAnnotationsArguments(declaringScope, jetParameter.getModifierList(), trace);
+            annotationResolver.resolveAnnotationsArguments(jetParameter.getModifierList(), trace);
 
             if (!needCompleteAnalysis) continue;
 

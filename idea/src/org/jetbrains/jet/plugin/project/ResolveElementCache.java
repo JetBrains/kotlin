@@ -213,8 +213,7 @@ public class ResolveElementCache {
 
             resolveSession.getAnnotationResolver().resolveAnnotationsArguments(
                     descriptor,
-                    resolveSession.getTrace(),
-                    resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
+                    resolveSession.getTrace()
             );
 
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
