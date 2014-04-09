@@ -18,16 +18,22 @@ package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable;
 
 import com.intellij.ide.DataManager;
 import com.intellij.psi.PsiElement;
+import com.intellij.refactoring.RefactoringActionHandler;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler;
 
 import java.io.File;
 
-public abstract class AbstractJetIntroduceVariableTest extends LightCodeInsightFixtureTestCase {
-    protected void doTest(@NotNull String path) {
+public abstract class AbstractJetExtractionTest extends LightCodeInsightFixtureTestCase {
+    protected void doIntroduceVariableTest(@NotNull String path) {
+        doTest(path, new KotlinIntroduceVariableHandler());
+    }
+
+    protected void doTest(@NotNull String path, @NotNull RefactoringActionHandler handler) {
         File mainFile = new File(path);
 
         myFixture.setTestDataPath(JetTestCaseBuilder.getHomeDirectory() + "/" + mainFile.getParent());
@@ -47,7 +53,7 @@ public abstract class AbstractJetIntroduceVariableTest extends LightCodeInsightF
         }
         assert expectedResultText != null;
 
-        new KotlinIntroduceVariableHandler().invoke(
+        handler.invoke(
                 getProject(), myFixture.getEditor(), file, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent())
         );
 
