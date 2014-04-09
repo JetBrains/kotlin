@@ -105,6 +105,7 @@ import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -555,6 +556,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractKotlinSteppingTest>()) {
             model("debugger/tinyApp/src/stepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
             model("debugger/tinyApp/src/stepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+        }
+
+        testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {
+            model("debugger/tinyApp/src/evaluate")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {
