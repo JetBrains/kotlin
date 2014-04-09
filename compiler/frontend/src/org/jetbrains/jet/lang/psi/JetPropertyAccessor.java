@@ -21,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyAccessorStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -45,16 +44,24 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
     }
 
     public boolean isSetter() {
+        PsiJetPropertyAccessorStub stub = getStub();
+        if (stub != null) {
+            return !stub.isGetter();
+        }
         return findChildByType(JetTokens.SET_KEYWORD) != null;
     }
 
     public boolean isGetter() {
+        PsiJetPropertyAccessorStub stub = getStub();
+        if (stub != null) {
+            return stub.isGetter();
+        }
         return findChildByType(JetTokens.GET_KEYWORD) != null;
     }
 
     @Nullable
     public JetParameter getParameter() {
-        JetParameterList parameterList = (JetParameterList) findChildByType(JetNodeTypes.VALUE_PARAMETER_LIST);
+        JetParameterList parameterList = getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
         if (parameterList == null) return null;
         List<JetParameter> parameters = parameterList.getParameters();
         if (parameters.isEmpty()) return null;
@@ -84,6 +91,10 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
 
     @Override
     public boolean hasBody() {
+        PsiJetPropertyAccessorStub stub = getStub();
+        if (stub != null) {
+            return stub.hasBody();
+        }
         return getBodyExpression() != null;
     }
 
@@ -105,7 +116,7 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
 
     @Nullable
     public JetTypeReference getReturnTypeReference() {
-        return findChildByClass(JetTypeReference.class);
+        return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);
     }
 
     @NotNull
