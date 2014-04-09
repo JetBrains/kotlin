@@ -201,7 +201,7 @@ public class DescriptorResolver {
     private JetType getDefaultSupertype(JetClassOrObject jetClass, BindingTrace trace) {
         // TODO : beautify
         if (jetClass instanceof JetEnumEntry) {
-            JetClassOrObject parent = PsiTreeUtil.getParentOfType(jetClass, JetClassOrObject.class);
+            JetClassOrObject parent = JetStubbedPsiUtil.getContainingDeclaration(jetClass, JetClassOrObject.class);
             ClassDescriptor parentDescriptor = trace.getBindingContext().get(BindingContext.CLASS, parent);
             if (parentDescriptor.getTypeConstructor().getParameters().isEmpty()) {
                 return parentDescriptor.getDefaultType();
