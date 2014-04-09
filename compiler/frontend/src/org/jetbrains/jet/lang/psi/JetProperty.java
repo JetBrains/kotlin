@@ -147,6 +147,10 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean hasDelegate() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.hasDelegate();
+        }
         return getDelegate() != null;
     }
 
@@ -156,6 +160,10 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean hasDelegateExpression() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.hasDelegateExpression();
+        }
         return getDelegateExpression() != null;
     }
 
@@ -169,6 +177,10 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
     }
 
     public boolean hasInitializer() {
+        PsiJetPropertyStub stub = getStub();
+        if (stub != null) {
+            return stub.hasInitializer();
+        }
         return getInitializer() != null;
     }
 
