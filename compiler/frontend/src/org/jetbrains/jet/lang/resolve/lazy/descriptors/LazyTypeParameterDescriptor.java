@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
 import com.google.common.collect.Sets;
-import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -79,7 +78,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
     }
 
     private void resolveUpperBoundsFromWhereClause(Set<JetType> upperBounds) {
-        JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(jetTypeParameter, JetClassOrObject.class);
+        JetClassOrObject classOrObject = JetStubbedPsiUtil.getContainingDeclaration(jetTypeParameter, JetClassOrObject.class, true);
         if (classOrObject instanceof JetClass) {
             JetClass jetClass = (JetClass) classOrObject;
             for (JetTypeConstraint jetTypeConstraint : jetClass.getTypeConstraints()) {
