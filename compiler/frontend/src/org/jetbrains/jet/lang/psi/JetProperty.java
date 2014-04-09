@@ -163,7 +163,7 @@ public class JetProperty extends JetTypeParameterListOwnerStub<PsiJetPropertyStu
 
     @NotNull
     public List<JetPropertyAccessor> getAccessors() {
-        return findChildrenByType(PROPERTY_ACCESSOR);
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.PROPERTY_ACCESSOR);
     }
 
     @Nullable
