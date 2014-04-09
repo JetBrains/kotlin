@@ -47,8 +47,7 @@ import java.io.File;
 
 public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
-
-    private File outputDir;
+    private static boolean IS_TINY_APP_COMPILED = false;
 
     @Override
     protected OutputChecker initOutputChecker() {
@@ -88,18 +87,13 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     }
 
     @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (outputDir != null && outputDir.exists()) {
-            FileUtil.delete(outputDir);
-        }
-    }
-
-    @Override
     protected void ensureCompiledAppExists() throws Exception {
-        String modulePath = getTestAppPath();
-        outputDir = new File(modulePath + File.separator + "classes");
-        MockLibraryUtil.compileKotlin(modulePath + File.separator + "src", outputDir);
+        if (!IS_TINY_APP_COMPILED) {
+            String modulePath = getTestAppPath();
+            MockLibraryUtil.compileKotlin(modulePath + File.separator + "src", new File(modulePath + File.separator + "classes"));
+            //noinspection AssignmentToStaticFieldFromInstanceMethod
+            IS_TINY_APP_COMPILED = true;
+        }
     }
 
     private static class KotlinOutputChecker extends OutputChecker {

@@ -12,3 +12,4 @@ pluginPublisher/plugin-verifier.jar
 tmp
 workspace.xml
 *.versionsBackup
+idea/testData/debugger/tinyApp/classes*
