@@ -84,7 +84,7 @@ public class AlternativeFieldSignatureData extends ElementAlternativeSignatureDa
             throw new AlternativeSignatureMismatchException("Wrong mutability in annotation for field");
         }
 
-        if (altProperty.getInitializer() != null) {
+        if (altProperty.hasInitializer()) {
             throw new AlternativeSignatureMismatchException("Default value is not expected in annotation for field");
         }
     }

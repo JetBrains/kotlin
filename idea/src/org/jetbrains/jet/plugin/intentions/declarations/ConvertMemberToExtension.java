@@ -67,7 +67,7 @@ public class ConvertMemberToExtension extends BaseIntentionAction {
     ) {
         JetCallableDeclaration declaration = getTarget(editor, file);
         if (declaration instanceof JetProperty) {
-            if (((JetProperty) declaration).getInitializer() != null) return false;
+            if (((JetProperty) declaration).hasInitializer()) return false;
         }
         return declaration != null
                && declaration.getParent() instanceof JetClassBody

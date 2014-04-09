@@ -42,7 +42,7 @@ public class DeclarationUtils {
     }
 
     public static boolean checkSplitProperty(@NotNull JetProperty property) {
-        return property.getInitializer() != null && property.isLocal();
+        return property.hasInitializer() && property.isLocal();
     }
 
     public static final Predicate<PsiElement> SKIP_DELIMITERS = new Predicate<PsiElement>() {
@@ -68,7 +68,7 @@ public class DeclarationUtils {
         }
 
         if (property == null) return null;
-        if (property.getInitializer() != null) return null;
+        if (property.hasInitializer()) return null;
         if (!JetPsiUtil.isOrdinaryAssignment(initializer)) return null;
 
         JetBinaryExpression assignment = (JetBinaryExpression) initializer;

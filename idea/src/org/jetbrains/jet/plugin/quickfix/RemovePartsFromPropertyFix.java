@@ -42,7 +42,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
     }
 
     private RemovePartsFromPropertyFix(@NotNull JetProperty element) {
-        this(element, element.getInitializer() != null,
+        this(element, element.hasInitializer(),
              element.getGetter() != null && element.getGetter().getBodyExpression() != null,
              element.getSetter() != null && element.getSetter().getBodyExpression() != null);
     }
