@@ -54,8 +54,12 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
 
-        return new PsiJetPropertyStubImpl(parentStub, StringRef.fromString(psi.getName()),
-                                          psi.isVar(), psi.isTopLevel(), ResolveSessionUtils.safeFqNameForLazyResolve(psi));
+        return new PsiJetPropertyStubImpl(
+                parentStub, StringRef.fromString(psi.getName()),
+                psi.isVar(), psi.isTopLevel(), psi.hasDelegate(),
+                psi.hasDelegateExpression(), psi.hasInitializer(),
+                ResolveSessionUtils.safeFqNameForLazyResolve(psi)
+        );
     }
 
     @Override
@@ -63,6 +67,9 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
+        dataStream.writeBoolean(stub.hasDelegate());
+        dataStream.writeBoolean(stub.hasDelegateExpression());
+        dataStream.writeBoolean(stub.hasInitializer());
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
@@ -74,11 +81,14 @@ public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStu
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
+        boolean hasDelegate = dataStream.readBoolean();
+        boolean hasDelegateExpression = dataStream.readBoolean();
+        boolean hasInitializer = dataStream.readBoolean();
 
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, fqName);
+        return new PsiJetPropertyStubImpl(parentStub, name, isVar, isTopLevel, hasDelegate, hasDelegateExpression, hasInitializer, fqName);
     }
 
     @Override

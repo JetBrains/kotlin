@@ -29,18 +29,36 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     private final StringRef name;
     private final boolean isVar;
     private final boolean isTopLevel;
+    private final boolean hasDelegate;
+    private final boolean hasDelegateExpression;
+    private final boolean hasInitializer;
     private final FqName fqName;
 
-    public PsiJetPropertyStubImpl( StubElement parent, StringRef name, boolean isVar, boolean isTopLevel, @Nullable FqName fqName) {
+    public PsiJetPropertyStubImpl(
+            StubElement parent,
+            StringRef name,
+            boolean isVar,
+            boolean isTopLevel,
+            boolean hasDelegate,
+            boolean hasDelegateExpression,
+            boolean hasInitializer,
+            @Nullable FqName fqName
+    ) {
         super(parent, JetStubElementTypes.PROPERTY);
 
         if (isTopLevel && fqName == null) {
             throw new IllegalArgumentException("fqName shouldn't be null for top level properties");
         }
+        if (hasDelegateExpression && !hasDelegate) {
+            throw new IllegalArgumentException("Can't have delegate expression without delegate");
+        }
 
         this.name = name;
         this.isVar = isVar;
         this.isTopLevel = isTopLevel;
+        this.hasDelegate = hasDelegate;
+        this.hasDelegateExpression = hasDelegateExpression;
+        this.hasInitializer = hasInitializer;
         this.fqName = fqName;
     }
 
@@ -52,6 +70,21 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     @Override
     public boolean isTopLevel() {
         return isTopLevel;
+    }
+
+    @Override
+    public boolean hasDelegate() {
+        return hasDelegate;
+    }
+
+    @Override
+    public boolean hasDelegateExpression() {
+        return hasDelegateExpression;
+    }
+
+    @Override
+    public boolean hasInitializer() {
+        return hasInitializer;
     }
 
     @Nullable
