@@ -69,7 +69,7 @@ public final class PsiCodegenPredictor {
         // TODO: Method won't work for declarations inside class objects
         // TODO: Method won't give correct class name for traits implementations
 
-        JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(declaration, JetDeclaration.class);
+        JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(declaration);
         if (parentDeclaration instanceof JetClassObject) {
             assert declaration instanceof JetObjectDeclaration : "Only object declarations can be children of JetClassObject: " + declaration;
             return getPredefinedJvmInternalName(parentDeclaration);
