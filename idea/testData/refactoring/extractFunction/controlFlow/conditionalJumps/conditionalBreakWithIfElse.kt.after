@@ -1,0 +1,18 @@
+// NEXT_SIBLING:
+fun b(a: Int, b: Int): Boolean {
+    if (a + b > 0) return true
+    else {
+        println(a - b)
+        if (a - b > 0) return true else println(a + b)
+    }
+    return false
+}
+
+fun foo(a: Int): Int {
+    val b: Int = 1
+    for (n in 1..a) {
+        if (b(a, b)) break
+        
+    }
+    return 1
+}

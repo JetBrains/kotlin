@@ -1,0 +1,20 @@
+// NEXT_SIBLING:
+fun unit(a: Int, b: Int) {
+    when {
+        a + b > 0 -> return
+        a - b > 0 -> return
+        else -> {
+            println(0)
+            return
+        }
+    }
+}
+
+fun foo(a: Int): Int {
+    val b: Int = 1
+    for (n in 1..a) {
+        unit(a, b)
+        break
+    }
+    return 1
+}

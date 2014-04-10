@@ -1,0 +1,16 @@
+// NEXT_SIBLING:
+fun unit(a: Int) {
+    var t = a
+    while (t > 0) {
+        if (t == 2) continue
+        println(t)
+        if (t == 1) break
+        t--
+    }
+}
+
+fun foo(a: Int) {
+    val b: Int = 1
+
+    unit(a)
+}

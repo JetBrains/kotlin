@@ -1,0 +1,20 @@
+public open class Z {
+    val z: Int = 0
+}
+
+// NEXT_SIBLING:
+fun i(a1: A, b1: A.B): Int {
+    return a1.a + b1.b + a1.z + b1.z
+}
+
+public class A(): Z() {
+    var a: Int = 1
+
+    public inner class B(): Z() {
+        var b: Int = 1
+
+        fun foo(): Int {
+            return i(this@A, this@B)
+        }
+    }
+}

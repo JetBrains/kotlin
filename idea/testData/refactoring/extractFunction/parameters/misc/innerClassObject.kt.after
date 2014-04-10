@@ -1,0 +1,23 @@
+// NEXT_SIBLING:
+fun i(): Int {
+    A.B.coFun()
+    return A.B.coProp + 10
+}
+
+class A {
+    class B {
+        fun test(): Int {
+            return i()
+        }
+
+        class object {
+            val coProp = 1
+
+            fun coFun() {
+
+            }
+        }
+    }
+}
+
+

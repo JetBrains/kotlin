@@ -17,36 +17,72 @@
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
-import com.intellij.refactoring.RefactoringActionHandler
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
-import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.jet.plugin.refactoring.extractFunction.selectElements
+import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
+import com.intellij.psi.PsiComment
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import org.jetbrains.jet.JetTestUtils
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.jet.lang.psi.JetPackageDirective
 
 public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestCase() {
+    val fixture: JavaCodeInsightTestFixture get() = myFixture
+
     protected fun doIntroduceVariableTest(path: String) {
-        doTest(path, KotlinIntroduceVariableHandler())
+        doTest(path) { file ->
+            KotlinIntroduceVariableHandler().invoke(
+                    fixture.getProject(),
+                    fixture.getEditor(),
+                    file,
+                    DataManager.getInstance().getDataContext(fixture.getEditor().getComponent())
+            )
+        }
     }
 
-    protected fun doTest(path: String, handler: RefactoringActionHandler) {
+    protected fun doExtractFunctionTest(path: String) {
+        doTest(path) { file ->
+            var explicitNextSibling: PsiElement? = null
+            file.accept(
+                    object: JetTreeVisitorVoid() {
+                        override fun visitComment(comment: PsiComment?) {
+                            if (comment?.getText() == "// NEXT_SIBLING:") {
+                                explicitNextSibling = PsiTreeUtil.skipSiblingsForward(
+                                        comment,
+                                        javaClass<PsiWhiteSpace>(),
+                                        javaClass<PsiComment>(),
+                                        javaClass<JetPackageDirective>()
+                                )
+                            }
+                        }
+                    }
+            )
+
+            val editor = fixture.getEditor()
+            selectElements(editor, file) { (elements, nextSibling) ->
+                ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitNextSibling ?: nextSibling)
+            }
+        }
+    }
+
+    protected fun doTest(path: String, action: (JetFile) -> Unit) {
         val mainFile = File(path)
         val afterFile = File("$path.after")
         val conflictFile = File("$path.conflicts")
 
-        myFixture.setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/${mainFile.getParent()}")
+        fixture.setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/${mainFile.getParent()}")
 
-        val file = myFixture.configureByFile(mainFile.getName()) as JetFile
+        val file = fixture.configureByFile(mainFile.getName()) as JetFile
 
         try {
-            handler.invoke(
-                    getProject(),
-                    myFixture.getEditor(),
-                    file,
-                    DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent())
-            )
+            action(file)
 
             assert(!conflictFile.exists())
             JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)

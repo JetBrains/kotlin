@@ -565,6 +565,7 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetExtractionTest>()) {
             model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
+            model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
         }
     }
 

@@ -1,0 +1,22 @@
+// NEXT_SIBLING:
+fun i(a: Int, b: Int): Int {
+    var b1 = b
+    when {
+        a > 0 -> {
+            b1 = b1 + 1
+        }
+        a < 0 -> {
+            b1 = b1 - 1
+        }
+    }
+    println(b1)
+    return b1
+}
+
+fun foo(a: Int): Int {
+    var b: Int = 1
+
+    b = i(a, b)
+
+    return b
+}
