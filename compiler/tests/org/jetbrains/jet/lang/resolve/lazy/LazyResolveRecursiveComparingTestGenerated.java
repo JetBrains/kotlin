@@ -744,6 +744,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/enum/enumVisibility.kt");
             }
             
+            @TestMetadata("enumWithConstuctor.kt")
+            public void testEnumWithConstuctor() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
+            }
+            
             @TestMetadata("innerEnum.kt")
             public void testInnerEnum() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");

@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class JetInitializerList extends JetElementImplStub<PsiJetPlaceHolderStub<JetInitializerList>> {
@@ -41,6 +42,6 @@ public class JetInitializerList extends JetElementImplStub<PsiJetPlaceHolderStub
 
     @NotNull
     public List<JetDelegationSpecifier> getInitializers() {
-        return PsiTreeUtil.getChildrenOfTypeAsList(this, JetDelegationSpecifier.class);
+        return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.DELEGATION_SPECIFIER_TYPES, JetDelegationSpecifier.ARRAY_FACTORY));
     }
 }

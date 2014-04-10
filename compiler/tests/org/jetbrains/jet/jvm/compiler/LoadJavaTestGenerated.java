@@ -2266,6 +2266,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/enum/enumVisibility.kt");
             }
             
+            @TestMetadata("enumWithConstuctor.kt")
+            public void testEnumWithConstuctor() throws Exception {
+                doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/enum/enumWithConstuctor.kt");
+            }
+            
             @TestMetadata("innerEnum.kt")
             public void testInnerEnum() throws Exception {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/enum/innerEnum.kt");
