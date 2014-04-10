@@ -1,3 +1,3 @@
 package test
 
-fun varargInt(a: Int, vararg b: Int) = 1
+fun varargInt(a: Int, vararg b: Int): Int = 1

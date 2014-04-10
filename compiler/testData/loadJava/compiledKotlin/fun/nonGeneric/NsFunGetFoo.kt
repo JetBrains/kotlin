@@ -1,3 +1,3 @@
 package test
 
-fun getFoo() = 1
+fun getFoo(): Int = 1

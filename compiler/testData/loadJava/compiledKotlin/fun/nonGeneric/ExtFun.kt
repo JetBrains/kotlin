@@ -1,3 +1,3 @@
 package test
 
-fun Int.shuffle() = 1
+fun Int.shuffle(): Int = 1

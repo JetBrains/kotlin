@@ -1,13 +1,13 @@
 package test
 
 class ClassVal() {
-    var property1 = 1
+    var property1: Int = 1
       set
 
-    var property2 = Object()
+    var property2: Object = Object()
       protected set
 
-    var property3 = Object()
+    var property3: Object = Object()
       private set
 
     protected var property4: String = ""

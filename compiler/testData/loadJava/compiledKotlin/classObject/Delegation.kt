@@ -5,7 +5,7 @@ trait T {
 }
 
 class A : T {
-    override fun foo() = 42
+    override fun foo(): Int = 42
 
     class object : T by A()
 }

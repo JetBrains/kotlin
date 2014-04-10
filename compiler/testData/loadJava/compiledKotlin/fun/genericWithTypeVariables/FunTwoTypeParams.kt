@@ -1,3 +1,3 @@
 package test
 
-fun <P, Q> funTwoTypeParams() = 1
+fun <P, Q> funTwoTypeParams(): Int = 1

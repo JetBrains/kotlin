@@ -1,3 +1,3 @@
 package test
 
-fun f() = 1
+fun f(): Int = 1

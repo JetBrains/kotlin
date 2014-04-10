@@ -1,5 +1,5 @@
 package test
 
 class River {
-    fun song() = 1
+    fun song(): Int = 1
 }

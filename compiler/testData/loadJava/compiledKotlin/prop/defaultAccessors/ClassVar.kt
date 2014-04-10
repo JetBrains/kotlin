@@ -1,11 +1,11 @@
 package test
 
 class ClassVar() {
-    var property1 = 1
+    var property1: Int = 1
 
-    internal var property2 = 1
+    internal var property2: Int = 1
 
-    private var property3 = Object()
+    private var property3: Object = Object()
 
     protected var property4: String = ""
 

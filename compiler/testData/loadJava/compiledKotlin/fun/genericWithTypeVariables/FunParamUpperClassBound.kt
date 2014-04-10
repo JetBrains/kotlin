@@ -1,3 +1,3 @@
 package test
 
-fun <A : java.lang.Number> uno() = 1
+fun <A : java.lang.Number> uno(): Int = 1

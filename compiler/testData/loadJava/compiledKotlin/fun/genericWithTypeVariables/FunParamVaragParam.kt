@@ -1,3 +1,3 @@
 package test
 
-fun <P> funParamVarargParam(a: Int, vararg b: P) = 1
+fun <P> funParamVarargParam(a: Int, vararg b: P): Int = 1
