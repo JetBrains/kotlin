@@ -1,0 +1,4 @@
+fun f(list: List<String>) {
+    val i = 1 + 2
+    val value = list[i]
+}

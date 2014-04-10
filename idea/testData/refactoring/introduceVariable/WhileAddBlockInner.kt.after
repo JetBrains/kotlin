@@ -1,0 +1,8 @@
+open class A() {
+    {
+        while (true) {
+            val i = 1
+            println(i)
+        }
+    }
+}

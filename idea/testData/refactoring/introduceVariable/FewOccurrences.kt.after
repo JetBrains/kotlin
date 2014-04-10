@@ -1,0 +1,6 @@
+fun a() {
+    val i = 1
+    i
+    i
+    if (true) i
+}

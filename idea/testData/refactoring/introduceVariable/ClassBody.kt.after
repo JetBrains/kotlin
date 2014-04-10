@@ -1,0 +1,4 @@
+open class A {
+    val i = 1
+    val x = i
+}

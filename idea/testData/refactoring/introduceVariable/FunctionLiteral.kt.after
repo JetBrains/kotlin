@@ -1,0 +1,4 @@
+fun foo(c : Collection<String>){
+    val function = { it; false }
+    c.filter(function)
+}

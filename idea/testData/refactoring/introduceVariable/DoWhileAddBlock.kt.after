@@ -1,0 +1,7 @@
+open class A() {
+    {
+        do {
+            val i = 1
+        } while (true)
+    }
+}

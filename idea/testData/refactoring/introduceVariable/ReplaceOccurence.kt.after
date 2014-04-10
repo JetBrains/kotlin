@@ -1,0 +1,5 @@
+fun a(x: Int) {}
+fun b() {
+    val i = 1
+    a(i)
+}

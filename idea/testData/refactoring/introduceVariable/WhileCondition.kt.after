@@ -1,0 +1,4 @@
+fun a() {
+    val b = true
+    while (b) {}
+}

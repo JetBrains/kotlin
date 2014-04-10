@@ -1,0 +1,6 @@
+fun a() {
+    if (true) {
+        val i = 1
+        println(i)
+    } else 2
+}

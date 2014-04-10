@@ -17,16 +17,14 @@
 package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
 import java.io.File
-import junit.framework.TestCase
-import kotlin.test.assertEquals
+import org.jetbrains.jet.JetTestUtils
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 
 public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestCase() {
     protected fun doIntroduceVariableTest(path: String) {
@@ -35,33 +33,27 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
 
     protected fun doTest(path: String, handler: RefactoringActionHandler) {
         val mainFile = File(path)
+        val afterFile = File("$path.after")
+        val conflictFile = File("$path.conflicts")
 
         myFixture.setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/${mainFile.getParent()}")
 
         val file = myFixture.configureByFile(mainFile.getName()) as JetFile
 
-        val lastChild = file.getLastChild()
-        assert(lastChild != null)
+        try {
+            handler.invoke(
+                    getProject(),
+                    myFixture.getEditor(),
+                    file,
+                    DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent())
+            )
 
-        val expectedResultText = 
-                when (lastChild!!.getNode()!!.getElementType()) {
-                    JetTokens.BLOCK_COMMENT -> {
-                        val lastChildText = lastChild.getText()
-                        lastChildText!!.substring(2, lastChildText.length() - 2).trim()
-                    }
-                    
-                    JetTokens.EOL_COMMENT -> {
-                        lastChild.getText()!!.substring(2).trim()
-                    }
-                    
-                    else -> null
-                }
-        assert(expectedResultText != null)
-
-        handler.invoke(
-                getProject(), myFixture.getEditor(), file, DataManager.getInstance().getDataContext(myFixture.getEditor().getComponent()))
-
-        val endOffset = file.getLastChild()!!.getTextRange()!!.getStartOffset()
-        assertEquals(expectedResultText, file.getText()!!.substring(0, endOffset).trim())
+            assert(!conflictFile.exists())
+            JetTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
+        }
+        catch(e: Exception) {
+            val message = if (e is ConflictsInTestsException) e.getMessages().sort().makeString(" ") else e.getMessage()
+            JetTestUtils.assertEqualsToFile(conflictFile, message?.replace("\n", " ") ?: e.javaClass.getName())
+        }
     }
 }
