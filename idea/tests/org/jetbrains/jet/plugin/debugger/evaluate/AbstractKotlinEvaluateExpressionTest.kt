@@ -77,12 +77,12 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     private fun SuspendContextImpl.evaluate(expression: String, expectedResult: String) {
         try {
             val sourcePosition = ContextUtil.getSourcePosition(this)
-            val contextElement = sourcePosition?.getElementAt()
-            Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement?.getText()}",
+            val contextElement = sourcePosition?.getElementAt()!!
+            Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
                               KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
             val evaluator = DebuggerInvocationUtil.commitAndRunReadAction(getProject()) {
-                EvaluatorBuilderImpl.build(TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression, "", JetFileType.INSTANCE),
+                EvaluatorBuilderImpl.build(TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression, KotlinEditorTextProvider.getImports(contextElement), JetFileType.INSTANCE),
                                            contextElement,
                                            sourcePosition)
             }

@@ -33,7 +33,11 @@ import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        return JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), context)
+        val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), context)
+        if (item.getImports().isNotEmpty()) {
+            codeFragment.addImportsFromString(item.getImports())
+        }
+        return codeFragment
     }
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {

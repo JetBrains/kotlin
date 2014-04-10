@@ -23,14 +23,29 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Pair
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
+import com.intellij.openapi.fileTypes.FileType
+import org.jetbrains.jet.plugin.JetFileType
+import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
 
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
-        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, elementAtCaret.getText())
+        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, elementAtCaret.getText(), getImports(elementAtCaret), JetFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
         return Pair(elementAtCaret, elementAtCaret.getTextRange())
+    }
+
+    class object {
+        fun getImports(elementAtCaret: PsiElement): String {
+            val containingFile = elementAtCaret.getContainingFile()
+            if (containingFile !is JetFile) return ""
+
+            return containingFile.getImportList()?.getImports()
+                                    ?.map { it.getText() }
+                                    ?.makeString(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR) ?: ""
+        }
     }
 }
 

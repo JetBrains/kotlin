@@ -50,10 +50,27 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import java.io.File
+import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import org.jetbrains.jet.OutputFileCollection
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
+        if (codeFragment !is JetExpressionCodeFragment) {
+            return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
+        }
+
+        val elementAt = position?.getElementAt()
+        if (elementAt != null) {
+            codeFragment.addImportsFromString(KotlinEditorTextProvider.getImports(elementAt))
+
+            val packageName = (elementAt.getContainingFile() as JetFile).getPackageDirective()?.getFqName()?.asString()
+            if (packageName != null) {
+                codeFragment.addImportsFromString("import $packageName.*")
+            }
+        }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment))
     }
 }
@@ -62,10 +79,11 @@ class KotlinEvaluator(val codeFragment: PsiElement) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
         return ApplicationManager.getApplication()?.runReadAction(object: Computable<Any> {
             override fun compute(): Any? {
-                val fileText = template.replace("!EXPRESSION!", codeFragment.getText())
-                val virtualFile = LightVirtualFile("debugFile.kt", JetLanguage.INSTANCE, fileText)
-                virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
-                val file = (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl).trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+                if (codeFragment !is JetExpressionCodeFragment) {
+                    throw AssertionError("KotlinEvaluator should be invoke only for KotlinCodeFragment")
+                }
+
+                val file = createFileForDebugger(codeFragment)
 
                 val analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                         file.getProject(),
@@ -80,7 +98,7 @@ class KotlinEvaluator(val codeFragment: PsiElement) : Evaluator {
                     AnalyzingUtils.throwExceptionOnErrors(bindingContext)
                 }
                 catch (e: IllegalStateException) {
-                    throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
+                    exception(e.getMessage() ?: "Exception from kotlin compiler")
                 }
 
                 val state = GenerationState(
@@ -146,9 +164,24 @@ class KotlinEvaluator(val codeFragment: PsiElement) : Evaluator {
 private val template = """
 package packageForDebugger
 
+!IMPORT_LIST!
+
 fun debugFun() = run {
     !EXPRESSION!
 }
 """
 
 private val packageInternalName = PackageClassUtils.getPackageClassFqName(FqName("packageForDebugger")).asString().replace(".", "/")
+
+private fun createFileForDebugger(codeFragment: JetExpressionCodeFragment): JetFile {
+    var fileText = template.replace("!EXPRESSION!", codeFragment.getText())
+    fileText = fileText.replace("!IMPORT_LIST!",
+                                codeFragment.importsToString()
+                                        .split(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR)
+                                        .makeString("\n"))
+
+    val virtualFile = LightVirtualFile("debugFile.kt", JetLanguage.INSTANCE, fileText)
+    virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
+    return (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl)
+                        .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+}
