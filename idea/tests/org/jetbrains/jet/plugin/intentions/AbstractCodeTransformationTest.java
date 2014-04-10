@@ -225,6 +225,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new InsertExplicitTypeArguments());
     }
 
+    public void doTestConvertAssertToIfWithThrowIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new ConvertAssertToIfWithThrowIntention());
+    }
+
     public void doTestSplitIf(@NotNull String path) throws Exception {
         doTestIntention(path, new SplitIfIntention());
     }

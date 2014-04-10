@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun foo() {
+    if (!true) {
+        throw lang.AssertionError("text")
+    }
+}
+
+class AssertionError
