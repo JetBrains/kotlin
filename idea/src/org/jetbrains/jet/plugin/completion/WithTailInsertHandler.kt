@@ -5,8 +5,9 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiDocumentManager
 
-object WithCommaInsertHandler : InsertHandler<LookupElement> {
+class WithTailInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val document = context.getDocument()
         val caretModel = context.getEditor().getCaretModel()
@@ -28,20 +29,23 @@ object WithCommaInsertHandler : InsertHandler<LookupElement> {
         }
 
         document.addDocumentListener(documentListener)
+
         item.handleInsert(context)
+        PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
+
         document.removeDocumentListener(documentListener)
 
         val moveCaret = caretModel.getOffset() == maxChangeOffset
 
-        if (maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1)) == ",") {
+        if (maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1))[0] == tailChar) {
             document.deleteString(maxChangeOffset, maxChangeOffset + 1)
 
-            if (maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1)) == " ") {
+            if (spaceAfter && maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1)) == " ") {
                 document.deleteString(maxChangeOffset, maxChangeOffset + 1)
             }
         }
 
-        val textToInsert = ", " //TODO: code style option
+        val textToInsert = if (spaceAfter) tailChar + " " else tailChar.toString()
         document.insertString(maxChangeOffset, textToInsert)
         if (moveCaret) {
             caretModel.moveToOffset(maxChangeOffset + textToInsert.length)

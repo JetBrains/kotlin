@@ -40,6 +40,7 @@ trait SmartCompletionData{
 
 enum class Tail {
   COMMA
+  PARENTHESIS
 }
 
 data class ExpectedTypeInfo(val `type`: JetType, val tail: Tail?)
@@ -175,7 +176,7 @@ private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, binding
         val parameters = candidate.getResultingDescriptor().getValueParameters()
         if (parameters.size <= argumentIndex) continue
         val parameterDescriptor = parameters[argumentIndex]
-        val tail = if (argumentIndex == parameters.size - 1) null else Tail.COMMA
+        val tail = if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
         expectedTypes.add(ExpectedTypeInfo(parameterDescriptor.getType(), tail))
     }
     return expectedTypes
@@ -493,11 +494,15 @@ private fun decorateLookupElement(lookupElement: LookupElement, tail: Tail?): Lo
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun handleInsert(context: InsertionContext) {
-                WithCommaInsertHandler.handleInsert(context, lookupElement)
+                WithTailInsertHandler(',', true /*TODO: use code style option*/).handleInsert(context, lookupElement)
             }
         }
 
-        else -> throw RuntimeException("Unknown tail type")
+        Tail.PARENTHESIS -> object: LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun handleInsert(context: InsertionContext) {
+                WithTailInsertHandler(')', false).handleInsert(context, lookupElement)
+            }
+        }
     }
 }
 

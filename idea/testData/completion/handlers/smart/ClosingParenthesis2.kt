@@ -1,7 +1,7 @@
 fun foo(s: String){ }
 
 fun bar(sss: String) {
-    foo(sss)<caret>
+    foo(<caret>)
 }
 
 //ELEMENT: sss
