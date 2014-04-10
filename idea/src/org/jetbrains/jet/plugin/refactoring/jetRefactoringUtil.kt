@@ -131,3 +131,33 @@ public inline fun JetFile.createTempCopy(textTransform: (String) -> String): Jet
     return tmpFile
 }
 
+public fun PsiElement.getAllExtractionContainers(strict: Boolean): List<JetElement> {
+    val containers = ArrayList<JetElement>()
+
+    var element: PsiElement? = if (strict) getParent() else this
+    while (element != null) {
+        when (element) {
+            is JetBlockExpression, is JetClassBody, is JetFile -> containers.add(element as JetElement)
+        }
+
+        element = element!!.getParent()
+    }
+
+    return containers
+}
+
+public fun Project.checkConflictsInteractively(conflicts: MultiMap<PsiElement, String>): Boolean {
+    if (conflicts.isEmpty()) return true
+
+    if (ApplicationManager.getApplication()!!.isUnitTestMode()) throw ConflictsInTestsException(conflicts.values())
+
+    val dialog = ConflictsDialog(this, conflicts)
+    dialog.show()
+    return dialog.isOK()
+}
+
+public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
+    CommandProcessor.getInstance()!!.executeCommand(
+            this, { ApplicationManager.getApplication()!!.runWriteAction(command) }, name, null
+    )
+}

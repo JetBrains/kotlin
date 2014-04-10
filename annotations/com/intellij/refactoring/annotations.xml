@@ -16,6 +16,14 @@
       name='com.intellij.refactoring.MultiFileTestCase.PerformAction void performAction(com.intellij.openapi.vfs.VirtualFile, com.intellij.openapi.vfs.VirtualFile) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item
+      name='com.intellij.refactoring.RefactoringActionHandler void invoke(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiFile, com.intellij.openapi.actionSystem.DataContext) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.refactoring.RefactoringActionHandler void invoke(com.intellij.openapi.project.Project, com.intellij.openapi.editor.Editor, com.intellij.psi.PsiFile, com.intellij.openapi.actionSystem.DataContext) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.refactoring.RefactoringHelper void performOperation(com.intellij.openapi.project.Project, T) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
