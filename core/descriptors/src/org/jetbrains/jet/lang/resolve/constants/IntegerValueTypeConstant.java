@@ -19,10 +19,9 @@ package org.jetbrains.jet.lang.resolve.constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
 import java.util.Collections;
 
@@ -30,8 +29,8 @@ public class IntegerValueTypeConstant extends IntegerValueConstant<Number> {
 
     private final IntegerValueTypeConstructor typeConstructor;
 
-    public IntegerValueTypeConstant(@NotNull Number value, boolean canBeUsedInAnnotations) {
-        super(value, canBeUsedInAnnotations, true);
+    public IntegerValueTypeConstant(@NotNull Number value, boolean canBeUsedInAnnotations, boolean usesVariableAsConstant) {
+        super(value, canBeUsedInAnnotations, true, usesVariableAsConstant);
         this.typeConstructor = new IntegerValueTypeConstructor(value.longValue());
     }
 

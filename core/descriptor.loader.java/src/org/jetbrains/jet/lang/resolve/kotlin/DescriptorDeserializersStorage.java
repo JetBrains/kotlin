@@ -89,7 +89,7 @@ public class DescriptorDeserializersStorage {
                 MemberSignature signature = MemberSignature.fromFieldNameAndDesc(name, desc);
                 if (initializer != null) {
                     propertyConstants.put(signature, ConstantsPackage.createCompileTimeConstant(
-                            initializer, /* canBeUsedInAnnotation */ true, /* isPureIntConstant */ true, /* expectedType */ null));
+                            initializer, /* canBeUsedInAnnotation */ true, /* isPureIntConstant */ true, /* usesVariableAsConstant */ true, /* expectedType */ null));
                 }
                 return new MemberAnnotationVisitor(signature);
             }

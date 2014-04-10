@@ -38,6 +38,7 @@ public class JavaPropertyInitializerEvaluatorImpl implements JavaPropertyInitial
                     evaluatedExpression,
                     DescriptorUtils.isPropertyCompileTimeConstant(descriptor),
                     false,
+                    true,
                     descriptor.getType());
         }
         return null;

@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class BooleanValue extends CompileTimeConstant<Boolean> {
 
-    public BooleanValue(boolean value, boolean canBeUseInAnnotation) {
-        super(value, canBeUseInAnnotation);
+    public BooleanValue(boolean value, boolean canBeUseInAnnotation, boolean usesVariableAsConstant) {
+        super(value, canBeUseInAnnotation, false, usesVariableAsConstant);
     }
 
     @NotNull

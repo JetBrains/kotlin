@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 public class AnnotationValue extends CompileTimeConstant<AnnotationDescriptor> {
     
     public AnnotationValue(@NotNull AnnotationDescriptor value) {
-        super(value, true);
+        super(value, true, false, false);
     }
 
     @NotNull

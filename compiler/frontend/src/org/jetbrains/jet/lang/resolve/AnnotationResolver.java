@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -282,11 +283,20 @@ public class AnnotationResolver {
                                                                        trace);
 
         if (argumentsAsVararg) {
+
+            boolean usesVariableAsConstant = KotlinPackage.any(constants, new Function1<CompileTimeConstant<?>, Boolean>() {
+                @Override
+                public Boolean invoke(CompileTimeConstant<?> constant) {
+                    return constant.usesVariableAsConstant();
+                }
+            });
+
             JetType arrayType = KotlinBuiltIns.getInstance().getPrimitiveArrayJetTypeByPrimitiveJetType(varargElementType);
             if (arrayType == null) {
                 arrayType = KotlinBuiltIns.getInstance().getArrayType(varargElementType);
             }
-            return new ArrayValue(constants, arrayType, true);
+
+            return new ArrayValue(constants, arrayType, true, usesVariableAsConstant);
         }
         else {
             // we should actually get only one element, but just in case of getting many, we take the last one

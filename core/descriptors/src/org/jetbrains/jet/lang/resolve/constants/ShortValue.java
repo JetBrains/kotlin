@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 public class ShortValue extends IntegerValueConstant<Short> {
 
-    public ShortValue(short value, boolean canBeUsedInAnnotations, boolean pure) {
-        super(value, canBeUsedInAnnotations, pure);
+    public ShortValue(short value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
+        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
     }
 
     @NotNull

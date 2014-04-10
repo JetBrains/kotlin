@@ -23,8 +23,8 @@ import org.jetbrains.jet.lang.types.JetType;
 
 public class CharValue extends IntegerValueConstant<Character> {
 
-    public CharValue(char value, boolean canBeUsedInAnnotations, boolean pure) {
-        super(value, canBeUsedInAnnotations, pure);
+    public CharValue(char value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
+        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
     }
 
     @NotNull
