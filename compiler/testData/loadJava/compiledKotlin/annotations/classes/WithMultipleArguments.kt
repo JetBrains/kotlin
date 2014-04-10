@@ -1,3 +1,4 @@
+//ALLOW_AST_ACCESS
 package test
 
 annotation class Anno(val int: Int, val string: String, val double: Double)

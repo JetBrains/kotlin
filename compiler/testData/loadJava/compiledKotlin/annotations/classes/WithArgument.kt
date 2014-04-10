@@ -1,3 +1,4 @@
+//ALLOW_AST_ACCESS
 package test
 
 annotation class IntAnno(val value: Int)
