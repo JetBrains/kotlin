@@ -21,8 +21,8 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
@@ -33,12 +33,17 @@ import java.util.Collection;
 public class JetNameValidatorImpl extends JetNameValidator {
     private final PsiElement myContainer;
     private final PsiElement myAnchor;
-    private BindingContext myBindingContext;
+    private final boolean myOnlyVariables;
 
-    public JetNameValidatorImpl(PsiElement container, PsiElement anchor) {
+    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, boolean onlyVariables) {
         super(container.getProject());
         myContainer = container;
         myAnchor = anchor;
+        myOnlyVariables = onlyVariables;
+    }
+
+    public JetNameValidatorImpl(PsiElement container, PsiElement anchor) {
+        this(container, anchor, true);
     }
 
     @Override
@@ -63,9 +68,10 @@ public class JetNameValidatorImpl extends JetNameValidator {
     }
 
     private boolean checkElement(final String name, PsiElement sibling) {
-        if (myBindingContext == null) {
-            myBindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) myContainer.getContainingFile()).getBindingContext();
-        }
+        if (!(sibling instanceof JetElement)) return true;
+
+        final BindingContext bindingContext  = AnalyzerFacadeWithCache.getContextForElement((JetElement) sibling);
+
         final Ref<Boolean> result = new Ref<Boolean>(true);
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
@@ -77,10 +83,9 @@ public class JetNameValidatorImpl extends JetNameValidator {
 
             @Override
             public void visitExpression(@NotNull JetExpression expression) {
-                Collection<DeclarationDescriptor> variants =
-                        TipsManager.getVariantsNoReceiver(expression, myBindingContext);
+                Collection<DeclarationDescriptor> variants = TipsManager.getVariantsNoReceiver(expression, bindingContext);
                 for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().asString().equals(name) && variant instanceof VariableDescriptor) {
+                    if (variant.getName().asString().equals(name) && (!myOnlyVariables || variant instanceof VariableDescriptor)) {
                         result.set(false);
                         return;
                     }
