@@ -470,8 +470,11 @@ public class DescriptorUtils {
                containing instanceof ClassDescriptor && isTopLevelOrInnerClass((ClassDescriptor) containing);
     }
 
-    // This method works correctly because every fake override has a declaration among its ancestors, and no fake override is allowed
-    // to have two different declarations among its ancestors, none of which is an ancestor of the other
+    /**
+     * Given a fake override, finds any declaration of it in the overridden descriptors. Keep in mind that there may be many declarations
+     * of the fake override in the supertypes, this method finds just the only one.
+     * TODO: probably all call-sites of this method are wrong, they should handle all super-declarations
+     */
     @NotNull
     public static <D extends CallableMemberDescriptor> D unwrapFakeOverride(@NotNull D descriptor) {
         while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
