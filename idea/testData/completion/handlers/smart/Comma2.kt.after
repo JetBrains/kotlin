@@ -1,0 +1,7 @@
+fun foo(s: String, i: Int){ }
+
+fun bar(sss: String) {
+    foo(sss, <caret>)
+}
+
+//ELEMENT: sss

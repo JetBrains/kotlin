@@ -15,27 +15,14 @@ import com.google.common.collect.SetMultimap
 import java.util.*
 import org.jetbrains.jet.lang.resolve.calls.autocasts.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.eclipse.jdt.internal.compiler.ast.TypeDeclaration
-import org.eclipse.jdt.internal.compiler.ast.MethodDeclaration
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPropertyDescriptor
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiModifier
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.openapi.editor.EditorModificationUtil
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.utils.*
 import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.jet.lang.resolve.calls.context.SimpleResolutionContext
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.jet.lang.resolve.calls.CompositeExtension
@@ -47,9 +34,15 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import com.intellij.lang.ASTNode
 
 trait SmartCompletionData{
-    fun accepts(descriptor: DeclarationDescriptor): Boolean
+    fun toElement(descriptor: DeclarationDescriptor): LookupElement?
     val additionalElements: Iterable<LookupElement>
 }
+
+enum class Tail {
+  COMMA
+}
+
+data class ExpectedTypeInfo(val `type`: JetType, val tail: Tail?)
 
 fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession: ResolveSessionForBodies): SmartCompletionData? {
     val parent = expression.getParent()
@@ -67,7 +60,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     val bindingContext = resolveSession.resolveToElement(expressionWithType)
 
     val allExpectedTypes = calcExpectedTypes(expressionWithType, bindingContext, resolveSession.getModuleDescriptor()) ?: return null
-    val expectedTypes = allExpectedTypes.filter { !it.isError() }
+    val expectedTypes = allExpectedTypes.filter { !it.`type`.isError() }
     if (expectedTypes.isEmpty()) return null
 
     val itemsToSkip = calcItemsToSkip(expressionWithType, resolveSession)
@@ -86,7 +79,7 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
         thisItems(expressionWithType, expectedTypes, bindingContext).toCollection(additionalElements)
     }
 
-    val dataFlowInfo = bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType)
+    val dataFlowInfo = bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType]
     val (variableToTypes: Map<VariableDescriptor, Collection<JetType>>, notNullVariables: Set<VariableDescriptor>) = processDataFlowInfo(dataFlowInfo, receiver, bindingContext)
 
     fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
@@ -116,28 +109,30 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     }
 
     return object: SmartCompletionData {
-        override fun accepts(descriptor: DeclarationDescriptor)
-                = !itemsToSkip.contains(descriptor)
-                      && typesOf(descriptor).any {
-                          descriptorType -> expectedTypes.any { expectedType -> isSubtypeOf(descriptorType, expectedType) }
-                         }
+        override fun toElement(descriptor: DeclarationDescriptor): LookupElement? {
+            if (itemsToSkip.contains(descriptor)) return null
+            val matchedExpectedTypes = expectedTypes.filter { expectedType -> typesOf(descriptor).any { descriptorType -> isSubtypeOf(descriptorType, expectedType.`type`) } }
+            if (matchedExpectedTypes.isEmpty()) return null
+            val tail = mergeTails(matchedExpectedTypes.map { it.tail })
+            return decorateLookupElement(DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor), tail)
+        }
 
         override val additionalElements = additionalElements
     }
 }
 
-private fun calcExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<JetType>? {
+private fun calcExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<ExpectedTypeInfo>? {
     val expectedTypes = calcArgumentExpectedTypes(expressionWithType, bindingContext, moduleDescriptor)
     if (expectedTypes != null) {
         return expectedTypes
     }
     else{
-        val expectedType = bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType) ?: return null
-        return listOf(expectedType)
+        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
+        return listOf(ExpectedTypeInfo(expectedType, null))
     }
 }
 
-private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<JetType>? {
+private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, bindingContext: BindingContext, moduleDescriptor: ModuleDescriptor): Collection<ExpectedTypeInfo>? {
     val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
     if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
     val argumentList = argument.getParent() as JetValueArgumentList
@@ -150,7 +145,7 @@ private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, binding
     val callOperationNode: ASTNode?
     if (parent is JetQualifiedExpression && callExpression == parent.getSelectorExpression()) {
         val receiverExpression = parent.getReceiverExpression()
-        val expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiverExpression) ?: return null
+        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, receiverExpression] ?: return null
         receiver = ExpressionReceiver(receiverExpression, expressionType)
         callOperationNode = parent.getOperationTokenNode()
     }
@@ -160,14 +155,14 @@ private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, binding
     }
     val call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
 
-    val resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, calleeExpression) ?: return null //TODO: discuss it
+    val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
     val callResolutionContext = BasicCallResolutionContext.create(
             DelegatingBindingTrace(bindingContext, "Temporary trace for smart completion"),
             resolutionScope,
             call,
-            bindingContext.get(BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression) ?: TypeUtils.NO_EXPECTED_TYPE,
-            bindingContext.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression) ?: DataFlowInfo.EMPTY,
+            bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE,
+            bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, callExpression] ?: DataFlowInfo.EMPTY,
             ContextDependency.INDEPENDENT,
             CheckValueArgumentsMode.ENABLED,
             CompositeExtension(listOf()),
@@ -175,12 +170,13 @@ private fun calcArgumentExpectedTypes(expressionWithType: JetExpression, binding
     val callResolver = InjectorForMacros(expressionWithType.getProject(), moduleDescriptor).getCallResolver()!!
     val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-    val expectedTypes = HashSet<JetType>()
+    val expectedTypes = HashSet<ExpectedTypeInfo>()
     for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
         val parameters = candidate.getResultingDescriptor().getValueParameters()
         if (parameters.size <= argumentIndex) continue
         val parameterDescriptor = parameters[argumentIndex]
-        expectedTypes.add(parameterDescriptor.getType())
+        val tail = if (argumentIndex == parameters.size - 1) null else Tail.COMMA
+        expectedTypes.add(ExpectedTypeInfo(parameterDescriptor.getType(), tail))
     }
     return expectedTypes
 }
@@ -191,7 +187,7 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSe
         is JetProperty -> {
             //TODO: this can be filtered out by ordinary completion
             if (expression == parent.getInitializer()) {
-                return resolveSession.resolveToElement(parent).get(BindingContext.DECLARATION_TO_DESCRIPTOR, parent).toList()
+                return resolveSession.resolveToElement(parent)[BindingContext.DECLARATION_TO_DESCRIPTOR, parent].toList()
             }
         }
 
@@ -199,7 +195,7 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSe
             if (parent.getRight() == expression && parent.getOperationToken() == JetTokens.EQ) {
                 val left = parent.getLeft()
                 if (left is JetReferenceExpression) {
-                    return resolveSession.resolveToElement(left).get(BindingContext.REFERENCE_TARGET, left).toList()
+                    return resolveSession.resolveToElement(left)[BindingContext.REFERENCE_TARGET, left].toList()
                 }
             }
         }
@@ -207,8 +203,8 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSe
     return listOf()
 }
 
-private fun typeInstantiationItems(expectedType: JetType, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
-    val typeConstructor: TypeConstructor = expectedType.getConstructor()
+private fun typeInstantiationItems(expectedType: ExpectedTypeInfo, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
+    val typeConstructor: TypeConstructor = expectedType.`type`.getConstructor()
     val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
     if (!(classifier is ClassDescriptor)) return listOf()
 
@@ -218,7 +214,7 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Resolv
 
     var lookupString = lookupElement.getLookupString()
 
-    val typeArgs = expectedType.getArguments()
+    val typeArgs = expectedType.`type`.getArguments()
     var itemText = lookupString + DescriptorRenderer.TEXT.renderTypeArguments(typeArgs)
 
     val insertHandler: InsertHandler<LookupElement>
@@ -289,16 +285,18 @@ private fun typeInstantiationItems(expectedType: JetType, resolveSession: Resolv
         }
     }
 
+    val lookupElementWithTail = decorateLookupElement(lookupElementDecorated, expectedType.tail)
+
     if (suppressAutoInsertion) {
-        return listOf(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementDecorated))
+        return listOf(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementWithTail))
     }
     else{
-        return listOf(lookupElementDecorated)
+        return listOf(lookupElementWithTail)
     }
 }
 
-private fun thisItems(context: JetExpression, expectedTypes: Collection<JetType>, bindingContext: BindingContext): Iterable<LookupElement> {
-    val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, context)
+private fun thisItems(context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>, bindingContext: BindingContext): Iterable<LookupElement> {
+    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
     if (scope == null) return listOf()
 
     val receivers: List<ReceiverParameterDescriptor> = scope.getImplicitReceiversHierarchy()
@@ -306,12 +304,15 @@ private fun thisItems(context: JetExpression, expectedTypes: Collection<JetType>
     for (i in 0..receivers.size - 1) {
         val receiver = receivers[i]
         val thisType = receiver.getType()
-        if (expectedTypes.any { isSubtypeOf(thisType, it) }) {
+        val matchedExpectedTypes = expectedTypes.filter { isSubtypeOf(thisType, it.`type`) }
+        if (matchedExpectedTypes.notEmpty) {
             //TODO: use this code when KT-4258 fixed
             //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
             val qualifier = if (i == 0) null else thisQualifierName(receiver, bindingContext) ?: continue
             val expressionText = if (qualifier == null) "this" else "this@" + qualifier
-            result.add(LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.TEXT.renderType(thisType)))
+            val lookupElement = LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.TEXT.renderType(thisType))
+            val tailType = mergeTails(matchedExpectedTypes.map { it.tail })
+            result.add(decorateLookupElement(lookupElement, tailType))
         }
     }
     return result
@@ -344,7 +345,7 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
     if (dataFlowInfo != null) {
         val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
         if (receiver != null) {
-            val receiverType = bindingContext.get(BindingContext.EXPRESSION_TYPE, receiver)
+            val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
             if (receiverType != null) {
                 val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
                 dataFlowValueToVariable = {(value) ->
@@ -371,7 +372,7 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
 
         val nullabilityInfo: Map<DataFlowValue, Nullability> = dataFlowInfo.getCompleteNullabilityInfo()
         val notNullVariables = nullabilityInfo
-                .filter_tmp { it.getValue() == Nullability.NOT_NULL }
+                .filter { it.getValue() == Nullability.NOT_NULL }
                 .map { dataFlowValueToVariable(it.getKey()) }
                 .filterNotNullTo(HashSet<VariableDescriptor>())
 
@@ -382,17 +383,17 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
 }
 
 // adds java static members, enum members and members from class object
-private fun staticMembers(context: JetExpression, expectedType: JetType, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
-    val classDescriptor = TypeUtils.getClassDescriptor(expectedType)
+private fun staticMembers(context: JetExpression, expectedType: ExpectedTypeInfo, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
+    val classDescriptor = TypeUtils.getClassDescriptor(expectedType.`type`)
     if (classDescriptor == null) return listOf()
     if (classDescriptor.getName().isSpecial()) return listOf()
-    val scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, context)
+    val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
     if (scope == null) return listOf()
 
     val descriptors = ArrayList<DeclarationDescriptor>()
 
     val isSuitableCallable: (DeclarationDescriptor) -> Boolean = {
-        it is CallableDescriptor && it.getReturnType()?.let { isSubtypeOf(it, expectedType) } ?: false
+        it is CallableDescriptor && it.getReturnType()?.let { isSubtypeOf(it, expectedType.`type`) } ?: false
     }
 
     if (classDescriptor is JavaClassDescriptor) {
@@ -447,7 +448,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
             }
         }
 
-        return object: LookupElementDecorator<LookupElement>(lookupElement){
+        val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
             override fun renderElement(presentation: LookupElementPresentation) {
@@ -459,7 +460,7 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                 if (descriptor is FunctionDescriptor) {
                     presentation.appendTailText(tailText, true)
                 }
-                else{
+                else {
                     presentation.setTailText(tailText, true)
                 }
 
@@ -472,11 +473,32 @@ private fun staticMembers(context: JetExpression, expectedType: JetType, resolve
                 insertHandler.handleInsert(context, lookupElement)
             }
         }
+
+        return decorateLookupElement(lookupElementDecorated, expectedType.tail)
     }
 
     return descriptors
             .filter { !(it is DeclarationDescriptorWithVisibility) || Visibilities.isVisible(it, scope.getContainingDeclaration()) }
-            .map({toLookupElement(it)}) //TODO: use ::toLookupElement but it causes compiler to crash
+            .map(::toLookupElement)
+}
+
+private fun mergeTails(tails: Collection<Tail?>): Tail? {
+    if (tails.size == 1) return tails.single()
+    return if (HashSet(tails).size == 1) tails.first() else null
+}
+
+private fun decorateLookupElement(lookupElement: LookupElement, tail: Tail?): LookupElement {
+    return when (tail) {
+        null -> lookupElement
+
+        Tail.COMMA -> object: LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun handleInsert(context: InsertionContext) {
+                WithCommaInsertHandler.handleInsert(context, lookupElement)
+            }
+        }
+
+        else -> throw RuntimeException("Unknown tail type")
+    }
 }
 
 private fun isSubtypeOf(t: JetType, expectedType: JetType): Boolean{

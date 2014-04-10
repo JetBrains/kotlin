@@ -66,6 +66,51 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/ClassObjectMethod2.kt");
     }
     
+    @TestMetadata("Comma1.kt")
+    public void testComma1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma1.kt");
+    }
+    
+    @TestMetadata("Comma2.kt")
+    public void testComma2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma2.kt");
+    }
+    
+    @TestMetadata("Comma3.kt")
+    public void testComma3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma3.kt");
+    }
+    
+    @TestMetadata("Comma4.kt")
+    public void testComma4() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma4.kt");
+    }
+    
+    @TestMetadata("Comma5.kt")
+    public void testComma5() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma5.kt");
+    }
+    
+    @TestMetadata("Comma6.kt")
+    public void testComma6() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma6.kt");
+    }
+    
+    @TestMetadata("Comma7.kt")
+    public void testComma7() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma7.kt");
+    }
+    
+    @TestMetadata("Comma8.kt")
+    public void testComma8() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma8.kt");
+    }
+    
+    @TestMetadata("Comma9.kt")
+    public void testComma9() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/Comma9.kt");
+    }
+    
     @TestMetadata("Constructor.kt")
     public void testConstructor() throws Exception {
         doTest("idea/testData/completion/handlers/smart/Constructor.kt");
@@ -129,6 +174,16 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("JavaStaticMethodInsertsImport.kt")
     public void testJavaStaticMethodInsertsImport() throws Exception {
         doTest("idea/testData/completion/handlers/smart/JavaStaticMethodInsertsImport.kt");
+    }
+    
+    @TestMetadata("TabReplaceComma1.kt")
+    public void testTabReplaceComma1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceComma1.kt");
+    }
+    
+    @TestMetadata("TabReplaceComma2.kt")
+    public void testTabReplaceComma2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceComma2.kt");
     }
     
     @TestMetadata("TabReplaceExpression.kt")

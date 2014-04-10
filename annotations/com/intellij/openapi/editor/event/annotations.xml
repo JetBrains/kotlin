@@ -1,0 +1,9 @@
+<root>
+  <item
+      name='com.intellij.openapi.editor.event.DocumentListener void beforeDocumentChange(com.intellij.openapi.editor.event.DocumentEvent) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.openapi.editor.event.DocumentListener void documentChanged(com.intellij.openapi.editor.event.DocumentEvent) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

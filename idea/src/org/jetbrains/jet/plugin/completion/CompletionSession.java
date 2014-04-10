@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.completion;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
@@ -29,6 +27,7 @@ import com.intellij.openapi.util.Conditions;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -52,6 +51,13 @@ class CompletionSession {
     private final JetCompletionResultSet jetResult;
     private final JetSimpleNameReference jetReference;
 
+    private final Condition<DeclarationDescriptor> descriptorFilter = new Condition<DeclarationDescriptor>() {
+        @Override
+        public boolean value(DeclarationDescriptor descriptor) {
+            return isVisibleDescriptor(descriptor);
+        }
+    };
+
     public CompletionSession(
             @NotNull CompletionParameters parameters,
             @NotNull CompletionResultSet result,
@@ -71,12 +77,7 @@ class CompletionSession {
         this.jetResult = new JetCompletionResultSet(
                 WeigherPackage.addJetSorting(result, parameters),
                 resolveSession,
-                expressionBindingContext, new Condition<DeclarationDescriptor>() {
-            @Override
-            public boolean value(DeclarationDescriptor descriptor) {
-                return isVisibleDescriptor(descriptor);
-            }
-        });
+                expressionBindingContext, descriptorFilter);
     }
 
     public void completeForReference() {
@@ -134,10 +135,10 @@ class CompletionSession {
 
         final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession());
         if (data != null) {
-            addReferenceVariants(new Condition<DeclarationDescriptor>() {
+            addReferenceVariants(new Function1<DeclarationDescriptor, LookupElement>() {
                 @Override
-                public boolean value(DeclarationDescriptor descriptor) {
-                    return data.accepts(descriptor);
+                public LookupElement invoke(DeclarationDescriptor descriptor) {
+                    return data.toElement(descriptor);
                 }
             });
             for (LookupElement element : data.getAdditionalElements()) {
@@ -241,17 +242,26 @@ class CompletionSession {
     }
 
     private void addReferenceVariants(@NotNull final Condition<DeclarationDescriptor> filterCondition) {
+        addReferenceVariants(new Function1<DeclarationDescriptor, LookupElement>() {
+            @Override
+            public LookupElement invoke(DeclarationDescriptor descriptor) {
+                return filterCondition.value(descriptor) ? DescriptorLookupConverter.createLookupElement(getResolveSession(), getExpressionBindingContext(), descriptor) : null;
+            }
+        });
+    }
+
+    private void addReferenceVariants(@NotNull Function1<DeclarationDescriptor, LookupElement> filter) {
         Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(
                 jetReference.getExpression(), getExpressionBindingContext());
 
-        Collection<DeclarationDescriptor> filterDescriptors = Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
-            @Override
-            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
-                return descriptor != null && filterCondition.value(descriptor);
+        for (DeclarationDescriptor descriptor : descriptors) {
+            if (descriptor != null && descriptorFilter.value(descriptor)) {
+                LookupElement element = filter.invoke(descriptor);
+                if (element != null) {
+                    jetResult.addElement(element);
+                }
             }
-        });
-
-        jetResult.addAllElements(filterDescriptors);
+        }
     }
 
     private boolean isVisibleDescriptor(DeclarationDescriptor descriptor) {
