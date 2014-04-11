@@ -68,36 +68,6 @@ public class ExpressionTypingComponents {
     }
 
     @NotNull
-    public GlobalContext getGlobalContext() {
-        return globalContext;
-    }
-
-    @NotNull
-    public ExpressionTypingServices getExpressionTypingServices() {
-        return expressionTypingServices;
-    }
-
-    @NotNull
-    public CallResolver getCallResolver() {
-        return callResolver;
-    }
-
-    @NotNull
-    public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
-        return platformToKotlinClassMap;
-    }
-
-    @NotNull
-    public ExpressionTypingUtils getExpressionTypingUtils() {
-        return expressionTypingUtils;
-    }
-
-    @NotNull
-    public ControlStructureTypingUtils getControlStructureTypingUtils() {
-        return controlStructureTypingUtils;
-    }
-
-    @NotNull
     public ForLoopConventionsChecker getForLoopConventionsChecker() {
         return forLoopConventionsChecker;
     }
