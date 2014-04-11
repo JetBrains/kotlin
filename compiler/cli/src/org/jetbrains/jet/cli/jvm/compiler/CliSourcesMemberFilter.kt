@@ -18,15 +18,16 @@ package org.jetbrains.jet.cli.jvm.compiler
 
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf
-import org.jetbrains.jet.codegen.PackageCodegen.getPackagePartInternalName
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils.getPackagePartInternalName
 import org.jetbrains.jet.descriptors.serialization.NameResolver
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import org.jetbrains.jet.codegen.AsmUtil
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 
 public class CliSourcesMemberFilter(environment: JetCoreEnvironment): MemberFilter {
-    val packagePartClassNames = environment.getSourceFiles().map { getPackagePartInternalName(it) }.toSet()
+    val packagePartClassNames = environment.getSourceFiles().map { PackagePartClassUtils.getPackagePartInternalName(it) }.toSet()
 
     override fun acceptPackagePartClass(container: PackageFragmentDescriptor, member: ProtoBuf.Callable, nameResolver: NameResolver): Boolean {
         if (member.hasExtension(JavaProtoBuf.implClassName)) {

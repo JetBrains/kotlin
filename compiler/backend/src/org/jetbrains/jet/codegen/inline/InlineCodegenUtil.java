@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
@@ -33,11 +32,13 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -154,9 +155,7 @@ public class InlineCodegenUtil {
                 assert codegenContext instanceof PackageContext : "Expected package context but " + codegenContext;
                 packagePartType = ((PackageContext) codegenContext).getPackagePartType();
             } else {
-                packagePartType =
-                        PackageCodegen.getPackagePartType(PackageClassUtils.getPackageClassFqName(getFqName(currentDescriptor).toSafe()),
-                                                          file.getVirtualFile());
+                packagePartType = PackagePartClassUtils.getPackagePartType((JetFile) file);
             }
 
             if (packagePartType == null) {

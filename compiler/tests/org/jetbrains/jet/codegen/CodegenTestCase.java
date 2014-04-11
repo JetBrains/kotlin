@@ -27,6 +27,7 @@ import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.ClassReader;
@@ -174,7 +175,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Class<?> generatePackagePartClass() {
-        String name = PackageCodegen.getPackagePartInternalName(myFiles.getPsiFile());
+        String name = PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile());
         return generateClass(name);
     }
 

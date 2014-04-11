@@ -20,10 +20,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -53,9 +51,8 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
-import org.jetbrains.jet.lang.resolve.kotlin.BaseDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -63,7 +60,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -144,7 +140,7 @@ public class PackageCodegen {
                 @Override
                 public void run() {
                     FieldOwnerContext context = CodegenContext.STATIC.intoPackageFacade(
-                            Type.getObjectType(getPackagePartInternalName(member)),
+                            AsmUtil.asmTypeByFqNameWithoutInnerClasses(PackagePartClassUtils.getPackagePartFqName(member)),
                             compiledPackageFragment
                     );
 
@@ -249,7 +245,7 @@ public class PackageCodegen {
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
         boolean generatePackagePart = false;
-        Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
+        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
         PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
@@ -335,42 +331,13 @@ public class PackageCodegen {
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetFile file = classOrObject.getContainingJetFile();
-        Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
+        JetFile file = (JetFile) classOrObject.getContainingFile();
+        Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
     }
 
     public void done() {
         v.done();
-    }
-
-    @NotNull
-    public static Type getPackagePartType(@NotNull FqName facadeFqName, @NotNull VirtualFile file) {
-        String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
-
-        // path hashCode to prevent same name / different path collision
-        String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
-                JvmCodegenUtil.getPathHashCode(file));
-
-        return asmTypeByFqNameWithoutInnerClasses(facadeFqName.parent().child(Name.identifier(srcName)));
-    }
-
-    @NotNull
-    private static String replaceSpecialSymbols(@NotNull String str) {
-        return str.replace('.', '_');
-    }
-
-    @NotNull
-    public static String getPackagePartInternalName(@NotNull JetFile file) {
-        FqName packageFqName = file.getPackageFqName();
-        return getPackagePartType(getPackageClassFqName(packageFqName), file.getVirtualFile()).getInternalName();
-    }
-
-    @NotNull
-    public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor callable) {
-        FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
-        FqName packagePartFqName = packageFqName.child(BaseDescriptorDeserializer.getPackagePartClassName(callable));
-        return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
     }
 }

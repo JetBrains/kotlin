@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.ClassBuilderFactories;
-import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -34,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -135,7 +135,7 @@ public final class PsiCodegenPredictor {
     @Nullable
     public static JetFile getFileForPackagePartName(@NotNull Collection<JetFile> allPackageFiles, @NotNull JvmClassName className) {
         for (JetFile file : allPackageFiles) {
-            String internalName = PackageCodegen.getPackagePartInternalName(file);
+            String internalName = PackagePartClassUtils.getPackagePartInternalName(file);
             JvmClassName jvmClassName = JvmClassName.byInternalName(internalName);
             if (jvmClassName.equals(className)) {
                 return file;

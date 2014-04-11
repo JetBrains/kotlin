@@ -244,13 +244,6 @@ public class JvmCodegenUtil {
         return (ImplementationBodyCodegen) classBodyCodegen.getParentCodegen();
     }
 
-    static int getPathHashCode(@NotNull VirtualFile file) {
-        // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
-        // it was introduced when fixing KT-2839, which appeared again (KT-3639).
-        // If you try to remove it, run tests on Windows.
-        return FileUtil.toSystemDependentName(file.getPath()).hashCode();
-    }
-
     @Nullable
     public static ClassDescriptor getExpectedThisObjectForConstructorCall(
             @NotNull ConstructorDescriptor descriptor,

@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
@@ -131,13 +132,14 @@ public class JetTypeMapper {
         if (insideModule) {
             JetFile file = BindingContextUtils.getContainingFile(bindingContext, descriptor);
             if (file != null) {
-                return PackageCodegen.getPackagePartInternalName(file);
+                return PackagePartClassUtils.getPackagePartInternalName(file);
             }
 
             if (descriptor instanceof DeserializedCallableMemberDescriptor && IncrementalCompilation.ENABLED) {
                 //
                 // TODO calls from other modules/libraries should use facade: KT-4590
-                return PackageCodegen.getPackagePartInternalName((DeserializedCallableMemberDescriptor) descriptor);
+                FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName((DeserializedCallableMemberDescriptor) descriptor);
+                return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
             }
         }
 

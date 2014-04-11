@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -43,7 +44,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     private Class<?> getPackageSrcClass(@NotNull ClassLoader loader) throws ClassNotFoundException {
-        return loader.loadClass(PackageCodegen.getPackagePartInternalName(myFiles.getPsiFile()));
+        return loader.loadClass(PackagePartClassUtils.getPackagePartInternalName(myFiles.getPsiFile()));
     }
 
     public void testVolatileProperty() throws Exception {

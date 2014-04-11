@@ -17,6 +17,10 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -29,9 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
@@ -136,7 +137,7 @@ public class SamWrapperCodegen {
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
         return packageInternalName + "$sam$" + descriptor.getName().asString() + "$" +
                Integer.toHexString(
-                       JvmCodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 +
+                       PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
                        DescriptorUtils.getFqNameSafe(descriptor).hashCode()
                );
     }

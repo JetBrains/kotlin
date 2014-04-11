@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.*;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaCallableMemberDescriptor;
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -773,7 +774,7 @@ public class AsmUtil {
 
         JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), originalDescriptor);
         assert containingFile != null : "Containing file should be present for " + classDescriptor;
-        return PackageCodegen.getPackagePartInternalName(containingFile);
+        return PackagePartClassUtils.getPackagePartInternalName(containingFile);
     }
 
 }
