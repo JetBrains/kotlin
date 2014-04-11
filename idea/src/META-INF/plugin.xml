@@ -673,6 +673,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.IfThenToSafeAccessInspection"
+        displayName="If-Then foldable to '?.'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

@@ -1,0 +1,114 @@
+<problems>
+  <problem>
+    <file>rhsNotEqualsNull.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsNotEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>rhsEqualsNull.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/rhsEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>noThenBlock.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/noThenBlock.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>noElseBlock.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/noElseBlock.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>lhsNotEqualsNull.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsNotEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>lhsEqualsNull.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/lhsEqualsNull.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>ifAsExpression.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAsExpression.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>ifAndElseNotInBlocks.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseNotInBlocks.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>ifAndElseBothInBlocks.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/ifAndElseBothInBlocks.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>emptyThenBlock.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/emptyThenBlock.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>emptyElseBlock.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/emptyElseBlock.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>doesNotinlineValueOutsideOfScope.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotInlineValueOutsideOfScope.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>doesNotinlineValueIfUsedMoreThanOnce.kt</file>
+    <line>10</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/doesNotInlineValueIfUsedMoreThanOnce.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+  <problem>
+    <file>willNotInlineClassProperty.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/willNotInlineClassProperty.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Replace 'if' expression with safe access expression</description>
+  </problem>
+</problems>
