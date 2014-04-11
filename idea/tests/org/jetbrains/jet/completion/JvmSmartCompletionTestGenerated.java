@@ -51,6 +51,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/AnonymousObjectForJavaInterface.kt");
     }
     
+    @TestMetadata("AnyExpected.kt")
+    public void testAnyExpected() throws Exception {
+        doTest("idea/testData/completion/smart/AnyExpected.kt");
+    }
+    
     @TestMetadata("AutoCastedType.kt")
     public void testAutoCastedType() throws Exception {
         doTest("idea/testData/completion/smart/AutoCastedType.kt");
@@ -124,6 +129,41 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("EnumMembers.kt")
     public void testEnumMembers() throws Exception {
         doTest("idea/testData/completion/smart/EnumMembers.kt");
+    }
+    
+    @TestMetadata("FunctionExpected1.kt")
+    public void testFunctionExpected1() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected1.kt");
+    }
+    
+    @TestMetadata("FunctionExpected3.kt")
+    public void testFunctionExpected3() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected3.kt");
+    }
+    
+    @TestMetadata("FunctionExpected4.kt")
+    public void testFunctionExpected4() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected4.kt");
+    }
+    
+    @TestMetadata("FunctionExpected5.kt")
+    public void testFunctionExpected5() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected5.kt");
+    }
+    
+    @TestMetadata("FunctionExpected6.kt")
+    public void testFunctionExpected6() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected6.kt");
+    }
+    
+    @TestMetadata("FunctionExpected7.kt")
+    public void testFunctionExpected7() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected7.kt");
+    }
+    
+    @TestMetadata("FunctionExpected9.kt")
+    public void testFunctionExpected9() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionExpected9.kt");
     }
     
     @TestMetadata("InsideIdentifier.kt")

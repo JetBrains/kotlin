@@ -1,0 +1,11 @@
+fun foo(p: String.() -> Unit){}
+
+fun bar() {
+    foo(<caret>)
+}
+
+fun String.f1(){}
+fun f2(){}
+
+// EXIST: ::f1
+// ABSENT: ::f2

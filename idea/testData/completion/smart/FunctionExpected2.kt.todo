@@ -1,0 +1,10 @@
+fun foo(p: () -> Unit){}
+
+fun bar() {
+    foo(<caret>)
+}
+
+fun f(){}
+fun f(i: Int){}
+
+// ABSENT: ::f

@@ -43,6 +43,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
+import java.util.Collections;
 
 class CompletionSession {
     @Nullable
@@ -133,12 +134,17 @@ class CompletionSession {
     public void completeSmart() {
         assert parameters.getCompletionType() == CompletionType.SMART;
 
-        final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession());
+        final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession(), new Function1<DeclarationDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(DeclarationDescriptor descriptor) {
+                return isVisibleDescriptor(descriptor);
+            }
+        });
         if (data != null) {
-            addReferenceVariants(new Function1<DeclarationDescriptor, LookupElement>() {
+            addReferenceVariants(new Function1<DeclarationDescriptor, Iterable<LookupElement>>(){
                 @Override
-                public LookupElement invoke(DeclarationDescriptor descriptor) {
-                    return data.toElement(descriptor);
+                public Iterable<LookupElement> invoke(DeclarationDescriptor descriptor) {
+                    return data.toElements(descriptor);
                 }
             });
             for (LookupElement element : data.getAdditionalElements()) {
@@ -242,22 +248,25 @@ class CompletionSession {
     }
 
     private void addReferenceVariants(@NotNull final Condition<DeclarationDescriptor> filterCondition) {
-        addReferenceVariants(new Function1<DeclarationDescriptor, LookupElement>() {
+        addReferenceVariants(new Function1<DeclarationDescriptor, Iterable<LookupElement>>(){
             @Override
-            public LookupElement invoke(DeclarationDescriptor descriptor) {
-                return filterCondition.value(descriptor) ? DescriptorLookupConverter.createLookupElement(getResolveSession(), getExpressionBindingContext(), descriptor) : null;
+            public Iterable<LookupElement> invoke(DeclarationDescriptor descriptor) {
+                return filterCondition.value(descriptor)
+                       ? Collections.singletonList(
+                        DescriptorLookupConverter.createLookupElement(getResolveSession(), getExpressionBindingContext(), descriptor))
+                       : Collections.<LookupElement>emptyList();
             }
         });
     }
 
-    private void addReferenceVariants(@NotNull Function1<DeclarationDescriptor, LookupElement> filter) {
+    private void addReferenceVariants(@NotNull Function1<DeclarationDescriptor, Iterable<LookupElement>> filter) {
         Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(
                 jetReference.getExpression(), getExpressionBindingContext());
 
         for (DeclarationDescriptor descriptor : descriptors) {
             if (descriptor != null && descriptorFilter.value(descriptor)) {
-                LookupElement element = filter.invoke(descriptor);
-                if (element != null) {
+                Iterable<LookupElement> elements = filter.invoke(descriptor);
+                for (LookupElement element : elements) {
                     jetResult.addElement(element);
                 }
             }
