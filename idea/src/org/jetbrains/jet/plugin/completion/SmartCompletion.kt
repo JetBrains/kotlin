@@ -71,11 +71,10 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     if (receiver == null) {
         for (expectedType in expectedTypes) {
             //TODO: there can be duplicates here for multiple expected types
-            typeInstantiationItems(expectedType, resolveSession, bindingContext).toCollection(additionalElements)
-
-            //TODO: there can be duplicates here for multiple expected types
             staticMembers(expressionWithType, expectedType, resolveSession, bindingContext).toCollection(additionalElements)
         }
+
+        additionalElements.addTypeInstantiationItems(expectedTypes, resolveSession, bindingContext)
 
         thisItems(expressionWithType, expectedTypes, bindingContext).toCollection(additionalElements)
     }
@@ -204,18 +203,24 @@ private fun calcItemsToSkip(expression: JetExpression, resolveSession: ResolveSe
     return listOf()
 }
 
-private fun typeInstantiationItems(expectedType: ExpectedTypeInfo, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
-    val typeConstructor: TypeConstructor = expectedType.`type`.getConstructor()
-    val classifier: ClassifierDescriptor? = typeConstructor.getDeclarationDescriptor()
-    if (!(classifier is ClassDescriptor)) return listOf()
+private fun MutableCollection<LookupElement>.addTypeInstantiationItems(expectedTypes: Collection<ExpectedTypeInfo>, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext) {
+    val expectedTypesGrouped: Map<JetType, List<ExpectedTypeInfo>> = expectedTypes.groupBy { TypeUtils.makeNotNullable(it.`type`) }
+    for ((jetType, types) in expectedTypesGrouped) {
+        val tail = mergeTails(types.map { it.tail })
+        addTypeInstantiationItems(jetType, tail, resolveSession, bindingContext)
+    }
+}
 
+private fun MutableCollection<LookupElement>.addTypeInstantiationItems(jetType: JetType, tail: Tail?, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext) {
+    val classifier = jetType.getConstructor().getDeclarationDescriptor()
+    if (!(classifier is ClassDescriptor)) return
     //TODO: check for constructor's visibility
 
     val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
 
     var lookupString = lookupElement.getLookupString()
 
-    val typeArgs = expectedType.`type`.getArguments()
+    val typeArgs = jetType.getArguments()
     var itemText = lookupString + DescriptorRenderer.TEXT.renderTypeArguments(typeArgs)
 
     val insertHandler: InsertHandler<LookupElement>
@@ -286,13 +291,13 @@ private fun typeInstantiationItems(expectedType: ExpectedTypeInfo, resolveSessio
         }
     }
 
-    val lookupElementWithTail = decorateLookupElement(lookupElementDecorated, expectedType.tail)
+    val lookupElementWithTail = decorateLookupElement(lookupElementDecorated, tail)
 
     if (suppressAutoInsertion) {
-        return listOf(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementWithTail))
+        add(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementWithTail))
     }
     else{
-        return listOf(lookupElementWithTail)
+        add(lookupElementWithTail)
     }
 }
 
