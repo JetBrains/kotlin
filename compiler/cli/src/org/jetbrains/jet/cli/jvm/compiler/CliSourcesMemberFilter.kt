@@ -23,6 +23,7 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.jet.codegen.AsmUtil
 
 public class CliSourcesMemberFilter(environment: JetCoreEnvironment): MemberFilter {
     val packagePartClassNames = environment.getSourceFiles().map { getPackagePartInternalName(it) }.toSet()
@@ -31,7 +32,7 @@ public class CliSourcesMemberFilter(environment: JetCoreEnvironment): MemberFilt
         if (member.hasExtension(JavaProtoBuf.implClassName)) {
             val shortName = nameResolver.getName(member.getExtension(JavaProtoBuf.implClassName)!!)
             val fqName = container.fqName.child(shortName)
-            val internalName = JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName()
+            val internalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(fqName)
             return internalName !in packagePartClassNames
         }
         return true

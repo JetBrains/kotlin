@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -133,7 +132,7 @@ public class SamWrapperCodegen {
     @NotNull
     private String getWrapperName(@NotNull JetFile containingFile) {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
-        String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
+        String packageInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(packageClassFqName);
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
         return packageInternalName + "$sam$" + descriptor.getName().asString() + "$" +
                Integer.toHexString(

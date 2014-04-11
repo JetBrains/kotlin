@@ -22,6 +22,7 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.JvmFunctionImplTypes;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.codegen.SamType;
@@ -36,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -148,7 +148,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
         }
         else {
-            nameStack.push(JvmClassName.byFqNameWithoutInnerClasses(file.getPackageFqName()).getInternalName());
+            nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
         }
         file.acceptChildren(this);
         nameStack.pop();

@@ -90,7 +90,7 @@ public class PackageCodegen {
                 JetFile sourceFile = files.size() == 1 && previouslyCompiledCallables.isEmpty()
                                      ? files.iterator().next() : null;
 
-                String className = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName();
+                String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
                 ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(Type.getObjectType(className), files);
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
@@ -371,6 +371,6 @@ public class PackageCodegen {
     public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor callable) {
         FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
         FqName packagePartFqName = packageFqName.child(BaseDescriptorDeserializer.getPackagePartClassName(callable));
-        return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
+        return AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName);
     }
 }

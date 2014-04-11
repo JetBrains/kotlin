@@ -730,7 +730,12 @@ public class AsmUtil {
 
     @NotNull
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
-        return Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName());
+        return Type.getObjectType(internalNameByFqNameWithoutInnerClasses(fqName));
+    }
+
+    @NotNull
+    public static String internalNameByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
+        return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
     }
 
     public static void writeOuterClassAndEnclosingMethod(
