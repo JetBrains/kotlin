@@ -51,6 +51,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/collections.kt");
     }
     
+    @TestMetadata("dependentOnFile.kt")
+    public void testDependentOnFile() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/dependentOnFile.kt");
+    }
+    
     @TestMetadata("imports.kt")
     public void testImports() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/imports.kt");

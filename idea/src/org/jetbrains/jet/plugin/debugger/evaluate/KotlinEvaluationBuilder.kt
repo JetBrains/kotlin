@@ -21,15 +21,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.*
 import com.intellij.debugger.engine.evaluation.expression.*
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
-import com.google.common.base.Predicates
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils
 import org.jetbrains.jet.codegen.state.GenerationState
 import org.jetbrains.jet.codegen.ClassBuilderFactories
 import java.util.Collections
-import com.intellij.psi.PsiFile
-import org.jetbrains.jet.codegen.state.Progress
-import org.jetbrains.jet.codegen.CompilationErrorHandler
 import org.jetbrains.jet.codegen.KotlinCodegenFacade
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.testFramework.LightVirtualFile
@@ -48,13 +43,12 @@ import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import java.io.File
 import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -85,13 +79,7 @@ class KotlinEvaluator(val codeFragment: PsiElement) : Evaluator {
 
                 val file = createFileForDebugger(codeFragment)
 
-                val analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationAndCheckForErrors(
-                        file.getProject(),
-                        Collections.singletonList(file),
-                        Predicates.alwaysTrue())
-                //val analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file)
-                //analyzeExhaust.forceResolveAll()
-
+                val analyzeExhaust = file.getAnalysisResults()
                 val bindingContext = analyzeExhaust.getBindingContext()
                 try {
                     analyzeExhaust.throwIfError()
