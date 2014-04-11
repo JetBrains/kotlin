@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import com.intellij.lang.ASTNode
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 trait SmartCompletionData{
     fun toElement(descriptor: DeclarationDescriptor): LookupElement?
@@ -69,14 +70,11 @@ fun buildSmartCompletionData(expression: JetSimpleNameExpression, resolveSession
     val additionalElements = ArrayList<LookupElement>()
 
     if (receiver == null) {
-        for (expectedType in expectedTypes) {
-            //TODO: there can be duplicates here for multiple expected types
-            staticMembers(expressionWithType, expectedType, resolveSession, bindingContext).toCollection(additionalElements)
-        }
-
         additionalElements.addTypeInstantiationItems(expectedTypes, resolveSession, bindingContext)
 
-        thisItems(expressionWithType, expectedTypes, bindingContext).toCollection(additionalElements)
+        additionalElements.addStaticMembers(expressionWithType, expectedTypes, resolveSession, bindingContext)
+
+        additionalElements.addThisItems(expressionWithType, expectedTypes, bindingContext)
     }
 
     val dataFlowInfo = bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, expressionWithType]
@@ -301,12 +299,11 @@ private fun MutableCollection<LookupElement>.addTypeInstantiationItems(jetType: 
     }
 }
 
-private fun thisItems(context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>, bindingContext: BindingContext): Iterable<LookupElement> {
+private fun MutableCollection<LookupElement>.addThisItems(context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>, bindingContext: BindingContext) {
     val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
-    if (scope == null) return listOf()
+    if (scope == null) return
 
     val receivers: List<ReceiverParameterDescriptor> = scope.getImplicitReceiversHierarchy()
-    val result = ArrayList<LookupElement>()
     for (i in 0..receivers.size - 1) {
         val receiver = receivers[i]
         val thisType = receiver.getType()
@@ -318,10 +315,9 @@ private fun thisItems(context: JetExpression, expectedTypes: Collection<Expected
             val expressionText = if (qualifier == null) "this" else "this@" + qualifier
             val lookupElement = LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.TEXT.renderType(thisType))
             val tailType = mergeTails(matchedExpectedTypes.map { it.tail })
-            result.add(decorateLookupElement(lookupElement, tailType))
+            add(decorateLookupElement(lookupElement, tailType))
         }
     }
-    return result
 }
 
 private fun thisQualifierName(receiver: ReceiverParameterDescriptor, bindingContext: BindingContext): String? {
@@ -389,37 +385,61 @@ private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpres
 }
 
 // adds java static members, enum members and members from class object
-private fun staticMembers(context: JetExpression, expectedType: ExpectedTypeInfo, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): Iterable<LookupElement> {
-    val classDescriptor = TypeUtils.getClassDescriptor(expectedType.`type`)
-    if (classDescriptor == null) return listOf()
-    if (classDescriptor.getName().isSpecial()) return listOf()
+private fun MutableCollection<LookupElement>.addStaticMembers(context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>,
+                          resolveSession: ResolveSessionForBodies, bindingContext: BindingContext) {
     val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
-    if (scope == null) return listOf()
+    if (scope == null) return
 
-    val descriptors = ArrayList<DeclarationDescriptor>()
-
-    val isSuitableCallable: (DeclarationDescriptor) -> Boolean = {
-        it is CallableDescriptor && it.getReturnType()?.let { isSubtypeOf(it, expectedType.`type`) } ?: false
+    val expectedTypesByClass = expectedTypes.groupBy { TypeUtils.getClassDescriptor(it.`type`) }
+    for ((classDescriptor, expectedTypesForClass) in expectedTypesByClass) {
+        if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
+            addStaticMembers(classDescriptor, expectedTypesForClass, scope, resolveSession, bindingContext)
+        }
     }
+}
 
-    if (classDescriptor is JavaClassDescriptor) {
-        val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
-        if (pseudoPackage != null) {
-            pseudoPackage.getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
+private fun MutableCollection<LookupElement>.addStaticMembers(classDescriptor: ClassDescriptor, expectedTypes: Collection<ExpectedTypeInfo>,
+        scope: JetScope, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext) {
+
+    val memberDescriptors = HashMap<DeclarationDescriptor, MutableList<ExpectedTypeInfo>>()
+
+    for (expectedType in expectedTypes) {
+        fun addMemberDescriptor(descriptor: DeclarationDescriptor) {
+            val list = memberDescriptors[descriptor]
+            if (list != null) {
+                list.add(expectedType)
+            }
+            else{
+                if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
+
+                val newList = ArrayList<ExpectedTypeInfo>()
+                newList.add(expectedType)
+                memberDescriptors[descriptor] = newList
+            }
+        }
+
+        fun isSuitableCallable(descriptor: DeclarationDescriptor)
+                = descriptor is CallableDescriptor && descriptor.getReturnType()?.let { isSubtypeOf(it, expectedType.`type`) } ?: false
+
+        if (classDescriptor is JavaClassDescriptor) {
+            val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
+            if (pseudoPackage != null) {
+                pseudoPackage.getMemberScope().getAllDescriptors().filter(::isSuitableCallable).forEach(::addMemberDescriptor)
+            }
+        }
+
+        val classObject = classDescriptor.getClassObjectDescriptor()
+        if (classObject != null) {
+            classObject.getDefaultType().getMemberScope().getAllDescriptors().filter(::isSuitableCallable).forEach(::addMemberDescriptor)
+        }
+
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+            classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
+                    .filter{ it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }.forEach(::addMemberDescriptor)
         }
     }
 
-    val classObject = classDescriptor.getClassObjectDescriptor()
-    if (classObject != null) {
-        classObject.getDefaultType().getMemberScope().getAllDescriptors().filterTo(descriptors, isSuitableCallable)
-    }
-
-    if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-        classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
-                .filterTo(descriptors) { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }
-    }
-
-    fun toLookupElement(descriptor: DeclarationDescriptor): LookupElement {
+    for ((descriptor, descriptorExpectedTypes) in memberDescriptors) {
         val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
         val qualifierPresentation = classDescriptor.getName().asString()
         val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
@@ -480,12 +500,9 @@ private fun staticMembers(context: JetExpression, expectedType: ExpectedTypeInfo
             }
         }
 
-        return decorateLookupElement(lookupElementDecorated, expectedType.tail)
+        val tail = mergeTails(descriptorExpectedTypes.map { it.tail })
+        add(decorateLookupElement(lookupElementDecorated, tail))
     }
-
-    return descriptors
-            .filter { !(it is DeclarationDescriptorWithVisibility) || Visibilities.isVisible(it, scope.getContainingDeclaration()) }
-            .map(::toLookupElement)
 }
 
 private fun mergeTails(tails: Collection<Tail?>): Tail? {
@@ -516,11 +533,5 @@ private fun isSubtypeOf(t: JetType, expectedType: JetType): Boolean{
 }
 
 private fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
-
-private fun <T> MutableCollection<T>.addAll(iterator: Iterator<T>) {
-    for (item in iterator) {
-        add(item)
-    }
-}
 
 private fun String?.isNullOrEmpty() = this == null || this.isEmpty()
