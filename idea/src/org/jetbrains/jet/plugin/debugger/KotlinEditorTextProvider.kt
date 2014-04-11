@@ -23,18 +23,29 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.Pair
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import com.intellij.openapi.fileTypes.FileType
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetReferenceExpression
+import org.jetbrains.jet.lang.psi.JetThisExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetOperationExpression
+import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import org.jetbrains.jet.lang.psi.JetSuperExpression
 
 class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
-        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, elementAtCaret.getText(), getImports(elementAtCaret), JetFileType.INSTANCE)
+        val expression = findExpressionInner(elementAtCaret)
+        return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression?.getText() ?: "", getImports(elementAtCaret), JetFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
-        return Pair(elementAtCaret, elementAtCaret.getTextRange())
+        val expression = findExpressionInner(elementAtCaret)
+        if (expression == null) return null
+        return Pair(expression, expression.getTextRange())
     }
 
     class object {
@@ -43,8 +54,51 @@ class KotlinEditorTextProvider : EditorTextProvider {
             if (containingFile !is JetFile) return ""
 
             return containingFile.getImportList()?.getImports()
-                                    ?.map { it.getText() }
-                                    ?.makeString(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR) ?: ""
+                                ?.map { it.getText() }
+                                ?.makeString(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR) ?: ""
+        }
+
+        fun findExpressionInner(element: PsiElement): JetExpression? {
+            val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<JetElement>())
+            if (jetElement == null) return null
+
+            val parent = jetElement.getParent()
+            if (parent == null) return null
+
+            val newExpression = when (parent) {
+                is JetThisExpression,
+                is JetSuperExpression,
+                is JetReferenceExpression -> {
+                    val pparent = parent.getParent()
+                    when (pparent) {
+                        is JetQualifiedExpression -> pparent
+                        else -> parent
+                    }
+                }
+                is JetQualifiedExpression -> {
+                    if (parent.getReceiverExpression() != jetElement) {
+                        parent
+                    } else {
+                        null
+                    }
+                }
+                is JetOperationExpression -> {
+                    if (parent.getOperationReference() == jetElement) {
+                        parent
+                    } else {
+                        null
+                    }
+                }
+                else -> null
+            }
+
+            if (newExpression is JetExpression) return newExpression
+
+            if (jetElement is JetSimpleNameExpression) {
+                return jetElement
+            }
+
+            return null
         }
     }
 }

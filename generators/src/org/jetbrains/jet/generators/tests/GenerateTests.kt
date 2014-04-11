@@ -106,6 +106,7 @@ import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -573,6 +574,10 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetExtractionTest>()) {
             model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
             model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
+        }
+
+        testClass(javaClass<AbstractSelectExpressionForDebuggerTest>()) {
+            model("debugger/selectExpression")
         }
     }
 

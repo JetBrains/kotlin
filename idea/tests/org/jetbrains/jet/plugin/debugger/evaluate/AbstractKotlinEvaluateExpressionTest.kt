@@ -77,7 +77,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
     private fun SuspendContextImpl.evaluate(expression: String, expectedResult: String) {
         try {
             val sourcePosition = ContextUtil.getSourcePosition(this)
-            val contextElement = sourcePosition?.getElementAt()!!
+            val contextElement = ContextUtil.getContextElement(sourcePosition)!!
             Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
                               KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 

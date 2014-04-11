@@ -30,6 +30,7 @@ import org.jetbrains.jet.lexer.JetToken
 import org.jetbrains.jet.JetNodeType
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import com.intellij.psi.PsiCodeBlock
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
@@ -45,6 +46,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     }
 
     override fun isContextAccepted(contextElement: PsiElement?): Boolean {
+        if (contextElement is PsiCodeBlock) {
+            return contextElement.getContext()?.getContext()?.getLanguage() == JetFileType.INSTANCE.getLanguage()
+        }
         return contextElement?.getLanguage() == JetFileType.INSTANCE.getLanguage()
     }
 
