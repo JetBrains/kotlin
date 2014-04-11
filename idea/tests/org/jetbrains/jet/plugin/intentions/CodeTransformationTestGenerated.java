@@ -96,6 +96,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     }
     
     @TestMetadata("idea/testData/intentions/branched/ifThenToElvis")
+    @InnerTestClasses({})
     public static class IfThenToElvis extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInIfThenToElvis() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/branched/ifThenToElvis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -236,6 +237,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestIfThenToElvis("idea/testData/intentions/branched/ifThenToElvis/willNotInlineClassProperty.kt");
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("IfThenToElvis");
+            suite.addTestSuite(IfThenToElvis.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/intentions/branched/safeAccessToIfThen")
@@ -3418,7 +3424,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     public static Test suite() {
         TestSuite suite = new TestSuite("CodeTransformationTestGenerated");
         suite.addTestSuite(ElvisToIfThen.class);
-        suite.addTestSuite(IfThenToElvis.class);
+        suite.addTest(IfThenToElvis.innerSuite());
         suite.addTestSuite(SafeAccessToIfThen.class);
         suite.addTestSuite(IfThenToSafeAccess.class);
         suite.addTestSuite(IfToAssignment.class);

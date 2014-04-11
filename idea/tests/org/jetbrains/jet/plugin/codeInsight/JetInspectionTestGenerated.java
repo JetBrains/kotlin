@@ -41,4 +41,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/inspectionData/inspections.test");
     }
     
+    @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
+    public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
+        doTest("idea/testData/intentions/branched/ifThenToElvis/inspectionData/inspections.test");
+    }
+    
 }
