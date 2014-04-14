@@ -149,6 +149,10 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<PsiJetObjectSt
 
     @Override
     public boolean isLocal() {
+        PsiJetObjectStub stub = getStub();
+        if (stub != null) {
+            return stub.isLocal();
+        }
         return JetPsiUtil.isLocal(this);
     }
 
