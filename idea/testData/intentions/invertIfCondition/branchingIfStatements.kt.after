@@ -1,0 +1,10 @@
+fun main() {
+    val a = 10
+
+    if (a <= 0) {
+        if (a < -5)
+            a + 1
+        else
+            a + 2
+    } else a
+}
