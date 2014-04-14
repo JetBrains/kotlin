@@ -1,0 +1,7 @@
+val a: String?
+    get() = ""
+
+fun main(args: Array<String>) {
+    val s = a
+    val x = if (s != null) s else throw NullPointerException("Expression 'a' must not be null")
+}

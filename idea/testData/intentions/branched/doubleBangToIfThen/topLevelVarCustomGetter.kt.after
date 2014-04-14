@@ -1,0 +1,10 @@
+var a: String?
+    get() = ""
+    set(v) {}
+
+fun main(args: Array<String>) {
+    val s = a
+    doSomething(if (s != null) s else throw NullPointerException("Expression 'a' must not be null"))
+}
+
+fun doSomething(a: Any){}
