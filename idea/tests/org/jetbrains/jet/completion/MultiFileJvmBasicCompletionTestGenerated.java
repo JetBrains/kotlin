@@ -51,6 +51,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest("idea/testData/completion/basic/multifile/DoNotCompleteWithConstraints");
     }
     
+    @TestMetadata("EnumEntry")
+    public void testEnumEntry() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/EnumEntry");
+    }
+    
     @TestMetadata("ExtensionFunction")
     public void testExtensionFunction() throws Exception {
         doTest("idea/testData/completion/basic/multifile/ExtensionFunction");
