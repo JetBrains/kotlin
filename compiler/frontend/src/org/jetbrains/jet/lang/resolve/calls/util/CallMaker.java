@@ -25,6 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.psi.Call.CallType;
+import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.Collections;
 import java.util.List;
@@ -291,7 +293,7 @@ public class CallMaker {
 
             @Override
             public String toString() {
-                return callElement.getText();
+                return DebugTextPackage.getDebugText(callElement);
             }
 
             @NotNull
