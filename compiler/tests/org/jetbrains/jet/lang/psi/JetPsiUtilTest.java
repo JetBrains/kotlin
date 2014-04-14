@@ -105,7 +105,7 @@ public class JetPsiUtilTest extends JetLiteFixture {
 
         assertNotNull("At least one import directive is expected", importDirective);
 
-        return JetPsiUtil.getImportPath(importDirective);
+        return importDirective.getImportPath();
     }
 
     private void checkIsSelectorInQualified() {

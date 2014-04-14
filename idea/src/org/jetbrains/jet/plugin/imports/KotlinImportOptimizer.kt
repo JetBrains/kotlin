@@ -48,7 +48,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             for (anImport in directives) {
                 directivesAfterCurrent.remove(anImport)
 
-                val importPath = JetPsiUtil.getImportPath(anImport)
+                val importPath = anImport.getImportPath()
                 if (importPath == null) {
                     continue
                 }

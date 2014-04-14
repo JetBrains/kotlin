@@ -20,7 +20,6 @@ import com.google.common.collect.*;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.storage.NotNullLazyValue;
@@ -73,7 +72,7 @@ class ImportsProvider {
             List<JetImportDirective> processedAllUnderImports = Lists.newArrayList();
 
             for (JetImportDirective anImport : importDirectives) {
-                ImportPath path = JetPsiUtil.getImportPath(anImport);
+                ImportPath path = anImport.getImportPath();
                 if (path == null) {
                     // Could be some parse errors
                     continue;

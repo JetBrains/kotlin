@@ -19,17 +19,21 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
 
     public static final TokenSet IMPORT_DIRECTIVE_EXPRESSIONS =
-               TokenSet.create(JetStubElementTypes.REFERENCE_EXPRESSION, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
-    
+            TokenSet.create(JetStubElementTypes.REFERENCE_EXPRESSION, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
+
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
     }
@@ -95,5 +99,64 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
             return stub.isAllUnder();
         }
         return getNode().findChildByType(JetTokens.MUL) != null;
+    }
+
+    @Nullable
+    @IfNotParsed
+    public ImportPath getImportPath() {
+        if (!isValidImport()) return null;
+
+        FqName importFqn = fqNameFromExpression(getImportedReference());
+        if (importFqn == null) {
+            return null;
+        }
+
+        Name alias = null;
+        String aliasName = getAliasName();
+        if (aliasName != null) {
+            alias = Name.identifier(aliasName);
+        }
+
+        return new ImportPath(importFqn, isAllUnder(), alias);
+    }
+
+    private boolean isValidImport() {
+        return !PsiTreeUtil.hasErrorElements(this);
+    }
+
+    @Nullable
+    private static FqName fqNameFromExpression(@Nullable JetExpression expression) {
+        if (expression == null) {
+            return null;
+        }
+
+        if (expression instanceof JetDotQualifiedExpression) {
+            JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression) expression;
+            FqName parentFqn = fqNameFromExpression(dotQualifiedExpression.getReceiverExpression());
+            Name child = nameFromExpression(dotQualifiedExpression.getSelectorExpression());
+
+            return parentFqn != null && child != null ? parentFqn.child(child) : null;
+        }
+        else if (expression instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;
+            return FqName.topLevel(simpleNameExpression.getReferencedNameAsName());
+        }
+        else {
+            throw new IllegalArgumentException("Can't construct fqn for: " + expression.getClass().toString());
+        }
+    }
+
+    @Nullable
+    private static Name nameFromExpression(@Nullable JetExpression expression) {
+        if (expression == null) {
+            return null;
+        }
+
+        if (expression instanceof JetSimpleNameExpression) {
+            return ((JetSimpleNameExpression) expression).getReferencedNameAsName();
+        }
+        else {
+            throw new IllegalArgumentException("Can't construct name for: " + expression.getClass().toString());
+        }
     }
 }
