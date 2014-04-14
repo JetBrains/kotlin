@@ -65,6 +65,12 @@ public final class TopLevelFIF extends CompositeFIF {
             return new JsBinaryOperation(JsBinaryOperator.REF_EQ, receiver, arguments.get(0));
         }
     };
+
+    @NotNull
+    public static final DescriptorPredicate HASH_CODE_IN_ANY = pattern("kotlin", "Any", "hashCode");
+    @NotNull
+    public static final KotlinFunctionIntrinsic KOTLIN_HASH_CODE = new KotlinFunctionIntrinsic("hashCode");
+
     @NotNull
     private static final FunctionIntrinsic RETURN_RECEIVER_INTRINSIC = new FunctionIntrinsic() {
         @NotNull
@@ -156,6 +162,7 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin", "toString").receiverExists(), TO_STRING);
         add(pattern("kotlin", "equals").receiverExists(), KOTLIN_EQUALS);
         add(pattern("kotlin", "identityEquals").receiverExists(), IDENTITY_EQUALS);
+        add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));

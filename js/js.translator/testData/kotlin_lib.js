@@ -48,6 +48,27 @@
         return obj1 === obj2;
     };
 
+    Kotlin.hashCode = function (obj) {
+        if (obj == null) {
+            return 0;
+        }
+        if ("function" == typeof obj.hashCode) {
+            return obj.hashCode();
+        }
+        var objType = typeof obj;
+        if ("object" == objType || "function" == objType) {
+            return getObjectHashCode(obj);
+        } else if ("number" == objType) {
+            // TODO: a more elaborate code is needed for floating point values.
+            return obj | 0;
+        } if ("boolean" == objType) {
+            return Number(obj)
+        }
+
+        var str = String(obj);
+        return getStringHashCode(str);
+    };
+
     Kotlin.toString = function (o) {
         if (o == null) {
             return "null";
@@ -95,6 +116,29 @@
             }
             throw new TypeError(message);
         };
+    }
+
+    /** @const */
+    var POW_2_32 = 4294967296;
+    // TODO: consider switching to Symbol type once we are on ES6.
+    /** @const */
+    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$";
+
+    function getObjectHashCode(obj) {
+        if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {
+            var hash = (Math.random() * POW_2_32) | 0; // Make 32-bit singed integer.
+            Object.defineProperty(obj, OBJECT_HASH_CODE_PROPERTY_NAME, { value:  hash, enumerable: false });
+        }
+        return obj[OBJECT_HASH_CODE_PROPERTY_NAME];
+    }
+
+    function getStringHashCode(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var code  = str.charCodeAt(i);
+            hash  = (hash * 31 + code) | 0; // Keep it 32-bit.
+        }
+        return hash;
     }
 
     /**
