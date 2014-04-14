@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+fun foo(): String? {
+    print("foo")
+    return "foo"
+}
+
+fun main(args: Array<String>) {
+    if (foo() == null) throw NullPointerException("Expression 'foo()' must not be null")
+}

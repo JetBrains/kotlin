@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+var a: String?
+    get() = ""
+    set(v) {}
+
+fun main(args: Array<String>) {
+    val s = a
+    println(if (s != null) s else throw NullPointerException("Expression 'a' must not be null"))
+}
