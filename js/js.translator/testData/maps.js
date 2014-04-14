@@ -64,12 +64,12 @@
     }
 
     function equals_fixedValueHasEquals(fixedValue, variableValue) {
-        return fixedValue.equals(variableValue);
+        return fixedValue.equals_za3rmp$(variableValue);
     }
 
     function equals_fixedValueNoEquals(fixedValue, variableValue) {
-        return (typeof variableValue.equals == FUNCTION) ?
-               variableValue.equals(fixedValue) : (fixedValue === variableValue);
+        return (typeof variableValue.equals_za3rmp$ == FUNCTION) ?
+               variableValue.equals_za3rmp$(fixedValue) : (fixedValue === variableValue);
     }
 
     function createKeyValCheck(kvStr) {
@@ -138,7 +138,7 @@
 
     Bucket.prototype = {
         getEqualityFunction: function (searchValue) {
-            return (typeof searchValue.equals == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
+            return (typeof searchValue.equals_za3rmp$ == FUNCTION) ? equals_fixedValueHasEquals : equals_fixedValueNoEquals;
         },
 
         getEntryForKey: createBucketSearcher(ENTRY),
@@ -687,7 +687,7 @@ Kotlin.PrimitiveHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
             return h;
         };
 
-        this.equals = function (o) {
+        this.equals_za3rmp$ = function (o) {
             if (o === null || o === undefined) return false;
             if (this.size() === o.size()) {
                 var iter1 = this.iterator();
