@@ -9,6 +9,6 @@ fun some() {
 
 class Some {
   class object {
-    NamedObjectInClassObject
+    object NamedObjectInClassObject
   }
 }
