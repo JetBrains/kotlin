@@ -38,6 +38,15 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
 import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetThrowExpression
+import org.jetbrains.jet.lang.psi.JetPostfixExpression
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+
+val NULL_PTR_EXCEPTION = "NullPointerException"
+val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
+val KOTLIN_NULL_PTR_EXCEPTION = "KotlinNullPointerException"
+val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
 
 fun JetBinaryExpression.comparesNonNullToNull(): Boolean {
     val operationToken = this.getOperationToken()
@@ -62,7 +71,7 @@ fun JetExpression.extractExpressionIfSingle(): JetExpression? {
     return innerExpression
 }
 
-fun JetSafeQualifiedExpression.isStatement(): Boolean {
+fun JetExpression.isStatement(): Boolean {
     val context = AnalyzerFacadeWithCache.getContextForElement(this)
 
     val expectedType = context.get(BindingContext.EXPECTED_EXPRESSION_TYPE, this);
@@ -87,6 +96,21 @@ fun JetExpression.isNullExpression(): Boolean = this.extractExpressionIfSingle()
 
 fun JetExpression.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().empty
 
+fun JetExpression.isThrowExpression(): Boolean = this.extractExpressionIfSingle() is JetThrowExpression
+
+fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
+    val thrownExpression = this.getThrownExpression()
+    if (thrownExpression !is JetCallExpression) return false
+
+    val context = AnalyzerFacadeWithCache.getContextForElement(this)
+    val descriptor = context.get(BindingContext.REFERENCE_TARGET, thrownExpression.getCalleeExpression() as JetSimpleNameExpression)
+    val declDescriptor = descriptor?.getContainingDeclaration()
+    if (declDescriptor == null) return false
+
+    val exceptionName = DescriptorUtils.getFqName(declDescriptor).asString()
+    return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.getValueArguments().isEmpty()
+}
+
 fun JetExpression.isNotNullExpression(): Boolean {
     val innerExpression = this.extractExpressionIfSingle()
     return innerExpression != null && innerExpression.getText() != "null"
@@ -97,8 +121,18 @@ fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
+    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} != null")
+    return this.convertToIfStatement(condition, thenClause, elseClause)
+}
+
+fun JetExpression.convertToIfNullExpression(conditionLhs: JetExpression, thenClause: JetExpression): JetIfExpression {
+    val condition = JetPsiFactory.createExpression(this.getProject(), "${conditionLhs.getText()} == null")
+    return this.convertToIfStatement(condition, thenClause, null)
+}
+
+fun JetExpression.convertToIfStatement(condition: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
     val elseBranch = if (elseClause == null) "" else " else ${elseClause.getText()}"
-    val conditionalString = "if (${conditionLhs.getText()} != null) ${thenClause.getText()}$elseBranch"
+    val conditionalString = "if (${condition.getText()}) ${thenClause.getText()}$elseBranch"
 
     val st = this.replace(conditionalString) as JetExpression
     return JetPsiUtil.deparenthesize(st) as JetIfExpression
@@ -134,6 +168,10 @@ fun JetSafeQualifiedExpression.inlineReceiverIfApplicableWithPrompt(editor: Edit
 
 fun JetBinaryExpression.inlineLeftSideIfApplicableWithPrompt(editor: Editor) {
     (this.getLeft() as? JetSimpleNameExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
+}
+
+fun JetPostfixExpression.inlineBaseExpressionIfApplicableWithPrompt(editor: Editor) {
+    (this.getBaseExpression() as? JetSimpleNameExpression)?.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor)
 }
 
 fun JetExpression.isStableVariable(): Boolean {
