@@ -31,6 +31,7 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
@@ -40,7 +41,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -611,86 +611,46 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return classifier;
     }
 
-    private List<PropertyDescriptor> getDataProperties() {
-        ArrayList<PropertyDescriptor> result = Lists.newArrayList();
-        for (JetParameter parameter : getPrimaryConstructorParameters()) {
-            if (parameter.getValOrVarNode() != null) {
-                result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
-            }
-        }
-        return result;
-    }
-
     private void generateFunctionsForDataClasses() {
         if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
 
-        generateComponentFunctionsForDataClasses();
-        generateCopyFunctionForDataClasses();
-
-        List<PropertyDescriptor> properties = getDataProperties();
-        if (!properties.isEmpty()) {
-            generateDataClassToStringIfNeeded(properties);
-            generateDataClassHashCodeIfNeeded(properties);
-            generateDataClassEqualsIfNeeded(properties);
-        }
+        new DataClassMethodGeneratorImpl(myClass, descriptor, bindingContext).generate();
     }
 
-    private void generateCopyFunctionForDataClasses() {
-        FunctionDescriptor copyFunction = bindingContext.get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
-        if (copyFunction != null) {
-            generateCopyFunction(copyFunction);
-        }
-    }
-
-    private void generateDataClassToStringIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor stringClass = KotlinBuiltIns.getInstance().getString();
-        if (!hasDeclaredNonTrivialMember("toString", stringClass)) {
-            generateDataClassToStringMethod(properties);
-        }
-    }
-
-    private void generateDataClassHashCodeIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor intClass = KotlinBuiltIns.getInstance().getInt();
-        if (!hasDeclaredNonTrivialMember("hashCode", intClass)) {
-            generateDataClassHashCodeMethod(properties);
-        }
-    }
-
-    private void generateDataClassEqualsIfNeeded(@NotNull List<PropertyDescriptor> properties) {
-        ClassDescriptor booleanClass = KotlinBuiltIns.getInstance().getBoolean();
-        ClassDescriptor anyClass = KotlinBuiltIns.getInstance().getAny();
-        if (!hasDeclaredNonTrivialMember("equals", booleanClass, anyClass)) {
-            generateDataClassEqualsMethod(properties);
-        }
-    }
-
-    /**
-     * @return true if the class has a declared member with the given name anywhere in its hierarchy besides Any
-     */
-    private boolean hasDeclaredNonTrivialMember(
-            @NotNull String name,
-            @NotNull ClassDescriptor returnedClassifier,
-            @NotNull ClassDescriptor... valueParameterClassifiers
-    ) {
-        FunctionDescriptor function =
-                getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers);
-        if (function == null) {
-            return false;
+    // A delegating class. Actual method implementations could easily move in.
+    private class DataClassMethodGeneratorImpl extends DataClassMethodGenerator {
+        DataClassMethodGeneratorImpl(
+                JetClassOrObject klazz,
+                ClassDescriptor descriptor,
+                BindingContext bindingContext
+        ) {
+            super(klazz, descriptor, bindingContext);
         }
 
-        if (function.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
-            return true;
+        @Override
+        public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
+            ImplementationBodyCodegen.this.generateComponentFunction(function, parameter);
         }
 
-        for (CallableDescriptor overridden : OverridingUtil.getOverriddenDeclarations(function)) {
-            if (overridden instanceof CallableMemberDescriptor
-                && ((CallableMemberDescriptor) overridden).getKind() == CallableMemberDescriptor.Kind.DECLARATION
-                && !overridden.getContainingDeclaration().equals(KotlinBuiltIns.getInstance().getAny())) {
-                return true;
-            }
+        @Override
+        public void generateCopyFunction(FunctionDescriptor function, List<JetParameter> constructorParameters) {
+            ImplementationBodyCodegen.this.generateCopyFunction(function);
         }
 
-        return false;
+        @Override
+        public void generateToStringMethod(List<PropertyDescriptor> properties) {
+            ImplementationBodyCodegen.this.generateDataClassToStringMethod(properties);
+        }
+
+        @Override
+        public void generateHashCodeMethod(List<PropertyDescriptor> properties) {
+            ImplementationBodyCodegen.this.generateDataClassHashCodeMethod(properties);
+        }
+
+        @Override
+        public void generateEqualsMethod(List<PropertyDescriptor> properties) {
+            ImplementationBodyCodegen.this.generateDataClassEqualsMethod(properties);
+        }
     }
 
     private void generateDataClassEqualsMethod(@NotNull List<PropertyDescriptor> properties) {
@@ -845,19 +805,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         iv.invokevirtual(classAsmType.getInternalName(), method.getName(), method.getDescriptor());
         return method.getReturnType();
-    }
-
-    private void generateComponentFunctionsForDataClasses() {
-        if (!myClass.hasPrimaryConstructor() || !KotlinBuiltIns.getInstance().isData(descriptor)) return;
-
-        ConstructorDescriptor constructor = descriptor.getConstructors().iterator().next();
-
-        for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
-            FunctionDescriptor function = bindingContext.get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);
-            if (function != null) {
-                generateComponentFunction(function, parameter);
-            }
-        }
     }
 
     private void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter) {

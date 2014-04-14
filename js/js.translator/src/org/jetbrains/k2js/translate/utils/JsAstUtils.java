@@ -140,6 +140,11 @@ public final class JsAstUtils {
     }
 
     @NotNull
+    public static JsBinaryOperation mul(@NotNull JsExpression left, @NotNull JsExpression right) {
+        return new JsBinaryOperation(JsBinaryOperator.MUL, left, right);
+    }
+
+    @NotNull
     public static JsPrefixOperation not(@NotNull JsExpression expression) {
         return new JsPrefixOperation(JsUnaryOperator.NOT, expression);
     }
