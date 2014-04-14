@@ -58,3 +58,11 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
 /** Returns the Set if its not null otherwise returns the empty set */
 public fun <T> Set<T>?.orEmpty(): Set<T>
         = if (this != null) this else Collections.EMPTY_SET as Set<T>
+
+
+/**
+ * Returns a list containing the elements returned by the
+ * specified enumeration in the order they are returned by the
+ * enumeration.
+ */
+fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
