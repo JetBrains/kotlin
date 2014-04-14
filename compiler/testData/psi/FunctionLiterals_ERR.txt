@@ -16,10 +16,10 @@ JetFile: FunctionLiterals_ERR.kt
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
           VALUE_PARAMETER_LIST
             <empty list>
+          PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
           BLOCK
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')

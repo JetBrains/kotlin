@@ -976,8 +976,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (at(ARROW)) {
             //   { -> ...}
-            advance(); // ARROW
             mark().done(VALUE_PARAMETER_LIST);
+            advance(); // ARROW
             paramsFound = true;
         }
         else if (at(LPAR)) {

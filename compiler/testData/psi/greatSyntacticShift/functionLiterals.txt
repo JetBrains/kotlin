@@ -73,10 +73,10 @@ JetFile: functionLiterals.kt
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace(' ')
-                PsiElement(ARROW)('->')
-                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   <empty list>
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
                 BLOCK
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
@@ -110,10 +110,10 @@ JetFile: functionLiterals.kt
             FUNCTION_LITERAL_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
-                PsiElement(ARROW)('->')
-                PsiWhiteSpace(' ')
                 VALUE_PARAMETER_LIST
                   <empty list>
+                PsiElement(ARROW)('->')
+                PsiWhiteSpace(' ')
                 BLOCK
                   INTEGER_CONSTANT
                     PsiElement(INTEGER_LITERAL)('1')
