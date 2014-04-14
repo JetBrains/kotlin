@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+class F(a: Int?) {
+    val b = a
+    val c = b!!
+}
+
+fun main(args: Array<String>) {
+    F(1).c
+}

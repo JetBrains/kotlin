@@ -500,6 +500,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.IfThenToDoubleBangIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.branchedTransformations.intentions.ElvisToIfThenIntention</className>
       <category>Kotlin</category>
     </intentionAction>
