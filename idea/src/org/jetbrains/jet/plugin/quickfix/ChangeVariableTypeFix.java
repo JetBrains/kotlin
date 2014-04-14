@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -24,6 +25,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -44,6 +46,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclaration> {
+    private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
+
     private final String renderedType;
     private final JetType type;
 
@@ -129,14 +133,21 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                     BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) property.getContainingFile()).getBindingContext();
                     JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
 
-                    PropertyDescriptor descriptor = (PropertyDescriptor) context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-                    assert descriptor != null : "Descriptor of property not available in binding context";
-                    JetType propertyType = descriptor.getReturnType();
+                    DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
+                    if (!(descriptor instanceof PropertyDescriptor)) {
+                        // Probably can happen in incomplete code.
+                        LOG.error("Property descriptor is expected: " + JetPsiUtil.getElementTextWithContext(property));
+                        return actions;
+                    }
+
+                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+
+                    JetType propertyType = propertyDescriptor.getReturnType();
                     assert propertyType != null : "Property type cannot be null if it mismatch something";
 
                     List<PropertyDescriptor> overriddenMismatchingProperties = new LinkedList<PropertyDescriptor>();
                     boolean canChangeOverriddenPropertyType = true;
-                    for (PropertyDescriptor overriddenProperty: descriptor.getOverriddenDescriptors()) {
+                    for (PropertyDescriptor overriddenProperty: propertyDescriptor.getOverriddenDescriptors()) {
                         JetType overriddenPropertyType = overriddenProperty.getReturnType();
                         if (overriddenPropertyType != null) {
                             if (!JetTypeChecker.INSTANCE.isSubtypeOf(propertyType, overriddenPropertyType)) {
@@ -163,6 +174,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
                         }
                     }
                 }
+
                 return actions;
             }
         };
