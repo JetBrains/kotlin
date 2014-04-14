@@ -327,7 +327,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                             public Boolean invoke(JetClassObject classObject) {
                                 return classObject != declarationProvider.getOwnerInfo().getClassObject();
                             }
-                        }),
+                        }
+                ),
                 new Function1<JetClassObject, ClassDescriptor>() {
                     @Override
                     public ClassDescriptor invoke(JetClassObject classObject) {
@@ -551,10 +552,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         private boolean isReachable(TypeConstructor from, TypeConstructor to, Set<TypeConstructor> visited) {
             if (!visited.add(from)) return false;
-            Collection<JetType> supertypes = from instanceof LazyClassTypeConstructor
-                                             ? ((LazyClassTypeConstructor) from).supertypes.invoke().getAllSupertypes()
-                                             : from.getSupertypes();
-            for (JetType supertype : supertypes) {
+            for (JetType supertype : getNeighbors(from)) {
                 TypeConstructor supertypeConstructor = supertype.getConstructor();
                 if (supertypeConstructor == to) {
                     return true;
@@ -564,6 +562,24 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 }
             }
             return false;
+        }
+
+        private Collection<JetType> getNeighbors(TypeConstructor from) {
+            // Supertypes + type for container
+            Collection<JetType> neighbours = new ArrayList<JetType>(
+                    from instanceof LazyClassTypeConstructor
+                             ? ((LazyClassTypeConstructor) from).supertypes.invoke().getAllSupertypes()
+                             : from.getSupertypes()
+            );
+
+            ClassifierDescriptor fromDescriptor = from.getDeclarationDescriptor();
+            if (fromDescriptor != null) {
+                DeclarationDescriptor container = fromDescriptor.getContainingDeclaration();
+                if (container instanceof ClassDescriptor) {
+                    neighbours.add(((ClassDescriptor) container).getDefaultType());
+                }
+            }
+            return neighbours;
         }
 
         @Override
