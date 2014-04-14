@@ -218,6 +218,10 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
 
     @Override
     public boolean isLocal() {
+        PsiJetClassStub stub = getStub();
+        if (stub != null) {
+            return stub.isLocal();
+        }
         return JetPsiUtil.isLocal(this);
     }
 }
