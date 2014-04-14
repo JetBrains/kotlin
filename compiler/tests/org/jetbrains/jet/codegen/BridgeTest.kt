@@ -75,13 +75,13 @@ class BridgeTest : TestCase() {
 
         fun findAllReachableDeclarations(from: Fun): MutableSet<Fun> {
             val handler = object : DFS.NodeHandlerWithListResult<Fun, Fun>() {
-                override fun afterChildren(current: Fun?) {
-                    if (current!!.isDeclaration) {
+                override fun afterChildren(current: Fun) {
+                    if (current.isDeclaration) {
                         result.add(current)
                     }
                 }
             }
-            DFS.dfs(listOf(from), { it!!.getOverridden() }, handler)
+            DFS.dfs(listOf(from), { it.getOverridden() }, handler)
             val result = HashSet(handler.result())
             result.remove(from)
             return result

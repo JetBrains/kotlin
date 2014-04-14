@@ -71,14 +71,14 @@ public fun <Function : FunctionHandle, Signature> generateBridges(
 
 private fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function): MutableSet<Function> {
     val collector = object : DFS.NodeHandlerWithListResult<Function, Function>() {
-        override fun afterChildren(current: Function?) {
-            if (current != null && current.isDeclaration) {
+        override fun afterChildren(current: Function) {
+            if (current.isDeclaration) {
                 result.add(current)
             }
         }
     }
     [suppress("UNCHECKED_CAST")]
-    DFS.dfs(listOf(function), { it!!.getOverridden() as Iterable<Function> }, collector)
+    DFS.dfs(listOf(function), { it.getOverridden() as Iterable<Function> }, collector)
     return HashSet(collector.result())
 }
 

@@ -79,16 +79,17 @@ public class DFS {
     }
 
     public interface NodeHandler<N, R> {
-
+        @KotlinSignature("fun beforeChildren(current: N): Unit")
         void beforeChildren(N current);
 
+        @KotlinSignature("fun afterChildren(current: N): Unit")
         void afterChildren(N current);
 
         R result();
     }
 
     public interface Neighbors<N> {
-        @KotlinSignature("fun getNeighbors(current: N?): Iterable<N>")
+        @KotlinSignature("fun getNeighbors(current: N): Iterable<N>")
         @NotNull
         Iterable<N> getNeighbors(N current);
     }
