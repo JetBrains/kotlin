@@ -23,7 +23,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid;
+import org.jetbrains.jet.lang.psi.debugText.DebugTextPackage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +68,9 @@ public class AnalyzingUtils {
 
     public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
         StringBuilder debugInfo = new StringBuilder(debugName);
-        if (resolutionSubjectForMessage instanceof PsiElement) {
-            PsiElement element = (PsiElement) resolutionSubjectForMessage;
-            debugInfo.append(" ").append(element.getText());
+        if (resolutionSubjectForMessage instanceof JetElement) {
+            JetElement element = (JetElement) resolutionSubjectForMessage;
+            debugInfo.append(" ").append(DebugTextPackage.getDebugText(element));
             debugInfo.append(" in ").append(element.getContainingFile().getName());
         }
         else if (resolutionSubjectForMessage != null) {
