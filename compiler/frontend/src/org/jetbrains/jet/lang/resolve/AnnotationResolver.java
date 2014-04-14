@@ -406,7 +406,8 @@ public class AnnotationResolver {
         for (JetAnnotationEntry annotation : annotations) {
             AnnotationDescriptor annotationDescriptor = trace.get(BindingContext.ANNOTATION, annotation);
             if (annotationDescriptor == null) {
-                throw new IllegalStateException("Annotation for annotation should have been resolved: " + annotation);
+                throw new IllegalStateException("Annotation for annotation should have been resolved: \n" +
+                                                JetPsiUtil.getElementTextWithContext(annotation));
             }
 
             result.add(annotationDescriptor);
