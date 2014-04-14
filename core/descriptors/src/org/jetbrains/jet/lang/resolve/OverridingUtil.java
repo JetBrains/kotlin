@@ -379,8 +379,18 @@ public class OverridingUtil {
             return;
         }
 
-        Visibility maxVisibility = computeVisibilityToInherit(memberDescriptor, cannotInferVisibility);
-        Visibility visibilityToInherit = maxVisibility == null ? Visibilities.PUBLIC : maxVisibility;
+        Visibility maxVisibility = computeVisibilityToInherit(memberDescriptor);
+        Visibility visibilityToInherit;
+        if (maxVisibility == null) {
+            if (cannotInferVisibility != null) {
+                cannotInferVisibility.invoke(memberDescriptor);
+            }
+            visibilityToInherit = Visibilities.PUBLIC;
+        }
+        else {
+            visibilityToInherit = maxVisibility;
+        }
+
         if (memberDescriptor instanceof PropertyDescriptorImpl) {
             ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
@@ -398,18 +408,19 @@ public class OverridingUtil {
     }
 
     @Nullable
-    private static Visibility computeVisibilityToInherit(
-            @NotNull CallableMemberDescriptor memberDescriptor,
-            @Nullable Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
-    ) {
-        Visibility maxVisibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
+    private static Visibility computeVisibilityToInherit(@NotNull CallableMemberDescriptor memberDescriptor) {
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = memberDescriptor.getOverriddenDescriptors();
+        Visibility maxVisibility = findMaxVisibility(overriddenDescriptors);
         if (maxVisibility == null) {
-            if (cannotInferVisibility != null) {
-                cannotInferVisibility.invoke(memberDescriptor);
-            }
             return null;
         }
         if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            for (CallableMemberDescriptor overridden : overriddenDescriptors) {
+                // An implementation (a non-abstract overridden member) of a fake override should have the maximum possible visibility
+                if (overridden.getModality() != Modality.ABSTRACT && !overridden.getVisibility().equals(maxVisibility)) {
+                    return null;
+                }
+            }
             return maxVisibility;
         }
         return maxVisibility.normalize();
@@ -423,7 +434,7 @@ public class OverridingUtil {
         Visibility maxVisibility = null;
         for (CallableMemberDescriptor descriptor : descriptors) {
             Visibility visibility = descriptor.getVisibility();
-            assert visibility != Visibilities.INHERITED;
+            assert visibility != Visibilities.INHERITED : "Visibility should have been computed for " + descriptor;
             if (maxVisibility == null) {
                 maxVisibility = visibility;
                 continue;

@@ -8,7 +8,7 @@ class SimpleSubclass : JavaInterface {
 // Class extends both Java and Kotlin traits. Checks that there's no DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES warning
 
 trait KotlinTrait {
-    fun foo(someOtherName: Int) {}
+    public fun foo(someOtherName: Int) {}
 }
 
 class BothTraitsSubclass : JavaInterface, KotlinTrait
