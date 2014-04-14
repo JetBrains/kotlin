@@ -599,7 +599,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
-            model("completion/basic/multifile", pattern = """^([^\.]+)\.kt$""")
+            model("completion/basic/multifile", extension = null, recursive = false)
         }
 
         testClass(javaClass<AbstractJetExtractionTest>()) {

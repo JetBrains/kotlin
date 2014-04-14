@@ -21,12 +21,12 @@ import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.completion.util.UtilPackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
     private boolean autoCompleteSetting;
@@ -68,41 +68,12 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
         setUpFixture(testPath);
 
         String fileText = FileUtil.loadFile(new File(testPath), true);
-
-        Integer invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText);
-
-        myFixture.complete(completionType(), invocationCount == null ? 0 : invocationCount);
-
-        ExpectedCompletionUtils.assertDirectivesValid(fileText, getAdditionalDirectives());
-
-        ExpectedCompletionUtils.CompletionProposal[] expected = ExpectedCompletionUtils.itemsShouldExist(fileText, getPlatform());
-        ExpectedCompletionUtils.CompletionProposal[] unexpected = ExpectedCompletionUtils.itemsShouldAbsent(fileText, getPlatform());
-        Integer itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText, getPlatform());
-
-        assertTrue("Should be some assertions about completion",
-                   expected.length != 0 || unexpected.length != 0 || itemsNumber != null);
-
-        LookupElement[] items = myFixture.getLookupElements();
-
-        if (items == null) {
-            items = new LookupElement[0];
-        }
-
-        ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText));
-        ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, items);
-
-        if (itemsNumber != null) {
-            assertEquals(
-                    String.format(
-                            "Invalid number of completion items: %s",
-                            ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(items))),
-                    itemsNumber.intValue(), items.length);
-        }
-    }
-
-    @NotNull
-    protected List<String> getAdditionalDirectives() {
-        return Collections.emptyList();
+        UtilPackage.testCompletion(fileText, getPlatform(), new Function1<Integer, LookupElement[]>() {
+            @Override
+            public LookupElement[] invoke(Integer invocationCount) {
+                return myFixture.complete(completionType(), invocationCount);
+            }
+        });
     }
 
     protected void setUpFixture(@NotNull String testPath) {

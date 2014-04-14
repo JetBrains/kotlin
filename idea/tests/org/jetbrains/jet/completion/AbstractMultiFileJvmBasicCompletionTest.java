@@ -16,63 +16,30 @@
 
 package org.jetbrains.jet.completion;
 
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.psi.PsiFile;
+import com.intellij.codeInsight.completion.CompletionTestCase;
+import com.intellij.codeInsight.lookup.LookupElement;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.completion.util.UtilPackage;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
+public abstract class AbstractMultiFileJvmBasicCompletionTest extends CompletionTestCase {
 
-public abstract class AbstractMultiFileJvmBasicCompletionTest extends JetFixtureCompletionBaseTestCase {
+    protected void doTest(@NotNull String testPath) throws Exception {
+        configureByFile(getTestName(false) + ".kt", "");
+        UtilPackage.testCompletion(getFile().getText(), TargetPlatform.JVM, new Function1<Integer, LookupElement[]>() {
+            @Override
+            public LookupElement[] invoke(Integer invocationCount) {
+                complete(invocationCount);
+                return myItems;
+            }
+        });
 
-    private static final String JAVA_FILE = "JAVA_FILE:";
-
-    @Override
-    protected void setUpFixture(@NotNull String testPath) {
-        String[] kotlinTestFiles = getKotlinFiles(testPath);
-        myFixture.configureByFiles(kotlinTestFiles);
-        PsiFile testFile = myFixture.getFile();
-        String text = testFile.getText();
-        String javaFilePath = InTextDirectivesUtils.findStringWithPrefixes(text, JAVA_FILE);
-        if (javaFilePath != null) {
-            myFixture.configureByFile(javaFilePath);
-            myFixture.configureByFiles(kotlinTestFiles);
-        }
-    }
-
-    @NotNull
-    private String[] getKotlinFiles(@NotNull String testPath) {
-        String testFileName = testPath.substring(testPath.lastIndexOf("/") + 1, testPath.length());
-        String secondaryFile = testFileName.replace(".kt", ".dependency.kt");
-        if (new File(getTestDataPath() + "/" + secondaryFile).exists()) {
-            return new String[] {testFileName, secondaryFile};
-        }
-        return new String[] {testFileName};
-    }
-
-    @Override
-    public TargetPlatform getPlatform() {
-        return TargetPlatform.JVM;
-    }
-
-    @NotNull
-    @Override
-    protected CompletionType completionType() {
-        return CompletionType.BASIC;
-    }
-
-    @NotNull
-    @Override
-    protected List<String> getAdditionalDirectives() {
-        return Collections.singletonList(JAVA_FILE);
     }
 
     @Override
     protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/";
+        return PluginTestCaseBase.getTestDataPathBase() + "/completion/basic/multifile/" + getTestName(false) + "/";
     }
 }
