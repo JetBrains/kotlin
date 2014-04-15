@@ -33,6 +33,9 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import com.intellij.lang.ASTNode
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
+import org.jetbrains.jet.plugin.refactoring.JetNameValidator
+import com.intellij.openapi.project.Project
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -40,10 +43,12 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
     private val bindingContext: BindingContext
     private val moduleDescriptor: ModuleDescriptor
+    private val project: Project
 
     {
         this.bindingContext = resolveSession.resolveToElement(expression)
         this.moduleDescriptor = resolveSession.getModuleDescriptor()
+        this.project = expression.getProject()
     }
 
     private enum class Tail {
@@ -100,6 +105,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             result.addStaticMembers(expressionWithType, expectedTypes)
 
             result.addThisItems(expressionWithType, expectedTypes)
+
+            result.addLambdaItems(functionExpectedTypes)
         }
 
         return result
@@ -245,7 +252,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         if (!(classifier is ClassDescriptor)) return
         //TODO: check for constructor's visibility
 
-        val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
+        var lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
 
         var lookupString = lookupElement.getLookupString()
 
@@ -253,7 +260,6 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         var itemText = lookupString + DescriptorRenderer.TEXT.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement>
-        var suppressAutoInsertion: Boolean = false
         val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
         if (classifier.getModality() == Modality.ABSTRACT) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
@@ -267,16 +273,11 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
                 editor.getCaretModel().moveToOffset(startOffset + text.length - 1)
 
-                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-                val file = context.getFile() as JetFile
-                val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, startOffset + text.length, javaClass<JetElement>())
-                if (element != null) {
-                    ShortenReferences.process(element)
-                }
+                shortenReferences(context, startOffset, startOffset + text.length)
 
                 ImplementMethodsHandler().invoke(context.getProject(), editor, context.getFile(), true)
             }
-            suppressAutoInsertion = true
+            lookupElement = suppressAutoInsertion(lookupElement)
         }
         else {
             itemText += "()"
@@ -298,12 +299,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
                 //TODO: autopopup parameter info and other functionality from JetFunctionInsertHandler
 
-                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-                val file = context.getFile() as JetFile
-                val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, javaClass<JetElement>())
-                if (element != null) {
-                    ShortenReferences.process(element)
-                }
+                shortenReferences(context, startOffset, endOffset)
             }
         }
 
@@ -320,14 +316,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             }
         }
 
-        val lookupElementWithTail = addTailToLookupElement(lookupElementDecorated, tail)
-
-        if (suppressAutoInsertion) {
-            add(AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElementWithTail))
-        }
-        else {
-            add(lookupElementWithTail)
-        }
+        add(addTailToLookupElement(lookupElementDecorated, tail))
     }
 
     private fun MutableCollection<LookupElement>.addThisItems(context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>) {
@@ -366,6 +355,65 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                        ?.getParent() as? JetCallExpression)
                            ?.getCalleeExpression() as? JetSimpleNameExpression)
                                ?.getReferencedName()
+    }
+
+
+    private fun MutableCollection<LookupElement>.addLambdaItems(functionExpectedTypes: Collection<ExpectedTypeInfo>) {
+        val distinctTypes = functionExpectedTypes.map { it.`type` }.toSet()
+
+        fun createLookupElement(lookupString: String, textBeforeCaret: String, textAfterCaret: String, shortenRefs: Boolean): LookupElement {
+            val lookupElement = LookupElementBuilder.create(lookupString).withInsertHandler {(context, lookupElement) ->
+                val offset = context.getEditor().getCaretModel().getOffset()
+                val startOffset = offset - lookupString.length
+                context.getDocument().deleteString(startOffset, offset) // delete inserted lookup string
+                context.getDocument().insertString(startOffset, textBeforeCaret + textAfterCaret)
+                context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length)
+
+                if (shortenRefs) {
+                    shortenReferences(context, startOffset, startOffset + textBeforeCaret.length + textAfterCaret.length)
+                }
+            }
+            return suppressAutoInsertion(lookupElement)
+        }
+
+        val singleType = if (distinctTypes.size == 1) distinctTypes.single() else null
+        val singleSignatureLength = singleType?.let { KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(it).size }
+        val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
+        if (offerNoParametersLambda) {
+            val lookupElement = createLookupElement("{...}", "{ ", " }", shortenRefs = false)
+            add(addTailToLookupElement(lookupElement, functionExpectedTypes))
+        }
+
+        if (singleSignatureLength != 0) {
+            fun functionParameterTypes(functionType: JetType)
+                    = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(functionType).map { it.getType() }
+
+            for (functionType in distinctTypes) {
+                val parameterTypes = functionParameterTypes(functionType)
+                val parametersPresentation = parameterTypes.map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }.makeString(", ")
+
+                val useExplicitTypes = distinctTypes.stream().any { it != functionType && functionParameterTypes(it).size == parameterTypes.size }
+                val nameValidator = JetNameValidator.getEmptyValidator(project)
+
+                fun parameterName(parameterType: JetType) = JetNameSuggester.suggestNames(parameterType, nameValidator, "p")[0]
+
+                fun parameterText(parameterType: JetType): String {
+                    return if (useExplicitTypes)
+                        parameterName(parameterType) + ": " + DescriptorRenderer.SOURCE_CODE.renderType(parameterType)
+                    else
+                        parameterName(parameterType)
+                }
+
+                val parametersText = parameterTypes.map(::parameterText).makeString(", ")
+
+                val useParenthesis = parameterTypes.size != 1
+                fun wrap(s: String) = if (useParenthesis) "($s)" else s
+
+                val lookupString = "{ ${wrap(parametersPresentation)} -> ... }"
+                val lookupElement = createLookupElement(lookupString, "{ ${wrap(parametersText)} -> ", " }", shortenRefs = true)
+                add(addTailToLookupElement(lookupElement, functionExpectedTypes.filter { it.`type` == functionType }))
+            }
+        }
     }
 
     private fun dataFlowToDescriptorTypes(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
@@ -531,12 +579,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 val endOffset = startOffset + text.length
                 editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
 
-                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-                val file = context.getFile() as JetFile
-                val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, startOffset + qualifierText.length, javaClass<JetElement>())
-                if (element != null) {
-                    ShortenReferences.process(element)
-                }
+                shortenReferences(context, startOffset, startOffset + qualifierText.length)
             }
 
             val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement) {
@@ -569,6 +612,15 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
     }
 
+    private fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
+        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+        val file = context.getFile() as JetFile
+        val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, javaClass<JetElement>())
+        if (element != null) {
+            ShortenReferences.process(element)
+        }
+    }
+
     private fun mergeTails(tails: Collection<Tail?>): Tail? {
         if (tails.size == 1) return tails.single()
         return if (HashSet(tails).size == 1) tails.first() else null
@@ -594,6 +646,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
     private fun addTailToLookupElement(lookupElement: LookupElement, matchedExpectedTypes: Collection<ExpectedTypeInfo>): LookupElement
             = addTailToLookupElement(lookupElement, mergeTails(matchedExpectedTypes.map { it.tail }))
+
+    private fun suppressAutoInsertion(lookupElement: LookupElement) = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(lookupElement)
 
     private fun functionType(function: FunctionDescriptor): JetType? {
         return KotlinBuiltIns.getInstance().getKFunctionType(function.getAnnotations(),

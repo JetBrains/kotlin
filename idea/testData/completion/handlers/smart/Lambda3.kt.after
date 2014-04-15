@@ -1,0 +1,7 @@
+fun foo(p: (Int) -> Unit){}
+
+fun bar() {
+    foo({ i -> <caret> })
+}
+
+// ELEMENT: "{ Int -> ... }"

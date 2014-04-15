@@ -20,6 +20,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -41,8 +42,8 @@ public class JetNameSuggester {
     private JetNameSuggester() {
     }
 
-    private static void addName(ArrayList<String> result, String name, JetNameValidator validator) {
-        if (name == "class") name = "clazz";
+    private static void addName(ArrayList<String> result, @Nullable String name, JetNameValidator validator) {
+        if ("class".equals(name)) name = "clazz";
         if (!isIdentifier(name)) return;
         String newName = validator.validateName(name);
         if (newName == null) return;
@@ -62,7 +63,7 @@ public class JetNameSuggester {
      * @param defaultName
      * @return possible names
      */
-    public static String[] suggestNames(JetExpression expression, JetNameValidator validator, String defaultName) {
+    public static @NotNull String[] suggestNames(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
 
         BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(expression);
@@ -76,20 +77,20 @@ public class JetNameSuggester {
         return ArrayUtil.toStringArray(result);
     }
 
-    public static String[] suggestNames(JetType type, JetNameValidator validator, String defaultName) {
+    public static @NotNull String[] suggestNames(@NotNull JetType type, @NotNull JetNameValidator validator, @Nullable String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
         addNamesForType(result, type, validator);
         if (result.isEmpty()) addName(result, defaultName, validator);
         return ArrayUtil.toStringArray(result);
     }
 
-    public static String[] suggestNamesForType(JetType jetType, JetNameValidator validator) {
+    public static @NotNull String[] suggestNamesForType(@NotNull JetType jetType, @NotNull JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
         addNamesForType(result, jetType, validator);
         return ArrayUtil.toStringArray(result);
     }
 
-    public static String[] suggestNamesForExpression(JetExpression expression, JetNameValidator validator) {
+    public static @NotNull String[] suggestNamesForExpression(@NotNull JetExpression expression, @NotNull JetNameValidator validator) {
         ArrayList<String> result = new ArrayList<String>();
         addNamesForExpression(result, expression, validator);
         return ArrayUtil.toStringArray(result);
@@ -240,7 +241,7 @@ public class JetNameSuggester {
         });
     }
     
-    public static boolean isIdentifier(String name) {
+    public static boolean isIdentifier(@Nullable String name) {
         ApplicationManager.getApplication().assertReadAccessAllowed();
         if (name == null || name.isEmpty()) return false;
 

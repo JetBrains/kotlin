@@ -131,39 +131,39 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/EnumMembers.kt");
     }
     
-    @TestMetadata("FunctionExpected1.kt")
-    public void testFunctionExpected1() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected1.kt");
+    @TestMetadata("FunctionReference1.kt")
+    public void testFunctionReference1() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference1.kt");
     }
     
-    @TestMetadata("FunctionExpected3.kt")
-    public void testFunctionExpected3() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected3.kt");
+    @TestMetadata("FunctionReference3.kt")
+    public void testFunctionReference3() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference3.kt");
     }
     
-    @TestMetadata("FunctionExpected4.kt")
-    public void testFunctionExpected4() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected4.kt");
+    @TestMetadata("FunctionReference4.kt")
+    public void testFunctionReference4() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference4.kt");
     }
     
-    @TestMetadata("FunctionExpected5.kt")
-    public void testFunctionExpected5() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected5.kt");
+    @TestMetadata("FunctionReference5.kt")
+    public void testFunctionReference5() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference5.kt");
     }
     
-    @TestMetadata("FunctionExpected6.kt")
-    public void testFunctionExpected6() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected6.kt");
+    @TestMetadata("FunctionReference6.kt")
+    public void testFunctionReference6() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference6.kt");
     }
     
-    @TestMetadata("FunctionExpected7.kt")
-    public void testFunctionExpected7() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected7.kt");
+    @TestMetadata("FunctionReference7.kt")
+    public void testFunctionReference7() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference7.kt");
     }
     
-    @TestMetadata("FunctionExpected9.kt")
-    public void testFunctionExpected9() throws Exception {
-        doTest("idea/testData/completion/smart/FunctionExpected9.kt");
+    @TestMetadata("FunctionReference9.kt")
+    public void testFunctionReference9() throws Exception {
+        doTest("idea/testData/completion/smart/FunctionReference9.kt");
     }
     
     @TestMetadata("InsideIdentifier.kt")
@@ -199,6 +199,26 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("JavaStaticMethods.kt")
     public void testJavaStaticMethods() throws Exception {
         doTest("idea/testData/completion/smart/JavaStaticMethods.kt");
+    }
+    
+    @TestMetadata("Lambda1.kt")
+    public void testLambda1() throws Exception {
+        doTest("idea/testData/completion/smart/Lambda1.kt");
+    }
+    
+    @TestMetadata("Lambda2.kt")
+    public void testLambda2() throws Exception {
+        doTest("idea/testData/completion/smart/Lambda2.kt");
+    }
+    
+    @TestMetadata("Lambda3.kt")
+    public void testLambda3() throws Exception {
+        doTest("idea/testData/completion/smart/Lambda3.kt");
+    }
+    
+    @TestMetadata("Lambda4.kt")
+    public void testLambda4() throws Exception {
+        doTest("idea/testData/completion/smart/Lambda4.kt");
     }
     
     @TestMetadata("MethodCallArgument.kt")

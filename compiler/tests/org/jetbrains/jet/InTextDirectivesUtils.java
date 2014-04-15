@@ -54,10 +54,15 @@ public final class InTextDirectivesUtils {
         List<String> result = new ArrayList<String>();
 
         for (String line : findLinesWithPrefixesRemoved(fileText, prefixes)) {
-            String[] variants = line.split(",");
-
-            for (String variant : variants) {
-                result.add(StringUtil.unquoteString(variant.trim()));
+            String unquoted = StringUtil.unquoteString(line);
+            if (!unquoted.equals(line)) {
+                result.add(unquoted);
+            }
+            else{
+                String[] variants = line.split(",");
+                for (String variant : variants) {
+                    result.add(variant.trim());
+                }
             }
         }
 

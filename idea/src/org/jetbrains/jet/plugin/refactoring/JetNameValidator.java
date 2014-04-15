@@ -17,6 +17,7 @@
 package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +29,7 @@ public abstract class JetNameValidator {
         this.project = project;
     }
 
+    @NotNull
     public static JetNameValidator getEmptyValidator(final Project project) {
         return new JetNameValidator(project) {
             @Override
@@ -37,6 +39,7 @@ public abstract class JetNameValidator {
         };
     }
 
+    @NotNull
     public static JetNameValidator getCollectingValidator(final Project project) {
         return new JetNameValidator(project) {
             private final Set<String> suggestedSet = new HashSet<String>();

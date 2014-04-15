@@ -19,7 +19,6 @@ package org.jetbrains.jet.completion;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -178,6 +177,9 @@ public class ExpectedCompletionUtils {
                 JsonParser parser = new JsonParser();
                 JsonElement json = parser.parse(proposalStr);
                 proposals.add(new CompletionProposal((JsonObject) json));
+            }
+            else if (proposalStr.startsWith("\"") && proposalStr.endsWith("\"")) {
+                proposals.add(new CompletionProposal(proposalStr.substring(1, proposalStr.length() - 1)));
             }
             else{
                 for(String item : proposalStr.split(",")){
