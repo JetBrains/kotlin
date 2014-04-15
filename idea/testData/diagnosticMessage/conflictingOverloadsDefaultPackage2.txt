@@ -1,0 +1,2 @@
+<!-- conflictingOverloadsDefaultPackage2 -->
+'internal fun foo(y: kotlin.Int): kotlin.Int' is already defined in root package

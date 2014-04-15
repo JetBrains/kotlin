@@ -1,0 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 2
+// !DIAGNOSTICS: CONFLICTING_OVERLOADS
+// !MESSAGE_TYPE: TEXT
+
+fun foo(x: Int) = x
+fun foo(y: Int) = y

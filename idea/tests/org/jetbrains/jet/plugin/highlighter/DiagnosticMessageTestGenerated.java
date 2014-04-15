@@ -41,6 +41,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
     }
     
+    @TestMetadata("conflictingOverloadsDefaultPackage.kt")
+    public void testConflictingOverloadsDefaultPackage() throws Exception {
+        doTest("idea/testData/diagnosticMessage/conflictingOverloadsDefaultPackage.kt");
+    }
+    
     @TestMetadata("conflictingSubstitutions.kt")
     public void testConflictingSubstitutions() throws Exception {
         doTest("idea/testData/diagnosticMessage/conflictingSubstitutions.kt");
