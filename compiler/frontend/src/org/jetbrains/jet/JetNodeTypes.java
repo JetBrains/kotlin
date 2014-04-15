@@ -145,7 +145,7 @@ public interface JetNodeTypes {
     JetNodeType WHEN_CONDITION_IS_PATTERN = new JetNodeType("WHEN_CONDITION_IS_PATTERN", JetWhenConditionIsPattern.class);
     JetNodeType WHEN_CONDITION_EXPRESSION = new JetNodeType("WHEN_CONDITION_WITH_EXPRESSION", JetWhenConditionWithExpression.class);
 
-    JetNodeType PACKAGE_DIRECTIVE = new JetNodeType("PACKAGE_DIRECTIVE", JetPackageDirective.class);
+    IElementType PACKAGE_DIRECTIVE = JetStubElementTypes.PACKAGE_DIRECTIVE;
 
     // SCRIPT: script node type
     JetNodeType SCRIPT = new JetNodeType("SCRIPT", JetScript.class);
