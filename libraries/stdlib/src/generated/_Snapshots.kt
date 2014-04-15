@@ -398,6 +398,16 @@ public fun String.toLinkedList(): LinkedList<Char> {
 }
 
 /**
+ * Returns a List containing all key-value pairs
+ */
+public fun <K, V> Map<K, V>.toList(): List<Map.Entry<K, V>> {
+    val result = ArrayList<Map.Entry<K, V>>(size)
+    for (item in this)
+        result.add(item)
+    return result
+}
+
+/**
  * Returns a List containing all elements
  */
 public fun <T> Array<out T>.toList(): List<T> {

@@ -60,6 +60,20 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toList()") {
+        only(Maps)
+        doc { "Returns a List containing all key-value pairs" }
+        returns("List<Map.Entry<K, V>>")
+        body {
+            """
+            val result = ArrayList<Map.Entry<K, V>>(size)
+            for (item in this)
+                result.add(item)
+            return result
+            """
+        }
+    }
+
+    templates add f("toList()") {
         doc { "Returns a List containing all elements" }
         returns("List<T>")
         body { "return toCollection(ArrayList<T>())" }
