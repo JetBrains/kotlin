@@ -554,6 +554,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.RemoveExplicitTypeArguments</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.RemoveCurlyBracesFromTemplateIntention</className>
       <category>Kotlin</category>
     </intentionAction>
