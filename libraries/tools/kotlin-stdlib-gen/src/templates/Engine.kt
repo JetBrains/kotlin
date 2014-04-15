@@ -91,7 +91,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         typeParams.add(t)
     }
 
-    fun inline(value : Boolean, vararg families: Family) {
+    fun inline(value: Boolean, vararg families: Family) {
         if (families.isEmpty())
             defaultInline = value
         else
@@ -148,7 +148,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
             Iterables -> "Iterable<T>"
             Collections -> "Collection<T>"
             Lists -> "List<T>"
-            Maps -> "Map<K,V>"
+            Maps -> "Map<K, V>"
             Streams -> "Stream<T>"
             ArraysOfObjects -> "Array<T>"
             Strings -> "String"
@@ -186,7 +186,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                                   "T" -> {
                                       when (f) {
                                           Strings -> "Char"
-                                          Maps -> "Map.Entry<K,V>"
+                                          Maps -> "Map.Entry<K, V>"
                                           else -> primitive?.name() ?: token
                                       }
                                   }
@@ -200,7 +200,7 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         fun effectiveTypeParams(): List<String> {
             val types = ArrayList(typeParams)
             if (primitive == null && f != Strings) {
-                val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).takeWhile { it != '>' }.split(",")
+                val implicitTypeParameters = receiver.dropWhile { it != '<' }.drop(1).filterNot { it == ' ' }.takeWhile { it != '>' }.split(",")
                 for (implicit in implicitTypeParameters.reverse()) {
                     if (!types.any { it.startsWith(implicit) }) {
                         types.add(0, implicit)
@@ -249,18 +249,21 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
 
 
         builder.append(receiverType)
-        builder.append(".${signature.renderType()} : ${returnType.renderType()} {")
+        builder.append(".${signature.renderType()}: ${returnType.renderType()} {")
 
         val body = (bodies[f] ?: defaultBody).trim("\n")
-        val prefix: Int = body.takeWhile { it == ' ' }.length
+        val indent: Int = body.takeWhile { it == ' ' }.length
 
+        builder.append('\n')
         StringReader(body).forEachLine {
-            builder.append('\n')
-            var count = prefix
-            builder.append("    ").append(it.dropWhile { count-- > 0 && it == ' ' } .renderType())
+            var count = indent
+            val line = it.dropWhile { count-- > 0 && it == ' ' } .renderType()
+            if (line.isNotEmpty()) {
+                builder.append("    ").append(line)
+                builder.append("\n")
+            }
         }
-
-        builder.append("\n}\n\n")
+        builder.append("}\n\n")
     }
 
     public override fun compareTo(other: GenericFunction): Int = this.signature.compareTo(other.signature)

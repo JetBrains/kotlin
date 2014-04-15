@@ -5,7 +5,7 @@ import templates.Family.*
 fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("toCollection(collection : C)") {
+    templates add f("toCollection(collection: C)") {
         doc { "Appends all elements to the given *collection*" }
         returns("C")
         typeParam("C : MutableCollection<in T>")
@@ -94,7 +94,7 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toSortedList()") {
         doc { "Returns a sorted list of all elements" }
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         returns("List<T>")
         body { "return toArrayList().sort()" }
         body(Iterables) { "return sort()" }

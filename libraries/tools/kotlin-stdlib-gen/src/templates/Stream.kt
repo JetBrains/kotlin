@@ -10,7 +10,11 @@ fun streams(): List<GenericFunction> {
         returns("Stream<T>")
         body {
             """
-            return object : Stream<T> { override fun iterator() : Iterator<T> { return this@stream.iterator() } }
+            return object : Stream<T> {
+                override fun iterator(): Iterator<T> {
+                    return this@stream.iterator()
+                }
+            }
             """
         }
 

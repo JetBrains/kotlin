@@ -25,7 +25,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("map(transform : (T) -> R)") {
+    templates add f("map(transform: (T) -> R)") {
         inline(true)
 
         doc { "Returns a list containing the results of applying the given *transform* function to each element of the original collection" }
@@ -39,16 +39,16 @@ fun mapping(): List<GenericFunction> {
         returns(Streams) { "Stream<R>" }
         doc(Streams) { "Returns a stream containing the results of applying the given *transform* function to each element of the original stream" }
         body(Streams) {
-            "return TransformingStream(this, transform) "
+            "return TransformingStream(this, transform)"
         }
         include(Maps)
     }
 
-    templates add f("mapNotNull(transform : (T) -> R)") {
+    templates add f("mapNotNull(transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
         doc { "Returns a list containing the results of applying the given *transform* function to each non-null element of the original collection" }
-        typeParam("T: Any")
+        typeParam("T : Any")
         typeParam("R")
         returns("List<R>")
         toNullableT = true
@@ -68,7 +68,7 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapTo(collection: C, transform : (T) -> R)") {
+    templates add f("mapTo(collection: C, transform: (T) -> R)") {
         inline(true)
 
         doc {
@@ -78,7 +78,7 @@ fun mapping(): List<GenericFunction> {
             """
         }
         typeParam("R")
-        typeParam("C: MutableCollection<in R>")
+        typeParam("C : MutableCollection<in R>")
         returns("C")
 
         body {
@@ -91,7 +91,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("mapNotNullTo(collection: C, transform : (T) -> R)") {
+    templates add f("mapNotNullTo(collection: C, transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
         doc {
@@ -100,9 +100,9 @@ fun mapping(): List<GenericFunction> {
             to the given *collection*
             """
         }
-        typeParam("T: Any")
+        typeParam("T : Any")
         typeParam("R")
-        typeParam("C: MutableCollection<in R>")
+        typeParam("C : MutableCollection<in R>")
         returns("C")
         toNullableT = true
         body {
@@ -110,14 +110,14 @@ fun mapping(): List<GenericFunction> {
             for (element in this) {
                 if (element != null) {
                     collection.add(transform(element))
-                 }
+                }
             }
             return collection
             """
         }
     }
 
-    templates add f("flatMap(transform: (T)-> Iterable<R>)") {
+    templates add f("flatMap(transform: (T) -> Iterable<R>)") {
         inline(true)
 
         exclude(Streams)
@@ -130,7 +130,7 @@ fun mapping(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("flatMap(transform: (T)-> Stream<R>)") {
+    templates add f("flatMap(transform: (T) -> Stream<R>)") {
         only(Streams)
         doc { "Returns a single stream of all elements streamed from results of *transform* function being invoked on each element of original stream" }
         typeParam("R")
@@ -145,7 +145,7 @@ fun mapping(): List<GenericFunction> {
         exclude(Streams)
         doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*" }
         typeParam("R")
-        typeParam("C: MutableCollection<in R>")
+        typeParam("C : MutableCollection<in R>")
         returns("C")
         body {
             """
@@ -165,7 +165,7 @@ fun mapping(): List<GenericFunction> {
         only(Streams)
         doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *collection*" }
         typeParam("R")
-        typeParam("C: MutableCollection<in R>")
+        typeParam("C : MutableCollection<in R>")
         returns("C")
         body {
             """

@@ -104,7 +104,7 @@ fun aggregates(): List<GenericFunction> {
         doc { "Returns the smallest element or null if there are no elements" }
         returns("T?")
         exclude(PrimitiveType.Boolean)
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         body {
             """
             val iterator = iterator()
@@ -135,8 +135,8 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { "Returns the first element yielding the smallest value of the given function or null if there are no elements" }
-        typeParam("R: Comparable<R>")
-        typeParam("T: Any")
+        typeParam("R : Comparable<R>")
+        typeParam("T : Any")
         returns("T?")
         body {
             """
@@ -149,8 +149,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = iterator.next()
                 val v = f(e)
                 if (minValue > v) {
-                   minElem = e
-                   minValue = v
+                    minElem = e
+                    minValue = v
                 }
             }
             return minElem
@@ -166,8 +166,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = this[i]
                 val v = f(e)
                 if (minValue > v) {
-                   minElem = e
-                   minValue = v
+                    minElem = e
+                    minValue = v
                 }
             }
             return minElem
@@ -180,7 +180,7 @@ fun aggregates(): List<GenericFunction> {
 
         only(Maps)
         doc { "Returns the first element yielding the smallest value of the given function or null if there are no elements" }
-        typeParam("R: Comparable<R>")
+        typeParam("R : Comparable<R>")
         returns("T?")
         body {
             """
@@ -193,8 +193,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = iterator.next()
                 val v = f(e)
                 if (minValue > v) {
-                   minElem = e
-                   minValue = v
+                    minElem = e
+                    minValue = v
                 }
             }
             return minElem
@@ -206,7 +206,7 @@ fun aggregates(): List<GenericFunction> {
         doc { "Returns the largest element or null if there are no elements" }
         returns("T?")
         exclude(PrimitiveType.Boolean)
-        typeParam("T: Comparable<T>")
+        typeParam("T : Comparable<T>")
         body {
             """
             val iterator = iterator()
@@ -239,8 +239,8 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { "Returns the first element yielding the largest value of the given function or null if there are no elements" }
-        typeParam("R: Comparable<R>")
-        typeParam("T: Any")
+        typeParam("R : Comparable<R>")
+        typeParam("T : Any")
         returns("T?")
         body {
             """
@@ -253,8 +253,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = iterator.next()
                 val v = f(e)
                 if (maxValue < v) {
-                   maxElem = e
-                   maxValue = v
+                    maxElem = e
+                    maxValue = v
                 }
             }
             return maxElem
@@ -270,8 +270,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = this[i]
                 val v = f(e)
                 if (maxValue < v) {
-                   maxElem = e
-                   maxValue = v
+                    maxElem = e
+                    maxValue = v
                 }
             }
             return maxElem
@@ -284,7 +284,7 @@ fun aggregates(): List<GenericFunction> {
 
         only(Maps)
         doc { "Returns the first element yielding the largest value of the given function or null if there are no elements" }
-        typeParam("R: Comparable<R>")
+        typeParam("R : Comparable<R>")
         returns("T?")
         body {
             """
@@ -297,8 +297,8 @@ fun aggregates(): List<GenericFunction> {
                 val e = iterator.next()
                 val v = f(e)
                 if (maxValue < v) {
-                   maxElem = e
-                   maxValue = v
+                    maxElem = e
+                    maxValue = v
                 }
             }
             return maxElem

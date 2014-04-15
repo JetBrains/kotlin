@@ -29,7 +29,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         body(Strings) { "return substring(Math.min(n, size))" }
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
 
         body(Collections, ArraysOfObjects, ArraysOfPrimitives) {
             """
@@ -63,7 +63,7 @@ fun filtering(): List<GenericFunction> {
         }
 
         body(Strings) { "return substring(0, Math.min(n, size))" }
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
 
         doc(Streams) { "Returns a stream containing first *n* elements" }
         returns(Streams) { "Stream<T>" }
@@ -90,7 +90,7 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
-    templates add f("dropWhile(predicate: (T)->Boolean)") {
+    templates add f("dropWhile(predicate: (T) -> Boolean)") {
         inline(true)
 
         doc { "Returns a list containing all elements except first elements that satisfy the given *predicate*" }
@@ -102,7 +102,7 @@ fun filtering(): List<GenericFunction> {
             for (item in this)
                 if (yielding)
                     list.add(item)
-                else if(!predicate(item)) {
+                else if (!predicate(item)) {
                     list.add(item)
                     yielding = true
                 }
@@ -110,7 +110,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
         body(Strings) {
             """
             for (index in 0..length)
@@ -128,20 +128,20 @@ fun filtering(): List<GenericFunction> {
             """
             var yielding = false
             return FilteringStream(this) {
-                        if (yielding)
-                            true
-                        else if (!predicate(it)) {
-                            yielding = true
-                            true
-                        } else
-                            false
-                    }
+                if (yielding)
+                    true
+                else if (!predicate(it)) {
+                    yielding = true
+                    true
+                } else
+                    false
+            }
             """
         }
 
     }
 
-    templates add f("takeWhile(predicate: (T)->Boolean)") {
+    templates add f("takeWhile(predicate: (T) -> Boolean)") {
         inline(true)
 
         doc { "Returns a list containing first elements satisfying the given *predicate*" }
@@ -150,15 +150,15 @@ fun filtering(): List<GenericFunction> {
             """
             val list = ArrayList<T>()
             for (item in this) {
-                 if(!predicate(item))
+                if (!predicate(item))
                     break;
-                 list.add(item)
+                list.add(item)
             }
             return list
             """
         }
 
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
         body(Strings) {
             """
             for (index in 0..length)
@@ -179,7 +179,7 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
-    templates add f("filter(predicate: (T)->Boolean)") {
+    templates add f("filter(predicate: (T) -> Boolean)") {
         inline(true)
 
         doc { "Returns a list containing all elements matching the given *predicate*" }
@@ -190,7 +190,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
         body(Strings) {
             """
             return filterTo(StringBuilder(), predicate).toString()
@@ -212,7 +212,7 @@ fun filtering(): List<GenericFunction> {
         inline(true)
 
         doc { "Appends all elements matching the given *predicate* into the given *collection*" }
-        typeParam("C: TCollection")
+        typeParam("C : TCollection")
         returns("C")
 
         body {
@@ -236,7 +236,7 @@ fun filtering(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("filterNot(predicate: (T)->Boolean)") {
+    templates add f("filterNot(predicate: (T) -> Boolean)") {
         inline(true)
 
         doc { "Returns a list containing all elements not matching the given *predicate*" }
@@ -247,7 +247,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        returns(Strings) { "String"}
+        returns(Strings) { "String" }
         body(Strings) {
             """
             return filterNotTo(StringBuilder(), predicate).toString()
@@ -269,7 +269,7 @@ fun filtering(): List<GenericFunction> {
         inline(true)
 
         doc { "Appends all elements not matching the given *predicate* to the given *collection*" }
-        typeParam("C: TCollection")
+        typeParam("C : TCollection")
         returns("C")
 
         body {
@@ -292,7 +292,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterNotNull()") {
         exclude(ArraysOfPrimitives, Strings)
         doc { "Returns a list containing all elements that are not null" }
-        typeParam("T: Any")
+        typeParam("T : Any")
         returns("List<T>")
         toNullableT = true
         body {
@@ -314,8 +314,8 @@ fun filtering(): List<GenericFunction> {
         exclude(ArraysOfPrimitives, Strings)
         doc { "Appends all elements that are not null to the given *collection*" }
         returns("C")
-        typeParam("C: TCollection")
-        typeParam("T: Any")
+        typeParam("C : TCollection")
+        typeParam("T : Any")
         toNullableT = true
         body {
             """

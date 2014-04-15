@@ -116,7 +116,7 @@ fun elements(): List<GenericFunction> {
         }
     }
 
-    templates add f("elementAt(index : Int)") {
+    templates add f("elementAt(index: Int)") {
         doc { "Returns element at given *index*" }
         returns("T")
         body {
@@ -241,10 +241,12 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> if (size == 0)
+                is List<*> -> {
+                    if (size == 0)
                         throw IllegalArgumentException("Collection is empty")
                     else
                         return this[size - 1] as T
+                }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())

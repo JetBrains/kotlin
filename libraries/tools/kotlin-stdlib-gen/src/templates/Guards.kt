@@ -12,7 +12,7 @@ fun guards(): List<GenericFunction> {
         include(Lists)
         exclude(Strings, ArraysOfPrimitives)
         doc { "Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements" }
-        typeParam("T:Any")
+        typeParam("T : Any")
         toNullableT = true
         returns("SELF")
         body {

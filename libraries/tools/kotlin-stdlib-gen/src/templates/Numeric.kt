@@ -10,12 +10,12 @@ fun numeric(): List<GenericFunction> {
         returns("SUM")
         body {
             """
-                val iterator = iterator()
-                var sum : SUM = ZERO
-                while (iterator.hasNext()) {
-                    sum += iterator.next()
-                }
-                return sum
+            val iterator = iterator()
+            var sum: SUM = ZERO
+            while (iterator.hasNext()) {
+                sum += iterator.next()
+            }
+            return sum
             """
         }
     }

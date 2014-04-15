@@ -5,7 +5,7 @@ import templates.Family.*
 fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String =\"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+    templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
             Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied

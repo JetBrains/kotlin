@@ -10,1391 +10,1253 @@ import java.util.*
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean) : Boolean {
+public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun ByteArray.all(predicate: (Byte) -> Boolean) : Boolean {
+public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun CharArray.all(predicate: (Char) -> Boolean) : Boolean {
+public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun DoubleArray.all(predicate: (Double) -> Boolean) : Boolean {
+public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun FloatArray.all(predicate: (Float) -> Boolean) : Boolean {
+public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun IntArray.all(predicate: (Int) -> Boolean) : Boolean {
+public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun LongArray.all(predicate: (Long) -> Boolean) : Boolean {
+public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun ShortArray.all(predicate: (Short) -> Boolean) : Boolean {
+public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun <K, V> Map<K,V>.all(predicate: (Map.Entry<K,V>) -> Boolean) : Boolean {
+public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-public inline fun String.all(predicate: (Char) -> Boolean) : Boolean {
+public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun <T> Array<out T>.any() : Boolean {
+public fun <T> Array<out T>.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun BooleanArray.any() : Boolean {
+public fun BooleanArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun ByteArray.any() : Boolean {
+public fun ByteArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun CharArray.any() : Boolean {
+public fun CharArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun DoubleArray.any() : Boolean {
+public fun DoubleArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun FloatArray.any() : Boolean {
+public fun FloatArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun IntArray.any() : Boolean {
+public fun IntArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun LongArray.any() : Boolean {
+public fun LongArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun ShortArray.any() : Boolean {
+public fun ShortArray.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun <T> Iterable<T>.any() : Boolean {
+public fun <T> Iterable<T>.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun <K, V> Map<K,V>.any() : Boolean {
+public fun <K, V> Map<K, V>.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun <T> Stream<T>.any() : Boolean {
+public fun <T> Stream<T>.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if collection has at least one element
  */
-public fun String.any() : Boolean {
+public fun String.any(): Boolean {
     for (element in this) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean) : Boolean {
+public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun ByteArray.any(predicate: (Byte) -> Boolean) : Boolean {
+public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun CharArray.any(predicate: (Char) -> Boolean) : Boolean {
+public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun DoubleArray.any(predicate: (Double) -> Boolean) : Boolean {
+public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun FloatArray.any(predicate: (Float) -> Boolean) : Boolean {
+public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun IntArray.any(predicate: (Int) -> Boolean) : Boolean {
+public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun LongArray.any(predicate: (Long) -> Boolean) : Boolean {
+public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun ShortArray.any(predicate: (Short) -> Boolean) : Boolean {
+public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun <K, V> Map<K,V>.any(predicate: (Map.Entry<K,V>) -> Boolean) : Boolean {
+public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns *true* if any element matches the given *predicate*
  */
-public inline fun String.any(predicate: (Char) -> Boolean) : Boolean {
+public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
     return false
-    
 }
 
 /**
  * Returns the number of elements
  */
-public fun <T> Array<out T>.count() : Int {
+public fun <T> Array<out T>.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun BooleanArray.count() : Int {
+public fun BooleanArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun ByteArray.count() : Int {
+public fun ByteArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun CharArray.count() : Int {
+public fun CharArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun DoubleArray.count() : Int {
+public fun DoubleArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun FloatArray.count() : Int {
+public fun FloatArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun IntArray.count() : Int {
+public fun IntArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun LongArray.count() : Int {
+public fun LongArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun ShortArray.count() : Int {
+public fun ShortArray.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun <T> Collection<T>.count() : Int {
+public fun <T> Collection<T>.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun <T> Iterable<T>.count() : Int {
+public fun <T> Iterable<T>.count(): Int {
     var count = 0
     for (element in this) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements
  */
-public fun <K, V> Map<K,V>.count() : Int {
+public fun <K, V> Map<K, V>.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements
  */
-public fun <T> Stream<T>.count() : Int {
+public fun <T> Stream<T>.count(): Int {
     var count = 0
     for (element in this) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements
  */
-public fun String.count() : Int {
+public fun String.count(): Int {
     return size
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean) : Int {
+public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean) : Int {
+public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun ByteArray.count(predicate: (Byte) -> Boolean) : Int {
+public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun CharArray.count(predicate: (Char) -> Boolean) : Int {
+public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun DoubleArray.count(predicate: (Double) -> Boolean) : Int {
+public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun FloatArray.count(predicate: (Float) -> Boolean) : Int {
+public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun IntArray.count(predicate: (Int) -> Boolean) : Int {
+public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun LongArray.count(predicate: (Long) -> Boolean) : Int {
+public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun ShortArray.count(predicate: (Short) -> Boolean) : Int {
+public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean) : Int {
+public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun <K, V> Map<K,V>.count(predicate: (Map.Entry<K,V>) -> Boolean) : Int {
+public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean) : Int {
+public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Returns the number of elements matching the given *predicate*
  */
-public inline fun String.count(predicate: (Char) -> Boolean) : Int {
+public inline fun String.count(predicate: (Char) -> Boolean): Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
     return count
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R) : R {
+public inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R) : R {
+public inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R) : R {
+public inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> R) : R {
+public inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R) : R {
+public inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> FloatArray.fold(initial: R, operation: (R, Float) -> R) : R {
+public inline fun <R> FloatArray.fold(initial: R, operation: (R, Float) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> IntArray.fold(initial: R, operation: (R, Int) -> R) : R {
+public inline fun <R> IntArray.fold(initial: R, operation: (R, Int) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R) : R {
+public inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R) : R {
+public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R) : R {
+public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T, R> Stream<T>.fold(initial: R, operation: (R, T) -> R) : R {
+public inline fun <T, R> Stream<T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R) : R {
+public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
     var accumulator = initial
     for (element in this) accumulator = operation(accumulator, element)
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R) : R {
+public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R) : R {
+public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R) : R {
+public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R) : R {
+public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R) : R {
+public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> R) : R {
+public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R) : R {
+public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R) : R {
+public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R) : R {
+public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R) : R {
+public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R) : R {
+public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R {
     var index = size - 1
     var accumulator = initial
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
     return accumulator
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit) : Unit {
+public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit) : Unit {
+public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun ByteArray.forEach(operation: (Byte) -> Unit) : Unit {
+public inline fun ByteArray.forEach(operation: (Byte) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun CharArray.forEach(operation: (Char) -> Unit) : Unit {
+public inline fun CharArray.forEach(operation: (Char) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun DoubleArray.forEach(operation: (Double) -> Unit) : Unit {
+public inline fun DoubleArray.forEach(operation: (Double) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun FloatArray.forEach(operation: (Float) -> Unit) : Unit {
+public inline fun FloatArray.forEach(operation: (Float) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun IntArray.forEach(operation: (Int) -> Unit) : Unit {
+public inline fun IntArray.forEach(operation: (Int) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun LongArray.forEach(operation: (Long) -> Unit) : Unit {
+public inline fun LongArray.forEach(operation: (Long) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun ShortArray.forEach(operation: (Short) -> Unit) : Unit {
+public inline fun ShortArray.forEach(operation: (Short) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit) : Unit {
+public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun <K, V> Map<K,V>.forEach(operation: (Map.Entry<K,V>) -> Unit) : Unit {
+public inline fun <K, V> Map<K, V>.forEach(operation: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit) : Unit {
+public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Performs the given *operation* on each element
  */
-public inline fun String.forEach(operation: (Char) -> Unit) : Unit {
+public inline fun String.forEach(operation: (Char) -> Unit): Unit {
     for (element in this) operation(element)
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Array<out T>.max() : T? {
+public fun <T : Comparable<T>> Array<out T>.max(): T? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun ByteArray.max() : Byte? {
+public fun ByteArray.max(): Byte? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun CharArray.max() : Char? {
+public fun CharArray.max(): Char? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun DoubleArray.max() : Double? {
+public fun DoubleArray.max(): Double? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun FloatArray.max() : Float? {
+public fun FloatArray.max(): Float? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun IntArray.max() : Int? {
+public fun IntArray.max(): Int? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun LongArray.max() : Long? {
+public fun LongArray.max(): Long? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun ShortArray.max() : Short? {
+public fun ShortArray.max(): Short? {
     if (isEmpty()) return null
-    
     var max = this[0]
     for (i in 1..lastIndex) {
         val e = this[i]
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Iterable<T>.max() : T? {
+public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var max = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Stream<T>.max() : T? {
+public fun <T : Comparable<T>> Stream<T>.max(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var max = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the largest element or null if there are no elements
  */
-public fun String.max() : Char? {
+public fun String.max(): Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var max = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (max < e) max = e
     }
     return max
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Array<out T>.maxBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(f: (T) -> R): T? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R) : Boolean? {
+public inline fun <R : Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> ByteArray.maxBy(f: (Byte) -> R) : Byte? {
+public inline fun <R : Comparable<R>> ByteArray.maxBy(f: (Byte) -> R): Byte? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> CharArray.maxBy(f: (Char) -> R) : Char? {
+public inline fun <R : Comparable<R>> CharArray.maxBy(f: (Char) -> R): Char? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> DoubleArray.maxBy(f: (Double) -> R) : Double? {
+public inline fun <R : Comparable<R>> DoubleArray.maxBy(f: (Double) -> R): Double? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> FloatArray.maxBy(f: (Float) -> R) : Float? {
+public inline fun <R : Comparable<R>> FloatArray.maxBy(f: (Float) -> R): Float? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> IntArray.maxBy(f: (Int) -> R) : Int? {
+public inline fun <R : Comparable<R>> IntArray.maxBy(f: (Int) -> R): Int? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> LongArray.maxBy(f: (Long) -> R) : Long? {
+public inline fun <R : Comparable<R>> LongArray.maxBy(f: (Long) -> R): Long? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> ShortArray.maxBy(f: (Short) -> R) : Short? {
+public inline fun <R : Comparable<R>> ShortArray.maxBy(f: (Short) -> R): Short? {
     if (isEmpty()) return null
-    
     var maxElem = this[0]
     var maxValue = f(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Iterable<T>.maxBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var maxElem = iterator.next()
     var maxValue = f(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Stream<T>.maxBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Stream<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var maxElem = iterator.next()
     var maxValue = f(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> String.maxBy(f: (Char) -> R) : Char? {
+public inline fun <R : Comparable<R>> String.maxBy(f: (Char) -> R): Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var maxElem = iterator.next()
     var maxValue = f(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-public inline fun <K, V, R: Comparable<R>> Map<K,V>.maxBy(f: (Map.Entry<K,V>) -> R) : Map.Entry<K,V>? {
+public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var maxElem = iterator.next()
     var maxValue = f(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (maxValue < v) {
-           maxElem = e
-           maxValue = v
+            maxElem = e
+            maxValue = v
         }
     }
     return maxElem
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Array<out T>.min() : T? {
+public fun <T : Comparable<T>> Array<out T>.min(): T? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1402,13 +1264,12 @@ public fun <T: Comparable<T>> Array<out T>.min() : T? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun ByteArray.min() : Byte? {
+public fun ByteArray.min(): Byte? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1416,13 +1277,12 @@ public fun ByteArray.min() : Byte? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun CharArray.min() : Char? {
+public fun CharArray.min(): Char? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1430,13 +1290,12 @@ public fun CharArray.min() : Char? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun DoubleArray.min() : Double? {
+public fun DoubleArray.min(): Double? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1444,13 +1303,12 @@ public fun DoubleArray.min() : Double? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun FloatArray.min() : Float? {
+public fun FloatArray.min(): Float? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1458,13 +1316,12 @@ public fun FloatArray.min() : Float? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun IntArray.min() : Int? {
+public fun IntArray.min(): Int? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1472,13 +1329,12 @@ public fun IntArray.min() : Int? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun LongArray.min() : Long? {
+public fun LongArray.min(): Long? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1486,13 +1342,12 @@ public fun LongArray.min() : Long? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun ShortArray.min() : Short? {
+public fun ShortArray.min(): Short? {
     if (isEmpty()) return null
     var min = this[0]
     for (i in 1..lastIndex) {
@@ -1500,908 +1355,792 @@ public fun ShortArray.min() : Short? {
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Iterable<T>.min() : T? {
+public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var min = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun <T: Comparable<T>> Stream<T>.min() : T? {
+public fun <T : Comparable<T>> Stream<T>.min(): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var min = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the smallest element or null if there are no elements
  */
-public fun String.min() : Char? {
+public fun String.min(): Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var min = iterator.next()
     while (iterator.hasNext()) {
         val e = iterator.next()
         if (min > e) min = e
     }
     return min
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Array<out T>.minBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): T? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R) : Boolean? {
+public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boolean? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> ByteArray.minBy(f: (Byte) -> R) : Byte? {
+public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> CharArray.minBy(f: (Char) -> R) : Char? {
+public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> DoubleArray.minBy(f: (Double) -> R) : Double? {
+public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Double? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> FloatArray.minBy(f: (Float) -> R) : Float? {
+public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> IntArray.minBy(f: (Int) -> R) : Int? {
+public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> LongArray.minBy(f: (Long) -> R) : Long? {
+public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> ShortArray.minBy(f: (Short) -> R) : Short? {
+public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? {
     if (size == 0) return null
-    
     var minElem = this[0]
     var minValue = f(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Iterable<T>.minBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var minElem = iterator.next()
     var minValue = f(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>, T: Any> Stream<T>.minBy(f: (T) -> R) : T? {
+public inline fun <R : Comparable<R>, T : Any> Stream<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var minElem = iterator.next()
     var minValue = f(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <R: Comparable<R>> String.minBy(f: (Char) -> R) : Char? {
+public inline fun <R : Comparable<R>> String.minBy(f: (Char) -> R): Char? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var minElem = iterator.next()
     var minValue = f(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-public inline fun <K, V, R: Comparable<R>> Map<K,V>.minBy(f: (Map.Entry<K,V>) -> R) : Map.Entry<K,V>? {
+public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
-    
     var minElem = iterator.next()
     var minValue = f(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
         val v = f(e)
         if (minValue > v) {
-           minElem = e
-           minValue = v
+            minElem = e
+            minValue = v
         }
     }
     return minElem
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun <T> Array<out T>.none() : Boolean {
+public fun <T> Array<out T>.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun BooleanArray.none() : Boolean {
+public fun BooleanArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun ByteArray.none() : Boolean {
+public fun ByteArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun CharArray.none() : Boolean {
+public fun CharArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun DoubleArray.none() : Boolean {
+public fun DoubleArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun FloatArray.none() : Boolean {
+public fun FloatArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun IntArray.none() : Boolean {
+public fun IntArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun LongArray.none() : Boolean {
+public fun LongArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun ShortArray.none() : Boolean {
+public fun ShortArray.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun <T> Iterable<T>.none() : Boolean {
+public fun <T> Iterable<T>.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun <K, V> Map<K,V>.none() : Boolean {
+public fun <K, V> Map<K, V>.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun <T> Stream<T>.none() : Boolean {
+public fun <T> Stream<T>.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if collection has no elements
  */
-public fun String.none() : Boolean {
+public fun String.none(): Boolean {
     for (element in this) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean) : Boolean {
+public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun ByteArray.none(predicate: (Byte) -> Boolean) : Boolean {
+public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun CharArray.none(predicate: (Char) -> Boolean) : Boolean {
+public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun DoubleArray.none(predicate: (Double) -> Boolean) : Boolean {
+public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun FloatArray.none(predicate: (Float) -> Boolean) : Boolean {
+public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun IntArray.none(predicate: (Int) -> Boolean) : Boolean {
+public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun LongArray.none(predicate: (Long) -> Boolean) : Boolean {
+public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun ShortArray.none(predicate: (Short) -> Boolean) : Boolean {
+public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun <K, V> Map<K,V>.none(predicate: (Map.Entry<K,V>) -> Boolean) : Boolean {
+public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun <T> Stream<T>.none(predicate: (T) -> Boolean) : Boolean {
+public inline fun <T> Stream<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Returns *true* if no elements match the given *predicate*
  */
-public inline fun String.none(predicate: (Char) -> Boolean) : Boolean {
+public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
     return true
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T> Array<out T>.reduce(operation: (T, T) -> T) : T {
+public inline fun <T> Array<out T>.reduce(operation: (T, T) -> T): T {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean) : Boolean {
+public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte) : Byte {
+public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun CharArray.reduce(operation: (Char, Char) -> Char) : Char {
+public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double) : Double {
+public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Double {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun FloatArray.reduce(operation: (Float, Float) -> Float) : Float {
+public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun IntArray.reduce(operation: (Int, Int) -> Int) : Int {
+public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun LongArray.reduce(operation: (Long, Long) -> Long) : Long {
+public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun ShortArray.reduce(operation: (Short, Short) -> Short) : Short {
+public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T) : T {
+public inline fun <T> Iterable<T>.reduce(operation: (T, T) -> T): T {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun <T> Stream<T>.reduce(operation: (T, T) -> T) : T {
+public inline fun <T> Stream<T>.reduce(operation: (T, T) -> T): T {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
  */
-public inline fun String.reduce(operation: (Char, Char) -> Char) : Char {
+public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
     if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
     }
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T) : T {
+public inline fun <T> Array<out T>.reduceRight(operation: (T, T) -> T): T {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Boolean) : Boolean {
+public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Boolean): Boolean {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte) : Byte {
+public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char) : Char {
+public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double) : Double {
+public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double): Double {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float) : Float {
+public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Float {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int) : Int {
+public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long) : Long {
+public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short) : Short {
+public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Short {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T) : T {
+public inline fun <T> List<T>.reduceRight(operation: (T, T) -> T): T {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 
 /**
  * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
  */
-public inline fun String.reduceRight(operation: (Char, Char) -> Char) : Char {
+public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
     var index = size - 1
     if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
-    
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
     }
-    
     return accumulator
-    
 }
 

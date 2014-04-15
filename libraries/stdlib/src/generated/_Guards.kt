@@ -10,52 +10,48 @@ import java.util.*
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public fun <T:Any> Array<T?>.requireNoNulls() : Array<T> {
+public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")
         }
     }
     return this as Array<T>
-    
 }
 
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public fun <T:Any> Iterable<T?>.requireNoNulls() : Iterable<T> {
+public fun <T : Any> Iterable<T?>.requireNoNulls(): Iterable<T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")
         }
     }
     return this as Iterable<T>
-    
 }
 
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public fun <T:Any> List<T?>.requireNoNulls() : List<T> {
+public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this")
         }
     }
     return this as List<T>
-    
 }
 
 /**
  * Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-public fun <T:Any> Stream<T?>.requireNoNulls() : Stream<T> {
+public fun <T : Any> Stream<T?>.requireNoNulls(): Stream<T> {
     return FilteringStream(this) {
         if (it == null) {
             throw IllegalArgumentException("null element found in $this")
         }
         true
     } as Stream<T>
-    
 }
 

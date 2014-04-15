@@ -63,7 +63,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sort(fromIndex : Int = 0, toIndex : Int = size - 1)") {
+    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size - 1)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc { "Sorts array or range in array inplace" }
@@ -75,8 +75,8 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstanceTo(collection: C, klass: Class<R>)") {
         doc { "Appends all elements that are instances of specified class into the given *collection*" }
-        typeParam("C: MutableCollection<in R>")
-        typeParam("R: T")
+        typeParam("C : MutableCollection<in R>")
+        typeParam("R : T")
         returns("C")
         exclude(ArraysOfPrimitives)
         body {
@@ -89,7 +89,7 @@ fun specialJVM(): List<GenericFunction> {
 
     templates add f("filterIsInstance(klass: Class<R>)") {
         doc { "Returns a list containing all elements that are instances of specified class" }
-        typeParam("R: T")
+        typeParam("R : T")
         returns("List<R>")
         body {
             """
