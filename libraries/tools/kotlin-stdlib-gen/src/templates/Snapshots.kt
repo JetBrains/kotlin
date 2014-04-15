@@ -92,13 +92,5 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(LinkedList<T>())" }
     }
 
-    templates add f("toSortedList()") {
-        doc { "Returns a sorted list of all elements" }
-        typeParam("T : Comparable<T>")
-        returns("List<T>")
-        body { "return toArrayList().sort()" }
-        body(Iterables) { "return sort()" }
-    }
-
     return templates
 }

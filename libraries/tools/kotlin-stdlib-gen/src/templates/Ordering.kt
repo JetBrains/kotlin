@@ -45,15 +45,34 @@ fun ordering(): List<GenericFunction> {
         }
 
         exclude(Streams)
-        exclude(ArraysOfPrimitives) // TODO: resolve collision between inplace sort and this function
+        exclude(ArraysOfPrimitives)
         exclude(ArraysOfObjects)
         exclude(Strings)
+    }
+
+    templates add f("toSortedList()") {
+        doc {
+            """
+            Returns a sorted list of all elements
+            """
+        }
+        returns("List<T>")
+        typeParam("T : Comparable<T>")
+        body {
+            """
+            val sortedList = toArrayList()
+            java.util.Collections.sort(sortedList)
+            return sortedList
+            """
+        }
+
+        only(Streams, ArraysOfObjects, ArraysOfPrimitives, Iterables)
     }
 
     templates add f("sortDescending()") {
         doc {
             """
-            Returns a sorted list of all elements
+            Returns a sorted list of all elements, in descending order
             """
         }
         returns("List<T>")
@@ -68,7 +87,7 @@ fun ordering(): List<GenericFunction> {
         }
 
         exclude(Streams)
-        exclude(ArraysOfPrimitives) // TODO: resolve collision between inplace sort and this function
+        exclude(ArraysOfPrimitives)
         exclude(ArraysOfObjects)
         exclude(Strings)
     }
@@ -78,7 +97,7 @@ fun ordering(): List<GenericFunction> {
 
         doc {
             """
-            Returns a list of all elements, sorted by results of specified *order* function.
+            Returns a sorted list of all elements, ordered by results of specified *order* function.
             """
         }
         returns("List<T>")
@@ -97,12 +116,33 @@ fun ordering(): List<GenericFunction> {
         exclude(Strings)
     }
 
+    templates add f("toSortedListBy(order: (T) -> V)") {
+        doc {
+            """
+            Returns a sorted list of all elements, ordered by results of specified *order* function.
+            """
+        }
+        returns("List<T>")
+        typeParam("T")
+        typeParam("V : Comparable<V>")
+        body {
+            """
+            val sortedList = toArrayList()
+            val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
+            java.util.Collections.sort(sortedList, sortBy)
+            return sortedList
+            """
+        }
+
+        only(Streams, ArraysOfObjects, ArraysOfPrimitives, Iterables)
+    }
+
     templates add f("sortDescendingBy(order: (T) -> R)") {
         inline(true)
 
         doc {
             """
-            Returns a list of all elements, sorted by results of specified *order* function.
+            Returns a sorted list of all elements, in descending order by results of specified *order* function.
             """
         }
         returns("List<T>")

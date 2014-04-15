@@ -1,12 +1,13 @@
 package kotlin
 
 import kotlin.support.AbstractIterator
+import java.util.*
 
 public trait Stream<out T> {
     public fun iterator(): Iterator<T>
 }
 
-public fun <T> streamOf(vararg elements : T) : Stream<T> = elements.stream()
+public fun <T> streamOf(vararg elements: T): Stream<T> = elements.stream()
 
 public class FilteringStream<T>(val stream: Stream<T>, val sendWhen: Boolean = true, val predicate: (T) -> Boolean) : Stream<T> {
     override fun iterator(): Iterator<T> = object : AbstractIterator<T>() {
@@ -37,8 +38,8 @@ public class TransformingStream<T, R>(val stream: Stream<T>, val transformer: (T
     }
 }
 
-class ZippingStream<T1, T2>(val stream1: Stream<T1>, val stream2: Stream<T2>) : Stream<Pair<T1,T2>> {
-    override fun iterator(): Iterator<Pair<T1,T2>> = object : AbstractIterator<Pair<T1,T2>>() {
+class ZippingStream<T1, T2>(val stream1: Stream<T1>, val stream2: Stream<T2>) : Stream<Pair<T1, T2>> {
+    override fun iterator(): Iterator<Pair<T1, T2>> = object : AbstractIterator<Pair<T1, T2>>() {
         val iterator1 = stream1.iterator()
         val iterator2 = stream2.iterator()
         override fun computeNext() {
