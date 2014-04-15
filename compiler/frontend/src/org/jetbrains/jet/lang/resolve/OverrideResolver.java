@@ -549,20 +549,20 @@ public class OverrideResolver {
         }
 
         JetModifierList modifierList = member.getModifierList();
-        final ASTNode overrideNode = modifierList != null ? modifierList.getModifierNode(JetTokens.OVERRIDE_KEYWORD) : null;
+        boolean hasOverrideNode = modifierList != null && modifierList.hasModifier(JetTokens.OVERRIDE_KEYWORD);
         Set<? extends CallableMemberDescriptor> overriddenDescriptors = declared.getOverriddenDescriptors();
 
-        if (overrideNode != null) {
+        if (hasOverrideNode) {
             checkOverridesForMemberMarkedOverride(declared, true, new CheckOverrideReportStrategy() {
                 private boolean finalOverriddenError = false;
                 private boolean typeMismatchError = false;
                 private boolean kindMismatchError = false;
 
                 @Override
-                public void overridingFinalMember( @NotNull CallableMemberDescriptor overridden) {
+                public void overridingFinalMember(@NotNull CallableMemberDescriptor overridden) {
                     if (!finalOverriddenError) {
                         finalOverriddenError = true;
-                        trace.report(OVERRIDING_FINAL_MEMBER.on(overrideNode.getPsi(), overridden, overridden.getContainingDeclaration()));
+                        trace.report(OVERRIDING_FINAL_MEMBER.on(member, overridden, overridden.getContainingDeclaration()));
                     }
                 }
 

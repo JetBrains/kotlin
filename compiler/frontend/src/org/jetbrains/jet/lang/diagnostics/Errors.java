@@ -219,7 +219,8 @@ public interface Errors {
 
     DiagnosticFactory0<JetDeclaration> CANNOT_INFER_VISIBILITY = DiagnosticFactory0.create(ERROR, DECLARATION);
 
-    DiagnosticFactory2<PsiElement, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<JetNamedDeclaration, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER =
+            DiagnosticFactory2.create(ERROR, OVERRIDE_MODIFIER);
 
     DiagnosticFactory3<JetModifierListOwner, Visibility, CallableMemberDescriptor, DeclarationDescriptor> CANNOT_WEAKEN_ACCESS_PRIVILEGE =
             DiagnosticFactory3.create(ERROR, VISIBILITY_MODIFIER);
