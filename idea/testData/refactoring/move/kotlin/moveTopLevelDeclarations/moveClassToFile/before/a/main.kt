@@ -1,6 +1,16 @@
 package a
 
 class <caret>Test {
+    fun foo(u: Int) {
+        class T(val t: Int)
+        object O {
+            val t: Int = 1
+        }
+
+        val v = T(u).t + O.t
+        println(v)
+    }
+
     val aFoo: Foo = Foo()
     val bFoo: b.Foo = b.Foo()
     val cFoo: c.Foo = c.Foo()

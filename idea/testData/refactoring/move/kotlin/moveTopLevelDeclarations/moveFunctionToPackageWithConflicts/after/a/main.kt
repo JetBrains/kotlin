@@ -1,5 +1,5 @@
 package a
 
-private fun test {
+private fun test() {
     foo(Foo())
 }

@@ -32,6 +32,7 @@ import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
+import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -49,7 +50,7 @@ public fun JetElement.updateInternalReferencesOnPackageNameChange(
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.let { descriptor ->
             if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration() else descriptor
         }
-        if (descriptor == null) continue
+        if (descriptor == null || !descriptor.canBeReferencedViaImport()) continue
 
         val packageName = DescriptorUtils.getParentOfType(
                 descriptor, javaClass<PackageFragmentDescriptor>(), false
