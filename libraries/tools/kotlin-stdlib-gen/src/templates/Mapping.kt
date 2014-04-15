@@ -68,13 +68,13 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("mapTo(collection: C, transform: (T) -> R)") {
+    templates add f("mapTo(destination: C, transform: (T) -> R)") {
         inline(true)
 
         doc {
             """
             Appends transformed elements of original collection using the given *transform* function
-            to the given *collection*
+            to the given *destination*
             """
         }
         typeParam("R")
@@ -84,20 +84,20 @@ fun mapping(): List<GenericFunction> {
         body {
             """
                 for (item in this)
-                    collection.add(transform(item))
-                return collection
+                    destination.add(transform(item))
+                return destination
             """
         }
         include(Maps)
     }
 
-    templates add f("mapNotNullTo(collection: C, transform: (T) -> R)") {
+    templates add f("mapNotNullTo(destination: C, transform: (T) -> R)") {
         inline(true)
         exclude(Strings, ArraysOfPrimitives)
         doc {
             """
             Appends transformed non-null elements of original collection using the given *transform* function
-            to the given *collection*
+            to the given *destination*
             """
         }
         typeParam("T : Any")
@@ -109,10 +109,10 @@ fun mapping(): List<GenericFunction> {
             """
             for (element in this) {
                 if (element != null) {
-                    collection.add(transform(element))
+                    destination.add(transform(element))
                 }
             }
-            return collection
+            return destination
             """
         }
     }
@@ -140,10 +140,10 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("flatMapTo(collection: C, transform: (T) -> Iterable<R>)") {
+    templates add f("flatMapTo(destination: C, transform: (T) -> Iterable<R>)") {
         inline(true)
         exclude(Streams)
-        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*" }
+        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*" }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -151,19 +151,19 @@ fun mapping(): List<GenericFunction> {
             """
                 for (element in this) {
                     val list = transform(element)
-                    collection.addAll(list)
+                    destination.addAll(list)
                 }
-                return collection
+                return destination
             """
         }
         include(Maps)
     }
 
-    templates add f("flatMapTo(collection: C, transform: (T) -> Stream<R>)") {
+    templates add f("flatMapTo(destination: C, transform: (T) -> Stream<R>)") {
         inline(true)
 
         only(Streams)
-        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *collection*" }
+        doc { "Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *destination*" }
         typeParam("R")
         typeParam("C : MutableCollection<in R>")
         returns("C")
@@ -171,9 +171,9 @@ fun mapping(): List<GenericFunction> {
             """
                 for (element in this) {
                     val list = transform(element)
-                    collection.addAll(list)
+                    destination.addAll(list)
                 }
-                return collection
+                return destination
             """
         }
     }

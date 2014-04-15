@@ -99,146 +99,146 @@ public fun <T, R> Stream<T>.flatMap(transform: (T) -> Stream<R>): Stream<R> {
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(collection: C, transform: (T) -> Iterable<R>): C {
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(collection: C, transform: (Boolean) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(collection: C, transform: (Byte) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(collection: C, transform: (Char) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(collection: C, transform: (Double) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(collection: C, transform: (Float) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(collection: C, transform: (Int) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(collection: C, transform: (Long) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(collection: C, transform: (Short) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(collection: C, transform: (T) -> Iterable<R>): C {
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(collection: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original collection, to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(collection: C, transform: (Char) -> Iterable<R>): C {
+public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *collection*
+ * Appends all elements yielded from results of *transform* function being invoked on each element of original stream, to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.flatMapTo(collection: C, transform: (T) -> Stream<R>): C {
+public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.flatMapTo(destination: C, transform: (T) -> Stream<R>): C {
     for (element in this) {
         val list = transform(element)
-        collection.addAll(list)
+        destination.addAll(list)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -602,171 +602,171 @@ public fun <T : Any, R> Stream<T?>.mapNotNull(transform: (T) -> R): Stream<R> {
 
 /**
  * Appends transformed non-null elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T : Any, R, C : MutableCollection<in R>> Array<T?>.mapNotNullTo(collection: C, transform: (T) -> R): C {
+public inline fun <T : Any, R, C : MutableCollection<in R>> Array<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
-            collection.add(transform(element))
+            destination.add(transform(element))
         }
     }
-    return collection
+    return destination
 }
 
 /**
  * Appends transformed non-null elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T : Any, R, C : MutableCollection<in R>> Iterable<T?>.mapNotNullTo(collection: C, transform: (T) -> R): C {
+public inline fun <T : Any, R, C : MutableCollection<in R>> Iterable<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
-            collection.add(transform(element))
+            destination.add(transform(element))
         }
     }
-    return collection
+    return destination
 }
 
 /**
  * Appends transformed non-null elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T : Any, R, C : MutableCollection<in R>> Stream<T?>.mapNotNullTo(collection: C, transform: (T) -> R): C {
+public inline fun <T : Any, R, C : MutableCollection<in R>> Stream<T?>.mapNotNullTo(destination: C, transform: (T) -> R): C {
     for (element in this) {
         if (element != null) {
-            collection.add(transform(element))
+            destination.add(transform(element))
         }
     }
-    return collection
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(collection: C, transform: (T) -> R): C {
+public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(collection: C, transform: (Boolean) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> BooleanArray.mapTo(destination: C, transform: (Boolean) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(collection: C, transform: (Byte) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> ByteArray.mapTo(destination: C, transform: (Byte) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(collection: C, transform: (Char) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> CharArray.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(collection: C, transform: (Double) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> DoubleArray.mapTo(destination: C, transform: (Double) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(collection: C, transform: (Float) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> FloatArray.mapTo(destination: C, transform: (Float) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(collection: C, transform: (Int) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> IntArray.mapTo(destination: C, transform: (Int) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(collection: C, transform: (Long) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> LongArray.mapTo(destination: C, transform: (Long) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(collection: C, transform: (Short) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> ShortArray.mapTo(destination: C, transform: (Short) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(collection: C, transform: (T) -> R): C {
+public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(collection: C, transform: (Map.Entry<K, V>) -> R): C {
+public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destination: C, transform: (Map.Entry<K, V>) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapTo(collection: C, transform: (T) -> R): C {
+public inline fun <T, R, C : MutableCollection<in R>> Stream<T>.mapTo(destination: C, transform: (T) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**
  * Appends transformed elements of original collection using the given *transform* function
- * to the given *collection*
+ * to the given *destination*
  */
-public inline fun <R, C : MutableCollection<in R>> String.mapTo(collection: C, transform: (Char) -> R): C {
+public inline fun <R, C : MutableCollection<in R>> String.mapTo(destination: C, transform: (Char) -> R): C {
     for (item in this)
-        collection.add(transform(item))
-    return collection
+        destination.add(transform(item))
+    return destination
 }
 
 /**

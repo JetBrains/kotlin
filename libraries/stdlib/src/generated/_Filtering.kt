@@ -565,231 +565,231 @@ public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
 }
 
 /**
- * Appends all elements that are not null to the given *collection*
+ * Appends all elements that are not null to the given *destination*
  */
-public fun <C : MutableCollection<in T>, T : Any> Array<T?>.filterNotNullTo(collection: C): C {
-    for (element in this) if (element != null) collection.add(element)
-    return collection
+public fun <C : MutableCollection<in T>, T : Any> Array<T?>.filterNotNullTo(destination: C): C {
+    for (element in this) if (element != null) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements that are not null to the given *collection*
+ * Appends all elements that are not null to the given *destination*
  */
-public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(collection: C): C {
-    for (element in this) if (element != null) collection.add(element)
-    return collection
+public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C {
+    for (element in this) if (element != null) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements that are not null to the given *collection*
+ * Appends all elements that are not null to the given *destination*
  */
-public fun <C : MutableCollection<in T>, T : Any> Stream<T?>.filterNotNullTo(collection: C): C {
-    for (element in this) if (element != null) collection.add(element)
-    return collection
+public fun <C : MutableCollection<in T>, T : Any> Stream<T?>.filterNotNullTo(destination: C): C {
+    for (element in this) if (element != null) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(collection: C, predicate: (Boolean) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(collection: C, predicate: (Byte) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(collection: C, predicate: (Char) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(collection: C, predicate: (Double) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(collection: C, predicate: (Float) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(collection: C, predicate: (Int) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(collection: C, predicate: (Long) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(collection: C, predicate: (Short) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <K, V, C : MutableCollection<in Map.Entry<K, V>>> Map<K, V>.filterNotTo(collection: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <K, V, C : MutableCollection<in Map.Entry<K, V>>> Map<K, V>.filterNotTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements not matching the given *predicate* to the given *collection*
+ * Appends all elements not matching the given *predicate* to the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Stream<T>.filterNotTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Stream<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all characters not matching the given *predicate* to the given *collection*
+ * Appends all characters not matching the given *predicate* to the given *destination*
  */
-public inline fun <C : Appendable> String.filterNotTo(collection: C, predicate: (Char) -> Boolean): C {
-    for (element in this) if (!predicate(element)) collection.append(element)
-    return collection
+public inline fun <C : Appendable> String.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (!predicate(element)) destination.append(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(collection: C, predicate: (Boolean) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(collection: C, predicate: (Byte) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(collection: C, predicate: (Char) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(collection: C, predicate: (Double) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(collection: C, predicate: (Float) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(collection: C, predicate: (Int) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(collection: C, predicate: (Long) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(collection: C, predicate: (Short) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <K, V, C : MutableCollection<in Map.Entry<K, V>>> Map<K, V>.filterTo(collection: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <K, V, C : MutableCollection<in Map.Entry<K, V>>> Map<K, V>.filterTo(destination: C, predicate: (Map.Entry<K, V>) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all elements matching the given *predicate* into the given *collection*
+ * Appends all elements matching the given *predicate* into the given *destination*
  */
-public inline fun <T, C : MutableCollection<in T>> Stream<T>.filterTo(collection: C, predicate: (T) -> Boolean): C {
-    for (element in this) if (predicate(element)) collection.add(element)
-    return collection
+public inline fun <T, C : MutableCollection<in T>> Stream<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
+    for (element in this) if (predicate(element)) destination.add(element)
+    return destination
 }
 
 /**
- * Appends all characters matching the given *predicate* to the given *collection*
+ * Appends all characters matching the given *predicate* to the given *destination*
  */
 public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (index in 0..length - 1) {

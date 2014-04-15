@@ -43,13 +43,13 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(ArrayList<T>())" }
 
         // ISSUE: JavaScript can't perform this operation
-/*
-        body(Collections) {
-            """
-            return ArrayList<T>(this)
-            """
-        }
-*/
+        /*
+                body(Collections) {
+                    """
+                    return ArrayList<T>(this)
+                    """
+                }
+        */
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size)
@@ -65,18 +65,18 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(ArrayList<T>())" }
 
         // ISSUE: JavaScript can't perform this operations
-/*
-        body(Collections) {
-            """
-            return ArrayList<T>(this)
-            """
-        }
-        body(ArraysOfObjects) {
-            """
-            return ArrayList<T>(Arrays.asList(*this))
-            """
-        }
-*/
+        /*
+                body(Collections) {
+                    """
+                    return ArrayList<T>(this)
+                    """
+                }
+                body(ArraysOfObjects) {
+                    """
+                    return ArrayList<T>(Arrays.asList(*this))
+                    """
+                }
+        */
         body(ArraysOfPrimitives) {
             """
             val list = ArrayList<T>(size)

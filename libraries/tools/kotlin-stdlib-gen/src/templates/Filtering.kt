@@ -208,21 +208,21 @@ fun filtering(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("filterTo(collection: C, predicate: (T) -> Boolean)") {
+    templates add f("filterTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Appends all elements matching the given *predicate* into the given *collection*" }
+        doc { "Appends all elements matching the given *predicate* into the given *destination*" }
         typeParam("C : TCollection")
         returns("C")
 
         body {
             """
-            for (element in this) if (predicate(element)) collection.add(element)
-            return collection
+            for (element in this) if (predicate(element)) destination.add(element)
+            return destination
             """
         }
 
-        doc(Strings) { "Appends all characters matching the given *predicate* to the given *collection*" }
+        doc(Strings) { "Appends all characters matching the given *predicate* to the given *destination*" }
         body(Strings) {
             """
             for (index in 0..length - 1) {
@@ -265,25 +265,25 @@ fun filtering(): List<GenericFunction> {
         include(Maps)
     }
 
-    templates add f("filterNotTo(collection: C, predicate: (T) -> Boolean)") {
+    templates add f("filterNotTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Appends all elements not matching the given *predicate* to the given *collection*" }
+        doc { "Appends all elements not matching the given *predicate* to the given *destination*" }
         typeParam("C : TCollection")
         returns("C")
 
         body {
             """
-            for (element in this) if (!predicate(element)) collection.add(element)
-            return collection
+            for (element in this) if (!predicate(element)) destination.add(element)
+            return destination
             """
         }
 
-        doc(Strings) { "Appends all characters not matching the given *predicate* to the given *collection*" }
+        doc(Strings) { "Appends all characters not matching the given *predicate* to the given *destination*" }
         body(Strings) {
             """
-            for (element in this) if (!predicate(element)) collection.append(element)
-            return collection
+            for (element in this) if (!predicate(element)) destination.append(element)
+            return destination
             """
         }
         include(Maps)
@@ -310,17 +310,17 @@ fun filtering(): List<GenericFunction> {
         }
     }
 
-    templates add f("filterNotNullTo(collection: C)") {
+    templates add f("filterNotNullTo(destination: C)") {
         exclude(ArraysOfPrimitives, Strings)
-        doc { "Appends all elements that are not null to the given *collection*" }
+        doc { "Appends all elements that are not null to the given *destination*" }
         returns("C")
         typeParam("C : TCollection")
         typeParam("T : Any")
         toNullableT = true
         body {
             """
-            for (element in this) if (element != null) collection.add(element)
-            return collection
+            for (element in this) if (element != null) destination.add(element)
+            return destination
             """
         }
     }

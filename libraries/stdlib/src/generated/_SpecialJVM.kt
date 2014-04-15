@@ -353,35 +353,35 @@ public fun <R : Char> String.filterIsInstance(klass: Class<R>): List<R> {
 }
 
 /**
- * Appends all elements that are instances of specified class into the given *collection*
+ * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Array<out T>.filterIsInstanceTo(collection: C, klass: Class<R>): C {
-    for (element in this) if (klass.isInstance(element)) collection.add(element as R)
-    return collection
+public fun <T, C : MutableCollection<in R>, R : T> Array<out T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
 }
 
 /**
- * Appends all elements that are instances of specified class into the given *collection*
+ * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Iterable<T>.filterIsInstanceTo(collection: C, klass: Class<R>): C {
-    for (element in this) if (klass.isInstance(element)) collection.add(element as R)
-    return collection
+public fun <T, C : MutableCollection<in R>, R : T> Iterable<T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
 }
 
 /**
- * Appends all elements that are instances of specified class into the given *collection*
+ * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <T, C : MutableCollection<in R>, R : T> Stream<T>.filterIsInstanceTo(collection: C, klass: Class<R>): C {
-    for (element in this) if (klass.isInstance(element)) collection.add(element as R)
-    return collection
+public fun <T, C : MutableCollection<in R>, R : T> Stream<T>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
 }
 
 /**
- * Appends all elements that are instances of specified class into the given *collection*
+ * Appends all elements that are instances of specified class to the given *destination*
  */
-public fun <C : MutableCollection<in R>, R : Char> String.filterIsInstanceTo(collection: C, klass: Class<R>): C {
-    for (element in this) if (klass.isInstance(element)) collection.add(element as R)
-    return collection
+public fun <C : MutableCollection<in R>, R : Char> String.filterIsInstanceTo(destination: C, klass: Class<R>): C {
+    for (element in this) if (klass.isInstance(element)) destination.add(element as R)
+    return destination
 }
 
 /**
