@@ -1,9 +1,8 @@
-package org.jetbrains.jet.plugin.completion
+package org.jetbrains.jet.plugin.completion.handlers
 
-import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
-import com.intellij.openapi.editor.event.DocumentListener
-import com.intellij.openapi.editor.event.DocumentEvent
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 
@@ -29,18 +28,22 @@ class WithTailInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : Inser
         }
 
         document.addDocumentListener(documentListener)
-
-        item.handleInsert(context)
-        PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
-
-        document.removeDocumentListener(documentListener)
+        try{
+            item.handleInsert(context)
+            PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
+        }
+        finally {
+            document.removeDocumentListener(documentListener)
+        }
 
         val moveCaret = caretModel.getOffset() == maxChangeOffset
 
-        if (maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1))[0] == tailChar) {
+        fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getText(TextRange(offset, offset + 1))[0] == c
+
+        if (isCharAt(maxChangeOffset, tailChar)) {
             document.deleteString(maxChangeOffset, maxChangeOffset + 1)
 
-            if (spaceAfter && maxChangeOffset < document.getTextLength() && document.getText(TextRange(maxChangeOffset, maxChangeOffset + 1)) == " ") {
+            if (spaceAfter && isCharAt(maxChangeOffset, ' ')) {
                 document.deleteString(maxChangeOffset, maxChangeOffset + 1)
             }
         }

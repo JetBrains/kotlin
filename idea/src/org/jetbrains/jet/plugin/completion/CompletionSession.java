@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.plugin.completion;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.intellij.codeInsight.completion.CompletionParameters;
 import com.intellij.codeInsight.completion.CompletionResultSet;
 import com.intellij.codeInsight.completion.CompletionType;
@@ -43,7 +45,6 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 import java.util.Collection;
-import java.util.Collections;
 
 class CompletionSession {
     @Nullable
@@ -51,13 +52,6 @@ class CompletionSession {
     private final CompletionParameters parameters;
     private final JetCompletionResultSet jetResult;
     private final JetSimpleNameReference jetReference;
-
-    private final Condition<DeclarationDescriptor> descriptorFilter = new Condition<DeclarationDescriptor>() {
-        @Override
-        public boolean value(DeclarationDescriptor descriptor) {
-            return isVisibleDescriptor(descriptor);
-        }
-    };
 
     public CompletionSession(
             @NotNull CompletionParameters parameters,
@@ -75,10 +69,17 @@ class CompletionSession {
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
 
+        Condition<DeclarationDescriptor> descriptorFilter = new Condition<DeclarationDescriptor>() {
+            @Override
+            public boolean value(DeclarationDescriptor descriptor) {
+                return isVisibleDescriptor(descriptor);
+            }
+        };
         this.jetResult = new JetCompletionResultSet(
                 WeigherPackage.addJetSorting(result, parameters),
                 resolveSession,
-                expressionBindingContext, descriptorFilter);
+                expressionBindingContext,
+                descriptorFilter);
     }
 
     public void completeForReference() {
@@ -134,20 +135,18 @@ class CompletionSession {
     public void completeSmart() {
         assert parameters.getCompletionType() == CompletionType.SMART;
 
-        final SmartCompletionData data = CompletionPackage.buildSmartCompletionData(jetReference.getExpression(), getResolveSession(), new Function1<DeclarationDescriptor, Boolean>() {
+        Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(
+                jetReference.getExpression(), getExpressionBindingContext());
+        Function1<DeclarationDescriptor, Boolean> visibilityFilter = new Function1<DeclarationDescriptor, Boolean>() {
             @Override
             public Boolean invoke(DeclarationDescriptor descriptor) {
                 return isVisibleDescriptor(descriptor);
             }
-        });
-        if (data != null) {
-            addReferenceVariants(new Function1<DeclarationDescriptor, Iterable<LookupElement>>(){
-                @Override
-                public Iterable<LookupElement> invoke(DeclarationDescriptor descriptor) {
-                    return data.toElements(descriptor);
-                }
-            });
-            for (LookupElement element : data.getAdditionalElements()) {
+        };
+        Collection<LookupElement> elements = CompletionPackage.buildSmartCompletionData(
+                jetReference.getExpression(), getResolveSession(), descriptors, visibilityFilter);
+        if (elements != null) {
+            for (LookupElement element : elements) {
                 jetResult.addElement(element);
             }
         }
@@ -244,33 +243,21 @@ class CompletionSession {
     }
 
     private boolean shouldRunExtensionsCompletion() {
-        return !(parameters.getInvocationCount() <= 1 && jetResult.getResult().getPrefixMatcher().getPrefix().length() < 3);
+        return parameters.getInvocationCount() > 1 || jetResult.getResult().getPrefixMatcher().getPrefix().length() >= 3;
     }
 
     private void addReferenceVariants(@NotNull final Condition<DeclarationDescriptor> filterCondition) {
-        addReferenceVariants(new Function1<DeclarationDescriptor, Iterable<LookupElement>>(){
-            @Override
-            public Iterable<LookupElement> invoke(DeclarationDescriptor descriptor) {
-                return filterCondition.value(descriptor)
-                       ? Collections.singletonList(
-                        DescriptorLookupConverter.createLookupElement(getResolveSession(), getExpressionBindingContext(), descriptor))
-                       : Collections.<LookupElement>emptyList();
-            }
-        });
-    }
-
-    private void addReferenceVariants(@NotNull Function1<DeclarationDescriptor, Iterable<LookupElement>> filter) {
         Collection<DeclarationDescriptor> descriptors = TipsManager.getReferenceVariants(
                 jetReference.getExpression(), getExpressionBindingContext());
 
-        for (DeclarationDescriptor descriptor : descriptors) {
-            if (descriptor != null && descriptorFilter.value(descriptor)) {
-                Iterable<LookupElement> elements = filter.invoke(descriptor);
-                for (LookupElement element : elements) {
-                    jetResult.addElement(element);
-                }
+        Collection<DeclarationDescriptor> filterDescriptors = Collections2.filter(descriptors, new Predicate<DeclarationDescriptor>() {
+            @Override
+            public boolean apply(@Nullable DeclarationDescriptor descriptor) {
+                return descriptor != null && filterCondition.value(descriptor);
             }
-        }
+        });
+
+        jetResult.addAllElements(filterDescriptors);
     }
 
     private boolean isVisibleDescriptor(DeclarationDescriptor descriptor) {
