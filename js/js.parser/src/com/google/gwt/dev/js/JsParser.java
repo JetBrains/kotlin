@@ -31,11 +31,13 @@ import java.util.Stack;
  */
 public class JsParser {
 
+    private JsProgram program;
+
     public static List<JsStatement> parse(
             SourceInfo rootSourceInfo,
             JsScope scope, Reader r, boolean insideFunction
     ) throws IOException, JsParserException {
-        return new JsParser().parseImpl(rootSourceInfo, scope, r, insideFunction);
+        return new JsParser(scope.getProgram()).parseImpl(rootSourceInfo, scope, r, insideFunction);
     }
 
     private final Stack<JsScope> scopeStack = new Stack<JsScope>();
@@ -45,7 +47,8 @@ public class JsParser {
      */
     private static final String sourceNameStub = "jsCode";
 
-    private JsParser() {
+    private JsParser(JsProgram program) {
+        this.program = program;
     }
 
     List<JsStatement> parseImpl(
@@ -180,7 +183,7 @@ public class JsParser {
                 return mapConditional(node);
 
             case TokenStream.STRING:
-                return new JsStringLiteral(node.getString());
+                return program.getStringLiteral(node.getString());
 
             case TokenStream.NUMBER_INT:
                 return mapIntNumber(node);
@@ -565,7 +568,7 @@ public class JsParser {
                 toForIn.setBody(bodyStmt);
             }
             else {
-                toForIn.setBody(new JsEmpty());
+                toForIn.setBody(program.getEmptyStatement());
             }
 
             return toForIn;
@@ -593,7 +596,7 @@ public class JsParser {
                 toFor.setBody(bodyStmt);
             }
             else {
-                toFor.setBody(new JsEmpty());
+                toFor.setBody(program.getEmptyStatement());
             }
             return toFor;
         }
@@ -755,11 +758,11 @@ public class JsParser {
     }
 
     private JsExpression mapIntNumber(Node numberNode) {
-        return new JsNumberLiteral.JsIntLiteral((int) numberNode.getDouble());
+        return program.getNumberLiteral((int) numberNode.getDouble());
     }
 
     private JsExpression mapDoubleNumber(Node numberNode) {
-        return new JsNumberLiteral.JsDoubleLiteral(numberNode.getDouble());
+        return program.getNumberLiteral(numberNode.getDouble());
     }
 
     private JsExpression mapObjectLit(Node objLitNode) throws JsParserException {
@@ -823,7 +826,7 @@ public class JsParser {
     private JsExpression mapPrimary(Node node) throws JsParserException {
         switch (node.getIntDatum()) {
             case TokenStream.THIS:
-                return new JsLiteral.JsThisRef();
+                return JsLiteral.THIS;
 
             case TokenStream.TRUE:
                 return JsBooleanLiteral.TRUE;
@@ -956,7 +959,7 @@ public class JsParser {
         else {
             // When map() returns null, we return an empty statement.
             //
-            return new JsEmpty();
+            return program.getEmptyStatement();
         }
     }
 
