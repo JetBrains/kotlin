@@ -36,6 +36,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/diagnosticMessage"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("assignedButNeverAccessedVariable.kt")
+    public void testAssignedButNeverAccessedVariable() throws Exception {
+        doTest("idea/testData/diagnosticMessage/assignedButNeverAccessedVariable.kt");
+    }
+    
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         doTest("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");
@@ -101,9 +106,19 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/typeMismatchWithNothing.kt");
     }
     
+    @TestMetadata("unusedParameter.kt")
+    public void testUnusedParameter() throws Exception {
+        doTest("idea/testData/diagnosticMessage/unusedParameter.kt");
+    }
+    
     @TestMetadata("unusedValue.kt")
     public void testUnusedValue() throws Exception {
         doTest("idea/testData/diagnosticMessage/unusedValue.kt");
+    }
+    
+    @TestMetadata("unusedVariable.kt")
+    public void testUnusedVariable() throws Exception {
+        doTest("idea/testData/diagnosticMessage/unusedVariable.kt");
     }
     
     @TestMetadata("upperBoundViolated.kt")

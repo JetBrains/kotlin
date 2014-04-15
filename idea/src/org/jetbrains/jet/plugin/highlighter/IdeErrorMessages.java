@@ -25,7 +25,7 @@ import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.TO_STRING;
+import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.STRING;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
 import static org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
@@ -86,11 +86,11 @@ public class IdeErrorMessages {
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "<html>{0} must override {1}<br />because it inherits many implementations of it</html>",
                 RENDER_CLASS_OR_OBJECT, DescriptorRenderer.HTML);
         MAP.put(CONFLICTING_OVERLOADS, "<html>''{0}''<br />is already defined in {1}</html>",
-                DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS, TO_STRING);
+                DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS, STRING);
 
         MAP.put(RESULT_TYPE_MISMATCH, "<html>Function return type mismatch." +
                                       "<table><tr><td>Expected:</td><td>{1}</td></tr>" +
-                                      "<tr><td>Found:</td><td>{2}</td></tr></table></html>", TO_STRING, HTML_RENDER_TYPE, HTML_RENDER_TYPE);
+                                      "<tr><td>Found:</td><td>{2}</td></tr></table></html>", STRING, HTML_RENDER_TYPE, HTML_RENDER_TYPE);
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "<html>Overload resolution ambiguity. All these functions match. <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
         MAP.put(NONE_APPLICABLE, "<html>None of the following functions can be called with the arguments supplied. <ul>{0}</ul></html>",
@@ -98,9 +98,9 @@ public class IdeErrorMessages {
         MAP.put(CANNOT_COMPLETE_RESOLVE, "<html>Cannot choose among the following candidates without completing type inference: <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "<html>Unresolved reference. <br/> None of the following candidates is applicable because of receiver type mismatch: <ul>{0}</ul></html>", HTML_AMBIGUOUS_CALLS);
 
-        MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "<html>Overload resolution ambiguity on method ''{0}''. All these functions match. <ul>{1}</ul></html>", TO_STRING, HTML_AMBIGUOUS_CALLS);
+        MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "<html>Overload resolution ambiguity on method ''{0}''. All these functions match. <ul>{1}</ul></html>", STRING, HTML_AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "<html>Property delegate must have a ''{0}'' method. None of the following functions is suitable. <ul>{1}</ul></html>",
-                TO_STRING, HTML_NONE_APPLICABLE_CALLS);
+                STRING, HTML_NONE_APPLICABLE_CALLS);
 
         MAP.setImmutable();
     }

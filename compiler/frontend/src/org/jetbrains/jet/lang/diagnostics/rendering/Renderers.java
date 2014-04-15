@@ -65,14 +65,19 @@ public class Renderers {
         }
     };
 
-    public static final Renderer<Object> NAME = new Renderer<Object>() {
+    public static final Renderer<String> STRING = new Renderer<String>() {
         @NotNull
         @Override
-        public String render(@NotNull Object element) {
-            if (element instanceof Named) {
-                return ((Named) element).getName().asString();
-            }
-            return element.toString();
+        public String render(@NotNull String element) {
+            return element;
+        }
+    };
+
+    public static final Renderer<Named> NAME = new Renderer<Named>() {
+        @NotNull
+        @Override
+        public String render(@NotNull Named element) {
+            return element.getName().asString();
         }
     };
 

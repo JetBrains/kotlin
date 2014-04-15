@@ -115,7 +115,7 @@ public interface Errors {
     DiagnosticFactory0<JetDelegationSpecifierList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<JetAnnotationEntry, String> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<JetAnnotationEntry, DeclarationDescriptor> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> ANNOTATION_CLASS_WITH_BODY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> INVALID_TYPE_OF_ANNOTATION_MEMBER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeReference> NULLABLE_TYPE_OF_ANNOTATION_MEMBER = DiagnosticFactory0.create(ERROR);
@@ -445,10 +445,10 @@ public interface Errors {
     DiagnosticFactory1<JetSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<JetSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
 
-    DiagnosticFactory1<PsiNameIdentifierOwner, Object> UNUSED_VARIABLE = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
-    DiagnosticFactory1<PsiNameIdentifierOwner, Object> UNUSED_PARAMETER = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, VariableDescriptor> UNUSED_VARIABLE = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
+    DiagnosticFactory1<PsiNameIdentifierOwner, VariableDescriptor> UNUSED_PARAMETER = DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
 
-    DiagnosticFactory1<PsiNameIdentifierOwner, Object> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE =
+    DiagnosticFactory1<PsiNameIdentifierOwner, VariableDescriptor> ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE =
             DiagnosticFactory1.create(WARNING, NAME_IDENTIFIER);
     DiagnosticFactory1<JetExpression, DeclarationDescriptor> VARIABLE_WITH_REDUNDANT_INITIALIZER = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory2<JetElement, JetElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING);

@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
 import static org.jetbrains.jet.lang.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 
@@ -177,11 +178,11 @@ public class AnnotationResolver {
                 ConstructorDescriptor constructor = (ConstructorDescriptor)descriptor;
                 ClassDescriptor classDescriptor = constructor.getContainingDeclaration();
                 if (classDescriptor.getKind() != ClassKind.ANNOTATION_CLASS) {
-                    trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor.getName().asString()));
+                    trace.report(NOT_AN_ANNOTATION_CLASS.on(entryElement, classDescriptor));
                 }
             }
             else {
-                trace.report(Errors.NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor.getName().asString()));
+                trace.report(NOT_AN_ANNOTATION_CLASS.on(entryElement, descriptor));
             }
         }
     }
