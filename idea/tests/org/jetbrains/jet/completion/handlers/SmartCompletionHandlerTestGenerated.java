@@ -161,9 +161,14 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/EnumMember.kt");
     }
     
-    @TestMetadata("FunctionReference.kt")
-    public void testFunctionReference() throws Exception {
-        doTest("idea/testData/completion/handlers/smart/FunctionReference.kt");
+    @TestMetadata("FunctionReference1.kt")
+    public void testFunctionReference1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/FunctionReference1.kt");
+    }
+    
+    @TestMetadata("FunctionReference2.kt")
+    public void testFunctionReference2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/FunctionReference2.kt");
     }
     
     @TestMetadata("JavaEnumMemberInsertsImport.kt")

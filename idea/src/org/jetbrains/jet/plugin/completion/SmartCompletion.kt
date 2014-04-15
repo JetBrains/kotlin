@@ -76,56 +76,20 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
         val itemsToSkip = calcItemsToSkip(expressionWithType)
 
+        val functionExpectedTypes = expectedTypes.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it.`type`) }
+
         for (descriptor in referenceVariants) {
             if (itemsToSkip.contains(descriptor)) continue
 
-            run {
-                val matchedExpectedTypes = expectedTypes.filter { expectedType ->
-                    typesOf(descriptor).any { descriptorType -> isSubtypeOf(descriptorType, expectedType.`type`) }
-                }
-                if (matchedExpectedTypes.isNotEmpty()) {
-                    val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
-                    result.add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
-                }
+            val matchedExpectedTypes = expectedTypes.filter { expectedType ->
+                typesOf(descriptor).any { descriptorType -> isSubtypeOf(descriptorType, expectedType.`type`) }
+            }
+            if (matchedExpectedTypes.isNotEmpty()) {
+                val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
+                result.add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
             }
 
-            val functionExpectedTypes = expectedTypes.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it.`type`) }
-            if (functionExpectedTypes.isNotEmpty()) {
-                fun functionReferenceLookupElement(descriptor: FunctionDescriptor): LookupElement? {
-                    val functionType = functionType(descriptor)
-                    if (functionType == null) return null
-
-                    val matchedExpectedTypes = functionExpectedTypes.filter { isSubtypeOf(functionType, it.`type`) }
-                    if (matchedExpectedTypes.isEmpty()) return null
-                    val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
-                    val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
-                    val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement) {
-                        override fun getLookupString() = text
-
-                        override fun renderElement(presentation: LookupElementPresentation) {
-                            super.renderElement(presentation)
-                            presentation.setItemText(text)
-                            presentation.setTypeText("")
-                        }
-
-                        override fun handleInsert(context: InsertionContext) {
-                        }
-                    }
-
-                    return addTailToLookupElement(lookupElementDecorated, matchedExpectedTypes)
-                }
-
-                if (descriptor is SimpleFunctionDescriptor) {
-                    functionReferenceLookupElement(descriptor)?.let { result.add(it) }
-                }
-                else if (descriptor is ClassDescriptor && descriptor.getModality() != Modality.ABSTRACT) {
-                    val constructors = descriptor.getConstructors().filter(visibilityFilter)
-                    if (constructors.size == 1) {
-                        //TODO: this code is to be changed if overloads to start work after ::
-                        functionReferenceLookupElement(constructors.single())?.let { result.add(it) }
-                    }
-                }
-            }
+            toFunctionReferenceLookupElement(descriptor, functionExpectedTypes)?.let { result.add(it) }
         }
 
         if (receiver == null) {
@@ -219,6 +183,49 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             }
         }
         return listOf()
+    }
+
+    private fun toFunctionReferenceLookupElement(descriptor: DeclarationDescriptor,
+                                                 functionExpectedTypes: Collection<ExpectedTypeInfo>): LookupElement? {
+        if (functionExpectedTypes.isEmpty()) return null
+
+        fun toLookupElement(descriptor: FunctionDescriptor): LookupElement? {
+            val functionType = functionType(descriptor)
+            if (functionType == null) return null
+
+            val matchedExpectedTypes = functionExpectedTypes.filter { isSubtypeOf(functionType, it.`type`) }
+            if (matchedExpectedTypes.isEmpty()) return null
+
+            val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
+            val text = "::" + (if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration().getName() else descriptor.getName())
+            val lookupElementDecorated = object: LookupElementDecorator<LookupElement>(lookupElement) {
+                override fun getLookupString() = text
+
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    presentation.setItemText(text)
+                    presentation.setTypeText("")
+                }
+
+                override fun handleInsert(context: InsertionContext) {
+                }
+            }
+
+            return addTailToLookupElement(lookupElementDecorated, matchedExpectedTypes)
+        }
+
+        if (descriptor is SimpleFunctionDescriptor) {
+            return toLookupElement(descriptor)
+        }
+        else if (descriptor is ClassDescriptor && descriptor.getModality() != Modality.ABSTRACT) {
+            val constructors = descriptor.getConstructors().filter(visibilityFilter)
+            if (constructors.size == 1) {
+                //TODO: this code is to be changed if overloads to start work after ::
+                return toLookupElement(constructors.single())
+            }
+        }
+
+        return null
     }
 
     private fun MutableCollection<LookupElement>.addTypeInstantiationItems(expectedTypes: Collection<ExpectedTypeInfo>) {
@@ -353,16 +360,16 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             else -> null
         }
         return ((((expression?.getParent() as? JetValueArgument)
-        ?.getParent() as? JetValueArgumentList)
-        ?.getParent() as? JetCallExpression)
-        ?.getCalleeExpression() as? JetSimpleNameExpression)
-        ?.getReferencedName()
+                   ?.getParent() as? JetValueArgumentList)
+                       ?.getParent() as? JetCallExpression)
+                           ?.getCalleeExpression() as? JetSimpleNameExpression)
+                               ?.getReferencedName()
     }
 
     private fun dataFlowToDescriptorTypes(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
         val dataFlowInfo = bindingContext[BindingContext.EXPRESSION_DATA_FLOW_INFO, expression]
         val (variableToTypes: Map<VariableDescriptor, Collection<JetType>>, notNullVariables: Set<VariableDescriptor>)
-        = processDataFlowInfo(dataFlowInfo, receiver)
+            = processDataFlowInfo(dataFlowInfo, receiver)
 
         fun typesOf(descriptor: DeclarationDescriptor): Iterable<JetType> {
             if (descriptor is CallableDescriptor) {
@@ -583,8 +590,8 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
     }
 
-    private fun addTailToLookupElement(lookupElement: LookupElement, expectedTypes: Collection<ExpectedTypeInfo>): LookupElement
-            = addTailToLookupElement(lookupElement, mergeTails(expectedTypes.map { it.tail }))
+    private fun addTailToLookupElement(lookupElement: LookupElement, matchedExpectedTypes: Collection<ExpectedTypeInfo>): LookupElement
+            = addTailToLookupElement(lookupElement, mergeTails(matchedExpectedTypes.map { it.tail }))
 
     private fun functionType(function: FunctionDescriptor): JetType? {
         return KotlinBuiltIns.getInstance().getKFunctionType(function.getAnnotations(),
