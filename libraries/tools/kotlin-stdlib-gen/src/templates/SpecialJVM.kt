@@ -78,7 +78,7 @@ fun specialJVM(): List<GenericFunction> {
         typeParam("C : MutableCollection<in R>")
         typeParam("R : T")
         returns("C")
-        exclude(ArraysOfPrimitives)
+        exclude(ArraysOfPrimitives, Strings)
         body {
             """
             for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -96,7 +96,7 @@ fun specialJVM(): List<GenericFunction> {
             return filterIsInstanceTo(ArrayList<R>(), klass)
             """
         }
-        exclude(ArraysOfPrimitives)
+        exclude(ArraysOfPrimitives, Strings)
 
         doc(Streams) { "Returns a stream containing all elements that are instances of specified class" }
         returns(Streams) { "Stream<T>" }
