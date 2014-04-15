@@ -89,7 +89,9 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 result.add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
             }
 
-            toFunctionReferenceLookupElement(descriptor, functionExpectedTypes)?.let { result.add(it) }
+            if (receiver == null) {
+                toFunctionReferenceLookupElement(descriptor, functionExpectedTypes)?.let { result.add(it) }
+            }
         }
 
         if (receiver == null) {

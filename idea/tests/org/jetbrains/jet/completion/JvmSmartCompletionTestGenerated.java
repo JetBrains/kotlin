@@ -211,6 +211,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NoConstructorWithQualifier.kt");
     }
     
+    @TestMetadata("NoFunctionReferenceAfterQualifier.kt")
+    public void testNoFunctionReferenceAfterQualifier() throws Exception {
+        doTest("idea/testData/completion/smart/NoFunctionReferenceAfterQualifier.kt");
+    }
+    
     @TestMetadata("NoNothing.kt")
     public void testNoNothing() throws Exception {
         doTest("idea/testData/completion/smart/NoNothing.kt");
