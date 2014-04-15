@@ -405,17 +405,28 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     private void doForceResolveAllContents() {
-        ForceResolveUtil.forceResolveAllContents(getAnnotations());
-
+        resolveMemberHeaders();
         ClassDescriptor classObjectDescriptor = getClassObjectDescriptor();
         if (classObjectDescriptor != null) {
             ForceResolveUtil.forceResolveAllContents(classObjectDescriptor);
         }
 
+        ForceResolveUtil.forceResolveAllContents(getConstructors());
         ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraClassObjects());
+        ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
+        ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+    }
+
+    // Note: headers of member classes' members are not resolved
+    public void resolveMemberHeaders() {
+        ForceResolveUtil.forceResolveAllContents(getAnnotations());
+
+        getClassObjectDescriptor();
+
+        getDescriptorsForExtraClassObjects();
 
         getClassObjectType();
-        ForceResolveUtil.forceResolveAllContents(getConstructors());
+        getConstructors();
         getContainingDeclaration();
         getThisAsReceiverParameter();
         getKind();
@@ -424,10 +435,14 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getOriginal();
         getScopeForClassHeaderResolution();
         getScopeForMemberDeclarationResolution();
-        ForceResolveUtil.forceResolveAllContents(getScopeForMemberLookup());
+        getScopeForMemberLookup().getAllDescriptors();
         getScopeForInitializerResolution();
         getUnsubstitutedInnerClassesScope();
-        ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+        getTypeConstructor().getSupertypes();
+        for (TypeParameterDescriptor typeParameterDescriptor : getTypeConstructor().getParameters()) {
+            typeParameterDescriptor.getUpperBounds();
+            typeParameterDescriptor.getLowerBounds();
+        }
         getUnsubstitutedPrimaryConstructor();
         getVisibility();
     }

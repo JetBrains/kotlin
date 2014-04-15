@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import javax.inject.Inject;
@@ -213,7 +213,7 @@ public class LazyTopDownAnalyzer {
 
         createPropertyDescriptors(c, resolveSession, topLevelFqNames, properties);
 
-        forceResolveAllClasses(c);
+        resolveAllHeadersInClasses(c);
 
         declarationResolver.checkRedeclarationsInPackages(resolveSession, topLevelFqNames);
         declarationResolver.checkRedeclarationsInInnerClassNames(c);
@@ -240,9 +240,9 @@ public class LazyTopDownAnalyzer {
         }
     }
 
-    private static void forceResolveAllClasses(TopDownAnalysisContext c) {
+    private static void resolveAllHeadersInClasses(TopDownAnalysisContext c) {
         for (ClassDescriptorWithResolutionScopes classDescriptor : c.getAllClasses()) {
-            ForceResolveUtil.forceResolveAllContents(classDescriptor);
+            ((LazyClassDescriptor) classDescriptor).resolveMemberHeaders();
         }
     }
 
