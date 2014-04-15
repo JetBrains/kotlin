@@ -244,7 +244,7 @@ fun filtering(): List<GenericFunction> {
         returns(Streams) { "Stream<T>" }
         body(Streams) {
             """
-            return FilteringStream(this, false, { it != null }) as Stream<T>
+            return FilteringStream(this, false, { it == null }) as Stream<T>
             """
         }
     }
