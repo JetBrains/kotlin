@@ -33,7 +33,10 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
-        return new OverloadResolutionResultsImpl<D>(Code.NAME_NOT_FOUND, Collections.<ResolvedCallWithTrace<D>>emptyList());
+        OverloadResolutionResultsImpl<D> results = new OverloadResolutionResultsImpl<D>(
+                Code.NAME_NOT_FOUND, Collections.<ResolvedCallWithTrace<D>>emptyList());
+        results.setAllCandidates(Collections.<ResolvedCall<D>>emptyList());
+        return results;
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallWithTrace<D> candidate) {
