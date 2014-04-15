@@ -431,70 +431,70 @@ public inline fun String.first(predicate: (Char) -> Boolean): Char {
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun <T> Array<out T>.firstOrNull(): T? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun BooleanArray.firstOrNull(): Boolean? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun ByteArray.firstOrNull(): Byte? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun CharArray.firstOrNull(): Char? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun DoubleArray.firstOrNull(): Double? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun FloatArray.firstOrNull(): Float? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun IntArray.firstOrNull(): Int? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun LongArray.firstOrNull(): Long? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun ShortArray.firstOrNull(): Short? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun <T> Iterable<T>.firstOrNull(): T? {
     when (this) {
@@ -514,14 +514,14 @@ public fun <T> Iterable<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun <T> List<T>.firstOrNull(): T? {
     return if (size > 0) this[0] else null
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun <T> Stream<T>.firstOrNull(): T? {
     when (this) {
@@ -541,7 +541,7 @@ public fun <T> Stream<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns first elementm, or null if collection is empty
+ * Returns first element, or null if collection is empty
  */
 public fun String.firstOrNull(): Char? {
     return if (size > 0) this[0] else null

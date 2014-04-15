@@ -182,7 +182,7 @@ fun elements(): List<GenericFunction> {
         }
     }
     templates add f("firstOrNull()") {
-        doc { "Returns first elementm, or null if collection is empty" }
+        doc { "Returns first element, or null if collection is empty" }
         returns("T?")
         body {
             """
