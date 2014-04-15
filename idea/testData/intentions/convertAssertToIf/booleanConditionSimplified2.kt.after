@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun foo() {
+    if (0 == 1) {
+        throw AssertionError("text")
+    }
+}
