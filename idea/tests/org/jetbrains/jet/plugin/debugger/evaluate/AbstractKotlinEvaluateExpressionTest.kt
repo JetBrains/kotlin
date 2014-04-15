@@ -41,21 +41,21 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         createDebugProcess(path)
 
         onBreakpoint {
-            val exceptions = arrayListOf<Throwable>()
+            val exceptions = linkedMapOf<String, Throwable>()
             for ((i, expression) in expressions.withIndices()) {
                 try {
                     evaluate(expression, expectedResults[i])
                 }
                 catch (e: Throwable) {
-                    exceptions.add(e)
+                    exceptions.put(expression, e)
                 }
             }
 
-            if (exceptions.notEmpty) {
-                for (exc in exceptions) {
+            if (!exceptions.empty) {
+                for (exc in exceptions.values()) {
                     exc.printStackTrace()
                 }
-                throw AssertionError("Test failed:\n" + exceptions.map { it.getMessage() }.makeString("\n"))
+                throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
             }
         }
         finish()
