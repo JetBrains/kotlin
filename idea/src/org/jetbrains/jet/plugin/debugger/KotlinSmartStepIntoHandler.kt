@@ -40,6 +40,8 @@ import com.sun.jdi.Location
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiFile
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
+import com.intellij.psi.PsiDocumentManager
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -49,26 +51,21 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         if (position.getLine() < 0) return Collections.emptyList()
 
         val file = position.getFile()
-        val vFile = file.getVirtualFile()
-        if (vFile == null) return Collections.emptyList()
 
-        val doc = FileDocumentManager.getInstance()?.getDocument(vFile)
-        if (doc == null) return Collections.emptyList()
+        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.getLine())
+        if (lineStart == null) return Collections.emptyList()
 
-        val line = position.getLine()
-        if (line >= doc.getLineCount()) return Collections.emptyList()
-
-        val lineStartOffset = doc.getLineStartOffset(line)
-        val offsetWithoutTab = CharArrayUtil.shiftForward(doc.getCharsSequence(), lineStartOffset, " \t")
-        val elementAtOffset = file.findElementAt(offsetWithoutTab)
+        val elementAtOffset = file.findElementAt(lineStart)
         if (elementAtOffset == null) return Collections.emptyList()
 
-        val element = getTopmostElementAtOffset(elementAtOffset, lineStartOffset)
-
+        val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
         if (element !is JetElement) return Collections.emptyList()
 
         val elementTextRange = element.getTextRange()
         if (elementTextRange == null) return Collections.emptyList()
+
+        val doc = PsiDocumentManager.getInstance(file.getProject()).getDocument(file)
+        if (doc == null) return Collections.emptyList()
 
         val lines = Range<Int>(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)

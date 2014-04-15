@@ -11,13 +11,13 @@ fun main(args: Array<String>) {
 }
 
 // EXPRESSION: Collections.emptyList<String>()
-// RESULT: instance of java.util.Collections$EmptyList(id=337): Ljava/util/Collections$EmptyList;
+// RESULT: instance of java.util.Collections$EmptyList(id=ID): Ljava/util/Collections$EmptyList;
 
 // EXPRESSION: ArrayList<Int>()
-// RESULT: instance of java.util.ArrayList(id=383): Ljava/util/ArrayList;
+// RESULT: instance of java.util.ArrayList(id=ID): Ljava/util/ArrayList;
 
 // EXPRESSION: HashSet<Int>()
-// RESULT: instance of java.util.HashSet(id=387): Ljava/util/HashSet;
+// RESULT: instance of java.util.HashSet(id=ID): Ljava/util/HashSet;
 
 // EXPRESSION: JHashMap<Int, Int>()
-// RESULT: instance of java.util.HashMap(id=391): Ljava/util/HashMap;
+// RESULT: instance of java.util.HashMap(id=ID): Ljava/util/HashMap;

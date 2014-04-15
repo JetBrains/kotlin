@@ -48,7 +48,7 @@ class Delegate {
 
 // EXPRESSION: 1.testExtVal
 // RESULT: 1: I
-//
+
 // EXPRESSION: testDelVal
 // RESULT: 1: I
 

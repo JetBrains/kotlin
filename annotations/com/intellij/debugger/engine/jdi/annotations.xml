@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.debugger.engine.jdi.StackFrameProxy com.sun.jdi.StackFrame getStackFrame()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

@@ -46,6 +46,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/arrays.kt");
     }
     
+    @TestMetadata("classObjectVal.kt")
+    public void testClassObjectVal() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/classObjectVal.kt");
+    }
+    
     @TestMetadata("collections.kt")
     public void testCollections() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/collections.kt");
@@ -56,9 +61,34 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/dependentOnFile.kt");
     }
     
+    @TestMetadata("enums.kt")
+    public void testEnums() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/enums.kt");
+    }
+    
+    @TestMetadata("extractLocalVariables.kt")
+    public void testExtractLocalVariables() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/extractLocalVariables.kt");
+    }
+    
+    @TestMetadata("extractThis.kt")
+    public void testExtractThis() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/extractThis.kt");
+    }
+    
+    @TestMetadata("extractVariablesFromCall.kt")
+    public void testExtractVariablesFromCall() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/extractVariablesFromCall.kt");
+    }
+    
     @TestMetadata("imports.kt")
     public void testImports() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/imports.kt");
+    }
+    
+    @TestMetadata("multilineExpressionAtBreakpoint.kt")
+    public void testMultilineExpressionAtBreakpoint() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/multilineExpressionAtBreakpoint.kt");
     }
     
     @TestMetadata("simple.kt")
@@ -69,6 +99,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
     @TestMetadata("stdlib.kt")
     public void testStdlib() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/stdlib.kt");
+    }
+    
+    @TestMetadata("vars.kt")
+    public void testVars() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/vars.kt");
     }
     
 }

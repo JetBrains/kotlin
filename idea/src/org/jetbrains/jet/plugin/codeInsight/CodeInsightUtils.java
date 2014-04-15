@@ -1,15 +1,14 @@
 package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiComment;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
+import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -187,5 +186,28 @@ public class CodeInsightUtils {
     ) {
         DescriptorRenderer renderer = shortTypeNames ? DescriptorRenderer.SOURCE_CODE_SHORT_NAMES_IN_TYPES : DescriptorRenderer.SOURCE_CODE;
         return renderer.render(descriptor);
+    }
+
+    @Nullable
+    public static Integer getStartLineOffset(@NotNull PsiFile file, int line) {
+        Document document = PsiDocumentManager.getInstance(file.getProject()).getDocument(file);
+        if (document == null) return null;
+
+        int lineStartOffset = document.getLineStartOffset(line);
+        return CharArrayUtil.shiftForward(document.getCharsSequence(), lineStartOffset, " \t");
+    }
+
+    @Nullable
+    public static PsiElement getTopmostElementAtOffset(@NotNull PsiElement element, int offset) {
+        do {
+            PsiElement parent = element.getParent();
+            if (parent == null || (parent.getTextOffset() < offset)) {
+                break;
+            }
+            element = parent;
+        }
+        while(true);
+
+        return element;
     }
 }

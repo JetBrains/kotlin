@@ -29,6 +29,9 @@ import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jet.InTextDirectivesUtils
 import org.jetbrains.eval4j.jdi.asValue
+import org.jetbrains.eval4j.Value
+import org.jetbrains.eval4j.ObjectValue
+import com.sun.jdi.ObjectReference
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     fun doTest(path: String) {
@@ -89,11 +92,18 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
             if (evaluator == null) throw AssertionError("Cannot create an Evaluator for Evaluate Expression")
 
             val value = evaluator.evaluate(createEvaluationContext(this))
-            val actualResult = value.asValue().toString()
+            val actualResult = value.asValue().asString()
             Assert.assertTrue("Evaluate expression returns wrong result for $expression:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
         }
         finally {
             resume(this)
         }
+    }
+
+    private fun Value.asString(): String {
+        if (this is ObjectValue && this.value is ObjectReference) {
+            return this.toString().replaceFirst("id=[0-9]*", "id=ID")
+        }
+        return this.toString()
     }
 }

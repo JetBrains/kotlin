@@ -6,10 +6,10 @@ fun main(args: Array<String>) {
 }
 
 // EXPRESSION: array(1, 2).map { it.toString() }
-// RESULT: instance of java.util.ArrayList(id=347): Ljava/util/ArrayList;
+// RESULT: instance of java.util.ArrayList(id=ID): Ljava/util/ArrayList;
 
 // EXPRESSION: array(1, 2, 101, 102).filter { it > 100 }
-// RESULT: instance of java.util.ArrayList(id=369): Ljava/util/ArrayList;
+// RESULT: instance of java.util.ArrayList(id=ID): Ljava/util/ArrayList;
 
 // EXPRESSION: array(1, 2).none()
 // RESULT: 0: Z
@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
 // RESULT: 2: I
 
 // EXPRESSION: intArray(1, 2).max()
-// RESULT: instance of java.lang.Integer(id=343): Ljava/lang/Integer;
+// RESULT: instance of java.lang.Integer(id=ID): Ljava/lang/Integer;
 
 // EXPRESSION: array(1, 2).max()
-// RESULT: instance of java.lang.Integer(id=343): Ljava/lang/Integer;
+// RESULT: instance of java.lang.Integer(id=ID): Ljava/lang/Integer;
