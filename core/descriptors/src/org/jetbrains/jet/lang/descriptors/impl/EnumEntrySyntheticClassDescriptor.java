@@ -18,10 +18,10 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import kotlin.Function0;
 import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
@@ -37,7 +37,10 @@ import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.jet.storage.StorageManager;
 import org.jetbrains.jet.utils.Printer;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final ClassKind kind;
@@ -222,10 +225,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                         @Override
                         @SuppressWarnings("unchecked")
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
                                 @Override
-                                public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                                public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                                     // Do nothing
+                                    return Unit.VALUE;
                                 }
                             });
                             result.add((D) fakeOverride);

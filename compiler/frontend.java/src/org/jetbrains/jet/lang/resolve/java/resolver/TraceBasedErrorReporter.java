@@ -17,21 +17,17 @@
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
-import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import javax.inject.Inject;
-
-import static org.jetbrains.jet.lang.diagnostics.Errors.CANNOT_INFER_VISIBILITY;
 
 public class TraceBasedErrorReporter implements ErrorReporter {
     private static final Logger LOG = Logger.getInstance(TraceBasedErrorReporter.class);
@@ -52,10 +48,7 @@ public class TraceBasedErrorReporter implements ErrorReporter {
 
     @Override
     public void reportCannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
-        PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), descriptor);
-        if (element instanceof JetDeclaration) {
-            trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
-        }
+        OverrideResolver.createCannotInferVisibilityReporter(trace).invoke(descriptor);
     }
 
     @Override

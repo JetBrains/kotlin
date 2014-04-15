@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.java.resolver;
 
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -56,10 +58,11 @@ public final class DescriptorResolverUtils {
                     @Override
                     @SuppressWarnings("unchecked")
                     public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                        OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                        OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
                             @Override
-                            public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                            public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                                 errorReporter.reportCannotInferVisibility(descriptor);
+                                return Unit.VALUE;
                             }
                         });
                         result.add((D) fakeOverride);

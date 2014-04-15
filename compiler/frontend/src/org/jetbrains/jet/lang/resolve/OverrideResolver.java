@@ -25,6 +25,8 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
@@ -164,16 +166,18 @@ public class OverrideResolver {
 
     public static void resolveUnknownVisibilities(
             @NotNull Collection<? extends CallableMemberDescriptor> descriptors,
-            @NotNull BindingTrace trace) {
+            @NotNull BindingTrace trace
+    ) {
         for (CallableMemberDescriptor descriptor : descriptors) {
-            resolveUnknownVisibilityForMember(descriptor, trace);
+            OverridingUtil.resolveUnknownVisibilityForMember(descriptor, createCannotInferVisibilityReporter(trace));
         }
     }
 
-    public static void resolveUnknownVisibilityForMember(@NotNull CallableMemberDescriptor descriptor, @NotNull final BindingTrace trace) {
-        OverridingUtil.resolveUnknownVisibilityForMember(descriptor, new OverridingUtil.NotInferredVisibilitySink() {
+    @NotNull
+    public static Function1<CallableMemberDescriptor, Unit> createCannotInferVisibilityReporter(@NotNull final BindingTrace trace) {
+        return new Function1<CallableMemberDescriptor, Unit>() {
             @Override
-            public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+            public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                 DeclarationDescriptor reportOn = descriptor.getKind() == FAKE_OVERRIDE
                                                  ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class)
                                                  : descriptor;
@@ -182,8 +186,9 @@ public class OverrideResolver {
                 if (element instanceof JetDeclaration) {
                     trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
                 }
+                return Unit.VALUE;
             }
-        });
+        };
     }
 
     private static enum Filtering {

@@ -19,6 +19,7 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -280,9 +281,9 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         OverridingUtil.DescriptorSink sink = new OverridingUtil.DescriptorSink() {
             @Override
             public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
                     @Override
-                    public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                    public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                         throw new IllegalStateException("Cannot infer visibility for " + descriptor + " in " + classObject);
                     }
                 });
@@ -433,11 +434,12 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                     new OverridingUtil.DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new OverridingUtil.NotInferredVisibilitySink() {
+                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
                                 @Override
-                                public void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor) {
+                                public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                                     // Do nothing
                                     // TODO: do something
+                                    return Unit.VALUE;
                                 }
                             });
                             //noinspection unchecked

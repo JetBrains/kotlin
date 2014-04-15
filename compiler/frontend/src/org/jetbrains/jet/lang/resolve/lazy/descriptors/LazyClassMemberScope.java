@@ -137,11 +137,7 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
     public Set<FunctionDescriptor> getFunctions(@NotNull Name name) {
         // TODO: this should be handled by lazy function descriptors
         Set<FunctionDescriptor> functions = super.getFunctions(name);
-        for (FunctionDescriptor functionDescriptor : functions) {
-            if (functionDescriptor.getKind() != FAKE_OVERRIDE && functionDescriptor.getKind() != DELEGATION) {
-                OverrideResolver.resolveUnknownVisibilityForMember(functionDescriptor, trace);
-            }
-        }
+        resolveUnknownVisibilitiesForMembers(functions);
         return functions;
     }
 
@@ -206,15 +202,20 @@ public class LazyClassMemberScope extends AbstractLazyMemberScope<LazyClassDescr
 
     @NotNull
     @Override
+    @SuppressWarnings("unchecked")
     public Set<VariableDescriptor> getProperties(@NotNull Name name) {
         // TODO: this should be handled by lazy property descriptors
         Set<VariableDescriptor> properties = super.getProperties(name);
-        for (VariableDescriptor variableDescriptor : properties) {
-            PropertyDescriptor propertyDescriptor = (PropertyDescriptor) variableDescriptor;
-            if (propertyDescriptor.getKind() == FAKE_OVERRIDE || propertyDescriptor.getKind() == DELEGATION) continue;
-            OverrideResolver.resolveUnknownVisibilityForMember(propertyDescriptor, trace);
-        }
+        resolveUnknownVisibilitiesForMembers((Set) properties);
         return properties;
+    }
+
+    private void resolveUnknownVisibilitiesForMembers(@NotNull Set<? extends CallableMemberDescriptor> descriptors) {
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            if (descriptor.getKind() != FAKE_OVERRIDE && descriptor.getKind() != DELEGATION) {
+                OverridingUtil.resolveUnknownVisibilityForMember(descriptor, OverrideResolver.createCannotInferVisibilityReporter(trace));
+            }
+        }
     }
 
     @Override

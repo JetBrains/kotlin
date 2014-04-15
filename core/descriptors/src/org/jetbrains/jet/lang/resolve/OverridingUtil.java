@@ -19,6 +19,8 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -365,11 +367,11 @@ public class OverridingUtil {
 
     public static void resolveUnknownVisibilityForMember(
             @NotNull CallableMemberDescriptor memberDescriptor,
-            @NotNull NotInferredVisibilitySink sink
+            @NotNull Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
     ) {
         for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
             if (descriptor.getVisibility() == Visibilities.INHERITED) {
-                resolveUnknownVisibilityForMember(descriptor, sink);
+                resolveUnknownVisibilityForMember(descriptor, cannotInferVisibility);
             }
         }
 
@@ -377,11 +379,11 @@ public class OverridingUtil {
             return;
         }
 
-        Visibility visibilityToInherit = computeVisibilityToInherit(memberDescriptor, sink);
+        Visibility visibilityToInherit = computeVisibilityToInherit(memberDescriptor, cannotInferVisibility);
         if (memberDescriptor instanceof PropertyDescriptorImpl) {
             ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
-                resolveUnknownVisibilityForMember(accessor, sink);
+                resolveUnknownVisibilityForMember(accessor, cannotInferVisibility);
             }
         }
         else if (memberDescriptor instanceof FunctionDescriptorImpl) {
@@ -396,11 +398,11 @@ public class OverridingUtil {
     @NotNull
     private static Visibility computeVisibilityToInherit(
             @NotNull CallableMemberDescriptor memberDescriptor,
-            @NotNull NotInferredVisibilitySink sink
+            @NotNull Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
     ) {
         Visibility maxVisibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
         if (maxVisibility == null) {
-            sink.cannotInferVisibility(memberDescriptor);
+            cannotInferVisibility.invoke(memberDescriptor);
             return Visibilities.PUBLIC;
         }
         if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
@@ -448,10 +450,6 @@ public class OverridingUtil {
         void addToScope(@NotNull CallableMemberDescriptor fakeOverride);
 
         void conflict(@NotNull CallableMemberDescriptor fromSuper, @NotNull CallableMemberDescriptor fromCurrent);
-    }
-
-    public interface NotInferredVisibilitySink {
-        void cannotInferVisibility(@NotNull CallableMemberDescriptor descriptor);
     }
 
     public static class OverrideCompatibilityInfo {
