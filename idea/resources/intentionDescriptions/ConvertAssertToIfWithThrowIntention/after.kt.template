@@ -1,5 +1,5 @@
 fun foo() {
     <spot>if (!true) {
-        throw AssertionException("text")
+        throw AssertionError("text")
     }</spot>
 }
