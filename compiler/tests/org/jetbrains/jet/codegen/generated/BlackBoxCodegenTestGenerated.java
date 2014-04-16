@@ -2366,6 +2366,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/enum/abstractMethodInEnum.kt");
         }
         
+        @TestMetadata("abstractNestedClass.kt")
+        public void testAbstractNestedClass() throws Exception {
+            doTest("compiler/testData/codegen/box/enum/abstractNestedClass.kt");
+        }
+        
         @TestMetadata("abstractmethod.kt")
         public void testAbstractmethod() throws Exception {
             doTest("compiler/testData/codegen/box/enum/abstractmethod.kt");

@@ -21,6 +21,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
+import jet.runtime.typeinfo.JetValueParameter;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -182,16 +185,15 @@ public class CodegenUtil {
     }
 
     public static boolean hasAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return ContainerUtil.exists(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
-                                    new Condition<DeclarationDescriptor>() {
-                                        @Override
-                                        public boolean value(DeclarationDescriptor declaration) {
-                                            if (!(declaration instanceof MemberDescriptor)) {
-                                                return false;
-                                            }
-                                            return ((MemberDescriptor) declaration).getModality() == ABSTRACT;
-                                        }
-                                    });
+        return KotlinPackage.any(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors(),
+                                 new Function1<DeclarationDescriptor, Boolean>() {
+                                     @Override
+                                     public Boolean invoke(DeclarationDescriptor descriptor) {
+                                         return descriptor instanceof CallableMemberDescriptor &&
+                                                ((CallableMemberDescriptor) descriptor).getModality() == ABSTRACT;
+                                     }
+                                 }
+        );
     }
 
     /**
