@@ -30,6 +30,11 @@ import com.intellij.testFramework.InspectionTestUtil
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.jet.JetTestCaseBuilder
+import org.jetbrains.jet.testing.ConfigLibraryUtil
+import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.openapi.projectRoots.JavaSdk
+import com.intellij.openapi.projectRoots.Sdk
+import org.apache.commons.lang.SystemUtils;
 
 public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
@@ -51,14 +56,35 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
                     .listFiles { it.getName().endsWith(".kt") }!!
                     .map { configureByFile(it.getName())!!.getVirtualFile()!! }
 
-            val scope = AnalysisScope(getProject(), virtualFiles)
-            scope.invalidate()
+            val isWithRuntime = virtualFiles.any({ file ->
+                InTextDirectivesUtils.findStringWithPrefixes(String(file.contentsToByteArray(), "utf-8"), "// WITH_RUNTIME") != null
+             })
 
-            val inspectionManager = (InspectionManager.getInstance(getProject()) as InspectionManagerEx)
-            val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, toolWrapper)
+            try {
+                if (isWithRuntime) {
+                    ConfigLibraryUtil.configureKotlinRuntime(myFixture!!.getModule(), getFullJavaJDK());
+                }
 
-            InspectionTestUtil.runTool(toolWrapper, scope, globalContext, inspectionManager)
-            InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.getPath())
+                val scope = AnalysisScope(getProject(), virtualFiles)
+                scope.invalidate()
+
+                val inspectionManager = (InspectionManager.getInstance(getProject()) as InspectionManagerEx)
+                val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, toolWrapper)
+
+                InspectionTestUtil.runTool(toolWrapper, scope, globalContext, inspectionManager)
+                InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.getPath())
+            }
+            finally {
+                if (isWithRuntime) {
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture!!.getModule(), IdeaTestUtil.getMockJdk17());
+                }
+            }
         }
+    }
+
+    protected fun getFullJavaJDK(): Sdk {
+        val javaPath = checkNotNull(SystemUtils.getJavaHome()?.getAbsolutePath(), "JDK Path must not be null")
+        val jdk = JavaSdk.getInstance()?.createJdk("JDK", javaPath);
+        return checkNotNull(jdk, "Could not obtain JDK instance")
     }
 }
