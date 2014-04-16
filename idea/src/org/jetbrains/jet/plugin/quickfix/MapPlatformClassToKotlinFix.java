@@ -62,10 +62,10 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
     @NotNull
     @Override
     public String getText() {
-        String platformClassQualifiedName = DescriptorRenderer.TEXT.renderType(platformClass.getDefaultType());
+        String platformClassQualifiedName = DescriptorRenderer.FQNAMES_IN_TYPES.renderType(platformClass.getDefaultType());
         return possibleClasses.size() == 1
                ? JetBundle.message("map.platform.class.to.kotlin", platformClassQualifiedName,
-                                   DescriptorRenderer.TEXT.renderType(possibleClasses.iterator().next().getDefaultType()))
+                                   DescriptorRenderer.FQNAMES_IN_TYPES.renderType(possibleClasses.iterator().next().getDefaultType()))
                : JetBundle.message("map.platform.class.to.kotlin.multiple", platformClassQualifiedName);
     }
 

@@ -107,7 +107,7 @@ class ExtractionData(
 
     fun getBrokenReferencesInfo(body: JetBlockExpression): List<ResolvedReferenceInfo> {
         fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-            return d1 == d2 || (d1 != null && d2 != null && DescriptorRenderer.TEXT.render(d1) == DescriptorRenderer.TEXT.render(d2))
+            return d1 == d2 || (d1 != null && d2 != null && DescriptorRenderer.FQNAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQNAMES_IN_TYPES.render(d2))
         }
 
         val startOffset = body.getStatements().first!!.getTextRange()!!.getStartOffset()

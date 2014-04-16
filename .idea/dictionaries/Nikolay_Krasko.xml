@@ -2,6 +2,7 @@
   <dictionary name="Nikolay.Krasko">
     <words>
       <w>accessors</w>
+      <w>fqnames</w>
       <w>goto</w>
       <w>kdoc</w>
       <w>memoized</w>

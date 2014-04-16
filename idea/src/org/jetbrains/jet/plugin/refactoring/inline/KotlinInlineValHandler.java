@@ -236,7 +236,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return StringUtil.join(fun.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
             @Override
             public String fun(ValueParameterDescriptor descriptor) {
-                return descriptor.getName() + ": " + DescriptorRenderer.TEXT.renderType(descriptor.getType());
+                return descriptor.getName() + ": " + DescriptorRenderer.FQNAMES_IN_TYPES.renderType(descriptor.getType());
             }
         }, ", ");
     }
@@ -357,7 +357,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return StringUtil.join(typeArguments, new Function<JetType, String>() {
             @Override
             public String fun(JetType type) {
-                return DescriptorRenderer.TEXT.renderType(type);
+                return DescriptorRenderer.FQNAMES_IN_TYPES.renderType(type);
             }
         }, ", ");
     }

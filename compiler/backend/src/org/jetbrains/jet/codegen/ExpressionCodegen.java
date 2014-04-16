@@ -3555,9 +3555,9 @@ The "returned" value of try expression with no finally is either the last expres
                         v.ifnonnull(nonnull);
                         JetType leftType = bindingContext.get(BindingContext.EXPRESSION_TYPE, left);
                         assert leftType != null;
-                        throwNewException("kotlin/TypeCastException", DescriptorRenderer.TEXT.renderType(leftType) +
+                        throwNewException("kotlin/TypeCastException", DescriptorRenderer.FQNAMES_IN_TYPES.renderType(leftType) +
                                                                      " cannot be cast to " +
-                                                                     DescriptorRenderer.TEXT.renderType(rightType));
+                                                                     DescriptorRenderer.FQNAMES_IN_TYPES.renderType(rightType));
                         v.mark(nonnull);
                     }
                 }

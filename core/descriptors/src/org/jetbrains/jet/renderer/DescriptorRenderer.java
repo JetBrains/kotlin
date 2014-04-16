@@ -54,7 +54,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setModifiers()
             .setStartFromName(true).build();
 
-    DescriptorRenderer TEXT = new DescriptorRendererBuilder().build();
+    DescriptorRenderer FQNAMES_IN_TYPES = new DescriptorRendererBuilder().build();
 
     DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setShortNames(true).build();
 

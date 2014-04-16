@@ -316,7 +316,7 @@ public class JetLineMarkerProvider implements LineMarkerProvider {
         else {
             JBPopup popup = NavigationUtil.getPsiElementPopup(PsiUtilCore.toPsiElementArray(list),
                                                               new JetFunctionPsiElementCellRenderer(bindingContext),
-                                                              DescriptorRenderer.TEXT.render(descriptor));
+                                                              DescriptorRenderer.FQNAMES_IN_TYPES.render(descriptor));
             if (event != null) {
                 popup.show(new RelativePoint(event));
             }

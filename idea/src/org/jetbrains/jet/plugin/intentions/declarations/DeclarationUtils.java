@@ -115,7 +115,7 @@ public class DeclarationUtils {
         JetType inferredType = getPropertyTypeIfNeeded(property);
 
         String typeStr = inferredType != null
-                         ? DescriptorRenderer.TEXT.renderType(inferredType)
+                         ? DescriptorRenderer.FQNAMES_IN_TYPES.renderType(inferredType)
                          : JetPsiUtil.getNullableText(property.getTypeRef());
 
         //noinspection ConstantConditions

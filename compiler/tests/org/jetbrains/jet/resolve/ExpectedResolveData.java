@@ -367,6 +367,6 @@ public abstract class ExpectedResolveData {
 
     @NotNull
     private static String renderNullableDescriptor(@Nullable DeclarationDescriptor d) {
-        return d == null ? "<null>" : DescriptorRenderer.TEXT.render(d);
+        return d == null ? "<null>" : DescriptorRenderer.FQNAMES_IN_TYPES.render(d);
     }
 }

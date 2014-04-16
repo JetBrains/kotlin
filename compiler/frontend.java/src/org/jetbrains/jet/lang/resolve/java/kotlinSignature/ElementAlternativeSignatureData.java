@@ -97,7 +97,7 @@ public abstract class ElementAlternativeSignatureData {
             else {
                 throw new AlternativeSignatureMismatchException(
                         "Return type in alternative signature is missing, while in real signature it is '%s'",
-                        DescriptorRenderer.TEXT.renderType(originalType));
+                        DescriptorRenderer.FQNAMES_IN_TYPES.renderType(originalType));
             }
         }
 

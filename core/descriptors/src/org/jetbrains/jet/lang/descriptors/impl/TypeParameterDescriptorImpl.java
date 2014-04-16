@@ -194,7 +194,7 @@ public class TypeParameterDescriptorImpl extends DeclarationDescriptorNonRootImp
     @Override
     public String toString() {
         try {
-            return DescriptorRenderer.TEXT.render(this);
+            return DescriptorRenderer.FQNAMES_IN_TYPES.render(this);
         } catch (Exception e) {
             return this.getClass().getName() + "@" + System.identityHashCode(this);
         }

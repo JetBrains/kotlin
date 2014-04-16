@@ -249,7 +249,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             public void run() {
                 String variableText = "val " + suggestedNames[0];
                 if (noTypeInference) {
-                    variableText += ": " + DescriptorRenderer.TEXT.renderType(expressionType);
+                    variableText += ": " + DescriptorRenderer.FQNAMES_IN_TYPES.renderType(expressionType);
                 }
                 variableText += " = ";
                 if (expression instanceof JetParenthesizedExpression) {

@@ -463,7 +463,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
 
 fun ExtractionDescriptor.getFunctionText(
         withBody: Boolean = true,
-        descriptorRenderer: DescriptorRenderer = DescriptorRenderer.TEXT
+        descriptorRenderer: DescriptorRenderer = DescriptorRenderer.FQNAMES_IN_TYPES
 ): String {
     return FunctionBuilder().let { builder ->
         builder.modifier(visibility)

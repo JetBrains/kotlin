@@ -131,7 +131,7 @@ public class MoveDeclarationsOutHelper {
             typeString = typeRef.getText();
         }
         else if (!propertyType.isError()) {
-            typeString = DescriptorRenderer.TEXT.renderType(propertyType);
+            typeString = DescriptorRenderer.FQNAMES_IN_TYPES.renderType(propertyType);
         }
 
         return JetPsiFactory.createProperty(property.getProject(), property.getName(), typeString, property.isVar(), initializer);

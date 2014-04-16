@@ -302,7 +302,7 @@ public class DeclarationResolver {
                     for (DeclarationDescriptor declarationDescriptor : descriptors) {
                         for (PsiElement declaration : getDeclarationsByDescriptor(declarationDescriptor)) {
                             assert declaration != null : "Null declaration for descriptor: " + declarationDescriptor + " " +
-                                                         (declarationDescriptor != null ? DescriptorRenderer.TEXT.render(declarationDescriptor) : "");
+                                                         (declarationDescriptor != null ? DescriptorRenderer.FQNAMES_IN_TYPES.render(declarationDescriptor) : "");
                             trace.report(REDECLARATION.on(declaration, declarationDescriptor.getName().asString()));
                         }
                     }

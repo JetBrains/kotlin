@@ -149,7 +149,7 @@ public class MemberMatching {
             return true;
         }
         if (declarationReceiver != null && descriptorReceiver != null) {
-            return declarationReceiver.getText().equals(DescriptorRenderer.TEXT.renderType(descriptorReceiver.getType()));
+            return declarationReceiver.getText().equals(DescriptorRenderer.FQNAMES_IN_TYPES.renderType(descriptorReceiver.getType()));
         }
         return false;
     }
@@ -178,7 +178,7 @@ public class MemberMatching {
 
             JetType typeToRender = varargInDeclaration ? descriptorParameter.getVarargElementType() : descriptorParameter.getType();
             assert typeToRender != null;
-            String descriptorParameterText = DescriptorRenderer.TEXT.renderType(typeToRender);
+            String descriptorParameterText = DescriptorRenderer.FQNAMES_IN_TYPES.renderType(typeToRender);
             if (!declarationTypeText.equals(descriptorParameterText)) {
                 return false;
             }
@@ -227,12 +227,12 @@ public class MemberMatching {
                     descriptor.getUpperBounds(), new Function<JetType, String>() {
                 @Override
                 public String fun(JetType type) {
-                    return DescriptorRenderer.TEXT.renderType(type);
+                    return DescriptorRenderer.FQNAMES_IN_TYPES.renderType(type);
                 }
             }));
 
             Set<String> decompiledUpperBounds = decompiledParameterToBounds.get(descriptor.getName()).isEmpty()
-                    ? Sets.newHashSet(DescriptorRenderer.TEXT.renderType(KotlinBuiltIns.getInstance().getDefaultBound()))
+                    ? Sets.newHashSet(DescriptorRenderer.FQNAMES_IN_TYPES.renderType(KotlinBuiltIns.getInstance().getDefaultBound()))
                     : Sets.newHashSet(decompiledParameterToBounds.get(descriptor.getName()));
             if (!descriptorUpperBounds.equals(decompiledUpperBounds)) {
                 return false;

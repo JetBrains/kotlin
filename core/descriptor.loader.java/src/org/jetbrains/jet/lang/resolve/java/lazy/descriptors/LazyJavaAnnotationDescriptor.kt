@@ -176,6 +176,6 @@ class LazyJavaAnnotationDescriptor(
 
 
     override fun toString(): String {
-        return DescriptorRenderer.TEXT.renderAnnotation(this)
+        return DescriptorRenderer.FQNAMES_IN_TYPES.renderAnnotation(this)
     }
 }
