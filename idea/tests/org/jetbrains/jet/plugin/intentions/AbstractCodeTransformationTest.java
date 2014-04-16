@@ -38,6 +38,14 @@ import org.junit.Assert;
 import java.io.File;
 
 public abstract class AbstractCodeTransformationTest extends LightCodeInsightTestCase {
+    public void doTestDoubleBangToIfThen(@NotNull String path) throws Exception {
+        doTestIntention(path, new DoubleBangToIfThenIntention());
+    }
+
+    public void doTestIfThenToDoubleBang(@NotNull String path) throws Exception {
+        doTestIntention(path, new IfThenToDoubleBangIntention());
+    }
+
     public void doTestElvisToIfThen(@NotNull String path) throws Exception {
         doTestIntention(path, new ElvisToIfThenIntention());
     }

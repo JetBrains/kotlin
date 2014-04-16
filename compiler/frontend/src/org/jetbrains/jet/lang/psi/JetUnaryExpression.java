@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -33,5 +34,9 @@ public abstract class JetUnaryExpression extends JetExpressionImpl implements Je
     @NotNull
     public JetSimpleNameExpression getOperationReference() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
+    }
+
+    public IElementType getOperationToken() {
+        return getOperationReference().getReferencedNameElementType();
     }
 }

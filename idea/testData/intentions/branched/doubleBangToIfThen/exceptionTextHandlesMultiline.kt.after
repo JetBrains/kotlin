@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+fun main(args: Array<String>) {
+    val i = mapOf("one" to 1,
+            "two" to null,
+            "three" to 3).get("one")
+    val t = if (i != null) i else throw NullPointerException("Expression 'mapOf(\"one\" to 1, ...' must not be null")
+}

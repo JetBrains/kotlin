@@ -29,6 +29,8 @@ import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNotNullExpr
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.replace
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.inlineLeftSideIfApplicableWithPrompt
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
+import org.jetbrains.jet.lang.psi.JetThrowExpression
 
 public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.elvis", javaClass()) {
 
@@ -42,8 +44,15 @@ public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
         if (expression == null || !expression.isStableVariable()) return false
 
         return when (condition.getOperationToken()) {
-            JetTokens.EQEQ -> thenClause.isNotNullExpression() && elseClause.evaluatesTo(expression)
-            JetTokens.EXCLEQ -> elseClause.isNotNullExpression() && thenClause.evaluatesTo(expression)
+            JetTokens.EQEQ ->
+                thenClause.isNotNullExpression() && elseClause.evaluatesTo(expression) &&
+                !(thenClause is JetThrowExpression && thenClause.throwsNullPointerExceptionWithNoArguments())
+
+
+            JetTokens.EXCLEQ ->
+                elseClause.isNotNullExpression() && thenClause.evaluatesTo(expression) &&
+                !(elseClause is JetThrowExpression && elseClause.throwsNullPointerExceptionWithNoArguments())
+
             else -> false
         }
     }
