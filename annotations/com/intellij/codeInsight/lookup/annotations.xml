@@ -83,6 +83,9 @@
       name='com.intellij.codeInsight.lookup.LookupElementBuilder com.intellij.codeInsight.lookup.LookupElementBuilder withTypeText(java.lang.String, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.codeInsight.lookup.LookupElementDecorator T getDelegate()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.codeInsight.lookup.LookupElementDecorator void renderElement(com.intellij.codeInsight.lookup.LookupElementPresentation) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
