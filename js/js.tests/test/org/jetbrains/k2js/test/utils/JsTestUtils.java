@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.k2js.config.EcmaVersion;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -49,9 +48,7 @@ public final class JsTestUtils {
 
     @NotNull
     public static String readFile(@NotNull String path) throws IOException {
-        @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
-        FileInputStream stream = new FileInputStream(new File(path));
-        return FileUtil.loadTextAndClose(stream);
+        return FileUtil.loadFile(new File(path), /*convertLineSeparators = */ true);
     }
 
     @NotNull

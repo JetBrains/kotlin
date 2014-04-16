@@ -18,6 +18,7 @@ package org.jetbrains.k2js.config;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
@@ -73,7 +74,7 @@ public final class MetaInfServices {
                                 // lets try to discover the file
                                 InputStream stream = loadClasspathResource(line);
                                 if (stream != null) {
-                                    String text = FileUtil.loadTextAndClose(stream);
+                                    String text = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(stream));
                                     libFiles.add(JetPsiFactory.createFile(project, line, text));
                                 }
                             }

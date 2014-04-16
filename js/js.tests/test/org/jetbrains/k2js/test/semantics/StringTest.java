@@ -16,12 +16,11 @@
 
 package org.jetbrains.k2js.test.semantics;
 
+import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.k2js.config.EcmaVersion;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-
-import static com.intellij.openapi.util.io.FileUtil.loadTextAndClose;
 
 public final class StringTest extends AbstractExpressionTest {
 
@@ -75,8 +74,7 @@ public final class StringTest extends AbstractExpressionTest {
     private void checkHasNoToStringCalls() throws IOException {
         for (EcmaVersion ecmaVersion : DEFAULT_ECMA_VERSIONS) {
             String filePath = getOutputFilePath(getTestName(true) + ".kt", ecmaVersion);
-            //noinspection IOResourceOpenedButNotSafelyClosed
-            String text = loadTextAndClose(new FileInputStream(filePath));
+            String text = FileUtil.loadFile(new File(filePath), /*convertLineSeparators = */ true);
             assertFalse(filePath + " should not contain toString calls", text.contains("toString"));
         }
     }

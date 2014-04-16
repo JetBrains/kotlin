@@ -21,6 +21,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.*;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
@@ -120,7 +121,7 @@ public class LibrarySourcesConfig extends Config {
             ZipEntry entry = zipEntries.nextElement();
             if (!entry.isDirectory() && entry.getName().endsWith(".kt")) {
                 InputStream stream = file.getInputStream(entry);
-                String text = FileUtil.loadTextAndClose(stream);
+                String text = StringUtil.convertLineSeparators(FileUtil.loadTextAndClose(stream));
                 JetFile jetFile = JetPsiFactory.createFile(getProject(), entry.getName(), text);
                 jetFile.putUserData(EXTERNAL_MODULE_NAME, UNKNOWN_EXTERNAL_MODULE_NAME);
                 result.add(jetFile);
