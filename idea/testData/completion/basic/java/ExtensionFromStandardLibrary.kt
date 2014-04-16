@@ -8,5 +8,5 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"toLinkedList", itemText:"toLinkedList()", tailText:" for kotlin.Iterable<T> in kotlin" }
+// EXIST: { lookupString:"toLinkedList", itemText:"toLinkedList()", tailText:" for Iterable<T> in kotlin" }
 // NUMBER: 1

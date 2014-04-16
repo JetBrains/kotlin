@@ -64,39 +64,38 @@ public final class DescriptorLookupConverter {
         String presentableText = descriptor.getName().asString();
         String typeText = "";
         String tailText = "";
-        boolean tailTextGrayed = true;
 
         if (descriptor instanceof FunctionDescriptor) {
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
             JetType returnType = functionDescriptor.getReturnType();
-            typeText = DescriptorRenderer.TEXT.renderType(returnType);
-            presentableText += DescriptorRenderer.TEXT.renderFunctionParameters(functionDescriptor);
+            typeText = returnType != null ? DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(returnType) : "";
+            presentableText += DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(functionDescriptor);
 
             boolean extensionFunction = functionDescriptor.getReceiverParameter() != null;
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration != null && extensionFunction) {
-                tailText += " for " + DescriptorRenderer.TEXT.renderType(functionDescriptor.getReceiverParameter().getType());
+                tailText += " for " + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(functionDescriptor.getReceiverParameter().getType());
                 tailText += " in " + DescriptorUtils.getFqName(containingDeclaration);
             }
         }
         else if (descriptor instanceof VariableDescriptor) {
             JetType outType = ((VariableDescriptor) descriptor).getType();
-            typeText = DescriptorRenderer.TEXT.renderType(outType);
+            typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(outType);
         }
         else if (descriptor instanceof ClassDescriptor) {
             DeclarationDescriptor declaredIn = descriptor.getContainingDeclaration();
             assert declaredIn != null;
             tailText = " (" + DescriptorUtils.getFqName(declaredIn) + ")";
-            tailTextGrayed = true;
         }
         else {
-            typeText = DescriptorRenderer.TEXT.render(descriptor);
+            typeText = DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor);
         }
 
         element = element.withInsertHandler(getInsertHandler(descriptor));
-        element = element.withTailText(tailText, tailTextGrayed).withTypeText(typeText).withPresentableText(presentableText);
+        element = element.withTailText(tailText, true).withTypeText(typeText).withPresentableText(presentableText);
         element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor));
+
         return element;
     }
 
@@ -138,7 +137,9 @@ public final class DescriptorLookupConverter {
             if (containingClass != null && !JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
                 if (declaration instanceof PsiMethod) {
                     InsertHandler<LookupElement> handler = getInsertHandler(descriptor);
-                    assert handler != null: "Special kotlin handler is expected for function: " + declaration.getText() + " and descriptor" + DescriptorRenderer.TEXT.render(descriptor);
+                    assert handler != null:
+                            "Special kotlin handler is expected for function: " + declaration.getText() +
+                            " and descriptor: " + DescriptorRenderer.TEXT.render(descriptor);
 
                     return new JavaMethodCallElementWithCustomHandler(declaration).setInsertHandler(handler);
                 }
