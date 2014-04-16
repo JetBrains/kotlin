@@ -20,12 +20,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.PackageFacadeContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
@@ -42,14 +36,20 @@ import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.FieldVisitor;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PropertyCodegen extends GenerationStateAware {
     @NotNull
@@ -257,64 +257,44 @@ public class PropertyCodegen extends GenerationStateAware {
         return generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
     }
 
-    private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor getter) {
-        boolean defaultGetter = getter == null || getter.getBodyExpression() == null;
-
-        //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
-        //if (!defaultGetter || isExternallyAccessible(propertyDescriptor)) {
-        PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
-        getterDescriptor = getterDescriptor != null ? getterDescriptor : DescriptorFactory.createDefaultGetter(propertyDescriptor);
-        JvmMethodSignature signature = typeMapper.mapSignature(getterDescriptor, kind);
-
-        if (kind != OwnerKind.TRAIT_IMPL || !defaultGetter) {
-            FunctionGenerationStrategy strategy;
-            if (defaultGetter) {
-                if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
-                    strategy = new DefaultPropertyWithDelegateAccessorStrategy(state, getterDescriptor);
-                }
-                else {
-                    strategy = new DefaultPropertyAccessorStrategy(state, getterDescriptor);
-                }
-            }
-            else {
-                strategy = new FunctionGenerationStrategy.FunctionDefault(state, getterDescriptor, getter);
-            }
-            functionCodegen.generateMethod(getter != null ? getter : p,
-                                           signature,
-                                           getterDescriptor,
-                                           strategy);
-        }
-        //}
+    private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor getter) {
+        generateAccessor(p, getter, descriptor.getGetter() != null
+                                    ? descriptor.getGetter()
+                                    : DescriptorFactory.createDefaultGetter(descriptor));
     }
 
-    private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor propertyDescriptor, @Nullable JetPropertyAccessor setter) {
-        boolean defaultSetter = setter == null || setter.getBodyExpression() == null;
+    private void generateSetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor setter) {
+        if (!descriptor.isVar()) return;
 
-        //TODO: Now it's not enough information to properly resolve property from bytecode without generated getter and setter
-        if (/*!defaultSetter || isExternallyAccessible(propertyDescriptor) &&*/ propertyDescriptor.isVar()) {
-            PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
-            setterDescriptor = setterDescriptor != null ? setterDescriptor : DescriptorFactory.createDefaultSetter(propertyDescriptor);
-            JvmMethodSignature signature = typeMapper.mapSignature(setterDescriptor, kind);
+        generateAccessor(p, setter, descriptor.getSetter() != null
+                                    ? descriptor.getSetter()
+                                    : DescriptorFactory.createDefaultSetter(descriptor));
+    }
 
-            if (kind != OwnerKind.TRAIT_IMPL || !defaultSetter) {
-                FunctionGenerationStrategy strategy;
-                if (defaultSetter) {
-                    if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
-                        strategy = new DefaultPropertyWithDelegateAccessorStrategy(state, setterDescriptor);
-                    }
-                    else {
-                        strategy = new DefaultPropertyAccessorStrategy(state, setterDescriptor);
-                    }
-                }
-                else {
-                    strategy = new FunctionGenerationStrategy.FunctionDefault(state, setterDescriptor, setter);
-                }
-                functionCodegen.generateMethod(setter != null ? setter : p,
-                                               signature,
-                                               setterDescriptor,
-                                               strategy);
+    private void generateAccessor(
+            @Nullable JetNamedDeclaration p,
+            @Nullable JetPropertyAccessor accessor,
+            @NotNull PropertyAccessorDescriptor accessorDescriptor
+    ) {
+        boolean isDefaultAccessor = accessor == null || accessor.getBodyExpression() == null;
+
+        if (kind == OwnerKind.TRAIT_IMPL && isDefaultAccessor) return;
+
+        FunctionGenerationStrategy strategy;
+        if (isDefaultAccessor) {
+            if (p instanceof JetProperty && ((JetProperty) p).getDelegateExpression() != null) {
+                strategy = new DefaultPropertyWithDelegateAccessorStrategy(state, accessorDescriptor);
+            }
+            else {
+                strategy = new DefaultPropertyAccessorStrategy(state, accessorDescriptor);
             }
         }
+        else {
+            strategy = new FunctionGenerationStrategy.FunctionDefault(state, accessorDescriptor, accessor);
+        }
+
+        JvmMethodSignature signature = typeMapper.mapSignature(accessorDescriptor, kind);
+        functionCodegen.generateMethod(accessor != null ? accessor : p, signature, accessorDescriptor, strategy);
     }
 
 
