@@ -22,15 +22,12 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPrefixExpression
-import org.jetbrains.jet.lang.psi.JetFunctionLiteralExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.lang.psi.JetCallableReferenceExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.JetIfExpression
 
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {
@@ -63,38 +60,44 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
         val condition = args[0]?.getArgumentExpression()
         val lambdas = element.getFunctionLiteralArguments()
 
-        val messageExpr: JetExpression?
-        if (args.size == 2) {
-            messageExpr = args[1]?.getArgumentExpression()
-        } else if (lambdas.isNotEmpty()) {
-            messageExpr = element.getFunctionLiteralArguments()[0]
-        } else {
-            messageExpr = JetPsiFactory.createExpression(element.getProject(), "\"Assertion failed\"")
-        }
+        val messageExpr =
+                if (args.size == 2) {
+                    args[1]?.getArgumentExpression()
+                }
+                else if (lambdas.isNotEmpty()) {
+                    element.getFunctionLiteralArguments()[0]
+                }
+                else {
+                    JetPsiFactory.createExpression(element.getProject(), "\"Assertion failed\"")
+                }
 
         if (condition == null || messageExpr == null) return
 
-        val message: String
-        if (messageIsAFunction && messageExpr is JetCallableReferenceExpression) {
-            message = "${messageExpr.getCallableReference().getText()}()"
-        } else if (messageIsAFunction) {
-            message = "${messageExpr.getText()}()"
-        } else {
-            message = "${messageExpr.getText()}"
-        }
-
-        val negatedCondition = JetPsiFactory.createExpression(element.getProject(), "!true") as JetPrefixExpression
-        negatedCondition.getBaseExpression()?.replace(condition)
-
-        val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(negatedCondition)) {
-            simplifier.applyTo(negatedCondition, editor)
-        }
+        val message =
+                if (messageIsAFunction && messageExpr is JetCallableReferenceExpression) {
+                    "${messageExpr.getCallableReference().getText()}()"
+                }
+                else if (messageIsAFunction) {
+                    "${messageExpr.getText()}()"
+                }
+                else {
+                    "${messageExpr.getText()}"
+                }
 
         val assertTypeRef = JetPsiFactory.createType(element.getProject(), "java.lang.AssertionError")
         ShortenReferences.process(assertTypeRef)
 
-        val text = "if (${negatedCondition.getText()}) { throw ${assertTypeRef.getText()}(${message}) }"
-        element.replace(JetPsiFactory.createExpression(element.getProject(), text))
+        val text = "if (!true) { throw ${assertTypeRef.getText()}(${message}) }"
+        val ifExpression = JetPsiFactory.createExpression(element.getProject(), text) as JetIfExpression
+
+        val ifCondition = ifExpression.getCondition() as JetPrefixExpression
+        ifCondition.getBaseExpression()?.replace(condition)
+
+        val simplifier = SimplifyNegatedBinaryExpressionIntention()
+        if (simplifier.isApplicableTo(ifCondition)) {
+            simplifier.applyTo(ifCondition, editor)
+        }
+
+        element.replace(ifExpression)
     }
 }
