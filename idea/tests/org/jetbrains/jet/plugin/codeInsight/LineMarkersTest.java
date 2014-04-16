@@ -27,7 +27,7 @@ import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.List;
 
-public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureTestCase {
+public class LineMarkersTest extends JetLightCodeInsightFixtureTestCase {
     @Override
     protected String getBasePath() {
         return PluginTestCaseBase.TEST_DATA_PROJECT_RELATIVE + "/codeInsight/lineMarker";
@@ -70,6 +70,18 @@ public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureT
     }
 
     public void testFakeOverrideFunWithMostRelevantImplementation() throws Exception {
+        doTest();
+    }
+
+    public void testSimpleRecursiveMarker() throws Exception {
+        doTest();
+    }
+
+    public void testQualifiedNameRecursiveMarker() throws Exception {
+        doTest();
+    }
+
+    public void testSpecialNameRecursiveMarker() throws Exception {
         doTest();
     }
 
