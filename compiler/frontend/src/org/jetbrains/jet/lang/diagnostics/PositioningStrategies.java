@@ -98,6 +98,9 @@ public class PositioningStrategies {
             if (nameIdentifier != null) {
                 return markElement(nameIdentifier);
             }
+            if (element instanceof JetObjectDeclaration) {
+                return markElement(((JetObjectDeclaration) element).getObjectKeyword());
+            }
             return markElement(element);
         }
     };
@@ -157,11 +160,7 @@ public class PositioningStrategies {
                         nameAsDeclaration.getTextRange().getStartOffset(), primaryConstructorParameterList.getTextRange().getEndOffset()));
             }
             else if (element instanceof JetObjectDeclaration) {
-                PsiElement nameAsDeclaration = element.getNameIdentifier();
-                if (nameAsDeclaration == null) {
-                    return markElement(((JetObjectDeclaration) element).getObjectKeyword());
-                }
-                return markRange(nameAsDeclaration.getTextRange());
+                return NAME_IDENTIFIER.mark(element);
             }
             return super.mark(element);
         }

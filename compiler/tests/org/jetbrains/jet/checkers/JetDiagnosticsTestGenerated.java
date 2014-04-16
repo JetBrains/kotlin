@@ -5429,6 +5429,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/NonGenerics.kt");
             }
             
+            @TestMetadata("ObjectDelegationManyImpl.kt")
+            public void testObjectDelegationManyImpl() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/ObjectDelegationManyImpl.kt");
+            }
+            
             @TestMetadata("OverridingFinalMember.kt")
             public void testOverridingFinalMember() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/OverridingFinalMember.kt");

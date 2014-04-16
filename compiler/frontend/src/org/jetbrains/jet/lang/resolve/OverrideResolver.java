@@ -326,24 +326,12 @@ public class OverrideResolver {
         Set<CallableMemberDescriptor> manyImpl = Sets.newLinkedHashSet();
         collectMissingImplementations(classDescriptor, abstractNoImpl, manyImpl);
 
-        PsiElement nameIdentifier = null;
-        if (klass instanceof JetClass) {
-            nameIdentifier = klass.getNameIdentifier();
-        }
-        else if (klass instanceof JetObjectDeclaration) {
-            nameIdentifier = klass.getNameIdentifier();
-            if (nameIdentifier == null) {
-                nameIdentifier = ((JetObjectDeclaration) klass).getObjectKeyword();
-            }
-        }
-        if (nameIdentifier == null) return;
-
         if (!manyImpl.isEmpty()) {
-            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, manyImpl.iterator().next()));
+            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(klass, klass, manyImpl.iterator().next()));
         }
 
         if (classDescriptor.getModality() != Modality.ABSTRACT && !abstractNoImpl.isEmpty()) {
-            trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(nameIdentifier, klass, abstractNoImpl.iterator().next()));
+            trace.report(ABSTRACT_MEMBER_NOT_IMPLEMENTED.on(klass, klass, abstractNoImpl.iterator().next()));
         }
     }
 

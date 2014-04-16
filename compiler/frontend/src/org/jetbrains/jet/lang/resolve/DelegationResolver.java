@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -181,16 +180,11 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
         return false;
     }
 
-    private boolean checkClashWithOtherDelegatedMember(
-            @NotNull Collection<T> delegatedMembers,
-            @NotNull T candidate
-    ) {
+    private boolean checkClashWithOtherDelegatedMember(@NotNull Collection<T> delegatedMembers, @NotNull T candidate) {
         for (CallableMemberDescriptor alreadyDelegatedMember : delegatedMembers) {
             if (haveSameSignatures(alreadyDelegatedMember, candidate)) {
                 //trying to delegate to many traits with the same methods
-                PsiElement nameIdentifier = classOrObject.getNameIdentifier();
-                PsiElement element = nameIdentifier != null ? nameIdentifier : classOrObject;
-                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(element, classOrObject, alreadyDelegatedMember));
+                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegatedMember));
                 return true;
             }
         }
