@@ -35,7 +35,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator
-import com.intellij.openapi.project.Project
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -497,97 +496,88 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                                                                   expectedTypes: Collection<ExpectedTypeInfo>,
                                                                   scope: JetScope) {
 
-        val memberDescriptors = HashMap<DeclarationDescriptor, MutableList<ExpectedTypeInfo>>()
+        fun processMember(descriptor: DeclarationDescriptor) {
+            if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
 
-        for (expectedType in expectedTypes) {
-            fun addMemberDescriptor(descriptor: DeclarationDescriptor) {
-                val list = memberDescriptors[descriptor]
-                if (list != null) {
-                    list.add(expectedType)
-                }
-                else {
-                    if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
-
-                    val newList = ArrayList<ExpectedTypeInfo>()
-                    newList.add(expectedType)
-                    memberDescriptors[descriptor] = newList
-                }
+            val matchedExpectedTypes = expectedTypes.filter {
+                expectedType ->
+                    descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedType.`type`) } ?: false
+                        || descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
             }
+            if (matchedExpectedTypes.isEmpty()) return
 
-            fun isSuitableCallable(descriptor: DeclarationDescriptor)
-                    = descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedType.`type`) } ?: false
+            val lookupElement = createStaticMemberLookupElement(descriptor, classDescriptor)
+            add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
+        }
 
-            if (classDescriptor is JavaClassDescriptor) {
-                val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
-                if (pseudoPackage != null) {
-                    pseudoPackage.getMemberScope().getAllDescriptors().filter(::isSuitableCallable).forEach(::addMemberDescriptor)
-                }
-            }
-
-            val classObject = classDescriptor.getClassObjectDescriptor()
-            if (classObject != null) {
-                classObject.getDefaultType().getMemberScope().getAllDescriptors().filter(::isSuitableCallable).forEach(::addMemberDescriptor)
-            }
-
-            if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
-                classDescriptor.getDefaultType().getMemberScope().getAllDescriptors()
-                        .filter { it is ClassDescriptor && it.getKind() == ClassKind.ENUM_ENTRY }.forEach(::addMemberDescriptor)
+        if (classDescriptor is JavaClassDescriptor) {
+            val pseudoPackage = classDescriptor.getCorrespondingPackageFragment()
+            if (pseudoPackage != null) {
+                pseudoPackage.getMemberScope().getAllDescriptors().forEach(::processMember)
             }
         }
 
-        for ((descriptor, descriptorExpectedTypes) in memberDescriptors) {
-            var lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
-            val qualifierPresentation = classDescriptor.getName().asString()
-            val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
-            val qualifierText = DescriptorUtils.getFqName(classDescriptor).asString() //TODO: escape keywords
+        val classObject = classDescriptor.getClassObjectDescriptor()
+        if (classObject != null) {
+            classObject.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
+        }
 
-            val caretPosition: CaretPosition?
-            if (descriptor is FunctionDescriptor) {
-                caretPosition = if (descriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-            }
-            else {
-                caretPosition = null
-            }
+        if (classDescriptor.getKind() == ClassKind.ENUM_CLASS) {
+            classDescriptor.getDefaultType().getMemberScope().getAllDescriptors().forEach(::processMember)
+        }
+    }
 
-            lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
-                override fun getLookupString() = lookupString
 
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    getDelegate().renderElement(presentation)
+    private fun createStaticMemberLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
+        val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, memberDescriptor)
+        val qualifierPresentation = classDescriptor.getName().asString()
+        val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
+        val qualifierText = DescriptorUtils.getFqName(classDescriptor).asString() //TODO: escape keywords
 
-                    presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
+        val caretPosition: CaretPosition?
+        if (memberDescriptor is FunctionDescriptor) {
+            caretPosition = if (memberDescriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+        }
+        else {
+            caretPosition = null
+        }
 
-                    val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
-                    if (descriptor is FunctionDescriptor) {
-                        presentation.appendTailText(tailText, true)
-                    }
-                    else {
-                        presentation.setTailText(tailText, true)
-                    }
+        return object: LookupElementDecorator<LookupElement>(lookupElement) {
+            override fun getLookupString() = lookupString
 
-                    if (presentation.getTypeText().isNullOrEmpty()) {
-                        presentation.setTypeText(DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
-                    }
+            override fun renderElement(presentation: LookupElementPresentation) {
+                getDelegate().renderElement(presentation)
+
+                presentation.setItemText(qualifierPresentation + "." + presentation.getItemText())
+
+                val tailText = " (" + DescriptorUtils.getFqName(classDescriptor.getContainingDeclaration()) + ")"
+                if (memberDescriptor is FunctionDescriptor) {
+                    presentation.appendTailText(tailText, true)
+                }
+                else {
+                    presentation.setTailText(tailText, true)
                 }
 
-                override fun handleInsert(context: InsertionContext) {
-                    val editor = context.getEditor()
-                    val startOffset = context.getStartOffset()
-                    var text = qualifierText + "." + descriptor.getName().asString() //TODO: escape
-                    if (descriptor is FunctionDescriptor) {
-                        text += "()"
-                        //TODO: auto-popup parameter info and other functionality from JetFunctionInsertHandler
-                    }
-
-                    editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
-                    val endOffset = startOffset + text.length
-                    editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
-
-                    shortenReferences(context, startOffset, startOffset + qualifierText.length)
+                if (presentation.getTypeText().isNullOrEmpty()) {
+                    presentation.setTypeText(DescriptorRenderer.TEXT.renderType(classDescriptor.getDefaultType()))
                 }
             }
 
-            add(addTailToLookupElement(lookupElement, descriptorExpectedTypes))
+            override fun handleInsert(context: InsertionContext) {
+                val editor = context.getEditor()
+                val startOffset = context.getStartOffset()
+                var text = qualifierText + "." + memberDescriptor.getName().asString() //TODO: escape
+                if (memberDescriptor is FunctionDescriptor) {
+                    text += "()"
+                    //TODO: auto-popup parameter info and other functionality from JetFunctionInsertHandler
+                }
+
+                editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
+                val endOffset = startOffset + text.length
+                editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
+
+                shortenReferences(context, startOffset, startOffset + qualifierText.length)
+            }
         }
     }
 
