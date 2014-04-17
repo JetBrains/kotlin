@@ -107,6 +107,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
     // scripts have no package directive, all other files must have package directives
     @Nullable
     public JetPackageDirective getPackageDirective() {
+        PsiJetFileStub stub = getStub();
+        if (stub != null) {
+            StubElement<JetPackageDirective> packageDirectiveStub = stub.findChildStubByType(JetStubElementTypes.PACKAGE_DIRECTIVE);
+            return packageDirectiveStub != null ? packageDirectiveStub.getPsi() : null;
+        }
         ASTNode ast = getNode().findChildByType(JetNodeTypes.PACKAGE_DIRECTIVE);
         return ast != null ? (JetPackageDirective) ast.getPsi() : null;
     }
