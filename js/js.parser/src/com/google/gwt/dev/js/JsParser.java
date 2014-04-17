@@ -45,7 +45,7 @@ public class JsParser {
     /**
      * since source maps are not mapped to kotlin source maps
      */
-    private static final String sourceNameStub = "jsCode";
+    private static final String SOURCE_NAME_STUB = "jsCode";
 
     private JsParser(JsProgram program) {
         this.program = program;
@@ -60,7 +60,7 @@ public class JsParser {
             @Override
             public void error(String msg, String loc, int ln, String src, int col) {
                 throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, sourceNameStub));
+                                                                           src, col, SOURCE_NAME_STUB));
             }
 
             @Override
@@ -70,7 +70,7 @@ public class JsParser {
             ) {
                 // Never called, but just in case.
                 throw new UncheckedJsParserException(new JsParserException(msg, ln,
-                                                                           src, col, sourceNameStub));
+                                                                           src, col, SOURCE_NAME_STUB));
             }
 
             @Override
@@ -81,7 +81,7 @@ public class JsParser {
         try {
             // Parse using the Rhino parser.
             //
-            TokenStream ts = new TokenStream(r, sourceNameStub, rootSourceInfo.getLine());
+            TokenStream ts = new TokenStream(r, SOURCE_NAME_STUB, rootSourceInfo.getLine());
             Parser parser = new Parser(new IRFactory(ts), insideFunction);
             Node topNode = (Node) parser.parse(ts);
 
@@ -99,8 +99,8 @@ public class JsParser {
         }
     }
 
-    private JsParserException createParserException(String msg, Node offender) {
-        return new JsParserException(msg, offender.getLineno(), null, 0, sourceNameStub);
+    private static JsParserException createParserException(String msg, Node offender) {
+        return new JsParserException(msg, offender.getLineno(), null, 0, SOURCE_NAME_STUB);
     }
 
     private JsScope getScope() {
