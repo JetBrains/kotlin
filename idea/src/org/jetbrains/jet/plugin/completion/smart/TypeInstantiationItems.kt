@@ -19,6 +19,7 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import com.intellij.codeInsight.AutoPopupController
 
 class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -81,9 +82,9 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
                 val endOffset = startOffset + text.length
                 editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
 
-                //TODO: auto-popup parameter info and other functionality from JetFunctionInsertHandler
-
                 shortenReferences(context, startOffset, endOffset)
+
+                AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, null)
             }
         }
 
