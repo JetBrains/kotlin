@@ -2970,6 +2970,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/convertNegatedBooleanSequence"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("complexNegatedSequence.kt")
+        public void testComplexNegatedSequence() throws Exception {
+            doTestConvertNegatedBooleanSequence("idea/testData/intentions/convertNegatedBooleanSequence/complexNegatedSequence.kt");
+        }
+        
         @TestMetadata("conjunctionOfThreeNegations.kt")
         public void testConjunctionOfThreeNegations() throws Exception {
             doTestConvertNegatedBooleanSequence("idea/testData/intentions/convertNegatedBooleanSequence/conjunctionOfThreeNegations.kt");
