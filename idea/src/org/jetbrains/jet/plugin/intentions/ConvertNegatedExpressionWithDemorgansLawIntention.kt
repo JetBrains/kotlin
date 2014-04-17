@@ -26,6 +26,9 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.JetConstantExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import java.util.ArrayList
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingIntention<JetPrefixExpression>(
         "convert.negated.expression.with.demorgans.law",javaClass()
@@ -36,50 +39,65 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
         if (prefixOperator != JetTokens.EXCL) return false
 
         val parenthesizedExpression = element.getBaseExpression() as? JetParenthesizedExpression
-        var binaryElement = parenthesizedExpression?.getExpression() as? JetBinaryExpression
-        val operatorToken = binaryElement?.getOperationToken() ?: return false
+        val baseExpression = parenthesizedExpression?.getExpression() as? JetBinaryExpression ?: return false
+        val operatorToken = baseExpression.getOperationToken() ?: return false
 
         if (!(operatorToken == JetTokens.ANDAND || operatorToken == JetTokens.OROR)) {
             return false
         }
 
-        while (binaryElement != null) { // While loop lets us handle expressions of any length
-            val leftChild = binaryElement?.getLeft()
-            val rightChild = binaryElement?.getRight()
-            if (rightChild is PsiErrorElementImpl || operatorToken != binaryElement?.getOperationToken()) {
-                return false
-            }
-            binaryElement = leftChild as? JetBinaryExpression
-        }
-
-        return true
+        val elements = splitBooleanSequence(baseExpression) ?: return false
+        return !(elements.any { x -> x is PsiErrorElementImpl })
     }
 
     override fun applyTo(element: JetPrefixExpression, editor: Editor) {
         val parenthesizedExpression = element.getBaseExpression() as JetParenthesizedExpression
-        var binaryElement = parenthesizedExpression.getExpression() as? JetBinaryExpression
-        val operator = binaryElement!!.getOperationToken()
-        val operatorText = when(operator){
+        val baseExpression = parenthesizedExpression.getExpression() as JetBinaryExpression
+        val operatorText = when(baseExpression.getOperationToken()){
             JetTokens.ANDAND -> JetTokens.OROR.getValue()
             JetTokens.OROR -> JetTokens.ANDAND.getValue()
-            else -> throw IllegalArgumentException("Invalid operator: '$operator'. Only expressions using '&&' or '||' can be converted.")
+            else -> throw IllegalArgumentException(
+                    "Invalid operator: '${baseExpression.getOperationToken()}'. Only expressions using '&&' or '||' can be converted.")
         }
-        var expressionText = ""
+        val elements = splitBooleanSequence(baseExpression)
+        val negatedElements = elements!!.map { exp -> handleSpecial(exp) }
+        val negatedExpression = negatedElements.subList(0,negatedElements.size()-1).foldRight(
+                "${negatedElements.last()}",{negated, exp-> "$exp $operatorText $negated"})
 
-        while (binaryElement != null) {
-            val leftChild = binaryElement?.getLeft()
-            val rightChild = binaryElement?.getRight()
-
-            val rightChildText = rightChild!!.getText()
-            expressionText = "$operatorText !$rightChildText $expressionText "
-            if (leftChild !is JetBinaryExpression) {
-                expressionText = "!${leftChild!!.getText()} $expressionText"
-            }
-            binaryElement = leftChild as? JetBinaryExpression
-        }
-
-        val newExpression = JetPsiFactory.createExpression(element.getProject(),expressionText)
+        val newExpression = JetPsiFactory.createExpression(element.getProject(),negatedExpression)
         element.replace(newExpression)
+    }
+
+    fun handleSpecial(expression: JetExpression) : String {
+        return when(expression) {
+            JetTokens.TRUE_KEYWORD -> JetTokens.FALSE_KEYWORD.getValue()
+            JetTokens.FALSE_KEYWORD -> JetTokens.TRUE_KEYWORD.getValue()
+            is JetSimpleNameExpression, is JetConstantExpression, is JetPrefixExpression,
+            is JetParenthesizedExpression -> "!${expression.getText()}"
+            else -> "!(${expression.getText()})"
+        }
+    }
+
+    fun splitBooleanSequence(expression: JetBinaryExpression) : List<JetExpression>? {
+        val itemList = ArrayList<JetExpression>()
+        val firstOperator = expression.getOperationToken()
+        var currentItem : JetExpression? = expression
+
+        while(currentItem as? JetBinaryExpression != null) {
+            val remainingExpression = currentItem as JetBinaryExpression
+            val operation = remainingExpression.getOperationToken()
+            if (!(operation == JetTokens.ANDAND || operation == JetTokens.OROR)) break
+
+            if (operation != firstOperator) return null //Boolean sequence must be homogenous
+
+            val leftChild = remainingExpression.getLeft()
+            val rightChild = remainingExpression.getRight()
+            itemList.add(rightChild as JetExpression)
+            currentItem = leftChild
+        }
+
+        if (currentItem != null) itemList.add(currentItem!!)
+        return itemList
     }
 
 }
