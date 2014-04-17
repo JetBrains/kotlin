@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Arrays;
@@ -58,7 +59,7 @@ public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetCl
 
     @NotNull
     public List<JetProperty> getProperties() {
-        return findChildrenByType(JetNodeTypes.PROPERTY);
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.PROPERTY);
     }
 
     @Nullable
