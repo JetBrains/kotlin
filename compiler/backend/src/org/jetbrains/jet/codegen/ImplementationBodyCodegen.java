@@ -926,29 +926,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         });
 
-        MethodContext functionContext = context.intoFunction(function);
-
-        functionCodegen.generateDefaultIfNeeded(functionContext, methodSignature, function, OwnerKind.IMPLEMENTATION,
-                                                new DefaultParameterValueLoader() {
-                                                    @Override
-                                                    public void putValueOnStack(
-                                                            ValueParameterDescriptor descriptor,
-                                                            ExpressionCodegen codegen
-                                                    ) {
-                                                        assert (KotlinBuiltIns.getInstance()
-                                                                        .isData((ClassDescriptor) function.getContainingDeclaration()))
-                                                                : "Trying to create function with default arguments for function that isn't presented in code for class without data annotation";
-                                                        PropertyDescriptor propertyDescriptor = codegen.getBindingContext().get(
-                                                                BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor);
-                                                        assert propertyDescriptor != null
-                                                                : "Trying to generate default value for parameter of copy function that doesn't correspond to any property";
-                                                        codegen.v.load(0, thisDescriptorType);
-                                                        Type propertyType = codegen.typeMapper.mapType(propertyDescriptor);
-                                                        codegen.intermediateValueForProperty(propertyDescriptor, false, null)
-                                                                .put(propertyType, codegen.v);
-                                                    }
-                                                });
-
+        functionCodegen.generateDefaultIfNeeded(
+                context.intoFunction(function), methodSignature, function, OwnerKind.IMPLEMENTATION,
+                new DefaultParameterValueLoader() {
+                    @Override
+                    public void putValueOnStack(ValueParameterDescriptor valueParameter, ExpressionCodegen codegen) {
+                        assert KotlinBuiltIns.getInstance().isData((ClassDescriptor) function.getContainingDeclaration())
+                                : "Function container should be annotated with [data]: " + function;
+                        PropertyDescriptor property = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, valueParameter);
+                        assert property != null : "Copy function doesn't correspond to any property: " + function;
+                        codegen.v.load(0, thisDescriptorType);
+                        Type propertyType = typeMapper.mapType(property);
+                        codegen.intermediateValueForProperty(property, false, null).put(propertyType, codegen.v);
+                    }
+                }
+        );
     }
 
     private void generateEnumMethodsAndConstInitializers() {
@@ -998,19 +990,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (entry.getValue() instanceof FunctionDescriptor) {
             FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
             final FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
-             functionCodegen.generateMethod(null, typeMapper.mapSignature(bridge), bridge,
-                   new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, bridge) {
-                       @Override
-                       public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                           generateMethodCallTo(original, codegen.v);
-                           codegen.v.areturn(signature.getReturnType());
-                       }
-                   });
+            functionCodegen.generateMethod(
+                    null, typeMapper.mapSignature(bridge), bridge,
+                    new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, bridge) {
+                        @Override
+                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                            generateMethodCallTo(original, codegen.v);
+                            codegen.v.areturn(signature.getReturnType());
+                        }
+                    }
+            );
         }
         else if (entry.getValue() instanceof PropertyDescriptor) {
             final PropertyDescriptor bridge = (PropertyDescriptor) entry.getValue();
             final PropertyDescriptor original = (PropertyDescriptor) entry.getKey();
-
 
             PropertyGetterDescriptor getter = bridge.getGetter();
             assert getter != null;
@@ -1121,24 +1114,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateClassObjectBackingFieldCopies() {
-        if (classObjectPropertiesToCopy != null) {
-            for (PropertyAndDefaultValue propertyInfo : classObjectPropertiesToCopy) {
-                PropertyDescriptor propertyDescriptor = propertyInfo.descriptor;
+        if (classObjectPropertiesToCopy == null) return;
 
-                FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(propertyDescriptor),
-                                                  typeMapper.mapType(propertyDescriptor).getDescriptor(), null, propertyInfo.defaultValue);
+        for (PropertyAndDefaultValue info : classObjectPropertiesToCopy) {
+            PropertyDescriptor property = info.descriptor;
 
-                AnnotationCodegen.forField(fv, typeMapper).genAnnotations(propertyDescriptor);
+            FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property),
+                                              typeMapper.mapType(property).getDescriptor(), null, info.defaultValue);
 
-                //This field are always static and final so if it has constant initializer don't do anything in clinit,
-                //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
-                // TODO: test this code
-                if (state.getClassBuilderMode() == ClassBuilderMode.FULL && propertyInfo.defaultValue == null) {
-                    ExpressionCodegen codegen = createOrGetClInitCodegen();
-                    int classObjectIndex = putClassObjectInLocalVar(codegen);
-                    StackValue.local(classObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
-                    copyFieldFromClassObject(propertyDescriptor);
-                }
+            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property);
+
+            //This field are always static and final so if it has constant initializer don't do anything in clinit,
+            //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4
+            // TODO: test this code
+            if (state.getClassBuilderMode() == ClassBuilderMode.FULL && info.defaultValue == null) {
+                ExpressionCodegen codegen = createOrGetClInitCodegen();
+                int classObjectIndex = putClassObjectInLocalVar(codegen);
+                StackValue.local(classObjectIndex, OBJECT_TYPE).put(OBJECT_TYPE, codegen.v);
+                copyFieldFromClassObject(property);
             }
         }
     }
@@ -1499,36 +1492,37 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 typeMapper.mapSignature(inheritedFun),
                 inheritedFun,
                 new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, inheritedFun) {
-            @Override
-            public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
-                if (!(containingDeclaration instanceof ClassDescriptor)) return;
-                ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
-                if (containingTrait.getKind() != ClassKind.TRAIT) return;
+                    @Override
+                    public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
+                        DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
+                        if (!(containingDeclaration instanceof ClassDescriptor)) return;
+                        ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
+                        if (containingTrait.getKind() != ClassKind.TRAIT) return;
 
-                Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal()).getAsmMethod();
+                        Method traitMethod = typeMapper.mapSignature(traitFun.getOriginal()).getAsmMethod();
 
-                Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
-                Type[] originalArgTypes = traitMethod.getArgumentTypes();
+                        Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
+                        Type[] originalArgTypes = traitMethod.getArgumentTypes();
 
-                InstructionAdapter iv = codegen.v;
-                iv.load(0, OBJECT_TYPE);
-                for (int i = 0, reg = 1; i < argTypes.length; i++) {
-                    StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-                    //noinspection AssignmentToForLoopParameter
-                    reg += argTypes[i].getSize();
+                        InstructionAdapter iv = codegen.v;
+                        iv.load(0, OBJECT_TYPE);
+                        for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+                            //noinspection AssignmentToForLoopParameter
+                            reg += argTypes[i].getSize();
+                        }
+
+                        Type type = getTraitImplThisParameterType(containingTrait, typeMapper);
+                        String desc = traitMethod.getDescriptor().replace("(", "(" + type.getDescriptor());
+
+                        iv.invokestatic(typeMapper.mapTraitImpl(containingTrait).getInternalName(), traitMethod.getName(), desc);
+
+                        Type returnType = signature.getReturnType();
+                        StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
+                        iv.areturn(returnType);
+                    }
                 }
-
-                Type type = getTraitImplThisParameterType(containingTrait, typeMapper);
-                String desc = traitMethod.getDescriptor().replace("(", "(" + type.getDescriptor());
-
-                iv.invokestatic(typeMapper.mapTraitImpl(containingTrait).getInternalName(), traitMethod.getName(), desc);
-
-                Type returnType = signature.getReturnType();
-                StackValue.onStack(traitMethod.getReturnType()).put(returnType, iv);
-                iv.areturn(returnType);
-            }
-        });
+        );
     }
 
     private void generateDelegatorToConstructorCall(
