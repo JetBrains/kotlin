@@ -57,6 +57,7 @@ import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveDe
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
 import org.jetbrains.jet.plugin.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.search.allScope
 
 public abstract class AbstractJetMoveTest : MultiFileTestCase() {
     protected fun doTest(path: String) {
@@ -194,7 +195,7 @@ enum class MoveAction {
             MoveClassToInnerProcessor(
                     project,
                     array(classToMove),
-                    JavaPsiFacade.getInstance(project).findClass(targetClass, GlobalSearchScope.allScope(project))!!,
+                    JavaPsiFacade.getInstance(project).findClass(targetClass, project.allScope())!!,
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
                     /* moveCallback = */ null

@@ -36,6 +36,7 @@ import com.intellij.psi.search.searches.DirectClassInheritorsSearch
 import com.intellij.util.EmptyQuery
 import com.intellij.util.MergeQuery
 import org.jetbrains.jet.asJava.toLightMethods
+import org.jetbrains.jet.plugin.search.allScope
 
 fun PsiElement.isOverridableElement(): Boolean = when (this) {
     is PsiMethod -> PsiUtil.canBeOverriden(this)
@@ -70,7 +71,7 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
             override fun nextElements(current: PsiClass): Iterable<PsiClass> =
                     DirectClassInheritorsSearch.search(
                             current,
-                            GlobalSearchScope.allScope(current.getProject()),
+                            current.getProject().allScope(),
                             /* checkInheritance = */ true,
                             /* includeAnonymous = */ true
                     )

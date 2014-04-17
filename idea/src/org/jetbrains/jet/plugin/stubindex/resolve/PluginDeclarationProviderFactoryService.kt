@@ -27,11 +27,12 @@ import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFacto
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.jet.plugin.stubindex.JetSourceFilterScope
 import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.plugin.search.allScope
 
 public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
     override fun create(project: Project, storageManager: StorageManager, files: Collection<JetFile>): DeclarationProviderFactory {
-        val indexedSourcesScope = JetSourceFilterScope.kotlinSourcesAndLibraries(GlobalSearchScope.allScope(project))
+        val indexedSourcesScope = JetSourceFilterScope.kotlinSourcesAndLibraries(project.allScope())
         val nonIndexedFiles = files.filter {
             file ->
             !file.isPhysical() || !indexedSourcesScope.contains(file.getVirtualFile()!!)

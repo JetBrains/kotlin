@@ -46,6 +46,7 @@ import com.intellij.util.EmptyQuery
 import com.intellij.openapi.project.Project
 import java.util.ArrayDeque
 import org.jetbrains.jet.plugin.search.usagesSearch.UsagesSearchFilter.*
+import org.jetbrains.jet.plugin.search.and
 
 public data class UsagesSearchLocation(
         val inCode: Boolean = true,
@@ -152,7 +153,7 @@ fun <A: PsiElement, B: PsiElement> UsagesSearchTarget<A>.retarget(element: B) =
         UsagesSearchTarget<B>(element, scope, location, restrictByTargetScope)
 
 val <T: PsiElement> UsagesSearchTarget<T>.effectiveScope: SearchScope
-    get() = if (restrictByTargetScope) scope.intersectWith(element.effectiveScope) else scope
+    get() = if (restrictByTargetScope) scope and element.effectiveScope else scope
 
 val PsiElement.effectiveScope: SearchScope
     get() = PsiSearchHelper.SERVICE.getInstance(getProject())!!.getUseScope(this)

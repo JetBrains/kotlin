@@ -71,6 +71,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.openapi.util.Ref
 import org.jetbrains.jet.plugin.refactoring.getKotlinFqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.jet.plugin.search.projectScope
 
 public class MoveKotlinTopLevelDeclarationsOptions(
         val elementsToMove: Collection<JetNamedDeclaration>,
@@ -107,7 +108,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                 val newFqName = StringUtil.getQualifiedName(newPackageName, lightElement.getName())
 
                 val foundReferences = HashSet<PsiReference>()
-                val projectScope = GlobalSearchScope.projectScope(lightElement.getProject())
+                val projectScope = lightElement.getProject().projectScope()
                 val results = ReferencesSearch
                         .search(lightElement, projectScope, false)
                         .mapTo(ArrayList<UsageInfo?>()) { ref ->

@@ -39,6 +39,7 @@ import org.jetbrains.jet.asJava.*
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.utils.keysToMap
 import com.intellij.psi.PsiMethod
+import org.jetbrains.jet.plugin.search.allScope
 
 public trait JetReference : PsiPolyVariantReference {
     public fun resolveToDescriptors(): Collection<DeclarationDescriptor>
@@ -120,7 +121,7 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
             val psiFacade = JavaPsiFacade.getInstance(project)
             val fqName = (targetDescriptor as PackageViewDescriptor).getFqName().asString()
             ContainerUtil.addIfNotNull(result, psiFacade.findPackage(fqName))
-            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, GlobalSearchScope.allScope(project)))
+            ContainerUtil.addIfNotNull(result, psiFacade.findClass(fqName, project.allScope()))
         }
         return result
     }

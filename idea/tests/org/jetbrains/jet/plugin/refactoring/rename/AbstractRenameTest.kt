@@ -46,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.name.isSubpackageOf
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
+import org.jetbrains.jet.plugin.search.allScope
 
 private enum class RenameType {
     JAVA_CLASS
@@ -104,7 +105,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
         val newName = renameParamsObject.getString("newName")
 
         doTest { rootDir, rootAfter ->
-            val aClass = context.javaFacade.findClass(classFQN, GlobalSearchScope.allScope(context.project))!!
+            val aClass = context.javaFacade.findClass(classFQN, context.project.allScope())!!
             val substitution = RenamePsiElementProcessor.forElement(aClass).substituteElementToRename(aClass, null)
 
             RenameProcessor(context.project, substitution, newName, true, true).run()

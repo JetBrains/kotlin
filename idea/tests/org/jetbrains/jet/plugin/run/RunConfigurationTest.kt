@@ -42,6 +42,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
 import java.io.File
 import com.intellij.openapi.roots.ModuleRootModificationUtil
+import org.jetbrains.jet.plugin.search.allScope
 
 class RunConfigurationTest: CodeInsightTestCase() {
     private val project: Project get() = myProject!!
@@ -82,8 +83,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
-        val mainFunction = JetTopLevelFunctionsFqnNameIndex.getInstance()!!.get(
-                mainFqn, project, GlobalSearchScope.allScope(project))!!.first()
+        val mainFunction = JetTopLevelFunctionsFqnNameIndex.getInstance()!!.get(mainFqn, project, project.allScope())!!.first()
 
         val dataContext = MapDataContext()
         dataContext.put(Location.DATA_KEY, PsiLocation(project, mainFunction))

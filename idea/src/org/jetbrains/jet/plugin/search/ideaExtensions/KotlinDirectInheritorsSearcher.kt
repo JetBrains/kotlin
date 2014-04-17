@@ -27,6 +27,7 @@ import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper
 import org.jetbrains.jet.plugin.stubindex.JetSuperClassIndex
 import org.jetbrains.jet.lang.resolve.*
 import java.util.Collections
+import org.jetbrains.jet.plugin.search.fileScope
 
 public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass, DirectClassInheritorsSearch.SearchParameters>(true) {
     public override fun processQuery(queryParameters: DirectClassInheritorsSearch.SearchParameters, consumer: Processor<PsiClass>) {
@@ -40,7 +41,7 @@ public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass,
         val scope = if (originalScope is GlobalSearchScope)
             originalScope
         else
-            baseClass.getContainingFile()?.let { file -> GlobalSearchScope.fileScope(file) }
+            baseClass.getContainingFile()?.let { file -> file.fileScope() }
 
         if (scope == null) return
 
