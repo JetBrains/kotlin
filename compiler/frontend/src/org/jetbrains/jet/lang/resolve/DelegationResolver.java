@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
 import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
 
@@ -161,8 +162,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
         for (T memberDescriptor : descriptorsToDelegate) {
             Modality newModality = memberDescriptor.getModality() == Modality.ABSTRACT ? Modality.OPEN : memberDescriptor.getModality();
             @SuppressWarnings("unchecked")
-            T copy = (T) memberDescriptor.copy(ownerDescriptor, newModality, memberDescriptor.getVisibility(),
-                                               CallableMemberDescriptor.Kind.DELEGATION, false);
+            T copy = (T) memberDescriptor.copy(ownerDescriptor, newModality, Visibilities.INHERITED, DELEGATION, false);
             result.add(copy);
         }
         return result;

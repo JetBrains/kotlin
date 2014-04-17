@@ -178,7 +178,7 @@ public class OverrideResolver {
         return new Function1<CallableMemberDescriptor, Unit>() {
             @Override
             public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                DeclarationDescriptor reportOn = descriptor.getKind() == FAKE_OVERRIDE
+                DeclarationDescriptor reportOn = descriptor.getKind() == FAKE_OVERRIDE || descriptor.getKind() == DELEGATION
                                                  ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class)
                                                  : descriptor;
                 //noinspection ConstantConditions
