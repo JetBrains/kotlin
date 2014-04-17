@@ -107,12 +107,16 @@ public object ShortenReferences {
         }
     }
 
-    private class ShortenQualifiedExpressionsVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetTreeVisitorVoid() {
+    private class ShortenQualifiedExpressionsVisitor(val file: JetFile, val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
         private val resolveSession : ResolveSessionForBodies
             get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext
                 = resolveMap[expression] ?: resolveSession.resolveToElement(expression) // binding context can be absent in the map if some references have been shortened already
+
+        override fun visitJetElement(element: JetElement) {
+            acceptChildren(element)
+        }
 
         override fun visitDotQualifiedExpression(expression: JetDotQualifiedExpression) {
             val resultElement = processDotQualifiedExpression(expression)

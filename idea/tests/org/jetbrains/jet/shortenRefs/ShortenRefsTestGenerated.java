@@ -37,6 +37,11 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
+    @TestMetadata("classObject.kt")
+    public void testClassObject() throws Exception {
+        doTest("idea/testData/shortenRefs/classObject.kt");
+    }
+    
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() throws Exception {
         doTest("idea/testData/shortenRefs/JavaStaticMethod.kt");

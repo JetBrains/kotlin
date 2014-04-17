@@ -1,0 +1,16 @@
+package p.q
+
+fun foo(): Int {
+    MyClass.foo()
+    return MyClass.coProp + 10
+}
+
+class MyClass {
+    class object {
+        val coProp = 1
+
+        fun foo() {
+
+        }
+    }
+}
