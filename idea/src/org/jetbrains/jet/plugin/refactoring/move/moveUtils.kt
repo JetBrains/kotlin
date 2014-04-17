@@ -33,6 +33,9 @@ import org.jetbrains.jet.plugin.JetFileType
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
+import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
+import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
@@ -51,6 +54,9 @@ public fun JetElement.updateInternalReferencesOnPackageNameChange(
             if (descriptor is ConstructorDescriptor) descriptor.getContainingDeclaration() else descriptor
         }
         if (descriptor == null || !descriptor.canBeReferencedViaImport()) continue
+
+        val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor, bindingContext)
+        if (declaration == null || isAncestor(declaration, true)) continue
 
         val packageName = DescriptorUtils.getParentOfType(
                 descriptor, javaClass<PackageFragmentDescriptor>(), false

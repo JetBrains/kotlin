@@ -108,12 +108,14 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val project = psiFile.getProject()
         val newPackageName = newParent.getPackage()?.getQualifiedName() ?: ""
 
+        val searchScope = GlobalSearchScope.projectScope(project) intersectWith
+                GlobalSearchScope.notScope(GlobalSearchScope.fileScope(psiFile))
         return psiFile.getDeclarations().flatMap { declaration ->
             val name = (declaration as? JetNamedDeclaration)?.getName()
             if (name != null) {
                 val newFqName = StringUtil.getQualifiedName(newPackageName, name)!!
 
-                val results = ReferencesSearch.search(declaration, GlobalSearchScope.projectScope(project), false)
+                val results = ReferencesSearch.search(declaration, searchScope, false)
                         .toSet()
                         .mapTo(ArrayList<UsageInfo?>()) { ref ->
                             val range = ref.getRangeInElement()!!
