@@ -221,6 +221,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/Lambda4.kt");
     }
     
+    @TestMetadata("Lambda5.kt")
+    public void testLambda5() throws Exception {
+        doTest("idea/testData/completion/smart/Lambda5.kt");
+    }
+    
     @TestMetadata("MethodCallArgument.kt")
     public void testMethodCallArgument() throws Exception {
         doTest("idea/testData/completion/smart/MethodCallArgument.kt");
