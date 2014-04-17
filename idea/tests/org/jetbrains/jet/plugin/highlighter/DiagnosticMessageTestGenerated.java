@@ -91,6 +91,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/multipleDefaultsFromSupertypes.kt");
     }
     
+    @TestMetadata("nameInConstraintIsNotATypeParameter.kt")
+    public void testNameInConstraintIsNotATypeParameter() throws Exception {
+        doTest("idea/testData/diagnosticMessage/nameInConstraintIsNotATypeParameter.kt");
+    }
+    
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         doTest("idea/testData/diagnosticMessage/numberValueTypes.kt");

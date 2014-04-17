@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -86,6 +87,14 @@ public class Renderers {
         @Override
         public String render(@NotNull PsiElement element) {
             return element.getText();
+        }
+    };
+
+    public static final Renderer<JetNamedDeclaration> DECLARATION_NAME = new Renderer<JetNamedDeclaration>() {
+        @NotNull
+        @Override
+        public String render(@NotNull JetNamedDeclaration element) {
+            return element.getNameAsSafeName().asString();
         }
     };
 

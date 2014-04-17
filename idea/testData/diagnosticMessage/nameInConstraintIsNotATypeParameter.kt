@@ -1,0 +1,6 @@
+// !DIAGNOSTICS_NUMBER: 1
+// !DIAGNOSTICS: NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER
+
+object O
+
+fun <T> foo() where O : O { }

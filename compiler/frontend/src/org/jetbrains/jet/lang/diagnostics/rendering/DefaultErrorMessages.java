@@ -347,7 +347,7 @@ public class DefaultErrorMessages {
                 //noinspection ConstantConditions
                 return typeConstraint.getSubjectTypeParameterName().getReferencedName();
             }
-        }, TO_STRING);
+        }, DECLARATION_NAME);
         MAP.put(AUTOCAST_IMPOSSIBLE,
                 "Automatic cast to ''{0}'' is impossible, because ''{1}'' could have changed since the is-check", RENDER_TYPE, STRING);
 
