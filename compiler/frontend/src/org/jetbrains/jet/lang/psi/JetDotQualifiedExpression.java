@@ -73,8 +73,8 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
 
     @Nullable
     private JetExpression[] getChildExpressionsByStub(@NotNull PsiJetPlaceHolderStub<JetDotQualifiedExpression> stub) {
-        if (stub.getParentStubOfType(JetImportDirective.class) == null) {
-            LOG.error("JetDotQualifiedExpression should only have stubs inside import directives.\n " +
+        if (stub.getParentStubOfType(JetImportDirective.class) == null && stub.getParentStubOfType(JetPackageDirective.class) == null) {
+            LOG.error("JetDotQualifiedExpression should only have stubs inside import or package directives.\n " +
                       "Stubs were created for:\n " + getText() +
                       "\nFile text:\n" + getContainingFile().getText());
             return null;

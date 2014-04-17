@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetPackageDirective;
 
 public class JetDotQualifiedExpressionElementType extends JetPlaceHolderStubElementType<JetDotQualifiedExpression> {
     public JetDotQualifiedExpressionElementType(@NotNull @NonNls String debugName) {
@@ -30,6 +31,6 @@ public class JetDotQualifiedExpressionElementType extends JetPlaceHolderStubElem
 
     @Override
     public boolean shouldCreateStub(ASTNode node) {
-        return PsiTreeUtil.getParentOfType(node.getPsi(), JetImportDirective.class) != null;
+        return PsiTreeUtil.getParentOfType(node.getPsi(), JetImportDirective.class, JetPackageDirective.class) != null;
     }
 }
