@@ -129,7 +129,7 @@ public class ScopeProvider {
         JetDeclaration parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(jetDeclaration);
 
         if (jetDeclaration instanceof JetPropertyAccessor) {
-            parentDeclaration = PsiTreeUtil.getParentOfType(parentDeclaration, JetDeclaration.class);
+            parentDeclaration = JetStubbedPsiUtil.getContainingDeclaration(parentDeclaration, JetDeclaration.class);
         }
 
         if (parentDeclaration == null) {
