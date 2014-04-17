@@ -2735,6 +2735,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("complexNegation1.kt")
+        public void testComplexNegation1() throws Exception {
+            doTestConvertNegatedExpressionWithDemorgansLaw("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/complexNegation1.kt");
+        }
+        
+        @TestMetadata("complexNegation2.kt")
+        public void testComplexNegation2() throws Exception {
+            doTestConvertNegatedExpressionWithDemorgansLaw("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/complexNegation2.kt");
+        }
+        
         @TestMetadata("conjunctionNegation1.kt")
         public void testConjunctionNegation1() throws Exception {
             doTestConvertNegatedExpressionWithDemorgansLaw("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/conjunctionNegation1.kt");
