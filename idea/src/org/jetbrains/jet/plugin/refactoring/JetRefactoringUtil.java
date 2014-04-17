@@ -31,6 +31,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.util.PsiFormatUtilBase;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -423,7 +424,9 @@ public class JetRefactoringUtil {
                         addExpression = false;
                     }
                 }
-                else if (element.getParent() instanceof JetCallElement || element.getParent() instanceof JetThisExpression) {
+                else if (element.getParent() instanceof JetCallElement
+                         || element.getParent() instanceof JetThisExpression
+                         || PsiTreeUtil.getParentOfType(element, JetSuperExpression.class) != null) {
                     addExpression = false;
                 }
                 else if (element.getParent() instanceof JetOperationExpression) {

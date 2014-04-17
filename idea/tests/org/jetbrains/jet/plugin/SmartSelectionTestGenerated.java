@@ -51,4 +51,34 @@ public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
         doTestSmartSelection("idea/testData/smartSelection/simple.kt");
     }
     
+    @TestMetadata("superExpression.kt")
+    public void testSuperExpression() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/superExpression.kt");
+    }
+    
+    @TestMetadata("superExpressionWithLabel.kt")
+    public void testSuperExpressionWithLabel() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/superExpressionWithLabel.kt");
+    }
+    
+    @TestMetadata("superExpressionWithLabelAndType.kt")
+    public void testSuperExpressionWithLabelAndType() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/superExpressionWithLabelAndType.kt");
+    }
+    
+    @TestMetadata("superExpressionWithType.kt")
+    public void testSuperExpressionWithType() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/superExpressionWithType.kt");
+    }
+    
+    @TestMetadata("typeInSuperExpression.kt")
+    public void testTypeInSuperExpression() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/typeInSuperExpression.kt");
+    }
+    
+    @TestMetadata("typeInSuperExpressionWithLabel.kt")
+    public void testTypeInSuperExpressionWithLabel() throws Exception {
+        doTestSmartSelection("idea/testData/smartSelection/typeInSuperExpressionWithLabel.kt");
+    }
+    
 }
