@@ -57,6 +57,11 @@ public class Renderers {
         @NotNull
         @Override
         public String render(@NotNull Object element) {
+            if (element instanceof DeclarationDescriptor) {
+                LOG.warn("Diagnostic renderer TO_STRING was used to render an instance of DeclarationDescriptor.\n" +
+                         "This is usually a bad idea, because descriptors' toString() includes some debug information, " +
+                         "which should not be seen by the user.\nDescriptor: " + element);
+            }
             return element.toString();
         }
 
