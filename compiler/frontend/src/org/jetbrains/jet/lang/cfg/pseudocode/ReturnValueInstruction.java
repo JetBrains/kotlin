@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
-public class ReturnValueInstruction extends AbstractJumpInstruction implements ReturnInstruction {
+public class ReturnValueInstruction extends AbstractJumpInstruction {
     public ReturnValueInstruction(
             @NotNull JetExpression returnExpression,
             @NotNull LexicalScope lexicalScope,
