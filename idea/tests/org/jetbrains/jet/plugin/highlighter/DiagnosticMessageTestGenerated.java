@@ -41,6 +41,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/assignedButNeverAccessedVariable.kt");
     }
     
+    @TestMetadata("cannotOverrideInvisibleMember.kt")
+    public void testCannotOverrideInvisibleMember() throws Exception {
+        doTest("idea/testData/diagnosticMessage/cannotOverrideInvisibleMember.kt");
+    }
+    
     @TestMetadata("conflictingOverloadsClass.kt")
     public void testConflictingOverloadsClass() throws Exception {
         doTest("idea/testData/diagnosticMessage/conflictingOverloadsClass.kt");

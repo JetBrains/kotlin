@@ -1,0 +1,2 @@
+<!-- cannotOverrideInvisibleMember1 -->
+'internal open fun foo(): kotlin.Unit defined in B' has no access to 'private open fun foo(): kotlin.Unit defined in A', so it cannot override it

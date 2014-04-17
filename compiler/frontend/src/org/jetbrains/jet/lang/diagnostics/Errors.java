@@ -211,8 +211,8 @@ public interface Errors {
     DiagnosticFactory3<PsiNameIdentifierOwner, CallableMemberDescriptor, CallableMemberDescriptor, DeclarationDescriptor> VIRTUAL_MEMBER_HIDDEN =
             DiagnosticFactory3.create(ERROR, NAMED_ELEMENT);
 
-    DiagnosticFactory3<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor, DeclarationDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
-            DiagnosticFactory3.create(ERROR, OVERRIDE_MODIFIER);
+    DiagnosticFactory2<JetModifierListOwner, CallableMemberDescriptor, CallableDescriptor> CANNOT_OVERRIDE_INVISIBLE_MEMBER =
+            DiagnosticFactory2.create(ERROR, OVERRIDE_MODIFIER);
 
     DiagnosticFactory2<JetAnnotationEntry, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_CONFLICT =
             DiagnosticFactory2.create(ERROR);

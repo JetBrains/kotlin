@@ -592,7 +592,7 @@ public class OverrideResolver {
 
                 @Override
                 public void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor invisibleOverridden) {
-                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden, invisibleOverridden.getContainingDeclaration()));
+                    trace.report(CANNOT_OVERRIDE_INVISIBLE_MEMBER.on(member, declared, invisibleOverridden));
                 }
 
                 @Override
