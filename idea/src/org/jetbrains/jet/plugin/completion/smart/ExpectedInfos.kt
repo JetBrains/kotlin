@@ -24,19 +24,19 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
-class ExpectedTypes(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
-    public fun calculate(expressionWithType: JetExpression): Collection<ExpectedTypeInfo>? {
-        val expectedTypes = calculateForArgument(expressionWithType)
-        if (expectedTypes != null) {
-            return expectedTypes
+class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
+    public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val expectedInfos = calculateForArgument(expressionWithType)
+        if (expectedInfos != null) {
+            return expectedInfos
         }
         else {
             val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
-            return listOf(ExpectedTypeInfo(expectedType, null))
+            return listOf(ExpectedInfo(expectedType, null))
         }
     }
 
-    private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedTypeInfo>? {
+    private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
         if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
         val argumentList = argument.getParent() as JetValueArgumentList
@@ -74,14 +74,14 @@ class ExpectedTypes(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val callResolver = InjectorForMacros(expressionWithType.getProject(), moduleDescriptor).getCallResolver()!!
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
-        val expectedTypes = HashSet<ExpectedTypeInfo>()
+        val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val parameters = candidate.getResultingDescriptor().getValueParameters()
             if (parameters.size <= argumentIndex) continue
             val parameterDescriptor = parameters[argumentIndex]
             val tail = if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
-            expectedTypes.add(ExpectedTypeInfo(parameterDescriptor.getType(), tail))
+            expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
         }
-        return expectedTypes
+        return expectedInfos
     }
 }

@@ -19,7 +19,7 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 
 class ThisItems(val bindingContext: BindingContext) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedTypes: Collection<ExpectedTypeInfo>) {
+    public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
         if (scope == null) return
 
@@ -27,14 +27,14 @@ class ThisItems(val bindingContext: BindingContext) {
         for (i in 0..receivers.size - 1) {
             val receiver = receivers[i]
             val thisType = receiver.getType()
-            val matchedExpectedTypes = expectedTypes.filter { thisType.isSubtypeOf(it.`type`) }
-            if (matchedExpectedTypes.notEmpty) {
+            val matchedExpectedInfos = expectedInfos.filter { thisType.isSubtypeOf(it.`type`) }
+            if (matchedExpectedInfos.notEmpty) {
                 //TODO: use this code when KT-4258 fixed
                 //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
                 val qualifier = if (i == 0) null else thisQualifierName(receiver) ?: continue
                 val expressionText = if (qualifier == null) "this" else "this@" + qualifier
                 val lookupElement = LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.TEXT.renderType(thisType))
-                collection.add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
+                collection.add(addTailToLookupElement(lookupElement, matchedExpectedInfos))
             }
         }
     }

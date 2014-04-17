@@ -10,8 +10,8 @@ import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import com.intellij.openapi.project.Project
 
 class LambdaItems(val project: Project) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedTypes: Collection<ExpectedTypeInfo>) {
-        val distinctTypes = functionExpectedTypes.map { it.`type` }.toSet()
+    public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
+        val distinctTypes = functionExpectedInfos.map { it.`type` }.toSet()
 
         fun createLookupElement(lookupString: String, textBeforeCaret: String, textAfterCaret: String, shortenRefs: Boolean)
                 = LookupElementBuilder.create(lookupString)
@@ -23,7 +23,7 @@ class LambdaItems(val project: Project) {
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
             val lookupElement = createLookupElement("{...}", "{ ", " }", shortenRefs = false)
-            collection.add(addTailToLookupElement(lookupElement, functionExpectedTypes))
+            collection.add(addTailToLookupElement(lookupElement, functionExpectedInfos))
         }
 
         if (singleSignatureLength != 0) {
@@ -53,7 +53,7 @@ class LambdaItems(val project: Project) {
 
                 val lookupString = "{ ${wrap(parametersPresentation)} -> ... }"
                 val lookupElement = createLookupElement(lookupString, "{ ${wrap(parametersText)} -> ", " }", shortenRefs = true)
-                collection.add(addTailToLookupElement(lookupElement, functionExpectedTypes.filter { it.`type` == functionType }))
+                collection.add(addTailToLookupElement(lookupElement, functionExpectedInfos.filter { it.`type` == functionType }))
             }
         }
     }

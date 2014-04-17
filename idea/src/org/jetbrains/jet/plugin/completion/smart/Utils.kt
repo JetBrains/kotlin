@@ -64,8 +64,8 @@ fun addTailToLookupElement(lookupElement: LookupElement, tail: Tail?): LookupEle
     }
 }
 
-fun addTailToLookupElement(lookupElement: LookupElement, matchedExpectedTypes: Collection<ExpectedTypeInfo>): LookupElement
-    = addTailToLookupElement(lookupElement, mergeTails(matchedExpectedTypes.map { it.tail }))
+fun addTailToLookupElement(lookupElement: LookupElement, matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement
+    = addTailToLookupElement(lookupElement, mergeTails(matchedExpectedInfos.map { it.tail }))
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
 

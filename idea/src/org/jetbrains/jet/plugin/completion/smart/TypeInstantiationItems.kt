@@ -21,9 +21,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 
 class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedTypes: Collection<ExpectedTypeInfo>) {
-        val expectedTypesGrouped: Map<JetType, List<ExpectedTypeInfo>> = expectedTypes.groupBy { TypeUtils.makeNotNullable(it.`type`) }
-        for ((jetType, types) in expectedTypesGrouped) {
+    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { TypeUtils.makeNotNullable(it.`type`) }
+        for ((jetType, types) in expectedInfosGrouped) {
             val tail = mergeTails(types.map { it.tail })
             addToCollection(collection, jetType, tail)
         }

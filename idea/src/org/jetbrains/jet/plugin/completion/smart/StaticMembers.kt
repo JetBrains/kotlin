@@ -24,14 +24,14 @@ import org.jetbrains.jet.lang.psi.JetExpression
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedTypes: Collection<ExpectedTypeInfo>, context: JetExpression) {
+    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, context: JetExpression) {
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
         if (scope == null) return
 
-        val expectedTypesByClass = expectedTypes.groupBy { TypeUtils.getClassDescriptor(it.`type`) }
-        for ((classDescriptor, expectedTypesForClass) in expectedTypesByClass) {
+        val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.`type`) }
+        for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
-                addToCollection(collection, classDescriptor, expectedTypesForClass, scope)
+                addToCollection(collection, classDescriptor, expectedInfosForClass, scope)
             }
         }
     }
@@ -39,21 +39,21 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
     private fun addToCollection(
             collection: MutableCollection<LookupElement>,
             classDescriptor: ClassDescriptor,
-            expectedTypes: Collection<ExpectedTypeInfo>,
+            expectedInfos: Collection<ExpectedInfo>,
             scope: JetScope) {
 
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
 
-            val matchedExpectedTypes = expectedTypes.filter {
-                expectedType ->
-                  descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedType.`type`) } ?: false
+            val matchedExpectedInfos = expectedInfos.filter {
+                expectedInfo ->
+                  descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedInfo.`type`) } ?: false
                     || descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
             }
-            if (matchedExpectedTypes.isEmpty()) return
+            if (matchedExpectedInfos.isEmpty()) return
 
             val lookupElement = createLookupElement(descriptor, classDescriptor)
-            collection.add(addTailToLookupElement(lookupElement, matchedExpectedTypes))
+            collection.add(addTailToLookupElement(lookupElement, matchedExpectedInfos))
         }
 
         if (classDescriptor is JavaClassDescriptor) {
