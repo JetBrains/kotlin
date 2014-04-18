@@ -371,11 +371,6 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/regression/Jet72.kt");
         }
         
-        @TestMetadata("Jet81.kt")
-        public void testJet81() throws Exception {
-            doTest("idea/testData/checker/regression/Jet81.kt");
-        }
-        
         @TestMetadata("kt251.kt")
         public void testKt251() throws Exception {
             doTest("idea/testData/checker/regression/kt251.kt");
