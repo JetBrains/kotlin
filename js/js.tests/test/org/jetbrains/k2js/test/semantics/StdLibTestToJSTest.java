@@ -30,6 +30,8 @@ public class StdLibTestToJSTest extends StdLibTestBase {
                           "GetOrElseTest.kt",
                           "collections/ListSpecificTest.kt",
                           "collections/IterableTests.kt",
+                          "language/RangeTest.kt",
+                          "language/RangeIterationTest.kt",
                           "text/StringTest.kt");
     }
 }
