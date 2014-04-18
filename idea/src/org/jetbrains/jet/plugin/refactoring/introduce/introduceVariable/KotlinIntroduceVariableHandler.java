@@ -40,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ObservableBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.PackageType;
@@ -465,14 +466,15 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                                 element2.getParent() instanceof JetSimpleNameExpression) {
                                 JetSimpleNameExpression expr1 = (JetSimpleNameExpression)element1.getParent();
                                 JetSimpleNameExpression expr2 = (JetSimpleNameExpression)element2.getParent();
-                                DeclarationDescriptor descr1 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr1);
-                                DeclarationDescriptor descr2 = bindingContext.get(BindingContext.REFERENCE_TARGET, expr2);
-                                if (descr1 != descr2) {
-                                    return 1;
-                                }
-                                else {
-                                    return 0;
-                                }
+
+                                ResolvedCall<?> rc1 = bindingContext.get(BindingContext.RESOLVED_CALL, expr1);
+                                ResolvedCall<?> rc2 = bindingContext.get(BindingContext.RESOLVED_CALL, expr2);
+                                if (rc1 == null || rc2 == null) return rc1 == rc2 ? 0 : 1;
+
+                                return  rc1.getResultingDescriptor() == rc2.getResultingDescriptor()
+                                        && rc1.getExplicitReceiverKind() == rc2.getExplicitReceiverKind()
+                                        && rc1.getReceiverArgument() == rc2.getReceiverArgument()
+                                        && rc1.getThisObject() == rc2.getThisObject() ? 0 : 1;
                             }
                         }
                         if (!element1.textMatches(element2)) {

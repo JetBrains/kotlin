@@ -128,6 +128,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ManyOccurrences.kt");
         }
         
+        @TestMetadata("nonEquivalentReceivers.kt")
+        public void testNonEquivalentReceivers() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");
+        }
+        
         @TestMetadata("ReplaceOccurence.kt")
         public void testReplaceOccurence() throws Exception {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ReplaceOccurence.kt");
