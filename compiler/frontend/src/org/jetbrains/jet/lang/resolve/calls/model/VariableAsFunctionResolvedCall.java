@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
@@ -98,6 +99,12 @@ public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<Fun
     @Override
     public List<ResolvedValueArgument> getValueArgumentsByIndex() {
         return functionCall.getValueArgumentsByIndex();
+    }
+
+    @NotNull
+    @Override
+    public ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument) {
+        return functionCall.getArgumentMapping(valueArgument);
     }
 
     @NotNull

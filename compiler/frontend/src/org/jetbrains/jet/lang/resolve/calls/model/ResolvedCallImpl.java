@@ -82,6 +82,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
     private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
+    private final Map<ValueArgument, ArgumentMatch> argumentToParameterMap = Maps.newHashMap();
 
     private boolean someArgumentHasNoType = false;
     private DelegatingBindingTrace trace;
@@ -263,6 +264,22 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedC
         }
         
         return arguments;
+    }
+
+    public void recordArgumentMatch(
+            @NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch
+    ) {
+        argumentToParameterMap.put(valueArgument, new ArgumentMatch(parameter, hasTypeMismatch));
+    }
+
+    @NotNull
+    @Override
+    public ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument) {
+        ArgumentMatch argumentMatch = argumentToParameterMap.get(valueArgument);
+        if (argumentMatch == null) {
+            return ArgumentUnmapped.instance$;
+        }
+        return argumentMatch;
     }
 
     public void argumentHasNoType() {

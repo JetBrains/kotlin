@@ -22,6 +22,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.ValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
@@ -61,6 +62,10 @@ public interface ResolvedCall<D extends CallableDescriptor> {
     /** Values (arguments) for value parameters indexed by parameter index */
     @Nullable
     List<ResolvedValueArgument> getValueArgumentsByIndex();
+
+    /** The result of mapping the value argument to a parameter */
+    @NotNull
+    ArgumentMapping getArgumentMapping(@NotNull ValueArgument valueArgument);
 
     /** What's substituted for type parameters */
     @NotNull

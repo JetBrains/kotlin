@@ -793,9 +793,11 @@ public class CandidateResolver {
                 JetType type = typeInfoForCall.getType();
                 infoForArguments.updateInfo(argument, typeInfoForCall.getDataFlowInfo());
 
+                boolean hasTypeMismatch = false;
                 if (type == null || (type.isError() && type != PLACEHOLDER_FUNCTION_TYPE)) {
                     candidateCall.argumentHasNoType();
                     argumentTypes.add(type);
+                    hasTypeMismatch = true;
                 }
                 else {
                     JetType resultingType;
@@ -807,11 +809,13 @@ public class CandidateResolver {
                         if (resultingType == null) {
                             resultingType = type;
                             resultStatus = OTHER_ERROR;
+                            hasTypeMismatch = true;
                         }
                     }
 
                     argumentTypes.add(resultingType);
                 }
+                candidateCall.recordArgumentMatch(argument, parameterDescriptor, hasTypeMismatch);
             }
         }
         return new ValueArgumentsCheckingResult(resultStatus, argumentTypes);
