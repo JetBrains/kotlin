@@ -42,7 +42,7 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
         var lookupString = lookupElement.getLookupString()
 
         val typeArgs = jetType.getArguments()
-        var itemText = lookupString + DescriptorRenderer.FQNAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement>
         val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)

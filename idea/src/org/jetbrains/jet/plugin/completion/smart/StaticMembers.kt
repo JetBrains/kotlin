@@ -104,7 +104,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
                 }
 
                 if (presentation.getTypeText().isNullOrEmpty()) {
-                    presentation.setTypeText(DescriptorRenderer.FQNAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
+                    presentation.setTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(classDescriptor.getDefaultType()))
                 }
             }
 

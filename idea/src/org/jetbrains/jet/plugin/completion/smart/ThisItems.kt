@@ -33,7 +33,7 @@ class ThisItems(val bindingContext: BindingContext) {
                 //val expressionText = if (i == 0) "this" else "this@" + (thisQualifierName(receiver, bindingContext) ?: continue)
                 val qualifier = if (i == 0) null else thisQualifierName(receiver) ?: continue
                 val expressionText = if (qualifier == null) "this" else "this@" + qualifier
-                val lookupElement = LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.FQNAMES_IN_TYPES.renderType(thisType))
+                val lookupElement = LookupElementBuilder.create(expressionText).withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
                 collection.add(addTailToLookupElement(lookupElement, matchedExpectedInfos))
             }
         }
