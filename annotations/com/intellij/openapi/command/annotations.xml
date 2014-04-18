@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.openapi.command.CommandProcessor com.intellij.openapi.command.CommandProcessor getInstance()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

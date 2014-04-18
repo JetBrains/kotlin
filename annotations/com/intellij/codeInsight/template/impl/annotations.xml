@@ -1,0 +1,34 @@
+<root>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor boolean isEnabled(com.intellij.codeInsight.template.Template) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor boolean isVisible(com.intellij.codeInsight.template.Template) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void processText(com.intellij.openapi.project.Project, com.intellij.codeInsight.template.Template, com.intellij.openapi.editor.Document, com.intellij.openapi.editor.RangeMarker, com.intellij.openapi.editor.Editor) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void processText(com.intellij.openapi.project.Project, com.intellij.codeInsight.template.Template, com.intellij.openapi.editor.Document, com.intellij.openapi.editor.RangeMarker, com.intellij.openapi.editor.Editor) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void processText(com.intellij.openapi.project.Project, com.intellij.codeInsight.template.Template, com.intellij.openapi.editor.Document, com.intellij.openapi.editor.RangeMarker, com.intellij.openapi.editor.Editor) 2'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void processText(com.intellij.openapi.project.Project, com.intellij.codeInsight.template.Template, com.intellij.openapi.editor.Document, com.intellij.openapi.editor.RangeMarker, com.intellij.openapi.editor.Editor) 3'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void processText(com.intellij.openapi.project.Project, com.intellij.codeInsight.template.Template, com.intellij.openapi.editor.Document, com.intellij.openapi.editor.RangeMarker, com.intellij.openapi.editor.Editor) 4'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.impl.TemplateOptionalProcessor void setEnabled(com.intellij.codeInsight.template.Template, boolean) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

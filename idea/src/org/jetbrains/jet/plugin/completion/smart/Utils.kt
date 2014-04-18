@@ -34,11 +34,7 @@ class ArtificialElementInsertHandler(
 
 fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
     PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-    val file = context.getFile() as JetFile
-    val element = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, javaClass<JetElement>())
-    if (element != null) {
-        ShortenReferences.process(element)
-    }
+    ShortenReferences.process(context.getFile() as JetFile, startOffset, endOffset)
 }
 
 fun mergeTails(tails: Collection<Tail?>): Tail? {

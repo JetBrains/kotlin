@@ -11,11 +11,17 @@
   <item name='com.intellij.psi.PsiElement com.intellij.psi.PsiElement replace(com.intellij.psi.PsiElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitElement(com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.PsiReference com.intellij.psi.PsiElement getElement()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item
       name='com.intellij.psi.PsiReferenceService java.util.List&lt;com.intellij.psi.PsiReference&gt; getReferences(com.intellij.psi.PsiElement, com.intellij.psi.PsiReferenceService.Hints)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.SmartPointerManager com.intellij.psi.SmartPointerManager getInstance(com.intellij.openapi.project.Project)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>

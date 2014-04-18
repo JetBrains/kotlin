@@ -39,7 +39,7 @@ public abstract class JetNameValidator {
         };
     }
 
-    @NotNull
+    @NotNull //TODO: shouldn't it be "createCollectingValidator"?
     public static JetNameValidator getCollectingValidator(final Project project) {
         return new JetNameValidator(project) {
             private final Set<String> suggestedSet = new HashSet<String>();

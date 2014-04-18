@@ -17,10 +17,11 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.psi.PsiElement;
+import org.jetbrains.annotations.NotNull;
 
 public class JetTreeVisitorVoid extends JetVisitorVoid {
     @Override
-    public void visitElement(PsiElement element) {
+    public void visitElement(@NotNull PsiElement element) {
         element.acceptChildren(this);
     }
 }

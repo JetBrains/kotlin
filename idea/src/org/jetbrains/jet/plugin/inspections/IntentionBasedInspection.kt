@@ -35,7 +35,7 @@ public abstract class IntentionBasedInspection<T: JetElement>(
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object: PsiElementVisitor() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 if (!intention.elementType.isInstance(element)) return
 
                 [suppress("UNCHECKED_CAST")]

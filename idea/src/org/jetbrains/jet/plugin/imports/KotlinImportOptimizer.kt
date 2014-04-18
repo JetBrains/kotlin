@@ -74,7 +74,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     private fun extractUsedQualifiedNames(jetFile: JetFile): Set<FqName> {
         val usedQualifiedNames = HashSet<FqName>()
         jetFile.accept(object : JetVisitorVoid() {
-            override fun visitElement(element: PsiElement?) {
+            override fun visitElement(element: PsiElement) {
                 ProgressIndicatorProvider.checkCanceled()
                 element?.acceptChildren(this)
             }

@@ -48,7 +48,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             val matchedExpectedInfos = expectedInfos.filter {
                 expectedInfo ->
                   descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedInfo.`type`) } ?: false
-                    || descriptor is ClassDescriptor && descriptor.getKind() == ClassKind.ENUM_ENTRY
+                    || DescriptorUtils.isEnumEntry(descriptor) /* we do not need to check type of enum entry because it's taken from proper enum */
             }
             if (matchedExpectedInfos.isEmpty()) return
 

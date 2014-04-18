@@ -221,6 +221,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/Lambda5.kt");
     }
     
+    @TestMetadata("LambdaInsertImport.kt")
+    public void testLambdaInsertImport() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/LambdaInsertImport.kt");
+    }
+    
     @TestMetadata("MergeTail1.kt")
     public void testMergeTail1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/MergeTail1.kt");

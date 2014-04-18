@@ -6,5 +6,5 @@ fun bar() {
 }
 
 // ABSENT: "{...}"
-// EXIST: "{ String -> ... }"
-// EXIST: "{ Int -> ... }"
+// EXIST: "{ (String) -> ... }"
+// EXIST: "{ (Int) -> ... }"
