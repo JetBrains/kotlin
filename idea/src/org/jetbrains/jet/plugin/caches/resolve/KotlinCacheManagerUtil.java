@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
 
 public class KotlinCacheManagerUtil {
@@ -28,9 +29,6 @@ public class KotlinCacheManagerUtil {
 
     @NotNull
     public static BindingContext getDeclarationsBindingContext(@NotNull JetElement element) {
-        JetFile jetFile = element.getContainingJetFile();
-        KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(jetFile.getProject())
-                .getDeclarationsFromProject(TargetPlatformDetector.getPlatform(jetFile));
-        return declarationsCache.getBindingContext();
+        return AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext();
     }
 }
