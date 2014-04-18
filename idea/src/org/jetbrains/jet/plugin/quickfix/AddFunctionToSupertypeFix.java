@@ -52,7 +52,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     }
 
     private static List<FunctionDescriptor> generateFunctionsToAdd(JetNamedFunction functionElement) {
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsFromProject(functionElement).getBindingContext();
+        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(functionElement);
 
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Collections.emptyList();
@@ -154,7 +154,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
 
     @NotNull
     private JetAddFunctionToClassifierAction createAction(Project project, Editor editor) {
-        BindingContext bindingContext = KotlinCacheManagerUtil.getDeclarationsFromProject(element).getBindingContext();
+        BindingContext bindingContext = KotlinCacheManagerUtil.getDeclarationsBindingContext(element);
         return new JetAddFunctionToClassifierAction(project, editor, bindingContext, functionsToAdd);
     }
 

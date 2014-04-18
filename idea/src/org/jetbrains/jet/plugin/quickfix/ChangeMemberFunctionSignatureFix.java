@@ -108,7 +108,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      */
     @NotNull
     private static List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsFromProject(functionElement).getBindingContext();
+        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(functionElement);
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
         List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);
