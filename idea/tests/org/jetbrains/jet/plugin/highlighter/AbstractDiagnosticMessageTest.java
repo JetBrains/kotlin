@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.plugin.highlighter.formatHtml.FormatHtmlPackage.formatHtml;
+
 public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";
     private static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
@@ -98,7 +100,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
             String readableDiagnosticText;
             String extension;
             if (messageType != MessageType.TEXT && IdeErrorMessages.MAP.get(diagnostic.getFactory()) != null) {
-                readableDiagnosticText = IdeErrorMessages.RENDERER.render(diagnostic).replaceAll(">", ">\n");
+                readableDiagnosticText = formatHtml(IdeErrorMessages.RENDERER.render(diagnostic));
                 extension = MessageType.HTML.extension;
             }
             else {
