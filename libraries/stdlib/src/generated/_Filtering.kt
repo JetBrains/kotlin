@@ -561,7 +561,7 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
  * Returns a stream containing all elements that are not null
  */
 public fun <T : Any> Stream<T?>.filterNotNull(): Stream<T> {
-    return FilteringStream(this, false, { it != null }) as Stream<T>
+    return FilteringStream(this, false, { it == null }) as Stream<T>
 }
 
 /**

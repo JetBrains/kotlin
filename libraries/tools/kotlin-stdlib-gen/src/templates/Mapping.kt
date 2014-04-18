@@ -63,7 +63,7 @@ fun mapping(): List<GenericFunction> {
         inline(false, Streams)
         body(Streams) {
             """
-            return TransformingStream(FilteringStream(this, false, { it != null }) as Stream<T>, transform)
+            return TransformingStream(FilteringStream(this, false, { it == null }) as Stream<T>, transform)
             """
         }
     }

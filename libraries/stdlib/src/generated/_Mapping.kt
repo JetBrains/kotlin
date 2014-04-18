@@ -597,7 +597,7 @@ public inline fun <T : Any, R> Iterable<T?>.mapNotNull(transform: (T) -> R): Lis
  * Returns a stream containing the results of applying the given *transform* function to each non-null element of the original stream
  */
 public fun <T : Any, R> Stream<T?>.mapNotNull(transform: (T) -> R): Stream<R> {
-    return TransformingStream(FilteringStream(this, false, { it != null }) as Stream<T>, transform)
+    return TransformingStream(FilteringStream(this, false, { it == null }) as Stream<T>, transform)
 }
 
 /**
