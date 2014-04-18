@@ -96,6 +96,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/nameInConstraintIsNotATypeParameter.kt");
     }
     
+    @TestMetadata("noneApplicable.kt")
+    public void testNoneApplicable() throws Exception {
+        doTest("idea/testData/diagnosticMessage/noneApplicable.kt");
+    }
+    
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         doTest("idea/testData/diagnosticMessage/numberValueTypes.kt");
