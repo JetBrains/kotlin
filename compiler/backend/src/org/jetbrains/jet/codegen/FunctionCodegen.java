@@ -66,6 +66,7 @@ import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
@@ -440,9 +441,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         );
 
         if (!bridgesToGenerate.isEmpty()) {
-            PsiElement origin = descriptor.getKind().isReal()
-                                ? callableDescriptorToDeclaration(bindingContext, descriptor)
-                                : null;
+            PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(bindingContext, descriptor) : null;
             for (Bridge<Method> bridge : bridgesToGenerate) {
                 generateBridge(origin, bridge.getFrom(), bridge.getTo());
             }
