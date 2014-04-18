@@ -1,6 +1,6 @@
 package test.collections
 
-import org.junit.Test
+import org.junit.Test as test
 import kotlin.test.*
 import java.util.*
 
@@ -18,7 +18,7 @@ fun fibonacci(): Stream<Int> {
 
 public class StreamTest {
 
-    Test fun requireNoNulls() {
+    test fun requireNoNulls() {
         val stream = arrayListOf<String?>("foo", "bar").stream()
         val notNull = stream.requireNoNulls()
         assertEquals(arrayListOf("foo", "bar"), notNull.toList())
@@ -31,6 +31,12 @@ public class StreamTest {
         }
     }
 
+    test fun filterNotNull() {
+        val data = arrayListOf(null, "foo", null, "bar").stream()
+        val filtered = data.filterNotNull()
+        assertEquals(arrayListOf("foo", "bar"), filtered.toList())
+    }
+
     test fun mapNotNull() {
         val data = arrayListOf(null, "foo", null, "bar").stream()
         val foo = data.mapNotNull { it.length }
@@ -41,39 +47,39 @@ public class StreamTest {
         }
     }
 
-    Test fun filterAndTakeWhileExtractTheElementsWithinRange() {
+    test fun filterAndTakeWhileExtractTheElementsWithinRange() {
         assertEquals(arrayListOf(144, 233, 377, 610, 987), fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.toList())
     }
 
-    Test fun foldReducesTheFirstNElements() {
+    test fun foldReducesTheFirstNElements() {
         val sum = {(a: Int, b: Int) -> a + b }
         assertEquals(arrayListOf(13, 21, 34, 55, 89).fold(0, sum), fibonacci().filter { it > 10 }.take(5).fold(0, sum))
     }
 
-    Test fun takeExtractsTheFirstNElements() {
+    test fun takeExtractsTheFirstNElements() {
         assertEquals(arrayListOf(0, 1, 1, 2, 3, 5, 8, 13, 21, 34), fibonacci().take(10).toList())
     }
 
-    Test fun mapAndTakeWhileExtractTheTransformedElements() {
+    test fun mapAndTakeWhileExtractTheTransformedElements() {
         assertEquals(arrayListOf(0, 3, 3, 6, 9, 15), fibonacci().map { it * 3 }.takeWhile {(i: Int) -> i < 20 }.toList())
     }
 
-    Test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
+    test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
         assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.makeString(separator = ", ", limit = 5))
     }
 
-    Test fun skippingIterator() {
+    test fun skippingIterator() {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).makeString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).makeString(limit = 10))
     }
 
-    Test fun toStringJoinsNoMoreThanTheFirstTenElements() {
+    test fun toStringJoinsNoMoreThanTheFirstTenElements() {
         assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().makeString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter { it > 10 }.makeString(limit = 10))
         assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.makeString())
     }
 
-    Test fun plus() {
+    test fun plus() {
         val stream = listOf("foo", "bar").stream()
         val streamChease = stream + "cheese"
         assertEquals(listOf("foo", "bar", "cheese"), streamChease.toList())
@@ -84,7 +90,7 @@ public class StreamTest {
         assertEquals(listOf("a", "b", "c"), mi.toList())
     }
 
-    Test fun plusCollection() {
+    test fun plusCollection() {
         val a = listOf("foo", "bar")
         val b = listOf("cheese", "wine")
         val stream = a.stream() + b
@@ -100,7 +106,7 @@ public class StreamTest {
     }
 
 
-    Test fun iterationOverStream() {
+    test fun iterationOverStream() {
         val c = arrayListOf(0, 1, 2, 3, 4, 5)
         var s = ""
         for (i in c.stream()) {
@@ -109,7 +115,7 @@ public class StreamTest {
         assertEquals("012345", s)
     }
 
-    Test fun streamFromFunction() {
+    test fun streamFromFunction() {
         var count = 3
 
         val stream = stream<Int> {
@@ -121,7 +127,7 @@ public class StreamTest {
         assertEquals(listOf(2, 1, 0), list)
     }
 
-    Test fun streamFromFunctionWithInitialValue() {
+    test fun streamFromFunctionWithInitialValue() {
         val values = stream<Int>(3) { n -> if (n > 0) n - 1 else null }
         assertEquals(arrayListOf(3, 2, 1, 0), values.toList())
     }
@@ -131,7 +137,7 @@ public class StreamTest {
         return result
     }
 
-    Test fun streamExtensions() {
+    test fun streamExtensions() {
         val c = arrayListOf(0, 1, 2, 3, 4, 5)
         val d = ArrayList<Int>()
         c.stream().takeWhileTo(d, { i -> i < 4 })
@@ -139,7 +145,7 @@ public class StreamTest {
     }
 
     /*
-    Test fun pairIterator() {
+    test fun pairIterator() {
         val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).makeString(limit = 10)
         assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
     }
