@@ -196,7 +196,9 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                             try {
                                 BindingContext bindingContext =
                                         AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
-                                descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+                                descriptor = bindingContext.getDiagnostics().forElement(declaration).isEmpty()
+                                             ? bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
+                                             : null;
                             }
                             finally {
                                 // Back to GUI thread for submitting result
