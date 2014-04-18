@@ -214,9 +214,14 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithJava/property"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
-        @TestMetadata("FieldAccess.kt")
-        public void testFieldAccess() throws Exception {
-            doTestWithJava("compiler/testData/codegen/boxWithJava/property/FieldAccess.kt");
+        @TestMetadata("fieldAccessFromExtensionInTraitImpl.kt")
+        public void testFieldAccessFromExtensionInTraitImpl() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/property/fieldAccessFromExtensionInTraitImpl.kt");
+        }
+        
+        @TestMetadata("fieldAccessViaSubclass.kt")
+        public void testFieldAccessViaSubclass() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/property/fieldAccessViaSubclass.kt");
         }
         
     }

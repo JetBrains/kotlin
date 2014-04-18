@@ -555,16 +555,16 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         Type ownerType;
         if (contextClass instanceof PackageFragmentDescriptor) {
-            ownerType = state.getTypeMapper().getOwner(functionDescriptor, kind, true);
+            ownerType = typeMapper.mapOwner(functionDescriptor, true);
         }
         else if (contextClass instanceof ClassDescriptor) {
-            ownerType = state.getTypeMapper().mapClass((ClassDescriptor) contextClass);
+            ownerType = typeMapper.mapClass((ClassDescriptor) contextClass);
         }
         else if (isLocalNamedFun(functionDescriptor)) {
-            ownerType = asmTypeForAnonymousClass(state.getBindingContext(), functionDescriptor);
+            ownerType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
         else {
-            throw new IllegalStateException("Couldn't obtain owner name for " + functionDescriptor);
+            throw new IllegalStateException("Couldn't obtain owner type for " + functionDescriptor);
         }
 
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
