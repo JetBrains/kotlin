@@ -411,14 +411,6 @@ public class CallResolver {
         ResolvedCallWithTrace<D> resolvedCall = results.getResultingCall();
         ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
 
-        if (!callToCompleteInference.hasIncompleteTypeParameters()) {
-            CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                    CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
-            candidateResolver.completeNestedCallsInference(callCandidateResolutionContext);
-            candidateResolver.checkValueArgumentTypes(callCandidateResolutionContext);
-            return results;
-        }
-
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
@@ -426,7 +418,7 @@ public class CallResolver {
         if (callToCompleteInference.getStatus().isSuccess()) {
             return OverloadResolutionResultsImpl.success(resolvedCall);
         }
-        return OverloadResolutionResultsImpl.incompleteTypeInference(resolvedCall);
+        return results;
     }
 
     private static <F extends CallableDescriptor> void cacheResults(

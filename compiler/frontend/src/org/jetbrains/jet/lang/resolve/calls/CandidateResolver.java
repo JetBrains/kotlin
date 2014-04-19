@@ -221,7 +221,12 @@ public class CandidateResolver {
             boolean isInnerCall
     ) {
         ResolvedCallImpl<D> resolvedCall = context.candidateCall;
-        assert resolvedCall.hasIncompleteTypeParameters();
+        if (!resolvedCall.hasIncompleteTypeParameters()) {
+            completeNestedCallsInference(context);
+            checkValueArgumentTypes(context);
+            return resolvedCall.getResultingDescriptor().getReturnType();
+        }
+
         assert resolvedCall.getConstraintSystem() != null;
 
         JetType unsubstitutedReturnType = resolvedCall.getCandidateDescriptor().getReturnType();
