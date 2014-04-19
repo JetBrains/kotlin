@@ -358,14 +358,6 @@ public class CallResolver {
 
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
             results = completeTypeInferenceDependentOnExpectedType(context, results, tracing);
-            if (results.isSingleResult()) {
-                //todo clean internal data for several resulting calls
-                results.getResultingCall().markCallAsCompleted();
-            }
-            else {
-                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
-                candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
-            }
         }
 
         if (results.isSingleResult()) {
@@ -400,21 +392,24 @@ public class CallResolver {
     ) {
         if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return results;
 
-        if (results.isSingleResult()) {
-            Set<ValueArgument> unmappedArguments = results.getResultingCall().getCallToCompleteTypeArgumentInference().getUnmappedArguments();
-            argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
-            candidateResolver.completeUnmappedArguments(context, unmappedArguments);
+        if (!results.isSingleResult()) {
+            argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
+            candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
+            return results;
         }
-
-        if (!results.isSingleResult()) return results;
 
         ResolvedCallWithTrace<D> resolvedCall = results.getResultingCall();
         ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
+
+        Set<ValueArgument> unmappedArguments = callToCompleteInference.getUnmappedArguments();
+        argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
+        candidateResolver.completeUnmappedArguments(context, unmappedArguments);
 
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
                 CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
+        resolvedCall.markCallAsCompleted();
         if (callToCompleteInference.getStatus().isSuccess()) {
             return OverloadResolutionResultsImpl.success(resolvedCall);
         }
