@@ -56,12 +56,24 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         }
         
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                         new File("idea/testData/indentationOnNewline"),
+                                                         Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
         
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")
         public void testConsecutiveCallsAfterDot() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/ConsecutiveCallsAfterDot.after.kt");
+        }
+        
+        @TestMetadata("ConsecutiveCallsInSaeCallsMiddle.after.kt")
+        public void testConsecutiveCallsInSaeCallsMiddle() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/ConsecutiveCallsInSaeCallsMiddle.after.kt");
+        }
+        
+        @TestMetadata("ConsecutiveCallsInSafeCallsEnd.after.kt")
+        public void testConsecutiveCallsInSafeCallsEnd() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.after.kt");
         }
         
         @TestMetadata("DoInFun.after.kt")
@@ -154,7 +166,9 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
     @InnerTestClasses({})
     public static class InvertedSettings extends AbstractJetTypingIndentationTestBase {
         public void testAllFilesPresentInInvertedSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                         new File("idea/testData/indentationOnNewline"),
+                                                         Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
         }
         
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")

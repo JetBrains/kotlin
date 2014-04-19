@@ -74,6 +74,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/ConsecutiveCalls.after.kt");
         }
         
+        @TestMetadata("ConsecutiveSafeCallsIndent.after.kt")
+        public void testConsecutiveSafeCallsIndent() throws Exception {
+            doTest("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.kt");
+        }
+        
         @TestMetadata("DoWhileLineBreak.after.kt")
         public void testDoWhileLineBreak() throws Exception {
             doTest("idea/testData/formatter/DoWhileLineBreak.after.kt");

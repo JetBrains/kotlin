@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,7 +157,7 @@ public class JetBlock extends AbstractBlock {
             // In try - try BLOCK catch BLOCK finally BLOCK
             return new ChildAttributes(Indent.getNoneIndent(), null);
         }
-        else if (type == DOT_QUALIFIED_EXPRESSION) {
+        else if (type == DOT_QUALIFIED_EXPRESSION || type == SAFE_ACCESS_EXPRESSION) {
             return new ChildAttributes(Indent.getContinuationWithoutFirstIndent(), null);
         }
         else if (type == VALUE_PARAMETER_LIST || type == VALUE_ARGUMENT_LIST) {
@@ -286,6 +286,10 @@ public class JetBlock extends AbstractBlock {
                     .notForType(BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
                     .set(Indent.getContinuationWithoutFirstIndent()),
 
+            ASTIndentStrategy.forNode("Chained calls")
+                    .in(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
+                    .set(Indent.getContinuationWithoutFirstIndent(true)),
+
             ASTIndentStrategy.forNode("KDoc comment indent")
                     .in(DOC_COMMENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
@@ -317,12 +321,6 @@ public class JetBlock extends AbstractBlock {
         }
 
         // TODO: Try to rewrite other rules to declarative style
-        if (childParent != null && childParent.getElementType() == DOT_QUALIFIED_EXPRESSION) {
-            if (childParent.getFirstChildNode() != child && childParent.getLastChildNode() != child) {
-                return Indent.getContinuationWithoutFirstIndent(false);
-            }
-        }
-
         if (childParent != null) {
             IElementType parentType = childParent.getElementType();
 
