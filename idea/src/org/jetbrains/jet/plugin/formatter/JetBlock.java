@@ -22,7 +22,6 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -111,17 +110,11 @@ public class JetBlock extends AbstractBlock {
         if (child.getElementType() == OPERATION_REFERENCE) {
             ASTNode operationNode = child.getFirstChildNode();
             if (operationNode != null) {
-                return new JetBlock(operationNode, alignmentStrategy, Indent.getNoneIndent(), null, mySettings, mySpacingBuilder);
+                return new JetBlock(operationNode, alignmentStrategy, createChildIndent(child), null, mySettings, mySpacingBuilder);
             }
         }
 
         return new JetBlock(child, alignmentStrategy, createChildIndent(child), null, mySettings, mySpacingBuilder);
-    }
-
-    private static Indent indentIfNotBrace(@NotNull ASTNode child) {
-        return child.getElementType() == RBRACE || child.getElementType() == LBRACE
-               ? Indent.getNoneIndent()
-               : Indent.getNormalIndent();
     }
 
     private static ASTNode getPrevWithoutWhitespace(ASTNode node) {
@@ -171,6 +164,10 @@ public class JetBlock extends AbstractBlock {
             return new ChildAttributes(Indent.getSpaceIndent(KDOC_COMMENT_INDENT), null);
         }
 
+        if (type == PARENTHESIZED) {
+            return super.getChildAttributes(newChildIndex);
+        }
+
         if (isIncomplete()) {
             return super.getChildAttributes(newChildIndex);
         }
@@ -184,28 +181,52 @@ public class JetBlock extends AbstractBlock {
     }
 
     private NodeAlignmentStrategy getChildrenAlignmentStrategy() {
-        CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
+        final CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
         JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
-
-        // Prepare default null strategy
-        NodeAlignmentStrategy strategy = myAlignmentStrategy;
 
         // Redefine list of strategies for some special elements
         IElementType parentType = myNode.getElementType();
         if (parentType == VALUE_PARAMETER_LIST) {
-            strategy = getAlignmentForChildInParenthesis(
+            return getAlignmentForChildInParenthesis(
                     jetCommonSettings.ALIGN_MULTILINE_PARAMETERS, VALUE_PARAMETER, COMMA,
                     jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR);
         }
         else if (parentType == VALUE_ARGUMENT_LIST) {
-            strategy = getAlignmentForChildInParenthesis(
+            return getAlignmentForChildInParenthesis(
                     jetCommonSettings.ALIGN_MULTILINE_PARAMETERS_IN_CALLS, VALUE_ARGUMENT, COMMA,
                     jetCommonSettings.ALIGN_MULTILINE_METHOD_BRACKETS, LPAR, RPAR);
         }
         else if (parentType == WHEN) {
-            strategy = getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH);
+            return getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH);
         }
-        return strategy;
+        else if (parentType == BINARY_EXPRESSION) {
+            return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
+                    createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
+        }
+        else if (parentType == PARENTHESIZED) {
+            return new NodeAlignmentStrategy() {
+                Alignment bracketsAlignment = jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION ? Alignment.createAlignment() : null;
+
+                @Nullable
+                @Override
+                public Alignment getAlignment(@NotNull ASTNode childNode) {
+                    IElementType childNodeType = childNode.getElementType();
+                    ASTNode prev = getPrevWithoutWhitespace(childNode);
+
+                    if ((prev != null && prev.getElementType() == TokenType.ERROR_ELEMENT) || childNodeType == TokenType.ERROR_ELEMENT) {
+                        return bracketsAlignment;
+                    }
+
+                    if (childNodeType == LPAR || childNodeType == RPAR) {
+                        return bracketsAlignment;
+                    }
+
+                    return null;
+                }
+            };
+        }
+
+        return myAlignmentStrategy;
     }
 
     private static NodeAlignmentStrategy getAlignmentForChildInParenthesis(
@@ -288,6 +309,14 @@ public class JetBlock extends AbstractBlock {
                     .in(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
                     .set(Indent.getContinuationWithoutFirstIndent(true)),
 
+            ASTIndentStrategy.forNode("Binary expressions")
+                    .in(BINARY_EXPRESSION)
+                    .set(Indent.getContinuationWithoutFirstIndent(false)),
+
+            ASTIndentStrategy.forNode("Parenthesized expression")
+                    .in(PARENTHESIZED)
+                    .set(Indent.getContinuationWithoutFirstIndent(false)),
+
             ASTIndentStrategy.forNode("KDoc comment indent")
                     .in(DOC_COMMENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
@@ -337,5 +366,18 @@ public class JetBlock extends AbstractBlock {
         }
 
         return Indent.getNoneIndent();
+    }
+
+    @Nullable
+    private static Alignment createAlignment(boolean alignOption, @Nullable Alignment defaultAlignment) {
+        return alignOption ? createAlignmentOrDefault(null, defaultAlignment) : defaultAlignment;
+    }
+
+    @Nullable
+    private static Alignment createAlignmentOrDefault(@Nullable Alignment base, @Nullable Alignment defaultAlignment) {
+        if (defaultAlignment == null) {
+            return base == null ? Alignment.createAlignment() : Alignment.createChildAlignment(base);
+        }
+        return defaultAlignment;
     }
 }

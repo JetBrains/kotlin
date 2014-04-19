@@ -36,7 +36,19 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @InnerTestClasses({Formatter.ModifierList.class})
     public static class Formatter extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatter() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                         new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"),
+                                                         true);
+        }
+        
+        @TestMetadata("BinaryExpressions.after.kt")
+        public void testBinaryExpressions() throws Exception {
+            doTest("idea/testData/formatter/BinaryExpressions.after.kt");
+        }
+        
+        @TestMetadata("BinaryExpressionsBoolean.after.kt")
+        public void testBinaryExpressionsBoolean() throws Exception {
+            doTest("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
         }
         
         @TestMetadata("BlockFor.after.kt")
@@ -405,6 +417,16 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+        }
+        
+        @TestMetadata("BinaryExpressions.after.inv.kt")
+        public void testBinaryExpressions() throws Exception {
+            doTestInverted("idea/testData/formatter/BinaryExpressions.after.inv.kt");
+        }
+        
+        @TestMetadata("BinaryExpressionsBoolean.after.inv.kt")
+        public void testBinaryExpressionsBoolean() throws Exception {
+            doTestInverted("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
         }
         
         @TestMetadata("CatchFinallyOnNewLine.after.inv.kt")

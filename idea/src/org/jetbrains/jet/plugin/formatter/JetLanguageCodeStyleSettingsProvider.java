@@ -155,6 +155,7 @@ public class JetLanguageCodeStyleSettingsProvider extends LanguageCodeStyleSetti
                         "ALIGN_MULTILINE_PARAMETERS",
                         "ALIGN_MULTILINE_PARAMETERS_IN_CALLS",
                         "ALIGN_MULTILINE_METHOD_BRACKETS",
+                        "ALIGN_MULTILINE_BINARY_OPERATION",
                         "ELSE_ON_NEW_LINE",
                         "WHILE_ON_NEW_LINE",
                         "CATCH_ON_NEW_LINE",

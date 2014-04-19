@@ -106,6 +106,31 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/If.after.kt");
         }
         
+        @TestMetadata("InBinaryExpressionInMiddle.after.kt")
+        public void testInBinaryExpressionInMiddle() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InBinaryExpressionInMiddle.after.kt");
+        }
+        
+        @TestMetadata("InBinaryExpressionUnfinished.after.kt")
+        public void testInBinaryExpressionUnfinished() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.kt");
+        }
+        
+        @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.kt")
+        public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.kt");
+        }
+        
+        @TestMetadata("InExpressionsParentheses.after.kt")
+        public void testInExpressionsParentheses() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InExpressionsParentheses.after.kt");
+        }
+        
+        @TestMetadata("InExpressionsParenthesesBeforeOperand.after.kt")
+        public void testInExpressionsParenthesesBeforeOperand() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.kt");
+        }
+        
         @TestMetadata("NotFirstParameter.after.kt")
         public void testNotFirstParameter() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/NotFirstParameter.after.kt");
@@ -169,6 +194,31 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
                                                          new File("idea/testData/indentationOnNewline"),
                                                          Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+        }
+        
+        @TestMetadata("InBinaryExpressionInMiddle.after.inv.kt")
+        public void testInBinaryExpressionInMiddle() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InBinaryExpressionInMiddle.after.inv.kt");
+        }
+        
+        @TestMetadata("InBinaryExpressionUnfinished.after.inv.kt")
+        public void testInBinaryExpressionUnfinished() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InBinaryExpressionUnfinished.after.inv.kt");
+        }
+        
+        @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt")
+        public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt");
+        }
+        
+        @TestMetadata("InExpressionsParentheses.after.inv.kt")
+        public void testInExpressionsParentheses() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InExpressionsParentheses.after.inv.kt");
+        }
+        
+        @TestMetadata("InExpressionsParenthesesBeforeOperand.after.inv.kt")
+        public void testInExpressionsParenthesesBeforeOperand() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.inv.kt");
         }
         
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")
