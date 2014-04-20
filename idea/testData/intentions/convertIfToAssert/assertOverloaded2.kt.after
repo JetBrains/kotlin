@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+package foo.kotlin
+
+fun foo() {
+    kotlin.assert(!true, "text")
+}
+
+fun assert(x: Boolean, y: Any) {}
