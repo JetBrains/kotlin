@@ -3541,6 +3541,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestConvertAssertToIfWithThrowIntention("idea/testData/intentions/convertAssertToIf/booleanConditionWithVariables.kt");
         }
         
+        @TestMetadata("dotQualifiedCall.kt")
+        public void testDotQualifiedCall() throws Exception {
+            doTestConvertAssertToIfWithThrowIntention("idea/testData/intentions/convertAssertToIf/dotQualifiedCall.kt");
+        }
+        
         @TestMetadata("functionCallCondition.kt")
         public void testFunctionCallCondition() throws Exception {
             doTestConvertAssertToIfWithThrowIntention("idea/testData/intentions/convertAssertToIf/functionCallCondition.kt");
