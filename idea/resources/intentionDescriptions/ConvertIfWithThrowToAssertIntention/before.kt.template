@@ -1,0 +1,5 @@
+fun foo() {
+    <spot>if (true) {
+        throw AssertionError("text")
+    }</spot>
+}
