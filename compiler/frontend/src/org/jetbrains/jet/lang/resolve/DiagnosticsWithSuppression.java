@@ -20,7 +20,6 @@ import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
@@ -30,6 +29,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetAnnotated;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
+import org.jetbrains.jet.lang.psi.JetStubbedPsiUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -95,7 +95,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private boolean isSuppressed(@NotNull Diagnostic diagnostic) {
         PsiElement element = diagnostic.getPsiElement();
 
-        JetAnnotated annotated = PsiTreeUtil.getParentOfType(element, JetAnnotated.class, false);
+        JetAnnotated annotated = JetStubbedPsiUtil.getPsiOrStubParent(element, JetAnnotated.class, false);
         if (annotated == null) return false;
 
         return isSuppressedByAnnotated(diagnostic, annotated, 0);
@@ -140,7 +140,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         Suppressor suppressor = getOrCreateSuppressor(annotated);
         if (suppressor.isSuppressed(diagnostic)) return true;
 
-        JetAnnotated annotatedAbove = PsiTreeUtil.getParentOfType(suppressor.getAnnotatedElement(), JetAnnotated.class, true);
+        JetAnnotated annotatedAbove = JetStubbedPsiUtil.getPsiOrStubParent(suppressor.getAnnotatedElement(), JetAnnotated.class, true);
         if (annotatedAbove == null) return false;
 
         boolean suppressed = isSuppressedByAnnotated(diagnostic, annotatedAbove, debugDepth + 1);
