@@ -7,7 +7,23 @@ public class DataClassTest extends SingleFileTranslationTest {
         super("dataClass/");
     }
 
-    public void testSimple() throws Exception {
+    public void testComponents() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testCopy() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testEquals() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testHashcode() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testTostring() throws Exception {
         checkFooBoxIsOk();
     }
 }

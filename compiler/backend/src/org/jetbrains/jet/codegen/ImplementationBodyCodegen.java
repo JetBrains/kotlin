@@ -31,7 +31,7 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.signature.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.codegencommon.DataClassMethodGenerator;
+import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
@@ -41,7 +41,6 @@ import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -615,11 +614,19 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateFunctionsForDataClasses() {
         if (!KotlinBuiltIns.getInstance().isData(descriptor)) return;
 
-        new DataClassMethodGenerator(myClass, descriptor, bindingContext, new DataClassGeneratorBackend()).generate();
+        new DataClassMethodGeneratorImpl(myClass, descriptor, bindingContext).generate();
     }
 
     // A delegating class. Actual method implementations could easily move in.
-    private class DataClassGeneratorBackend implements DataClassMethodGenerator.Backend {
+    private class DataClassMethodGeneratorImpl extends DataClassMethodGenerator {
+        DataClassMethodGeneratorImpl(
+                JetClassOrObject klazz,
+                ClassDescriptor descriptor,
+                BindingContext bindingContext
+        ) {
+            super(klazz, descriptor, bindingContext);
+        }
+
         @Override
         public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
             ImplementationBodyCodegen.this.generateComponentFunction(function, parameter);

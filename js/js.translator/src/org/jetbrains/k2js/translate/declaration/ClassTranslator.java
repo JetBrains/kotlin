@@ -19,7 +19,7 @@ package org.jetbrains.k2js.translate.declaration;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegencommon.DataClassMethodGenerator;
+import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetObjectDeclaration;
@@ -134,8 +134,7 @@ public final class ClassTranslator extends AbstractTranslator {
         mayBeAddEnumEntry(bodyVisitor.getEnumEntryList(), staticProperties, declarationContext);
 
         if (KotlinBuiltIns.getInstance().isData(descriptor)) {
-            DataClassGeneratorBackend generatorBackend = new DataClassGeneratorBackend(declarationContext, properties);
-            new DataClassMethodGenerator(classDeclaration, descriptor, context().bindingContext(), generatorBackend).generate();
+            new JsDataClassGenerator(classDeclaration, descriptor, context().bindingContext(), declarationContext, properties).generate();
         }
 
         boolean hasStaticProperties = !staticProperties.isEmpty();

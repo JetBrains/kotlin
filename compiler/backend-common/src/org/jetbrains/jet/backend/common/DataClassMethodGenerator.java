@@ -1,4 +1,4 @@
-package org.jetbrains.jet.codegencommon;
+package org.jetbrains.jet.backend.common;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
@@ -18,26 +18,15 @@ import java.util.List;
 /**
  * A platform-independent logic for generating data class synthetic methods.
  */
-public class DataClassMethodGenerator {
-
-    private final Backend platform;
+public abstract class DataClassMethodGenerator {
     private final JetClassOrObject myClass;
     private final ClassDescriptor descriptor;
     private final BindingContext bindingContext;
 
-    public DataClassMethodGenerator(JetClassOrObject klazz, ClassDescriptor descriptor,BindingContext bindingContext, Backend platform) {
+    public DataClassMethodGenerator(JetClassOrObject klazz, ClassDescriptor descriptor, BindingContext bindingContext) {
         this.descriptor = descriptor;
-        this.platform = platform;
         this.myClass = klazz;
         this.bindingContext = bindingContext;
-    }
-
-    public interface Backend {
-        void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull final ValueParameterDescriptor parameter);
-        void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters);
-        void generateToStringMethod(@NotNull List<PropertyDescriptor> properties);
-        void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties);
-        void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties);
     }
 
     public void generate() {
@@ -53,6 +42,24 @@ public class DataClassMethodGenerator {
         }
     }
 
+    // Backend-specific implementations.
+    protected abstract void generateComponentFunction(
+            @NotNull FunctionDescriptor function,
+            @NotNull final ValueParameterDescriptor parameter
+    );
+
+    protected abstract void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters);
+
+    protected abstract void generateToStringMethod(@NotNull List<PropertyDescriptor> properties);
+
+    protected abstract void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties);
+
+    protected abstract void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties);
+
+    protected ClassDescriptor getClassDescriptor() {
+        return descriptor;
+    }
+
     private void generateComponentFunctionsForDataClasses() {
         if (!myClass.hasPrimaryConstructor()) return;
 
@@ -61,7 +68,7 @@ public class DataClassMethodGenerator {
         for (ValueParameterDescriptor parameter : constructor.getValueParameters()) {
             FunctionDescriptor function = bindingContext.get(BindingContext.DATA_CLASS_COMPONENT_FUNCTION, parameter);
             if (function != null) {
-                platform.generateComponentFunction(function, parameter);
+                generateComponentFunction(function, parameter);
             }
         }
     }
@@ -69,29 +76,29 @@ public class DataClassMethodGenerator {
     private void generateCopyFunctionForDataClasses(List<JetParameter> constructorParameters) {
         FunctionDescriptor copyFunction = bindingContext.get(BindingContext.DATA_CLASS_COPY_FUNCTION, descriptor);
         if (copyFunction != null) {
-            platform.generateCopyFunction(copyFunction, constructorParameters);
+            generateCopyFunction(copyFunction, constructorParameters);
         }
     }
 
     private void generateDataClassToStringIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor stringClass = KotlinBuiltIns.getInstance().getString();
-        if (!hasDeclaredNonTrivialMember("toString", stringClass)) {
-            platform.generateToStringMethod(properties);
+        if (!hasDeclaredNonTrivialMember(CodegenUtil2.TO_STRING_METHOD_NAME, stringClass)) {
+            generateToStringMethod(properties);
         }
     }
 
     private void generateDataClassHashCodeIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor intClass = KotlinBuiltIns.getInstance().getInt();
-        if (!hasDeclaredNonTrivialMember("hashCode", intClass)) {
-            platform.generateHashCodeMethod(properties);
+        if (!hasDeclaredNonTrivialMember(CodegenUtil2.HASH_CODE_METHOD_NAME, intClass)) {
+            generateHashCodeMethod(properties);
         }
     }
 
     private void generateDataClassEqualsIfNeeded(@NotNull List<PropertyDescriptor> properties) {
         ClassDescriptor booleanClass = KotlinBuiltIns.getInstance().getBoolean();
         ClassDescriptor anyClass = KotlinBuiltIns.getInstance().getAny();
-        if (!hasDeclaredNonTrivialMember("equals", booleanClass, anyClass)) {
-            platform.generateEqualsMethod(properties);
+        if (!hasDeclaredNonTrivialMember(CodegenUtil2.EQUALS_METHOD_NAME, booleanClass, anyClass)) {
+            generateEqualsMethod(properties);
         }
     }
 
@@ -105,7 +112,9 @@ public class DataClassMethodGenerator {
         return result;
     }
 
-    private @NotNull List<JetParameter> getPrimaryConstructorParameters() {
+    private
+    @NotNull
+    List<JetParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof JetClass) {
             return ((JetClass) myClass).getPrimaryConstructorParameters();
         }
@@ -121,7 +130,7 @@ public class DataClassMethodGenerator {
             @NotNull ClassDescriptor... valueParameterClassifiers
     ) {
         FunctionDescriptor function =
-                CodeGenUtil2.getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier,
+                CodegenUtil2.getDeclaredFunctionByRawSignature(descriptor, Name.identifier(name), returnedClassifier,
                                                                valueParameterClassifiers);
         if (function == null) {
             return false;
@@ -140,30 +149,5 @@ public class DataClassMethodGenerator {
         }
 
         return false;
-    }
-
-    public static FunctionDescriptor getAnyEqualsMethod(KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function =
-                CodeGenUtil2.getDeclaredFunctionByRawSignature(anyClass, Name.identifier("equals"), builtIns.getBoolean(),
-                                                               anyClass);
-        assert function != null;
-        return function;
-    }
-
-    public static FunctionDescriptor getAnyToStringMethod(KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function =
-                CodeGenUtil2.getDeclaredFunctionByRawSignature(anyClass, Name.identifier("toString"), builtIns.getString());
-        assert function != null;
-        return function;
-    }
-
-    public static FunctionDescriptor getAnyHashCodeMethod(KotlinBuiltIns builtIns) {
-        ClassDescriptor anyClass = builtIns.getAny();
-        FunctionDescriptor function =
-                CodeGenUtil2.getDeclaredFunctionByRawSignature(anyClass, Name.identifier("hashCode"), builtIns.getInt());
-        assert function != null;
-        return function;
     }
 }

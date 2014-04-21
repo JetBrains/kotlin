@@ -48,6 +48,35 @@
         return obj1 === obj2;
     };
 
+    Kotlin.hashCode = function (obj) {
+        if (obj == null) {
+            return 0;
+        }
+        // TODO: extra branch for array case? We don't have it in JVM.
+        if ("function" == typeof obj.hashCode) {
+          return obj.hashCode();
+        }
+        if ("object" == typeof obj) {
+          if (!("hashCodeValue" in obj)) {
+            var hash = Math.floor(Math.random() * 4294967296); // 2 ^ 32
+            hash = hash & hash; // Convert to 32bit integer
+            Object.defineProperty(obj, "hashCodeValue", { value:  hash, enumerable: false });
+          }
+          return obj.hashCodeValue;
+        } if ("boolean" == typeof obj) {
+          return Number(obj)
+        }
+        // String hashcode.
+        var str = String(obj);
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var code  = str.charCodeAt(i);
+            hash  = hash * 31 + code;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+    };
+
     Kotlin.toString = function (o) {
         if (o == null) {
             return "null";
