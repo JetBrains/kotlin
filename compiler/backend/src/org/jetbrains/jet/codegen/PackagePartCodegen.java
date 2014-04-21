@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -58,36 +58,28 @@ public class PackagePartCodegen extends MemberCodegen {
 
         writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.PACKAGE_PART);
 
-        for (JetDeclaration declaration : jetFile.getDeclarations()) {
+        List<JetDeclaration> declarations = jetFile.getDeclarations();
+
+        for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
                 genFunctionOrProperty((JetTypeParameterListOwner) declaration, v);
             }
         }
 
-        generateStaticInitializers();
-
-        v.done();
-    }
-
-    private void generateStaticInitializers() {
-        List<JetProperty> properties = Lists.newArrayList();
-        for (JetDeclaration declaration : jetFile.getDeclarations()) {
-            if (declaration instanceof JetProperty) {
-                JetProperty property = (JetProperty) declaration;
-                if (ImplementationBodyCodegen.shouldInitializeProperty(property, typeMapper)) {
-                    properties.add(property);
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            generateInitializers(declarations, new Function0<ExpressionCodegen>() {
+                @Override
+                public ExpressionCodegen invoke() {
+                    return createOrGetClInitCodegen();
                 }
+            });
+
+            if (clInit != null) {
+                clInit.v.visitInsn(RETURN);
+                FunctionCodegen.endVisit(clInit.v, "static initializer for package", jetFile);
             }
         }
-        if (properties.isEmpty()) return;
 
-        ExpressionCodegen codegen = createOrGetClInitCodegen();
-
-        for (JetProperty property : properties) {
-            ImplementationBodyCodegen.initializeProperty(codegen, bindingContext, property);
-        }
-
-        codegen.v.visitInsn(RETURN);
-        FunctionCodegen.endVisit(codegen.v, "static initializer for package", jetFile);
+        v.done();
     }
 }

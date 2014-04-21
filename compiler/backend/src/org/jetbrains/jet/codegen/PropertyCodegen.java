@@ -247,7 +247,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private FieldVisitor generateBackingFieldAccess(JetNamedDeclaration p, PropertyDescriptor propertyDescriptor) {
         Object value = null;
 
-        if (ImplementationBodyCodegen.shouldWriteFieldInitializer(propertyDescriptor, typeMapper)) {
+        if (shouldWriteFieldInitializer(propertyDescriptor)) {
             CompileTimeConstant<?> initializer = propertyDescriptor.getCompileTimeInitializer();
             if (initializer != null) {
                 value = initializer.getValue();
@@ -255,6 +255,15 @@ public class PropertyCodegen extends GenerationStateAware {
         }
 
         return generateBackingField(p, propertyDescriptor, false, propertyDescriptor.getType(), value);
+    }
+
+    private boolean shouldWriteFieldInitializer(@NotNull PropertyDescriptor descriptor) {
+        //final field of primitive or String type
+        if (!descriptor.isVar()) {
+            Type type = typeMapper.mapType(descriptor);
+            return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
+        }
+        return false;
     }
 
     private void generateGetter(@Nullable JetNamedDeclaration p, @NotNull PropertyDescriptor descriptor, @Nullable JetPropertyAccessor getter) {

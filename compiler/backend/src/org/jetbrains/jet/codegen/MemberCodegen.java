@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.ClassContext;
@@ -30,18 +31,26 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.storage.LockBasedStorageManager;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collections;
+import java.util.List;
 
+import static org.jetbrains.jet.codegen.AsmUtil.boxType;
+import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
 
-public class MemberCodegen extends ParentCodegenAwareImpl {
+public abstract class MemberCodegen extends ParentCodegenAwareImpl {
     protected final FieldOwnerContext context;
     protected final ClassBuilder v;
     protected ExpressionCodegen clInit;
@@ -167,5 +176,109 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
             this.clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
         }
         return clInit;
+    }
+
+    protected void generateInitializers(@NotNull List<JetDeclaration> declarations, @NotNull Function0<ExpressionCodegen> createCodegen) {
+        NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
+        for (JetDeclaration declaration : declarations) {
+            if (declaration instanceof JetProperty) {
+                if (shouldInitializeProperty((JetProperty) declaration)) {
+                    initializeProperty(codegen.invoke(), (JetProperty) declaration);
+                }
+            }
+            else if (declaration instanceof JetClassInitializer) {
+                codegen.invoke().gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
+            }
+        }
+    }
+
+    protected void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull JetProperty property) {
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        JetExpression initializer = property.getDelegateExpressionOrInitializer();
+        assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
+
+        JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+
+        StackValue.Property propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
+
+        if (!propValue.isStatic) {
+            codegen.v.load(0, OBJECT_TYPE);
+        }
+
+        Type type = codegen.expressionType(initializer);
+        if (jetType.isNullable()) {
+            type = boxType(type);
+        }
+        codegen.gen(initializer, type);
+
+        propValue.store(type, codegen.v);
+    }
+
+    protected boolean shouldInitializeProperty(@NotNull JetProperty property) {
+        JetExpression initializer = property.getDelegateExpressionOrInitializer();
+        if (initializer == null) return false;
+
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
+        assert propertyDescriptor != null;
+
+        CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
+        if (compileTimeValue == null) return true;
+
+        //TODO: OPTIMIZATION: don't initialize static final fields
+
+        Object value = compileTimeValue.getValue();
+        JetType jetType = getPropertyOrDelegateType(property, propertyDescriptor);
+        Type type = typeMapper.mapType(jetType);
+        return !skipDefaultValue(propertyDescriptor, value, type);
+    }
+
+    @NotNull
+    private JetType getPropertyOrDelegateType(@NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
+        JetExpression delegateExpression = property.getDelegateExpression();
+        if (delegateExpression != null) {
+            JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
+            assert delegateType != null : "Type of delegate expression should be recorded";
+            return delegateType;
+        }
+        return descriptor.getType();
+    }
+
+    private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
+        if (isPrimitive(type)) {
+            if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
+                if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
+                    return true;
+                }
+                if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
+                    return true;
+                }
+                if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
+                    return true;
+                }
+                if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
+                    return true;
+                }
+                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
+                    return true;
+                }
+                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
+                    return true;
+                }
+            }
+            if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
+                return true;
+            }
+            if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
+                return true;
+            }
+        }
+        else {
+            if (value == null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

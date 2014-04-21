@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.util.ArrayUtil;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -43,7 +44,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
@@ -1214,7 +1214,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generatePrimaryConstructorImpl(
             @Nullable ConstructorDescriptor constructorDescriptor,
-            @NotNull ExpressionCodegen codegen,
+            @NotNull final ExpressionCodegen codegen,
             @Nullable MutableClosure closure
     ) {
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
@@ -1269,12 +1269,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         boolean generateInitializerInOuter = isClassObjectWithBackingFieldsInOuter(descriptor);
         if (generateInitializerInOuter) {
-            ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
+            final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
             //generate object$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
-            generateInitializers(parentCodegen.createOrGetClInitCodegen(), myClass.getDeclarations(), bindingContext, state);
+            generateInitializers(myClass.getDeclarations(), new Function0<ExpressionCodegen>() {
+                @Override
+                public ExpressionCodegen invoke() {
+                    return parentCodegen.createOrGetClInitCodegen();
+                }
+            });
         } else {
-            generateInitializers(codegen, myClass.getDeclarations(), bindingContext, state);
+            generateInitializers(myClass.getDeclarations(), new Function0<ExpressionCodegen>() {
+                @Override
+                public ExpressionCodegen invoke() {
+                    return codegen;
+                }
+            });
         }
 
         iv.visitInsn(RETURN);
@@ -1656,131 +1666,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.dup();
         iv.putstatic(classAsmType.getInternalName(), enumConstant.getName(), classAsmType.getDescriptor());
         iv.astore(OBJECT_TYPE);
-    }
-
-    public static void generateInitializers(
-            @NotNull ExpressionCodegen codegen, @NotNull List<JetDeclaration> declarations,
-            @NotNull BindingContext bindingContext, @NotNull GenerationState state
-    ) {
-        JetTypeMapper typeMapper = state.getTypeMapper();
-        for (JetDeclaration declaration : declarations) {
-            if (declaration instanceof JetProperty) {
-                if (shouldInitializeProperty((JetProperty) declaration, typeMapper)) {
-                    initializeProperty(codegen, bindingContext, (JetProperty) declaration);
-                }
-            }
-            else if (declaration instanceof JetClassInitializer) {
-                codegen.gen(((JetClassInitializer) declaration).getBody(), Type.VOID_TYPE);
-            }
-        }
-    }
-
-
-    public static void initializeProperty(
-            @NotNull ExpressionCodegen codegen,
-            @NotNull BindingContext bindingContext,
-            @NotNull JetProperty property
-    ) {
-
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
-        assert propertyDescriptor != null;
-
-        JetExpression initializer = property.getDelegateExpressionOrInitializer();
-        assert initializer != null : "shouldInitializeProperty must return false if initializer is null";
-
-        JetType jetType = getPropertyOrDelegateType(bindingContext, property, propertyDescriptor);
-
-        StackValue.StackValueWithSimpleReceiver propValue = codegen.intermediateValueForProperty(propertyDescriptor, true, null, MethodKind.INITIALIZER);
-
-        if (!propValue.isStatic) {
-            codegen.v.load(0, OBJECT_TYPE);
-        }
-
-        Type type = codegen.expressionType(initializer);
-        if (jetType.isNullable()) {
-            type = boxType(type);
-        }
-        codegen.gen(initializer, type);
-
-        propValue.store(type, codegen.v);
-    }
-
-    public static boolean shouldWriteFieldInitializer(PropertyDescriptor descriptor, JetTypeMapper mapper) {
-        //final field of primitive or String type
-        if (!descriptor.isVar()) {
-            Type type = mapper.mapType(descriptor);
-            return AsmUtil.isPrimitive(type) || "java.lang.String".equals(type.getClassName());
-        }
-        return false;
-    }
-
-    public static boolean shouldInitializeProperty(
-            @NotNull JetProperty property,
-            @NotNull JetTypeMapper typeMapper
-    ) {
-        JetExpression initializer = property.getDelegateExpressionOrInitializer();
-        if (initializer == null) return false;
-
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) typeMapper.getBindingContext().get(BindingContext.VARIABLE, property);
-        assert propertyDescriptor != null;
-
-        CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
-        if (compileTimeValue == null) return true;
-
-        //TODO: OPTIMIZATION: don't initialize static final fields
-
-        Object value = compileTimeValue.getValue();
-        JetType jetType = getPropertyOrDelegateType(typeMapper.getBindingContext(), property, propertyDescriptor);
-        Type type = typeMapper.mapType(jetType);
-        return !skipDefaultValue(propertyDescriptor, value, type);
-    }
-
-    @NotNull
-    private static JetType getPropertyOrDelegateType(@NotNull BindingContext bindingContext, @NotNull JetProperty property, @NotNull PropertyDescriptor descriptor) {
-        JetExpression delegateExpression = property.getDelegateExpression();
-        if (delegateExpression != null) {
-            JetType delegateType = bindingContext.get(BindingContext.EXPRESSION_TYPE, delegateExpression);
-            assert delegateType != null : "Type of delegate expression should be recorded";
-            return delegateType;
-        }
-        return descriptor.getType();
-    }
-
-    private static boolean skipDefaultValue(@NotNull PropertyDescriptor propertyDescriptor, Object value, @NotNull Type type) {
-        if (isPrimitive(type)) {
-            if (!propertyDescriptor.getType().isNullable() && value instanceof Number) {
-                if (type == Type.INT_TYPE && ((Number) value).intValue() == 0) {
-                    return true;
-                }
-                if (type == Type.BYTE_TYPE && ((Number) value).byteValue() == 0) {
-                    return true;
-                }
-                if (type == Type.LONG_TYPE && ((Number) value).longValue() == 0L) {
-                    return true;
-                }
-                if (type == Type.SHORT_TYPE && ((Number) value).shortValue() == 0) {
-                    return true;
-                }
-                if (type == Type.DOUBLE_TYPE && ((Number) value).doubleValue() == 0d) {
-                    return true;
-                }
-                if (type == Type.FLOAT_TYPE && ((Number) value).floatValue() == 0f) {
-                    return true;
-                }
-            }
-            if (type == Type.BOOLEAN_TYPE && value instanceof Boolean && !((Boolean) value)) {
-                return true;
-            }
-            if (type == Type.CHAR_TYPE && value instanceof Character && ((Character) value) == 0) {
-                return true;
-            }
-        }
-        else {
-            if (value == null) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected void generateDelegates(ClassDescriptor toClass, StackValue field) {

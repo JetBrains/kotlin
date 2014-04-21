@@ -16,11 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
@@ -34,13 +32,16 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 // SCRIPT: script code generator
 public class ScriptCodegen extends MemberCodegen {
@@ -113,7 +114,7 @@ public class ScriptCodegen extends MemberCodegen {
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull ClassDescriptor classDescriptorForScript,
             @NotNull ClassBuilder classBuilder,
-            @NotNull MethodContext context
+            @NotNull final MethodContext context
     ) {
 
         Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
@@ -129,7 +130,7 @@ public class ScriptCodegen extends MemberCodegen {
 
         mv.visitCode();
 
-        InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
+        final InstructionAdapter instructionAdapter = new InstructionAdapter(mv);
 
         Type classType = bindingContext.get(ASM_TYPE, classDescriptorForScript);
         assert classType != null;
@@ -139,7 +140,7 @@ public class ScriptCodegen extends MemberCodegen {
 
         instructionAdapter.load(0, classType);
 
-        FrameMap frameMap = context.prepareFrame(typeMapper);
+        final FrameMap frameMap = context.prepareFrame(typeMapper);
 
         for (ScriptDescriptor importedScript : earlierScripts) {
             frameMap.enter(importedScript, OBJECT_TYPE);
@@ -153,11 +154,12 @@ public class ScriptCodegen extends MemberCodegen {
             frameMap.enter(parameter, argTypes[i + add]);
         }
 
-        ImplementationBodyCodegen.generateInitializers(
-                new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state, this),
-                scriptDeclaration.getDeclarations(),
-                bindingContext,
-                state);
+        generateInitializers(scriptDeclaration.getDeclarations(), new Function0<ExpressionCodegen>() {
+            @Override
+            public ExpressionCodegen invoke() {
+                return new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state, ScriptCodegen.this);
+            }
+        });
 
         int offset = 1;
 
