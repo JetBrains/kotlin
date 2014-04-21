@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetExpression
-import java.util.ArrayList
+import java.util.LinkedList
 
 
 public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<JetBinaryExpression>(
@@ -52,8 +52,8 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<
 
         val elements = splitBooleanSequence(element)!!
         val bareExpressions = elements.map { prefixExpression -> prefixExpression.getBaseExpression()!!.getText() }
-        val negatedExpression = bareExpressions.subList(0, bareExpressions.size()-1).foldRight(
-                "!(${bareExpressions.last()}", { negated, expression -> "$expression $operatorText $negated"}
+        val negatedExpression = bareExpressions.subList(0, bareExpressions.lastIndex).foldRight(
+                "!(${bareExpressions.last()}", { negated, expression -> "$expression $operatorText $negated" }
         )
 
         val newExpression = JetPsiFactory.createExpression(element.getProject(), "$negatedExpression)")
@@ -66,12 +66,12 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<
         }
     }
 
-    fun splitBooleanSequence(expression: JetBinaryExpression) : List<JetPrefixExpression>? {
-        val itemList = ArrayList<JetPrefixExpression>()
+    fun splitBooleanSequence(expression: JetBinaryExpression): List<JetPrefixExpression>? {
+        val itemList = LinkedList<JetPrefixExpression>()
         val firstOperator = expression.getOperationToken()
-        var currentItem : JetBinaryExpression? = expression
+        var currentItem: JetBinaryExpression? = expression
 
-        while(currentItem != null) {
+        while (currentItem != null) {
             if (currentItem!!.getOperationToken() != firstOperator) return null //Boolean sequence must be homogenous
 
             val rightChild = currentItem!!.getRight() as? JetPrefixExpression ?: return null
@@ -79,7 +79,8 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingIntention<
             val leftChild = currentItem!!.getLeft()
             if (leftChild is JetPrefixExpression) {
                 itemList.add(leftChild as JetPrefixExpression)
-            } else if (leftChild !is JetBinaryExpression) {
+            }
+            else if (leftChild !is JetBinaryExpression) {
                 return null
             }
 
