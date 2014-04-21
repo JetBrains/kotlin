@@ -37,9 +37,9 @@ public class CallMaker {
 
         private final JetExpression expression;
 
-        private final PsiElement reportErrorsOn;
+        private final JetElement reportErrorsOn;
 
-        private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
+        private ExpressionValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
             this.expression = expression;
             this.reportErrorsOn = expression == null ? reportErrorsOn : expression;
         }
@@ -61,7 +61,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public PsiElement asElement() {
+        public JetElement asElement() {
             return reportErrorsOn;
         }
 
@@ -220,7 +220,7 @@ public class CallMaker {
     }
 
     @NotNull
-    public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull PsiElement reportErrorsOn) {
+    public static ValueArgument makeValueArgument(@Nullable JetExpression expression, @NotNull JetElement reportErrorsOn) {
         return new ExpressionValueArgument(expression, reportErrorsOn);
     }
 

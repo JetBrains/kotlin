@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +52,7 @@ public class JetValueArgument extends JetElementImpl implements ValueArgument {
 
     @NotNull
     @Override
-    public PsiElement asElement() {
+    public JetElement asElement() {
         return this;
     }
 
