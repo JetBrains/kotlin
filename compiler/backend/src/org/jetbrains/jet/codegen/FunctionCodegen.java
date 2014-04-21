@@ -47,6 +47,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -427,6 +428,9 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         if (owner.getContextKind() == OwnerKind.TRAIT_IMPL) return;
         if (isTrait(descriptor.getContainingDeclaration())) return;
 
+        // equals(Any?), hashCode(), toString() never need bridges
+        if (isMethodOfAny(descriptor)) return;
+
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
         if (CallResolverUtil.isOrOverridesSynthesized(descriptor)) return;
 
@@ -446,6 +450,19 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
                 generateBridge(origin, bridge.getFrom(), bridge.getTo());
             }
         }
+    }
+
+    private static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
+        String name = descriptor.getName().asString();
+        List<ValueParameterDescriptor> parameters = descriptor.getValueParameters();
+        if (parameters.isEmpty()) {
+            return name.equals("hashCode") || name.equals("toString");
+        }
+        else if (parameters.size() == 1 && name.equals("equals")) {
+            ValueParameterDescriptor parameter = parameters.get(0);
+            return parameter.getType().equals(KotlinBuiltIns.getInstance().getNullableAnyType());
+        }
+        return false;
     }
 
     @NotNull

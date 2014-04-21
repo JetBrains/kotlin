@@ -405,6 +405,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/bridges/noBridgeOnMutableCollectionInheritance.kt");
         }
         
+        @TestMetadata("objectClone.kt")
+        public void testObjectClone() throws Exception {
+            doTest("compiler/testData/codegen/box/bridges/objectClone.kt");
+        }
+        
         @TestMetadata("overrideAbstractProperty.kt")
         public void testOverrideAbstractProperty() throws Exception {
             doTest("compiler/testData/codegen/box/bridges/overrideAbstractProperty.kt");
@@ -1084,6 +1089,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("funDelegation.kt")
         public void testFunDelegation() throws Exception {
             doTest("compiler/testData/codegen/box/classes/funDelegation.kt");
+        }
+        
+        @TestMetadata("inheritSetAndHashSet.kt")
+        public void testInheritSetAndHashSet() throws Exception {
+            doTest("compiler/testData/codegen/box/classes/inheritSetAndHashSet.kt");
         }
         
         @TestMetadata("inheritance.kt")
