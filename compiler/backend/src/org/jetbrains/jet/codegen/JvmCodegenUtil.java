@@ -47,9 +47,9 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.Modality.ABSTRACT;
 
-public class CodegenUtil {
+public class JvmCodegenUtil {
 
-    private CodegenUtil() {
+    private JvmCodegenUtil() {
     }
 
     public static boolean isInterface(DeclarationDescriptor descriptor) {

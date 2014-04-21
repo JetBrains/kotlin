@@ -59,7 +59,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -512,7 +512,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         int access = descriptor.getKind() == ClassKind.TRAIT ?
                      ACC_PUBLIC | ACC_ABSTRACT :
                      ACC_PUBLIC;
-        if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
+        if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
             MethodVisitor mv = v.getVisitor().visitMethod(access, "toArray", "()[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
@@ -551,7 +551,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             @NotNull ClassifierDescriptor returnedClassifier,
             @NotNull ClassifierDescriptor... valueParameterClassifiers
     ) {
-        if (CodegenUtil.getDeclaredFunctionByRawSignature(
+        if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(
                 descriptor, Name.identifier(name), returnedClassifier, valueParameterClassifiers) == null) {
             int access = descriptor.getKind() == ClassKind.TRAIT ?
                          ACC_PUBLIC | ACC_ABSTRACT :

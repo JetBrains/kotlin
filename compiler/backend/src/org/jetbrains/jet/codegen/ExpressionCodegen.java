@@ -68,7 +68,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.*;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.functionTypeToImpl;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
@@ -3511,7 +3511,7 @@ The "returned" value of try expression with no finally is either the last expres
                 value.put(boxType(value.type), v);
 
                 if (opToken != JetTokens.AS_SAFE) {
-                    if (!CodegenUtil.isNullableType(rightType)) {
+                    if (!JvmCodegenUtil.isNullableType(rightType)) {
                         v.dup();
                         Label nonnull = new Label();
                         v.ifnonnull(nonnull);
