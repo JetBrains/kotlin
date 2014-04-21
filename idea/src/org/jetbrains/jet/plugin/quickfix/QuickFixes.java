@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -249,6 +249,10 @@ public class QuickFixes {
         factories.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, MapPlatformClassToKotlinFix.createFactory());
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
+
+        JetSingleIntentionActionFactory createUnresolvedFunctionFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateUnresolvedFunctionFromUsageFactory();
+        factories.put(UNRESOLVED_REFERENCE, createUnresolvedFunctionFromUsageFactory);
+        factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, createUnresolvedFunctionFromUsageFactory);
 
         factories.put(NO_GET_METHOD, CreateFunctionFromUsageFix.object$.createCreateGetFunctionFromUsageFactory());
         factories.put(NO_SET_METHOD, CreateFunctionFromUsageFix.object$.createCreateSetFunctionFromUsageFactory());
