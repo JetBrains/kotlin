@@ -1751,6 +1751,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/binaryExpressionArgument.kt");
         }
         
+        @TestMetadata("caretInsideCalleeExpr.kt")
+        public void testCaretInsideCalleeExpr() throws Exception {
+            doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/caretInsideCalleeExpr.kt");
+        }
+        
+        @TestMetadata("caretInsideReceiverExpr.kt")
+        public void testCaretInsideReceiverExpr() throws Exception {
+            doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/caretInsideReceiverExpr.kt");
+        }
+        
         @TestMetadata("doubleFunctionCall.kt")
         public void testDoubleFunctionCall() throws Exception {
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/doubleFunctionCall.kt");
@@ -1774,6 +1784,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("functionSafeCall.kt")
         public void testFunctionSafeCall() throws Exception {
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/functionSafeCall.kt");
+        }
+        
+        @TestMetadata("inapplicableCaretPosition.kt")
+        public void testInapplicableCaretPosition() throws Exception {
+            doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/inapplicableCaretPosition.kt");
         }
         
         @TestMetadata("multipleArguments.kt")
