@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import java.util.Collections;
 import java.util.List;
 
-public class JetPackageDirective extends JetExpressionImplStub<PsiJetPlaceHolderStub<JetPackageDirective>> implements JetReferenceExpression {
+public class JetPackageDirective extends JetModifierListOwnerStub<PsiJetPlaceHolderStub<JetPackageDirective>> implements JetReferenceExpression {
     private String qualifiedNameCache = null;
 
     public JetPackageDirective(@NotNull ASTNode node) {

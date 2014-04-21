@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.lexer.JetTokens;
 
@@ -119,9 +118,8 @@ public class DeclarationsChecker {
         JetPackageDirective packageDirective = file.getPackageDirective();
         if (packageDirective == null) return;
 
-        PsiElement firstChild = packageDirective.getFirstChild();
-        if (!(firstChild instanceof JetModifierList)) return;
-        JetModifierList modifierList = (JetModifierList) firstChild;
+        JetModifierList modifierList = packageDirective.getModifierList();
+        if (modifierList == null) return;
 
         for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
             JetConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
@@ -133,8 +131,10 @@ public class DeclarationsChecker {
             }
         }
 
-        for (ASTNode node : modifierList.getModifierNodes()) {
-            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetModifierKeywordToken) node.getElementType()));
+        for (JetModifierKeywordToken token : JetTokens.MODIFIER_KEYWORDS_ARRAY) {
+            if (modifierList.hasModifier(token)) {
+                trace.report(ILLEGAL_MODIFIER.on(modifierList.getModifier(token), token));
+            }
         }
     }
 
