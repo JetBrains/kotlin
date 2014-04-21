@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
  */
 public class JetBlock extends AbstractBlock {
     private static final int KDOC_COMMENT_INDENT = 1;
-    private final ASTAlignmentStrategy myAlignmentStrategy;
+    private final NodeAlignmentStrategy myAlignmentStrategy;
     private final Indent myIndent;
     private final CodeStyleSettings mySettings;
     private final KotlinSpacingBuilder mySpacingBuilder;
@@ -58,14 +58,14 @@ public class JetBlock extends AbstractBlock {
 
     // private static final List<IndentWhitespaceRule>
 
-    public JetBlock(@NotNull ASTNode node,
-            ASTAlignmentStrategy alignmentStrategy,
+    public JetBlock(
+            @NotNull ASTNode node,
+            NodeAlignmentStrategy alignmentStrategy,
             Indent indent,
             Wrap wrap,
             CodeStyleSettings settings,
             KotlinSpacingBuilder spacingBuilder
     ) {
-
         super(node, wrap, alignmentStrategy.getAlignment(node));
         myAlignmentStrategy = alignmentStrategy;
         myIndent = indent;
@@ -89,7 +89,7 @@ public class JetBlock extends AbstractBlock {
     private List<Block> buildSubBlocks() {
         List<Block> blocks = new ArrayList<Block>();
 
-        ASTAlignmentStrategy childrenAlignmentStrategy = getChildrenAlignmentStrategy();
+        NodeAlignmentStrategy childrenAlignmentStrategy = getChildrenAlignmentStrategy();
 
         for (ASTNode child = myNode.getFirstChildNode(); child != null; child = child.getTreeNext()) {
             IElementType childType = child.getElementType();
@@ -106,18 +106,16 @@ public class JetBlock extends AbstractBlock {
     }
 
     @NotNull
-    private Block buildSubBlock(@NotNull ASTNode child, ASTAlignmentStrategy alignmentStrategy) {
-        Wrap wrap = null;
-
-        // Affects to spaces around operators...
+    private Block buildSubBlock(@NotNull ASTNode child, NodeAlignmentStrategy alignmentStrategy) {
+        // Skip one sub-level for operators, so type of block node is an element type of operator
         if (child.getElementType() == OPERATION_REFERENCE) {
             ASTNode operationNode = child.getFirstChildNode();
             if (operationNode != null) {
-                return new JetBlock(operationNode, alignmentStrategy, Indent.getNoneIndent(), wrap, mySettings, mySpacingBuilder);
+                return new JetBlock(operationNode, alignmentStrategy, Indent.getNoneIndent(), null, mySettings, mySpacingBuilder);
             }
         }
 
-        return new JetBlock(child, alignmentStrategy, createChildIndent(child), wrap, mySettings, mySpacingBuilder);
+        return new JetBlock(child, alignmentStrategy, createChildIndent(child), null, mySettings, mySpacingBuilder);
     }
 
     private static Indent indentIfNotBrace(@NotNull ASTNode child) {
@@ -185,12 +183,12 @@ public class JetBlock extends AbstractBlock {
         return myNode.getFirstChildNode() == null;
     }
 
-    private ASTAlignmentStrategy getChildrenAlignmentStrategy() {
+    private NodeAlignmentStrategy getChildrenAlignmentStrategy() {
         CommonCodeStyleSettings jetCommonSettings = mySettings.getCommonSettings(JetLanguage.INSTANCE);
         JetCodeStyleSettings jetSettings = mySettings.getCustomSettings(JetCodeStyleSettings.class);
 
         // Prepare default null strategy
-        ASTAlignmentStrategy strategy = myAlignmentStrategy;
+        NodeAlignmentStrategy strategy = myAlignmentStrategy;
 
         // Redefine list of strategies for some special elements
         IElementType parentType = myNode.getElementType();
@@ -210,26 +208,26 @@ public class JetBlock extends AbstractBlock {
         return strategy;
     }
 
-    private static ASTAlignmentStrategy getAlignmentForChildInParenthesis(
+    private static NodeAlignmentStrategy getAlignmentForChildInParenthesis(
             boolean shouldAlignChild, final IElementType parameter, final IElementType delimiter,
-            boolean shouldAlignParenthesis, final IElementType openParenth, final IElementType closeParenth
+            boolean shouldAlignParenthesis, final IElementType openBracket, final IElementType closeBracket
     ) {
-        // TODO: Check this approach in other situations and refactor
         final Alignment parameterAlignment = shouldAlignChild ? Alignment.createAlignment() : null;
-        final Alignment parenthesisAlignment = shouldAlignParenthesis ? Alignment.createAlignment() : null;
+        final Alignment bracketsAlignment = shouldAlignParenthesis ? Alignment.createAlignment() : null;
 
-        return new ASTAlignmentStrategy() {
+        return new NodeAlignmentStrategy() {
             @Override
             public Alignment getAlignment(@NotNull ASTNode node) {
                 IElementType childNodeType = node.getElementType();
 
                 ASTNode prev = getPrevWithoutWhitespace(node);
                 if ((prev != null && prev.getElementType() == TokenType.ERROR_ELEMENT) || childNodeType == TokenType.ERROR_ELEMENT) {
+                    // Prefer align to parameters on incomplete code (case of line break after comma, when next parameters is absent)
                     return parameterAlignment;
                 }
 
-                if (childNodeType == openParenth || childNodeType == closeParenth) {
-                    return parenthesisAlignment;
+                if (childNodeType == openBracket || childNodeType == closeBracket) {
+                    return bracketsAlignment;
                 }
 
                 if (childNodeType == parameter || childNodeType == delimiter) {
@@ -241,13 +239,13 @@ public class JetBlock extends AbstractBlock {
         };
     }
 
-    private static ASTAlignmentStrategy getAlignmentForCaseBranch(boolean shouldAlignInColumns) {
+    private static NodeAlignmentStrategy getAlignmentForCaseBranch(boolean shouldAlignInColumns) {
         if (shouldAlignInColumns) {
-            return ASTAlignmentStrategy
-                    .fromTypes(AlignmentStrategy.createAlignmentPerTypeStrategy(Arrays.asList((IElementType) ARROW), WHEN_ENTRY, true));
+            return NodeAlignmentStrategy.fromTypes(
+                    AlignmentStrategy.createAlignmentPerTypeStrategy(Arrays.asList((IElementType) ARROW), WHEN_ENTRY, true));
         }
         else {
-            return ASTAlignmentStrategy.getNullStrategy();
+            return NodeAlignmentStrategy.getNullStrategy();
         }
     }
 

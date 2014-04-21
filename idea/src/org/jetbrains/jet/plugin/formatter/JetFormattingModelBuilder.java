@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class JetFormattingModelBuilder implements FormattingModelBuilder {
     public FormattingModel createModel(PsiElement element, CodeStyleSettings settings) {
         PsiFile containingFile = element.getContainingFile().getViewProvider().getPsi(JetLanguage.INSTANCE);
         JetBlock block = new JetBlock(
-                containingFile.getNode(), ASTAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
+                containingFile.getNode(), NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
                 FormatterPackage.createSpacingBuilder(settings));
 
         return FormattingModelProvider.createFormattingModelForPsiFile(

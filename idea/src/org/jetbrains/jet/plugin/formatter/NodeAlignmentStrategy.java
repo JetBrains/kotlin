@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,23 +22,23 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class ASTAlignmentStrategy {
+public abstract class NodeAlignmentStrategy {
 
-    private static final ASTAlignmentStrategy NULL_STRATEGY = fromTypes(AlignmentStrategy.wrap(null));
+    private static final NodeAlignmentStrategy NULL_STRATEGY = fromTypes(AlignmentStrategy.wrap(null));
 
     /** @return shared strategy instance that returns <code>null</code> all the time */
-    public static ASTAlignmentStrategy getNullStrategy() {
+    public static NodeAlignmentStrategy getNullStrategy() {
         return NULL_STRATEGY;
     }
 
-    public static ASTAlignmentStrategy fromTypes(AlignmentStrategy strategy) {
+    public static NodeAlignmentStrategy fromTypes(AlignmentStrategy strategy) {
         return new AlignmentStrategyWrapper(strategy);
     }
 
     @Nullable
     public abstract Alignment getAlignment(@NotNull ASTNode node);
 
-    public static class AlignmentStrategyWrapper extends ASTAlignmentStrategy {
+    public static class AlignmentStrategyWrapper extends NodeAlignmentStrategy {
         private final AlignmentStrategy internalStrategy;
 
         public AlignmentStrategyWrapper(@NotNull AlignmentStrategy internalStrategy) {
