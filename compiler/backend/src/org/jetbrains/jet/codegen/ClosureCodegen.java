@@ -46,7 +46,7 @@ import java.util.List;
 
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenUtil.isConst;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 

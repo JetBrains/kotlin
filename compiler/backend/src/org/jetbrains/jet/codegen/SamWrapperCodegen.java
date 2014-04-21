@@ -138,7 +138,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
         return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(CodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(
+               Integer.toHexString(JvmCodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(
                        samInterface).hashCode());
     }
 }

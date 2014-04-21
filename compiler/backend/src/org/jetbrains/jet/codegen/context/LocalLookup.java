@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.codegen.context;
 
+import org.jetbrains.jet.codegen.JvmCodegenUtil;
 import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.jet.codegen.CodegenUtil;
 import org.jetbrains.jet.codegen.ExpressionCodegen;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -92,7 +92,7 @@ public interface LocalLookup {
                 Type localType = asmTypeForAnonymousClass(bindingContext, vd);
 
                 MutableClosure localFunClosure = bindingContext.get(CLOSURE, bindingContext.get(CLASS_FOR_FUNCTION, vd));
-                if (localFunClosure != null && CodegenUtil.isConst(localFunClosure)) {
+                if (localFunClosure != null && JvmCodegenUtil.isConst(localFunClosure)) {
                     // This is an optimization: we can obtain an instance of a const closure simply by GETSTATIC ...$instance
                     // (instead of passing this instance to the constructor and storing as a field)
                     return StackValue.field(localType, localType, JvmAbi.INSTANCE_FIELD, true);

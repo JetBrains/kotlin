@@ -46,7 +46,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.CodegenUtil.peekFromStack;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.FunctionTypesUtil.getSuperTypeForClosure;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;

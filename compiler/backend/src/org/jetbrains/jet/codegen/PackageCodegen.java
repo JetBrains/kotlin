@@ -376,7 +376,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         // path hashCode to prevent same name / different path collision
         String srcName = facadeFqName.shortName().asString() + "-" + replaceSpecialSymbols(fileName) + "-" + Integer.toHexString(
-                CodegenUtil.getPathHashCode(file));
+                JvmCodegenUtil.getPathHashCode(file));
 
         return asmTypeByFqNameWithoutInnerClasses(facadeFqName.parent().child(Name.identifier(srcName)));
     }
