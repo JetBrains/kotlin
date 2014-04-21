@@ -198,6 +198,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("localClassFunctionRef.kt")
+            public void testLocalClassFunctionRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
+            }
+            
+            @TestMetadata("localClassPropertyRef.kt")
+            public void testLocalClassPropertyRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassPropertyRef.kt");
+            }
+            
+            @TestMetadata("localFunctionRef.kt")
+            public void testLocalFunctionRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");
+            }
+            
             @TestMetadata("malformedExpression.kt")
             public void testMalformedExpression() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/malformedExpression.kt");
@@ -206,6 +221,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("malformedStatements.kt")
             public void testMalformedStatements() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/malformedStatements.kt");
+            }
+            
+            @TestMetadata("misdirectedRef.kt")
+            public void testMisdirectedRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/misdirectedRef.kt");
+            }
+            
+            @TestMetadata("privateMemberRef.kt")
+            public void testPrivateMemberRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/privateMemberRef.kt");
+            }
+            
+            @TestMetadata("refInReturn.kt")
+            public void testRefInReturn() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/refInReturn.kt");
             }
             
         }

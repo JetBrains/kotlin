@@ -82,6 +82,16 @@ import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import com.intellij.refactoring.util.RefactoringUIUtil
+import org.jetbrains.jet.plugin.references.JetReference
+import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import java.util.Collections
+import com.intellij.psi.PsiNamedElement
+import org.jetbrains.jet.lang.diagnostics.Severity
+import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
+import org.jetbrains.jet.lang.types.ErrorUtils
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -337,9 +347,6 @@ private fun ExtractionData.inferParametersInfo(
                 replacementMap[refInfo.offsetInBody] =
                 if (hasThisReceiver && extractThis) AddPrefixReplacement(parameter) else RenameReplacement(parameter)
             }
-            else if (originalDeclaration is JetProperty) {
-                return MaybeError(JetRefactoringBundle.message("cannot.extract.non.local.declaration.ref")!!)
-            }
         }
     }
 
@@ -457,8 +464,57 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
 }
 
 fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
-    // todo: add name conflict checks (parameters, function, etc.)
-    return ExtractionDescriptorWithConflicts(this, MultiMap<PsiElement, String>())
+    val conflicts = MultiMap<PsiElement, String>()
+
+    val nameByOffset = HashMap<Int, JetElement>()
+    val function = generateFunction(true, nameByOffset)
+
+    val bindingContext = AnalyzerFacadeWithCache.getContextForElement(function.getBodyExpression()!!)
+
+    for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
+        if (resolveResult.declaration in extractionData.originalElements) continue
+
+        val currentRefExpr = nameByOffset[originalOffset] as JetSimpleNameExpression?
+        if (currentRefExpr == null) continue
+
+        if (currentRefExpr.getParent() is JetThisExpression) continue
+
+        val diagnostics = bindingContext.getDiagnostics().forElement(currentRefExpr)
+
+        val currentDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, currentRefExpr]
+        val currentTarget = currentDescriptor?.let {
+            DescriptorToDeclarationUtil.getDeclaration(extractionData.project, it, bindingContext)
+        } as? PsiNamedElement
+        if (currentTarget is JetParameter && currentTarget.getParent() == function.getValueParameterList()) continue
+        if (currentDescriptor is LocalVariableDescriptor
+                && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
+
+        if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
+                || (currentDescriptor != null
+                        && !ErrorUtils.isError(currentDescriptor)
+                        && !compareDescriptors(currentDescriptor, resolveResult.descriptor))) {
+            conflicts.putValue(
+                    currentRefExpr,
+                    JetRefactoringBundle.message(
+                            "0.will.no.longer.be.accessible.after.extraction",
+                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
+                    )
+            )
+            continue
+        }
+
+        diagnostics.firstOrNull { it.getFactory() == Errors.INVISIBLE_MEMBER }?.let {
+            conflicts.putValue(
+                    currentRefExpr,
+                    JetRefactoringBundle.message(
+                            "0.will.become.invisible.after.extraction",
+                            RefactoringUIUtil.getDescription(resolveResult.declaration, true)
+                    )
+            )
+        }
+    }
+
+    return ExtractionDescriptorWithConflicts(this, conflicts)
 }
 
 fun ExtractionDescriptor.getFunctionText(
@@ -488,7 +544,29 @@ fun ExtractionDescriptor.getFunctionText(
     }
 }
 
-fun ExtractionDescriptor.generateFunction(inTempFile: Boolean = false): JetNamedFunction {
+fun createNameCounterpartMap(from: JetElement, to: JetElement): Map<JetSimpleNameExpression, JetSimpleNameExpression> {
+    val map = HashMap<JetSimpleNameExpression, JetSimpleNameExpression>()
+
+    val fromOffset = from.getTextRange()!!.getStartOffset()
+    from.accept(
+            object: JetTreeVisitorVoid() {
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    val offset = expression.getTextRange()!!.getStartOffset() - fromOffset
+                    val newExpression = to.findElementAt(offset)?.getParentByType(javaClass<JetSimpleNameExpression>())
+                    assert(newExpression!= null, "Couldn't find expression at $offset in '${to.getText()}'")
+
+                    map[expression] = newExpression!!
+                }
+            }
+    )
+
+    return map
+}
+
+fun ExtractionDescriptor.generateFunction(
+        inTempFile: Boolean = false,
+        nameByOffset: MutableMap<Int, JetElement> = HashMap()
+): JetNamedFunction {
     val project = extractionData.project
 
     fun createFunction(): JetNamedFunction {
@@ -509,7 +587,8 @@ fun ExtractionDescriptor.generateFunction(inTempFile: Boolean = false): JetNamed
     fun adjustFunctionBody(function: JetNamedFunction) {
         val body = function.getBodyExpression() as JetBlockExpression
 
-        val exprReplacementMap = HashMap<JetElement, (JetElement) -> Unit>()
+        val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
+        val originalOffsetByExpr = HashMap<JetElement, Int>()
 
         val range = body.getStatements().first?.getTextRange()
         if (range == null) return
@@ -517,31 +596,46 @@ fun ExtractionDescriptor.generateFunction(inTempFile: Boolean = false): JetNamed
         val bodyOffset = range.getStartOffset()
         val file = body.getContainingFile()!!
 
-        for ((offsetInBody, replacement) in replacementMap) {
-            if (replacement is ParameterReplacement && replacement.parameter == receiverParameter) continue
-
+        for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration) {
             val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(javaClass<JetSimpleNameExpression>())
             assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
-            exprReplacementMap[expr!!] = replacement
+            originalOffsetByExpr[expr!!] = offsetInBody
+
+            replacementMap[offsetInBody]?.let { replacement ->
+                if (replacement !is ParameterReplacement || replacement.parameter != receiverParameter) {
+                    exprReplacementMap[expr] = replacement
+                }
+            }
         }
 
+        val replacingReturn: JetExpression?
+        val expressionsToReplaceWithReturn: List<JetElement>
         if (controlFlow is JumpBasedControlFlow) {
-            val replacementExpr = JetPsiFactory.createExpression(
-                    project,
-                    if (controlFlow is ConditionalJump) "return true" else "return"
-            )
-            for (jumpElement in controlFlow.elementsToReplace) {
+            replacingReturn = JetPsiFactory.createExpression(project, if (controlFlow is ConditionalJump) "return true" else "return")
+            expressionsToReplaceWithReturn = controlFlow.elementsToReplace.map { jumpElement ->
                 val offsetInBody = jumpElement.getTextRange()!!.getStartOffset() - extractionData.originalStartOffset!!
                 val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(jumpElement.javaClass)
                 assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 
-                exprReplacementMap[expr!!] = { it.replace(replacementExpr) }
+                expr!!
+            }
+        }
+        else {
+            replacingReturn = null
+            expressionsToReplaceWithReturn = Collections.emptyList()
+        }
+
+        if (replacingReturn != null) {
+            for (expr in expressionsToReplaceWithReturn) {
+                expr.replace(replacingReturn)
             }
         }
 
-        for ((expr, replacement) in exprReplacementMap) {
-            replacement(expr)
+        for ((expr, originalOffset) in originalOffsetByExpr) {
+            if (expr.isValid()) {
+                nameByOffset.put(originalOffset, exprReplacementMap[expr]?.invoke(expr) ?: expr)
+            }
         }
 
         for (param in parameters) {
@@ -558,7 +652,11 @@ fun ExtractionDescriptor.generateFunction(inTempFile: Boolean = false): JetNamed
                 body.appendElement(JetPsiFactory.createReturn(project, "false"))
 
             is ExpressionEvaluation ->
-                body.getStatements().last?.let { it.replace(JetPsiFactory.createReturn(project, it.getText()!!)) }
+                body.getStatements().last?.let {
+                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText()!!)).getReturnedExpression()!!
+                    val counterpartMap = createNameCounterpartMap(it, newExpr)
+                    nameByOffset.entrySet().forEach { it.setValue(counterpartMap[it.getValue()]!!) }
+                }
         }
     }
 

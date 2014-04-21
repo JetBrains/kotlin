@@ -27,6 +27,8 @@ import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
+import org.jetbrains.jet.lang.psi.psiUtil.replaced
+import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 
 data class Parameter(
         val argumentText: String,
@@ -38,7 +40,7 @@ data class Parameter(
     val nameForRef: String get() = mirrorVarName ?: name
 }
 
-trait Replacement: Function1<JetElement, Unit>
+trait Replacement: Function1<JetElement, JetElement>
 
 trait ParameterReplacement : Replacement {
     val parameter: Parameter
@@ -49,9 +51,9 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
-    override fun invoke(e: JetElement) {
+    override fun invoke(e: JetElement): JetElement {
         val thisExpr = e.getParent() as? JetThisExpression
-        (thisExpr ?: e).replace(JetPsiFactory.createSimpleName(e.getProject(), parameter.nameForRef))
+        return (thisExpr ?: e).replaced(JetPsiFactory.createSimpleName(e.getProject(), parameter.nameForRef))
     }
 }
 
@@ -59,16 +61,21 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
     override fun copy(parameter: Parameter) = AddPrefixReplacement(parameter)
 
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
-    override fun invoke(e: JetElement) {
+    override fun invoke(e: JetElement): JetElement {
         val selector = (e.getParent() as? JetCallExpression) ?: e
-        selector.replace(JetPsiFactory.createExpression(e.getProject(), "${parameter.nameForRef}.${selector.getText()}"))
+        val newExpr = selector.replace(
+                JetPsiFactory.createExpression(e.getProject(), "${parameter.nameForRef}.${selector.getText()}")
+        ) as JetQualifiedExpression
+
+        return with(newExpr.getSelectorExpression()!!) { if (this is JetCallExpression) getCalleeExpression()!! else this }
     }
 }
 
 class FqNameReplacement(val fqName: FqName): Replacement {
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
-    override fun invoke(e: JetElement) {
-        (e.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING)
+    override fun invoke(e: JetElement): JetElement {
+        val newExpr = (e.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName, ShorteningMode.NO_SHORTENING) as JetElement
+        return if (newExpr is JetQualifiedExpression) newExpr.getSelectorExpression()!! else newExpr
     }
 }
 

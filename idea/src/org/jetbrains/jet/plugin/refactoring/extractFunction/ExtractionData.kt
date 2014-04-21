@@ -106,10 +106,6 @@ class ExtractionData(
     }
 
     fun getBrokenReferencesInfo(body: JetBlockExpression): List<ResolvedReferenceInfo> {
-        fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
-            return d1 == d2 || (d1 != null && d2 != null && DescriptorRenderer.FQNAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQNAMES_IN_TYPES.render(d2))
-        }
-
         val startOffset = body.getStatements().first!!.getTextRange()!!.getStartOffset()
 
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
@@ -136,4 +132,10 @@ class ExtractionData(
 
     fun getInferredResultType(): JetType? =
             getExpressions().last?.let { AnalyzerFacadeWithCache.getContextForElement(it)[BindingContext.EXPRESSION_TYPE, it] }
+}
+
+private fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
+    return d1 == d2 ||
+            (d1 != null && d2 != null &&
+                    DescriptorRenderer.FQNAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQNAMES_IN_TYPES.render(d2))
 }
