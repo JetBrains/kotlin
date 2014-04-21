@@ -23,8 +23,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.LazyImportScope;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
@@ -82,7 +82,7 @@ public class LazyTopDownAnalyzer {
 
     @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
-            final ResolveSession resolveSession,
+            final KotlinCodeAnalyzer resolveSession,
             @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
             @NotNull Collection<? extends PsiElement> declarations
     ) {
@@ -230,7 +230,7 @@ public class LazyTopDownAnalyzer {
         return c;
     }
 
-    private static void resolveImportsInAllFiles(TopDownAnalysisContext c, ResolveSession resolveSession) {
+    private static void resolveImportsInAllFiles(TopDownAnalysisContext c, KotlinCodeAnalyzer resolveSession) {
         for (JetFile file : c.getFiles()) {
             resolveAndCheckImports(file, resolveSession);
         }
@@ -248,7 +248,7 @@ public class LazyTopDownAnalyzer {
 
     private static void createPropertyDescriptors(
             TopDownAnalysisContext c,
-            ResolveSession resolveSession,
+            KotlinCodeAnalyzer resolveSession,
             Multimap<FqName, JetElement> topLevelFqNames,
             List<JetProperty> properties
     ) {
@@ -266,7 +266,7 @@ public class LazyTopDownAnalyzer {
 
     private static void createFunctionDescriptors(
             TopDownAnalysisContext c,
-            ResolveSession resolveSession,
+            KotlinCodeAnalyzer resolveSession,
             List<JetNamedFunction> functions
     ) {
         for (JetNamedFunction function : functions) {
@@ -278,14 +278,14 @@ public class LazyTopDownAnalyzer {
         }
     }
 
-    private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
+    private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
         LazyImportScope fileScope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(file);
         fileScope.forceResolveAllContents();
     }
 
     private static void registerScope(
             @NotNull TopDownAnalysisContext c,
-            @NotNull ResolveSession resolveSession,
+            @NotNull KotlinCodeAnalyzer resolveSession,
             @Nullable JetDeclaration declaration
     ) {
         if (declaration == null) return;

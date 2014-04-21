@@ -192,6 +192,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return packageFragmentProvider;
     }
 
+    @Override
     @Nullable
     public LazyPackageDescriptor getPackageFragment(@NotNull FqName fqName) {
         return packages.invoke(fqName);
@@ -227,6 +228,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return exceptionTracker;
     }
 
+    @Override
     @NotNull
     @ReadOnly
     public Collection<ClassDescriptor> getTopLevelClassDescriptors(@NotNull FqName fqName) {
@@ -288,6 +290,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         return (ClassDescriptor) classifier;
     }
 
+    @Override
     @NotNull
     public ScriptDescriptor getScriptDescriptor(@NotNull JetScript script) {
         return scriptDescriptors.invoke(script);
@@ -472,6 +475,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         }
     }
 
+    @Override
     @NotNull
     public ScopeProvider getScopeProvider() {
         return scopeProvider;

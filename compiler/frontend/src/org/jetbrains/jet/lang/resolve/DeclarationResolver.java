@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.PackageLikeBuilder;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
+import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -396,7 +396,7 @@ public class DeclarationResolver {
         }
     }
 
-    public void checkRedeclarationsInPackages(@NotNull ResolveSession resolveSession, @NotNull Multimap<FqName, JetElement> topLevelFqNames) {
+    public void checkRedeclarationsInPackages(@NotNull KotlinCodeAnalyzer resolveSession, @NotNull Multimap<FqName, JetElement> topLevelFqNames) {
         for (Map.Entry<FqName, Collection<JetElement>> entry : topLevelFqNames.asMap().entrySet()) {
             FqName fqName = entry.getKey();
             Collection<JetElement> declarationsOrPackageDirectives = entry.getValue();
@@ -417,7 +417,7 @@ public class DeclarationResolver {
     }
 
     @NotNull
-    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(@NotNull ResolveSession resolveSession, @NotNull FqName fqName) {
+    private static Set<DeclarationDescriptor> getTopLevelDescriptorsByFqName(@NotNull KotlinCodeAnalyzer resolveSession, @NotNull FqName fqName) {
         FqName parentFqName = fqName.parent();
 
         Set<DeclarationDescriptor> descriptors = new HashSet<DeclarationDescriptor>();
