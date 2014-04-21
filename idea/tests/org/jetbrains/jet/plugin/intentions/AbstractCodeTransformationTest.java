@@ -278,6 +278,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ConvertToForEachFunctionCallIntention());
     }
 
+    public void doTestRemoveForLoopIndicesIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new RemoveForLoopIndicesIntention());
+    }
+
     private void doTestIntention(@NotNull String path, @NotNull IntentionAction intentionAction) throws Exception {
         configureByFile(path);
 

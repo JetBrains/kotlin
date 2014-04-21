@@ -662,6 +662,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.RemoveForLoopIndicesIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>S
+
+    <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
       <category>Kotlin</category>
     </intentionAction>
