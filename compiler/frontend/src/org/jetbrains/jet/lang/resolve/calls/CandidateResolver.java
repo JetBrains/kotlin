@@ -34,10 +34,12 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValueFactory;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TaskPrioritizer;
+import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
@@ -265,6 +267,47 @@ public class CandidateResolver {
         return returnType;
     }
 
+    private <D extends CallableDescriptor> void completeTypeInferenceForAllCandidates(
+            @NotNull CallCandidateResolutionContext<D> context,
+            @Nullable JetExpression expression
+    ) {
+        if (expression == null) return;
+
+        CallKey callKey = CallKey.create(expression);
+        OverloadResolutionResultsImpl<CallableDescriptor> resolutionResults = context.resolutionResultsCache.getResolutionResults(callKey);
+        if (resolutionResults == null) return;
+
+        completeTypeInferenceForAllCandidates(context.toBasic(), resolutionResults);
+    }
+
+    public <D extends CallableDescriptor> void completeTypeInferenceForAllCandidates(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull OverloadResolutionResultsImpl<D> results
+    ) {
+        Collection<? extends ResolvedCall<D>> candidates;
+        if (context.collectAllCandidates) {
+            candidates = results.getAllCandidates();
+            assert candidates != null : "Should be guaranteed by collectAllCandidates == true";
+        }
+        else {
+            candidates = results.getResultingCalls();
+        }
+        for (ResolvedCall<D> resolvedCall : candidates) {
+            ResolvedCallWithTrace<D> resolvedCallWithTrace = (ResolvedCallWithTrace<D>) resolvedCall;
+            if (resolvedCallWithTrace.isCompleted()) continue;
+
+            TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
+                    context.trace, "Trace to complete a candidate that is not a resulting call");
+            ResolvedCallImpl<D> callToCompleteInference = resolvedCallWithTrace.getCallToCompleteTypeArgumentInference();
+
+            CallCandidateResolutionContext<D> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
+                    callToCompleteInference, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY);
+
+            completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
+            resolvedCallWithTrace.markCallAsCompleted();
+        }
+    }
+
     private static <D extends CallableDescriptor> void updateSystemWithConstraintSystemCompleter(
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolvedCallImpl<D> resolvedCall
@@ -364,6 +407,7 @@ public class CandidateResolver {
         if (storedContextForArgument == null) {
             JetType type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
+            completeTypeInferenceForAllCandidates(context, keyExpression);
             return;
         }
 
@@ -389,6 +433,7 @@ public class CandidateResolver {
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
         markResultingCallAsCompleted(context, keyExpression);
+        completeTypeInferenceForAllCandidates(context, keyExpression);
 
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }

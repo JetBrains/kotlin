@@ -390,6 +390,7 @@ public class CallResolver {
         if (!results.isSingleResult()) {
             argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(context);
             candidateResolver.completeNestedCallsForNotResolvedInvocation(context);
+            candidateResolver.completeTypeInferenceForAllCandidates(context, results);
             return results;
         }
 
@@ -405,6 +406,8 @@ public class CallResolver {
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
         resolvedCall.markCallAsCompleted();
+        candidateResolver.completeTypeInferenceForAllCandidates(context, results);
+
         if (callToCompleteInference.getStatus().isSuccess()) {
             return OverloadResolutionResultsImpl.success(resolvedCall);
         }
