@@ -12,6 +12,16 @@
   </item>
   <item
       name='com.intellij.codeInsight.template.TemplateManager com.intellij.codeInsight.template.TemplateManager getInstance(com.intellij.openapi.project.Project)'>
+  <item
+      name='com.intellij.codeInsight.template.Expression com.intellij.codeInsight.lookup.LookupElement[] calculateLookupItems(com.intellij.codeInsight.template.ExpressionContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.Expression com.intellij.codeInsight.template.Result calculateQuickResult(com.intellij.codeInsight.template.ExpressionContext) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.template.Expression com.intellij.codeInsight.template.Result calculateResult(com.intellij.codeInsight.template.ExpressionContext) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>
