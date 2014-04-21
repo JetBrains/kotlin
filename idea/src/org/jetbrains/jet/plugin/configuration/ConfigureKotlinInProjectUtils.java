@@ -26,6 +26,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.FileTypeIndex;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.plugin.JetFileType;
@@ -54,11 +55,11 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     public static boolean hasKotlinFilesInSources(@NotNull Module module) {
-        return !FileTypeIndex.getFiles(JetFileType.INSTANCE, module.getModuleScope(false)).isEmpty();
+        return FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(false));
     }
 
     public static boolean hasKotlinFilesOnlyInTests(@NotNull Module module) {
-        return !hasKotlinFilesInSources(module) && !FileTypeIndex.getFiles(JetFileType.INSTANCE, module.getModuleScope(true)).isEmpty();
+        return !hasKotlinFilesInSources(module) && FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(true));
     }
 
     public static Collection<Module> getModulesWithKotlinFiles(@NotNull Project project) {
@@ -66,12 +67,17 @@ public class ConfigureKotlinInProjectUtils {
             return Collections.emptyList();
         }
 
+        if (!FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, GlobalSearchScope.projectScope(project))) {
+            return Collections.emptyList();
+        }
+
         List<Module> modulesWithKotlin = Lists.newArrayList();
         for (Module module : ModuleManager.getInstance(project).getModules()) {
-            if (hasKotlinFilesInSources(module) || hasKotlinFilesOnlyInTests(module)) {
+            if (FileTypeIndex.containsFileOfType(JetFileType.INSTANCE, module.getModuleScope(true))) {
                 modulesWithKotlin.add(module);
             }
         }
+
         return modulesWithKotlin;
     }
 
@@ -88,7 +94,6 @@ public class ConfigureKotlinInProjectUtils {
     }
 
     private static void showConfigureKotlinNotification(@NotNull Project project) {
-        //noinspection StaticFieldReferencedViaSubclass
         ConfigureKotlinNotificationManager.instance$.notify(project);
     }
 

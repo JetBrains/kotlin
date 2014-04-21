@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import com.intellij.ProjectTopics;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationsConfiguration;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
@@ -32,6 +31,7 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.openapi.vfs.newvfs.BulkFileListener;
 import com.intellij.openapi.vfs.newvfs.events.*;
+import com.intellij.util.Alarm;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.configuration.AbsentSdkAnnotationsNotificationManager;
@@ -43,9 +43,11 @@ import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     public static final String EXTERNAL_ANNOTATIONS_GROUP_ID = "Kotlin External annotations";
+    private volatile Alarm notificationAlarm;
 
     protected AbsentJdkAnnotationsComponent(Project project) {
         super(project);
@@ -58,6 +60,9 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
     public void projectOpened() {
         super.projectOpened();
         MessageBusConnection connection = myProject.getMessageBus().connect();
+
+        notificationAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, myProject);
+
         connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
             @Override
             public void enteredDumbMode() {
@@ -65,13 +70,14 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
 
             @Override
             public void exitDumbMode() {
-                showNotificationIfNeeded();
+                scheduleNotificationCheck();
             }
         });
+
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
             @Override
             public void rootsChanged(ModuleRootEvent event) {
-                showNotificationIfNeeded();
+                scheduleNotificationCheck();
             }
         });
 
@@ -81,7 +87,7 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
                 for (VFileEvent event : events) {
                     if (event instanceof VFileCreateEvent || event instanceof VFileDeleteEvent ||
                             event instanceof VFileMoveEvent || event instanceof VFileCopyEvent) {
-                        showNotificationIfNeeded();
+                        scheduleNotificationCheck();
                         break;
                     }
                 }
@@ -89,17 +95,27 @@ public class AbsentJdkAnnotationsComponent extends AbstractProjectComponent {
         });
     }
 
-    public void showNotificationIfNeeded() {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
+    private void scheduleNotificationCheck() {
+        if (notificationAlarm.isDisposed()) {
+            return;
+        }
+
+        notificationAlarm.cancelAllRequests();
+
+        notificationAlarm.addRequest(new Runnable() {
             @Override
             public void run() {
-                Collection<Sdk> sdks = collectSdksWithoutAnnotations();
-                if (sdks.isEmpty()) return;
-
-                //noinspection StaticFieldReferencedViaSubclass
-                AbsentSdkAnnotationsNotificationManager.instance$.notify(myProject, sdks);
+                DumbService.getInstance(myProject).smartInvokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Collection<Sdk> sdks = collectSdksWithoutAnnotations();
+                        if (!sdks.isEmpty()) {
+                            AbsentSdkAnnotationsNotificationManager.instance$.notify(myProject, sdks);
+                        }
+                    }
+                });
             }
-        });
+        }, TimeUnit.SECONDS.toMillis(1));
     }
 
     @NotNull
