@@ -454,16 +454,17 @@ public class CandidateResolver {
             JetExpression expression = argument.getArgumentExpression();
 
             JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-            markResultingCallAsCompleted(context, keyExpression);
 
             CallCandidateResolutionContext<?> storedContextForArgument =
                     context.resolutionResultsCache.getDeferredComputation(keyExpression);
-            if (storedContextForArgument != null) {
-                completeNestedCallsForNotResolvedInvocation(storedContextForArgument);
-                CallCandidateResolutionContext<?> newContext = storedContextForArgument.replaceBindingTrace(context.trace);
-                completeUnmappedArguments(newContext, storedContextForArgument.candidateCall.getUnmappedArguments());
-                argumentTypeResolver.checkTypesForFunctionArgumentsWithNoCallee(newContext.replaceContextDependency(INDEPENDENT));
-            }
+            if (storedContextForArgument == null) continue;
+            if (storedContextForArgument.candidateCall.isCompleted()) continue;
+
+            CallCandidateResolutionContext<?> newContext =
+                    storedContextForArgument.replaceBindingTrace(context.trace).replaceContextDependency(INDEPENDENT);
+            completeTypeInferenceDependentOnExpectedTypeForCall(newContext, true);
+
+            markResultingCallAsCompleted(context, keyExpression);
         }
     }
 
