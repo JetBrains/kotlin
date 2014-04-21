@@ -379,9 +379,7 @@ public class BodyResolver {
 
         annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
 
-        for (ASTNode node : modifierList.getModifierNodes()) {
-            trace.report(ILLEGAL_MODIFIER.on(node.getPsi(), (JetModifierKeywordToken) node.getElementType()));
-        }
+        ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
     }
 
     private void resolvePrimaryConstructorParameters(@NotNull BodiesResolveContext c) {

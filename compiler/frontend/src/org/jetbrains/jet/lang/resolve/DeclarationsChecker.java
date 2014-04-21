@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -131,11 +130,7 @@ public class DeclarationsChecker {
             }
         }
 
-        for (JetModifierKeywordToken token : JetTokens.MODIFIER_KEYWORDS_ARRAY) {
-            if (modifierList.hasModifier(token)) {
-                trace.report(ILLEGAL_MODIFIER.on(modifierList.getModifier(token), token));
-            }
-        }
+        ModifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY), trace);
     }
 
     private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {

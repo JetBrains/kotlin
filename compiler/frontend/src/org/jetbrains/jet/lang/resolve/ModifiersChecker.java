@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.jetbrains.jet.lang.diagnostics.Errors.ILLEGAL_MODIFIER;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class ModifiersChecker {
@@ -44,6 +45,22 @@ public class ModifiersChecker {
 
     private static final Collection<JetModifierKeywordToken> VISIBILITY_MODIFIERS =
             Lists.newArrayList(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD);
+
+    public static void reportIllegalModifiers(
+            @Nullable JetModifierList modifierList,
+            @NotNull Collection<JetModifierKeywordToken> illegalModifiers,
+            @NotNull BindingTrace trace
+    ) {
+        if (modifierList == null) return;
+
+        for (JetModifierKeywordToken modifierToken : illegalModifiers) {
+            if (modifierList.hasModifier(modifierToken)) {
+                PsiElement modifierPsi = modifierList.getModifier(modifierToken);
+                assert modifierPsi != null;
+                trace.report(ILLEGAL_MODIFIER.on(modifierPsi, modifierToken));
+            }
+        }
+    }
 
     @NotNull
     private final BindingTrace trace;
@@ -163,13 +180,11 @@ public class ModifiersChecker {
         }
     }
 
-    public void checkIllegalInThisContextModifiers(@Nullable JetModifierList modifierList, @NotNull Collection<JetModifierKeywordToken> illegalModifiers) {
-        if (modifierList == null) return;
-        for (JetModifierKeywordToken modifier : illegalModifiers) {
-            if (modifierList.hasModifier(modifier)) {
-                trace.report(Errors.ILLEGAL_MODIFIER.on(modifierList.getModifierNode(modifier).getPsi(), modifier));
-            }
-        }
+    public void checkIllegalInThisContextModifiers(
+            @Nullable JetModifierList modifierList,
+            @NotNull Collection<JetModifierKeywordToken> illegalModifiers
+    ) {
+        reportIllegalModifiers(modifierList, illegalModifiers, trace);
     }
 
     @NotNull
