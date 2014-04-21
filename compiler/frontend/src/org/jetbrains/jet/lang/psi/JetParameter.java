@@ -82,13 +82,8 @@ public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
     }
 
     public boolean isVarArg() {
-        PsiJetParameterStub stub = getStub();
-        if (stub != null) {
-            return stub.isVarArg();
-        }
-
         JetModifierList modifierList = getModifierList();
-        return modifierList != null && modifierList.getModifierNode(JetTokens.VARARG_KEYWORD) != null;
+        return modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
     }
 
     public boolean hasValOrVarNode() {

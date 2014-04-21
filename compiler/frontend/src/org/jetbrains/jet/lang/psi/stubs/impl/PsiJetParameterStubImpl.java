@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements PsiJetParameterStub {
     private final StringRef name;
     private final boolean isMutable;
-    private final boolean isVarArg;
     //TODO: store as StringRef
     private final FqName fqName;
     private final boolean hasValOrValNode;
@@ -38,14 +37,12 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
             StubElement parent,
             FqName fqName, StringRef name,
             boolean isMutable,
-            boolean isVarArg,
             boolean hasValOrValNode,
             boolean hasDefaultValue
     ) {
         super(parent, JetStubElementTypes.VALUE_PARAMETER);
         this.name = name;
         this.isMutable = isMutable;
-        this.isVarArg = isVarArg;
         this.fqName = fqName;
         this.hasValOrValNode = hasValOrValNode;
         this.hasDefaultValue = hasDefaultValue;
@@ -59,11 +56,6 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     @Override
     public boolean isMutable() {
         return isMutable;
-    }
-
-    @Override
-    public boolean isVarArg() {
-        return isVarArg;
     }
 
     @Override
@@ -82,10 +74,6 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
         builder.append("PsiJetParameterStubImpl[");
 
         builder.append(isMutable() ? "var " : "val ");
-
-        if (isVarArg()) {
-            builder.append("vararg ");
-        }
 
         builder.append("name=").append(getName());
         if (fqName != null) {

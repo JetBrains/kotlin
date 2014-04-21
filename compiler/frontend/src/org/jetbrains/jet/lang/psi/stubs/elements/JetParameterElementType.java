@@ -39,8 +39,7 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     @Override
     public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
         return new PsiJetParameterStubImpl(parentStub, psi.getFqName(), StringRef.fromString(psi.getName()),
-                                           psi.isMutable(), psi.isVarArg(), psi.hasValOrVarNode(),
-                                           psi.hasDefaultValue());
+                                           psi.isMutable(), psi.hasValOrVarNode(), psi.hasDefaultValue());
     }
 
     @Override
@@ -56,7 +55,6 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     public void serialize(@NotNull PsiJetParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
-        dataStream.writeBoolean(stub.isVarArg());
         dataStream.writeBoolean(stub.hasValOrValNode());
         dataStream.writeBoolean(stub.hasDefaultValue());
         FqName name = stub.getFqName();
@@ -68,12 +66,11 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     public PsiJetParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isMutable = dataStream.readBoolean();
-        boolean isVarArg = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
         boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqNameAsString = dataStream.readName();
         FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
 
-         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, isVarArg, hasValOrValNode, hasDefaultValue);
+         return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
     }
 }
