@@ -31,8 +31,7 @@ public class KotlinShortenFQNamesProcessor : TemplateOptionalProcessor {
     override fun isEnabled(template: Template) = template.isToShortenLongNames()
 
     override fun setEnabled(template: Template, value: Boolean) {
-        template.setToShortenLongNames(value)
     }
 
-    override fun isVisible(template: Template) = true
+    override fun isVisible(template: Template) = false
 }
