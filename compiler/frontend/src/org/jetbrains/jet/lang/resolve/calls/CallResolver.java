@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import javax.inject.Inject;
@@ -111,8 +110,7 @@ public class CallResolver {
         List<ResolutionTask<VariableDescriptor, VariableDescriptor>> prioritizedTasks =
                 TaskPrioritizer.<VariableDescriptor, VariableDescriptor>computePrioritizedTasks(
                         context, referencedName, tracing, callableDescriptorCollectors);
-        return doResolveCallOrGetCachedResults(ResolutionResultsCache.PROPERTY_MEMBER_TYPE,
-                context, prioritizedTasks, CallTransformer.PROPERTY_CALL_TRANSFORMER, tracing);
+        return doResolveCallOrGetCachedResults(context, prioritizedTasks, CallTransformer.PROPERTY_CALL_TRANSFORMER, tracing);
     }
 
     @NotNull
@@ -156,8 +154,7 @@ public class CallResolver {
     ) {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasks(context, name, tracing, collectors);
-        return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE,
-                                               context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+        return doResolveCallOrGetCachedResults(context, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     @NotNull
@@ -300,8 +297,7 @@ public class CallResolver {
 
         TracingStrategy tracing = TracingStrategyImpl.create(functionReference, context.call);
         OverloadResolutionResultsImpl<FunctionDescriptor> results = doResolveCallOrGetCachedResults(
-                ResolutionResultsCache.FUNCTION_MEMBER_TYPE, context, prioritizedTasks,
-                CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+                context, prioritizedTasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
         if (calleeExpression instanceof JetSimpleNameExpression) {
             ExpressionTypingUtils.checkCapturingInClosure((JetSimpleNameExpression) calleeExpression, context.trace, context.scope);
         }
@@ -321,12 +317,11 @@ public class CallResolver {
         List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
                 TaskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
                         basicCallResolutionContext, Collections.singleton(candidate), tracing);
-        return doResolveCallOrGetCachedResults(ResolutionResultsCache.FUNCTION_MEMBER_TYPE, basicCallResolutionContext, tasks,
-                                               CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+        return doResolveCallOrGetCachedResults(
+                basicCallResolutionContext, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
     }
 
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
-            @NotNull ResolutionResultsCache.MemberType<F> memberType,
             @NotNull BasicCallResolutionContext context,
             @NotNull List<ResolutionTask<D, F>> prioritizedTasks,
             @NotNull CallTransformer<D, F> callTransformer,
@@ -336,7 +331,7 @@ public class CallResolver {
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
         CallKey callKey = CallResolverUtil.createCallKey(context);
         if (callKey != null) {
-            OverloadResolutionResultsImpl<F> cachedResults = context.resolutionResultsCache.getResolutionResults(callKey, memberType);
+            OverloadResolutionResultsImpl<F> cachedResults = context.resolutionResultsCache.getResolutionResults(callKey);
             if (cachedResults != null) {
                 DelegatingBindingTrace deltasTraceForResolve = context.resolutionResultsCache.getResolutionTrace(callKey);
                 assert deltasTraceForResolve != null;
@@ -352,7 +347,7 @@ public class CallResolver {
                 deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
             }
             completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
-            cacheResults(memberType, context, results, traceToResolveCall, tracing);
+            cacheResults(context, results, traceToResolveCall, tracing);
         }
         traceToResolveCall.commit();
 
@@ -417,7 +412,6 @@ public class CallResolver {
     }
 
     private static <F extends CallableDescriptor> void cacheResults(
-            @NotNull ResolutionResultsCache.MemberType<F> memberType,
             @NotNull BasicCallResolutionContext context,
             @NotNull OverloadResolutionResultsImpl<F> results,
             @NotNull DelegatingBindingTrace traceToResolveCall,
@@ -430,7 +424,7 @@ public class CallResolver {
                 BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
-        context.resolutionResultsCache.recordResolutionResults(callKey, memberType, results);
+        context.resolutionResultsCache.recordResolutionResults(callKey, results);
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
 
         if (results.isSingleResult()) {

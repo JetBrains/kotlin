@@ -39,22 +39,21 @@ public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
     @Override
     public <D extends CallableDescriptor> void recordResolutionResults(
             @NotNull CallKey callKey,
-            @NotNull MemberType<D> memberType,
             @NotNull OverloadResolutionResultsImpl<D> results
     ) {
-        innerCache.recordResolutionResults(callKey, memberType, results);
+        innerCache.recordResolutionResults(callKey, results);
     }
 
     @Nullable
     @Override
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(
-            @NotNull CallKey callKey, @NotNull MemberType<D> memberType
+            @NotNull CallKey callKey
     ) {
-        OverloadResolutionResultsImpl<D> results = innerCache.getResolutionResults(callKey, memberType);
+        OverloadResolutionResultsImpl<D> results = innerCache.getResolutionResults(callKey);
         if (results != null) {
             return results;
         }
-        return parentCache.getResolutionResults(callKey, memberType);
+        return parentCache.getResolutionResults(callKey);
     }
 
     @Override

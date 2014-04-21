@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -36,8 +34,7 @@ import static org.jetbrains.jet.lang.psi.Call.CallType;
 import static org.jetbrains.jet.lang.psi.Call.CallType.*;
 
 public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
-    public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<FunctionDescriptor>> RESOLUTION_RESULTS_FOR_FUNCTION = Slices.createSimpleSlice();
-    public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<VariableDescriptor>> RESOLUTION_RESULTS_FOR_PROPERTY = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<CallableDescriptor>> RESOLUTION_RESULTS = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, CallCandidateResolutionContext<?>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, ResolvedCallWithTrace<?>> RESOLVED_CALL_FOR_ARGUMENT = Slices.createSimpleSlice();
@@ -49,22 +46,22 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
     private final DelegatingBindingTrace trace = new DelegatingBindingTrace(
             BindingContext.EMPTY, "Internal binding context in resolution results cache");
 
-    @NotNull
-    private static <D extends CallableDescriptor> WritableSlice<CallKey, OverloadResolutionResultsImpl<D>> getSliceByMemberType(@NotNull MemberType<D> memberType) {
-        //noinspection unchecked
-        return (WritableSlice<CallKey, OverloadResolutionResultsImpl<D>>)
-                (memberType == FUNCTION_MEMBER_TYPE ? RESOLUTION_RESULTS_FOR_FUNCTION : RESOLUTION_RESULTS_FOR_PROPERTY);
-    }
-
     @Override
-    public <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType, @NotNull OverloadResolutionResultsImpl<D> results) {
-        trace.record(getSliceByMemberType(memberType), callKey, results);
+    public <D extends CallableDescriptor> void recordResolutionResults(
+            @NotNull CallKey callKey,
+            @NotNull OverloadResolutionResultsImpl<D> results
+    ) {
+        //noinspection unchecked
+        trace.record(RESOLUTION_RESULTS, callKey, (OverloadResolutionResultsImpl<CallableDescriptor>) results);
     }
 
     @Override
     @Nullable
-    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType) {
-        return trace.get(getSliceByMemberType(memberType), callKey);
+    public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(
+            @NotNull CallKey callKey
+    ) {
+        //noinspection unchecked
+        return (OverloadResolutionResultsImpl<D>) trace.get(RESOLUTION_RESULTS, callKey);
     }
 
     @Override

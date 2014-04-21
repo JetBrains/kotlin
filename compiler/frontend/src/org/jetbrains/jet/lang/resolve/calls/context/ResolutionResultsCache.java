@@ -19,8 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
@@ -28,26 +26,11 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public interface ResolutionResultsCache {
-    class MemberType<D extends CallableDescriptor> {
-        public final String debugName;
 
-        public MemberType(String name) {
-            debugName = name;
-        }
-
-        @Override
-        public String toString() {
-            return debugName;
-        }
-    }
-    MemberType<FunctionDescriptor> FUNCTION_MEMBER_TYPE = new MemberType<FunctionDescriptor>("FUNCTION_MEMBER_TYPE");
-    MemberType<VariableDescriptor> PROPERTY_MEMBER_TYPE = new MemberType<VariableDescriptor>("PROPERTY_MEMBER_TYPE");
-
-
-    <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType, @NotNull OverloadResolutionResultsImpl<D> results);
+    <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull OverloadResolutionResultsImpl<D> results);
 
     @Nullable
-    <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(@NotNull CallKey callKey, @NotNull MemberType<D> memberType);
+    <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(@NotNull CallKey callKey);
 
     void recordResolutionTrace(@NotNull CallKey callKey, @NotNull DelegatingBindingTrace delegatingTrace);
 
