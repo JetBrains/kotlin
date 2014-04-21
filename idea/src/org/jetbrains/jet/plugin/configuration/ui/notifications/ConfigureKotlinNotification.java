@@ -73,7 +73,7 @@ public class ConfigureKotlinNotification extends Notification {
         builder.append(" in '").append(project.getName()).append("' project");
         builder.append("<br/>");
 
-        String links = StringUtil.join(ConfigureKotlinInProjectUtils.getApplicableConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
+        String links = StringUtil.join(ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
             @Override
             public String fun(KotlinProjectConfigurator configurator) {
                 return getLink(configurator, isOnlyOneModule);

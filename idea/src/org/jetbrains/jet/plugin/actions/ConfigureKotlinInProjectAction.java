@@ -28,7 +28,7 @@ public class ConfigureKotlinInProjectAction extends AnAction {
         }
 
         Collection<KotlinProjectConfigurator> configurators =
-                Collections2.filter(ConfigureKotlinInProjectUtils.getApplicableConfigurators(project), new Predicate<KotlinProjectConfigurator>() {
+                Collections2.filter(ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project), new Predicate<KotlinProjectConfigurator>() {
                     @Override
                     public boolean apply(KotlinProjectConfigurator input) {
                         return !input.getName().equals(KotlinJsModuleConfigurator.NAME);
