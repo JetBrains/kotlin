@@ -788,6 +788,9 @@ public class CreateFunctionFromUsageFix extends CreateFromUsageFixBase {
         // fix up the template to include the expression for the type parameter list
         variables.add(new Variable(TYPE_PARAMETER_LIST_VARIABLE_NAME, expression, expression, false, true));
 
+        // TODO: Disabled shortening names because it causes some tests fail. Refactor code to use automatic reference shortening
+        templateImpl.setToShortenLongNames(false);
+
         // run the template
         TemplateManager.getInstance(project).startTemplate(containingFileEditor, templateImpl, new TemplateEditingAdapter() {
             @Override
