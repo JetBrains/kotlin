@@ -19,24 +19,32 @@ package org.jetbrains.jet.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
-import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
+import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
+import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
 
+import java.util.Collections;
+
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
 
 public class MemberCodegen extends ParentCodegenAwareImpl {
-
     protected final FieldOwnerContext context;
-
-    private final ClassBuilder builder;
+    protected final ClassBuilder v;
+    protected ExpressionCodegen clInit;
 
     private NameGenerator inlineNameGenerator;
 
@@ -44,11 +52,11 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
             @NotNull GenerationState state,
             @Nullable MemberCodegen parentCodegen,
             @NotNull FieldOwnerContext context,
-            @Nullable ClassBuilder builder
+            ClassBuilder builder
     ) {
         super(state, parentCodegen);
         this.context = context;
-        this.builder = builder;
+        this.v = builder;
     }
 
     public void genFunctionOrProperty(
@@ -121,8 +129,7 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
 
     private static void badDescriptor(ClassDescriptor descriptor, ClassBuilderMode mode) {
         if (mode != ClassBuilderMode.LIGHT_CLASSES) {
-            throw new IllegalStateException(
-                    "Generating bad descriptor in ClassBuilderMode = " + mode + ": " + descriptor);
+            throw new IllegalStateException("Generating bad descriptor in ClassBuilderMode = " + mode + ": " + descriptor);
         }
     }
 
@@ -132,15 +139,33 @@ public class MemberCodegen extends ParentCodegenAwareImpl {
 
     @NotNull
     public ClassBuilder getBuilder() {
-        return builder;
+        return v;
     }
 
+    @NotNull
     public NameGenerator getInlineNameGenerator() {
         if (inlineNameGenerator == null) {
             String prefix = InlineCodegenUtil.getInlineName(context, typeMapper);
-
             inlineNameGenerator = new NameGenerator(prefix);
         }
         return inlineNameGenerator;
+    }
+
+    @NotNull
+    protected ExpressionCodegen createOrGetClInitCodegen() {
+        DeclarationDescriptor descriptor = context.getContextDescriptor();
+        assert state.getClassBuilderMode() == ClassBuilderMode.FULL
+                : "<clinit> should not be generated for light classes. Descriptor: " + descriptor;
+        if (clInit == null) {
+            MethodVisitor mv = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
+            mv.visitCode();
+            SimpleFunctionDescriptorImpl clInit =
+                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY, Name.special("<clinit>"), SYNTHESIZED);
+            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
+
+            this.clInit = new ExpressionCodegen(mv, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
+        }
+        return clInit;
     }
 }

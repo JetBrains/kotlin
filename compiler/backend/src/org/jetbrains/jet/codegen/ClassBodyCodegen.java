@@ -21,32 +21,24 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.ClassContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.jetbrains.org.objectweb.asm.Opcodes.RETURN;
 
 public abstract class ClassBodyCodegen extends MemberCodegen {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
-    protected final ClassBuilder v;
-
-    private MethodVisitor clInitMethod;
-
-    private ExpressionCodegen clInitCodegen;
 
     protected ClassBodyCodegen(
             @NotNull JetClassOrObject aClass,
@@ -56,10 +48,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             @Nullable MemberCodegen parentCodegen
     ) {
         super(state, parentCodegen, context, v);
-        descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
         myClass = aClass;
-        this.kind = context.getContextKind();
-        this.v = v;
+        kind = context.getContextKind();
+        descriptor = bindingContext.get(BindingContext.CLASS, aClass);
     }
 
     public void generate() {
@@ -69,7 +60,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
 
         generateSyntheticParts();
 
-        generateStaticInitializer();
+        completeStaticInitializer();
 
         generateKotlinAnnotation();
     }
@@ -152,49 +143,18 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
         }
     }
 
-    protected @NotNull List<JetParameter> getPrimaryConstructorParameters() {
+    @NotNull
+    protected List<JetParameter> getPrimaryConstructorParameters() {
         if (myClass instanceof JetClass) {
             return ((JetClass) myClass).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
     }
 
-    private void generateStaticInitializer() {
-        if (clInitMethod != null) {
-            createOrGetClInitMethod();
-
-            if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-                ExpressionCodegen codegen = createOrGetClInitCodegen();
-
-                createOrGetClInitMethod().visitInsn(RETURN);
-                FunctionCodegen.endVisit(codegen.v, "static initializer", myClass);
-            }
+    private void completeStaticInitializer() {
+        if (clInit != null) {
+            clInit.v.visitInsn(RETURN);
+            FunctionCodegen.endVisit(clInit.v, "static initializer", myClass);
         }
-    }
-
-    @NotNull
-    protected MethodVisitor createOrGetClInitMethod() {
-        if (clInitMethod == null) {
-            clInitMethod = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
-        }
-        return clInitMethod;
-    }
-
-    @NotNull
-    protected ExpressionCodegen createOrGetClInitCodegen() {
-        assert state.getClassBuilderMode() == ClassBuilderMode.FULL;
-        if (clInitCodegen == null) {
-            MethodVisitor method = createOrGetClInitMethod();
-            method.visitCode();
-            SimpleFunctionDescriptorImpl clInit =
-                    SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY,
-                                                        Name.special("<clinit>"),
-                                                        CallableMemberDescriptor.Kind.SYNTHESIZED);
-            clInit.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
-                              Collections.<ValueParameterDescriptor>emptyList(), null, null, Visibilities.PRIVATE);
-
-            clInitCodegen = new ExpressionCodegen(method, new FrameMap(), Type.VOID_TYPE, context.intoFunction(clInit), state, this);
-        }
-        return clInitCodegen;
     }
 }
