@@ -114,7 +114,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
         this.asFunctionInline = false;
 
         isSameModule = !(functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) /*not compiled library*/ &&
-                       CodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext());
+                       JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext());
     }
 
 

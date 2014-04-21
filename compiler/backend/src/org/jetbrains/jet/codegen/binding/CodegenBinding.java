@@ -38,7 +38,7 @@ import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.CodegenUtil.isInterface;
+import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
