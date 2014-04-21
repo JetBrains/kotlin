@@ -69,8 +69,7 @@ public class JetClassBody extends JetElementImplStub<PsiJetPlaceHolderStub<JetCl
 
     @NotNull
     public List<JetClassObject> getAllClassObjects() {
-        //noinspection unchecked
-        return (List) findChildrenByType(JetNodeTypes.CLASS_OBJECT);
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.CLASS_OBJECT);
     }
 
     @Nullable
