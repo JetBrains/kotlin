@@ -32,7 +32,7 @@ public object ShortenReferences {
     public fun process(file: JetFile, startOffset: Int, endOffset: Int) {
         val smartPointerManager = SmartPointerManager.getInstance(file.getProject())
         val pointer = smartPointerManager.createSmartPsiFileRangePointer(file, TextRange(startOffset, endOffset))
-        try{
+        try {
             process(listOf(file), { element ->
                 val segment = pointer.getRange()
                 if (segment != null) {
@@ -44,7 +44,7 @@ public object ShortenReferences {
                         else -> FilterResult.SKIP
                     }
                 }
-                else{
+                else {
                     FilterResult.SKIP
                 }
             })
@@ -102,9 +102,12 @@ public object ShortenReferences {
         }
 
         override fun visitUserType(userType: JetUserType) {
+            val filterResult = elementFilter(userType)
+            if (filterResult == FilterResult.SKIP) return
+
             userType.getTypeArgumentList()?.accept(this)
 
-            if (elementFilter(userType) == FilterResult.PROCESS && canShortenType(userType)) {
+            if (filterResult == FilterResult.PROCESS && canShortenType(userType)) {
                 typesToShorten.add(userType)
             }
             else{

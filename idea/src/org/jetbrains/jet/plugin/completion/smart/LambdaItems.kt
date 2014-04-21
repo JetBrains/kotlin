@@ -59,17 +59,16 @@ class LambdaItems(val project: Project) {
             val offset = context.getStartOffset()
             val placeholder = "{}"
             document.replaceString(offset, context.getTailOffset(), placeholder)
-            editor.getCaretModel().moveToOffset(offset + 1)
             val rangeMarker = document.createRangeMarker(offset, offset + placeholder.length)
 
             // we start template later to not interfere with insertion of tail type
             val commandProcessor = CommandProcessor.getInstance()
             val commandName = commandProcessor.getCurrentCommandName()
             val commandGroupId = commandProcessor.getCurrentCommandGroupId()
-            context.setLaterRunnable{
+            context.setLaterRunnable {
                 commandProcessor.executeCommand(project, {
-                    ApplicationManager.getApplication()!!.runWriteAction(Computable<Unit>{
-                        try{
+                    ApplicationManager.getApplication()!!.runWriteAction(Computable<Unit> {
+                        try {
                             if (rangeMarker.isValid()) {
                                 document.deleteString(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
                                 editor.getCaretModel().moveToOffset(rangeMarker.getStartOffset())
@@ -101,9 +100,9 @@ class LambdaItems(val project: Project) {
                 template.addTextSegment("(")
             }
 
-            var i = 0
-            for (parameterType in parameterTypes) {
-                if (i++ > 0) {
+            for (i in parameterTypes.indices) {
+                val parameterType = parameterTypes[i]
+                if (i > 0) {
                     template.addTextSegment(", ")
                 }
                 template.addVariable(ParameterNameExpression(JetNameSuggester.suggestNames(parameterType, nameValidator, "p")), true)
