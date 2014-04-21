@@ -27,16 +27,17 @@ import org.jetbrains.annotations.Nullable;
 public final class JetStubbedPsiUtil {
     @Nullable
     public static JetDeclaration getContainingDeclaration(@NotNull PsiElement element) {
-        return getContainingDeclaration(element, JetDeclaration.class, true);
+        return getPsiOrStubParent(element, JetDeclaration.class, true);
     }
 
     @Nullable
     public static <T extends JetDeclaration> T getContainingDeclaration(@NotNull PsiElement element, @NotNull Class<T> declarationClass) {
-        return getContainingDeclaration(element, declarationClass, true);
+        return getPsiOrStubParent(element, declarationClass, true);
     }
 
+    //TODO: contribute to idea PsiTreeUtil#getPsiOrStubParent
     @Nullable
-    public static <T extends JetDeclaration> T getContainingDeclaration(
+    public static <T extends JetElement> T getPsiOrStubParent(
             @NotNull PsiElement element,
             @NotNull Class<T> declarationClass,
             boolean strict
