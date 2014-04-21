@@ -61,7 +61,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
         runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @Override
             public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
-                JetNameValidator validator = JetNameValidator.getCollectingValidator(project);
+                JetNameValidator validator = JetNameValidator.createCollectingValidator(project);
                 changeSignatureData.clearParameters();
                 for (JetType type : parameterTypes) {
                     String name = JetNameSuggester.suggestNames(type, validator, "param")[0];

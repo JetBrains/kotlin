@@ -116,7 +116,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
             public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {
                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                 List<? extends ValueArgument> arguments = callElement.getValueArguments();
-                JetNameValidator validator = JetNameValidator.getCollectingValidator(callElement.getProject());
+                JetNameValidator validator = JetNameValidator.createCollectingValidator(callElement.getProject());
 
                 for (int i = 0; i < arguments.size(); i ++) {
                     ValueArgument argument = arguments.get(i);
