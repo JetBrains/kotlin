@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,11 @@ public abstract class JetSingleIntentionActionFactory implements JetIntentionAct
     @Override
     public final List<IntentionAction> createActions(Diagnostic diagnostic) {
         List<IntentionAction> intentionActionList = new LinkedList<IntentionAction>();
+
+        if (diagnostic.getPsiElement().getContainingFile() instanceof JetCodeFragmentImpl) {
+            return intentionActionList;
+        }
+
         IntentionAction intentionAction = createAction(diagnostic);
         if (intentionAction != null) {
             intentionActionList.add(intentionAction);

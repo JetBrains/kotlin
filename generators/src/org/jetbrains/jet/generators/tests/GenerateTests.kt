@@ -107,6 +107,8 @@ import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionTest
+import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -266,6 +268,10 @@ fun main(args: Array<String>) {
             model("checker/infos", testMethod = "doTestWithInfos")
         }
 
+        testClass(javaClass<AbstractCodeFragmentHighlightingTest>()) {
+            model("checker/codeFragments", extension = "kt")
+        }
+
         testClass(javaClass<AbstractJetJsCheckerTest>()) {
             model("checker/js")
         }
@@ -306,6 +312,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartCompletionHandlerTest>()) {
             model("completion/handlers/smart")
+        }
+
+        testClass(javaClass<AbstractCodeFragmentCompletionTest>()) {
+            model("completion/basic/codeFragments", extension = "kt")
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {

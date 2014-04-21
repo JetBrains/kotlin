@@ -27,6 +27,7 @@ import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
+import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.psi.*;
@@ -39,6 +40,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.storage.ExceptionTracker;
 import org.jetbrains.jet.storage.LazyResolveStorageManager;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
@@ -92,7 +94,8 @@ public class ResolveElementCache {
                 JetAnnotationEntry.class,
                 JetTypeParameter.class,
                 JetTypeConstraint.class,
-                JetPackageDirective.class);
+                JetPackageDirective.class,
+                JetExpressionCodeFragment.class);
 
         if (elementOfAdditionalResolve != null && !(elementOfAdditionalResolve instanceof JetParameter)) {
             if (elementOfAdditionalResolve instanceof JetPackageDirective) {
@@ -159,6 +162,9 @@ public class ResolveElementCache {
         else if (resolveElement instanceof JetTypeConstraint) {
             typeConstraintAdditionalResolve(resolveSession, (JetTypeConstraint) resolveElement);
         }
+        else if (resolveElement instanceof JetExpressionCodeFragment) {
+            codeFragmentAdditionalResolve(resolveSession, (JetExpressionCodeFragment) resolveElement, trace);
+        }
         else if (PsiTreeUtil.getParentOfType(resolveElement, JetPackageDirective.class) != null) {
             packageRefAdditionalResolve(resolveSession, trace, resolveElement);
         }
@@ -203,6 +209,34 @@ public class ResolveElementCache {
         for (TypeParameterDescriptor parameterDescriptor : constructor.getParameters()) {
             LazyEntity lazyEntity = (LazyEntity) parameterDescriptor;
             lazyEntity.forceResolveAllContents();
+        }
+    }
+
+    private void codeFragmentAdditionalResolve(
+            ResolveSession resolveSession,
+            JetExpressionCodeFragment codeFragment,
+            BindingTrace trace
+    ) {
+        JetExpression codeFragmentExpression = codeFragment.getExpression();
+        if (codeFragmentExpression == null) return;
+
+        PsiElement contextElement = codeFragment.getContext();
+        if (!(contextElement instanceof JetExpression)) return;
+
+        JetExpression contextExpression = (JetExpression) contextElement;
+        BindingContext contextForElement = resolveToElement(contextExpression);
+
+        JetScope scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
+        if (scopeForContextElement != null) {
+            DataFlowInfo dataFlowInfoForContextElement = contextForElement.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, contextExpression);
+            InjectorForMacros injectorForMacros = new InjectorForMacros(codeFragment.getProject(), resolveSession.getModuleDescriptor());
+            injectorForMacros.getExpressionTypingServices().getType(
+                    scopeForContextElement,
+                    codeFragmentExpression,
+                    TypeUtils.NO_EXPECTED_TYPE,
+                    dataFlowInfoForContextElement == null ? DataFlowInfo.EMPTY : dataFlowInfoForContextElement,
+                    trace
+            );
         }
     }
 

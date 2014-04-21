@@ -19,10 +19,12 @@ package org.jetbrains.jet.completion;
 import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,10 +64,10 @@ public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightF
     @NotNull
     protected abstract CompletionType completionType();
 
-    public void doTest(String testPath) {
+    public void doTest(String testPath) throws Exception {
         setUpFixture(testPath);
 
-        String fileText = myFixture.getFile().getText();
+        String fileText = FileUtil.loadFile(new File(testPath), true);
 
         Integer invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText);
 

@@ -40,11 +40,14 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
+import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
@@ -90,7 +93,8 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!JetPluginUtil.isInSource(element) || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
+        if (!(JetPluginUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragmentImpl)
+                || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
 
@@ -100,19 +104,32 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         JetFile file = (JetFile) element.getContainingFile();
 
-        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
-        if (analyzeExhaust.isError()) {
-            HighlighterPackage.updateHighlightingResult(file, true);
+        BindingContext bindingContext;
+        if (file instanceof JetCodeFragmentImpl) {
+            if (element instanceof JetElement) {
+                ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetElement) element);
+                bindingContext = resolveSession.resolveToElement((JetElement) element);
+            }
+            else {
+                return;
+            }
+        }
+        else {
+            AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
+            if (analyzeExhaust.isError()) {
+                HighlighterPackage.updateHighlightingResult(file, true);
 
-            throw new ProcessCanceledException(analyzeExhaust.getError());
+                throw new ProcessCanceledException(analyzeExhaust.getError());
+            }
+
+            bindingContext = analyzeExhaust.getBindingContext();
         }
 
-        BindingContext bindingContext = analyzeExhaust.getBindingContext();
         for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
             element.accept(visitor);
         }
 
-        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false)) {
+        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false) || file instanceof JetCodeFragmentImpl) {
             ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
             for (Diagnostic diagnostic : bindingContext.getDiagnostics().forElement(element)) {
                 elementAnnotator.registerDiagnosticAnnotations(diagnostic);

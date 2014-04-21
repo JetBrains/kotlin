@@ -50,6 +50,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
 import java.util.HashSet
 import org.jetbrains.jet.analyzer.AnalyzerFacade
+import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl
 
 private val LOG = Logger.getInstance(javaClass<KotlinResolveCache>())
 
@@ -158,7 +159,7 @@ class KotlinCacheService(val project: Project) {
         if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
 
         val firstFile = elements.first().getContainingJetFile()
-        if (elements.size == 1 && !isFileInScope(firstFile)) {
+        if (elements.size == 1 && (!isFileInScope(firstFile) && firstFile !is JetCodeFragmentImpl)) {
             return getCacheForSyntheticFile(firstFile).getAnalysisResultsForElements(elements)
         }
 

@@ -23,6 +23,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.checkers.DebugInfoUtil;
+import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -46,7 +47,7 @@ public class DebugInfoAnnotator implements Annotator {
             return;
         }
 
-        if (element instanceof JetFile) {
+        if (element instanceof JetFile && !(element instanceof JetCodeFragmentImpl)) {
             JetFile file = (JetFile) element;
             try {
                 BindingContext bindingContext = ResolvePackage.getAnalysisResults(file).getBindingContext();

@@ -19,13 +19,17 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
+import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
-public class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
+public abstract class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
+    private final Project project;
+
     protected PsiElement context;
     private GlobalSearchScope resolveScope;
 
@@ -34,6 +38,7 @@ public class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
                 new LightVirtualFile(name, JetFileType.INSTANCE, text), true), false);
         ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
         init(TokenType.CODE_FRAGMENT, elementType);
+        this.project = project;
         this.context = context;
     }
 
@@ -67,5 +72,28 @@ public class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
     public GlobalSearchScope getResolveScope() {
         if (resolveScope != null) return resolveScope;
         return super.getResolveScope();
+    }
+
+    @Override
+    protected JetCodeFragmentImpl clone() {
+        JetCodeFragmentImpl clone = (JetCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
+        clone.myOriginalFile = this;
+        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(project)).getFileManager();
+        SingleRootFileViewProvider cloneViewProvider = (SingleRootFileViewProvider)fileManager.createFileViewProvider(new LightVirtualFile(
+                getName(),
+                JetFileType.INSTANCE,
+                getText()), true);
+        cloneViewProvider.forceCachedPsi(clone);
+        clone.myViewProvider = cloneViewProvider;
+        return clone;
+    }
+
+    private FileViewProvider myViewProvider = null;
+
+    @Override
+    @NotNull
+    public FileViewProvider getViewProvider() {
+        if (myViewProvider != null) return myViewProvider;
+        return super.getViewProvider();
     }
 }

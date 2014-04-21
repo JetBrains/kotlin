@@ -21,23 +21,19 @@ import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaCodeFragment
-import com.intellij.openapi.fileTypes.LanguageFileType
-import com.intellij.debugger.engine.evaluation.expression.EvaluatorBuilder
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.jet.lexer.JetToken
-import org.jetbrains.jet.JetNodeType
-import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.psi.JavaCodeFragmentFactory
+import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetExpression
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), context)
+            val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), getContextElement(context))
             if (item.getImports().isNotEmpty()) {
                 codeFragment.addImportsFromString(item.getImports())
             }
@@ -60,4 +56,16 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun getFileType() = JetFileType.INSTANCE
 
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
+
+    class object {
+        fun getContextElement(elementAt: PsiElement?): PsiElement? {
+            if (elementAt == null) return null
+
+            val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
+            if (expressionAtOffset != null) {
+                return expressionAtOffset
+            }
+            return KotlinEditorTextProvider.findExpressionInner(elementAt)
+        }
+    }
 }

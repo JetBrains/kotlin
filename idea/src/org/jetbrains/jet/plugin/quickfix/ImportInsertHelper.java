@@ -96,6 +96,10 @@ public class ImportInsertHelper {
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
+        if (file instanceof JetCodeFragmentImpl) {
+            // TODO Insert import doesn't work for codeFragments yet
+            return;
+        }
         JetImportList importList = file.getImportList();
         if (importList != null) {
             JetImportDirective newDirective = JetPsiFactory.createImportDirective(file.getProject(), importPath);
