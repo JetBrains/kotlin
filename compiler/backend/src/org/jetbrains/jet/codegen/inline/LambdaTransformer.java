@@ -19,17 +19,13 @@ package org.jetbrains.jet.codegen.inline;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.Method;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -42,44 +38,39 @@ public class LambdaTransformer {
 
     protected final JetTypeMapper typeMapper;
 
-    private final MethodNode constructor;
-
-    private final MethodNode invoke;
-
-    private final MethodNode bridge;
+    private MethodNode constructor;
 
     private final InliningContext inliningContext;
 
-    private final Type oldLambdaType;
+    private final Type oldObjectType;
 
     private final Type newLambdaType;
 
-    private int classAccess;
-    private String signature;
+    private final ClassReader reader;
+
     private String superName;
-    private String[] interfaces;
+
     private final boolean isSameModule;
 
-    private Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
+    private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
 
-    public LambdaTransformer(String lambdaInternalName, InliningContext inliningContext, boolean isSameModule, Type newLambdaType) {
+    public LambdaTransformer(@NotNull String objectInternalName, @NotNull InliningContext inliningContext, boolean isSameModule, @NotNull Type newLambdaType) {
         this.isSameModule = isSameModule;
         this.state = inliningContext.state;
         this.typeMapper = state.getTypeMapper();
         this.inliningContext = inliningContext;
-        this.oldLambdaType = Type.getObjectType(lambdaInternalName);
+        this.oldObjectType = Type.getObjectType(objectInternalName);
         this.newLambdaType = newLambdaType;
 
         //try to find just compiled classes then in dependencies
-        ClassReader reader;
         try {
-            OutputFile outputFile = state.getFactory().get(lambdaInternalName + ".class");
+            OutputFile outputFile = state.getFactory().get(objectInternalName + ".class");
             if (outputFile != null) {
                 reader = new ClassReader(outputFile.asByteArray());
             } else {
-                VirtualFile file = InlineCodegenUtil.findVirtualFile(state.getProject(), lambdaInternalName);
+                VirtualFile file = InlineCodegenUtil.findVirtualFile(state.getProject(), objectInternalName);
                 if (file == null) {
-                    throw new RuntimeException("Couldn't find virtual file for " + lambdaInternalName);
+                    throw new RuntimeException("Couldn't find virtual file for " + objectInternalName);
                 }
                 reader = new ClassReader(file.getInputStream());
             }
@@ -87,72 +78,103 @@ public class LambdaTransformer {
         catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        //TODO rewrite to one step
-        constructor = getMethodNode(reader, true, false);
-        invoke = getMethodNode(reader, false, false);
-        bridge = getMethodNode(reader, false, true);
     }
 
-    private void buildInvokeParams(ParametersBuilder builder) {
-        builder.addThis(oldLambdaType, false);
+    private void buildInvokeParamsFor(@NotNull ParametersBuilder builder, @NotNull MethodNode node) {
+        builder.addThis(oldObjectType, false);
 
-        Type[] types = Type.getArgumentTypes(invoke.desc);
+        Type[] types = Type.getArgumentTypes(node.desc);
         for (Type type : types) {
             builder.addNextParameter(type, false, null);
         }
     }
 
-    public InlineResult doTransform(ConstructorInvocation invocation, FieldRemapper parentRemapper) {
-        ClassBuilder classBuilder = createClassBuilder();
+    @NotNull
+    public InlineResult doTransform(@NotNull ConstructorInvocation invocation, @NotNull FieldRemapper parentRemapper) {
+        final ClassBuilder classBuilder = createClassBuilder();
+        final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
+        final List<FieldNode> fieldToAdd = new ArrayList<FieldNode>();
+        reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
 
-        //TODO: public visibility for inline function
-        classBuilder.defineClass(null,
-                                 V1_6,
-                                 classAccess,
-                                 newLambdaType.getInternalName(),
-                                 signature,
-                                 superName,
-                                 interfaces
-        );
+            @Override
+            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+                //TODO: public visibility for inline function
+                LambdaTransformer.this.superName = superName;
+                classBuilder.defineClass(null,
+                                         V1_6,
+                                         access,
+                                         newLambdaType.getInternalName(),
+                                         signature,
+                                         superName,
+                                         interfaces
+                );
+            }
 
-        // TODO: load synthetic class kind from the transformed class and write the same kind to the copy of that class here
-        // See AsmUtil.writeKotlinSyntheticClassAnnotation
+            @Override
+            public MethodVisitor visitMethod(
+                    int access, String name, String desc, String signature, String[] exceptions
+            ) {
+                MethodNode node = new MethodNode(access, name, desc, signature, exceptions);
+                if (name.equals("<init>")){
+                    if (constructor != null)
+                        throw new RuntimeException("Lambda, SAM or anonymous object should have only one constructor");
 
-        ParametersBuilder builder = ParametersBuilder.newBuilder();
-        Parameters parameters = getLambdaParameters(builder, invocation);
-
-        MethodVisitor invokeVisitor = newMethod(classBuilder, invoke);
-
-        RegeneratedLambdaFieldRemapper remapper =
-                new RegeneratedLambdaFieldRemapper(oldLambdaType.getInternalName(), newLambdaType.getInternalName(),
-                                                   parameters, invocation.getCapturedLambdasToInline(),
-                                                   parentRemapper);
-
-        MethodInliner inliner = new MethodInliner(invoke, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
-                                                  remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
-        InlineResult result = inliner.doInline(invokeVisitor, new LocalVarRemapper(parameters, 0), false);
-        invokeVisitor.visitMaxs(-1, -1);
-
-        generateConstructorAndFields(classBuilder, builder, invocation);
-
-        if (bridge != null) {
-            MethodVisitor invokeBridge = newMethod(classBuilder, bridge);
-            bridge.accept(new MethodVisitor(InlineCodegenUtil.API, invokeBridge) {
-                @Override
-                public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                    if (owner.equals(oldLambdaType.getInternalName())) {
-                        super.visitMethodInsn(opcode, newLambdaType.getInternalName(), name, desc, itf);
-                    } else {
-                        super.visitMethodInsn(opcode, owner, name, desc, itf);
-                    }
+                    constructor = node;
+                } else {
+                    methodsToTransform.add(node);
                 }
-            });
+                return node;
+            }
+
+            @Override
+            public FieldVisitor visitField(
+                    int access, String name, String desc, String signature, Object value
+            ) {
+                addUniqueField(name);
+                FieldNode fieldNode = new FieldNode(access, name, desc, signature, value);
+                fieldToAdd.add(fieldNode);
+                return fieldNode;
+            }
+        }, ClassReader.SKIP_FRAMES);
+
+        ParametersBuilder capturedBuilder = ParametersBuilder.newBuilder();
+        extractParametersMappingAndPatchConstructor(constructor, capturedBuilder, invocation);
+
+        InlineResult result = InlineResult.create();
+        for (MethodNode next : methodsToTransform) {
+            MethodVisitor visitor = newMethod(classBuilder, next);
+            InlineResult funResult = inlineMethod(invocation, parentRemapper, visitor, next, capturedBuilder);
+            result.addAllClassesToRemove(funResult);
         }
+
+        generateConstructorAndFields(classBuilder, capturedBuilder, invocation);
 
         classBuilder.done();
 
         invocation.setNewLambdaType(newLambdaType);
+        return result;
+    }
+
+    @NotNull
+    private InlineResult inlineMethod(
+            @NotNull ConstructorInvocation invocation,
+            @NotNull FieldRemapper parentRemapper,
+            @NotNull MethodVisitor resultVisitor,
+            @NotNull MethodNode sourceNode,
+            @NotNull ParametersBuilder capturedBuilder
+    ) {
+
+        Parameters parameters = getMethodParametersWithCaptured(capturedBuilder, sourceNode);
+
+        RegeneratedLambdaFieldRemapper remapper =
+                new RegeneratedLambdaFieldRemapper(oldObjectType.getInternalName(), newLambdaType.getInternalName(),
+                                                   parameters, invocation.getCapturedLambdasToInline(),
+                                                   parentRemapper);
+
+        MethodInliner inliner = new MethodInliner(sourceNode, parameters, inliningContext.subInline(inliningContext.nameGenerator.subGenerator("lambda")),
+                                                  remapper, isSameModule, "Transformer for " + invocation.getOwnerInternalName());
+        InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false);
+        resultVisitor.visitMaxs(-1, -1);
         return result;
     }
 
@@ -174,32 +196,43 @@ public class LambdaTransformer {
         invocation.setNewConstructorDescriptor(newConstructor.getDescriptor());
     }
 
-    private Parameters getLambdaParameters(ParametersBuilder builder, ConstructorInvocation invocation) {
-        buildInvokeParams(builder);
-        extractParametersMapping(constructor, builder, invocation);
+    @NotNull
+    private Parameters getMethodParametersWithCaptured(
+            @NotNull ParametersBuilder capturedBuilder,
+            @NotNull MethodNode sourceNode
+    ) {
+        ParametersBuilder builder = ParametersBuilder.newBuilder();
+        buildInvokeParamsFor(builder, sourceNode);
+        for (CapturedParamInfo param : capturedBuilder.getCapturedParams()) {
+            builder.addCapturedParamCopy(param);
+        }
         return builder.buildParameters();
     }
 
+    @NotNull
     private ClassBuilder createClassBuilder() {
         return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.call.getCallElement().getContainingFile()),
                      new TypeRemapper(inliningContext.typeMapping));
     }
 
-    private static MethodVisitor newMethod(ClassBuilder builder, MethodNode original) {
+    @NotNull
+    private static MethodVisitor newMethod(@NotNull ClassBuilder builder, @NotNull MethodNode original) {
         return builder.newMethod(
                 null,
                 original.access,
                 original.name,
                 original.desc,
                 original.signature,
-                null //TODO: change signature to list
+                original.exceptions.toArray(new String [original.exceptions.size()])
         );
     }
 
-    private void extractParametersMapping(MethodNode constructor, ParametersBuilder builder, final ConstructorInvocation invocation) {
+    private void extractParametersMappingAndPatchConstructor(
+            @NotNull MethodNode constructor,
+            @NotNull ParametersBuilder builder,
+            @NotNull final ConstructorInvocation invocation
+    ) {
         Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
-
-        AbstractInsnNode cur = constructor.instructions.getFirst();
         List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
         CapturedParamOwner owner = new CapturedParamOwner() {
             @Override
@@ -208,21 +241,27 @@ public class LambdaTransformer {
             }
         };
 
+        AbstractInsnNode cur = constructor.instructions.getFirst();
+        //load captured parameters (NB: there is also could be object fields)
         while (cur != null) {
             if (cur.getType() == AbstractInsnNode.FIELD_INSN) {
                 FieldInsnNode fieldNode = (FieldInsnNode) cur;
-                CapturedParamInfo info = builder.addCapturedParam(fieldNode.name, Type.getType(fieldNode.desc), false, null, owner);
+                CapturedParamInfo info = builder.addCapturedParam(owner, fieldNode.name, Type.getType(fieldNode.desc), false, null);
 
-                assert fieldNode.getPrevious() instanceof VarInsnNode : "Previous instruction should be VarInsnNode but was " + fieldNode.getPrevious();
-                VarInsnNode previous = (VarInsnNode) fieldNode.getPrevious();
-                int varIndex = previous.var;
-                LambdaInfo lambdaInfo = indexToLambda.get(varIndex);
-                if (lambdaInfo != null) {
-                    info.setLambda(lambdaInfo);
-                    capturedLambdas.add(lambdaInfo);
+                boolean isPrevVarNode = fieldNode.getPrevious() instanceof VarInsnNode;
+                boolean isPrevPrevVarNode = isPrevVarNode && fieldNode.getPrevious().getPrevious() instanceof VarInsnNode;
+                if (isPrevPrevVarNode) {
+                    VarInsnNode node = (VarInsnNode) fieldNode.getPrevious().getPrevious();
+                    if (node.var == 0) {
+                        VarInsnNode previous = (VarInsnNode) fieldNode.getPrevious();
+                        int varIndex = previous.var;
+                        LambdaInfo lambdaInfo = indexToLambda.get(varIndex);
+                        if (lambdaInfo != null) {
+                            info.setLambda(lambdaInfo);
+                            capturedLambdas.add(lambdaInfo);
+                        }
+                    }
                 }
-
-                addUniqueField(info.getOriginalFieldName());
             }
             cur = cur.getNext();
         }
@@ -234,9 +273,9 @@ public class LambdaTransformer {
         for (LambdaInfo info : capturedLambdas) {
             for (CapturedParamInfo var : info.getCapturedVars()) {
                 CapturedParamInfo recapturedParamInfo = builder.addCapturedParam(var, getNewFieldName(var.getOriginalFieldName()));
-                StackValue composed = StackValue.composed(StackValue.local(0, oldLambdaType),
+                StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
                                                           StackValue.field(var.getType(),
-                                                                           oldLambdaType, /*TODO owner type*/
+                                                                           oldObjectType, /*TODO owner type*/
                                                                            recapturedParamInfo.getNewFieldName(), false)
                 );
                 recapturedParamInfo.setRemapValue(composed);
@@ -247,39 +286,6 @@ public class LambdaTransformer {
 
         invocation.setAllRecapturedParameters(allRecapturedParameters);
         invocation.setCapturedLambdasToInline(capturedLambdasToInline);
-    }
-
-    @Nullable
-    public MethodNode getMethodNode(@NotNull ClassReader reader, final boolean findConstructor, final boolean findBridge) {
-        final MethodNode[] methodNode = new MethodNode[1];
-        reader.accept(new ClassVisitor(InlineCodegenUtil.API) {
-
-            @Override
-            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-                super.visit(version, access, name, signature, superName, interfaces);
-                LambdaTransformer.this.classAccess = access;
-                LambdaTransformer.this.signature = signature;
-                LambdaTransformer.this.superName = superName;
-                LambdaTransformer.this.interfaces = interfaces;
-            }
-
-            @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-                boolean isConstructorMethod = "<init>".equals(name);
-                boolean isBridge = (access & Opcodes.ACC_BRIDGE) != 0;
-                if (findConstructor && isConstructorMethod || (!findConstructor && !isConstructorMethod && (isBridge == findBridge))) {
-                    assert methodNode[0] == null : "Wrong lambda/sam structure: " + methodNode[0].name + " conflicts with " + name;
-                    return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
-                }
-                return null;
-            }
-        }, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-
-        if (methodNode[0] == null && !findBridge) {
-            throw new RuntimeException("Couldn't find operation method of lambda/sam class " + oldLambdaType.getInternalName() + ": findConstructor = " + findConstructor);
-        }
-
-        return methodNode[0];
     }
 
     @NotNull

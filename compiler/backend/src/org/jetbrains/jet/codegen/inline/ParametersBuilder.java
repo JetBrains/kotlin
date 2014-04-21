@@ -59,12 +59,20 @@ public class  ParametersBuilder {
     }
 
     @NotNull
+    public CapturedParamInfo addCapturedParamCopy(
+            @NotNull CapturedParamInfo copyFrom
+    ) {
+        CapturedParamInfo info = copyFrom.newIndex(nextCaptured);
+        return addCapturedParameter(info);
+    }
+
+    @NotNull
     public CapturedParamInfo addCapturedParam(
+            @NotNull CapturedParamOwner containingLambda,
             @NotNull String fieldName,
             @NotNull Type type,
             boolean skipped,
-            @Nullable ParameterInfo original,
-            @NotNull CapturedParamOwner containingLambda
+            @Nullable ParameterInfo original
     ) {
         CapturedParamInfo info =
                 new CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCaptured,
@@ -104,5 +112,9 @@ public class  ParametersBuilder {
 
     public Parameters buildParameters() {
         return new Parameters(buildWithStubs(), buildCapturedWithStubs());
+    }
+
+    public List<CapturedParamInfo> getCapturedParams() {
+        return capturedParams;
     }
 }
