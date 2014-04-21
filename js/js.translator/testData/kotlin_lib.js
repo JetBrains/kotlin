@@ -52,29 +52,18 @@
         if (obj == null) {
             return 0;
         }
-        // TODO: extra branch for array case? We don't have it in JVM.
         if ("function" == typeof obj.hashCode) {
-          return obj.hashCode();
+            return obj.hashCode();
         }
-        if ("object" == typeof obj) {
-          if (!("hashCodeValue" in obj)) {
-            var hash = Math.floor(Math.random() * 4294967296); // 2 ^ 32
-            hash = hash & hash; // Convert to 32bit integer
-            Object.defineProperty(obj, "hashCodeValue", { value:  hash, enumerable: false });
-          }
-          return obj.hashCodeValue;
-        } if ("boolean" == typeof obj) {
-          return Number(obj)
+        var objType = typeof obj;
+        if ("object" == objType || "function" == objType) {
+            return getObjectHashCode(obj);
+        } if ("boolean" == objType) {
+            return Number(obj)
         }
         // String hashcode.
         var str = String(obj);
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            var code  = str.charCodeAt(i);
-            hash  = hash * 31 + code;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        return hash;
+        return getStringHashCode(str);
     };
 
     Kotlin.toString = function (o) {
@@ -124,6 +113,28 @@
             }
             throw new TypeError(message);
         };
+    }
+
+    /** @const */
+    var POW_2_32 = 4294967296;
+    /** @const */
+    var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$";
+
+    function getObjectHashCode(obj) {
+        if (!(OBJECT_HASH_CODE_PROPERTY_NAME in obj)) {
+            var hash = (Math.random() * POW_2_32) | 0; // Make 32-bit singed integer.
+            Object.defineProperty(obj, OBJECT_HASH_CODE_PROPERTY_NAME, { value:  hash, enumerable: false });
+        }
+        return obj[OBJECT_HASH_CODE_PROPERTY_NAME];
+    }
+
+    function getStringHashCode(str) {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            var code  = str.charCodeAt(i);
+            hash  = (hash * 31 + code) | 0; // Keep it 32-bit.
+        }
+        return hash;
     }
 
     /**

@@ -30,14 +30,14 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
 
     @Override
     public void generateComponentFunction(@NotNull FunctionDescriptor function, @NotNull ValueParameterDescriptor parameter) {
-        JsFunction functionObject = generateJsMethod(function, /* isPrototype = */ false);
+        JsFunction functionObject = generateJsMethod(function);
         JsExpression returnExpression = propertyAccessor(JsLiteral.THIS, context.getNameForDescriptor(parameter).toString());
         functionObject.getBody().getStatements().add(new JsReturn(returnExpression));
     }
 
     @Override
     public void generateCopyFunction(@NotNull FunctionDescriptor function, @NotNull List<JetParameter> constructorParameters) {
-        JsFunction functionObj = generateJsMethod(function, /* isPrototype = */ false);
+        JsFunction functionObj = generateJsMethod(function);
         JsScope funScope = functionObj.getScope();
 
         assert function.getValueParameters().size() == constructorParameters.size();
@@ -78,7 +78,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     public void generateToStringMethod(@NotNull List<PropertyDescriptor> classProperties) {
         assert !classProperties.isEmpty();
         FunctionDescriptor prototypeFun = CodegenUtil.getAnyToStringMethod();
-        JsFunction functionObj = generateJsMethod(prototypeFun, /* isPrototype = */ true);
+        JsFunction functionObj = generateJsMethod(prototypeFun);
 
         JsProgram jsProgram = context.program();
         JsExpression result = null;
@@ -102,7 +102,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     @Override
     public void generateHashCodeMethod(@NotNull List<PropertyDescriptor> classProperties) {
         FunctionDescriptor prototypeFun = CodegenUtil.getAnyHashCodeMethod();
-        JsFunction functionObj = generateJsMethod(prototypeFun, /* isPrototype = */ true);
+        JsFunction functionObj = generateJsMethod(prototypeFun);
 
         JsProgram jsProgram = context.program();
         List<JsStatement> statements = functionObj.getBody().getStatements();
@@ -118,12 +118,11 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
             // Should we statically check that we can call hashCode method directly, or it would be an overkill?
             JsExpression component = new JsInvocation(new JsNameRef("hashCode", Namer.KOTLIN_OBJECT_REF),
                                                       propertyAccessor(JsLiteral.THIS, prop.getName().toString()));
-            statements.add(JsAstUtils.assignment(new JsNameRef(varName), JsAstUtils
-                    .sum(JsAstUtils.mul(new JsNameRef(varName), jsProgram.getNumberLiteral(31)), component)).makeStmt());
-            statements.add(JsAstUtils.assignment(new JsNameRef(varName),
-                                                 new JsBinaryOperation(JsBinaryOperator.BIT_AND, new JsNameRef(varName),
-                                                                       new JsNameRef(varName))
-            ).makeStmt());
+            JsExpression newHashValue = JsAstUtils.sum(JsAstUtils.mul(new JsNameRef(varName), jsProgram.getNumberLiteral(31)), component);
+            JsExpression assignment = JsAstUtils.assignment(new JsNameRef(varName),
+                                                            new JsBinaryOperation(JsBinaryOperator.BIT_OR, newHashValue,
+                                                                                  jsProgram.getNumberLiteral(0)));
+            statements.add(assignment.makeStmt());
         }
 
         statements.add(new JsReturn(new JsNameRef(varName)));
@@ -133,7 +132,7 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
     public void generateEqualsMethod(@NotNull List<PropertyDescriptor> classProperties) {
         assert !classProperties.isEmpty();
         FunctionDescriptor prototypeFun = CodegenUtil.getAnyEqualsMethod();
-        JsFunction functionObj = generateJsMethod(prototypeFun, /* isPrototype = */ true);
+        JsFunction functionObj = generateJsMethod(prototypeFun);
         JsScope funScope = functionObj.getScope();
 
         JsName paramName = funScope.declareName("other");
@@ -169,16 +168,10 @@ class JsDataClassGenerator extends DataClassMethodGenerator {
         return new JsNameRef(propertyName, object);
     }
 
-    private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor, boolean isPrototype) {
+    private JsFunction generateJsMethod(@NotNull FunctionDescriptor functionDescriptor) {
         JsName functionName = context.getNameForDescriptor(functionDescriptor);
-        JsFunction functionObject;
-        if (isPrototype) {
-            JsScope enclosingScope = context.scope();
-            functionObject = JsAstUtils.createFunctionWithEmptyBody(enclosingScope);
-        }
-        else {
-            functionObject = context.getFunctionObject(functionDescriptor);
-        }
+        JsScope enclosingScope = context.scope();
+        JsFunction functionObject = JsAstUtils.createFunctionWithEmptyBody(enclosingScope);
         JsPropertyInitializer initializer = new JsPropertyInitializer(functionName.makeRef(), functionObject);
         output.add(initializer);
         return functionObject;

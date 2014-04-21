@@ -13,15 +13,15 @@ fun assertEquals<T>(expected: T, actual: T) {
 fun box(): String {
     val d = D("a", "b")
 
-    assertEquals("#D(start=a, end=b)", "#" + d)
+    assertEquals("D(start=a, end=b)", "${d}")
 
     var hd = Holder(D("y", "n"))
 
-    assertEquals("#Holder(v=D(start=y, end=n))", "#" + hd)
+    assertEquals("Holder(v=D(start=y, end=n))", "${hd}")
 
     var ho = Holder(O("+", "-"))
 
-    assertEquals("#Holder(v=[object Object])", "#" + ho)
+    assertEquals("Holder(v=[object Object])", "${ho}")
 
     return "OK"
 }
