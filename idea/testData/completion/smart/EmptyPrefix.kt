@@ -20,7 +20,9 @@ fun f3() : String{}
 // EXIST: p1
 // EXIST: p2
 // ABSENT: p3
-// ABSENT: p4
+// ABSENT: { lookupString:"p4", itemText:"p4" }
+// EXIST: { lookupString:"p4", itemText:"!! p4" }
+// EXIST: { lookupString:"p4", itemText:"?: p4" }
 // EXIST: f1
 // EXIST: f2
 // ABSENT: f3

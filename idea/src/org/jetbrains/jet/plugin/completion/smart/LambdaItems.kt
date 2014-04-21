@@ -29,7 +29,7 @@ class LambdaItems(val project: Project) {
         val offerNoParametersLambda = singleSignatureLength == 0 || singleSignatureLength == 1
         if (offerNoParametersLambda) {
             val lookupElement = createLookupElement("{...}", "{ ", " }", shortenRefs = false)
-            collection.add(addTailToLookupElement(lookupElement, functionExpectedInfos))
+            collection.add(lookupElement.addTail(functionExpectedInfos))
         }
 
         if (singleSignatureLength != 0) {
@@ -44,7 +44,7 @@ class LambdaItems(val project: Project) {
                 val lookupElement = LookupElementBuilder.create(lookupString)
                         .withInsertHandler(LambdaInsertHandler(functionType, useExplicitTypes))
                         .suppressAutoInsertion()
-                collection.add(addTailToLookupElement(lookupElement, functionExpectedInfos.filter { it.`type` == functionType }))
+                collection.add(lookupElement.addTail(functionExpectedInfos.filter { it.`type` == functionType }))
             }
         }
     }

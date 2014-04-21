@@ -5,17 +5,18 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.lang.psi.JetFile
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import java.util.HashSet
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.WithTailCharInsertHandler
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
+import com.intellij.codeInsight.lookup.LookupElementPresentation
+import org.jetbrains.jet.plugin.completion.handlers.WithTailStringInsertHandler
+import java.util.ArrayList
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -42,28 +43,93 @@ fun mergeTails(tails: Collection<Tail?>): Tail? {
     return if (HashSet(tails).size == 1) tails.first() else null
 }
 
-fun addTailToLookupElement(lookupElement: LookupElement, tail: Tail?): LookupElement {
+fun LookupElement.addTail(tail: Tail?): LookupElement {
     return when (tail) {
-        null -> lookupElement
+        null -> this
 
-        Tail.COMMA -> object: LookupElementDecorator<LookupElement>(lookupElement) {
+        Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler(',', true /*TODO: use code style option*/).handleInsert(context, lookupElement)
+                WithTailCharInsertHandler(',', true /*TODO: use code style option*/).handleInsert(context, getDelegate())
             }
         }
 
-        Tail.PARENTHESIS -> object: LookupElementDecorator<LookupElement>(lookupElement) {
+        Tail.PARENTHESIS -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailInsertHandler(')', false).handleInsert(context, lookupElement)
+                WithTailCharInsertHandler(')', false).handleInsert(context, getDelegate())
             }
         }
     }
 }
 
-fun addTailToLookupElement(lookupElement: LookupElement, matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement
-    = addTailToLookupElement(lookupElement, mergeTails(matchedExpectedInfos.map { it.tail }))
+fun LookupElement.addTail(matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement
+    = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
+
+enum class ExpectedInfoClassification {
+    MATCHES
+    MAKE_NOT_NULLABLE
+    NOT_MATCHES
+}
+
+fun MutableCollection<LookupElement>.addLookupElements(expectedInfos: Collection<ExpectedInfo>,
+                                                       infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+                                                       lookupElementFactory: () -> LookupElement?) {
+    val matchedInfos = ArrayList<ExpectedInfo>()
+    val matchedInfosNotNullable = ArrayList<ExpectedInfo>()
+    for (info in expectedInfos) {
+        when (infoClassifier(info)) {
+            ExpectedInfoClassification.MATCHES -> matchedInfos.add(info)
+            ExpectedInfoClassification.MAKE_NOT_NULLABLE -> matchedInfosNotNullable.add(info)
+        }
+    }
+
+    if (matchedInfos.isNotEmpty()) {
+        val lookupElement = lookupElementFactory()
+        if (lookupElement != null) {
+            add(lookupElement.addTail(matchedInfos))
+        }
+    }
+    else if (matchedInfosNotNullable.isNotEmpty()) {
+        addLookupElementsForNullable(lookupElementFactory, matchedInfosNotNullable)
+    }
+}
+
+fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
+    run {
+        var lookupElement = factory()
+        if (lookupElement != null) {
+            lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    presentation.setItemText("!! " + presentation.getItemText())
+                }
+                override fun handleInsert(context: InsertionContext) {
+                    WithTailStringInsertHandler("!!").handleInsert(context, getDelegate())
+                }
+            }
+            lookupElement = lookupElement!!.suppressAutoInsertion()
+            add(lookupElement!!.addTail(matchedInfos))
+        }
+    }
+
+    run {
+        var lookupElement = factory()
+        if (lookupElement != null) {
+            lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+                override fun renderElement(presentation: LookupElementPresentation) {
+                    super.renderElement(presentation)
+                    presentation.setItemText("?: " + presentation.getItemText())
+                }
+                override fun handleInsert(context: InsertionContext) {
+                    WithTailStringInsertHandler(" ?: ").handleInsert(context, getDelegate()) //TODO: code style
+                }
+            }
+            lookupElement = lookupElement!!.suppressAutoInsertion()
+            add(lookupElement!!.addTail(matchedInfos))
+        }
+    }
+}
 
 fun functionType(function: FunctionDescriptor): JetType? {
     return KotlinBuiltIns.getInstance().getKFunctionType(function.getAnnotations(),

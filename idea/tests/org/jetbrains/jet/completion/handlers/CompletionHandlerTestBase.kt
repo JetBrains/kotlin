@@ -42,20 +42,24 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
     protected override fun setUp() {
         super.setUp()
-        fixture = myFixture!!
+        fixture = myFixture
     }
 
-    protected fun doTest() : Unit = doTest(2, null, null, '\n')
+    protected fun doTest() : Unit = doTest(2, null, null, null, '\n')
 
     protected fun doTest(time : Int, lookupString : String?, tailText : String?, completionChar : Char) {
-        fixture.configureByFile(fileName())
-        doTestWithTextLoaded(time, lookupString, tailText, completionChar)
+        doTest(time, lookupString, null, tailText, completionChar)
     }
 
-    protected fun doTestWithTextLoaded(time : Int, lookupString : String?, tailText : String?, completionChar : Char) {
-        if (lookupString != null || tailText != null) {
+    protected fun doTest(time : Int, lookupString : String?, itemText: String?, tailText : String?, completionChar : Char) {
+        fixture.configureByFile(fileName())
+        doTestWithTextLoaded(time, lookupString, itemText, tailText, completionChar)
+    }
+
+    protected fun doTestWithTextLoaded(time : Int, lookupString : String?, itemText: String?, tailText : String?, completionChar : Char) {
+        if (lookupString != null || itemText != null || tailText != null) {
             fixture.complete(completionType, time)
-            val item = getExistentLookupElement(lookupString, tailText)
+            val item = getExistentLookupElement(lookupString, itemText, tailText)
             if (item != null) {
                 selectItem(item, completionChar)
             }
@@ -70,38 +74,42 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         fixture.checkResultByFile(afterFileName())
     }
 
-    private fun getExistentLookupElement(lookupString : String?, tailText : String?) : LookupElement? {
+    private fun getExistentLookupElement(lookupString : String?, itemText: String?, tailText : String?) : LookupElement? {
         val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl?
         if (lookup == null) return null
 
         var foundElement : LookupElement? = null
         val presentation = LookupElementPresentation()
         for (lookupElement in lookup.getItems()) {
-            val lookupOk : Boolean
-            if (lookupString != null) {
-                lookupOk = lookupElement.getLookupString().contains(lookupString)
-            }
-            else {
-                lookupOk = true
-            }
+            val lookupOk = if (lookupString != null) lookupElement.getLookupString().contains(lookupString) else true
 
             if (lookupOk) {
-                val tailOk : Boolean
-                if (tailText != null) {
-                    lookupElement.renderElement(presentation)
-                    val itemTailText : String? = presentation.getTailText()
-                    tailOk = itemTailText != null && itemTailText.contains(tailText)
+                lookupElement.renderElement(presentation)
+
+                val textOk = if (itemText != null) {
+                    val itemItemText = presentation.getItemText()
+                    itemItemText != null && itemItemText.contains(itemText)
                 }
                 else {
-                    tailOk = true
+                    true
                 }
 
-                if (tailOk) {
-                    if (foundElement != null) {
-                        Assert.fail("Several elements satisfy to completion restrictions")
+                if (textOk) {
+                    val tailOk = if (tailText != null) {
+                        val itemTailText = presentation.getTailText()
+                        itemTailText != null && itemTailText.contains(tailText)
+                    }
+                    else {
+                        true
                     }
 
-                    foundElement = lookupElement
+                    if (tailOk) {
+                        if (foundElement != null) {
+                            Assert.fail("Several elements satisfy to completion restrictions")
+                        }
+
+                        foundElement = lookupElement
+                    }
                 }
             }
         }

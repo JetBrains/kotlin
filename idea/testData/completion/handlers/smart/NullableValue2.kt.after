@@ -1,0 +1,9 @@
+fun foo(s: String){ }
+
+fun getString(i: Int): String?{}
+
+fun bar() {
+    foo(getString(<caret>) ?: )
+}
+
+// ELEMENT_TEXT: "?: getString(i: Int)"

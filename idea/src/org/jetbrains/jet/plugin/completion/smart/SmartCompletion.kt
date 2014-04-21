@@ -55,13 +55,16 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         for (descriptor in referenceVariants) {
             if (itemsToSkip.contains(descriptor)) continue
 
-            val matchedExpectedInfos = expectedInfos.filter { expectedInfo ->
-                typesWithAutoCasts(descriptor).any { it.isSubtypeOf(expectedInfo.`type`) }
+            val types = typesWithAutoCasts(descriptor)
+            val nonNullTypes = types.map { TypeUtils.makeNotNullable(it) }
+            val classifier = { (expectedInfo: ExpectedInfo) ->
+                when {
+                    types.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MATCHES
+                    nonNullTypes.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                    else -> ExpectedInfoClassification.NOT_MATCHES
+                }
             }
-            if (matchedExpectedInfos.isNotEmpty()) {
-                val lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
-                result.add(addTailToLookupElement(lookupElement, matchedExpectedInfos))
-            }
+            result.addLookupElements(expectedInfos, classifier, { DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor) })
 
             if (receiver == null) {
                 toFunctionReferenceLookupElement(descriptor, functionExpectedInfos)?.let { result.add(it) }
@@ -129,7 +132,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
                 }
             }
 
-            return addTailToLookupElement(lookupElement, matchedExpectedInfos)
+            return lookupElement.addTail(matchedExpectedInfos)
         }
 
         if (descriptor is SimpleFunctionDescriptor) {

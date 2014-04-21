@@ -246,6 +246,21 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/MergeTail4.kt");
     }
     
+    @TestMetadata("NullableValue1.kt")
+    public void testNullableValue1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/NullableValue1.kt");
+    }
+    
+    @TestMetadata("NullableValue2.kt")
+    public void testNullableValue2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/NullableValue2.kt");
+    }
+    
+    @TestMetadata("NullableValue3.kt")
+    public void testNullableValue3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/NullableValue3.kt");
+    }
+    
     @TestMetadata("TabReplaceComma1.kt")
     public void testTabReplaceComma1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/TabReplaceComma1.kt");

@@ -37,6 +37,7 @@ import org.jetbrains.jet.InTextDirectivesUtils
 abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase() {
     private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
     private val LOOKUP_STRING_PREFIX = "ELEMENT:"
+    private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
 
@@ -49,6 +50,7 @@ abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase(
         val fileText = fixture.getFile()!!.getText()
         val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
         val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
+        val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
         val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
         val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
         val completionChar = when(completionCharString) {
@@ -56,6 +58,6 @@ abstract class AbstractSmartCompletionHandlerTest() : CompletionHandlerTestBase(
             "\\t" -> '\t'
             else -> error("Uknown completion char")
         }
-        doTestWithTextLoaded(invocationCount, lookupString, tailText, completionChar)
+        doTestWithTextLoaded(invocationCount, lookupString, itemText, tailText, completionChar)
     }
 }

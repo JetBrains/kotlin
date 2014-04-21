@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
+import java.util.ArrayList
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -45,15 +46,27 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
 
-            val matchedExpectedInfos = expectedInfos.filter {
-                expectedInfo ->
-                  descriptor is CallableDescriptor && descriptor.getReturnType()?.let { it.isSubtypeOf(expectedInfo.`type`) } ?: false
-                    || DescriptorUtils.isEnumEntry(descriptor) /* we do not need to check type of enum entry because it's taken from proper enum */
+            val classifier: (ExpectedInfo) -> ExpectedInfoClassification
+            if (descriptor is CallableDescriptor) {
+                val returnType = descriptor.getReturnType()
+                if (returnType == null) return
+                classifier = {
+                    expectedInfo ->
+                        when {
+                            returnType.isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MATCHES
+                            returnType.isNullable() && TypeUtils.makeNotNullable(returnType).isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                            else -> ExpectedInfoClassification.NOT_MATCHES
+                        }
+                }
             }
-            if (matchedExpectedInfos.isEmpty()) return
+            else if (DescriptorUtils.isEnumEntry(descriptor)) {
+                classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
+            }
+            else{
+                return
+            }
 
-            val lookupElement = createLookupElement(descriptor, classDescriptor)
-            collection.add(addTailToLookupElement(lookupElement, matchedExpectedInfos))
+            collection.addLookupElements(expectedInfos, classifier, { createLookupElement(descriptor, classDescriptor) })
         }
 
         if (classDescriptor is JavaClassDescriptor) {

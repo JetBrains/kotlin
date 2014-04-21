@@ -101,6 +101,6 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
             }
         }
 
-        collection.add(addTailToLookupElement(lookupElement, tail))
+        collection.add(lookupElement.addTail(tail))
     }
 }
