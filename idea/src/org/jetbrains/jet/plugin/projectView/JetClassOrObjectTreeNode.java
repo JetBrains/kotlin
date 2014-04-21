@@ -59,7 +59,7 @@ public class JetClassOrObjectTreeNode extends AbstractPsiBasedNode<JetClassOrObj
             data.setPresentableText(classOrObject.getName());
 
             AbstractTreeNode parent = getParent();
-            if (JetIconProvider.getMainClass((JetFile) classOrObject.getContainingFile()) != null) {
+            if (JetIconProvider.getMainClass(classOrObject.getContainingJetFile()) != null) {
                 if (parent instanceof JetFileTreeNode) {
                     update(parent.getParent());
                 }

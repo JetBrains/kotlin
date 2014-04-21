@@ -32,7 +32,7 @@ import java.util.List;
 public class KotlinMoveFilesOrDirectoriesHandler extends MoveFilesOrDirectoriesHandler {
     public static boolean isMovableClass(JetClassOrObject clazz) {
         if (!(clazz.getParent() instanceof JetFile)) return false;
-        JetFile file = (JetFile) clazz.getContainingFile();
+        JetFile file = clazz.getContainingJetFile();
         List<JetDeclaration> declarations = file.getDeclarations();
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetClassOrObject && declaration != clazz) return false;

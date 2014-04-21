@@ -66,7 +66,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
 
     @Nullable
     public static KotlinLightClassForExplicitDeclaration create(@NotNull PsiManager manager, @NotNull JetClassOrObject classOrObject) {
-        if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
+        if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
             return null;
         }
 
@@ -288,7 +288,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                 @NotNull
                 @Override
                 public String getPackageName() {
-                    return ((JetFile) classOrObject.getContainingFile()).getPackageFqName().asString();
+                    return classOrObject.getContainingJetFile().getPackageFqName().asString();
                 }
 
                 @NotNull

@@ -177,7 +177,7 @@ public class LazyImportScope implements JetScope, LazyEntity {
 
             ImportResolveStatus status = importedScopesProvider.invoke(importDirective).importResolveStatus;
             if (status != null && !status.descriptors.isEmpty()) {
-                JetScope fileScope = resolveSession.getScopeProvider().getFileScope((JetFile) importDirective.getContainingFile());
+                JetScope fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile());
                 ImportsResolver.reportUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve);
             }
         }

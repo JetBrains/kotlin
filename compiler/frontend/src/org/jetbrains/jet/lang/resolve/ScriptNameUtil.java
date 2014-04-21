@@ -30,7 +30,7 @@ public class ScriptNameUtil {
 
     @NotNull
     public static FqName classNameForScript(JetScript script) {
-        JetFile file = (JetFile) script.getContainingFile();
+        JetFile file = script.getContainingJetFile();
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         String name = file.getName();

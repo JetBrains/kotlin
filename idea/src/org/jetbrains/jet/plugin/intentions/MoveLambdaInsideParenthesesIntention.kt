@@ -44,7 +44,7 @@ public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<Je
             }
         }
         if (element.getValueArguments().any { it?.getArgumentName() != null}) {
-            val context = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingFile() as JetFile).getBindingContext()
+            val context = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext()
             val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
             val literalName = resolvedCall?.getResultingDescriptor()?.getValueParameters()?.last?.getName().toString()
             sb.append("$literalName = ")

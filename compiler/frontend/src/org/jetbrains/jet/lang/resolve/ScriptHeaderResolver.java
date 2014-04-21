@@ -64,7 +64,7 @@ public class ScriptHeaderResolver {
 
 
     public void processScriptHierarchy(@NotNull TopDownAnalysisContext c, @NotNull JetScript script, @NotNull WritableScope outerScope) {
-        JetFile file = (JetFile) script.getContainingFile();
+        JetFile file = script.getContainingJetFile();
         FqName fqName = file.getPackageFqName();
         PackageFragmentDescriptor ns = packageFragmentProvider.getOrCreateFragment(fqName);
 

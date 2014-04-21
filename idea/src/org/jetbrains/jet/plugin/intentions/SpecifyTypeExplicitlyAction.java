@@ -140,7 +140,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
 
     private static boolean hasPublicMemberDiagnostic(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(declaration.getContainingJetFile()).getBindingContext();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             //noinspection ConstantConditions
             if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
@@ -152,7 +152,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @NotNull
     public static JetType getTypeForDeclaration(@NotNull JetNamedDeclaration declaration) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) declaration.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(declaration.getContainingJetFile()).getBindingContext();
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         JetType type;

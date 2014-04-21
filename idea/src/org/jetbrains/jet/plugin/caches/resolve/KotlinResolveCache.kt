@@ -63,7 +63,7 @@ class KotlinResolveCache(
 
                 try {
                     for (element in task!!.elements) {
-                        val file = element.getContainingFile() as JetFile
+                        val file = element.getContainingJetFile()
                         val virtualFile = file.getVirtualFile()
                         if (LightClassUtil.belongsToKotlinBuiltIns(file)
                             || virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, file.getProject()) != null) {

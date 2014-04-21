@@ -344,7 +344,7 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     public void generateClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        JetFile file = (JetFile) classOrObject.getContainingFile();
+        JetFile file = classOrObject.getContainingJetFile();
         Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);

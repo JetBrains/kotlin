@@ -109,7 +109,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) entry.getContainingFile()).getBindingContext();
+                BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(entry.getContainingJetFile()).getBindingContext();
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
@@ -130,7 +130,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
                 JetProperty property = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);
                 if (property != null) {
-                    BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) property.getContainingFile()).getBindingContext();
+                    BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache(property.getContainingJetFile()).getBindingContext();
                     JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
 
                     DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);

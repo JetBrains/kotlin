@@ -20,6 +20,7 @@ import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
@@ -50,6 +51,14 @@ public class JetElementImpl extends ASTWrapperPsiElement implements JetElement {
         else {
             visitor.visitElement(this);
         }
+    }
+
+    @NotNull
+    @Override
+    public JetFile getContainingJetFile() {
+        PsiFile file = getContainingFile();
+        assert file instanceof JetFile : "JetElement not inside JetFile: " + file + " " + file.getText();
+        return (JetFile) file;
     }
 
     @Override

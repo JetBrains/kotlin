@@ -254,7 +254,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<JetExpression> inlinedExpressions) {
-        JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
+        JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
         ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
@@ -314,7 +314,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     }
 
     private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<JetExpression> inlinedExpressions) {
-        JetFile containingFile = (JetFile) inlinedExpressions.get(0).getContainingFile();
+        JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
         ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);

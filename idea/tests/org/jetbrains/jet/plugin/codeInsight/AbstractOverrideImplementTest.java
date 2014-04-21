@@ -122,7 +122,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
-        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
+        final JetFile jetFile = classOrObject.getContainingJetFile();
         final ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(jetFile);
         Set<CallableMemberDescriptor> descriptors =
                 handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
@@ -177,7 +177,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         final JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, JetClassOrObject.class);
         assertNotNull("Caret should be inside class or object", classOrObject);
 
-        final JetFile jetFile = (JetFile) classOrObject.getContainingFile();
+        final JetFile jetFile = classOrObject.getContainingJetFile();
         final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement(classOrObject);
         Set<CallableMemberDescriptor> descriptors = handler.collectMethodsToGenerate(classOrObject, bindingContext);
 

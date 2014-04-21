@@ -321,7 +321,7 @@ public class JetPsiUtil {
 
     public static void deleteClass(@NotNull JetClassOrObject clazz) {
         CheckUtil.checkWritable(clazz);
-        JetFile file = (JetFile) clazz.getContainingFile();
+        JetFile file = clazz.getContainingJetFile();
         if (isLocal(clazz) || file.getDeclarations().size() > 1) {
             PsiElement parent = clazz.getParent();
             CodeEditUtil.removeChild(parent.getNode(), clazz.getNode());
@@ -912,7 +912,7 @@ public class JetPsiUtil {
 
     @Nullable
     public static String getPackageName(@NotNull JetElement element) {
-        JetFile file = (JetFile) element.getContainingFile();
+        JetFile file = element.getContainingJetFile();
         JetPackageDirective header = PsiTreeUtil.findChildOfType(file, JetPackageDirective.class);
 
         return header != null ? header.getQualifiedName() : null;

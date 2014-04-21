@@ -44,7 +44,7 @@ public class JetPsiHeuristicsUtil {
             if (isTopLevelDeclaration(classOrObject) && classOrObject.hasModifier(JetTokens.PRIVATE_KEYWORD)) {
                 // The class is declared private in the targetPackage
                 // It is visible in this package and all of its subpackages
-                JetFile targetFile = (JetFile) classOrObject.getContainingFile();
+                JetFile targetFile = classOrObject.getContainingJetFile();
                 FqName targetPackage = targetFile.getPackageFqName();
                 FqName fromPackage = fromFile.getPackageFqName();
 

@@ -1960,7 +1960,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                               KotlinSyntheticClass.Kind.SAM_LAMBDA);
         }
 
-        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samInterface, (JetFile) expression.getContainingFile());
+        Type asmType = state.getSamWrapperClasses().getSamWrapperClass(samInterface, expression.getContainingJetFile());
 
         v.anew(asmType);
         v.dup();

@@ -28,13 +28,13 @@ public class KotlinCacheManagerUtil {
 
     @NotNull
     public static KotlinDeclarationsCache getDeclarationsFromProject(@NotNull JetElement element) {
-        JetFile jetFile = (JetFile) element.getContainingFile();
+        JetFile jetFile = element.getContainingJetFile();
         return KotlinCacheManager.getInstance(jetFile.getProject()).getDeclarationsFromProject(TargetPlatformDetector.getPlatform(jetFile));
     }
 
     @NotNull
     public static BindingContext getDeclarationsBindingContext(@NotNull JetElement element) {
-        JetFile jetFile = (JetFile) element.getContainingFile();
+        JetFile jetFile = element.getContainingJetFile();
         KotlinDeclarationsCache declarationsCache = KotlinCacheManager.getInstance(jetFile.getProject())
                 .getDeclarationsFromProject(TargetPlatformDetector.getPlatform(jetFile));
         return declarationsCache.getBindingContext();

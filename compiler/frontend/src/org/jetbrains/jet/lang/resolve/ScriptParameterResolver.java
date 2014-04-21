@@ -54,7 +54,7 @@ public class ScriptParameterResolver {
     ) {
         List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
 
-        JetFile file = (JetFile) declaration.getContainingFile();
+        JetFile file = declaration.getContainingJetFile();
         JetScriptDefinition scriptDefinition = JetScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
 
         int index = 0;

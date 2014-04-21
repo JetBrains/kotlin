@@ -25,7 +25,7 @@ public object ShortenReferences {
     }
 
     public fun process(elements: Iterable<JetElement>) {
-        for ((file, fileElements) in elements.groupBy { element -> element.getContainingFile() as JetFile }) {
+        for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
             // first resolve all qualified references - optimization
             val referenceToContext = JetFileReferencesResolver.resolve(file, fileElements, visitShortNames = false)
 

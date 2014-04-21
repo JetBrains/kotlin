@@ -105,7 +105,7 @@ public class JetSourceNavigationHelper {
 
     @NotNull
     private static GlobalSearchScope createLibrarySourcesScope(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        JetFile containingFile = (JetFile) decompiledDeclaration.getContainingFile();
+        JetFile containingFile = decompiledDeclaration.getContainingJetFile();
         VirtualFile libraryFile = containingFile.getVirtualFile();
         if (libraryFile == null) {
             return GlobalSearchScope.EMPTY_SCOPE;
@@ -348,7 +348,7 @@ public class JetSourceNavigationHelper {
 
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull JetClassOrObject classOrObject) {
-        if (LightClassUtil.belongsToKotlinBuiltIns((JetFile) classOrObject.getContainingFile())) {
+        if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingJetFile())) {
             Name className = classOrObject.getNameAsName();
             assert className != null : "Class from BuiltIns should have a name";
             ClassDescriptor classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByName(className);
@@ -374,7 +374,7 @@ public class JetSourceNavigationHelper {
         }
         String fqName = JvmClassName.byInternalName(internalName).getFqNameForClassNameWithoutDollars().asString();
 
-        JetFile file = (JetFile) classOrObject.getContainingFile();
+        JetFile file = classOrObject.getContainingJetFile();
 
         VirtualFile vFile = file.getVirtualFile();
         Project project = file.getProject();

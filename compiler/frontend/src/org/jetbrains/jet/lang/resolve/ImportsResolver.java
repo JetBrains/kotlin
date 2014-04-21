@@ -82,7 +82,7 @@ public class ImportsResolver {
         // SCRIPT: process script import directives
         for (JetScript script : c.getScripts().keySet()) {
             WritableScope scriptScope = ((ScriptDescriptorImpl) c.getScripts().get(script)).getScopeForBodyResolution();
-            processImportsInFile(lookupMode, scriptScope, ((JetFile) script.getContainingFile()).getImportDirectives(), true);
+            processImportsInFile(lookupMode, scriptScope, script.getContainingJetFile().getImportDirectives(), true);
         }
     }
 

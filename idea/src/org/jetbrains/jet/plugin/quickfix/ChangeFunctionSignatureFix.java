@@ -164,7 +164,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                         (DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>>) diagnostic;
                 JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
                 BindingContext bindingContext =
-                        AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) functionLiteral.getContainingFile()).getBindingContext();
+                        AnalyzerFacadeWithCache.analyzeFileWithCache(functionLiteral.getContainingJetFile()).getBindingContext();
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, functionLiteral);
 
                 if (descriptor instanceof FunctionDescriptor) {

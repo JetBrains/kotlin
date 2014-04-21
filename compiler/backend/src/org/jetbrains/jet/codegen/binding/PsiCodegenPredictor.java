@@ -80,7 +80,7 @@ public final class PsiCodegenPredictor {
             }
         }
         else {
-            FqName packageFqName = ((JetFile) declaration.getContainingFile()).getPackageFqName();
+            FqName packageFqName = declaration.getContainingJetFile().getPackageFqName();
 
             if (declaration instanceof JetNamedFunction) {
                 JvmClassName packageClass = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(packageFqName));

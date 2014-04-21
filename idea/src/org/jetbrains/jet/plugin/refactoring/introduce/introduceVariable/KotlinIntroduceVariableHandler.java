@@ -118,7 +118,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             }
         }
         ResolveSessionForBodies resolveSession =
-                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) expression.getContainingFile());
+                AnalyzerFacadeWithCache.getLazyResolveSessionForFile(expression.getContainingJetFile());
         BindingContext bindingContext = resolveSession.resolveToElement(expression);
         final JetType expressionType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expression); //can be null or error type
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);

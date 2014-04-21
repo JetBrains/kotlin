@@ -72,7 +72,7 @@ public class JetPackagesContributor extends CompletionContributor {
                                result = result.withPrefixMatcher(new PlainPrefixMatcher(name.substring(0, prefixLength)));
 
                                ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache
-                                       .getLazyResolveSessionForFile((JetFile) simpleNameReference.getExpression().getContainingFile());
+                                       .getLazyResolveSessionForFile(simpleNameReference.getExpression().getContainingJetFile());
                                BindingContext bindingContext = resolveSession.resolveToElement(simpleNameReference.getExpression());
 
                                for (LookupElement variant : DescriptorLookupConverter.collectLookupElements(

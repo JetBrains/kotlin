@@ -128,7 +128,7 @@ public class ResolveElementCache {
         BindingTrace trace = resolveSession.getStorageManager().createSafeTrace(
                 new DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement));
 
-        JetFile file = (JetFile) resolveElement.getContainingFile();
+        JetFile file = resolveElement.getContainingJetFile();
 
         if (resolveElement instanceof JetNamedFunction) {
             functionAdditionalResolve(resolveSession, (JetNamedFunction) resolveElement, trace, file);
@@ -144,7 +144,7 @@ public class ResolveElementCache {
         }
         else if (resolveElement instanceof JetImportDirective) {
             JetImportDirective importDirective = (JetImportDirective) resolveElement;
-            LazyImportScope scope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile((JetFile) importDirective.getContainingFile());
+            LazyImportScope scope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(importDirective.getContainingJetFile());
             scope.forceResolveAllContents();
         }
         else if (resolveElement instanceof JetAnnotationEntry) {
@@ -346,7 +346,7 @@ public class ResolveElementCache {
         ScopeProvider provider = resolveSession.getScopeProvider();
         JetDeclaration parentDeclaration = PsiTreeUtil.getParentOfType(expression, JetDeclaration.class);
         if (parentDeclaration == null) {
-            return provider.getFileScope((JetFile) expression.getContainingFile());
+            return provider.getFileScope(expression.getContainingJetFile());
         }
         return provider.getResolutionScopeForDeclaration(parentDeclaration);
     }
@@ -380,7 +380,7 @@ public class ResolveElementCache {
 
                 if (expression.getParent() instanceof JetDotQualifiedExpression) {
                     JetExpression element = ((JetDotQualifiedExpression) expression.getParent()).getReceiverExpression();
-                    FqName fqName = ((JetFile) expression.getContainingFile()).getPackageFqName();
+                    FqName fqName = expression.getContainingJetFile().getPackageFqName();
 
                     PackageViewDescriptor filePackage = resolveSession.getModuleDescriptor().getPackage(fqName);
                     assert filePackage != null : "File package should be already resolved and be found";

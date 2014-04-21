@@ -124,7 +124,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                 JetPsiUtil.isLocal(classOrObject),
                 new StubGenerationStrategy<OutermostKotlinClassLightClassData>() {
                     private JetFile getFile() {
-                        return (JetFile) classOrObject.getContainingFile();
+                        return classOrObject.getContainingJetFile();
                     }
 
                     @NotNull

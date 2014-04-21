@@ -53,7 +53,7 @@ public final class AnalyzerFacadeWithCache {
 
     @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        ResolveSessionForBodies resolveSessionForBodies = getLazyResolveSessionForFile((JetFile) jetElement.getContainingFile());
+        ResolveSessionForBodies resolveSessionForBodies = getLazyResolveSessionForFile(jetElement.getContainingJetFile());
         return resolveSessionForBodies.resolveToElement(jetElement);
     }
 

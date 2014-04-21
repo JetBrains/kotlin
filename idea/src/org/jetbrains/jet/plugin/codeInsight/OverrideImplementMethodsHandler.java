@@ -94,7 +94,7 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         }
 
         List<JetElement> elementsToCompact = new ArrayList<JetElement>();
-        JetFile file = (JetFile) classOrObject.getContainingFile();
+        JetFile file = classOrObject.getContainingJetFile();
         for (JetElement element : generateOverridingMembers(selectedElements, file)) {
             PsiElement added = body.addAfter(element, afterAnchor);
             afterAnchor = added;

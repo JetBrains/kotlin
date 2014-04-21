@@ -50,7 +50,7 @@ public class RenameJetClassProcessor extends RenamePsiElementProcessor {
         JetClassOrObject classOrObject = getJetClassOrObject(element, false, null);
 
         if (classOrObject != null) {
-            JetFile file = (JetFile) classOrObject.getContainingFile();
+            JetFile file = classOrObject.getContainingJetFile();
 
             VirtualFile virtualFile = file.getVirtualFile();
             if (virtualFile != null) {

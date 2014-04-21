@@ -160,6 +160,12 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         }
     }
 
+    @NotNull
+    @Override
+    public JetFile getContainingJetFile() {
+        return this;
+    }
+
     @Override
     public <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data) {
         JetPsiUtil.visitChildren(this, visitor, data);

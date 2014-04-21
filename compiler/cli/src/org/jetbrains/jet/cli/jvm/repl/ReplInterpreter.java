@@ -368,8 +368,8 @@ public class ReplInterpreter {
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(
                 state,
-                ((JetFile) script.getContainingFile()).getPackageFqName(),
-                Collections.singleton((JetFile) script.getContainingFile()),
+                script.getContainingJetFile().getPackageFqName(),
+                Collections.singleton(script.getContainingJetFile()),
                 errorHandler);
     }
 

@@ -4,7 +4,7 @@ class A {
     private fun formatElement(var element: PsiElement): String {
         element = JetPsiUtil.ascendIfPropertyAccessor(element)
         if (element is JetNamedFunction || element is JetProperty) {
-            val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((element.getContainingFile() as JetFile)).getBindingContext()
+            val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext()
 
             val declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
             if (declarationDescriptor is CallableMemberDescriptor) {

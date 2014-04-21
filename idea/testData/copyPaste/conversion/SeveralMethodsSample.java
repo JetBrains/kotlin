@@ -3,7 +3,7 @@ class A {
         element = JetPsiUtil.ascendIfPropertyAccessor(element);
         if (element instanceof JetNamedFunction || element instanceof JetProperty) {
             BindingContext bindingContext =
-                    AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) element.getContainingFile()).getBindingContext();
+                    AnalyzerFacadeWithCache.analyzeFileWithCache(element.getContainingJetFile()).getBindingContext();
 
             DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             if (declarationDescriptor instanceof CallableMemberDescriptor) {

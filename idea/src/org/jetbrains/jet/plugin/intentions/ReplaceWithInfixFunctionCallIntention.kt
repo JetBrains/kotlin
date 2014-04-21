@@ -61,7 +61,7 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
                 numOfTotalValueArguments == 1 &&
                 callee != null) {
                 if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
-                    val file: JetFile = element.getContainingFile() as JetFile
+                    val file: JetFile = element.getContainingJetFile()
                     val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext()
                     val descriptor = bindingContext.get(BindingContext.RESOLVED_CALL, callee)
                     val valueArgumentsMap = descriptor?.getValueArguments()

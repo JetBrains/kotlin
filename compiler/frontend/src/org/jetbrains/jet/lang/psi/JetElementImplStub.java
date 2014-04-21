@@ -21,6 +21,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.lang.Language;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
@@ -56,6 +57,14 @@ public class JetElementImplStub<T extends StubElement> extends StubBasedPsiEleme
         else {
             visitor.visitElement(this);
         }
+    }
+
+    @NotNull
+    @Override
+    public JetFile getContainingJetFile() {
+        PsiFile file = getContainingFile();
+        assert file instanceof JetFile : "JetElement not inside JetFile: " + file + " " + file.getText();
+        return (JetFile) file;
     }
 
     @Override

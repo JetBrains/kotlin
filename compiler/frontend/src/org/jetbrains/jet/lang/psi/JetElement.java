@@ -20,6 +20,9 @@ import com.intellij.psi.NavigatablePsiElement;
 import org.jetbrains.annotations.NotNull;
 
 public interface JetElement extends NavigatablePsiElement {
+    @NotNull
+    JetFile getContainingJetFile();
+
     <D> void acceptChildren(@NotNull JetTreeVisitor<D> visitor, D data);
 
     <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);

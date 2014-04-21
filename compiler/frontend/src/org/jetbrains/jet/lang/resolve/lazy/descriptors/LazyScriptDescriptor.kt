@@ -58,7 +58,7 @@ public class LazyScriptDescriptor(
         val jetScript: JetScript,
         val _priority: Int
 ) : ScriptDescriptor, LazyEntity, DeclarationDescriptorNonRootImpl(
-        (jetScript.getContainingFile() as JetFile).getPackageFqName().let {
+        jetScript.getContainingJetFile().getPackageFqName().let {
             fqName ->
             resolveSession.getPackageFragment(fqName).sure("Package not found $fqName")
         },
@@ -102,7 +102,7 @@ public class LazyScriptDescriptor(
         return ChainedScope(
                 this,
                 "Scope for body resolution for " + this,
-                resolveSession.getScopeProvider().getFileScope(jetScript.getContainingFile() as JetFile),
+                resolveSession.getScopeProvider().getFileScope(jetScript.getContainingJetFile()),
                 parametersScope
         )
     }

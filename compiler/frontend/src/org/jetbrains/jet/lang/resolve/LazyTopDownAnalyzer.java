@@ -236,7 +236,7 @@ public class LazyTopDownAnalyzer {
         }
 
         for (JetScript script : c.getScripts().keySet()) {
-            resolveAndCheckImports((JetFile) script.getContainingFile(), resolveSession);
+            resolveAndCheckImports(script.getContainingJetFile(), resolveSession);
         }
     }
 
