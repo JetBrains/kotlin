@@ -56,6 +56,12 @@ public class InlineCodegenUtil {
     public static final String INVOKE = "invoke";
     public static final boolean DEFAULT_INLINE_FLAG = true;
 
+    public static final String CAPTURED_FIELD_PREFIX = "$";
+
+    public static final String THIS$0 = "this$0";
+
+    public static final String RECEIVER$0 = "receiver$0";
+
     @Nullable
     public static MethodNode getMethodNode(
             InputStream classData,
@@ -258,5 +264,9 @@ public class InlineCodegenUtil {
         }
 
         return true;
+    }
+
+    public static boolean isCapturedFieldName(@NotNull String fieldName) {
+        return fieldName.startsWith(CAPTURED_FIELD_PREFIX) || THIS$0.equals(fieldName) || RECEIVER$0.equals(fieldName);
     }
 }

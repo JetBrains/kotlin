@@ -41,8 +41,10 @@ public class FieldRemapper {
         params = methodParams;
     }
 
-    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
-        return fieldOwner.equals(getLambdaInternalName());
+    protected boolean canProcess(@NotNull String fieldOwner, String fieldName, boolean isFolding) {
+        return fieldOwner.equals(getLambdaInternalName()) &&
+               //don't process general field of anonymous objects
+               InlineCodegenUtil.isCapturedFieldName(fieldName);
     }
 
     @Nullable
@@ -73,7 +75,7 @@ public class FieldRemapper {
         if (transformed == null) {
             //if parent couldn't transform
             FieldInsnNode insnNode = (FieldInsnNode) capturedFieldAccess.get(currentInstruction);
-            if (canProcess(insnNode.owner, true)) {
+            if (canProcess(insnNode.owner, insnNode.name, true)) {
                 insnNode.name = "$$$" + insnNode.name;
                 insnNode.setOpcode(Opcodes.GETSTATIC);
 

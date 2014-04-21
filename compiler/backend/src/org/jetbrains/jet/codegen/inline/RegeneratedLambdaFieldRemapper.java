@@ -51,8 +51,8 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     }
 
     @Override
-    public boolean canProcess(@NotNull String fieldOwner, boolean isFolding) {
-        return super.canProcess(fieldOwner, isFolding) || isRecapturedLambdaType(fieldOwner);
+    public boolean canProcess(@NotNull String fieldOwner, String fieldName, boolean isFolding) {
+        return super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner);
     }
 
     private boolean isRecapturedLambdaType(String owner) {
@@ -62,7 +62,7 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
     @Nullable
     @Override
     public CapturedParamInfo findField(@NotNull FieldInsnNode fieldInsnNode, @NotNull Collection<CapturedParamInfo> captured) {
-        boolean searchInParent = !canProcess(fieldInsnNode.owner, false);
+        boolean searchInParent = !canProcess(fieldInsnNode.owner, fieldInsnNode.name, false);
         if (searchInParent) {
             return parent.findField(fieldInsnNode);
         } else {
@@ -87,7 +87,7 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
             field = findFieldInMyCaptured(new FieldInsnNode(Opcodes.GETSTATIC, oldOwnerType, "this$0", Type.getObjectType(parent.getLambdaInternalName()).getDescriptor()));
             searchInParent = true;
             if (field == null) {
-                throw new IllegalStateException("Could find captured this " + getLambdaInternalName());
+                throw new IllegalStateException("Couldn't find captured this " + getLambdaInternalName() + " for " + node.name);
             }
         }
 

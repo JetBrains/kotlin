@@ -244,7 +244,7 @@ public class LambdaTransformer {
         AbstractInsnNode cur = constructor.instructions.getFirst();
         //load captured parameters (NB: there is also could be object fields)
         while (cur != null) {
-            if (cur.getType() == AbstractInsnNode.FIELD_INSN) {
+            if (cur instanceof FieldInsnNode && cur.getOpcode() == Opcodes.PUTFIELD && InlineCodegenUtil.isCapturedFieldName(((FieldInsnNode) cur).name)) {
                 FieldInsnNode fieldNode = (FieldInsnNode) cur;
                 CapturedParamInfo info = builder.addCapturedParam(owner, fieldNode.name, Type.getType(fieldNode.desc), false, null);
 
@@ -290,7 +290,7 @@ public class LambdaTransformer {
 
     @NotNull
     public String getNewFieldName(@NotNull String oldName) {
-        if (oldName.equals("this$0")) {
+        if (InlineCodegenUtil.THIS$0.equals(oldName)) {
             //"this$0" couldn't clash and we should keep this name invariant for further transformations
             return oldName;
         }
