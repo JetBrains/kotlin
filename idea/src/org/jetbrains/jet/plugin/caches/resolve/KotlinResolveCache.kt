@@ -264,8 +264,11 @@ private class KotlinResolveCache(
     }, false)
 
     private fun getAnalysisResults(task: Task): AnalyzeExhaust {
-        return synchronized(analysisResults) {
-            analysisResults.getValue()!![task]
+        val slruCache = synchronized(analysisResults) {
+            analysisResults.getValue()!!
+        }
+        return synchronized(slruCache) {
+            slruCache[task]
         }
     }
 
