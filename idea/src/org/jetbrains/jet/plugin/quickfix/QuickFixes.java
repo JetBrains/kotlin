@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,15 +250,19 @@ public class QuickFixes {
 
         factories.put(MANY_CLASSES_IN_SUPERTYPE_LIST, RemoveSupertypeFix.createFactory());
 
-        factories.put(NO_GET_METHOD, CreateFunctionFromUsageFix.createCreateGetFunctionFromUsageFactory());
-        factories.put(NO_SET_METHOD, CreateFunctionFromUsageFix.createCreateSetFunctionFromUsageFactory());
-        JetSingleIntentionActionFactory createHasNextFromUsageFactory = CreateFunctionFromUsageFix.createCreateHasNextFunctionFromUsageFactory();
+        JetSingleIntentionActionFactory createUnresolvedFunctionFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateUnresolvedFunctionFromUsageFactory();
+        factories.put(UNRESOLVED_REFERENCE, createUnresolvedFunctionFromUsageFactory);
+        factories.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, createUnresolvedFunctionFromUsageFactory);
+
+        factories.put(NO_GET_METHOD, CreateFunctionFromUsageFix.object$.createCreateGetFunctionFromUsageFactory());
+        factories.put(NO_SET_METHOD, CreateFunctionFromUsageFix.object$.createCreateSetFunctionFromUsageFactory());
+        JetSingleIntentionActionFactory createHasNextFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateHasNextFunctionFromUsageFactory();
         factories.put(HAS_NEXT_MISSING, createHasNextFromUsageFactory);
         factories.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, createHasNextFromUsageFactory);
-        JetSingleIntentionActionFactory createNextFromUsageFactory = CreateFunctionFromUsageFix.createCreateNextFunctionFromUsageFactory();
+        JetSingleIntentionActionFactory createNextFromUsageFactory = CreateFunctionFromUsageFix.object$.createCreateNextFunctionFromUsageFactory();
         factories.put(NEXT_MISSING, createNextFromUsageFactory);
         factories.put(NEXT_NONE_APPLICABLE, createNextFromUsageFactory);
-        factories.put(ITERATOR_MISSING, CreateFunctionFromUsageFix.createCreateIteratorFunctionFromUsageFactory());
-        factories.put(COMPONENT_FUNCTION_MISSING, CreateFunctionFromUsageFix.createCreateComponentFunctionFromUsageFactory());
+        factories.put(ITERATOR_MISSING, CreateFunctionFromUsageFix.object$.createCreateIteratorFunctionFromUsageFactory());
+        factories.put(COMPONENT_FUNCTION_MISSING, CreateFunctionFromUsageFix.object$.createCreateComponentFunctionFromUsageFactory());
     }
 }

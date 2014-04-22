@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.parsing.JetExpressionParsing;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.jet.lexer.JetTokens;
 
 import static org.jetbrains.jet.lexer.JetTokens.*;
@@ -58,7 +59,11 @@ public class JetSimpleNameExpression extends JetReferenceExpression {
             }
         }
         else if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationReference() == this) {
-            return ((JetBinaryExpression) parent).getLeft();
+            JetBinaryExpression expr = (JetBinaryExpression) parent;
+            //noinspection SuspiciousMethodCalls
+            return OperatorConventions.IN_OPERATIONS.contains(expr.getOperationToken())
+                   ? expr.getRight()
+                   : expr.getLeft();
         }
         else if (parent instanceof JetUnaryExpression && ((JetUnaryExpression) parent).getOperationReference() == this) {
             return ((JetUnaryExpression) parent).getBaseExpression();
