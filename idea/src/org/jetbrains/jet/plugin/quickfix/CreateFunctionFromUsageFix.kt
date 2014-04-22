@@ -708,7 +708,7 @@ public class CreateFunctionFromUsageFix internal (
         } else {
             // create as regular function
             val func = JetPsiFactory.createFunction(project, "fun $functionName($parametersString)$returnTypeString { }")
-            containingFile = ownerClass.getContainingFile() as JetFile
+            containingFile = ownerClass.getContainingJetFile()
 
             NavigationUtil.activateFileWithPsiElement(containingFile)
             containingFileEditor = FileEditorManager.getInstance(project)!!.getSelectedTextEditor()!!
