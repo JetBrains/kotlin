@@ -111,6 +111,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractSelectExpressionForDeb
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
 import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
+import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -600,6 +601,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractMultiFileJvmBasicCompletionTest>()) {
             model("completion/basic/multifile", extension = null, recursive = false)
+        }
+
+        testClass(javaClass<AbstractMultiFileHighlightingTest>()) {
+            model("multiFileHighlighting", recursive = false)
         }
 
         testClass(javaClass<AbstractJetExtractionTest>()) {
