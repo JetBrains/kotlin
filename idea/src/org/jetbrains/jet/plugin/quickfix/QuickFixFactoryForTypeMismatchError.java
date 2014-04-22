@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
         JetExpression expression = diagnosticWithParameters.getPsiElement();
         JetType expectedType = diagnosticWithParameters.getA();
         JetType expressionType = diagnosticWithParameters.getB();
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) diagnostic.getPsiFile()).getBindingContext();
+        BindingContext context = ResolvePackage.getAnalysisResults((JetFile) diagnostic.getPsiFile()).getBindingContext();
 
         // We don't want to cast a cast or type-asserted expression:
         if (!(expression instanceof JetBinaryExpressionWithTypeRHS) && !(expression.getParent() instanceof  JetBinaryExpressionWithTypeRHS)) {

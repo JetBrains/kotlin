@@ -27,7 +27,7 @@ import org.jetbrains.jet.checkers.CheckerTestUtil;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -43,7 +43,7 @@ public class CopyAsDiagnosticTestAction extends AnAction {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) psiFile).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) psiFile).getBindingContext();
 
         List<Diagnostic> diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, psiFile);
         String result = CheckerTestUtil.addDiagnosticMarkersToText(psiFile, diagnostics).toString();

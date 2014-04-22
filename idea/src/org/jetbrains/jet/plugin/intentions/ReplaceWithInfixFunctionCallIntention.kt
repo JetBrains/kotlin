@@ -19,18 +19,12 @@ package org.jetbrains.jet.plugin.intentions
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import org.jetbrains.jet.lang.psi.JetBinaryExpressionWithTypeRHS
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import javax.naming.Binding
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 
 public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
@@ -62,7 +56,7 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
                 callee != null) {
                 if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
                     val file: JetFile = element.getContainingJetFile()
-                    val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext()
+                    val bindingContext = file.getBindingContext()
                     val descriptor = bindingContext.get(BindingContext.RESOLVED_CALL, callee)
                     val valueArgumentsMap = descriptor?.getValueArguments()
                     val firstArgument = valueArguments?.getArguments()?.first()

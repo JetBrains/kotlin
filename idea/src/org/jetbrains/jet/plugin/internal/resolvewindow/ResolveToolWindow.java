@@ -47,8 +47,8 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetFileType;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.internal.Location;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.util.InfinitePeriodicalTask;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
@@ -104,7 +104,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
             int startOffset = requestInfo.getStartOffset();
             int endOffset = requestInfo.getEndOffset();
 
-            BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+            BindingContext bindingContext = ResolvePackage.getAnalysisResults(jetFile).getBindingContext();
 
             PsiElement elementAtOffset;
             if (startOffset == endOffset) {

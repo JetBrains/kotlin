@@ -25,7 +25,6 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -34,7 +33,6 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.caches.resolve.DeclarationsCacheProvider;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,15 +40,6 @@ import java.util.HashSet;
 public final class AnalyzerFacadeWithCache {
 
     private AnalyzerFacadeWithCache() {
-    }
-
-    /**
-     * Analyze project with string cache for given file. Given file will be fully analyzed.
-     */
-    // TODO: Also need to pass several files when user have multi-file environment
-    @NotNull
-    public static AnalyzeExhaust analyzeFileWithCache(@NotNull JetFile file) {
-        return ResolvePackage.getAnalysisResults(file);
     }
 
     @NotNull

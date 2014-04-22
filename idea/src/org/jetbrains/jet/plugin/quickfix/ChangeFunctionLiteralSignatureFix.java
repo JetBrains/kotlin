@@ -26,7 +26,7 @@ import org.jetbrains.jet.lang.psi.JetFunctionLiteral;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetChangeSignatureConfiguration;
@@ -57,7 +57,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
 
     @Override
     protected void invoke(@NotNull final Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getAnalysisResults(file).getBindingContext();
         runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @Override
             public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {

@@ -35,7 +35,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.module.Module
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.name.Name
@@ -47,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.name.isSubpackageOf
 import org.jetbrains.jet.getString
 import org.jetbrains.jet.getNullableString
 import org.jetbrains.jet.plugin.search.allScope
+import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 
 private enum class RenameType {
     JAVA_CLASS
@@ -187,7 +187,7 @@ public abstract class AbstractRenameTest : MultiFileTestCase() {
             val document = FileDocumentManager.getInstance()!!.getDocument(mainFile)!!
             val jetFile = PsiDocumentManager.getInstance(context.project).getPsiFile(document) as JetFile
 
-            val bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext()
+            val bindingContext = jetFile.getBindingContext()
             val classDescriptor = bindingContext.get(BindingContext.FQNAME_TO_CLASS_DESCRIPTOR, classFqName)!!
 
             val psiElement = BindingContextUtils.descriptorToDeclaration(bindingContext, findDescriptorToRename(classDescriptor))!!

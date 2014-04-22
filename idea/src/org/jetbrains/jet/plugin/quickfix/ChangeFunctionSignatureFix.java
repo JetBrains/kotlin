@@ -38,7 +38,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator;
 import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
@@ -77,7 +77,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return false;
         }
 
-        BindingContext bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) file).getBindingContext();
         List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(bindingContext, functionDescriptor);
         if (declarations.isEmpty()) {
             return false;
@@ -164,7 +164,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                         (DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>>) diagnostic;
                 JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
                 BindingContext bindingContext =
-                        AnalyzerFacadeWithCache.analyzeFileWithCache(functionLiteral.getContainingJetFile()).getBindingContext();
+                        ResolvePackage.getAnalysisResults(functionLiteral.getContainingJetFile()).getBindingContext();
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, functionLiteral);
 
                 if (descriptor instanceof FunctionDescriptor) {
@@ -219,7 +219,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         }
 
         BindingContext bindingContext =
-                AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) context.getContainingFile()).getBindingContext();
+                ResolvePackage.getAnalysisResults((JetFile) context.getContainingFile()).getBindingContext();
         if (descriptor instanceof ValueParameterDescriptor) {
             return new RemoveFunctionParametersFix(context, functionDescriptor, (ValueParameterDescriptor) descriptor);
         }

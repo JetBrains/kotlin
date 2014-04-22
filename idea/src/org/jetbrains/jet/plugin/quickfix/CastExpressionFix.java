@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 public class CastExpressionFix extends JetIntentionAction<JetExpression> {
@@ -59,7 +59,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
-        BindingContext context = AnalyzerFacadeWithCache.analyzeFileWithCache((JetFile) file).getBindingContext();
+        BindingContext context = ResolvePackage.getAnalysisResults((JetFile) file).getBindingContext();
         JetType expressionType = context.get(BindingContext.EXPRESSION_TYPE, element);
         return expressionType != null && JetTypeChecker.INSTANCE.isSubtypeOf(type, expressionType);
     }

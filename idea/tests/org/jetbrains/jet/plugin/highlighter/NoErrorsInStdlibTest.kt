@@ -23,14 +23,14 @@ import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.jet.cli.common.messages.MessageCollectorPlainTextToStream
 import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import kotlin.test.assertEquals
+import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.lang.diagnostics.Severity
 
 public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
@@ -46,7 +46,7 @@ public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
             if (!file!!.isDirectory()) {
                 val psiFile = psiManager.findFile(file)
                 if (psiFile is JetFile) {
-                    var bindingContext = AnalyzerFacadeWithCache.analyzeFileWithCache(psiFile).getBindingContext()
+                    var bindingContext = psiFile.getBindingContext()
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
                     if (!errors.isEmpty()) {

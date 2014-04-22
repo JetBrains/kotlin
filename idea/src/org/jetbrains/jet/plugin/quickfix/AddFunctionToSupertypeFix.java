@@ -152,7 +152,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
 
     @NotNull
     private JetAddFunctionToClassifierAction createAction(Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getLazyResolveSession(file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext(element);
         return new JetAddFunctionToClassifierAction(project, editor, bindingContext, functionsToAdd);
     }
 

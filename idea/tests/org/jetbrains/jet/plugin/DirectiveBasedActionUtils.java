@@ -29,8 +29,8 @@ import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.highlighter.IdeErrorMessages;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,7 +45,7 @@ public class DirectiveBasedActionUtils {
             return;
         }
 
-        AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
+        AnalyzeExhaust exhaust = ResolvePackage.getAnalysisResults(file);
 
         Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics().all();
         Collection<Diagnostic> errorDiagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {

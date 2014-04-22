@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.LongRunningReadTask;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -195,7 +195,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                             DeclarationDescriptor descriptor = null;
                             try {
                                 BindingContext bindingContext =
-                                        AnalyzerFacadeWithCache.analyzeFileWithCache(jetFile).getBindingContext();
+                                        ResolvePackage.getAnalysisResults(jetFile).getBindingContext();
                                 descriptor = bindingContext.getDiagnostics().forElement(declaration).isEmpty()
                                              ? bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                                              : null;

@@ -44,7 +44,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetPluginUtil;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
@@ -100,7 +100,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         JetFile file = (JetFile) element.getContainingFile();
 
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
+        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
         if (analyzeExhaust.isError()) {
             HighlighterPackage.updateHighlightingResult(file, true);
 

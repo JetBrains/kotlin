@@ -32,7 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.io.File;
 import java.util.List;
@@ -97,7 +97,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
     }
 
     private static void checkNoUnresolvedReferences(@NotNull final JetFile file) {
-        AnalyzeExhaust exhaust = AnalyzerFacadeWithCache.analyzeFileWithCache(file);
+        AnalyzeExhaust exhaust = ResolvePackage.getAnalysisResults(file);
         for (Diagnostic diagnostic : exhaust.getBindingContext().getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 List<TextRange> textRanges = diagnostic.getTextRanges();
