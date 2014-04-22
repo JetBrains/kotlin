@@ -3,7 +3,6 @@ package org.jetbrains.jet.plugin.completion.handlers
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.editor.event.*
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.codeInsight.AutoPopupController
 
@@ -46,7 +45,7 @@ abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
 class WithTailCharInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : WithTailInsertHandlerBase() {
     override fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean) {
         val document = context.getDocument()
-        fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getText(TextRange(offset, offset + 1))[0] == c
+        fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
 
         if (isCharAt(offset, tailChar)) {
             document.deleteString(offset, offset + 1)

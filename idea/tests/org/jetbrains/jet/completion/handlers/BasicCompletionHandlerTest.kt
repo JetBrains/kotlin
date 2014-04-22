@@ -46,6 +46,12 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testHigherOrderFunctionWithArg() = doTest(2, "filterNot", null, '\n')
 
+    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo { (String, Char) -> ... }", null, '\n')
+
+    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo(p: (String, Char) -> Boolean)", null, '\n')
+
+    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo { (String, Char) -> ... }", null, '\n')
+
     fun testForceParenthesisForTabChar() = doTest(0, "some", null, '\t')
 
     fun testTabInsertAtTheFileEnd() = doTest(0, "vvvvv", null, '\t')

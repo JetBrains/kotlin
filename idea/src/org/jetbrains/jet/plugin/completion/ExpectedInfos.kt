@@ -1,4 +1,4 @@
-package org.jetbrains.jet.plugin.completion.smart
+package org.jetbrains.jet.plugin.completion
 
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -23,17 +23,25 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.types.JetType
+
+enum class Tail {
+    COMMA
+    PARENTHESIS
+}
+
+data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
 
 class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val expectedInfos = calculateForArgument(expressionWithType)
-        if (expectedInfos != null) {
-            return expectedInfos
-        }
-        else {
-            val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
-            return listOf(ExpectedInfo(expectedType, null))
-        }
+        val expectedInfos1 = calculateForArgument(expressionWithType)
+        if (expectedInfos1 != null) return expectedInfos1
+
+        val expectedInfos2 = calculateForFunctionLiteralArgument(expressionWithType)
+        if (expectedInfos2 != null) return expectedInfos2
+
+        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
+        return listOf(ExpectedInfo(expectedType, null))
     }
 
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -42,6 +50,21 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val argumentList = argument.getParent() as JetValueArgumentList
         val argumentIndex = argumentList.getArguments().indexOf(argument)
         val callExpression = argumentList.getParent() as? JetCallExpression ?: return null
+        return calculateForArgument(callExpression, argumentIndex, false)
+    }
+
+    private fun calculateForFunctionLiteralArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val callExpression = expressionWithType.getParent() as? JetCallExpression
+        if (callExpression != null) {
+            val arguments = callExpression.getFunctionLiteralArguments()
+            if (arguments.size > 0 && arguments[0] == expressionWithType) {
+                return calculateForArgument(callExpression, callExpression.getValueArguments().size, true)
+            }
+        }
+        return null
+    }
+
+    private fun calculateForArgument(callExpression: JetCallExpression, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
         val calleeExpression = callExpression.getCalleeExpression()
 
         val parent = callExpression.getParent()
@@ -62,7 +85,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
         val callResolutionContext = BasicCallResolutionContext.create(
-                DelegatingBindingTrace(bindingContext, "Temporary trace for smart completion"),
+                DelegatingBindingTrace(bindingContext, "Temporary trace for completion"),
                 resolutionScope,
                 call,
                 bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE,
@@ -71,15 +94,20 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 CheckValueArgumentsMode.ENABLED,
                 CompositeExtension(listOf()),
                 false).replaceCollectAllCandidates(true)
-        val callResolver = InjectorForMacros(expressionWithType.getProject(), moduleDescriptor).getCallResolver()!!
+        val callResolver = InjectorForMacros(callExpression.getProject(), moduleDescriptor).getCallResolver()!!
         val results: OverloadResolutionResults<FunctionDescriptor> = callResolver.resolveFunctionCall(callResolutionContext)
 
         val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             val parameters = candidate.getResultingDescriptor().getValueParameters()
-            if (parameters.size <= argumentIndex) continue
+            if (isFunctionLiteralArgument) {
+                if (argumentIndex != parameters.size - 1) continue
+            }
+            else{
+                if (parameters.size <= argumentIndex) continue
+            }
             val parameterDescriptor = parameters[argumentIndex]
-            val tail = if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
+            val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
             expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
         }
         return expectedInfos

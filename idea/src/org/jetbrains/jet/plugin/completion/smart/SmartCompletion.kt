@@ -9,15 +9,8 @@ import org.jetbrains.jet.lang.types.*
 import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.completion.*
 import java.util.*
-import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter
+import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-
-enum class Tail {
-    COMMA
-    PARENTHESIS
-}
-
-data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -78,7 +71,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
 
             ThisItems(bindingContext).addToCollection(result, expressionWithType, expectedInfos)
 
-            LambdaItems(project).addToCollection(result, functionExpectedInfos)
+            LambdaItems.addToCollection(result, functionExpectedInfos)
         }
 
         return result

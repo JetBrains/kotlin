@@ -17,13 +17,26 @@
 package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.CompletionResultSet;
+import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementDecorator;
+import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.completion.handlers.CaretPosition;
+import org.jetbrains.jet.plugin.completion.handlers.GenerateLambdaInfo;
+import org.jetbrains.jet.plugin.completion.handlers.HandlersPackage;
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
+
+import java.util.List;
 
 public class JetCompletionResultSet {
     private final ResolveSessionForBodies resolveSession;
@@ -74,12 +87,38 @@ public class JetCompletionResultSet {
         }
 
         addElement(DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor));
+
+        // add special item for function with one argument of function type with more than one parameter
+        if (descriptor instanceof FunctionDescriptor) {
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
+            List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
+            if (parameters.size() == 1) {
+                final JetType parameterType = parameters.get(0).getType();
+                if (KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(parameterType)) {
+                    int parameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(parameterType).size();
+                    if (parameterCount > 1) {
+                        LookupElement lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor);
+                        addElement(new LookupElementDecorator<LookupElement>(lookupElement) {
+                            @Override
+                            public void renderElement(LookupElementPresentation presentation) {
+                                super.renderElement(presentation);
+                                presentation.setItemText(getLookupString() + " " + HandlersPackage.buildLambdaPresentation(parameterType));
+                            }
+
+                            @Override
+                            public void handleInsert(InsertionContext context) {
+                                new JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, new GenerateLambdaInfo(parameterType, true))
+                                        .handleInsert(context, this);
+                            }
+                        });
+                    }
+                }
+            }
+        }
     }
 
     public void addElement(@NotNull LookupElement element) {
-        if (!result.getPrefixMatcher().prefixMatches(element)) {
-            return;
-        }
+        if (!result.getPrefixMatcher().prefixMatches(element)) return;
 
         result.addElement(element);
         isSomethingAdded = true;

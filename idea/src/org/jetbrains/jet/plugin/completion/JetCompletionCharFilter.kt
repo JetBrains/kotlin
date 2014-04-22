@@ -21,55 +21,37 @@ import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.CharFilter.Result
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import com.intellij.openapi.util.Key
 
 public open class JetCompletionCharFilter() : CharFilter() {
+    class object {
+        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key<Boolean>("JetCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+    }
+
     public override fun acceptChar(c : Char, prefixLength : Int, lookup : Lookup) : Result? {
         if (lookup.getPsiFile() !is JetFile) return null
 
-        fun checkHideLookupForRangeOperator(): Result? {
-            if (c == '.' && prefixLength == 0 && !lookup.isSelectionTouched()) {
-                val caret = lookup.getEditor().getCaretModel().getOffset()
-                if (caret > 0 && (lookup.getEditor().getDocument().getCharsSequence().charAt(caret - 1)) == '.') {
-                    return Result.HIDE_LOOKUP
-                }
+        if (c == '.' && prefixLength == 0 && !lookup.isSelectionTouched()) {
+            val caret = lookup.getEditor().getCaretModel().getOffset()
+            if (caret > 0 && (lookup.getEditor().getDocument().getCharsSequence().charAt(caret - 1)) == '.') {
+                return Result.HIDE_LOOKUP
             }
-
-            return null
         }
 
-        fun checkFinishCompletionForOpenBrace(): Result? {
-            if (c == '{') {
-                val currentItem = lookup.getCurrentItem()
-                if (currentItem != null && (currentItem.getObject() is JetLookupObject)) {
-                    val lookupObject = (currentItem.getObject() as JetLookupObject)
-                    val descriptor = lookupObject.getDescriptor()
-
-                    if (descriptor != null) {
-                        val handler = DescriptorLookupConverter.getInsertHandler(descriptor)
-                        if (handler == JetFunctionInsertHandler.PARAMS_BRACES_FUNCTION_HANDLER) {
-                            return Result.SELECT_ITEM_AND_FINISH_LOOKUP
-                        }
-                    }
-                }
+        if (c == '{') {
+            val currentItem = lookup.getCurrentItem()
+            if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false) {
+                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
-
-            return null
         }
 
-        fun checkFinishCompletionForEqual(): Result? {
-            if (c == '=') {
-                val currentItem = lookup.getCurrentItem()
-                if (currentItem != null && (currentItem.getObject() is KotlinNamedParametersContributor.NamedParameterLookupObject)) {
-                    return Result.SELECT_ITEM_AND_FINISH_LOOKUP
-                }
+        if (c == '=') {
+            val currentItem = lookup.getCurrentItem()
+            if (currentItem != null && (currentItem.getObject() is KotlinNamedParametersContributor.NamedParameterLookupObject)) {
+                return Result.SELECT_ITEM_AND_FINISH_LOOKUP
             }
-
-            return null
         }
 
-        return checkHideLookupForRangeOperator() ?:
-               checkFinishCompletionForOpenBrace() ?:
-               checkFinishCompletionForEqual() ?:
-               null
+        return null
     }
 }

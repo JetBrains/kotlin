@@ -17,6 +17,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.jet.plugin.completion.handlers.WithTailStringInsertHandler
 import java.util.ArrayList
+import org.jetbrains.jet.plugin.completion.*
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{

@@ -54,6 +54,11 @@ public class JetCallExpression extends JetReferenceExpression implements JetCall
         return (JetTypeArgumentList) findChildByType(JetNodeTypes.TYPE_ARGUMENT_LIST);
     }
 
+    /**
+     * Normally there should be only one (or zero) function literal arguments.
+     * The returned value is a list for better handling of commonly made mistake of a function taking a lambda and returning another function.
+     * Most of users can simply ignore lists of more than one element.
+     */
     @Override
     @NotNull
     public List<JetExpression> getFunctionLiteralArguments() {

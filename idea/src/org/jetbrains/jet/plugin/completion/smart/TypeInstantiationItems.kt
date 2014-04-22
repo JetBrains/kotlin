@@ -13,13 +13,13 @@ import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
-import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import com.intellij.codeInsight.AutoPopupController
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
+import org.jetbrains.jet.plugin.completion.*
 
 class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -65,26 +65,28 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
             lookupElement = lookupElement.suppressAutoInsertion()
         }
         else {
+            //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
             itemText += "()"
-            val constructors: Collection<ConstructorDescriptor> = classifier.getConstructors()
-            val caretPosition =
+            val constructors = classifier.getConstructors()
+            val baseInsertHandler =
                     if (constructors.size == 0)
-                        CaretPosition.AFTER_BRACKETS
+                        JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (constructors.size == 1)
-                        if (constructors.first().getValueParameters().isEmpty()) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
+                        DescriptorLookupConverter.getDefaultInsertHandler(constructors.first())!!
                     else
-                        CaretPosition.IN_BRACKETS
-            insertHandler = InsertHandler<LookupElement> {(context, item) ->
-                val editor = context.getEditor()
-                val startOffset = context.getStartOffset()
-                val text = typeText + "()"
-                editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
-                val endOffset = startOffset + text.length
-                editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
+                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+            insertHandler = object : InsertHandler<LookupElement> {
+                override fun handleInsert(context: InsertionContext, item: LookupElement) {
+                    context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
+                    context.setTailOffset(context.getStartOffset() + typeText.length)
 
-                shortenReferences(context, startOffset, endOffset)
+                    baseInsertHandler.handleInsert(context, item)
 
-                AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, null)
+                    shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+                }
+            }
+            if ((baseInsertHandler as JetFunctionInsertHandler).lambdaInfo != null) {
+                lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
         }
 

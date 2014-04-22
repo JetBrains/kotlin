@@ -7,4 +7,4 @@ fun bar() {
     foo({ (date: Date) -> <caret> })
 }
 
-// ELEMENT: "{ (Date) -> ... }"
+// ELEMENT: "{ Date -> ... }"

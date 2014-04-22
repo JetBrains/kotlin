@@ -21,6 +21,7 @@ import com.intellij.codeInsight.completion.InsertionContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import java.util.ArrayList
 
 // adds java static members, enum members and members from class object

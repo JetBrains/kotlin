@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.plugin.completion.ExpectedInfo
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {

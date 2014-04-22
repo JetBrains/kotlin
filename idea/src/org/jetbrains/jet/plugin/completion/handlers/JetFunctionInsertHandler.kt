@@ -33,22 +33,22 @@ import org.jetbrains.jet.plugin.completion.JetLookupObject
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import com.intellij.openapi.editor.Document
+import org.jetbrains.jet.lang.types.JetType
+import com.intellij.openapi.util.TextRange
 
 public enum class CaretPosition {
     IN_BRACKETS
     AFTER_BRACKETS
 }
-public enum class BracketType {
-    PARENTHESIS
-    BRACES
-}
 
-public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bracketType : BracketType) : InsertHandler<LookupElement> {
+public data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
+
+public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : InsertHandler<LookupElement> {
     {
-        if (caretPosition == CaretPosition.AFTER_BRACKETS && bracketType == BracketType.BRACES) {
-            throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with bracketType == BracketType.BRACES combination is not supported")
+        if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
+            throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
         }
     }
 
@@ -67,32 +67,29 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
             addBrackets(context, element)
         }
 
-        addImport(context, item)
+        addImports(context, item)
     }
 
     private fun addBrackets(context : InsertionContext, offsetElement : PsiElement) {
-        val offset = context.getSelectionEndOffset()
+        val offset = context.getTailOffset()
         val document = context.getDocument()
         val completionChar = context.getCompletionChar()
 
-        var documentText = document.getText()
-
-        val forceParenthesis = bracketType == BracketType.BRACES && completionChar == '\t' && documentText.charAt(offset) == '('
-
-        val braces = bracketType == BracketType.BRACES && completionChar != '(' && !forceParenthesis
+        val forceParenthesis = lambdaInfo != null && completionChar == '\t' && document.getCharsSequence().charAt(offset) == '('
+        val braces = lambdaInfo != null && completionChar != '(' && !forceParenthesis
 
         val openingBracket = if (braces) '{' else '('
         val closingBracket = if (braces) '}' else ')'
 
-        var openingBracketIndex = indexOfSkippingSpace(documentText, openingBracket, offset)
+        var openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
         var inBracketsShift = 0
-        if (openingBracketIndex == -1) {
+        if (openingBracketOffset == -1) {
             if (braces) {
                 if (completionChar == ' ' || completionChar == '{') {
                     context.setAddCompletionChar(false)
                 }
 
-                if (isInsertSpacesInOneLineFunctionEnabled(offsetElement.getProject())) {
+                if (isInsertSpacesInOneLineFunctionEnabled(context.getProject())) {
                     document.insertString(offset, " {  }")
                     inBracketsShift = 1
                 }
@@ -104,74 +101,69 @@ public class JetFunctionInsertHandler(val caretPosition : CaretPosition, val bra
                 document.insertString(offset, "()")
             }
             PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
-            documentText = document.getText()
         }
 
-        openingBracketIndex = indexOfSkippingSpace(documentText, openingBracket, offset)
-        assert (openingBracketIndex != -1) { "If there wasn't open bracket it should already have been inserted" }
+        openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
+        assert (openingBracketOffset != -1) { "If there wasn't open bracket it should already have been inserted" }
 
-        val closeBracketIndex = indexOfSkippingSpace(documentText, closingBracket, openingBracketIndex + 1)
+        val closeBracketOffset = indexOfSkippingSpace(document, closingBracket, openingBracketOffset + 1)
         val editor = context.getEditor()
 
         var forcePlaceCaretIntoParentheses : Boolean = completionChar == '('
 
-        if (caretPosition == CaretPosition.IN_BRACKETS || forcePlaceCaretIntoParentheses || closeBracketIndex == -1) {
-            editor.getCaretModel().moveToOffset(openingBracketIndex + 1 + inBracketsShift)
+        if (caretPosition == CaretPosition.IN_BRACKETS || forcePlaceCaretIntoParentheses || closeBracketOffset == -1) {
+            editor.getCaretModel().moveToOffset(openingBracketOffset + 1 + inBracketsShift)
             AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, offsetElement)
         }
         else {
-            editor.getCaretModel().moveToOffset(closeBracketIndex + 1)
+            editor.getCaretModel().moveToOffset(closeBracketOffset + 1)
         }
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(context.getDocument())
+
+        if (lambdaInfo != null && lambdaInfo.explicitParameters) {
+            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset + 1), lambdaInfo.lambdaType)
+        }
     }
 
     class object {
-        public val EMPTY_FUNCTION_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, BracketType.PARENTHESIS)
-        public val PARAMS_PARENTHESIS_FUNCTION_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, BracketType.PARENTHESIS)
-        public val PARAMS_BRACES_FUNCTION_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, BracketType.BRACES)
+        public val NO_PARAMETERS_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
+        public val WITH_PARAMETERS_HANDLER: JetFunctionInsertHandler = JetFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 
         private fun shouldAddBrackets(element : PsiElement) : Boolean {
             return PsiTreeUtil.getParentOfType(element, javaClass<JetImportDirective>()) == null
         }
 
-        private fun indexOfSkippingSpace(str : String, ch : Char, startIndex : Int) : Int {
-            for (i in startIndex..str.length() - 1) {
-                val currentChar = str.charAt(i)
-                if (ch == currentChar) {
-                    return i
-                }
-
-                if (!Character.isWhitespace(currentChar)) {
-                    return -1
-                }
+        private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {
+            val text = document.getCharsSequence()
+            for (i in startIndex..text.length() - 1) {
+                val currentChar = text.charAt(i)
+                if (ch == currentChar) return i
+                if (!Character.isWhitespace(currentChar)) return -1
             }
-
             return -1
         }
 
-        private open fun isInsertSpacesInOneLineFunctionEnabled(project : Project) : Boolean {
-            val settings = CodeStyleSettingsManager.getSettings(project)
-            val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
-            return jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
-        }
+        private open fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
+                = CodeStyleSettingsManager.getSettings(project)
+                      .getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
 
-        private open fun addImport(context : InsertionContext, item : LookupElement) {
+        private open fun addImports(context : InsertionContext, item : LookupElement) {
             ApplicationManager.getApplication()?.runReadAction { () : Unit ->
                 val startOffset = context.getStartOffset()
                 val element = context.getFile().findElementAt(startOffset)
 
                 if (element == null) return@runReadAction
 
-                if (context.getFile() is JetFile && item.getObject() is JetLookupObject) {
+                val file = context.getFile()
+                if (file is JetFile && item.getObject() is JetLookupObject) {
                     val descriptor = (item.getObject() as JetLookupObject).getDescriptor()
 
                     if (descriptor is SimpleFunctionDescriptor) {
-                        val file = context.getFile() as JetFile
                         val functionDescriptor = descriptor as SimpleFunctionDescriptor
 
                         if (PsiTreeUtil.getParentOfType(element, javaClass<JetQualifiedExpression>()) != null &&
-                        functionDescriptor.getReceiverParameter() == null) {
+                                functionDescriptor.getReceiverParameter() == null) {
                             return@runReadAction
                         }
 

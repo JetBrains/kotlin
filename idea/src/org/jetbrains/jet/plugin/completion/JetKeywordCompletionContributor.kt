@@ -279,7 +279,7 @@ public open class JetKeywordCompletionContributor() : CompletionContributor() {
                         lookupElementBuilder.withInsertHandler(JetKeywordCompletionContributor.KEYWORDS_INSERT_HANDLER)
                     }
                     else {
-                        lookupElementBuilder.withInsertHandler(JetFunctionInsertHandler.EMPTY_FUNCTION_HANDLER)
+                        lookupElementBuilder.withInsertHandler(JetFunctionInsertHandler.NO_PARAMETERS_HANDLER)
                     }
                 }
             }
