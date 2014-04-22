@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.util.containers.HashMap
 import org.jetbrains.jet.lang.psi.JetUserType
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
@@ -29,6 +28,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import java.util.Collections
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 object JetFileReferencesResolver {
     fun resolve(
@@ -58,7 +58,7 @@ object JetFileReferencesResolver {
     }
 
     private class ResolveAllReferencesVisitor(file: JetFile, val visitReceivers: Boolean, val visitShortNames: Boolean) : JetTreeVisitorVoid() {
-        private val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
+        private val resolveSession = file.getLazyResolveSession()
         private val resolveMap = HashMap<JetReferenceExpression, BindingContext>()
 
         public val result: Map<JetReferenceExpression, BindingContext> = resolveMap

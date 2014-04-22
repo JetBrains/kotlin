@@ -37,8 +37,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public abstract class BaseJetVariableMacro extends Macro {
         JetExpression contextExpression = findContextExpression(psiFile, context.getStartOffset());
         if (contextExpression == null) return null;
 
-        ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) psiFile);
+        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetFile) psiFile);
 
         BindingContext bc = resolveSession.resolveToElement(contextExpression);
         JetScope scope = bc.get(BindingContext.RESOLUTION_SCOPE, contextExpression);

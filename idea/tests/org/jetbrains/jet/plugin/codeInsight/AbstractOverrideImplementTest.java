@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
@@ -123,7 +124,7 @@ public abstract class AbstractOverrideImplementTest extends LightCodeInsightFixt
         assertNotNull("Caret should be inside class or object", classOrObject);
 
         final JetFile jetFile = classOrObject.getContainingJetFile();
-        final ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(jetFile);
+        final ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession(jetFile);
         Set<CallableMemberDescriptor> descriptors =
                 handler.collectMethodsToGenerate(classOrObject, resolveSession.resolveToElement(classOrObject));
 

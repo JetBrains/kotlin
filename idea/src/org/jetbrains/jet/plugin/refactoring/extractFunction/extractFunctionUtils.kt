@@ -31,7 +31,6 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.plugin.util.MaybeValue
 import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
@@ -80,18 +79,16 @@ import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
-import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import com.intellij.refactoring.util.RefactoringUIUtil
-import org.jetbrains.jet.plugin.references.JetReference
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
-import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
 import java.util.Collections
 import com.intellij.psi.PsiNamedElement
-import org.jetbrains.jet.lang.diagnostics.Severity
-import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.diagnostics.Errors
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -425,7 +422,7 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
     val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclarationWithBody>())
     if (enclosingDeclaration == null) return MaybeError(JetRefactoringBundle.message("cannot.refactor.no.container")!!)
 
-    val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(originalFile)
+    val resolveSession = originalFile.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(enclosingDeclaration.getBodyExpression())
 
     val pseudocode = PseudocodeUtil.generatePseudocode(enclosingDeclaration, bindingContext)

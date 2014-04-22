@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 
 import java.util.*;
@@ -60,7 +60,7 @@ public class MakeOverriddenMemberOpenFix extends JetIntentionAction<JetDeclarati
         overriddenNonOverridableMembers.clear();
         containingDeclarationsNames.clear();
 
-        ResolveSessionForBodies resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) file);
+        ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetFile) file);
         DeclarationDescriptor descriptor = resolveSession.resolveToDescriptor(element);
         if (!(descriptor instanceof CallableMemberDescriptor)) return false;
 

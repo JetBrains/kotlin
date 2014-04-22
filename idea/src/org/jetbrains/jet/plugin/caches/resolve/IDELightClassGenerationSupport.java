@@ -38,7 +38,6 @@ import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.libraries.JetSourceNavigationHelper;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.stubindex.JetAllPackagesIndex;
 import org.jetbrains.jet.plugin.stubindex.JetClassByPackageIndex;
@@ -87,7 +86,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
         Collections.sort(sortedFiles, jetFileComparator);
 
-        ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(sortedFiles.get(0));
+        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(sortedFiles.get(0));
         forceResolvePackageDeclarations(files, session);
         return new LightClassConstructionContext(session.getBindingContext(), null);
     }
@@ -95,7 +94,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        ResolveSessionForBodies session = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(classOrObject.getContainingJetFile());
+        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(classOrObject.getContainingJetFile());
 
         if (JetPsiUtil.isLocal(classOrObject)) {
             BindingContext bindingContext = session.resolveToElement(classOrObject);

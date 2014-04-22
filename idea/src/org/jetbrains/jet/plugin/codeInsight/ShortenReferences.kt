@@ -5,7 +5,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -19,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentF
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPointerManager
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 public object ShortenReferences {
     public fun process(element: JetElement) {
@@ -83,7 +83,7 @@ public object ShortenReferences {
                                       val elementFilter: (PsiElement) -> FilterResult,
                                       val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
         private val resolveSession : ResolveSessionForBodies
-            get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
+            get() = file.getLazyResolveSession()
 
         private val typesToShorten = ArrayList<JetUserType>()
 
@@ -158,7 +158,7 @@ public object ShortenReferences {
                                                      val elementFilter: (PsiElement) -> FilterResult,
                                                      val resolveMap: Map<JetReferenceExpression, BindingContext>) : JetVisitorVoid() {
         private val resolveSession : ResolveSessionForBodies
-            get() = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
+            get() = file.getLazyResolveSession()
 
         private fun bindingContext(expression: JetReferenceExpression): BindingContext
                 = resolveMap[expression] ?: resolveSession.resolveToElement(expression) // binding context can be absent in the map if some references have been shortened already

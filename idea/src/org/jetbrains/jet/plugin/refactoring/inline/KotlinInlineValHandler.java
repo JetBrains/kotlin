@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
@@ -257,7 +258,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
 
-        ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
+        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
             assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
@@ -317,7 +318,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFile containingFile = inlinedExpressions.get(0).getContainingJetFile();
         List<JetCallExpression> callsToAddArguments = Lists.newArrayList();
 
-        ResolveSessionForBodies resolveSessionForBodies = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(containingFile);
+        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(containingFile);
         for (JetExpression inlinedExpression : inlinedExpressions) {
             JetCallExpression callExpression = getCallExpression(inlinedExpression);
             assert callExpression != null : "can't find call expression for " + inlinedExpression.getText();

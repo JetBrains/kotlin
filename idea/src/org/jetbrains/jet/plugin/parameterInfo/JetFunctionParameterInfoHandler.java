@@ -44,8 +44,8 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -380,7 +380,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
         }
 
         ResolveSessionForBodies resolveSession =
-                AnalyzerFacadeWithCache.getLazyResolveSessionForFile(callNameExpression.getContainingJetFile());
+                ResolvePackage.getLazyResolveSession(callNameExpression.getContainingJetFile());
         BindingContext bindingContext = resolveSession.resolveToElement(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);

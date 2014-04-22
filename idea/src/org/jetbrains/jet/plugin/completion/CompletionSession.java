@@ -38,10 +38,10 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.TipsManager;
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion;
 import org.jetbrains.jet.plugin.completion.weigher.WeigherPackage;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
@@ -64,7 +64,7 @@ class CompletionSession {
         this.jetReference = jetReference;
 
         ResolveSessionForBodies resolveSession =
-                AnalyzerFacadeWithCache.getLazyResolveSessionForFile((JetFile) position.getContainingFile());
+                ResolvePackage.getLazyResolveSession((JetFile) position.getContainingFile());
         BindingContext expressionBindingContext = resolveSession.resolveToElement(jetReference.getExpression());
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
 

@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddImportAction;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 import org.jetbrains.jet.plugin.util.JetPsiHeuristicsUtil;
@@ -93,7 +93,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         }
 
         ResolveSessionForBodies resolveSessionForBodies =
-                AnalyzerFacadeWithCache.getLazyResolveSessionForFile(element.getContainingJetFile());
+                ResolvePackage.getLazyResolveSession(element.getContainingJetFile());
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {

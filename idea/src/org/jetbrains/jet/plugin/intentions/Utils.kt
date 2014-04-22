@@ -2,13 +2,13 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import org.jetbrains.jet.JetNodeTypes
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
     specifyTypeExplicitly(declaration, JetPsiFactory.createType(declaration.getProject(), typeText))
@@ -29,13 +29,13 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeR
 }
 
 fun expressionType(expression: JetExpression): JetType? {
-    val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(expression.getContainingJetFile())
+    val resolveSession = expression.getContainingJetFile().getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(expression)
     return bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)
 }
 
 fun functionReturnType(function: JetNamedFunction): JetType? {
-    val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(function.getContainingJetFile())
+    val resolveSession = function.getContainingJetFile().getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(function)
     val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function)
     if (descriptor == null) return null

@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.project;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
@@ -29,12 +28,7 @@ public final class AnalyzerFacadeWithCache {
 
     @NotNull
     public static BindingContext getContextForElement(@NotNull JetElement jetElement) {
-        ResolveSessionForBodies resolveSessionForBodies = getLazyResolveSessionForFile(jetElement.getContainingJetFile());
+        ResolveSessionForBodies resolveSessionForBodies = ResolvePackage.getLazyResolveSession(jetElement.getContainingJetFile());
         return resolveSessionForBodies.resolveToElement(jetElement);
-    }
-
-    @NotNull
-    public static ResolveSessionForBodies getLazyResolveSessionForFile(@NotNull JetFile file) {
-        return ResolvePackage.getLazyResolveSession(file);
     }
 }
