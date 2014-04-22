@@ -117,6 +117,9 @@
     <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"
                     serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"
+                    serviceImplementation="org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService"/>
+
     <projectService serviceInterface="org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder"
                     serviceImplementation="org.jetbrains.jet.plugin.vfilefinder.IDEVirtualFileFinder"/>
 

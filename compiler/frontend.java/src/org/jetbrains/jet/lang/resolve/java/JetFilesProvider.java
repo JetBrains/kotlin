@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.Collection;
 
 public abstract class JetFilesProvider {
+    @NotNull
     public static JetFilesProvider getInstance(Project project) {
         return ServiceManager.getService(project, JetFilesProvider.class);
     }

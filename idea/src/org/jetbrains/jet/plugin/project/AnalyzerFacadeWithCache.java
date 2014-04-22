@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.plugin.caches.resolve.DeclarationsCacheProvider;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -48,7 +49,7 @@ public final class AnalyzerFacadeWithCache {
     // TODO: Also need to pass several files when user have multi-file environment
     @NotNull
     public static AnalyzeExhaust analyzeFileWithCache(@NotNull JetFile file) {
-        return getLazyResolveSessionForFile(file).getResolveCache().getAnalysisResultsForElement(file);
+        return ResolvePackage.getAnalysisResults(file);
     }
 
     @NotNull

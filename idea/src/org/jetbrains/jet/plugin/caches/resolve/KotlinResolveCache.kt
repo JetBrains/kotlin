@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.caches.resolve
 
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.psi.util.PsiTreeUtil
@@ -40,19 +39,144 @@ import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.jet.asJava.LightClassUtil
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks
+import org.jetbrains.jet.lang.resolve.BindingContext
+import com.intellij.openapi.components.ServiceManager
+import org.jetbrains.jet.lang.resolve.java.JetFilesProvider
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider
+import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.jet.plugin.project.TargetPlatform.*
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import org.jetbrains.jet.plugin.project.TargetPlatformDetector
+import com.google.common.collect.ImmutableMap
+import org.jetbrains.jet.lang.resolve.Diagnostics
+import org.jetbrains.jet.util.slicedmap.ReadOnlySlice
+import org.jetbrains.jet.util.slicedmap.WritableSlice
+import org.jetbrains.jet.lang.diagnostics.Diagnostic
+import java.util.HashSet
 
 private val LOG = Logger.getInstance(javaClass<KotlinResolveCache>())
 
-class KotlinResolveCache(
+fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
+    return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
+}
+
+fun JetElement.getAnalysisResults(): AnalyzeExhaust {
+    return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this))
+}
+
+fun JetElement.getBindingContext(): BindingContext {
+    return getAnalysisResults().getBindingContext()
+}
+
+fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
+    if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
+    val element = elements.first()
+    return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
+}
+
+class KotlinCacheService(val project: Project) {
+    class object {
+        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+    }
+
+    private fun globalResolveSessionProvider(platform: TargetPlatform, syntheticFile: JetFile? = null) = {
+        val allFiles = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project))
+
+        val files = if (syntheticFile == null) allFiles else collectFilesForSyntheticFile(allFiles, syntheticFile)
+        val resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files)
+        CachedValueProvider.Result.create(ResolveSessionForBodies(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+    }
+
+    private fun collectFilesForSyntheticFile(allFiles: Collection<JetFile>, syntheticFile: JetFile): Collection<JetFile> {
+        val files = HashSet(allFiles)
+
+        // Add requested file to the list of files for searching declarations
+        files.add(syntheticFile)
+
+        val originalFile = syntheticFile.getOriginalFile()
+        if (syntheticFile != originalFile) {
+            // Given file can be a non-physical copy of the file in list (completion case). Remove the prototype file.
+            files.remove(originalFile)
+        }
+
+        return files
+    }
+
+    private val globalCachesPerPlatform = mapOf(
+            JVM to KotlinResolveCache(project, globalResolveSessionProvider(JVM)),
+            JS to KotlinResolveCache(project, globalResolveSessionProvider(JS))
+    )
+
+    private val syntheticFileCaches = object : SLRUCache<JetFile, SynchronizedCachedValue<KotlinResolveCache>>(2, 3) {
+        override fun createValue(file: JetFile?): SynchronizedCachedValue<KotlinResolveCache> {
+            return SynchronizedCachedValue<KotlinResolveCache>(
+                    project,
+                    {
+                        CachedValueProvider.Result(
+                            KotlinResolveCache(
+                                    project,
+                                    globalResolveSessionProvider(
+                                            TargetPlatformDetector.getPlatform(file!!),
+                                            file
+                                    )
+                            ),
+                            PsiModificationTracker.MODIFICATION_COUNT
+                        )
+                    },
+                    false)
+        }
+
+    }
+
+    public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
+        val file = element.getContainingJetFile()
+        if (!isFileInScope(file)) {
+            return synchronized(syntheticFileCaches) {
+                syntheticFileCaches[file].getValue().getLazyResolveSession()
+            }
+        }
+
+        return globalCachesPerPlatform[TargetPlatformDetector.getPlatform(file)]!!.getLazyResolveSession()
+    }
+
+    public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
+        if (elements.isEmpty()) return AnalyzeExhaust.EMPTY
+
+        val firstFile = elements.first().getContainingJetFile()
+        if (elements.size == 1 && !isFileInScope(firstFile)) {
+            return synchronized(syntheticFileCaches) {
+                syntheticFileCaches[firstFile].getValue().getAnalysisResultsForElements(elements)
+            }
+        }
+
+        val resolveCache = globalCachesPerPlatform[TargetPlatformDetector.getPlatform(firstFile)]!!
+        return synchronized(resolveCache) {
+            resolveCache.getAnalysisResultsForElements(elements)
+        }
+    }
+
+    private fun isFileInScope(jetFile: JetFile): Boolean {
+        val project = jetFile.getProject()
+        return JetFilesProvider.getInstance(project).isFileInScope(jetFile, GlobalSearchScope.allScope(project))
+    }
+}
+
+private class KotlinResolveCache(
         val project: Project,
-        val resolveSession: ResolveSession
+        val resolveSessionProvider: () -> CachedValueProvider.Result<ResolveSessionForBodies>
 ) {
+
+    private val resolveSessionCache = SynchronizedCachedValue(project, resolveSessionProvider)
+
+    public fun getLazyResolveSession(): ResolveSessionForBodies = resolveSessionCache.getValue()
 
     private data class Task(
             val elements: Set<JetElement>
     )
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue ({
+        val resolveSession = getLazyResolveSession()
         val results = object : SLRUCache<Task, AnalyzeExhaust>(2, 3) {
             override fun createValue(task: Task?): AnalyzeExhaust {
                 if (DumbService.isDumb(project)) {
