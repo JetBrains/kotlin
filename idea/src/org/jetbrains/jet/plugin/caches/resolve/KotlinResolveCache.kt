@@ -57,6 +57,10 @@ fun JetElement.getLazyResolveSession(): ResolveSessionForBodies {
     return KotlinCacheService.getInstance(getProject()).getLazyResolveSession(this)
 }
 
+fun Project.getLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
+    return KotlinCacheService.getInstance(this).getGlobalLazyResolveSession(platform)
+}
+
 fun JetElement.getAnalysisResults(): AnalyzeExhaust {
     return KotlinCacheService.getInstance(getProject()).getAnalysisResults(listOf(this))
 }
@@ -140,6 +144,10 @@ class KotlinCacheService(val project: Project) {
 
     }
 
+    public fun getGlobalLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
+        return globalCachesPerPlatform[platform]!!.getLazyResolveSession()
+    }
+
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
         if (!isFileInScope(file)) {
@@ -148,7 +156,7 @@ class KotlinCacheService(val project: Project) {
             }
         }
 
-        return globalCachesPerPlatform[TargetPlatformDetector.getPlatform(file)]!!.getLazyResolveSession()
+        return getGlobalLazyResolveSession(TargetPlatformDetector.getPlatform(file))
     }
 
     public fun getAnalysisResults(elements: Collection<JetElement>): AnalyzeExhaust {
@@ -254,9 +262,6 @@ private class KotlinResolveCache(
                 }
                 catch (e: Throwable) {
                     handleError(e)
-
-                    // Exception during body resolve analyze can harm internal caches in declarations cache
-                    KotlinCacheManager.getInstance(project).invalidateCache()
 
                     val bindingTraceContext = BindingTraceContext()
                     return AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e)

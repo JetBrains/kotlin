@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.caches.resolve;
 
 import com.google.common.collect.Maps;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.DefaultModificationTracker;
@@ -42,16 +41,6 @@ public class KotlinCacheManager {
         cacheProviders.put(TargetPlatform.JS, new JSDeclarationsCacheProvider(project));
     }
 
-    /**
-     * Should be called under read lock.
-     */
-    @NotNull
-    public KotlinDeclarationsCache getDeclarationsFromProject(@NotNull TargetPlatform platform) {
-        // Computing declarations should be performed under read lock
-        ApplicationManager.getApplication().assertReadAccessAllowed();
-        return getRegisteredProvider(platform).getDeclarations();
-    }
-
     @NotNull
     public DeclarationsCacheProvider getRegisteredProvider(@NotNull TargetPlatform platform) {
         DeclarationsCacheProvider provider = cacheProviders.get(platform);
@@ -60,10 +49,6 @@ public class KotlinCacheManager {
         }
 
         return provider;
-    }
-
-    public void invalidateCache() {
-        kotlinDeclarationsTracker.incModificationCount();
     }
 
     public ModificationTracker getDeclarationsTracker() {
