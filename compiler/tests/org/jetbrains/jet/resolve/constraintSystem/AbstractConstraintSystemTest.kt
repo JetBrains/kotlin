@@ -16,43 +16,25 @@
 
 package org.jetbrains.jet.resolve.constraintSystem
 
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.Maps
-import com.intellij.psi.PsiElement
 import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
 import org.jetbrains.jet.di.InjectorForTests
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
-import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.*
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
 import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import java.io.File
-import java.io.IOException
-import java.util.Collections
-import com.intellij.openapi.project.Project
-import java.util.HashMap
 import java.util.regex.Pattern
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
-import kotlin.test.assertEquals
-import org.junit.Assert
 import java.util.LinkedHashMap
 import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
@@ -82,7 +64,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val fileName = "declarations/declarations.kt"
 
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))
-        val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile)
+        val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile)
         val bindingContext = analyzeExhaust.getBindingContext()
         return MyDeclarations(bindingContext, getProject(), typeResolver)
     }

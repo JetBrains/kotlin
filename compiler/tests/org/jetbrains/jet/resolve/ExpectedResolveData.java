@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -145,7 +145,7 @@ public abstract class ExpectedResolveData {
         }
 
         Project project = files.iterator().next().getProject();
-        AnalyzeExhaust analyzeExhaust = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(
                 project, files, Predicates.<PsiFile>alwaysTrue());
         return analyzeExhaust.getBindingContext();
     }

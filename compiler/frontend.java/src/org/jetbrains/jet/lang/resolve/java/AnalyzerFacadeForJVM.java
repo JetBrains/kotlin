@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.java;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
@@ -42,7 +41,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
@@ -118,76 +116,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     }
 
     @NotNull
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegrationAndCheckForErrors(JetFile file) {
-        AnalyzingUtils.checkForSyntacticErrors(file);
-
-        AnalyzeExhaust analyzeExhaust = analyzeOneFileWithJavaIntegration(file);
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-
-        return analyzeExhaust;
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeOneFileWithJavaIntegration(JetFile file) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file),
-                                               Predicates.<PsiFile>alwaysTrue());
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationAndCheckForErrors(
-            Project project,
-            Collection<JetFile> files,
-            Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        for (JetFile file : files) {
-            AnalyzingUtils.checkForSyntacticErrors(file);
-        }
-
-        AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
-                project, files, filesToAnalyzeCompletely, false);
-
-        AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
-
-        return analyzeExhaust;
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project,
-            Collection<JetFile> files,
-            Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        return analyzeFilesWithJavaIntegration(
-                project, files, filesToAnalyzeCompletely, false);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project,
-            Collection<JetFile> files,
-            Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve
-    ) {
-        BindingTraceContext bindingTraceContext = new BindingTraceContext();
-
-        return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
-                                               storeContextForBodiesResolve);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project,
-            Collection<JetFile> files,
-            BindingTrace trace,
-            Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve
-    ) {
-        return analyzeFilesWithJavaIntegration(project, files, trace, filesToAnalyzeCompletely,
-                                               storeContextForBodiesResolve, createJavaModule("<module>"), MemberFilter.ALWAYS_TRUE);
-    }
-
-    @NotNull
     public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
             Project project,
             Collection<JetFile> files,
@@ -198,21 +126,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             MemberFilter memberFilter
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
-        return analyzeFilesWithJavaIntegrationInGlobalContext(project, files, trace, filesToAnalyzeCompletely,
-                                                              storeContextForBodiesResolve, module, globalContext, memberFilter);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegrationInGlobalContext(
-            Project project,
-            Collection<JetFile> files,
-            BindingTrace trace,
-            Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve,
-            ModuleDescriptorImpl module,
-            GlobalContext globalContext,
-            MemberFilter memberFilter
-    ) {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
                 globalContext.getStorageManager(),
                 globalContext.getExceptionTracker(),

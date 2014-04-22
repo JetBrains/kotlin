@@ -61,6 +61,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
+import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -226,14 +227,14 @@ public class JetTestUtils {
 
     @NotNull
     public static AnalyzeExhaust analyzeFile(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(file);
+        return JvmResolveUtil.analyzeOneFileWithJavaIntegration(file);
     }
 
     @NotNull
     public static AnalyzeExhaust analyzeFileWithoutBody(@NotNull JetFile file) {
-        return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(file.getProject(),
-                                                                    Collections.singleton(file),
-                                                                    Predicates.<PsiFile>alwaysFalse());
+        return JvmResolveUtil.analyzeFilesWithJavaIntegration(file.getProject(),
+                                                              Collections.singleton(file),
+                                                              Predicates.<PsiFile>alwaysFalse());
     }
 
     @NotNull

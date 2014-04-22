@@ -25,16 +25,15 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
-import java.util.Collections
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
@@ -51,7 +50,7 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
 
         fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
             val psiFile = JetTestUtils.loadJetFile(getProject(), file)
-            val analyzeExhaust = AnalyzerFacadeForJVM.analyzeOneFileWithJavaIntegration(psiFile)
+            val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile)
             val bindingContext = analyzeExhaust.getBindingContext()
             return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
         }
