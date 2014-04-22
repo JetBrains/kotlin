@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,6 +105,7 @@ import org.jetbrains.jet.plugin.codeInsight.AbstractJetInspectionTest
 import org.jetbrains.jet.plugin.debugger.AbstractKotlinSteppingTest
 import org.jetbrains.jet.completion.AbstractMultiFileJvmBasicCompletionTest
 import org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable.AbstractJetExtractionTest
+import org.jetbrains.jet.formatter.AbstractJetTypingIndentationTestBase
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractKotlinEvaluateExpressionTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractSelectExpressionForDebuggerTest
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletionTest
@@ -516,6 +517,13 @@ fun main(args: Array<String>) {
             model("formatter", pattern = """^([^\.]+)\.after\.kt.*$""")
             model("formatter", pattern = """^([^\.]+)\.after\.inv\.kt.*$""",
                   testMethod = "doTestInverted", testClassName = "FormatterInverted")
+        }
+
+        testClass(javaClass<AbstractJetTypingIndentationTestBase>()) {
+            model("indentationOnNewline", pattern = """^([^\.]+)\.after\.kt.*$""", testMethod = "doNewlineTest",
+                  testClassName = "DirectSettings")
+            model("indentationOnNewline", pattern = """^([^\.]+)\.after\.inv\.kt.*$""", testMethod = "doNewlineTestWithInvert",
+                  testClassName = "InvertedSettings")
         }
 
         testClass(javaClass<AbstractDiagnosticMessageTest>()) {
