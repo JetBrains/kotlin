@@ -123,25 +123,16 @@ class KotlinCacheService(val project: Project) {
             JS to KotlinResolveCache(project, globalResolveSessionProvider(JS))
     )
 
-    private val syntheticFileCaches = object : SLRUCache<JetFile, SynchronizedCachedValue<KotlinResolveCache>>(2, 3) {
-        override fun createValue(file: JetFile?): SynchronizedCachedValue<KotlinResolveCache> {
-            return SynchronizedCachedValue<KotlinResolveCache>(
+    private val syntheticFileCaches = object : SLRUCache<JetFile, KotlinResolveCache>(2, 3) {
+        override fun createValue(file: JetFile?): KotlinResolveCache {
+            return KotlinResolveCache(
                     project,
-                    {
-                        CachedValueProvider.Result(
-                            KotlinResolveCache(
-                                    project,
-                                    globalResolveSessionProvider(
-                                            TargetPlatformDetector.getPlatform(file!!),
-                                            file
-                                    )
-                            ),
-                            PsiModificationTracker.MODIFICATION_COUNT
-                        )
-                    },
-                    false)
+                    globalResolveSessionProvider(
+                            TargetPlatformDetector.getPlatform(file!!),
+                            file
+                    )
+            )
         }
-
     }
 
     public fun getGlobalLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
@@ -152,7 +143,7 @@ class KotlinCacheService(val project: Project) {
         val file = element.getContainingJetFile()
         if (!isFileInScope(file)) {
             return synchronized(syntheticFileCaches) {
-                syntheticFileCaches[file].getValue().getLazyResolveSession()
+                syntheticFileCaches[file].getLazyResolveSession()
             }
         }
 
@@ -165,7 +156,7 @@ class KotlinCacheService(val project: Project) {
         val firstFile = elements.first().getContainingJetFile()
         if (elements.size == 1 && !isFileInScope(firstFile)) {
             return synchronized(syntheticFileCaches) {
-                syntheticFileCaches[firstFile].getValue().getAnalysisResultsForElements(elements)
+                syntheticFileCaches[firstFile].getAnalysisResultsForElements(elements)
             }
         }
 
