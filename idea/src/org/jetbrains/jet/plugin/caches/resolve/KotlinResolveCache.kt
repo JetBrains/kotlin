@@ -135,6 +135,12 @@ class KotlinCacheService(val project: Project) {
         }
     }
 
+    private fun getCacheForSyntheticFile(file: JetFile): KotlinResolveCache {
+        return synchronized(syntheticFileCaches) {
+            syntheticFileCaches[file]
+        }
+    }
+
     public fun getGlobalLazyResolveSession(platform: TargetPlatform): ResolveSessionForBodies {
         return globalCachesPerPlatform[platform]!!.getLazyResolveSession()
     }
@@ -142,9 +148,7 @@ class KotlinCacheService(val project: Project) {
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         val file = element.getContainingJetFile()
         if (!isFileInScope(file)) {
-            return synchronized(syntheticFileCaches) {
-                syntheticFileCaches[file].getLazyResolveSession()
-            }
+            return getCacheForSyntheticFile(file).getLazyResolveSession()
         }
 
         return getGlobalLazyResolveSession(TargetPlatformDetector.getPlatform(file))
@@ -155,9 +159,7 @@ class KotlinCacheService(val project: Project) {
 
         val firstFile = elements.first().getContainingJetFile()
         if (elements.size == 1 && !isFileInScope(firstFile)) {
-            return synchronized(syntheticFileCaches) {
-                syntheticFileCaches[firstFile].getAnalysisResultsForElements(elements)
-            }
+            return getCacheForSyntheticFile(firstFile).getAnalysisResultsForElements(elements)
         }
 
         val resolveCache = globalCachesPerPlatform[TargetPlatformDetector.getPlatform(firstFile)]!!
