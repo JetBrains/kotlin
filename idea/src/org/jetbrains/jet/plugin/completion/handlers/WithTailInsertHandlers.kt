@@ -2,13 +2,13 @@ package org.jetbrains.jet.plugin.completion.handlers
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.editor.*
 import com.intellij.openapi.editor.event.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.codeInsight.AutoPopupController
 
 abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
-    protected abstract fun insertTail(document: Document, offset: Int): Int
+    protected abstract fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean)
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val document = context.getDocument()
@@ -39,16 +39,13 @@ abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
             document.removeDocumentListener(documentListener)
         }
 
-        val moveCaret = caretModel.getOffset() == maxChangeOffset
-        val endTailOffset = insertTail(document, maxChangeOffset)
-        if (moveCaret) {
-            caretModel.moveToOffset(endTailOffset)
-        }
+        insertTail(context, maxChangeOffset, caretModel.getOffset() == maxChangeOffset)
     }
 }
 
 class WithTailCharInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : WithTailInsertHandlerBase() {
-    override fun insertTail(document: Document, offset: Int): Int {
+    override fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean) {
+        val document = context.getDocument()
         fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getText(TextRange(offset, offset + 1))[0] == c
 
         if (isCharAt(offset, tailChar)) {
@@ -61,13 +58,21 @@ class WithTailCharInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : W
 
         val textToInsert = if (spaceAfter) tailChar + " " else tailChar.toString()
         document.insertString(offset, textToInsert)
-        return offset + textToInsert.length
+        if (moveCaret) {
+            context.getEditor().getCaretModel().moveToOffset(offset + textToInsert.length)
+
+            if (tailChar == ',') {
+                AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)
+            }
+        }
     }
 }
 
 class WithTailStringInsertHandler(val tail: String) : WithTailInsertHandlerBase() {
-    override fun insertTail(document: Document, offset: Int): Int {
-        document.insertString(offset, tail)
-        return offset + tail.length
+    override fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean) {
+        context.getDocument().insertString(offset, tail)
+        if (moveCaret) {
+            context.getEditor().getCaretModel().moveToOffset(offset + tail.length)
+        }
     }
 }
