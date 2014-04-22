@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.types;
 
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
@@ -390,6 +391,40 @@ public class ErrorUtils {
     @NotNull
     public static ModuleDescriptor getErrorModule() {
         return ERROR_MODULE;
+    }
+
+    public static boolean isUninferredParameter(@Nullable JetType type) {
+        return type instanceof UninferredParameterType;
+    }
+
+    public static boolean containsUninferredParameter(@Nullable JetType type) {
+        return TypeUtils.containsSpecialType(type, new Function1<JetType, Boolean>() {
+            @Override
+            public Boolean invoke(JetType argumentType) {
+                return isUninferredParameter(argumentType);
+            }
+        });
+    }
+
+    public static UninferredParameterType createUninferredParameterType(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+        return new UninferredParameterType(typeParameterDescriptor);
+    }
+
+    public static class UninferredParameterType extends ErrorTypeImpl {
+        private final TypeParameterDescriptor typeParameterDescriptor;
+
+        private UninferredParameterType(
+                @NotNull TypeParameterDescriptor descriptor
+        ) {
+            super(createErrorTypeConstructorWithCustomDebugName("CANT_INFER_TYPE_PARAMETER: " + descriptor.getName()),
+                  createErrorScope("Scope for error type for not inferred parameter: " + descriptor.getName()));
+            typeParameterDescriptor = descriptor;
+        }
+
+        @NotNull
+        public TypeParameterDescriptor getTypeParameterDescriptor() {
+            return typeParameterDescriptor;
+        }
     }
 
     private ErrorUtils() {}

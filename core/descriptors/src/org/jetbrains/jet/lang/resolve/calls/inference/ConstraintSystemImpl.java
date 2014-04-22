@@ -24,6 +24,7 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -40,9 +41,8 @@ import java.util.Set;
 
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL;
 import static org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE;
-import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*;
 import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.Bound;
-import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
+import static org.jetbrains.jet.lang.resolve.calls.inference.TypeBounds.BoundKind.*;
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class ConstraintSystemImpl implements ConstraintSystem {
@@ -125,7 +125,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     private static Map<TypeParameterDescriptor, TypeProjection> getParameterToInferredValueMap(
             @NotNull Map<TypeParameterDescriptor, TypeBoundsImpl> typeParameterBounds,
-            @Nullable TypeProjection defaultTypeProjection
+            @NotNull Function1<TypeParameterDescriptor, TypeProjection> getDefaultTypeProjection
     ) {
         Map<TypeParameterDescriptor, TypeProjection> substitutionContext = Maps.newHashMap();
         for (Map.Entry<TypeParameterDescriptor, TypeBoundsImpl> entry : typeParameterBounds.entrySet()) {
@@ -134,20 +134,41 @@ public class ConstraintSystemImpl implements ConstraintSystem {
 
             TypeProjection typeProjection;
             JetType value = typeBounds.getValue();
-            if (value != null && !TypeUtils.equalsOrContainsAsArgument(value, TypeUtils.DONT_CARE)) {
+            if (value != null && !TypeUtils.containsSpecialType(value, TypeUtils.DONT_CARE)) {
                 typeProjection = new TypeProjectionImpl(value);
             }
             else {
-                typeProjection = defaultTypeProjection;
+                typeProjection = getDefaultTypeProjection.invoke(typeParameter);
             }
             substitutionContext.put(typeParameter, typeProjection);
         }
         return substitutionContext;
     }
 
-    private TypeSubstitutor createTypeSubstitutorWithDefaultForUnknownTypeParameter(@NotNull JetType defaultType) {
-        return TypeUtils.makeSubstitutorForTypeParametersMap(
-                getParameterToInferredValueMap(typeParameterBounds, new TypeProjectionImpl(defaultType)));
+    private TypeSubstitutor replaceUninferredBy(@NotNull Function1<TypeParameterDescriptor, TypeProjection> getDefaultValue) {
+        return TypeUtils.makeSubstitutorForTypeParametersMap(getParameterToInferredValueMap(typeParameterBounds, getDefaultValue));
+    }
+
+    private TypeSubstitutor replaceUninferredBy(@NotNull final JetType defaultValue) {
+        return replaceUninferredBy(
+                new Function1<TypeParameterDescriptor, TypeProjection>() {
+                    @Override
+                    public TypeProjection invoke(TypeParameterDescriptor descriptor) {
+                        return new TypeProjectionImpl(defaultValue);
+                    }
+                }
+        );
+    }
+
+    private TypeSubstitutor replaceUninferredBySpecialErrorType() {
+        return replaceUninferredBy(
+                new Function1<TypeParameterDescriptor, TypeProjection>() {
+                    @Override
+                    public TypeProjection invoke(TypeParameterDescriptor descriptor) {
+                        return new TypeProjectionImpl(ErrorUtils.createUninferredParameterType(descriptor));
+                    }
+                }
+        );
     }
 
     @NotNull
@@ -323,7 +344,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     }
 
     private boolean isErrorOrSpecialType(@Nullable JetType type) {
-        if (type == DONT_CARE || type == CANT_INFER_TYPE_PARAMETER) {
+        if (type == DONT_CARE || ErrorUtils.isUninferredParameter(type)) {
             return true;
         }
 
@@ -474,13 +495,13 @@ public class ConstraintSystemImpl implements ConstraintSystem {
     @NotNull
     @Override
     public TypeSubstitutor getResultingSubstitutor() {
-        return createTypeSubstitutorWithDefaultForUnknownTypeParameter(TypeUtils.CANT_INFER_TYPE_PARAMETER);
+        return replaceUninferredBySpecialErrorType();
     }
 
     @NotNull
     @Override
     public TypeSubstitutor getCurrentSubstitutor() {
-        return createTypeSubstitutorWithDefaultForUnknownTypeParameter(TypeUtils.DONT_CARE);
+        return replaceUninferredBy(TypeUtils.DONT_CARE);
     }
 
     @NotNull

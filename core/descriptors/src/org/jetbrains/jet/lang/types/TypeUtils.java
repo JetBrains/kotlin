@@ -45,7 +45,6 @@ import java.util.*;
 
 public class TypeUtils {
     public static final JetType DONT_CARE = ErrorUtils.createErrorTypeWithCustomDebugName("DONT_CARE");
-    public static final JetType CANT_INFER_TYPE_PARAMETER = ErrorUtils.createErrorTypeWithCustomDebugName("CANT_INFER_TYPE_PARAMETER");
     public static final JetType PLACEHOLDER_FUNCTION_TYPE = ErrorUtils.createErrorTypeWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE");
 
     public static final JetType CANT_INFER_LAMBDA_PARAM_TYPE = ErrorUtils.createErrorType("Cannot be inferred");
@@ -494,16 +493,24 @@ public class TypeUtils {
         return false;
     }
 
-    public static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull JetType... possibleArgumentTypes) {
-        return equalsOrContainsAsArgument(type, Sets.newHashSet(possibleArgumentTypes));
+    public static boolean containsSpecialType(@Nullable JetType type, @NotNull final JetType specialType) {
+        return containsSpecialType(type, new Function1<JetType, Boolean>() {
+            @Override
+            public Boolean invoke(JetType type) {
+                return specialType.equals(type);
+            }
+        });
     }
 
-    private static boolean equalsOrContainsAsArgument(@Nullable JetType type, @NotNull Set<JetType> possibleArgumentTypes) {
+    public static boolean containsSpecialType(
+            @Nullable JetType type,
+            @NotNull Function1<JetType, Boolean> isSpecialType
+    ) {
         if (type == null) return false;
-        if (possibleArgumentTypes.contains(type)) return true;
+        if (isSpecialType.invoke(type)) return true;
         if (type instanceof PackageType) return false;
         for (TypeProjection projection : type.getArguments()) {
-            if (equalsOrContainsAsArgument(projection.getType(), possibleArgumentTypes)) return true;
+            if (containsSpecialType(projection.getType(), isSpecialType)) return true;
         }
         return false;
     }

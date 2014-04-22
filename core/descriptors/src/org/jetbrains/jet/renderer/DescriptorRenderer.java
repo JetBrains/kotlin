@@ -66,6 +66,10 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
+    DescriptorRenderer HTML_FOR_UNINFERRED_TYPE_PARAMS = new DescriptorRendererBuilder()
+            .setUninferredTypeParameterAsName(true)
+            .setTextFormat(TextFormat.HTML).build();
+
     @NotNull
     String renderType(@NotNull JetType type);
 

@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_TYPE_PARAMETER;
 import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class CallResolverUtil {
@@ -51,7 +50,8 @@ public class CallResolverUtil {
         // last argument is return type of function type
         List<TypeProjection> functionParameters = arguments.subList(0, arguments.size() - 1);
         for (TypeProjection functionParameter : functionParameters) {
-            if (TypeUtils.equalsOrContainsAsArgument(functionParameter.getType(), CANT_INFER_TYPE_PARAMETER, DONT_CARE)) {
+            if (TypeUtils.containsSpecialType(functionParameter.getType(), DONT_CARE)
+                || ErrorUtils.containsUninferredParameter(functionParameter.getType())) {
                 return true;
             }
         }
@@ -73,7 +73,7 @@ public class CallResolverUtil {
         return new JetTypeImpl(type.getAnnotations(), type.getConstructor(), type.isNullable(), newArguments, type.getMemberScope());
     }
 
-    private static boolean hasReturnTypeDependentOnNotInferredParams(
+    private static boolean hasReturnTypeDependentOnUninferredParams(
             @NotNull CallableDescriptor candidateDescriptor,
             @NotNull ConstraintSystem constraintSystem
     ) {
@@ -95,7 +95,7 @@ public class CallResolverUtil {
             @NotNull CallableDescriptor candidateDescriptor,
             @NotNull ConstraintSystem constraintSystem
     ) {
-        if (hasReturnTypeDependentOnNotInferredParams(candidateDescriptor, constraintSystem)) return false;
+        if (hasReturnTypeDependentOnUninferredParams(candidateDescriptor, constraintSystem)) return false;
 
         // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
         if (constraintSystem.getStatus().hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION)) return false;

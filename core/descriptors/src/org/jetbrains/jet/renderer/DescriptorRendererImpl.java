@@ -41,6 +41,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.*;
 
+import static org.jetbrains.jet.lang.types.ErrorUtils.UninferredParameterType;
 import static org.jetbrains.jet.lang.types.TypeUtils.*;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
@@ -55,6 +56,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean normalizedVisibilities;
     private final boolean showInternalKeyword;
     private final boolean prettyFunctionTypes;
+    private final boolean uninferredTypeParameterAsName;
 
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
@@ -78,6 +80,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean normalizedVisibilities,
             boolean showInternalKeyword,
             boolean prettyFunctionTypes,
+            boolean uninferredTypeParameterAsName,
             @NotNull OverrideRenderingPolicy overrideRenderingPolicy,
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
@@ -100,6 +103,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.includePropertyConstant = includePropertyConstant;
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
+        this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
     }
 
     /* FORMATTING */
@@ -110,6 +114,17 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 return keyword;
             case HTML:
                 return "<b>" + keyword + "</b>";
+        }
+        throw new IllegalStateException("Unexpected textFormat: " + textFormat);
+    }
+
+    @NotNull
+    private String renderError(@NotNull String keyword) {
+        switch (textFormat) {
+            case PLAIN:
+                return keyword;
+            case HTML:
+                return "<font color=red><b>" + keyword + "</b></font>";
         }
         throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
@@ -128,6 +143,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     private String lt() {
         return escape("<");
+    }
+
+    @NotNull
+    private String gt() {
+        return escape(">");
     }
 
     @NotNull
@@ -213,22 +233,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     @NotNull
     @Override
     public String renderType(@NotNull JetType type) {
-        return escape(renderTypeWithoutEscape(type));
-    }
-
-    @NotNull
-    @Override
-    public String renderTypeArguments(@NotNull List<TypeProjection> typeArguments) {
-        if (typeArguments.isEmpty()) return "";
-        StringBuilder sb = new StringBuilder();
-        sb.append("<");
-        appendTypeProjections(typeArguments, sb);
-        sb.append(">");
-        return sb.toString();
-    }
-
-    private String renderTypeWithoutEscape(@NotNull JetType type) {
-        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == CANT_INFER_TYPE_PARAMETER || type == DONT_CARE) {
+        if (type == CANT_INFER_LAMBDA_PARAM_TYPE || type == DONT_CARE) {
+            return "???";
+        }
+        if (ErrorUtils.isUninferredParameter(type)) {
+            if (uninferredTypeParameterAsName) {
+                return renderError(((UninferredParameterType) type).getTypeParameterDescriptor().getName().toString());
+            }
             return "???";
         }
         if (type instanceof LazyType && debugMode) {
@@ -244,6 +255,17 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     @NotNull
+    @Override
+    public String renderTypeArguments(@NotNull List<TypeProjection> typeArguments) {
+        if (typeArguments.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder();
+        sb.append(lt());
+        appendTypeProjections(typeArguments, sb);
+        sb.append(gt());
+        return sb.toString();
+    }
+
+    @NotNull
     private String renderDefaultType(@NotNull JetType type) {
         StringBuilder sb = new StringBuilder();
 
@@ -253,11 +275,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         else {
             sb.append(renderTypeName(type.getConstructor()));
         }
-        if (!type.getArguments().isEmpty()) {
-            sb.append("<");
-            appendTypeProjections(type.getArguments(), sb);
-            sb.append(">");
-        }
+        sb.append(renderTypeArguments(type.getArguments()));
         if (type.isNullable()) {
             sb.append("?");
         }
@@ -520,7 +538,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         if (topLevel) {
-            builder.append(">");
+            builder.append(gt());
         }
     }
 
@@ -538,7 +556,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                     builder.append(", ");
                 }
             }
-            builder.append(">");
+            builder.append(gt());
             if (withSpace) {
                 builder.append(" ");
             }

@@ -31,10 +31,7 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.CommonSupertypes;
-import org.jetbrains.jet.lang.types.DeferredType;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.JetTypeInfo;
+import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -276,7 +273,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             }
         }
         else {
-            if (expectedType == null || expectedType == DONT_CARE || expectedType == CANT_INFER_TYPE_PARAMETER) {
+            if (expectedType == null || expectedType == DONT_CARE || ErrorUtils.isUninferredParameter(expectedType)) {
                 context.trace.report(CANNOT_INFER_PARAMETER_TYPE.on(declaredParameter));
             }
             if (expectedType != null) {
