@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
 import java.util.Collection;
@@ -34,7 +33,7 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public ResolveSession getLazyResolveSession(@NotNull Project project, @NotNull Collection<JetFile> files) {
-        return AnalyzerFacadeForJS.getLazyResolveSession(files, new IDEAConfig(project));
+    public Setup createSetup(@NotNull Project project, @NotNull Collection<JetFile> files) {
+        return new BasicSetup(AnalyzerFacadeForJS.getLazyResolveSession(files, new IDEAConfig(project)));
     }
 }

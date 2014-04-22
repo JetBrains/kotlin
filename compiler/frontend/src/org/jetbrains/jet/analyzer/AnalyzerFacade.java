@@ -25,8 +25,28 @@ import java.util.Collection;
 
 public interface AnalyzerFacade {
 
+    interface Setup {
+        @NotNull
+        ResolveSession getLazyResolveSession();
+    }
+
+    class BasicSetup implements Setup {
+
+        private final ResolveSession resolveSession;
+
+        public BasicSetup(@NotNull ResolveSession session) {
+            resolveSession = session;
+        }
+
+        @NotNull
+        @Override
+        public ResolveSession getLazyResolveSession() {
+            return resolveSession;
+        }
+    }
+
     @NotNull
-    ResolveSession getLazyResolveSession(
+    Setup createSetup(
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     );

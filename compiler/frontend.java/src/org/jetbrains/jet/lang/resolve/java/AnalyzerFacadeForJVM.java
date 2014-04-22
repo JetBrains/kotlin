@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
@@ -61,8 +59,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
 
     @NotNull
     @Override
-    public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        return createLazyResolveSession(fileProject, files, new BindingTraceContext(), true);
+    public Setup createSetup(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
+        return new BasicSetup(createLazyResolveSession(fileProject, files, new BindingTraceContext(), true));
     }
 
     @NotNull

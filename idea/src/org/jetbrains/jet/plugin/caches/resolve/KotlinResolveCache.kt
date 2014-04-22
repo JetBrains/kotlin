@@ -84,7 +84,7 @@ class KotlinCacheService(val project: Project) {
         val allFiles = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project))
 
         val files = if (syntheticFile == null) allFiles else collectFilesForSyntheticFile(allFiles, syntheticFile)
-        val resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files)
+        val resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).createSetup(project, files).getLazyResolveSession()
         CachedValueProvider.Result.create(ResolveSessionForBodies(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
     }
 

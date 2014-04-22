@@ -24,6 +24,7 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.PsiModificationTracker;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.JetFilesProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
@@ -71,7 +72,8 @@ public abstract class DeclarationsCacheProvider {
         @Override
         public synchronized Result<ResolveSessionForBodies> compute() {
             Collection<JetFile> files = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project));
-            ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).getLazyResolveSession(project, files);
+            AnalyzerFacade facade = AnalyzerFacadeProvider.getAnalyzerFacade(platform);
+            ResolveSession resolveSession = facade.createSetup(project, files).getLazyResolveSession();
             return Result.create(new ResolveSessionForBodies(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
         }
     }

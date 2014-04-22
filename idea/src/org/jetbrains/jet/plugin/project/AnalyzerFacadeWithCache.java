@@ -26,6 +26,7 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -103,7 +104,8 @@ public final class AnalyzerFacadeWithCache {
                                 files.remove(file.getOriginalFile());
                             }
 
-                            ResolveSession resolveSession = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file).getLazyResolveSession(fileProject, files);
+                            AnalyzerFacade facade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(file);
+                            ResolveSession resolveSession = facade.createSetup(fileProject, files).getLazyResolveSession();
                             return Result.create(new ResolveSessionForBodies(file, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
                         }
                     },

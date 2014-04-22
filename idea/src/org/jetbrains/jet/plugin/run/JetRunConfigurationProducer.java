@@ -82,8 +82,8 @@ public class JetRunConfigurationProducer extends RuntimeConfigurationProducer im
         PsiFile psiFile = location.getPsiElement().getContainingFile();
         if (psiFile instanceof JetFile) {
             JetFile jetFile = (JetFile) psiFile;
-            AnalyzerFacade analyzerFacade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(jetFile);
-            ResolveSession resolveSession = analyzerFacade.getLazyResolveSession(jetFile.getProject(), Collections.singleton(jetFile));
+            AnalyzerFacade facade = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(jetFile);
+            ResolveSession resolveSession = facade.createSetup(jetFile.getProject(), Collections.singleton(jetFile)).getLazyResolveSession();
             MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(resolveSession);
             if (mainFunctionDetector.hasMain(jetFile.getDeclarations())) {
                 return jetFile;
