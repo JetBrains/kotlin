@@ -3198,6 +3198,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperands.kt");
         }
         
+        @TestMetadata("multipleOperandsWithDifferentPrecedence.kt")
+        public void testMultipleOperandsWithDifferentPrecedence() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence.kt");
+        }
+        
         @TestMetadata("multiply.kt")
         public void testMultiply() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multiply.kt");

@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.intentions.SwapBinaryExpression.Position.*
+import org.jetbrains.jet.plugin.util.JetPsiPrecedences
 
 public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(
         "swap.binary.expression", javaClass()
@@ -35,16 +36,24 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
     fun getInnermostOperand(element: JetBinaryExpression, position: Position): JetExpression? {
         val left = element.getLeft()
         val right = element.getRight()
-
         if (left == null || right == null) {
             return null
         }
 
+        val parentPrecedence = JetPsiPrecedences.getPrecedence(element)
+        val leftPrecedence = JetPsiPrecedences.getPrecedence(left)
+        val rightPrecedence = JetPsiPrecedences.getPrecedence(right)
         return when (position) {
-            FIRST_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT) else left as JetExpression
-            FIRST_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT) else right as JetExpression
-            NEXT_LEFT -> if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
-            NEXT_RIGHT -> if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
+            FIRST_LEFT -> if (leftPrecedence < parentPrecedence) left
+                else if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT)
+                else left as JetExpression
+            FIRST_RIGHT -> if (rightPrecedence < parentPrecedence) right
+                else if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT)
+                else right as JetExpression
+            NEXT_LEFT -> if (left is JetBinaryExpression)
+                getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
+            NEXT_RIGHT -> if (right is JetBinaryExpression)
+                getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
         }
     }
 
