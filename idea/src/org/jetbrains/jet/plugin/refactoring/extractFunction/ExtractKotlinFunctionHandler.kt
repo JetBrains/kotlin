@@ -72,7 +72,7 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
                     validationResult.descriptor
                 }
                 else {
-                    val dialog = KotlinExtractFunctionDialog(project, validationResult.descriptor)
+                    val dialog = KotlinExtractFunctionDialog(project, validationResult)
                     if (!dialog.showAndGet()) return
 
                     dialog.getCurrentDescriptor()

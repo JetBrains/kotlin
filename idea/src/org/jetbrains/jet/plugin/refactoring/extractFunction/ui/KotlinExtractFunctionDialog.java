@@ -23,6 +23,7 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -47,15 +48,15 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     private final Project project;
 
-    private final ExtractionDescriptor originalDescriptor;
+    private final ExtractionDescriptorWithConflicts originalDescriptor;
     private ExtractionDescriptor currentDescriptor;
 
-    public KotlinExtractFunctionDialog(Project project, ExtractionDescriptor originalDescriptor) {
+    public KotlinExtractFunctionDialog(Project project, ExtractionDescriptorWithConflicts originalDescriptor) {
         super(project, true);
 
         this.project = project;
         this.originalDescriptor = originalDescriptor;
-        this.currentDescriptor = originalDescriptor;
+        this.currentDescriptor = originalDescriptor.getDescriptor();
 
         setModal(true);
         setTitle(JetRefactoringBundle.message("extract.function"));
@@ -68,7 +69,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean isVisibilitySectionAvailable() {
-        PsiElement target = originalDescriptor.getExtractionData().getNextSibling().getParent();
+        PsiElement target = originalDescriptor.getDescriptor().getExtractionData().getNextSibling().getParent();
         return target instanceof JetClassOrObject || target instanceof JetFile;
     }
 
@@ -108,7 +109,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         functionNameLabel.setLabelFor(functionNameField);
 
-        functionNameField.setText(originalDescriptor.getName());
+        functionNameField.setText(originalDescriptor.getDescriptor().getName());
         functionNameField.addDocumentListener(
                 new DocumentAdapter() {
                     @Override
@@ -121,7 +122,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            String visibility = originalDescriptor.getVisibility();
+            String visibility = originalDescriptor.getDescriptor().getVisibility();
             visibilityBox.setSelectedItem(visibility.isEmpty() ? "internal" : visibility);
         }
 
@@ -141,14 +142,16 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 doCancelAction();
             }
         };
-        parameterTablePanel.init(originalDescriptor.getParameters());
+        parameterTablePanel.init(originalDescriptor.getDescriptor().getParameters());
         inputParametersPanel.add(parameterTablePanel);
     }
 
     @Override
     protected void doOKAction() {
-        ExtractionDescriptorWithConflicts validationResult = ExtractFunctionPackage.validate(currentDescriptor);
-        if (RefactoringPackage.checkConflictsInteractively(project, validationResult.getConflicts())) {
+        MultiMap<PsiElement, String> conflicts = ExtractFunctionPackage.validate(currentDescriptor).getConflicts();
+        conflicts.values().removeAll(originalDescriptor.getConflicts().values());
+
+        if (RefactoringPackage.checkConflictsInteractively(project, conflicts)) {
             super.doOKAction();
         }
     }
@@ -170,6 +173,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     @NotNull
     private ExtractionDescriptor createDescriptor() {
+        ExtractionDescriptor descriptor = originalDescriptor.getDescriptor();
+
         List<KotlinParameterTablePanel.ParameterInfo> parameterInfos = parameterTablePanel.getParameterInfos();
 
         Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
@@ -177,13 +182,13 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
         }
 
-        ControlFlow controlFlow = originalDescriptor.getControlFlow();
+        ControlFlow controlFlow = descriptor.getControlFlow();
         if (controlFlow instanceof ParameterUpdate) {
             controlFlow = new ParameterUpdate(oldToNewParameters.get(((ParameterUpdate) controlFlow).getParameter()));
         }
 
         Map<Integer, Replacement> replacementMap = ContainerUtil.newHashMap();
-        for (Map.Entry<Integer, Replacement> e : originalDescriptor.getReplacementMap().entrySet()) {
+        for (Map.Entry<Integer, Replacement> e : descriptor.getReplacementMap().entrySet()) {
             Integer offset = e.getKey();
             Replacement replacement = e.getValue();
 
@@ -202,11 +207,11 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         }
 
         return new ExtractionDescriptor(
-                originalDescriptor.getExtractionData(),
+                descriptor.getExtractionData(),
                 getFunctionName(),
                 getVisibility(),
                 ContainerUtil.newArrayList(oldToNewParameters.values()),
-                originalDescriptor.getReceiverParameter(),
+                descriptor.getReceiverParameter(),
                 replacementMap,
                 controlFlow
         );
