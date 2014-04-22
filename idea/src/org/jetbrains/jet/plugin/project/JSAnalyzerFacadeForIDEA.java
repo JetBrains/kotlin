@@ -16,16 +16,10 @@
 
 package org.jetbrains.jet.plugin.project;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.analyzer.AnalyzerFacade;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.k2js.analyze.AnalyzerFacadeForJS;
 
@@ -36,28 +30,6 @@ public enum JSAnalyzerFacadeForIDEA implements AnalyzerFacade {
     INSTANCE;
 
     private JSAnalyzerFacadeForIDEA() {
-    }
-
-    @NotNull
-    @Override
-    public AnalyzeExhaust analyzeFiles(
-            @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        return AnalyzerFacadeForJS.analyzeFiles(files, filesToAnalyzeCompletely, new IDEAConfig(project), true);
-    }
-
-    @NotNull
-    @Override
-    public AnalyzeExhaust analyzeBodiesInFiles(
-            @NotNull Project project,
-            @NotNull Predicate<PsiFile> filesForBodiesResolve,
-            @NotNull BindingTrace traceContext,
-            @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module
-    ) {
-        return AnalyzerFacadeForJS.analyzeBodiesInFiles(filesForBodiesResolve, new IDEAConfig(project), traceContext, bodiesResolveContext, module);
     }
 
     @NotNull

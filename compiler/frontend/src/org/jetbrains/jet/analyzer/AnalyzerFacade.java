@@ -16,35 +16,14 @@
 
 package org.jetbrains.jet.analyzer;
 
-import com.google.common.base.Predicate;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 
 import java.util.Collection;
 
 public interface AnalyzerFacade {
-
-    @NotNull
-    AnalyzeExhaust analyzeFiles(
-            @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
-    );
-
-    @NotNull
-    AnalyzeExhaust analyzeBodiesInFiles(
-            @NotNull Project project,
-            @NotNull Predicate<PsiFile> filesForBodiesResolve,
-            @NotNull BindingTrace traceContext,
-            @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module
-    );
 
     @NotNull
     ResolveSession getLazyResolveSession(

@@ -23,7 +23,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 import org.jetbrains.jet.plugin.JetBundle;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
 import java.util.Collection;
@@ -86,15 +86,15 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
 
-        AnalyzeExhaust analyzeExhaust = MigrateSureInProjectFix.analyzeFiles(file, files);
+        for (JetFile jetFile : files) {
+            for (Diagnostic diagnostic : ResolvePackage.getAnalysisResults(jetFile).getBindingContext().getDiagnostics()) {
+                if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
 
-        for (Diagnostic diagnostic : analyzeExhaust.getBindingContext().getDiagnostics()) {
-            if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
+                PsiElement element = diagnostic.getPsiElement();
+                if (!isEqualsHashCodeOrToString(element)) continue;
 
-            PsiElement element = diagnostic.getPsiElement();
-            if (!isEqualsHashCodeOrToString(element)) continue;
-
-            element.replace(AddModifierFix.addModifier(element, OVERRIDE_KEYWORD, MODIFIERS_TO_REPLACE, project, false));
+                element.replace(AddModifierFix.addModifier(element, OVERRIDE_KEYWORD, MODIFIERS_TO_REPLACE, project, false));
+            }
         }
     }
 

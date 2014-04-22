@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.quickfix;
 
-import com.google.common.base.Predicates;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -24,15 +23,12 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeProvider;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.PluginJetFilesProvider;
 
 import java.util.Collection;
@@ -92,14 +88,13 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
         Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
 
-        AnalyzeExhaust analyzeExhaust = analyzeFiles(file, files);
-
         for (JetFile jetFile : files) {
-            replaceUnresolvedSure(jetFile, analyzeExhaust.getBindingContext());
+            replaceUnresolvedSure(jetFile);
         }
     }
 
-    private void replaceUnresolvedSure(JetFile file, final BindingContext context) {
+    private void replaceUnresolvedSure(JetFile file) {
+        final BindingContext context = ResolvePackage.getBindingContext(file);
         for (JetDeclaration declaration : file.getDeclarations()) {
             declaration.acceptChildren(new JetVisitorVoid() {
 
@@ -141,23 +136,5 @@ public class MigrateSureInProjectFix extends JetIntentionAction<PsiElement> {
                 return new MigrateSureInProjectFix(element);
             }
         };
-    }
-
-    /* package */ static AnalyzeExhaust analyzeFiles(JetFile initialFile, Collection<JetFile> files) {
-        AnalyzeExhaust analyzeExhaustHeaders = AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeFiles(
-                initialFile.getProject(),
-                files,
-                Predicates.<PsiFile>alwaysFalse());
-
-        BodiesResolveContext context = analyzeExhaustHeaders.getBodiesResolveContext();
-        assert context != null : "Headers resolver should prepare and stored information for bodies resolve";
-
-        // Need to resolve bodies in given file and all in the same package
-        return AnalyzerFacadeProvider.getAnalyzerFacadeForFile(initialFile).analyzeBodiesInFiles(
-                initialFile.getProject(),
-                Predicates.<PsiFile>alwaysTrue(),
-                new DelegatingBindingTrace(analyzeExhaustHeaders.getBindingContext(), "trace in migrate sure fix"),
-                context,
-                analyzeExhaustHeaders.getModuleDescriptor());
     }
 }

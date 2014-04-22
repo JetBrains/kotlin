@@ -59,30 +59,6 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
     private AnalyzerFacadeForJVM() {
     }
 
-    @Override
-    @NotNull
-    public AnalyzeExhaust analyzeFiles(
-            @NotNull Project project,
-            @NotNull Collection<JetFile> files,
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely
-    ) {
-        return analyzeFilesWithJavaIntegration(project, files, filesToAnalyzeCompletely, true);
-    }
-
-    @NotNull
-    @Override
-    public AnalyzeExhaust analyzeBodiesInFiles(
-            @NotNull Project project,
-            @NotNull Predicate<PsiFile> filesForBodiesResolve,
-            @NotNull BindingTrace headersTraceContext,
-            @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module
-    ) {
-        return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
-                project, filesForBodiesResolve,
-                headersTraceContext, bodiesResolveContext, module);
-    }
-
     @NotNull
     @Override
     public ResolveSession getLazyResolveSession(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
