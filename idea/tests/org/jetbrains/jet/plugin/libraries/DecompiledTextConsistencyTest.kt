@@ -17,22 +17,16 @@
 package org.jetbrains.jet.plugin.libraries
 
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.junit.Assert
-import org.jetbrains.jet.plugin.JetJdkAndLibraryProjectDescriptor
-import org.jetbrains.jet.jvm.compiler.longTest.ResolveDescriptorsFromExternalLibraries
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor
-import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.project.Project
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import java.util.Collections
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -40,10 +34,9 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 
     public fun testConsistencyWithJavaDescriptorResolver() {
         val packageClassFqName = PackageClassUtils.getPackageClassFqName(STANDARD_LIBRARY_FQNAME)
-        val kotlinPackageClass = myFixture!!.getJavaFacade()!!.findClass(packageClassFqName.asString())!!
+        val kotlinPackageClass = myFixture.getJavaFacade()!!.findClass(packageClassFqName.asString())!!
         val kotlinPackageFile = kotlinPackageClass.getContainingFile()!!.getVirtualFile()!!
-        val project = getProject()!!
-        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(project)).text
+        val projectBasedText = buildDecompiledText(kotlinPackageFile, ProjectBasedResolverForDecompiler(getProject())).text
         val deserializerForDecompiler = DeserializerForDecompiler(kotlinPackageFile.getParent()!!, STANDARD_LIBRARY_FQNAME)
         val deserializedText = buildDecompiledText(kotlinPackageFile, deserializerForDecompiler).text
         Assert.assertEquals(projectBasedText, deserializedText)
@@ -58,7 +51,7 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 }
 
 class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
-    val javaDescriptorResolver = InjectorForJavaDescriptorResolverUtil.create(project, BindingTraceContext()).getJavaDescriptorResolver()!!
+    val javaDescriptorResolver = JavaResolveExtension[project]
 
     override fun resolveClass(classFqName: FqName): ClassDescriptor? {
         return javaDescriptorResolver.resolveClass(classFqName)

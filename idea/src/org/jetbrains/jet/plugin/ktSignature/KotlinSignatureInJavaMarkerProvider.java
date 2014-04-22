@@ -35,8 +35,6 @@ import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -50,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinDeclarationsCache;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
@@ -98,9 +97,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         }
 
         BindingTrace trace = createDelegatingTrace(project);
-        InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(project, trace);
 
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.instance$.get(project);
 
         for (PsiElement element : elements) {
             if (!(element instanceof PsiMember)) {

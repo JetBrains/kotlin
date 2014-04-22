@@ -48,12 +48,8 @@ import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.TargetPlatform.*
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector
-import com.google.common.collect.ImmutableMap
-import org.jetbrains.jet.lang.resolve.Diagnostics
-import org.jetbrains.jet.util.slicedmap.ReadOnlySlice
-import org.jetbrains.jet.util.slicedmap.WritableSlice
-import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import java.util.HashSet
+import org.jetbrains.jet.analyzer.AnalyzerFacade
 
 private val LOG = Logger.getInstance(javaClass<KotlinResolveCache>())
 
@@ -75,6 +71,12 @@ fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExha
     return KotlinCacheService.getInstance(element.getProject()).getAnalysisResults(elements)
 }
 
+private class SessionAndSetup(
+        val platform: TargetPlatform,
+        val resolveSessionForBodies: ResolveSessionForBodies,
+        val setup: AnalyzerFacade.Setup
+)
+
 class KotlinCacheService(val project: Project) {
     class object {
         fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
@@ -84,8 +86,17 @@ class KotlinCacheService(val project: Project) {
         val allFiles = JetFilesProvider.getInstance(project).allInScope(GlobalSearchScope.allScope(project))
 
         val files = if (syntheticFile == null) allFiles else collectFilesForSyntheticFile(allFiles, syntheticFile)
-        val resolveSession = AnalyzerFacadeProvider.getAnalyzerFacade(platform).createSetup(project, files).getLazyResolveSession()
-        CachedValueProvider.Result.create(ResolveSessionForBodies(project, resolveSession), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+        val setup = AnalyzerFacadeProvider.getAnalyzerFacade(platform).createSetup(project, files)
+        val resolveSessionForBodies = ResolveSessionForBodies(project, setup.getLazyResolveSession())
+        CachedValueProvider.Result.create(
+                SessionAndSetup(
+                        platform,
+                        resolveSessionForBodies,
+                        setup
+                ),
+                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                resolveSessionForBodies
+        )
     }
 
     private fun collectFilesForSyntheticFile(allFiles: Collection<JetFile>, syntheticFile: JetFile): Collection<JetFile> {
@@ -160,16 +171,32 @@ class KotlinCacheService(val project: Project) {
         val project = jetFile.getProject()
         return JetFilesProvider.getInstance(project).isFileInScope(jetFile, GlobalSearchScope.allScope(project))
     }
+
+    public fun <T> get(extension: CacheExtension<T>): T {
+        return globalCachesPerPlatform[extension.platform]!![extension]
+    }
+}
+
+trait CacheExtension<T> {
+    val platform: TargetPlatform
+    fun getData(setup: AnalyzerFacade.Setup): T
 }
 
 private class KotlinResolveCache(
         val project: Project,
-        val resolveSessionProvider: () -> CachedValueProvider.Result<ResolveSessionForBodies>
+        val resolveSessionProvider: () -> CachedValueProvider.Result<SessionAndSetup>
 ) {
 
-    private val resolveSessionCache = SynchronizedCachedValue(project, resolveSessionProvider)
+    private val setupCache = SynchronizedCachedValue(project, resolveSessionProvider, trackValue = false)
 
-    public fun getLazyResolveSession(): ResolveSessionForBodies = resolveSessionCache.getValue()
+    public fun getLazyResolveSession(): ResolveSessionForBodies = setupCache.getValue().resolveSessionForBodies
+
+    public fun <T> get(extension: CacheExtension<T>): T {
+        val sessionAndSetup = setupCache.getValue()
+        assert(extension.platform == sessionAndSetup.platform,
+               "Extension $extension declares platfrom ${extension.platform} which is incompatible with ${sessionAndSetup.platform}")
+        return extension.getData(sessionAndSetup.setup)
+    }
 
     private data class Task(
             val elements: Set<JetElement>

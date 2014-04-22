@@ -19,19 +19,19 @@ package org.jetbrains.jet.plugin.ktSignature;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
-import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManager;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
+import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase {
 
@@ -46,15 +46,13 @@ public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase
         project = myFixture.getProject();
 
 
-        myFixture.configureByText(JetFileType.INSTANCE, "val t: Thread? = null");
+        PsiFile file = myFixture.configureByText(JetFileType.INSTANCE, "val t: Thread? = null");
 
         PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass("java.lang.Thread", GlobalSearchScope.allScope(project));
-        BindingContext context = KotlinCacheManager.getInstance(project).getDeclarationsFromProject(TargetPlatform.JVM).getBindingContext();
+        BindingContext context = ResolvePackage.getBindingContext((JetFile) file);
         ClassDescriptor preResolvedClass = context.get(BindingContext.CLASS, psiClass);
 
-        InjectorForJavaDescriptorResolver injector =
-                InjectorForJavaDescriptorResolverUtil.create(project, KotlinSignatureInJavaMarkerProvider.createDelegatingTrace(project));
-        ClassDescriptor reResolvedClass = injector.getJavaDescriptorResolver()
+        ClassDescriptor reResolvedClass = JavaResolveExtension.instance$.get(project)
                 .resolveClass(new FqName("java.lang.Thread"));
 
         assertSame(preResolvedClass, reResolvedClass);

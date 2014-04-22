@@ -54,13 +54,28 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             new ImportPath("kotlin.*"),
             new ImportPath("kotlin.io.*"));
 
+    public static class JvmSetup extends BasicSetup {
+
+        private final JavaDescriptorResolver javaDescriptorResolver;
+
+        public JvmSetup(@NotNull ResolveSession session, @NotNull JavaDescriptorResolver javaDescriptorResolver) {
+            super(session);
+            this.javaDescriptorResolver = javaDescriptorResolver;
+        }
+
+        @NotNull
+        public JavaDescriptorResolver getJavaDescriptorResolver() {
+            return javaDescriptorResolver;
+        }
+    }
+
     private AnalyzerFacadeForJVM() {
     }
 
     @NotNull
     @Override
-    public Setup createSetup(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
-        return new BasicSetup(createLazyResolveSession(fileProject, files, new BindingTraceContext(), true));
+    public JvmSetup createSetup(@NotNull Project fileProject, @NotNull Collection<JetFile> files) {
+        return createSetup(fileProject, files, new BindingTraceContext(), true);
     }
 
     @NotNull
@@ -68,6 +83,16 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             @NotNull Project project,
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
+            boolean addBuiltIns
+    ) {
+
+        return createSetup(project, files, trace, addBuiltIns).getLazyResolveSession();
+    }
+
+    private static JvmSetup createSetup(
+            Project project,
+            Collection<JetFile> files,
+            BindingTrace trace,
             boolean addBuiltIns
     ) {
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
@@ -89,8 +114,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                     DependencyKind.BUILT_INS,
                     KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());
         }
-
-        return resolveWithJava.getResolveSession();
+        return new JvmSetup(resolveWithJava.getResolveSession(), resolveWithJava.getJavaDescriptorResolver());
     }
 
     @NotNull
