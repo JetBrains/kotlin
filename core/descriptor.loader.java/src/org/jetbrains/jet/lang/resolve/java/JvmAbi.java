@@ -38,6 +38,7 @@ public final class JvmAbi {
     public static final String CLASS_OBJECT_SUFFIX = "$" + CLASS_OBJECT_CLASS_NAME;
 
     public static final String DELEGATED_PROPERTY_NAME_SUFFIX = "$delegate";
+    public static final String PROPERTY_METADATA_ARRAY_NAME = "$propertyMetadata";
     public static final String ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX = "$annotations";
 
     public static final String INSTANCE_FIELD = "instance$";

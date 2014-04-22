@@ -74,6 +74,8 @@ public class PackagePartCodegen extends MemberCodegen {
                 }
             });
 
+            generatePropertyMetadataArrayFieldIfNeeded(packagePartType, jetFile);
+
             if (clInit != null) {
                 clInit.v.visitInsn(RETURN);
                 FunctionCodegen.endVisit(clInit.v, "static initializer for package", jetFile);

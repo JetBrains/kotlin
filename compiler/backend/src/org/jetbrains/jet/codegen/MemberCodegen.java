@@ -31,7 +31,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.types.ErrorUtils;
@@ -40,15 +42,18 @@ import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public abstract class MemberCodegen extends ParentCodegenAwareImpl {
     protected final FieldOwnerContext context;
@@ -193,7 +198,7 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
     }
 
     protected void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull JetProperty property) {
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
@@ -220,7 +225,7 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         if (initializer == null) return false;
 
-        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(BindingContext.VARIABLE, property);
+        PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
         CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
@@ -280,5 +285,39 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
             }
         }
         return false;
+    }
+
+    protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType, @NotNull JetDeclarationContainer container) {
+        List<JetProperty> delegatedProperties = new ArrayList<JetProperty>();
+        for (JetDeclaration declaration : container.getDeclarations()) {
+            if (declaration instanceof JetProperty) {
+                JetProperty property = (JetProperty) declaration;
+                if (property.getDelegate() != null) {
+                    delegatedProperties.add(property);
+                }
+            }
+        }
+        if (delegatedProperties.isEmpty()) return;
+
+        v.newField(null, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.PROPERTY_METADATA_ARRAY_NAME,
+                   "[" + PROPERTY_METADATA_TYPE, null, null);
+
+        InstructionAdapter iv = createOrGetClInitCodegen().v;
+        iv.iconst(delegatedProperties.size());
+        iv.newarray(PROPERTY_METADATA_TYPE);
+
+        for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
+            VariableDescriptor property = BindingContextUtils.getNotNull(bindingContext, VARIABLE, delegatedProperties.get(i));
+
+            iv.dup();
+            iv.iconst(i);
+            iv.anew(PROPERTY_METADATA_IMPL_TYPE);
+            iv.dup();
+            iv.visitLdcInsn(property.getName().asString());
+            iv.invokespecial(PROPERTY_METADATA_IMPL_TYPE.getInternalName(), "<init>", "(Ljava/lang/String;)V");
+            iv.astore(PROPERTY_METADATA_IMPL_TYPE);
+        }
+
+        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
     }
 }

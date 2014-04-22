@@ -2299,6 +2299,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/delegatedProperty/privateVar.kt");
         }
         
+        @TestMetadata("propertyMetadataShouldBeCached.kt")
+        public void testPropertyMetadataShouldBeCached() throws Exception {
+            doTest("compiler/testData/codegen/box/delegatedProperty/propertyMetadataShouldBeCached.kt");
+        }
+        
         @TestMetadata("setAsExtensionFun.kt")
         public void testSetAsExtensionFun() throws Exception {
             doTest("compiler/testData/codegen/box/delegatedProperty/setAsExtensionFun.kt");

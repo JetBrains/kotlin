@@ -442,6 +442,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
+        generateDelegatedPropertyMetadataArray();
+
         generateFieldForSingleton();
 
         generateClassObjectBackingFieldCopies();
@@ -472,6 +474,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateToArray();
 
         genClosureFields(context.closure, v, state.getTypeMapper());
+    }
+
+    private void generateDelegatedPropertyMetadataArray() {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            generatePropertyMetadataArrayFieldIfNeeded(classAsmType, myClass);
+        }
     }
 
     private boolean isGenericToArrayPresent() {

@@ -93,7 +93,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private final Type returnType;
 
     private final BindingContext bindingContext;
-    final MethodContext context;
+    private final MethodContext context;
     private final CodegenStatementVisitor statementVisitor;
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
@@ -105,8 +105,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      * When we create a temporary variable to hold some value not to compute it many times
      * we put it into this map to emit access to that variable instead of evaluating the whole expression
      */
-    private final Map<JetElement, StackValue.Local> tempVariables = Maps.newHashMap();
-    @NotNull
+    final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
+
     private final TailRecursionCodegen tailRecursionCodegen;
 
     public final CallGenerator defaultCallGenerator;

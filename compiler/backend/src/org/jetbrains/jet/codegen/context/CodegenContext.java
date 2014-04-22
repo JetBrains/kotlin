@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen.context;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -33,17 +32,18 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NullableLazyValue;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
-import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.jet.codegen.AsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
 public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
@@ -103,17 +103,15 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public ClassOrPackageFragmentDescriptor getClassOrPackageDescriptor() {
-        CodegenContext c = this;
+    @SuppressWarnings("unchecked")
+    public CodegenContext<? extends ClassOrPackageFragmentDescriptor> getClassOrPackageParentContext() {
+        CodegenContext<?> context = this;
         while (true) {
-            assert c != null;
-            DeclarationDescriptor contextDescriptor = c.getContextDescriptor();
-            if (contextDescriptor instanceof ClassOrPackageFragmentDescriptor) {
-                return (ClassOrPackageFragmentDescriptor) contextDescriptor;
+            if (context.getContextDescriptor() instanceof ClassOrPackageFragmentDescriptor) {
+                return (CodegenContext) context;
             }
-            else {
-                c = c.getParentContext();
-            }
+            context = context.getParentContext();
+            assert context != null : "Context which is not top-level has no parent: " + this;
         }
     }
 
@@ -413,7 +411,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         CodegenContext descriptorContext = null;
-        if (!fromOutsideContext || getClassOrPackageDescriptor() != descriptor.getContainingDeclaration()) {
+        if (!fromOutsideContext || getClassOrPackageParentContext().getContextDescriptor() != descriptor.getContainingDeclaration()) {
             DeclarationDescriptor enclosed = descriptor.getContainingDeclaration();
             boolean isClassObjectMember = DescriptorUtils.isClassObject(enclosed);
             //go upper
