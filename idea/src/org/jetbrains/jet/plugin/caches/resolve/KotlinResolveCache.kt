@@ -272,10 +272,6 @@ private class KotlinResolveCache(
         }
     }
 
-    fun getAnalysisResultsForElement(element: JetElement): AnalyzeExhaust {
-        return getAnalysisResults(Task(setOf(element)))
-    }
-
     fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
         return getAnalysisResults(Task(elements.toSet()))
     }
