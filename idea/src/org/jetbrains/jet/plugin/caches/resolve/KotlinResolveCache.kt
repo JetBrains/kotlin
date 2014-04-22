@@ -161,9 +161,7 @@ class KotlinCacheService(val project: Project) {
         }
 
         val resolveCache = globalCachesPerPlatform[TargetPlatformDetector.getPlatform(firstFile)]!!
-        return synchronized(resolveCache) {
-            resolveCache.getAnalysisResultsForElements(elements)
-        }
+        return resolveCache.getAnalysisResultsForElements(elements)
     }
 
     private fun isFileInScope(jetFile: JetFile): Boolean {
