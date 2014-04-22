@@ -96,38 +96,34 @@ fun MutableCollection<LookupElement>.addLookupElements(expectedInfos: Collection
 }
 
 fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () -> LookupElement?, matchedInfos: Collection<ExpectedInfo>) {
-    run {
-        var lookupElement = factory()
-        if (lookupElement != null) {
-            lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    super.renderElement(presentation)
-                    presentation.setItemText("!! " + presentation.getItemText())
-                }
-                override fun handleInsert(context: InsertionContext) {
-                    WithTailStringInsertHandler("!!").handleInsert(context, getDelegate())
-                }
+    var lookupElement = factory()
+    if (lookupElement != null) {
+        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setItemText("!! " + presentation.getItemText())
             }
-            lookupElement = lookupElement!!.suppressAutoInsertion()
-            add(lookupElement!!.addTail(matchedInfos))
+            override fun handleInsert(context: InsertionContext) {
+                WithTailStringInsertHandler("!!").handleInsert(context, getDelegate())
+            }
         }
+        lookupElement = lookupElement!!.suppressAutoInsertion()
+        add(lookupElement!!.addTail(matchedInfos))
     }
 
-    run {
-        var lookupElement = factory()
-        if (lookupElement != null) {
-            lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
-                override fun renderElement(presentation: LookupElementPresentation) {
-                    super.renderElement(presentation)
-                    presentation.setItemText("?: " + presentation.getItemText())
-                }
-                override fun handleInsert(context: InsertionContext) {
-                    WithTailStringInsertHandler(" ?: ").handleInsert(context, getDelegate()) //TODO: code style
-                }
+    lookupElement = factory()
+    if (lookupElement != null) {
+        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setItemText("?: " + presentation.getItemText())
             }
-            lookupElement = lookupElement!!.suppressAutoInsertion()
-            add(lookupElement!!.addTail(matchedInfos))
+            override fun handleInsert(context: InsertionContext) {
+                WithTailStringInsertHandler(" ?: ").handleInsert(context, getDelegate()) //TODO: code style
+            }
         }
+        lookupElement = lookupElement!!.suppressAutoInsertion()
+        add(lookupElement!!.addTail(matchedInfos))
     }
 }
 

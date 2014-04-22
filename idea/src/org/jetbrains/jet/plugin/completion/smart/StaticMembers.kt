@@ -62,7 +62,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             else if (DescriptorUtils.isEnumEntry(descriptor)) {
                 classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
-            else{
+            else {
                 return
             }
 
