@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 
 public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(
         "convert.assert.to.if.with.throw", javaClass()) {
@@ -98,6 +99,11 @@ public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<Jet
             simplifier.applyTo(ifCondition, editor)
         }
 
-        element.replace(ifExpression)
+        val parent = element.getParent()
+        if (parent is JetDotQualifiedExpression) {
+            parent.replace(ifExpression)
+        } else {
+            element.replace(ifExpression)
+        }
     }
 }
