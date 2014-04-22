@@ -3365,6 +3365,36 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperands.kt");
         }
         
+        @TestMetadata("multipleOperandsWithDifferentPrecedence.kt")
+        public void testMultipleOperandsWithDifferentPrecedence() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence.kt");
+        }
+        
+        @TestMetadata("multipleOperandsWithDifferentPrecedence2.kt")
+        public void testMultipleOperandsWithDifferentPrecedence2() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence2.kt");
+        }
+        
+        @TestMetadata("multipleOperandsWithDifferentPrecedence3.kt")
+        public void testMultipleOperandsWithDifferentPrecedence3() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence3.kt");
+        }
+        
+        @TestMetadata("multipleOperandsWithDifferentPrecedence4.kt")
+        public void testMultipleOperandsWithDifferentPrecedence4() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence4.kt");
+        }
+        
+        @TestMetadata("multipleOperandsWithDifferentPrecedence5.kt")
+        public void testMultipleOperandsWithDifferentPrecedence5() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence5.kt");
+        }
+        
+        @TestMetadata("multipleOperandsWithDifferentPrecedence6.kt")
+        public void testMultipleOperandsWithDifferentPrecedence6() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multipleOperandsWithDifferentPrecedence6.kt");
+        }
+        
         @TestMetadata("multiply.kt")
         public void testMultiply() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/multiply.kt");
