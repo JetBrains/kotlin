@@ -27,16 +27,39 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.jet.InTextDirectivesUtils
+import junit.framework.TestCase
+import kotlin.test.fail
 
 object AstAccessControl {
+    private val ALLOW_AST_ACCESS_DIRECTIVE = "ALLOW_AST_ACCESS"
 
-    val ALLOW_AST_ACCESS_DIRECTIVE = "ALLOW_AST_ACCESS"
+    // Please provide at least one test that fails ast switch check (shouldFail should be true for at least one test)
+    // This kind of inconvenience is justified by the fact that the check can be invalidated by slight misconfiguration of the test
+    // leading to all tests passing
+    fun testWithControlledAccessToAst(shouldFail: Boolean, project: Project, disposable: Disposable, testBody: () -> Unit) {
+        testWithControlledAccessToAst(shouldFail, listOf(), project, disposable, testBody)
+    }
 
-    fun prohibitAstAccessForKotlinFiles(project: Project, disposable: Disposable) {
+    fun testWithControlledAccessToAst(
+            shouldFail: Boolean, allowedFile: VirtualFile,
+            project: Project, disposable: Disposable, testBody: () -> Unit
+    ) {
+        testWithControlledAccessToAst(shouldFail, listOf(allowedFile), project, disposable, testBody)
+    }
+
+    fun testWithControlledAccessToAst(
+            shouldFail: Boolean, allowedFiles: List<VirtualFile>,
+            project: Project, disposable: Disposable, testBody: () -> Unit
+    ) {
+        setFilter(allowedFiles, disposable, project)
+        performTest(shouldFail, testBody)
+    }
+
+    private fun setFilter(allowedFiles: List<VirtualFile>, disposable: Disposable, project: Project) {
         val manager = (PsiManager.getInstance(project) as PsiManagerImpl)
         val filter = VirtualFileFilter {
             file ->
-            if (file!!.getFileType() != JetFileType.INSTANCE) {
+            if (file!!.getFileType() != JetFileType.INSTANCE || file in allowedFiles) {
                 false
             }
             else {
@@ -47,4 +70,20 @@ object AstAccessControl {
         manager.setAssertOnFileLoadingFilter(filter, disposable)
     }
 
+    private fun performTest(shouldFail: Boolean, testBody: () -> Unit) {
+        try {
+            testBody()
+            if (shouldFail) {
+                fail("This failure means that that a test that should fail (by triggering ast switch) in fact did not.\n" +
+                     "This could happen for the following reasons:\n" +
+                     "1. This kind of operation no longer trigger ast switch, choose better indicator test case." +
+                     "2. Test is now misconfigured and no longer checks for ast switch, reconfigure the test.")
+            }
+        }
+        catch (e: Throwable) {
+            if (!shouldFail) {
+                throw e
+            }
+        }
+    }
 }

@@ -36,6 +36,11 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/basic/multifile"), Pattern.compile("^([^\\.]+)$"), false);
     }
     
+    @TestMetadata("CompleteFunctionWithNoSpecifiedType")
+    public void testCompleteFunctionWithNoSpecifiedType() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/CompleteFunctionWithNoSpecifiedType");
+    }
+    
     @TestMetadata("CompleteImportedFunction")
     public void testCompleteImportedFunction() throws Exception {
         doTest("idea/testData/completion/basic/multifile/CompleteImportedFunction");

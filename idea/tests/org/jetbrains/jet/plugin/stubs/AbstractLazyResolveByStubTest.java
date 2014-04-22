@@ -24,6 +24,8 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.Consumer;
+import kotlin.Function0;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor;
@@ -32,7 +34,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
@@ -52,11 +53,26 @@ public abstract class AbstractLazyResolveByStubTest extends CodeInsightTestCase 
         doTest(testFileName, false, false);
     }
 
-    public void doTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) throws Exception {
+    public void doTest(@NotNull final String path, final boolean checkPrimaryConstructors, final boolean checkPropertyAccessors)
+            throws Exception {
         configureByFile(path);
-        AstAccessControl.instance$.prohibitAstAccessForKotlinFiles(getProject(), getTestRootDisposable());
         configureModule(getModule(), JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE);
-        ResolveSessionForBodies resolveSession = KotlinCacheService.object$.getInstance(getFile().getProject()).getLazyResolveSession((JetFile) getFile());
+        boolean shouldFail = getTestName(false).equals("ClassWithConstVal");
+        AstAccessControl.instance$.testWithControlledAccessToAst(
+                shouldFail, getProject(), getTestRootDisposable(),
+                new Function0<Unit>() {
+                    @Override
+                    public Unit invoke() {
+                        performTest(path, checkPrimaryConstructors, checkPropertyAccessors);
+                        return Unit.VALUE;
+                    }
+                }
+        );
+    }
+
+    private void performTest(@NotNull String path, boolean checkPrimaryConstructors, boolean checkPropertyAccessors) {
+        ResolveSessionForBodies resolveSession =
+                KotlinCacheService.object$.getInstance(getFile().getProject()).getLazyResolveSession((JetFile) getFile());
         ModuleDescriptor module = resolveSession.getModuleDescriptor();
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
         Assert.assertNotNull(packageViewDescriptor);
