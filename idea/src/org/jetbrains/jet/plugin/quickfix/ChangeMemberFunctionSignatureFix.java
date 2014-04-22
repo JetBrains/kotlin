@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetChangeFunctionSignatureAction;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 import java.util.*;
@@ -108,7 +108,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
      */
     @NotNull
     private static List<FunctionDescriptor> computePossibleSignatures(JetNamedFunction functionElement) {
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(functionElement);
+        BindingContext context = ResolvePackage.getBindingContext(functionElement);
         FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
         if (functionDescriptor == null) return Lists.newArrayList();
         List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);

@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.ArrayList;
@@ -77,7 +77,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
 
     @Override
     public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(file);
+        BindingContext context = ResolvePackage.getBindingContext(file);
         Iterable<Diagnostic> diagnostics = context.getDiagnostics();
         List<JetImportDirective> imports = new ArrayList<JetImportDirective>();
         List<JetUserType> usages = new ArrayList<JetUserType>();
@@ -194,7 +194,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 PsiFile psiFile = diagnostic.getPsiFile();
                 if (!(psiFile instanceof JetFile)) return null;
 
-                BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext((JetFile) psiFile);
+                BindingContext context = ResolvePackage.getBindingContext((JetFile) psiFile);
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 

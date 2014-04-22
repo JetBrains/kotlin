@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.stubindex.JetAnnotationsIndex;
 
 import java.util.ArrayList;
@@ -70,10 +70,10 @@ public class KotlinAnnotatedElementsSearcher extends AnnotatedElementsSearcher {
                     JetDeclaration parentOfType = PsiTreeUtil.getParentOfType(elt, JetDeclaration.class);
                     if (parentOfType == null) return;
 
-                    //TODO LazyResolve
-                    BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(parentOfType);
+                    JetAnnotationEntry annotationEntry = (JetAnnotationEntry) elt;
 
-                    AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, (JetAnnotationEntry) elt);
+                    BindingContext context = ResolvePackage.getBindingContext(annotationEntry);
+                    AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
                     if (annotationDescriptor == null) return;
 
                     ClassifierDescriptor descriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();

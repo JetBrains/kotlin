@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.actions.JetAddFunctionToClassifierAction;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 
 import java.util.Collections;
@@ -52,10 +52,8 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     }
 
     private static List<FunctionDescriptor> generateFunctionsToAdd(JetNamedFunction functionElement) {
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(functionElement);
-
-        FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
-        if (functionDescriptor == null) return Collections.emptyList();
+        FunctionDescriptor functionDescriptor =
+                (FunctionDescriptor) ResolvePackage.getLazyResolveSession(functionElement).resolveToDescriptor(functionElement);
 
         DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
         if (!(containingDeclaration instanceof ClassDescriptor)) return Collections.emptyList();
@@ -143,18 +141,18 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     }
 
     @Override
-    protected void invoke(@NotNull final Project project, final Editor editor, JetFile file) {
+    protected void invoke(@NotNull final Project project, final Editor editor, final JetFile file) {
         CommandProcessor.getInstance().runUndoTransparentAction(new Runnable() {
             @Override
             public void run() {
-                createAction(project, editor).execute();
+                createAction(project, editor, file).execute();
             }
         });
     }
 
     @NotNull
-    private JetAddFunctionToClassifierAction createAction(Project project, Editor editor) {
-        BindingContext bindingContext = KotlinCacheManagerUtil.getDeclarationsBindingContext(element);
+    private JetAddFunctionToClassifierAction createAction(Project project, Editor editor, JetFile file) {
+        BindingContext bindingContext = ResolvePackage.getLazyResolveSession(file).getBindingContext();
         return new JetAddFunctionToClassifierAction(project, editor, bindingContext, functionsToAdd);
     }
 

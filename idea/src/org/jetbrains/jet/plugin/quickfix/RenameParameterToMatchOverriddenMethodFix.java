@@ -31,7 +31,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 
 public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionAction<JetParameter>{
     private final JetParameter parameter;
@@ -48,7 +48,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
             return false;
         }
 
-        BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(parameter);
+        BindingContext context = ResolvePackage.getBindingContext(parameter);
         VariableDescriptor parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter);
         if (parameterDescriptor == null) {
             return false;

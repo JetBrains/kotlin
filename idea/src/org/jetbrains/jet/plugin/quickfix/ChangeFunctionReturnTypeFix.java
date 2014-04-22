@@ -42,7 +42,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetBundle;
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheManagerUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
@@ -204,7 +204,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
 
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 if (function != null) {
-                    BindingContext context = KotlinCacheManagerUtil.getDeclarationsBindingContext(function);
+                    BindingContext context = ResolvePackage.getBindingContext(function);
                     JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
                     if (matchingReturnType != null) {
                         actions.add(new ChangeFunctionReturnTypeFix(function, matchingReturnType));
