@@ -38,11 +38,10 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetUserType
+import org.jetbrains.jet.plugin.intentions.branchedTransformations.isNullExpression
 
 public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingIntention<JetIfExpression>(
         "convert.if.with.throw.to.assert", javaClass()) {
-
-    private var param: ResolvedValueArgument by Delegates.notNull()
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         if (element.getElse() != null) return false
@@ -54,13 +53,12 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingIntention<Jet
         if (thrownExpr !is JetCallExpression) return false
 
         if (thrownExpr.getCalleeExpression()?.getText() != "AssertionError") return false
+        val paramAmount = thrownExpr.getValueArguments().size
+        if (paramAmount > 1) return false
 
         val context = AnalyzerFacadeWithCache.getContextForElement(thrownExpr)
         val resolvedCall = context[BindingContext.RESOLVED_CALL, thrownExpr.getCalleeExpression()]
         if (resolvedCall == null) return false
-
-        val paramAmount = resolvedCall.getValueArguments().size
-        if (paramAmount > 1) return false
 
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "java.lang.AssertionError.<init>"
     }
@@ -71,15 +69,12 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingIntention<Jet
 
         val thenExpr = element.getThen()?.extractExpressionIfSingle() as JetThrowExpression
         val thrownExpr = getSelector(thenExpr.getThrownExpression()) as JetCallExpression
-        val context = AnalyzerFacadeWithCache.getContextForElement(thrownExpr)
-        val resolvedCall = context[BindingContext.RESOLVED_CALL, thrownExpr.getCalleeExpression()]!!
 
-        val paramAmount = resolvedCall.getValueArguments().size
-        val param =
-            if (paramAmount == 1) {
-                val paramDescriptor = resolvedCall.getResultingDescriptor().getValueParameters()[0]
-                val paramText = resolvedCall.getValueArguments()[paramDescriptor]!!.toString()
-                if (paramText == "null") "" else ", $paramText"
+        val args = thrownExpr.getValueArguments()
+        val paramText =
+            if (args.isNotEmpty()) {
+                val param = args.first!!.getArgumentExpression()!!
+                if (param.isNullExpression()) "" else ", ${param.getText()}"
             } else {
                 ""
             }
@@ -94,13 +89,12 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingIntention<Jet
             simplifier.applyTo(newCondition, editor)
         }
 
-        val assertText = "kotlin.assert(${element.getCondition()?.getText()} $param)"
+        val assertText = "kotlin.assert(${element.getCondition()?.getText()} $paramText)"
         val assertExpr = JetPsiFactory.createExpression(element.getProject(), assertText)
 
         val newExpr = element.replace(assertExpr) as JetExpression
         ShortenReferences.process(newExpr)
     }
-
 
     private fun getSelector(element: JetExpression?): JetExpression? {
         if (element is JetDotQualifiedExpression) {
