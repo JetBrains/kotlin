@@ -26,10 +26,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.Importer;
-import org.jetbrains.jet.lang.resolve.ImportsResolver;
-import org.jetbrains.jet.lang.resolve.JetModuleUtil;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -173,13 +170,17 @@ public class LazyImportScope implements JetScope, LazyEntity {
     @Override
     public void forceResolveAllContents() {
         for (JetImportDirective importDirective : importsProvider.getAllImports()) {
-            getImportScope(importDirective, LookupMode.EVERYTHING);
+            forceResolveImportDirective(importDirective);
+        }
+    }
 
-            ImportResolveStatus status = importedScopesProvider.invoke(importDirective).importResolveStatus;
-            if (status != null && !status.descriptors.isEmpty()) {
-                JetScope fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile());
-                ImportsResolver.reportUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve);
-            }
+    public void forceResolveImportDirective(@NotNull JetImportDirective importDirective) {
+        getImportScope(importDirective, LookupMode.EVERYTHING);
+
+        ImportResolveStatus status = importedScopesProvider.invoke(importDirective).importResolveStatus;
+        if (status != null && !status.descriptors.isEmpty()) {
+            JetScope fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile());
+            ImportsResolver.reportUselessImport(importDirective, fileScope, status.descriptors, traceForImportResolve);
         }
     }
 

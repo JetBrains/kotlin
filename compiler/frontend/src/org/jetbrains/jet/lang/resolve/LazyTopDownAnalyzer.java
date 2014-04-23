@@ -138,6 +138,12 @@ public class LazyTopDownAnalyzer {
                             DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace);
                         }
 
+                        @Override
+                        public void visitImportDirective(@NotNull JetImportDirective importDirective) {
+                            LazyImportScope importScope = resolveSession.getScopeProvider().getExplicitImportsScopeForFile(importDirective.getContainingJetFile());
+                            importScope.forceResolveImportDirective(importDirective);
+                        }
+
                         private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
                             ClassDescriptorWithResolutionScopes descriptor =
                                     (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(classOrObject);
