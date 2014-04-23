@@ -40,7 +40,6 @@ import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.calls.inference.BoundsOwner;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionTask;
@@ -205,7 +204,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
 
         if (debugInfo != null) {
             for (ResolutionTask<?, ?> resolutionTask : debugInfo.get(TASKS)) {
-                for (ResolvedCallWithTrace<?> resolvedCall : resolutionTask.getResolvedCalls()) {
+                for (ResolvedCall<?> resolvedCall : resolutionTask.getResolvedCalls()) {
                     renderResolutionLogForCall(debugInfo, resolvedCall, result);
                 }
             }
@@ -223,7 +222,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
         return result.toString();
     }
 
-    private static void renderResolutionLogForCall(Data debugInfo, ResolvedCallWithTrace<?> resolvedCall, StringBuilder result) {
+    private static void renderResolutionLogForCall(Data debugInfo, ResolvedCall<?> resolvedCall, StringBuilder result) {
         result.append("Trying to call ").append(resolvedCall.getCandidateDescriptor()).append("\n");
         StringBuilder errors = debugInfo.getByKey(ERRORS, resolvedCall);
         if (errors != null) {

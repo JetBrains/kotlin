@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
@@ -46,7 +46,7 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
+    public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {
         CallableDescriptor descriptor = resolvedCall.getCandidateDescriptor();
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             descriptor = ((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall().getCandidateDescriptor();
@@ -58,7 +58,7 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall) {
+    public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {
         trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
         trace.record(CALL, call.getCalleeExpression(), call);
     }
@@ -69,7 +69,7 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
+    public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates) {
         trace.report(UNRESOLVED_REFERENCE_WRONG_RECEIVER.on(reference, candidates));
     }
 }

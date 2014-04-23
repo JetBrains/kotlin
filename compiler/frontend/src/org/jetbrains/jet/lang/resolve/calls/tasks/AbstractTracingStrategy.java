@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -55,9 +55,9 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void recordAmbiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates) {
+    public <D extends CallableDescriptor> void recordAmbiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates) {
         Collection<D> descriptors = Sets.newHashSet();
-        for (ResolvedCallWithTrace<D> candidate : candidates) {
+        for (ResolvedCall<D> candidate : candidates) {
             descriptors.add(candidate.getCandidateDescriptor());
         }
         trace.record(AMBIGUOUS_REFERENCE_TARGET, reference, descriptors);
@@ -109,19 +109,19 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
+    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {
         trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, descriptors));
     }
 
     @Override
-    public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors) {
+    public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {
         trace.report(NONE_APPLICABLE.on(reference, descriptors));
     }
 
     @Override
     public <D extends CallableDescriptor> void cannotCompleteResolve(
             @NotNull BindingTrace trace,
-            @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+            @NotNull Collection<? extends ResolvedCall<D>> descriptors
     ) {
         trace.report(CANNOT_COMPLETE_RESOLVE.on(reference, descriptors));
     }

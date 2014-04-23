@@ -35,7 +35,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
@@ -324,14 +323,14 @@ public class ControlStructureTypingUtils {
         return new ThrowingOnErrorTracingStrategy("resolve " + constructionName + " as a call") {
             @Override
             public <D extends CallableDescriptor> void bindReference(
-                    @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
+                    @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
             ) {
                 //do nothing
             }
 
             @Override
             public <D extends CallableDescriptor> void bindResolvedCall(
-                    @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
+                    @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
             ) {
                 trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
                 trace.record(CALL, call.getCalleeExpression(), call);
@@ -387,14 +386,14 @@ public class ControlStructureTypingUtils {
 
         @Override
         public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
-                @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
             throwError();
         }
 
         @Override
         public <D extends CallableDescriptor> void recordAmbiguity(
-                @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
         ) {
             throwError();
         }
@@ -432,21 +431,21 @@ public class ControlStructureTypingUtils {
 
         @Override
         public <D extends CallableDescriptor> void ambiguity(
-                @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
             throwError();
         }
 
         @Override
         public <D extends CallableDescriptor> void noneApplicable(
-                @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
             throwError();
         }
 
         @Override
         public <D extends CallableDescriptor> void cannotCompleteResolve(
-                @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> descriptors
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
         ) {
             throwError();
         }

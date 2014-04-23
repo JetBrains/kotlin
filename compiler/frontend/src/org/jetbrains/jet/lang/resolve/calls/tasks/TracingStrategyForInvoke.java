@@ -21,7 +21,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -44,13 +44,13 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void bindReference(
-            @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
+            @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
     }
 
     @Override
     public <D extends CallableDescriptor> void bindResolvedCall(
-            @NotNull BindingTrace trace, @NotNull ResolvedCallWithTrace<D> resolvedCall
+            @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
         trace.record(RESOLVED_CALL, reference, resolvedCall);
         trace.record(CALL, reference, call);
@@ -63,7 +63,7 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
 
     @Override
     public <D extends CallableDescriptor> void unresolvedReferenceWrongReceiver(
-            @NotNull BindingTrace trace, @NotNull Collection<ResolvedCallWithTrace<D>> candidates
+            @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> candidates
     ) {
         trace.report(FUNCTION_EXPECTED.on(reference, reference, calleeType));
     }
