@@ -184,10 +184,10 @@ trait CacheExtension<T> {
 
 private class KotlinResolveCache(
         val project: Project,
-        val resolveSessionProvider: () -> CachedValueProvider.Result<SessionAndSetup>
+        setupProvider: () -> CachedValueProvider.Result<SessionAndSetup>
 ) {
 
-    private val setupCache = SynchronizedCachedValue(project, resolveSessionProvider, trackValue = false)
+    private val setupCache = SynchronizedCachedValue(project, setupProvider, trackValue = false)
 
     public fun getLazyResolveSession(): ResolveSessionForBodies = setupCache.getValue().resolveSessionForBodies
 
