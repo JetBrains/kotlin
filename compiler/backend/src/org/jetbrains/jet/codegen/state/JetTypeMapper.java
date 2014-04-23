@@ -394,13 +394,13 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public CallableMethod mapToCallableMethod(
-            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor descriptor,
             boolean superCall,
             @NotNull CodegenContext<?> context
     ) {
-        DeclarationDescriptor functionParent = functionDescriptor.getOriginal().getContainingDeclaration();
+        DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
 
-        functionDescriptor = unwrapFakeOverride(functionDescriptor.getOriginal());
+        FunctionDescriptor functionDescriptor = unwrapFakeOverride(descriptor.getOriginal());
 
         JvmMethodSignature signature;
         Type owner;
@@ -418,43 +418,37 @@ public class JetTypeMapper extends BindingTraceAware {
             boolean originalIsInterface = isInterface(declarationOwner);
             boolean currentIsInterface = isInterface(currentOwner);
 
-            ClassDescriptor receiver;
-            if (currentIsInterface && !originalIsInterface) {
-                receiver = declarationOwner;
-            }
-            else {
-                receiver = currentOwner;
-            }
+            boolean isInterface = currentIsInterface && originalIsInterface;
 
-            boolean isInterface = originalIsInterface && currentIsInterface;
+            ClassDescriptor ownerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
+            ownerForDefaultParam = mapClass(ownerForDefault);
+            ownerForDefaultImpl = isInterface(ownerForDefault) ? mapTraitImpl(ownerForDefault) : ownerForDefaultParam;
 
-            ClassDescriptor declarationOwnerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
-            ownerForDefaultParam = mapClass(declarationOwnerForDefault);
-            ownerForDefaultImpl = isInterface(declarationOwnerForDefault) ? mapTraitImpl(declarationOwnerForDefault) : ownerForDefaultParam;
-            if (isInterface) {
-                invokeOpcode = superCall ? INVOKESTATIC : INVOKEINTERFACE;
+            if (isInterface && superCall) {
+                invokeOpcode = INVOKESTATIC;
+                signature = mapSignature(functionDescriptor, OwnerKind.TRAIT_IMPL);
+                owner = mapTraitImpl(currentOwner);
+                thisClass = mapClass(currentOwner);
             }
             else {
                 if (isAccessor(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
+                }
+                else if (isInterface) {
+                    invokeOpcode = INVOKEINTERFACE;
                 }
                 else {
                     boolean isPrivateFunInvocation = isCallInsideSameClassAsDeclared(functionDescriptor, context) &&
                                                      functionDescriptor.getVisibility() == Visibilities.PRIVATE;
                     invokeOpcode = superCall || isPrivateFunInvocation ? INVOKESPECIAL : INVOKEVIRTUAL;
                 }
-            }
 
-            if (isInterface && superCall) {
-                signature = mapSignature(functionDescriptor, OwnerKind.TRAIT_IMPL);
-                owner = mapTraitImpl(receiver);
-            }
-            else {
                 signature = mapSignature(functionDescriptor.getOriginal());
-                owner = mapClass(receiver);
-            }
 
-            thisClass = mapType(receiver.getDefaultType());
+                ClassDescriptor receiver = currentIsInterface && !originalIsInterface ? declarationOwner : currentOwner;
+                owner = mapClass(receiver);
+                thisClass = owner;
+            }
         }
         else {
             signature = mapSignature(functionDescriptor.getOriginal());
