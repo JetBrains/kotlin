@@ -1,0 +1,8 @@
+<root>
+    <item name='java.lang.Process java.io.InputStream getErrorStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.lang.Process java.io.InputStream getInputStream()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

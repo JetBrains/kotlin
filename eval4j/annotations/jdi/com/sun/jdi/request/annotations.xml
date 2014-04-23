@@ -1,0 +1,8 @@
+<root>
+    <item name='com.sun.jdi.request.EventRequestManager com.sun.jdi.request.BreakpointRequest createBreakpointRequest(com.sun.jdi.Location)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='com.sun.jdi.request.EventRequestManager com.sun.jdi.request.ClassPrepareRequest createClassPrepareRequest()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>
