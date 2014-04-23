@@ -23,8 +23,8 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfos
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 fun insertLambdaTemplate(context: InsertionContext, placeholderRange: TextRange, lambdaType: JetType) {
     val explicitParameterTypes = needExplicitParameterTypes(context, placeholderRange, lambdaType)
@@ -68,7 +68,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<JetExpression>())
     if (expression == null) return false
 
-    val resolveSession = AnalyzerFacadeWithCache.getLazyResolveSessionForFile(file)
+    val resolveSession = file.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(expression)
     val expectedInfos = ExpectedInfos(bindingContext, resolveSession.getModuleDescriptor()).calculate(expression) ?: return false
     val functionTypes = expectedInfos.map { it.`type` }.filter { KotlinBuiltIns.getInstance().isExactFunctionOrExtensionFunctionType(it) }.toSet()
