@@ -3915,6 +3915,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableAssertionErrorOverloaded.kt");
         }
         
+        @TestMetadata("inapplicableCauseSent.kt")
+        public void testInapplicableCauseSent() throws Exception {
+            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableCauseSent.kt");
+        }
+        
         @TestMetadata("inapplicableHasElse.kt")
         public void testInapplicableHasElse() throws Exception {
             doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableHasElse.kt");
@@ -3930,19 +3935,14 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableMoreThanSingleExpression2.kt");
         }
         
-        @TestMetadata("inapplicableNoMessage.kt")
-        public void testInapplicableNoMessage() throws Exception {
-            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableNoMessage.kt");
+        @TestMetadata("noMessageSent.kt")
+        public void testNoMessageSent() throws Exception {
+            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/noMessageSent.kt");
         }
         
-        @TestMetadata("inapplicableNullCauseSent.kt")
-        public void testInapplicableNullCauseSent() throws Exception {
-            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableNullCauseSent.kt");
-        }
-        
-        @TestMetadata("inapplicableNullSent.kt")
-        public void testInapplicableNullSent() throws Exception {
-            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/inapplicableNullSent.kt");
+        @TestMetadata("nullSent.kt")
+        public void testNullSent() throws Exception {
+            doTestConvertIfWithThrowToAssertIntention("idea/testData/intentions/convertIfToAssert/nullSent.kt");
         }
         
         @TestMetadata("simpleConvert.kt")
