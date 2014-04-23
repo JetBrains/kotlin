@@ -77,7 +77,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return false;
         }
 
-        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) file);
         List<PsiElement> declarations = BindingContextUtils.callableDescriptorToDeclarations(bindingContext, functionDescriptor);
         if (declarations.isEmpty()) {
             return false;
@@ -164,7 +164,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
                         (DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>>) diagnostic;
                 JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
                 BindingContext bindingContext =
-                        ResolvePackage.getAnalysisResults(functionLiteral.getContainingJetFile()).getBindingContext();
+                        ResolvePackage.getBindingContext(functionLiteral.getContainingJetFile());
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, functionLiteral);
 
                 if (descriptor instanceof FunctionDescriptor) {
@@ -219,7 +219,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         }
 
         BindingContext bindingContext =
-                ResolvePackage.getAnalysisResults((JetFile) context.getContainingFile()).getBindingContext();
+                ResolvePackage.getBindingContext((JetFile) context.getContainingFile());
         if (descriptor instanceof ValueParameterDescriptor) {
             return new RemoveFunctionParametersFix(context, functionDescriptor, (ValueParameterDescriptor) descriptor);
         }

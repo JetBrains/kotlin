@@ -195,7 +195,7 @@ public class DeclarationHintSupport extends AbstractProjectComponent {
                             DeclarationDescriptor descriptor = null;
                             try {
                                 BindingContext bindingContext =
-                                        ResolvePackage.getAnalysisResults(jetFile).getBindingContext();
+                                        ResolvePackage.getBindingContext(jetFile);
                                 descriptor = bindingContext.getDiagnostics().forElement(declaration).isEmpty()
                                              ? bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                                              : null;

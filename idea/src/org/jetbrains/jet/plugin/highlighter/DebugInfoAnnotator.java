@@ -50,7 +50,7 @@ public class DebugInfoAnnotator implements Annotator {
         if (element instanceof JetFile && !(element instanceof JetCodeFragmentImpl)) {
             JetFile file = (JetFile) element;
             try {
-                BindingContext bindingContext = ResolvePackage.getAnalysisResults(file).getBindingContext();
+                BindingContext bindingContext = ResolvePackage.getBindingContext(file);
                 DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
                     @Override
                     public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {

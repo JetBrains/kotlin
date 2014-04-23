@@ -50,7 +50,7 @@ public class ChangeFunctionLiteralReturnTypeFix extends JetIntentionAction<JetFu
         renderedType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type);
         functionLiteralReturnTypeRef = element.getFunctionLiteral().getReturnTypeRef();
 
-        BindingContext context = ResolvePackage.getAnalysisResults(element.getContainingJetFile()).getBindingContext();
+        BindingContext context = ResolvePackage.getBindingContext(element.getContainingJetFile());
         JetType functionLiteralType = context.get(BindingContext.EXPRESSION_TYPE, element);
         assert functionLiteralType != null : "Type of function literal not available in binding context";
 

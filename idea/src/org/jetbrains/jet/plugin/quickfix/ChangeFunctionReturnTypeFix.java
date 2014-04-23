@@ -142,8 +142,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolvePackage.getAnalysisResults((JetFile) entry.getContainingFile().getContainingFile())
-                        .getBindingContext();
+                BindingContext context = ResolvePackage.getBindingContext((JetFile) entry.getContainingFile().getContainingFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
@@ -164,7 +163,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetExpression.class);
                 assert expression != null : "HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.getAnalysisResults(expression.getContainingJetFile()).getBindingContext();
+                BindingContext context = ResolvePackage.getBindingContext(expression.getContainingJetFile());
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
                 JetFunction hasNextFunction = (JetFunction) BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());
@@ -184,7 +183,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
                 assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.getAnalysisResults(expression.getContainingJetFile()).getBindingContext();
+                BindingContext context = ResolvePackage.getBindingContext(expression.getContainingJetFile());
                 ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
                 if (resolvedCall == null) return null;
                 PsiElement compareTo = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());

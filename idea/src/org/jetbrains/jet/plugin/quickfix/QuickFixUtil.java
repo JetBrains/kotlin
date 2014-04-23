@@ -67,7 +67,7 @@ public class QuickFixUtil {
     public static JetType getDeclarationReturnType(JetNamedDeclaration declaration) {
         PsiFile file = declaration.getContainingFile();
         if (!(file instanceof JetFile)) return null;
-        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) file);
         DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
         if (!(descriptor instanceof CallableDescriptor)) return null;
         JetType type = ((CallableDescriptor) descriptor).getReturnType();
@@ -106,7 +106,7 @@ public class QuickFixUtil {
 
     @Nullable
     public static JetParameterList getParameterListOfCallee(@NotNull JetCallExpression callExpression) {
-        BindingContext context = ResolvePackage.getAnalysisResults(callExpression.getContainingJetFile()).getBindingContext();
+        BindingContext context = ResolvePackage.getBindingContext(callExpression.getContainingJetFile());
         ResolvedCall<?> resolvedCall = context.get(BindingContext.RESOLVED_CALL, callExpression.getCalleeExpression());
         if (resolvedCall == null) return null;
         PsiElement declaration = BindingContextUtils.descriptorToDeclaration(context, resolvedCall.getCandidateDescriptor());

@@ -106,7 +106,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) callElement.getContainingFile()).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) callElement.getContainingFile());
         runChangeSignature(project, functionDescriptor, addParameterConfiguration(), bindingContext, callElement, getText());
     }
 

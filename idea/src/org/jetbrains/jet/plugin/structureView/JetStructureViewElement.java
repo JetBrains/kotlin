@@ -119,7 +119,7 @@ public class JetStructureViewElement implements StructureViewTreeElement {
     public TreeElement[] getChildren() {
         if (myElement instanceof JetFile) {
             JetFile jetFile = (JetFile) myElement;
-            context = ResolvePackage.getAnalysisResults(jetFile).getBindingContext();
+            context = ResolvePackage.getBindingContext(jetFile);
             return wrapDeclarations(jetFile.getDeclarations());
         }
         else if (myElement instanceof JetClass) {

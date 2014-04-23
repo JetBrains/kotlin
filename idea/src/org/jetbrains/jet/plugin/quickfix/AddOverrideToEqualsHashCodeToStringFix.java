@@ -87,7 +87,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends JetIntentionAction<P
         Collection<JetFile> files = PluginJetFilesProvider.allFilesInProject(file);
 
         for (JetFile jetFile : files) {
-            for (Diagnostic diagnostic : ResolvePackage.getAnalysisResults(jetFile).getBindingContext().getDiagnostics()) {
+            for (Diagnostic diagnostic : ResolvePackage.getBindingContext(jetFile).getDiagnostics()) {
                 if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
 
                 PsiElement element = diagnostic.getPsiElement();

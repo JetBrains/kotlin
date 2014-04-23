@@ -57,7 +57,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
 
     @Override
     protected void invoke(@NotNull final Project project, Editor editor, JetFile file) {
-        BindingContext bindingContext = ResolvePackage.getAnalysisResults(file).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
         runChangeSignature(project, functionDescriptor, new JetChangeSignatureConfiguration() {
             @Override
             public void configure(@NotNull JetChangeSignatureData changeSignatureData, @NotNull BindingContext bindingContext) {

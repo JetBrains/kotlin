@@ -33,7 +33,7 @@ public class JetTypeDeclarationProvider implements TypeDeclarationProvider {
     public PsiElement[] getSymbolTypeDeclarations(PsiElement symbol) {
         if (symbol instanceof JetElement && symbol.getContainingFile() instanceof JetFile) {
             BindingContext bindingContext =
-                    ResolvePackage.getAnalysisResults((JetFile) symbol.getContainingFile()).getBindingContext();
+                    ResolvePackage.getBindingContext((JetFile) symbol.getContainingFile());
             DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, symbol);
             if (descriptor instanceof CallableDescriptor) {
                 JetType type = ((CallableDescriptor) descriptor).getReturnType();

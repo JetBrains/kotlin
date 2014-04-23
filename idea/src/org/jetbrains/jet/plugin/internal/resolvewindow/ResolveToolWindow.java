@@ -104,7 +104,7 @@ public class ResolveToolWindow extends JPanel implements Disposable {
             int startOffset = requestInfo.getStartOffset();
             int endOffset = requestInfo.getEndOffset();
 
-            BindingContext bindingContext = ResolvePackage.getAnalysisResults(jetFile).getBindingContext();
+            BindingContext bindingContext = ResolvePackage.getBindingContext(jetFile);
 
             PsiElement elementAtOffset;
             if (startOffset == endOffset) {

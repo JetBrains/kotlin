@@ -40,7 +40,7 @@ public class ShowExpressionTypeAction extends AnAction {
         PsiFile psiFile = e.getData(LangDataKeys.PSI_FILE);
         assert editor != null && psiFile != null;
         JetExpression expression;
-        BindingContext bindingContext = ResolvePackage.getAnalysisResults((JetFile) psiFile).getBindingContext();
+        BindingContext bindingContext = ResolvePackage.getBindingContext((JetFile) psiFile);
         if (editor.getSelectionModel().hasSelection()) {
             int startOffset = editor.getSelectionModel().getSelectionStart();
             int endOffset = editor.getSelectionModel().getSelectionEnd();
