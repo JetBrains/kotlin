@@ -212,6 +212,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 getVisibility(),
                 ContainerUtil.newArrayList(oldToNewParameters.values()),
                 descriptor.getReceiverParameter(),
+                descriptor.getTypeParameters(),
                 replacementMap,
                 controlFlow
         );

@@ -186,7 +186,7 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
     }
     
     @TestMetadata("idea/testData/refactoring/extractFunction")
-    @InnerTestClasses({ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.Parameters.class})
+    @InnerTestClasses({ExtractFunction.Basic.class, ExtractFunction.ControlFlow.class, ExtractFunction.Parameters.class, ExtractFunction.TypeParameters.class})
     public static class ExtractFunction extends AbstractJetExtractionTest {
         public void testAllFilesPresentInExtractFunction() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -618,12 +618,81 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             }
         }
         
+        @TestMetadata("idea/testData/refactoring/extractFunction/typeParameters")
+        public static class TypeParameters extends AbstractJetExtractionTest {
+            public void testAllFilesPresentInTypeParameters() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/typeParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("localClassInBound.kt")
+            public void testLocalClassInBound() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/localClassInBound.kt");
+            }
+            
+            @TestMetadata("localClassInTypeConstraint.kt")
+            public void testLocalClassInTypeConstraint() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/localClassInTypeConstraint.kt");
+            }
+            
+            @TestMetadata("simpleTypeParameter.kt")
+            public void testSimpleTypeParameter() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameter.kt");
+            }
+            
+            @TestMetadata("simpleTypeParameterWithConstraint.kt")
+            public void testSimpleTypeParameterWithConstraint() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/simpleTypeParameterWithConstraint.kt");
+            }
+            
+            @TestMetadata("typeParamInArgument.kt")
+            public void testTypeParamInArgument() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParamInArgument.kt");
+            }
+            
+            @TestMetadata("typeParametersAndConstraintsCombined1.kt")
+            public void testTypeParametersAndConstraintsCombined1() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined1.kt");
+            }
+            
+            @TestMetadata("typeParametersAndConstraintsCombined2.kt")
+            public void testTypeParametersAndConstraintsCombined2() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined2.kt");
+            }
+            
+            @TestMetadata("typeParametersAndConstraintsCombined3.kt")
+            public void testTypeParametersAndConstraintsCombined3() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersAndConstraintsCombined3.kt");
+            }
+            
+            @TestMetadata("typeParametersCombined1.kt")
+            public void testTypeParametersCombined1() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined1.kt");
+            }
+            
+            @TestMetadata("typeParametersCombined2.kt")
+            public void testTypeParametersCombined2() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined2.kt");
+            }
+            
+            @TestMetadata("typeParametersCombined3.kt")
+            public void testTypeParametersCombined3() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombined3.kt");
+            }
+            
+            @TestMetadata("typeParametersCombinedAndThis.kt")
+            public void testTypeParametersCombinedAndThis() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/typeParameters/typeParametersCombinedAndThis.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("ExtractFunction");
             suite.addTestSuite(ExtractFunction.class);
             suite.addTestSuite(Basic.class);
             suite.addTest(ControlFlow.innerSuite());
             suite.addTest(Parameters.innerSuite());
+            suite.addTestSuite(TypeParameters.class);
             return suite;
         }
     }

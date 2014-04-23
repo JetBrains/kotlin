@@ -1,0 +1,16 @@
+open class Data(val x: Int)
+trait DataEx
+trait DataExEx
+
+class A<T: Data>(val t: T) where T: DataEx {
+    inner class B<U: Data>(val u: U) where U: DataExEx {
+        // NEXT_SIBLING:
+        fun <V : Data> i(v: V): Int where V : DataEx {
+            return t.x + u.x + v.x
+        }
+
+        fun foo<V: Data>(v: V): Int where V: DataEx {
+            return i(v)
+        }
+    }
+}

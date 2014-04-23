@@ -1,0 +1,12 @@
+class Data<T>(val t: Int)
+
+// NEXT_SIBLING:
+fun <T> i(d: Data<T>): Int {
+    return d.t + 1
+}
+
+class A<T> {
+    fun foo(d: Data<T>): Int {
+        return i(d)
+    }
+}

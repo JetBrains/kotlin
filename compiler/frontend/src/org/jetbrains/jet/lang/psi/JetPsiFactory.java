@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.LocalTimeCounter;
+import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetKeywordToken;
 import org.jetbrains.jet.plugin.JetFileType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -526,8 +528,10 @@ public class JetPsiFactory {
         static enum State {
             MODIFIERS,
             NAME,
+            RECEIVER,
             FIRST_PARAM,
             REST_PARAMS,
+            TYPE_CONSTRAINTS,
             BODY,
             DONE
         }
@@ -543,7 +547,7 @@ public class JetPsiFactory {
 
             sb.append(")");
 
-            state = State.BODY;
+            state = State.TYPE_CONSTRAINTS;
         }
 
         private void placeFun() {
@@ -554,7 +558,7 @@ public class JetPsiFactory {
             }
             sb.append("fun ");
 
-            state = State.NAME;
+            state = State.RECEIVER;
         }
 
         @NotNull
@@ -567,23 +571,28 @@ public class JetPsiFactory {
         }
 
         @NotNull
-        public FunctionBuilder receiver(@NotNull String receiverType) {
+        public FunctionBuilder typeParams(@NotNull Collection<String> values) {
             placeFun();
-            sb.append(receiverType).append(".");
+            if (!values.isEmpty()) {
+                sb.append(KotlinPackage.makeString(values, ", ", "<", "> ", -1, ""));
+            }
 
             return this;
         }
 
         @NotNull
-        public FunctionBuilder noReceiver() {
-            placeFun();
+        public FunctionBuilder receiver(@NotNull String receiverType) {
+            assert state == State.RECEIVER;
+
+            sb.append(receiverType).append(".");
+            state = State.NAME;
 
             return this;
         }
 
         @NotNull
         public FunctionBuilder name(@NotNull String name) {
-            assert state == State.NAME;
+            assert state == State.NAME || state == State.RECEIVER;
 
             sb.append(name).append("(");
             state = State.FIRST_PARAM;
@@ -622,8 +631,20 @@ public class JetPsiFactory {
         }
 
         @NotNull
+        public FunctionBuilder typeConstraints(@NotNull Collection<String> values) {
+            assert state == State.TYPE_CONSTRAINTS;
+
+            if (!values.isEmpty()) {
+                sb.append(KotlinPackage.makeString(values, ", ", " where ", "", -1, ""));
+            }
+            state = State.BODY;
+
+            return this;
+        }
+
+        @NotNull
         public FunctionBuilder simpleBody(@NotNull String body) {
-            assert state == State.BODY;
+            assert state == State.BODY || state == State.TYPE_CONSTRAINTS;
 
             sb.append(" = ").append(body);
             state = State.DONE;
@@ -633,7 +654,7 @@ public class JetPsiFactory {
 
         @NotNull
         public FunctionBuilder blockBody(@NotNull String body) {
-            assert state == State.BODY;
+            assert state == State.BODY || state == State.TYPE_CONSTRAINTS;
 
             sb.append(" {\n").append(body).append("\n}");
             state = State.DONE;

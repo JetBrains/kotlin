@@ -1,0 +1,13 @@
+open class Data(val x: Int)
+trait DataEx
+
+// NEXT_SIBLING:
+fun <T : Data, V : Data> A<T>.i(v: V): Int where T : DataEx {
+    return t.x + v.x
+}
+
+class A<T: Data>(val t: T) where T: DataEx {
+    fun foo<V: Data>(v: V): Int {
+        return i(v)
+    }
+}

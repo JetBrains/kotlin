@@ -125,14 +125,24 @@ public class DFS {
         }
     }
 
-    public static abstract class NodeHandlerWithListResult<N, R> extends AbstractNodeHandler<N, List<R>> {
+    public static abstract class CollectingNodeHandler<N, R, C extends Iterable<R>> extends AbstractNodeHandler<N, C> {
         @NotNull
-        protected final LinkedList<R> result = new LinkedList<R>();
+        protected final C result;
+
+        protected CollectingNodeHandler(@NotNull C result) {
+            this.result = result;
+        }
 
         @Override
         @NotNull
-        public List<R> result() {
+        public C result() {
             return result;
+        }
+    }
+
+    public static abstract class NodeHandlerWithListResult<N, R> extends CollectingNodeHandler<N, R, LinkedList<R>> {
+        protected NodeHandlerWithListResult() {
+            super(new LinkedList<R>());
         }
     }
 

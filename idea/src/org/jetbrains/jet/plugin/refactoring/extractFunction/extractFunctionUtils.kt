@@ -86,9 +86,20 @@ import java.util.Collections
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.psi.JetTypeConstraint
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
+import org.jetbrains.jet.utils.DFS
+import org.jetbrains.jet.utils.DFS.Neighbors
+import org.jetbrains.jet.utils.DFS.VisitedWithSet
+import org.jetbrains.jet.utils.DFS.AbstractNodeHandler
+import org.jetbrains.jet.utils.DFS.CollectingNodeHandler
+import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.psi.JetTypeReference
+import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
@@ -227,13 +238,75 @@ private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression {
     return tmpFunction.getBodyExpression() as JetBlockExpression
 }
 
+private fun JetType.collectReferencedTypes(): List<JetType> {
+    return DFS.dfsFromNode(
+            this,
+            object: Neighbors<JetType> {
+                override fun getNeighbors(current: JetType): Iterable<JetType> = current.getArguments().map { it.getType() }
+            },
+            VisitedWithSet(),
+            object: CollectingNodeHandler<JetType, JetType, ArrayList<JetType>>(ArrayList()) {
+                override fun afterChildren(current: JetType) {
+                    result.add(current)
+                }
+            }
+    )!!
+}
+
+fun JetTypeParameter.collectRelevantConstraints(): List<JetTypeConstraint> {
+    val typeConstraints = getParentByType(javaClass<JetTypeParameterListOwner>())?.getTypeConstraints()
+    if (typeConstraints == null) return Collections.emptyList()
+    return typeConstraints.filter { it.getSubjectTypeParameterName()?.getReference()?.resolve() == this}
+}
+
+fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<JetType> {
+    val typeRefs = ArrayList<JetTypeReference>()
+    originalDeclaration.getExtendsBound()?.let { typeRefs.add(it) }
+    originalConstraints
+            .map { it.getBoundTypeReference() }
+            .filterNotNullTo(typeRefs)
+
+    return typeRefs
+            .map { bindingContext[BindingContext.TYPE, it] }
+            .filterNotNull()
+}
+
+private fun JetType.processTypeIfExtractable(
+        bindingContext: BindingContext,
+        typeParameters: MutableSet<TypeParameter>,
+        nonDenotableTypes: HashSet<JetType>
+): Boolean {
+    return collectReferencedTypes().fold(true) { (extractable, typeToCheck) ->
+        val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+        val typeParameter = parameterTypeDescriptor?.let {
+            BindingContextUtils.descriptorToDeclaration(bindingContext, it)
+        } as? JetTypeParameter
+
+        when {
+            typeParameter != null -> {
+                typeParameters.add(TypeParameter(typeParameter, typeParameter.collectRelevantConstraints()))
+                extractable
+            }
+
+            typeToCheck.canBeReferencedViaImport() ->
+                extractable
+
+            else -> {
+                nonDenotableTypes.add(typeToCheck)
+                false
+            }
+        }
+    }
+}
+
 private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext,
         resultType: JetType?,
         replacementMap: MutableMap<Int, Replacement>,
-        parameters: MutableSet<Parameter>
+        parameters: MutableSet<Parameter>,
+        typeParameters: MutableSet<TypeParameter>
 ): MaybeError<ExtractionDescriptor, String>? {
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
@@ -244,6 +317,7 @@ private fun ExtractionData.inferParametersInfo(
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, Parameter>()
     val nonDenotableTypes = HashSet<JetType>()
+
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
         val ref = refInfo.refExpr
@@ -439,8 +513,10 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
 
     val replacementMap = HashMap<Int, Replacement>()
     val parameters = HashSet<Parameter>()
-    val parameterError =
-            inferParametersInfo(commonParent, localInstructions, bindingContext, inferredResultType, replacementMap, parameters)
+    val typeParameters = HashSet<TypeParameter>()
+    val parameterError = inferParametersInfo(
+            commonParent, localInstructions, bindingContext, inferredResultType, replacementMap, parameters, typeParameters
+    )
     if (parameterError != null) return parameterError
 
     val controlFlowInfo = localInstructions.analyzeControlFlow(bindingContext, parameters, inferredResultType)
@@ -465,7 +541,16 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
     receiverParameter?.let { parameters.remove(it) }
 
     return MaybeValue(
-            ExtractionDescriptor(this, functionName, "", parameters.sortBy { it.name }, receiverParameter, replacementMap, controlFlow)
+            ExtractionDescriptor(
+                    this,
+                    functionName,
+                    "",
+                    parameters.sortBy { it.name },
+                    receiverParameter,
+                    typeParameters.sortBy { it.originalDeclaration.getName()!! },
+                    replacementMap,
+                    controlFlow
+            )
     )
 }
 

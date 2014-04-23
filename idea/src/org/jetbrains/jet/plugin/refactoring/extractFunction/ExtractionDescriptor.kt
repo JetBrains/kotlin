@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.psi.JetTypeConstraint
 
 data class Parameter(
         val argumentText: String,
@@ -39,6 +41,11 @@ data class Parameter(
 ) {
     val nameForRef: String get() = mirrorVarName ?: name
 }
+
+data class TypeParameter(
+        val originalDeclaration: JetTypeParameter,
+        val originalConstraints: List<JetTypeConstraint>
+)
 
 trait Replacement: Function1<JetElement, JetElement>
 
@@ -120,6 +127,7 @@ data class ExtractionDescriptor(
         val visibility: String,
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
+        val typeParameters: List<TypeParameter>,
         val replacementMap: Map<Int, Replacement>,
         val controlFlow: ControlFlow
 )
