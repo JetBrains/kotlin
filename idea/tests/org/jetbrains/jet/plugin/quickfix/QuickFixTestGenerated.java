@@ -1441,6 +1441,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/supertypeInitialization/beforeSupertypeNotInitializedEmptyConstructor.kt");
         }
         
+        @TestMetadata("beforeSupertypeNotInitializedForLocalClass.kt")
+        public void testSupertypeNotInitializedForLocalClass() throws Exception {
+            doTest("idea/testData/quickfix/supertypeInitialization/beforeSupertypeNotInitializedForLocalClass.kt");
+        }
+        
+        @TestMetadata("beforeSupertypeNotInitializedForObjectExpression.kt")
+        public void testSupertypeNotInitializedForObjectExpression() throws Exception {
+            doTest("idea/testData/quickfix/supertypeInitialization/beforeSupertypeNotInitializedForObjectExpression.kt");
+        }
+        
     }
     
     @TestMetadata("idea/testData/quickfix/suppress")
