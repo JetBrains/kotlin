@@ -73,7 +73,19 @@ class JetExpressionCodeFragmentImpl(
         return true
     }
 
-    override fun getExpression() = findChildByClass(javaClass<JetExpression>())
+    override fun getExpression(): JetExpression? {
+        var resultingExpression: JetExpression? = null
+        this.accept(object: JetTreeVisitor<Void>() {
+            override fun visitExpression(expression: JetExpression, data: Void?): Void? {
+                resultingExpression = expression
+                return null
+            }
+
+            override fun visitElement(element: PsiElement) = element.acceptChildren(this)
+
+        }, null)
+        return resultingExpression
+    }
 
     class object {
         val IMPORT_SEPARATOR = ","
