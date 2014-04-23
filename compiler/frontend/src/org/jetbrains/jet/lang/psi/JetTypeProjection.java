@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
@@ -42,12 +43,12 @@ public class JetTypeProjection extends JetModifierListOwnerStub<PsiJetTypeProjec
         }
 
         ASTNode projectionNode = getProjectionNode();
-        if (projectionNode == null) return JetProjectionKind.NONE;
-
-        if (projectionNode.getElementType() == JetTokens.IN_KEYWORD) return JetProjectionKind.IN;
-        if (projectionNode.getElementType() == JetTokens.OUT_KEYWORD) return JetProjectionKind.OUT;
-        if (projectionNode.getElementType() == JetTokens.MUL) return JetProjectionKind.STAR;
-
+        IElementType token = projectionNode != null ? projectionNode.getElementType() : null;
+        for (JetProjectionKind projectionKind : JetProjectionKind.values()) {
+            if (projectionKind.getToken() == token) {
+                return projectionKind;
+            }
+        }
         throw new IllegalStateException(projectionNode.getText());
     }
 

@@ -16,6 +16,22 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lexer.JetSingleValueToken;
+import org.jetbrains.jet.lexer.JetTokens;
+
 public enum JetProjectionKind {
-    IN, OUT, STAR, NONE;
+    IN(JetTokens.IN_KEYWORD), OUT(JetTokens.OUT_KEYWORD), STAR(JetTokens.MUL), NONE(null);
+
+    @Nullable
+    private final JetSingleValueToken token;
+
+    JetProjectionKind(@Nullable JetSingleValueToken token) {
+        this.token = token;
+    }
+
+    @Nullable
+    public JetSingleValueToken getToken() {
+        return token;
+    }
 }
