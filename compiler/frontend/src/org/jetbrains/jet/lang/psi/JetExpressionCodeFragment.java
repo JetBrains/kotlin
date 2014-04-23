@@ -16,10 +16,10 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiCodeFragment;
+import com.intellij.psi.JavaCodeFragment;
 import org.jetbrains.annotations.Nullable;
 
-public interface JetExpressionCodeFragment extends PsiCodeFragment {
+public interface JetExpressionCodeFragment extends JavaCodeFragment {
     @Nullable
     JetExpression getExpression();
 }

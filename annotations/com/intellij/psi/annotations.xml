@@ -1,4 +1,7 @@
 <root>
+  <item name='com.intellij.psi.JavaCodeFragment java.lang.String importsToString()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.JavaPsiFacade com.intellij.psi.JavaPsiFacade getInstance(com.intellij.openapi.project.Project)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
