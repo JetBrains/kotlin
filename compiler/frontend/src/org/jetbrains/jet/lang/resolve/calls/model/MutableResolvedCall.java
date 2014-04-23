@@ -36,6 +36,7 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     boolean isDirty();
 
+    @NotNull
     DelegatingBindingTrace getTrace();
 
     /**

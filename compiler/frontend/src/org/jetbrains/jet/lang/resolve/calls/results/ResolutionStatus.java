@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.lang.resolve.calls.results;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.EnumSet;
 
 public enum ResolutionStatus {
@@ -55,6 +57,7 @@ public enum ResolutionStatus {
         return success;
     }
 
+    @NotNull
     public ResolutionStatus combine(ResolutionStatus other) {
         if (this == UNKNOWN_STATUS) return other;
         if (SUCCESS.among(this, other)) {

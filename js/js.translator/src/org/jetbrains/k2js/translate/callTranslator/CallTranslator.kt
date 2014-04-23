@@ -85,16 +85,16 @@ private fun translateCall(context: TranslationContext,
 ): JsExpression {
     if (resolvedCall is VariableAsFunctionResolvedCall) {
         assert(explicitReceivers.receiverObject == null, "VariableAsFunctionResolvedCall must have one receiver")
-        val variableCall = resolvedCall.getVariableCall()
+        val variableCall = resolvedCall.variableCall
         if (variableCall.expectedReceivers()) {
             val newReceiver = CallTranslator.translateGet(context, variableCall, explicitReceivers.receiverOrThisObject)
-            return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(newReceiver))
+            return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(newReceiver))
         } else {
             val thisObject = CallTranslator.translateGet(context, variableCall, null)
             if (explicitReceivers.receiverOrThisObject == null)
-                return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject))
+                return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(thisObject))
             else
-                return translateFunctionCall(context, resolvedCall.getFunctionCall(), ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
+                return translateFunctionCall(context, resolvedCall.functionCall, ExplicitReceivers(thisObject, explicitReceivers.receiverOrThisObject))
         }
     }
 

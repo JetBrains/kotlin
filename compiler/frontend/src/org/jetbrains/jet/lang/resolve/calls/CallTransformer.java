@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionConte
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCallImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.tasks.ExplicitReceiverKind;
@@ -215,7 +215,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             return Collections2.transform(calls, new Function<MutableResolvedCall<FunctionDescriptor>, MutableResolvedCall<FunctionDescriptor>>() {
                 @Override
                 public MutableResolvedCall<FunctionDescriptor> apply(MutableResolvedCall<FunctionDescriptor> functionResolvedCall) {
-                    return new VariableAsFunctionResolvedCall(functionResolvedCall, variableResolvedCall);
+                    return new VariableAsFunctionResolvedCallImpl(functionResolvedCall, variableResolvedCall);
                 }
             });
         }

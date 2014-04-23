@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -53,7 +52,8 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
         JetExpression calleeExpression = getExpression().getCalleeExpression();
         ResolvedCall<?> resolvedCall = context.get(RESOLVED_CALL, calleeExpression);
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-            return Collections.<DeclarationDescriptor>singleton(((VariableAsFunctionResolvedCall) resolvedCall).getCandidateDescriptor());
+            return Collections.<DeclarationDescriptor>singleton(
+                    ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall().getCandidateDescriptor());
         }
         Call call = context.get(CALL, calleeExpression);
         if (call != null && resolvedCall != null && call.getCallType() == Call.CallType.INVOKE) {

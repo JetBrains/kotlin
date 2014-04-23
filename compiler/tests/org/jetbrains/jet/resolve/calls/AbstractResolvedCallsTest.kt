@@ -80,8 +80,8 @@ public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
             }
 
             if (resolvedCall is VariableAsFunctionResolvedCall) {
-                tryCall(resolvedCall.getFunctionCall(), "invoke")
-                tryCall(resolvedCall.getVariableCall())
+                tryCall(resolvedCall.functionCall, "invoke")
+                tryCall(resolvedCall.variableCall)
             }
             else {
                 tryCall(resolvedCall)
