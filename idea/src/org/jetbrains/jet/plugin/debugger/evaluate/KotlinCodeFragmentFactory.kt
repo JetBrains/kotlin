@@ -39,7 +39,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
             return codeFragment
         }
-        return JavaCodeFragmentFactory.getInstance(project)!!.createCodeBlockCodeFragment(item.getText(), context, false)
+        return JavaCodeFragmentFactory.getInstance(project)!!.createCodeBlockCodeFragment(item.getText(), context, true)
     }
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
