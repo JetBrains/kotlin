@@ -93,7 +93,7 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
         }
 
         ResolveSessionForBodies resolveSessionForBodies =
-                ResolvePackage.getLazyResolveSession(element.getContainingJetFile());
+                ResolvePackage.getLazyResolveSession(element);
 
         List<FqName> result = Lists.newArrayList();
         if (!isSuppressedTopLevelImportInPosition(element)) {

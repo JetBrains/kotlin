@@ -40,7 +40,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
         if (element.getTypeArguments().isEmpty()) return false
 
-        val resolveSession = element.getContainingJetFile().getLazyResolveSession()
+        val resolveSession = element.getLazyResolveSession()
         val injector = InjectorForMacros(element.getProject(), resolveSession.getModuleDescriptor())
 
         val scope = context[BindingContext.RESOLUTION_SCOPE, element]

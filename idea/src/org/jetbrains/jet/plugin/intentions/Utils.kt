@@ -29,13 +29,13 @@ fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeR
 }
 
 fun expressionType(expression: JetExpression): JetType? {
-    val resolveSession = expression.getContainingJetFile().getLazyResolveSession()
+    val resolveSession = expression.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(expression)
     return bindingContext.get(BindingContext.EXPRESSION_TYPE, expression)
 }
 
 fun functionReturnType(function: JetNamedFunction): JetType? {
-    val resolveSession = function.getContainingJetFile().getLazyResolveSession()
+    val resolveSession = function.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(function)
     val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function)
     if (descriptor == null) return null

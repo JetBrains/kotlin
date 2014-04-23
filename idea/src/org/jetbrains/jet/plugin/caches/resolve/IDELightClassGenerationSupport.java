@@ -94,7 +94,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
     @NotNull
     @Override
     public LightClassConstructionContext getContextForClassOrObject(@NotNull JetClassOrObject classOrObject) {
-        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(classOrObject.getContainingJetFile());
+        ResolveSessionForBodies session = ResolvePackage.getLazyResolveSession(classOrObject);
 
         if (JetPsiUtil.isLocal(classOrObject)) {
             BindingContext bindingContext = session.resolveToElement(classOrObject);
