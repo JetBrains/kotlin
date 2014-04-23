@@ -1,0 +1,110 @@
+<root>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitReturnType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitParameterType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor void visitFormalTypeParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter void visitInnerClassType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitExceptionType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitTypeArgument(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter void visitTypeVariable(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitParameterType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureReader void acceptType(org.objectweb.asm.signature.SignatureVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitClassBound()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitInterfaceBound()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter void visitFormalTypeParameter(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitReturnType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter void visitClassType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitSuperclass()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor void visitClassType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitTypeArgument(char)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitClassBound()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureReader void accept(org.objectweb.asm.signature.SignatureVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor void visitInnerClassType(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitInterfaceBound()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitSuperclass()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitInterface()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor void visitTypeVariable(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureVisitor org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitArrayType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitArrayType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.objectweb.asm.signature.SignatureWriter org.jetbrains.org.objectweb.asm.signature.SignatureVisitor visitExceptionType()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

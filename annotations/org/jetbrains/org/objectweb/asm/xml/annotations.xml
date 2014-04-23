@@ -1,0 +1,290 @@
+<root>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXFieldAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter SAXAnnotationAdapter(org.jetbrains.org.objectweb.asm.xml.SAXAdapter, java.lang.String, int, int, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.ASMContentHandler.Rule org.jetbrains.org.objectweb.asm.Label getLabel(java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter void visitEnum(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter void visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTypeInsn(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter void visit(int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitMultiANewArrayInsn(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter SAXAnnotationAdapter(org.jetbrains.org.objectweb.asm.xml.SAXAdapter, java.lang.String, int, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLabel(org.jetbrains.org.objectweb.asm.Label) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTableSwitchInsn(int, int, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotationDefault()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.Processor void main(java.lang.String[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLdcInsn(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter void visit(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTableSwitchInsn(int, int, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label...) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXFieldAdapter SAXFieldAdapter(org.jetbrains.org.objectweb.asm.xml.SAXAdapter, org.xml.sax.Attributes) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter void visitOuterClass(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int, java.lang.String, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.ASMContentHandler.Rule int getAccess(java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter void visitEnum(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLineNumber(int, org.jetbrains.org.objectweb.asm.Label) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter SAXAnnotationAdapter(int, org.jetbrains.org.objectweb.asm.xml.SAXAdapter, java.lang.String, int, java.lang.String, java.lang.String, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXAnnotationAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.ASMContentHandler.Rule void begin(java.lang.String, org.xml.sax.Attributes) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXClassAdapter org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXFieldAdapter org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.xml.SAXCodeAdapter void visitJumpInsn(int, org.jetbrains.org.objectweb.asm.Label) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+</root>

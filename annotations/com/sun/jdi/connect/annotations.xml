@@ -1,0 +1,5 @@
+<root>
+    <item name='com.sun.jdi.connect.Connector java.util.Map&lt;java.lang.String,com.sun.jdi.connect.Connector.Argument&gt; defaultArguments()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

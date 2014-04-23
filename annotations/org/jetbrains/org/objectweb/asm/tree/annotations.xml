@@ -1,0 +1,593 @@
+<root>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitArray(java.lang.String)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode void visit(java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode void visitEnum(java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.AnnotationNode void visitEnum(java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.FieldVisitor visitField(int, java.lang.String, java.lang.String, java.lang.String, java.lang.Object) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[])'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode org.jetbrains.org.objectweb.asm.MethodVisitor visitMethod(int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode void accept(org.jetbrains.org.objectweb.asm.ClassVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode void visit(int, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode void visitAttribute(org.jetbrains.org.objectweb.asm.Attribute) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode void visitInnerClass(java.lang.String, java.lang.String, java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.ClassNode void visitOuterClass(java.lang.String, java.lang.String, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode desc'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode name'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode owner'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldNode void accept(org.jetbrains.org.objectweb.asm.ClassVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FieldNode void visitAttribute(org.jetbrains.org.objectweb.asm.Attribute) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FrameNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FrameNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.FrameNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IincInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IincInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IincInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InnerClassNode void accept(org.jetbrains.org.objectweb.asm.ClassVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList int indexOf(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList java.util.ListIterator&lt;org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList java.util.ListIterator&lt;org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode&gt; iterator(int)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode[] toArray()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void add(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void add(org.jetbrains.org.objectweb.asm.tree.InsnList) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insert(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insert(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insert(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insert(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.InsnList) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insert(org.jetbrains.org.objectweb.asm.tree.InsnList) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insertBefore(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insertBefore(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void insertBefore(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.InsnList) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void remove(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void set(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnList void set(org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode, org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IntInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IntInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.IntInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InvokeDynamicInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InvokeDynamicInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.InvokeDynamicInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.JumpInsnNode label'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.JumpInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.JumpInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.JumpInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LabelNode org.jetbrains.org.objectweb.asm.Label getLabel()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LabelNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LabelNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LdcInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LdcInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LdcInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LineNumberNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LineNumberNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LineNumberNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LocalVariableNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LookupSwitchInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LookupSwitchInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.LookupSwitchInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode desc'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode name'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode owner'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode desc'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode instructions'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode name'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(java.lang.String, boolean) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotationDefault()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int, java.lang.String, boolean)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.AnnotationVisitor visitParameterAnnotation(int, java.lang.String, boolean) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode org.jetbrains.org.objectweb.asm.tree.LabelNode getLabelNode(org.jetbrains.org.objectweb.asm.Label) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode tryCatchBlocks'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void accept(org.jetbrains.org.objectweb.asm.ClassVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitAttribute(org.jetbrains.org.objectweb.asm.Attribute) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitFieldInsn(int, java.lang.String, java.lang.String, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitInvokeDynamicInsn(java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Handle, java.lang.Object...) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitJumpInsn(int, org.jetbrains.org.objectweb.asm.Label) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLabel(org.jetbrains.org.objectweb.asm.Label) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLdcInsn(java.lang.Object) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLineNumber(int, org.jetbrains.org.objectweb.asm.Label) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLocalVariable(java.lang.String, java.lang.String, java.lang.String, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, int) 4'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitLookupSwitchInsn(org.jetbrains.org.objectweb.asm.Label, int[], org.jetbrains.org.objectweb.asm.Label[]) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitMethodInsn(int, java.lang.String, java.lang.String, java.lang.String) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitMultiANewArrayInsn(java.lang.String, int) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTableSwitchInsn(int, int, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label...) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTableSwitchInsn(int, int, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label...) 3'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTryCatchBlock(org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, org.jetbrains.org.objectweb.asm.Label, java.lang.String) 2'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MethodNode void visitTypeInsn(int, java.lang.String) 1'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MultiANewArrayInsnNode desc'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MultiANewArrayInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MultiANewArrayInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.MultiANewArrayInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TableSwitchInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TableSwitchInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TableSwitchInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode end'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode start'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TypeInsnNode desc'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TypeInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TypeInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.TypeInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.VarInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.VarInsnNode org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode clone(java.util.Map&lt;org.jetbrains.org.objectweb.asm.tree.LabelNode,org.jetbrains.org.objectweb.asm.tree.LabelNode&gt;) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+        <annotation name='org.jetbrains.kannotator.runtime.annotations.Propagated'>
+            <val name="value" val="{org.jetbrains.kannotator.controlFlow.builder.analysis.NullabilityKey.class}"/>
+        </annotation>
+    </item>
+    <item name='org.jetbrains.org.objectweb.asm.tree.VarInsnNode void accept(org.jetbrains.org.objectweb.asm.MethodVisitor) 0'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+</root>

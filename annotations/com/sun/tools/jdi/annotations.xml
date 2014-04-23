@@ -1,0 +1,12 @@
+<root>
+  <item name='com.sun.tools.jdi.ObjectReferenceImpl com.sun.jdi.ReferenceType referenceType()'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+  <item name='com.sun.tools.jdi.ReferenceTypeImpl'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+    <annotation name='java.lang.annotation.Deprecated'/>
+  </item>
+  <item name='com.sun.tools.jdi.VirtualMachineImpl com.sun.tools.jdi.ReferenceTypeImpl referenceType(long, byte)'>
+    <annotation name='org.jetbrains.annotations.Nullable'/>
+  </item>
+</root>
