@@ -27,30 +27,15 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> implements PsiJetTypeParameterStub {
     private final StringRef name;
-    private final StringRef extendBoundTypeText;
     private final boolean isInVariance;
     private final boolean isOutVariance;
 
-    public PsiJetTypeParameterStubImpl(
-            StubElement parent, StringRef name, StringRef extendBoundTypeText, boolean isInVariance, boolean isOutVariance
-    ) {
+    public PsiJetTypeParameterStubImpl(StubElement parent, StringRef name, boolean isInVariance, boolean isOutVariance) {
         super(parent, JetStubElementTypes.TYPE_PARAMETER);
 
         this.name = name;
-        this.extendBoundTypeText = extendBoundTypeText;
         this.isInVariance = isInVariance;
         this.isOutVariance = isOutVariance;
-    }
-
-    public PsiJetTypeParameterStubImpl(
-            StubElement parent, String name, String extendBoundTypeText, boolean isInVariance, boolean isOutVariance
-    ) {
-        this(parent, StringRef.fromString(name), StringRef.fromString(extendBoundTypeText), isInVariance, isOutVariance);
-    }
-
-    @Override
-    public String getExtendBoundTypeText() {
-        return StringRef.toString(extendBoundTypeText);
     }
 
     @Override
@@ -82,8 +67,6 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
         }
 
         builder.append("name=").append(getName());
-        builder.append(" extendText=").append(getExtendBoundTypeText());
-
         builder.append("]");
 
         return builder.toString();

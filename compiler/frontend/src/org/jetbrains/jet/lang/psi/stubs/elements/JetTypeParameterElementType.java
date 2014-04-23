@@ -37,18 +37,13 @@ public class JetTypeParameterElementType extends JetStubElementType<PsiJetTypePa
 
     @Override
     public PsiJetTypeParameterStub createStub(@NotNull JetTypeParameter psi, StubElement parentStub) {
-        JetTypeReference extendsBound = psi.getExtendsBound();
-        return new PsiJetTypeParameterStubImpl(parentStub,
-                psi.getName(),
-                extendsBound != null ? extendsBound.getText() : null,
-                psi.getVariance() == Variance.IN_VARIANCE,
-                psi.getVariance() == Variance.OUT_VARIANCE);
+        return new PsiJetTypeParameterStubImpl(parentStub, StringRef.fromString(psi.getName()),
+                                               psi.getVariance() == Variance.IN_VARIANCE, psi.getVariance() == Variance.OUT_VARIANCE);
     }
 
     @Override
     public void serialize(@NotNull PsiJetTypeParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
-        dataStream.writeName(stub.getExtendBoundTypeText());
         dataStream.writeBoolean(stub.isInVariance());
         dataStream.writeBoolean(stub.isOutVariance());
     }
@@ -57,11 +52,9 @@ public class JetTypeParameterElementType extends JetStubElementType<PsiJetTypePa
     @Override
     public PsiJetTypeParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
-        StringRef extendBoundTypeText = dataStream.readName();
         boolean isInVariance = dataStream.readBoolean();
         boolean isOutVariance = dataStream.readBoolean();
 
-        return new PsiJetTypeParameterStubImpl(parentStub,
-                name, extendBoundTypeText, isInVariance, isOutVariance);
+        return new PsiJetTypeParameterStubImpl(parentStub, name, isInVariance, isOutVariance);
     }
 }

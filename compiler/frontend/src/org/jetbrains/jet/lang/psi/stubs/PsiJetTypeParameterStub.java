@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi.stubs;
 import org.jetbrains.jet.lang.psi.JetTypeParameter;
 
 public interface PsiJetTypeParameterStub extends PsiJetStubWithFqName<JetTypeParameter> {
-    String getExtendBoundTypeText();
     boolean isInVariance();
     boolean isOutVariance();
 }
