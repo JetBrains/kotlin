@@ -131,6 +131,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/EnumMembers.kt");
     }
     
+    @TestMetadata("EqOperator.kt")
+    public void testEqOperator() throws Exception {
+        doTest("idea/testData/completion/smart/EqOperator.kt");
+    }
+    
     @TestMetadata("FunctionReference1.kt")
     public void testFunctionReference1() throws Exception {
         doTest("idea/testData/completion/smart/FunctionReference1.kt");
@@ -249,6 +254,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("NoSillyAssignment.kt")
     public void testNoSillyAssignment() throws Exception {
         doTest("idea/testData/completion/smart/NoSillyAssignment.kt");
+    }
+    
+    @TestMetadata("NotEqOperator.kt")
+    public void testNotEqOperator() throws Exception {
+        doTest("idea/testData/completion/smart/NotEqOperator.kt");
     }
     
     @TestMetadata("NotSillyAssignment.kt")

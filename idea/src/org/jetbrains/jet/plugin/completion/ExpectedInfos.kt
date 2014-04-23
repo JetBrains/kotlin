@@ -40,6 +40,8 @@ import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.jet.lexer.JetTokens
 
 enum class Tail {
     COMMA
@@ -50,14 +52,10 @@ data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
 
 class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val expectedInfos1 = calculateForArgument(expressionWithType)
-        if (expectedInfos1 != null) return expectedInfos1
-
-        val expectedInfos2 = calculateForFunctionLiteralArgument(expressionWithType)
-        if (expectedInfos2 != null) return expectedInfos2
-
-        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
-        return listOf(ExpectedInfo(expectedType, null))
+        return calculateForArgument(expressionWithType)
+            ?: calculateForFunctionLiteralArgument(expressionWithType)
+            ?: calculateForEq(expressionWithType)
+            ?: getFromBindingContext(expressionWithType)
     }
 
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -127,5 +125,25 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
         }
         return expectedInfos
+    }
+
+    private fun calculateForEq(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
+        if (binaryExpression != null) {
+            val operationToken = binaryExpression.getOperationToken()
+            if (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
+                val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
+                if (otherOperand != null) {
+                    val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
+                    return listOf(ExpectedInfo(TypeUtils.makeNullable(expressionType), null))
+                }
+            }
+        }
+        return null
+    }
+
+    private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val expectedType = bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, expressionWithType] ?: return null
+        return listOf(ExpectedInfo(expectedType, null))
     }
 }

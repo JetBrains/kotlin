@@ -104,10 +104,13 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             }
 
             is JetBinaryExpression -> {
-                if (parent.getRight() == expression && parent.getOperationToken() == JetTokens.EQ) {
-                    val left = parent.getLeft()
-                    if (left is JetReferenceExpression) {
-                        return resolveSession.resolveToElement(left)[BindingContext.REFERENCE_TARGET, left].toList()
+                if (parent.getRight() == expression) {
+                    val operationToken = parent.getOperationToken()
+                    if (operationToken == JetTokens.EQ || operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ) {
+                        val left = parent.getLeft()
+                        if (left is JetReferenceExpression) {
+                            return resolveSession.resolveToElement(left)[BindingContext.REFERENCE_TARGET, left].toList()
+                        }
                     }
                 }
             }
