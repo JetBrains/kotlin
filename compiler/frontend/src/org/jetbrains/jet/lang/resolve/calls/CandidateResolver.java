@@ -222,9 +222,13 @@ public class CandidateResolver {
             boolean isInnerCall
     ) {
         MutableResolvedCall<D> resolvedCall = context.candidateCall;
+        if (resolvedCall.isCompleted()) {
+            return resolvedCall.getResultingDescriptor().getReturnType();
+        }
         if (!resolvedCall.hasIncompleteTypeParameters()) {
             completeNestedCallsInference(context);
             checkValueArgumentTypes(context);
+            resolvedCall.markCallAsCompleted();
             return resolvedCall.getResultingDescriptor().getReturnType();
         }
 
@@ -242,27 +246,31 @@ public class CandidateResolver {
 
         ((ConstraintSystemImpl)resolvedCall.getConstraintSystem()).processDeclaredBoundConstraints();
 
+        JetType returnType;
         if (!resolvedCall.getConstraintSystem().getStatus().isSuccessful()) {
-            return reportInferenceError(context);
+            returnType = reportInferenceError(context);
         }
-        resolvedCall.setResultingSubstitutor(resolvedCall.getConstraintSystem().getResultingSubstitutor());
+        else {
+            resolvedCall.setResultingSubstitutor(resolvedCall.getConstraintSystem().getResultingSubstitutor());
 
-        completeNestedCallsInference(context);
-        // Here we type check the arguments with inferred types expected
-        checkAllValueArguments(context, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
+            completeNestedCallsInference(context);
+            // Here we type check the arguments with inferred types expected
+            checkAllValueArguments(context, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
 
-        resolvedCall.setHasIncompleteTypeParameters(false);
-        ResolutionStatus status = resolvedCall.getStatus();
-        if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
-            resolvedCall.setStatusToSuccess();
-        }
-        JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
-        if (isInnerCall) {
-            PsiElement callElement = context.call.getCallElement();
-            if (callElement instanceof JetCallExpression) {
-                DataFlowUtils.checkType(returnType, (JetCallExpression) callElement, context, context.dataFlowInfo);
+            resolvedCall.setHasIncompleteTypeParameters(false);
+            ResolutionStatus status = resolvedCall.getStatus();
+            if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
+                resolvedCall.setStatusToSuccess();
+            }
+            returnType = resolvedCall.getResultingDescriptor().getReturnType();
+            if (isInnerCall) {
+                PsiElement callElement = context.call.getCallElement();
+                if (callElement instanceof JetCallExpression) {
+                    DataFlowUtils.checkType(returnType, (JetCallExpression) callElement, context, context.dataFlowInfo);
+                }
             }
         }
+        resolvedCall.markCallAsCompleted();
         return returnType;
     }
 
@@ -302,7 +310,6 @@ public class CandidateResolver {
                     mutableResolvedCall, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY);
 
             completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
-            mutableResolvedCall.markCallAsCompleted();
         }
     }
 
@@ -411,26 +418,15 @@ public class CandidateResolver {
 
         CallCandidateResolutionContext<?> contextForArgument = storedContextForArgument
                 .replaceContextDependency(INDEPENDENT).replaceBindingTrace(context.trace).replaceExpectedType(expectedType);
-        JetType type;
-        if (contextForArgument.candidateCall.hasIncompleteTypeParameters()
-                && !contextForArgument.candidateCall.isCompleted()) { //e.g. 'equals' argument
-            type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
+        JetType type = completeTypeInferenceDependentOnExpectedTypeForCall(contextForArgument, true);
+        JetType recordedType = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
+        if (recordedType != null && !recordedType.getConstructor().isDenotable()) {
+            type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
         }
-        else {
-            completeNestedCallsInference(contextForArgument);
-            JetType recordedType = context.trace.get(BindingContext.EXPRESSION_TYPE, expression);
-            if (recordedType != null && !recordedType.getConstructor().isDenotable()) {
-                type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
-            }
-            else {
-                type = contextForArgument.candidateCall.getResultingDescriptor().getReturnType();
-            }
-            checkValueArgumentTypes(contextForArgument);
-        }
+
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
-        markResultingCallAsCompleted(context, keyExpression);
         completeTypeInferenceForAllCandidates(context, keyExpression);
 
         DataFlowUtils.checkType(result, expression, contextForArgument);
@@ -461,18 +457,7 @@ public class CandidateResolver {
             CallCandidateResolutionContext<?> newContext =
                     storedContextForArgument.replaceBindingTrace(context.trace).replaceContextDependency(INDEPENDENT);
             completeTypeInferenceDependentOnExpectedTypeForCall(newContext, true);
-
-            markResultingCallAsCompleted(context, keyExpression);
         }
-    }
-
-    private static void markResultingCallAsCompleted(@NotNull CallResolutionContext<?> context, @Nullable JetExpression keyExpression) {
-        if (keyExpression == null) return;
-
-        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
-        if (storedContextForArgument == null) return;
-
-        storedContextForArgument.candidateCall.markCallAsCompleted();
     }
 
     @Nullable
