@@ -19,10 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -31,12 +27,16 @@ import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public abstract class StackValue {
 
@@ -118,8 +118,8 @@ public abstract class StackValue {
     }
 
     @NotNull
-    public static StackValue arrayElement(Type type, boolean unbox) {
-        return new ArrayElement(type, unbox);
+    public static StackValue arrayElement(Type type) {
+        return new ArrayElement(type);
     }
 
     @NotNull
@@ -567,23 +567,20 @@ public abstract class StackValue {
     }
 
     private static class ArrayElement extends StackValue {
-        private final Type boxed;
-
-        public ArrayElement(Type type, boolean unbox) {
+        public ArrayElement(Type type) {
             super(type);
-            this.boxed = unbox ? boxType(type) : type;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
-            v.aload(boxed);    // assumes array and index are on the stack
-            coerce(boxed, type, v);
+            v.aload(this.type);    // assumes array and index are on the stack
+            coerceTo(type, v);
         }
 
         @Override
         public void store(Type topOfStackType, InstructionAdapter v) {
-            coerce(topOfStackType, boxed, v);
-            v.astore(boxed);
+            coerceFrom(topOfStackType, v);
+            v.astore(this.type);
         }
 
         @Override

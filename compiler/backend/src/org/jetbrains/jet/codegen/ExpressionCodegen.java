@@ -2409,7 +2409,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.dup();
                 v.iconst(i);
                 gen(arguments.get(i).getArgumentExpression(), elementType);
-                StackValue.arrayElement(elementType, false).store(elementType, v);
+                StackValue.arrayElement(elementType).store(elementType, v);
             }
         }
     }
@@ -3332,11 +3332,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             assert type != null;
             if (KotlinBuiltIns.getInstance().isArray(type)) {
                 JetType elementType = type.getArguments().get(0).getType();
-                Type notBoxed = asmType(elementType);
-                return StackValue.arrayElement(notBoxed, true);
+                return StackValue.arrayElement(boxType(asmType(elementType)));
             }
             else {
-                return StackValue.arrayElement(correctElementType(arrayType), false);
+                return StackValue.arrayElement(correctElementType(arrayType));
             }
         }
         else {
