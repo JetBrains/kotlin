@@ -107,4 +107,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
             jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true
         }
     }
+
+    fun testObject() = doTest()
 }
