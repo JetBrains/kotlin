@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.analyzer.AnalyzerFacadeForEverything;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
@@ -118,20 +117,6 @@ public final class AnalyzerFacadeForJS {
         finally {
             injector.destroy();
         }
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeBodiesInFiles(
-            @NotNull Predicate<PsiFile> filesToAnalyzeCompletely,
-            @NotNull Config config,
-            @NotNull BindingTrace traceContext,
-            @NotNull BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module) {
-        Predicate<PsiFile> completely = Predicates.and(notLibFiles(config.getLibFiles()), filesToAnalyzeCompletely);
-
-        return AnalyzerFacadeForEverything.analyzeBodiesInFilesWithJavaIntegration(
-                config.getProject(), completely, traceContext, bodiesResolveContext,
-                module);
     }
 
     public static void checkForErrors(@NotNull Collection<JetFile> allFiles, @NotNull BindingContext bindingContext) {
