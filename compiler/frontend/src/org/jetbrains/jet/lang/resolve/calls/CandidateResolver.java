@@ -75,7 +75,7 @@ public class CandidateResolver {
 
         ProgressIndicatorProvider.checkCanceled();
 
-        ResolvedCallImpl<D> candidateCall = context.candidateCall;
+        MutableResolvedCall<D> candidateCall = context.candidateCall;
         D candidate = candidateCall.getCandidateDescriptor();
 
         candidateCall.addStatus(checkReceiverTypeError(context));
@@ -104,11 +104,10 @@ public class CandidateResolver {
 
         if (task.checkArguments == CheckValueArgumentsMode.ENABLED) {
             Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
-            ValueArgumentsToParametersMapper.Status
-                    argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(context.call, context.tracing,
-                                                                                                            candidateCall, unmappedArguments);
+            ValueArgumentsToParametersMapper.Status argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
+                    context.call, context.tracing, candidateCall, unmappedArguments);
             if (!argumentMappingStatus.isSuccess()) {
-                candidateCall.setUnmappedArguments(unmappedArguments);
+                candidateCall.addUnmappedArguments(unmappedArguments);
                 //For the expressions like '42.(f)()' where f: () -> Unit we'd like to generate an error 'no receiver admitted',
                 //not to throw away the candidate.
                 if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR
@@ -175,7 +174,7 @@ public class CandidateResolver {
 
     private static void markAllArgumentsAsUnmapped(CallCandidateResolutionContext<?> context) {
         if (context.checkArguments == CheckValueArgumentsMode.ENABLED) {
-            context.candidateCall.setUnmappedArguments(context.call.getValueArguments());
+            context.candidateCall.addUnmappedArguments(context.call.getValueArguments());
         }
     }
 
@@ -200,7 +199,7 @@ public class CandidateResolver {
     public <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiteralsForCall(
             CallCandidateResolutionContext<D> context
     ) {
-        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        MutableResolvedCall<D> resolvedCall = context.candidateCall;
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         if (!resolvedCall.hasIncompleteTypeParameters() || constraintSystem == null) return;
 
@@ -222,7 +221,7 @@ public class CandidateResolver {
             @NotNull CallCandidateResolutionContext<D> context,
             boolean isInnerCall
     ) {
-        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        MutableResolvedCall<D> resolvedCall = context.candidateCall;
         if (!resolvedCall.hasIncompleteTypeParameters()) {
             completeNestedCallsInference(context);
             checkValueArgumentTypes(context);
@@ -252,7 +251,7 @@ public class CandidateResolver {
         // Here we type check the arguments with inferred types expected
         checkAllValueArguments(context, context.trace, RESOLVE_FUNCTION_ARGUMENTS);
 
-        resolvedCall.setHasUnknownTypeParameters(false);
+        resolvedCall.setHasIncompleteTypeParameters(false);
         ResolutionStatus status = resolvedCall.getStatus();
         if (status == ResolutionStatus.UNKNOWN_STATUS || status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
             resolvedCall.setStatusToSuccess();
@@ -310,7 +309,7 @@ public class CandidateResolver {
 
     private static <D extends CallableDescriptor> void updateSystemWithConstraintSystemCompleter(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull ResolvedCallImpl<D> resolvedCall
+            @NotNull MutableResolvedCall<D> resolvedCall
     ) {
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
@@ -330,7 +329,7 @@ public class CandidateResolver {
 
     private static <D extends CallableDescriptor> void updateSystemIfExpectedTypeIsUnit(
             @NotNull CallCandidateResolutionContext<D> context,
-            @NotNull ResolvedCallImpl<D> resolvedCall
+            @NotNull MutableResolvedCall<D> resolvedCall
     ) {
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
@@ -350,7 +349,7 @@ public class CandidateResolver {
     private <D extends CallableDescriptor> JetType reportInferenceError(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
-        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        MutableResolvedCall<D> resolvedCall = context.candidateCall;
         ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
         assert constraintSystem != null;
 
@@ -372,7 +371,7 @@ public class CandidateResolver {
             @NotNull CallCandidateResolutionContext<D> context
     ) {
         if (CallResolverUtil.isInvokeCallOnVariable(context.call)) return;
-        ResolvedCallImpl<D> resolvedCall = context.candidateCall;
+        MutableResolvedCall<D> resolvedCall = context.candidateCall;
         for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
             ValueParameterDescriptor parameterDescriptor = entry.getKey();
             ResolvedValueArgument resolvedArgument = entry.getValue();
@@ -631,7 +630,7 @@ public class CandidateResolver {
     }
 
     private <D extends CallableDescriptor> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D> context) {
-        ResolvedCallImpl<D> candidateCall = context.candidateCall;
+        MutableResolvedCall<D> candidateCall = context.candidateCall;
         final D candidate = candidateCall.getCandidateDescriptor();
 
         context.trace.get(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement());
@@ -706,7 +705,7 @@ public class CandidateResolver {
 
         // Solution
         boolean hasContradiction = constraintSystem.getStatus().hasContradiction();
-        candidateCall.setHasUnknownTypeParameters(true);
+        candidateCall.setHasIncompleteTypeParameters(true);
         if (!hasContradiction) {
             return INCOMPLETE_TYPE_INFERENCE;
         }
@@ -817,7 +816,7 @@ public class CandidateResolver {
 
     private <D extends CallableDescriptor, C extends CallResolutionContext<C>> ValueArgumentsCheckingResult checkValueArgumentTypes(
             @NotNull CallResolutionContext<C> context,
-            @NotNull ResolvedCallImpl<D> candidateCall,
+            @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull BindingTrace trace,
             @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
         ResolutionStatus resultStatus = SUCCESS;
@@ -893,7 +892,7 @@ public class CandidateResolver {
     private static <D extends CallableDescriptor> ResolutionStatus checkReceiverTypeError(
             @NotNull CallCandidateResolutionContext<D> context
     ) {
-        ResolvedCallImpl<D> candidateCall = context.candidateCall;
+        MutableResolvedCall<D> candidateCall = context.candidateCall;
         D candidateDescriptor = candidateCall.getCandidateDescriptor();
 
         ReceiverParameterDescriptor receiverDescriptor = candidateDescriptor.getReceiverParameter();

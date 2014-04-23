@@ -116,10 +116,12 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return status;
     }
 
+    @Override
     public void addStatus(@NotNull ResolutionStatus status) {
         this.status = this.status.combine(status);
     }
 
+    @Override
     public void setStatusToSuccess() {
         assert status == INCOMPLETE_TYPE_INFERENCE || status == UNKNOWN_STATUS;
         status = ResolutionStatus.SUCCESS;
@@ -130,8 +132,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return hasUnknownTypeParameters;
     }
 
-    public void setHasUnknownTypeParameters(boolean hasUnknownTypeParameters) {
-        this.hasUnknownTypeParameters = hasUnknownTypeParameters;
+    @Override
+    public void setHasIncompleteTypeParameters(boolean hasIncompleteTypeParameters) {
+        this.hasUnknownTypeParameters = hasIncompleteTypeParameters;
     }
 
     @Override
@@ -165,6 +168,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return resultingDescriptor == null ? candidateDescriptor : resultingDescriptor;
     }
 
+    @Override
     public void setResultingSubstitutor(@NotNull TypeSubstitutor substitutor) {
         resultingDescriptor = (D) candidateDescriptor.substitute(substitutor);
         assert resultingDescriptor != null : candidateDescriptor;
@@ -190,26 +194,31 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         }
     }
 
+    @Override
     public void setConstraintSystem(@NotNull ConstraintSystem constraintSystem) {
         this.constraintSystem = constraintSystem;
     }
 
     @Nullable
+    @Override
     public ConstraintSystem getConstraintSystem() {
         assertNotCompleted("ConstraintSystem");
         return constraintSystem;
     }
 
+    @Override
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
         assert !valueArguments.containsKey(valueParameter) : valueParameter + " -> " + valueArgument;
         valueArguments.put(valueParameter, valueArgument);
     }
 
-    public void setUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments) {
+    @Override
+    public void addUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments) {
         this.unmappedArguments.addAll(unmappedArguments);
 
     }
 
+    @Override
     @NotNull
     public Set<ValueArgument> getUnmappedArguments() {
         return unmappedArguments;
@@ -266,6 +275,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return arguments;
     }
 
+    @Override
     public void recordArgumentMatch(
             @NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch
     ) {
@@ -282,6 +292,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return argumentMatch;
     }
 
+    @Override
     public void argumentHasNoType() {
         this.someArgumentHasNoType = true;
     }
@@ -302,6 +313,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return isSafeCall;
     }
 
+    @Override
     public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
         dataFlowInfoForArguments.setInitialDataFlowInfo(info);
     }
@@ -318,6 +330,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return this;
     }
 
+    @Override
     public boolean hasInferredReturnType() {
         if (!completed) {
             hasInferredReturnType = constraintSystem == null || CallResolverUtil.hasInferredReturnType(candidateDescriptor, constraintSystem);

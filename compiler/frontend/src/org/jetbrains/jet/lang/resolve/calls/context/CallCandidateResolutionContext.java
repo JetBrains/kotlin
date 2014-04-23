@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -32,12 +32,12 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
-    public final ResolvedCallImpl<D> candidateCall;
+    public final MutableResolvedCall<D> candidateCall;
     public final TracingStrategy tracing;
     public final ReceiverValue explicitExtensionReceiverForInvoke;
 
     private CallCandidateResolutionContext(
-            @NotNull ResolvedCallImpl<D> candidateCall,
+            @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
             @NotNull JetScope scope,
@@ -62,7 +62,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
+            @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull ReceiverValue explicitExtensionReceiverForInvoke
     ) {
         candidateCall.setInitialDataFlowInfo(context.dataFlowInfo);
@@ -74,20 +74,20 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
+            @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call
     ) {
         return create(candidateCall, context, trace, tracing, call, ReceiverValue.NO_RECEIVER);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
+            @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing) {
         return create(candidateCall, context, trace, tracing, context.call);
     }
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
-            @NotNull ResolvedCallImpl<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
+            @NotNull MutableResolvedCall<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,

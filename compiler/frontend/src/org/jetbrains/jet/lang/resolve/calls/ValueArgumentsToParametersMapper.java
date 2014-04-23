@@ -71,7 +71,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
     public static <D extends CallableDescriptor> Status mapValueArgumentsToParameters(
             @NotNull Call call,
             @NotNull TracingStrategy tracing,
-            @NotNull ResolvedCallImpl<D> candidateCall,
+            @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull Set<ValueArgument> unmappedArguments
     ) {
         //return new ValueArgumentsToParametersMapper().process(call, tracing, candidateCall, unmappedArguments);
@@ -84,7 +84,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
     private static class Processor<D extends CallableDescriptor> {
         private final Call call;
         private final TracingStrategy tracing;
-        private final ResolvedCallImpl<D> candidateCall;
+        private final MutableResolvedCall<D> candidateCall;
 
         private final Map<Name,ValueParameterDescriptor> parameterByName;
 
@@ -93,7 +93,7 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
         private final Set<ValueParameterDescriptor> usedParameters = Sets.newHashSet();
         private Status status = OK;
 
-        private Processor(@NotNull Call call, @NotNull ResolvedCallImpl<D> candidateCall, @NotNull TracingStrategy tracing) {
+        private Processor(@NotNull Call call, @NotNull MutableResolvedCall<D> candidateCall, @NotNull TracingStrategy tracing) {
             this.call = call;
             this.tracing = tracing;
             this.candidateCall = candidateCall;
