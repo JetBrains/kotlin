@@ -12,7 +12,7 @@ import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import java.util.ArrayList
 
 trait InterpreterResult {
-    fun toString(): String
+    override fun toString(): String
 }
 
 class ExceptionThrown(val exception: Value): InterpreterResult {
@@ -45,11 +45,11 @@ trait InterpretationEventHandler {
 }
 
 class ThrownFromEvalException(cause: Throwable): RuntimeException(cause) {
-    fun toString(): String = "Thrown by evaluator: ${getCause()}"
+    override fun toString(): String = "Thrown by evaluator: ${getCause()}"
 }
 
 class ThrownFromEvaluatedCodeException(val exception: Value): RuntimeException() {
-    fun toString(): String = "Thrown from evaluated code: $exception"
+    override fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
 fun interpreterLoop(

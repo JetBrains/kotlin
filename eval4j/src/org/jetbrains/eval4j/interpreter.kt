@@ -63,9 +63,9 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             LCONST_0 -> long(0)
             LCONST_1 -> long(1)
 
-            FCONST_0 -> float(0.0)
-            FCONST_1 -> float(1.0)
-            FCONST_2 -> float(2.0)
+            FCONST_0 -> float(0.0f)
+            FCONST_1 -> float(1.0f)
+            FCONST_2 -> float(2.0f)
 
             DCONST_0 -> double(0.0)
             DCONST_1 -> double(1.0)
