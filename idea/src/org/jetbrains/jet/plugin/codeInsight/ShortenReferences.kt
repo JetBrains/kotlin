@@ -18,6 +18,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyPackageFragmentF
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaMethodDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPointerManager
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 
 public object ShortenReferences {
@@ -30,13 +31,19 @@ public object ShortenReferences {
     }
 
     public fun process(file: JetFile, startOffset: Int, endOffset: Int) {
-        val smartPointerManager = SmartPointerManager.getInstance(file.getProject())
-        val pointer = smartPointerManager.createSmartPsiFileRangePointer(file, TextRange(startOffset, endOffset))
+        val documentManager = PsiDocumentManager.getInstance(file.getProject())
+        val document = documentManager.getDocument(file)!!
+        if (!documentManager.isCommitted(document)) {
+            throw IllegalStateException("Document should be committed to shorten references in range")
+        }
+
+        val rangeMarker = document.createRangeMarker(startOffset, endOffset)
+        rangeMarker.setGreedyToLeft(true)
+        rangeMarker.setGreedyToRight(true)
         try {
             process(listOf(file), { element ->
-                val segment = pointer.getRange()
-                if (segment != null) {
-                    val range = TextRange(segment.getStartOffset(), segment.getEndOffset())
+                if (rangeMarker.isValid()) {
+                    val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
                     val elementRange = element.getTextRange()!!
                     when {
                         range.contains(elementRange) -> FilterResult.PROCESS
@@ -50,7 +57,7 @@ public object ShortenReferences {
             })
         }
         finally {
-            smartPointerManager.removePointer(pointer)
+            rangeMarker.dispose()
         }
     }
 

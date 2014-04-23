@@ -93,14 +93,6 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
         val lookupString = qualifierPresentation + "." + lookupElement.getLookupString()
         val qualifierText = DescriptorUtils.getFqName(classDescriptor).asString() //TODO: escape keywords
 
-        val caretPosition: CaretPosition?
-        if (memberDescriptor is FunctionDescriptor) {
-            caretPosition = if (memberDescriptor.getValueParameters().empty) CaretPosition.AFTER_BRACKETS else CaretPosition.IN_BRACKETS
-        }
-        else {
-            caretPosition = null
-        }
-
         return object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun getLookupString() = lookupString
 
@@ -123,19 +115,16 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             }
 
             override fun handleInsert(context: InsertionContext) {
-                val editor = context.getEditor()
-                val startOffset = context.getStartOffset()
                 var text = qualifierText + "." + memberDescriptor.getName().asString() //TODO: escape
+
+                context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
+                context.setTailOffset(context.getStartOffset() + text.length)
+
                 if (memberDescriptor is FunctionDescriptor) {
-                    text += "()"
-                    //TODO: auto-popup parameter info and other functionality from JetFunctionInsertHandler
+                    getDelegate().handleInsert(context)
                 }
 
-                editor.getDocument().replaceString(startOffset, context.getTailOffset(), text)
-                val endOffset = startOffset + text.length
-                editor.getCaretModel().moveToOffset(if (caretPosition == CaretPosition.IN_BRACKETS) endOffset - 1 else endOffset)
-
-                shortenReferences(context, startOffset, startOffset + qualifierText.length)
+                shortenReferences(context, context.getStartOffset(), context.getTailOffset())
             }
         }
     }

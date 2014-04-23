@@ -31,7 +31,7 @@ abstract class AbstractShortenRefsTest : LightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     protected fun doTest(testPath: String) {
-        val fixture = myFixture!!
+        val fixture = myFixture
         val dependencyPath = testPath.replace(".kt", ".dependency.kt")
         if (File(dependencyPath).exists()) {
             fixture.configureByFile(dependencyPath)
@@ -44,13 +44,12 @@ abstract class AbstractShortenRefsTest : LightCodeInsightFixtureTestCase() {
         fixture.configureByFile(testPath)
 
         val file = fixture.getFile() as JetFile
-        val selectionModel = fixture.getEditor()!!.getSelectionModel()
+        val selectionModel = fixture.getEditor().getSelectionModel()
         if (!selectionModel.hasSelection()) error("No selection in input file")
-        val element = PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<JetElement>())!!
 
-        CommandProcessor.getInstance()!!.executeCommand(getProject(), {
+        CommandProcessor.getInstance().executeCommand(getProject(), {
             ApplicationManager.getApplication()!!.runWriteAction {
-                ShortenReferences.process(element)
+                ShortenReferences.process(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd())
             }
         }, null, null)
         selectionModel.removeSelection()
