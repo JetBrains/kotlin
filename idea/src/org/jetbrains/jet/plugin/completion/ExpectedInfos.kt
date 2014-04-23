@@ -57,7 +57,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val callExpression = expressionWithType.getParent() as? JetCallExpression
         if (callExpression != null) {
             val arguments = callExpression.getFunctionLiteralArguments()
-            if (arguments.size > 0 && arguments[0] == expressionWithType) {
+            if (arguments.firstOrNull() == expressionWithType) {
                 return calculateForArgument(callExpression, callExpression.getValueArguments().size, true)
             }
         }
@@ -103,7 +103,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             if (isFunctionLiteralArgument) {
                 if (argumentIndex != parameters.size - 1) continue
             }
-            else{
+            else {
                 if (parameters.size <= argumentIndex) continue
             }
             val parameterDescriptor = parameters[argumentIndex]

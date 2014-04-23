@@ -75,7 +75,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     if (functionTypes.size <= 1) return false
 
     val lambdaParameterCount = KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(lambdaType).size
-    return functionTypes.filter { KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount}.size > 1
+    return functionTypes.filter { KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(it).size == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, project: Project): Template {
