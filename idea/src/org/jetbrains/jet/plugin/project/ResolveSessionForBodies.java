@@ -42,10 +42,6 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
     private final ResolveSession resolveSession;
     private final ResolveElementCache resolveElementCache;
 
-    public ResolveSessionForBodies(@NotNull JetFile file, @NotNull ResolveSession resolveSession) {
-        this(file, file.getProject(), resolveSession);
-    }
-
     public ResolveSessionForBodies(@NotNull Project project, @NotNull ResolveSession resolveSession) {
         this(project, project, resolveSession);
     }
