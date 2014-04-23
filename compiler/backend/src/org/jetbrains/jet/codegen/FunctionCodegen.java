@@ -65,7 +65,6 @@ import java.util.Set;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
-import static org.jetbrains.jet.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
@@ -553,20 +552,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
         int flags = getVisibilityAccessFlag(functionDescriptor) | getDeprecatedAccessFlag(functionDescriptor);
 
-        Type ownerType;
-        if (contextClass instanceof PackageFragmentDescriptor) {
-            ownerType = typeMapper.mapOwner(functionDescriptor, true);
-        }
-        else if (contextClass instanceof ClassDescriptor) {
-            ownerType = typeMapper.mapClass((ClassDescriptor) contextClass);
-        }
-        else if (isLocalNamedFun(functionDescriptor)) {
-            ownerType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
-        }
-        else {
-            throw new IllegalStateException("Couldn't obtain owner type for " + functionDescriptor);
-        }
-
+        Type ownerType = typeMapper.mapOwner(functionDescriptor, true);
         String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
         boolean isConstructor = "<init>".equals(jvmSignature.getName());
         if (!isStatic && !isConstructor) {
