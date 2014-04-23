@@ -406,7 +406,7 @@ public class CallResolver {
         candidateResolver.completeTypeInferenceForAllCandidates(context, results);
 
         if (resolvedCall.getStatus().isSuccess()) {
-            return OverloadResolutionResultsImpl.success(resolvedCall);
+            return results.changeStatusToSuccess();
         }
         return results;
     }
