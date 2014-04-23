@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -40,23 +40,23 @@ public class OverloadingConflictResolver {
     private OverloadingConflictResolver() {}
 
     @Nullable
-    public <D extends CallableDescriptor> ResolvedCallWithTrace<D> findMaximallySpecific(
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+    public <D extends CallableDescriptor> MutableResolvedCall<D> findMaximallySpecific(
+            @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenericDescriptors
     ) {
         // Different autocasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
-        Set<ResolvedCallWithTrace<D>> maximallySpecific = new THashSet<ResolvedCallWithTrace<D>>(new TObjectHashingStrategy<ResolvedCallWithTrace<D>>() {
+        Set<MutableResolvedCall<D>> maximallySpecific = new THashSet<MutableResolvedCall<D>>(new TObjectHashingStrategy<MutableResolvedCall<D>>() {
                     @Override
-                    public boolean equals(ResolvedCallWithTrace<D> o1, ResolvedCallWithTrace<D> o2) {
+                    public boolean equals(MutableResolvedCall<D> o1, MutableResolvedCall<D> o2) {
                         return o1 == null ? o2 == null : o1.getResultingDescriptor().equals(o2.getResultingDescriptor());
                     }
 
                     @Override
-                    public int computeHashCode(ResolvedCallWithTrace<D> object) {
+                    public int computeHashCode(MutableResolvedCall<D> object) {
                         return object == null ? 0 : object.getResultingDescriptor().hashCode();
                     }
                 });
-        for (ResolvedCallWithTrace<D> candidateCall : candidates) {
+        for (MutableResolvedCall<D> candidateCall : candidates) {
             if (isMaximallySpecific(candidateCall, candidates, discriminateGenericDescriptors)) {
                 maximallySpecific.add(candidateCall);
             }
@@ -65,8 +65,8 @@ public class OverloadingConflictResolver {
     }
 
     private <D extends CallableDescriptor> boolean isMaximallySpecific(
-            @NotNull ResolvedCallWithTrace<D> candidateCall,
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            @NotNull MutableResolvedCall<D> candidateCall,
+            @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenericDescriptors
     ) {
         D me = candidateCall.getResultingDescriptor();
@@ -80,7 +80,7 @@ public class OverloadingConflictResolver {
             variable = null;
         }
 
-        for (ResolvedCallWithTrace<D> otherCall : candidates) {
+        for (MutableResolvedCall<D> otherCall : candidates) {
             D other = otherCall.getResultingDescriptor();
             if (other == me) continue;
 
@@ -89,7 +89,7 @@ public class OverloadingConflictResolver {
                 if (!isInvoke) return false;
 
                 assert otherCall instanceof VariableAsFunctionResolvedCall : "'invoke' candidate goes with usual one: " + candidateCall + otherCall;
-                ResolvedCallWithTrace<VariableDescriptor> otherVariableCall = ((VariableAsFunctionResolvedCall) otherCall).getVariableCall();
+                MutableResolvedCall<VariableDescriptor> otherVariableCall = ((VariableAsFunctionResolvedCall) otherCall).getVariableCall();
                 if (definitelyNotMaximallySpecific(variable, otherVariableCall.getResultingDescriptor(), discriminateGenericDescriptors)) {
                     return false;
                 }

@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverExtension;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.expressions.LabelResolver;
@@ -39,7 +39,7 @@ import java.util.Collection;
  */
 public class ResolutionTask<D extends CallableDescriptor, F extends D> extends CallResolutionContext<ResolutionTask<D, F>> {
     private final Collection<ResolutionCandidate<D>> candidates;
-    private final Collection<ResolvedCallWithTrace<F>> resolvedCalls;
+    private final Collection<MutableResolvedCall<F>> resolvedCalls;
     private DescriptorCheckStrategy checkingStrategy;
     public final TracingStrategy tracing;
 
@@ -57,7 +57,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
             @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallResolverExtension callResolverExtension,
-            @NotNull Collection<ResolvedCallWithTrace<F>> resolvedCalls,
+            @NotNull Collection<MutableResolvedCall<F>> resolvedCalls,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
@@ -77,7 +77,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.trace, context.scope, context.call,
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments,
-             context.callResolverExtension, Lists.<ResolvedCallWithTrace<F>>newArrayList(), context.isAnnotationContext, context.collectAllCandidates);
+             context.callResolverExtension, Lists.<MutableResolvedCall<F>>newArrayList(), context.isAnnotationContext, context.collectAllCandidates);
     }
 
     public ResolutionTask(
@@ -93,12 +93,12 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
         return candidates;
     }
 
-    public void addResolvedCall(@NotNull ResolvedCallWithTrace<F> resolvedCall) {
+    public void addResolvedCall(@NotNull MutableResolvedCall<F> resolvedCall) {
         resolvedCalls.add(resolvedCall);
     }
 
     @NotNull
-    public Collection<ResolvedCallWithTrace<F>> getResolvedCalls() {
+    public Collection<MutableResolvedCall<F>> getResolvedCalls() {
         return resolvedCalls;
     }
 

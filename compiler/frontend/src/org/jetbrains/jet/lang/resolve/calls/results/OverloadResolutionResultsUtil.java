@@ -20,10 +20,9 @@ import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.types.JetType;
 
 import java.util.Collection;
@@ -31,9 +30,9 @@ import java.util.Collection;
 public class OverloadResolutionResultsUtil {
     @NotNull
     public static <D extends CallableDescriptor> OverloadResolutionResults<D> ambiguity(OverloadResolutionResults<D> results1, OverloadResolutionResults<D> results2) {
-        Collection<ResolvedCallWithTrace<D>> resultingCalls = Lists.newArrayList();
-        resultingCalls.addAll((Collection<ResolvedCallWithTrace<D>>) results1.getResultingCalls());
-        resultingCalls.addAll((Collection<ResolvedCallWithTrace<D>>) results2.getResultingCalls());
+        Collection<MutableResolvedCall<D>> resultingCalls = Lists.newArrayList();
+        resultingCalls.addAll((Collection<MutableResolvedCall<D>>) results1.getResultingCalls());
+        resultingCalls.addAll((Collection<MutableResolvedCall<D>>) results2.getResultingCalls());
         return OverloadResolutionResultsImpl.ambiguity(resultingCalls);
     }
 
@@ -53,7 +52,7 @@ public class OverloadResolutionResultsUtil {
     ) {
         if (results.isSingleResult() && contextDependency == ContextDependency.INDEPENDENT) {
             ResolvedCall<D> resultingCall = results.getResultingCall();
-            if (!((ResolvedCallWithTrace<D>)resultingCall).getCallToCompleteTypeArgumentInference().hasInferredReturnType()) {
+            if (!((MutableResolvedCall<D>)resultingCall).getCallToCompleteTypeArgumentInference().hasInferredReturnType()) {
                 return null;
             }
         }

@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
@@ -32,8 +31,8 @@ import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CallCandidateResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.ContextDependency;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
@@ -81,11 +80,11 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
      * the resolved call from callCandidateResolutionContext otherwise
      */
     @NotNull
-    public Collection<ResolvedCallWithTrace<F>> transformCall(@NotNull CallCandidateResolutionContext<D> callCandidateResolutionContext,
+    public Collection<MutableResolvedCall<F>> transformCall(@NotNull CallCandidateResolutionContext<D> callCandidateResolutionContext,
             @NotNull CallResolver callResolver,
             @NotNull ResolutionTask<D, F> task
     ) {
-        return Collections.singleton((ResolvedCallWithTrace<F>) callCandidateResolutionContext.candidateCall);
+        return Collections.singleton((MutableResolvedCall<F>) callCandidateResolutionContext.candidateCall);
     }
 
 
@@ -177,7 +176,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public Collection<ResolvedCallWithTrace<FunctionDescriptor>> transformCall(
+        public Collection<MutableResolvedCall<FunctionDescriptor>> transformCall(
                 @NotNull CallCandidateResolutionContext<CallableDescriptor> context,
                 @NotNull CallResolver callResolver,
                 @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task
@@ -193,7 +192,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 return Collections.emptyList();
             }
 
-            final ResolvedCallWithTrace<VariableDescriptor> variableResolvedCall = (ResolvedCallWithTrace)context.candidateCall;
+            final MutableResolvedCall<VariableDescriptor> variableResolvedCall = (MutableResolvedCall)context.candidateCall;
 
             JetExpression calleeExpression = task.call.getCalleeExpression();
             if (calleeExpression == null) return Collections.emptyList();
@@ -211,11 +210,11 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                     calleeExpression, functionCall, variableReceiver.getType());
             OverloadResolutionResults<FunctionDescriptor> results = callResolver.resolveCallForInvoke(
                     basicCallResolutionContext, tracingForInvoke);
-            Collection<ResolvedCallWithTrace<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
+            Collection<MutableResolvedCall<FunctionDescriptor>> calls = ((OverloadResolutionResultsImpl<FunctionDescriptor>)results).getResultingCalls();
 
-            return Collections2.transform(calls, new Function<ResolvedCallWithTrace<FunctionDescriptor>, ResolvedCallWithTrace<FunctionDescriptor>>() {
+            return Collections2.transform(calls, new Function<MutableResolvedCall<FunctionDescriptor>, MutableResolvedCall<FunctionDescriptor>>() {
                 @Override
-                public ResolvedCallWithTrace<FunctionDescriptor> apply(ResolvedCallWithTrace<FunctionDescriptor> functionResolvedCall) {
+                public MutableResolvedCall<FunctionDescriptor> apply(MutableResolvedCall<FunctionDescriptor> functionResolvedCall) {
                     return new VariableAsFunctionResolvedCall(functionResolvedCall, variableResolvedCall);
                 }
             });

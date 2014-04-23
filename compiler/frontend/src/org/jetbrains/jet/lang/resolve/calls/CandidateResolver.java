@@ -293,18 +293,18 @@ public class CandidateResolver {
             candidates = results.getResultingCalls();
         }
         for (ResolvedCall<D> resolvedCall : candidates) {
-            ResolvedCallWithTrace<D> resolvedCallWithTrace = (ResolvedCallWithTrace<D>) resolvedCall;
-            if (resolvedCallWithTrace.isCompleted()) continue;
+            MutableResolvedCall<D> mutableResolvedCall = (MutableResolvedCall<D>) resolvedCall;
+            if (mutableResolvedCall.isCompleted()) continue;
 
             TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                     context.trace, "Trace to complete a candidate that is not a resulting call");
-            ResolvedCallImpl<D> callToCompleteInference = resolvedCallWithTrace.getCallToCompleteTypeArgumentInference();
+            ResolvedCallImpl<D> callToCompleteInference = mutableResolvedCall.getCallToCompleteTypeArgumentInference();
 
             CallCandidateResolutionContext<D> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                     callToCompleteInference, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY);
 
             completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
-            resolvedCallWithTrace.markCallAsCompleted();
+            mutableResolvedCall.markCallAsCompleted();
         }
     }
 
@@ -477,7 +477,7 @@ public class CandidateResolver {
         storedContextForArgument.candidateCall.markCallAsCompleted();
 
         // clean data for "invoke" calls
-        ResolvedCallWithTrace<?> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
+        MutableResolvedCall<?> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
         assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
         resolvedCall.markCallAsCompleted();
     }

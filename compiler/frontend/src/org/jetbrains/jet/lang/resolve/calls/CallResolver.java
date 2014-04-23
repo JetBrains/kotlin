@@ -28,9 +28,9 @@ import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.context.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
@@ -394,7 +394,7 @@ public class CallResolver {
             return results;
         }
 
-        ResolvedCallWithTrace<D> resolvedCall = results.getResultingCall();
+        MutableResolvedCall<D> resolvedCall = results.getResultingCall();
         ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
 
         Set<ValueArgument> unmappedArguments = callToCompleteInference.getUnmappedArguments();
@@ -431,7 +431,7 @@ public class CallResolver {
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
 
         if (results.isSingleResult()) {
-            ResolvedCallWithTrace<F> resultingCall = results.getResultingCall();
+            MutableResolvedCall<F> resultingCall = results.getResultingCall();
             CallCandidateResolutionContext<F> contextForCallToCompleteTypeArgumentInference = CallCandidateResolutionContext.createForCallBeingAnalyzed(
                     results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
             context.resolutionResultsCache.recordDeferredComputationForCall(callKey, resultingCall, contextForCallToCompleteTypeArgumentInference);
@@ -597,9 +597,9 @@ public class CallResolver {
                 to have a binding to variable while 'invoke' call resolve */
                 task.tracing.bindReference(context.candidateCall.getTrace(), context.candidateCall);
 
-                Collection<ResolvedCallWithTrace<F>> calls = callTransformer.transformCall(context, this, task);
+                Collection<MutableResolvedCall<F>> calls = callTransformer.transformCall(context, this, task);
 
-                for (ResolvedCallWithTrace<F> call : calls) {
+                for (MutableResolvedCall<F> call : calls) {
                     task.tracing.bindReference(call.getTrace(), call);
                     task.tracing.bindResolvedCall(call.getTrace(), call);
                     task.addResolvedCall(call);

@@ -28,8 +28,8 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
 
             assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " in not completed",
-                       ((ResolvedCallWithTrace<?>) resolvedCall).isCompleted());
+                       ((MutableResolvedCall<?>) resolvedCall).isCompleted());
         }
     }
 }

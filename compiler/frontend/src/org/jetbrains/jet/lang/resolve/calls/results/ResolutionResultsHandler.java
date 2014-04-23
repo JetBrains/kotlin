@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 
 import java.util.*;
@@ -39,13 +39,13 @@ public class ResolutionResultsHandler {
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeResultAndReportErrors(
             @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing,
-            @NotNull Collection<ResolvedCallWithTrace<D>> candidates
+            @NotNull Collection<MutableResolvedCall<D>> candidates
     ) {
-        Set<ResolvedCallWithTrace<D>> successfulCandidates = Sets.newLinkedHashSet();
-        Set<ResolvedCallWithTrace<D>> failedCandidates = Sets.newLinkedHashSet();
-        Set<ResolvedCallWithTrace<D>> incompleteCandidates = Sets.newLinkedHashSet();
-        Set<ResolvedCallWithTrace<D>> candidatesWithWrongReceiver = Sets.newLinkedHashSet();
-        for (ResolvedCallWithTrace<D> candidateCall : candidates) {
+        Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> incompleteCandidates = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> candidatesWithWrongReceiver = Sets.newLinkedHashSet();
+        for (MutableResolvedCall<D> candidateCall : candidates) {
             ResolutionStatus status = candidateCall.getStatus();
             assert status != UNKNOWN_STATUS : "No resolution for " + candidateCall.getCandidateDescriptor();
             if (status.isSuccess()) {
@@ -81,15 +81,15 @@ public class ResolutionResultsHandler {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeSuccessfulResult(
             BindingTrace trace,
             TracingStrategy tracing,
-            Set<ResolvedCallWithTrace<D>> successfulCandidates,
-            Set<ResolvedCallWithTrace<D>> incompleteCandidates
+            Set<MutableResolvedCall<D>> successfulCandidates,
+            Set<MutableResolvedCall<D>> incompleteCandidates
     ) {
-        Set<ResolvedCallWithTrace<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
+        Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
         OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true);
         if (results.isSingleResult()) {
-            ResolvedCallWithTrace<D> resultingCall = results.getResultingCall();
+            MutableResolvedCall<D> resultingCall = results.getResultingCall();
             resultingCall.getTrace().moveAllMyDataTo(trace);
             if (resultingCall.getStatus() == INCOMPLETE_TYPE_INFERENCE) {
                 return OverloadResolutionResultsImpl.incompleteTypeInference(resultingCall);
@@ -114,15 +114,15 @@ public class ResolutionResultsHandler {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> computeFailedResult(
             BindingTrace trace,
             TracingStrategy tracing,
-            Set<ResolvedCallWithTrace<D>> failedCandidates
+            Set<MutableResolvedCall<D>> failedCandidates
     ) {
         if (failedCandidates.size() != 1) {
             // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
             // and some are not OK at all. In this case we'd like to say "unsafe call" rather than "none applicable"
             // Used to be: weak errors. Generalized for future extensions
             for (EnumSet<ResolutionStatus> severityLevel : SEVERITY_LEVELS) {
-                Set<ResolvedCallWithTrace<D>> thisLevel = Sets.newLinkedHashSet();
-                for (ResolvedCallWithTrace<D> candidate : failedCandidates) {
+                Set<MutableResolvedCall<D>> thisLevel = Sets.newLinkedHashSet();
+                for (MutableResolvedCall<D> candidate : failedCandidates) {
                     if (severityLevel.contains(candidate.getStatus())) {
                         thisLevel.add(candidate);
                     }
@@ -142,7 +142,7 @@ public class ResolutionResultsHandler {
 
             assert false : "Should not be reachable, cause every status must belong to some level";
 
-            Set<ResolvedCallWithTrace<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
+            Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(failedCandidates, MAP_TO_CANDIDATE);
             if (noOverrides.size() != 1) {
                 tracing.noneApplicable(trace, noOverrides);
                 tracing.recordAmbiguity(trace, noOverrides);
@@ -152,20 +152,20 @@ public class ResolutionResultsHandler {
             failedCandidates = noOverrides;
         }
 
-        ResolvedCallWithTrace<D> failed = failedCandidates.iterator().next();
+        MutableResolvedCall<D> failed = failedCandidates.iterator().next();
         failed.getTrace().moveAllMyDataTo(trace);
         return OverloadResolutionResultsImpl.singleFailedCandidate(failed);
     }
 
-    private static <D extends CallableDescriptor> boolean allClean(@NotNull Collection<ResolvedCallWithTrace<D>> results) {
-        for (ResolvedCallWithTrace<D> result : results) {
+    private static <D extends CallableDescriptor> boolean allClean(@NotNull Collection<MutableResolvedCall<D>> results) {
+        for (MutableResolvedCall<D> result : results) {
             if (result.isDirty()) return false;
         }
         return true;
     }
 
-    private static <D extends CallableDescriptor> boolean allIncomplete(@NotNull Collection<ResolvedCallWithTrace<D>> results) {
-        for (ResolvedCallWithTrace<D> result : results) {
+    private static <D extends CallableDescriptor> boolean allIncomplete(@NotNull Collection<MutableResolvedCall<D>> results) {
+        for (MutableResolvedCall<D> result : results) {
             if (result.getStatus() != INCOMPLETE_TYPE_INFERENCE) return false;
         }
         return true;
@@ -173,16 +173,16 @@ public class ResolutionResultsHandler {
 
     @NotNull
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
-            @NotNull Set<ResolvedCallWithTrace<D>> candidates,
+            @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics
     ) {
         if (candidates.size() == 1) {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
         }
 
-        Set<ResolvedCallWithTrace<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
-        for (Iterator<ResolvedCallWithTrace<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
-            ResolvedCallWithTrace<D> candidate = iterator.next();
+        Set<MutableResolvedCall<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
+        for (Iterator<MutableResolvedCall<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
+            MutableResolvedCall<D> candidate = iterator.next();
             if (candidate.isDirty()) {
                 iterator.remove();
             }
@@ -191,19 +191,19 @@ public class ResolutionResultsHandler {
         if (cleanCandidates.isEmpty()) {
             cleanCandidates = candidates;
         }
-        ResolvedCallWithTrace<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, false);
+        MutableResolvedCall<D> maximallySpecific = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, false);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
-            ResolvedCallWithTrace<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, true);
+            MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = OverloadingConflictResolver.INSTANCE.findMaximallySpecific(cleanCandidates, true);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }
         }
 
-        Set<ResolvedCallWithTrace<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
+        Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
         if (noOverrides.size() == 1) {
                 return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }

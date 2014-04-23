@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
@@ -37,7 +37,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
     public static final WritableSlice<CallKey, OverloadResolutionResultsImpl<CallableDescriptor>> RESOLUTION_RESULTS = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, DelegatingBindingTrace> TRACE_DELTAS_CACHE = Slices.createSimpleSlice();
     public static final WritableSlice<CallKey, CallCandidateResolutionContext<?>> DEFERRED_COMPUTATION_FOR_CALL = Slices.createSimpleSlice();
-    public static final WritableSlice<CallKey, ResolvedCallWithTrace<?>> RESOLVED_CALL_FOR_ARGUMENT = Slices.createSimpleSlice();
+    public static final WritableSlice<CallKey, MutableResolvedCall<?>> RESOLVED_CALL_FOR_ARGUMENT = Slices.createSimpleSlice();
 
     static {
         BasicWritableSlice.initSliceDebugNames(ResolutionResultsCacheImpl.class);
@@ -78,7 +78,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
     @Override
     public <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull ResolvedCallWithTrace<D> resolvedCall,
+            @NotNull MutableResolvedCall<D> resolvedCall,
             @NotNull CallCandidateResolutionContext<D> deferredComputation
     ) {
         trace.record(DEFERRED_COMPUTATION_FOR_CALL, callKey, deferredComputation);
@@ -109,7 +109,7 @@ public class ResolutionResultsCacheImpl implements ResolutionResultsCache {
 
     @Nullable
     @Override
-    public ResolvedCallWithTrace<?> getCallForArgument(@Nullable JetExpression expression) {
+    public MutableResolvedCall<?> getCallForArgument(@Nullable JetExpression expression) {
         return getValueTryingAllCallTypes(expression, RESOLVED_CALL_FOR_ARGUMENT);
     }
 

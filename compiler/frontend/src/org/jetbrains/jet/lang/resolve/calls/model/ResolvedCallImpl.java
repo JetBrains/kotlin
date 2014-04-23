@@ -44,18 +44,18 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus.UNKNOWN_STATUS;
 
-public class ResolvedCallImpl<D extends CallableDescriptor> implements ResolvedCallWithTrace<D> {
+public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableResolvedCall<D> {
 
-    public static final Function<ResolvedCallWithTrace<?>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<ResolvedCallWithTrace<?>, CallableDescriptor>() {
+    public static final Function<MutableResolvedCall<?>, CallableDescriptor> MAP_TO_CANDIDATE = new Function<MutableResolvedCall<?>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallWithTrace<?> resolvedCall) {
+        public CallableDescriptor fun(MutableResolvedCall<?> resolvedCall) {
             return resolvedCall.getCandidateDescriptor();
         }
     };
 
-    public static final Function<ResolvedCallWithTrace<?>, CallableDescriptor> MAP_TO_RESULT = new Function<ResolvedCallWithTrace<?>, CallableDescriptor>() {
+    public static final Function<MutableResolvedCall<?>, CallableDescriptor> MAP_TO_RESULT = new Function<MutableResolvedCall<?>, CallableDescriptor>() {
         @Override
-        public CallableDescriptor fun(ResolvedCallWithTrace<?> resolvedCall) {
+        public CallableDescriptor fun(MutableResolvedCall<?> resolvedCall) {
             return resolvedCall.getResultingDescriptor();
         }
     };

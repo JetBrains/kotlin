@@ -22,7 +22,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.CallKey;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public interface ResolutionResultsCache {
@@ -40,7 +40,7 @@ public interface ResolutionResultsCache {
     //For VariableAsFunctionCall deferredComputation is taken for its function call, but resolvedCall is the VariableAsFunctionCall itself.
     <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull ResolvedCallWithTrace<D> resolvedCall,
+            @NotNull MutableResolvedCall<D> resolvedCall,
             @NotNull CallCandidateResolutionContext<D> deferredComputation
     );
 
@@ -48,5 +48,5 @@ public interface ResolutionResultsCache {
     CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression);
 
     @Nullable
-    ResolvedCallWithTrace<?> getCallForArgument(@Nullable JetExpression expression);
+    MutableResolvedCall<?> getCallForArgument(@Nullable JetExpression expression);
 }

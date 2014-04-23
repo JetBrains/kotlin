@@ -33,23 +33,23 @@ import org.jetbrains.jet.lang.types.JetType;
 import java.util.List;
 import java.util.Map;
 
-public class VariableAsFunctionResolvedCall implements ResolvedCallWithTrace<FunctionDescriptor> {
-    private final ResolvedCallWithTrace<FunctionDescriptor> functionCall;
-    private final ResolvedCallWithTrace<VariableDescriptor> variableCall;
+public class VariableAsFunctionResolvedCall implements MutableResolvedCall<FunctionDescriptor> {
+    private final MutableResolvedCall<FunctionDescriptor> functionCall;
+    private final MutableResolvedCall<VariableDescriptor> variableCall;
 
-    public VariableAsFunctionResolvedCall(@NotNull ResolvedCallWithTrace<FunctionDescriptor> functionCall,
-            @NotNull ResolvedCallWithTrace<VariableDescriptor> variableCall) {
+    public VariableAsFunctionResolvedCall(@NotNull MutableResolvedCall<FunctionDescriptor> functionCall,
+            @NotNull MutableResolvedCall<VariableDescriptor> variableCall) {
         this.functionCall = functionCall;
         this.variableCall = variableCall;
     }
 
     @NotNull
-    public ResolvedCallWithTrace<FunctionDescriptor> getFunctionCall() {
+    public MutableResolvedCall<FunctionDescriptor> getFunctionCall() {
         return functionCall;
     }
 
     @NotNull
-    public ResolvedCallWithTrace<VariableDescriptor> getVariableCall() {
+    public MutableResolvedCall<VariableDescriptor> getVariableCall() {
         return variableCall;
     }
 

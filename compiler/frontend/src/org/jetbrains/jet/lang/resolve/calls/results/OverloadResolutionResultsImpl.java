@@ -20,67 +20,67 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallWithTrace;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class OverloadResolutionResultsImpl<D extends CallableDescriptor> implements OverloadResolutionResults<D> {
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull ResolvedCallWithTrace<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> success(@NotNull MutableResolvedCall<D> candidate) {
         return new OverloadResolutionResultsImpl<D>(Code.SUCCESS, Collections.singleton(candidate));
     }
 
     public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> nameNotFound() {
         OverloadResolutionResultsImpl<D> results = new OverloadResolutionResultsImpl<D>(
-                Code.NAME_NOT_FOUND, Collections.<ResolvedCallWithTrace<D>>emptyList());
+                Code.NAME_NOT_FOUND, Collections.<MutableResolvedCall<D>>emptyList());
         results.setAllCandidates(Collections.<ResolvedCall<D>>emptyList());
         return results;
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(ResolvedCallWithTrace<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> singleFailedCandidate(MutableResolvedCall<D> candidate) {
         return new OverloadResolutionResultsImpl<D>(Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH, Collections.singleton(candidate));
     }
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> manyFailedCandidates(Collection<MutableResolvedCall<D>> failedCandidates) {
         return new OverloadResolutionResultsImpl<D>(Code.MANY_FAILED_CANDIDATES, failedCandidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> candidatesWithWrongReceiver(Collection<ResolvedCallWithTrace<D>> failedCandidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> candidatesWithWrongReceiver(Collection<MutableResolvedCall<D>> failedCandidates) {
         return new OverloadResolutionResultsImpl<D>(Code.CANDIDATES_WITH_WRONG_RECEIVER, failedCandidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<ResolvedCallWithTrace<D>> candidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> ambiguity(Collection<MutableResolvedCall<D>> candidates) {
         return new OverloadResolutionResultsImpl<D>(Code.AMBIGUITY, candidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<ResolvedCallWithTrace<D>> candidates) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(Collection<MutableResolvedCall<D>> candidates) {
         return new OverloadResolutionResultsImpl<D>(Code.INCOMPLETE_TYPE_INFERENCE, candidates);
     }
 
-    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(ResolvedCallWithTrace<D> candidate) {
+    public static <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> incompleteTypeInference(MutableResolvedCall<D> candidate) {
         return incompleteTypeInference(Collections.singleton(candidate));
     }
 
-    private final Collection<ResolvedCallWithTrace<D>> results;
+    private final Collection<MutableResolvedCall<D>> results;
     private final Code resultCode;
     private DelegatingBindingTrace trace;
     private Collection<ResolvedCall<D>> allCandidates;
 
-    private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<ResolvedCallWithTrace<D>> results) {
+    private OverloadResolutionResultsImpl(@NotNull Code resultCode, @NotNull Collection<MutableResolvedCall<D>> results) {
         this.results = results;
         this.resultCode = resultCode;
     }
 
     @Override
     @NotNull
-    public Collection<ResolvedCallWithTrace<D>> getResultingCalls() {
+    public Collection<MutableResolvedCall<D>> getResultingCalls() {
         return results;
     }
 
     @Override
     @NotNull
-    public ResolvedCallWithTrace<D> getResultingCall() {
+    public MutableResolvedCall<D> getResultingCall() {
         assert isSingleResult();
         return results.iterator().next();
     }
