@@ -120,7 +120,7 @@ public class Renderers {
         @NotNull
         @Override
         public String render(@NotNull JetType type) {
-            return DescriptorRenderer.FQNAMES_IN_TYPES.renderType(type);
+            return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
         }
     };
 
@@ -131,7 +131,7 @@ public class Renderers {
                 public String render(@NotNull Collection<? extends ResolvedCall<?>> argument) {
                     StringBuilder stringBuilder = new StringBuilder("\n");
                     for (ResolvedCall<?> call : argument) {
-                        stringBuilder.append(DescriptorRenderer.FQNAMES_IN_TYPES.render(call.getResultingDescriptor())).append("\n");
+                        stringBuilder.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(call.getResultingDescriptor())).append("\n");
                     }
                     return stringBuilder.toString();
                 }

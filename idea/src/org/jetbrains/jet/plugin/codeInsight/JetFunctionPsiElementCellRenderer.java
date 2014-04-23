@@ -37,7 +37,7 @@ public class JetFunctionPsiElementCellRenderer extends DefaultPsiElementCellRend
             SimpleFunctionDescriptor fd =
                     bindingContext.get(BindingContext.FUNCTION, function);
             assert fd != null;
-            return DescriptorRenderer.FQNAMES_IN_TYPES.render(fd);
+            return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(fd);
         }
         return super.getElementText(element);
     }

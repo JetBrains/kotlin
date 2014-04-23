@@ -75,7 +75,7 @@ public class KotlinTypeHierarchyProvider extends JavaTypeHierarchyProvider {
                 if (functionDescriptor != null) {
                     JetType type = functionDescriptor.getReturnType();
                     if (type != null) {
-                        String returnTypeText = DescriptorRenderer.FQNAMES_IN_TYPES.renderType(type);
+                        String returnTypeText = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type);
                         if (returnTypeText.equals(functionName)) {
                             Collection<JetClassOrObject> classOrObjects =
                                     JetClassShortNameIndex.getInstance().get(functionName, project, GlobalSearchScope.allScope(project));

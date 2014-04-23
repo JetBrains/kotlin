@@ -74,7 +74,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
     public JetType visitNullableType(@NotNull JetNullableType nullableType, Void aVoid) {
         if (!originalType.isNullable() && typeUsage != TYPE_ARGUMENT) {
             throw new AlternativeSignatureMismatchException("Auto type '%s' is not-null, while type in alternative signature is nullable: '%s'",
-                 DescriptorRenderer.FQNAMES_IN_TYPES.renderType(originalType), nullableType.getText());
+                 DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), nullableType.getText());
         }
         JetTypeElement innerType = nullableType.getInnerType();
         assert innerType != null : "Syntax error: " + nullableType.getText();
@@ -134,7 +134,7 @@ public class TypeTransformingVisitor extends JetVisitor<JetType, Void> {
 
         if (arguments.size() != type.getTypeArgumentsAsTypes().size()) {
             throw new AlternativeSignatureMismatchException("'%s' type in method signature has %d type arguments, while '%s' in alternative signature has %d of them",
-                 DescriptorRenderer.FQNAMES_IN_TYPES.renderType(originalType), arguments.size(), type.getText(),
+                 DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(originalType), arguments.size(), type.getText(),
                  type.getTypeArgumentsAsTypes().size());
         }
 

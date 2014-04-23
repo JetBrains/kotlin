@@ -301,7 +301,7 @@ public object ShortenReferences {
         }
     }
 
-    private fun DeclarationDescriptor.asString() = DescriptorRenderer.FQNAMES_IN_TYPES.render(this)
+    private fun DeclarationDescriptor.asString() = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(this)
 
     //TODO: do we need this "IfNeeded" check?
     private fun addImportIfNeeded(descriptor: DeclarationDescriptor, file: JetFile) {

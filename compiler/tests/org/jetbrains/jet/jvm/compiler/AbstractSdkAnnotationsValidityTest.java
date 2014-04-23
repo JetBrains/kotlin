@@ -149,7 +149,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
         private Void visitDeclaration(@NotNull DeclarationDescriptor descriptor) {
             List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
             if (errors != null) {
-                this.errors.put(DescriptorRenderer.FQNAMES_IN_TYPES.render(descriptor), errors);
+                this.errors.put(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor), errors);
             }
             return null;
         }

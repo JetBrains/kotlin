@@ -146,7 +146,7 @@ public final class DescriptorLookupConverter {
                     InsertHandler<LookupElement> handler = getDefaultInsertHandler(descriptor);
                     assert handler != null:
                             "Special kotlin handler is expected for function: " + declaration.getText() +
-                            " and descriptor: " + DescriptorRenderer.FQNAMES_IN_TYPES.render(descriptor);
+                            " and descriptor: " + DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor);
 
                     return new JavaMethodCallElementWithCustomHandler(declaration).setInsertHandler(handler);
                 }

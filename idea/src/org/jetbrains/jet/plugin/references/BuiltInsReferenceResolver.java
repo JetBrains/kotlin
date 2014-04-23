@@ -187,7 +187,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         JetScope memberScope = getMemberScope(containingDeclaration);
         if (memberScope == null) return null;
 
-        String renderedOriginal = DescriptorRenderer.FQNAMES_IN_TYPES.render(originalDescriptor);
+        String renderedOriginal = DescriptorRenderer.FQ_NAMES_IN_TYPES.render(originalDescriptor);
         Collection<? extends DeclarationDescriptor> descriptors;
         if (originalDescriptor instanceof ConstructorDescriptor && containingDeclaration instanceof ClassDescriptor) {
             descriptors = ((ClassDescriptor) containingDeclaration).getConstructors();
@@ -196,7 +196,7 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
             descriptors = memberScope.getAllDescriptors();
         }
         for (DeclarationDescriptor member : descriptors) {
-            if (renderedOriginal.equals(DescriptorRenderer.FQNAMES_IN_TYPES.render(member))) {
+            if (renderedOriginal.equals(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(member))) {
                 return member;
             }
         }

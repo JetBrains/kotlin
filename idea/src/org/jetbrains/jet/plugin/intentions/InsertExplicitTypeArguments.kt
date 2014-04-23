@@ -51,7 +51,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
 
         val typeArgs = types.map {
             assert(args[it] != null, "there is a null in the type arguments to transform")
-            val typeToCompute = DescriptorRenderer.FQNAMES_IN_TYPES.renderType(args[it]!!);
+            val typeToCompute = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(args[it]!!);
             val computedTypeRef = JetPsiFactory.createType(element.getProject(), typeToCompute)
             ShortenReferences.process(computedTypeRef)
             computedTypeRef.getText()

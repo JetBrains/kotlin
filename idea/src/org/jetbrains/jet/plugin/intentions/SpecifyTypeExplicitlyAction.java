@@ -235,7 +235,7 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
             @Override
             protected String getResult(JetType element) {
-                return DescriptorRenderer.FQNAMES_IN_TYPES.renderType(element);
+                return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(element);
             }
         };
 

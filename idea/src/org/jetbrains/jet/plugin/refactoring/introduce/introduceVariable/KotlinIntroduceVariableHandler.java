@@ -34,7 +34,6 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForMacros;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -251,7 +250,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             public void run() {
                 String variableText = "val " + suggestedNames[0];
                 if (noTypeInference) {
-                    variableText += ": " + DescriptorRenderer.FQNAMES_IN_TYPES.renderType(expressionType);
+                    variableText += ": " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(expressionType);
                 }
                 variableText += " = ";
                 if (expression instanceof JetParenthesizedExpression) {

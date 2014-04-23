@@ -111,7 +111,7 @@ public class ForLoopConventionsChecker {
             if (iteratorResolutionResults.isAmbiguity()) {
 //                    StringBuffer stringBuffer = new StringBuffer("Method 'iterator()' is ambiguous for this expression: ");
 //                    for (FunctionDescriptor functionDescriptor : iteratorResolutionResults.getResultingCalls()) {
-//                        stringBuffer.append(DescriptorRendererImpl.FQNAMES_IN_TYPES.render(functionDescriptor)).append(" ");
+//                        stringBuffer.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(functionDescriptor)).append(" ");
 //                    }
 //                    errorMessage = stringBuffer.toString();
                 context.trace.report(ITERATOR_AMBIGUITY.on(loopRangeExpression, iteratorResolutionResults.getResultingCalls()));

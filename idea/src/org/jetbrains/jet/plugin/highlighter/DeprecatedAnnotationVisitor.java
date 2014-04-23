@@ -262,8 +262,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
             return "val " + descriptor.getName();
         }
         else if (descriptor instanceof FunctionDescriptor) {
-            return "fun " + descriptor.getName() + DescriptorRenderer.FQNAMES_IN_TYPES.renderFunctionParameters((FunctionDescriptor) descriptor);
+            return "fun " + descriptor.getName() + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderFunctionParameters((FunctionDescriptor) descriptor);
         }
-        return DescriptorRenderer.FQNAMES_IN_TYPES.render(descriptor);
+        return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor);
     }
 }
