@@ -31,14 +31,19 @@ import org.jetbrains.jet.JetNodeType
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
 import com.intellij.psi.PsiCodeBlock
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
+import com.intellij.psi.JavaCodeFragmentFactory
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), context)
-        if (item.getImports().isNotEmpty()) {
-            codeFragment.addImportsFromString(item.getImports())
+        if (item.getKind() == CodeFragmentKind.EXPRESSION) {
+            val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), context)
+            if (item.getImports().isNotEmpty()) {
+                codeFragment.addImportsFromString(item.getImports())
+            }
+            return codeFragment
         }
-        return codeFragment
+        return JavaCodeFragmentFactory.getInstance(project)!!.createCodeBlockCodeFragment(item.getText(), context, false)
     }
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
