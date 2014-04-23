@@ -20,38 +20,38 @@ public class Ref {
     private Ref() {}
 
     public static final class ObjectRef<T> {
-        public T element;
+        public volatile T element;
     }
 
     public static final class ByteRef {
-        public byte element;
+        public volatile byte element;
     }
 
     public static final class ShortRef {
-        public short element;
+        public volatile short element;
     }
 
     public static final class IntRef {
-        public int element;
+        public volatile int element;
     }
 
     public static final class LongRef {
-        public long element;
+        public volatile long element;
     }
 
     public static final class FloatRef {
-        public float element;
+        public volatile float element;
     }
 
     public static final class DoubleRef {
-        public double element;
+        public volatile double element;
     }
 
     public static final class CharRef {
-        public char element;
+        public volatile char element;
     }
 
     public static final class BooleanRef {
-        public boolean element;
+        public volatile boolean element;
     }
 }
