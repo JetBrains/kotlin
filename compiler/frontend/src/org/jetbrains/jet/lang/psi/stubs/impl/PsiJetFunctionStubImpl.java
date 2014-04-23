@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi.stubs.impl;
 
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -90,13 +89,6 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public boolean hasTypeParameterListBeforeFunctionName() {
         return hasTypeParameterListBeforeFunctionName;
-    }
-
-    @NotNull
-    @Override
-    public String[] getAnnotations() {
-        // TODO (stubs)
-        return ArrayUtil.EMPTY_STRING_ARRAY;
     }
 
     @Override
