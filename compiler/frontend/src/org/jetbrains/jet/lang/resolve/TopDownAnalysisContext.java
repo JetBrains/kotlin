@@ -42,6 +42,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private DataFlowInfo outerDataFlowInfo = DataFlowInfo.EMPTY;
 
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes = Maps.newLinkedHashMap();
+    private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers = Maps.newLinkedHashMap();
     protected final Map<JetFile, MutablePackageFragmentDescriptor> packageFragments = Maps.newHashMap();
     protected final Set<JetFile> files = new LinkedHashSet<JetFile>();
     private List<MutableClassDescriptor> classesTopologicalOrder = null;
@@ -112,6 +113,11 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @Override
     public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
+    }
+
+    @Override
+    public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
+        return anonymousInitializers;
     }
 
     public Map<JetFile, WritableScope> getFileScopes() {

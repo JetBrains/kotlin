@@ -348,9 +348,7 @@ public class ResolveElementCache {
         LazyClassDescriptor classOrObjectDescriptor = (LazyClassDescriptor) resolveSession.resolveToDescriptor(classOrObject);
 
         BodyResolver bodyResolver = createBodyResolver(resolveSession, trace, file);
-        bodyResolver.resolveAnonymousInitializers(createEmptyContext(resolveSession), classOrObject,
-                                                  classOrObjectDescriptor.getUnsubstitutedPrimaryConstructor(),
-                                                  classOrObjectDescriptor.getScopeForInitializerResolution());
+        bodyResolver.resolveAnonymousInitializer(createEmptyContext(resolveSession), classInitializer, classOrObjectDescriptor);
 
         return true;
     }
@@ -490,6 +488,11 @@ public class ResolveElementCache {
 
         @Override
         public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
             return Collections.emptyMap();
         }
 

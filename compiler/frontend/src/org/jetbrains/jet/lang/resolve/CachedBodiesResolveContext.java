@@ -41,6 +41,7 @@ import java.util.Map;
 public class CachedBodiesResolveContext implements BodiesResolveContext {
     private final Collection<JetFile> files;
     private final Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> classes;
+    private final Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> anonymousInitializers;
     private final Map<JetProperty, PropertyDescriptor> properties;
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions;
     private final Function<JetDeclaration, JetScope> declaringScopes;
@@ -52,6 +53,7 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     public CachedBodiesResolveContext(TopDownAnalysisContext context) {
         files = Collections.unmodifiableCollection(context.getFiles());
         classes = Collections.unmodifiableMap(context.getDeclaredClasses());
+        anonymousInitializers = Collections.unmodifiableMap(context.getAnonymousInitializers());
         properties = Collections.unmodifiableMap(context.getProperties());
         functions = Collections.unmodifiableMap(context.getFunctions());
         declaringScopes = context.getDeclaringScopes();
@@ -81,6 +83,11 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     @Override
     public Map<JetClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses() {
         return classes;
+    }
+
+    @Override
+    public Map<JetClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers() {
+        return anonymousInitializers;
     }
 
     @Override

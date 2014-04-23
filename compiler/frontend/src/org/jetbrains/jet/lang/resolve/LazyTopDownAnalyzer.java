@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -206,6 +207,11 @@ public class LazyTopDownAnalyzer {
                         @Override
                         public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
                             registerScope(c, resolveSession, initializer);
+                            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(initializer, JetClassOrObject.class);
+                            c.getAnonymousInitializers().put(
+                                    initializer,
+                                    (ClassDescriptorWithResolutionScopes) resolveSession.resolveToDescriptor(classOrObject)
+                            );
                         }
 
                         @Override

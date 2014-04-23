@@ -334,34 +334,42 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            JetClassOrObject classOrObject = entry.getKey();
-            ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
-            resolveAnonymousInitializers(c, classOrObject, descriptor.getUnsubstitutedPrimaryConstructor(),
-                                         descriptor.getScopeForInitializerResolution());
-        }
-    }
-
-    public void resolveAnonymousInitializers(
-            @NotNull BodiesResolveContext c,
-            @NotNull JetClassOrObject jetClassOrObject,
-            @Nullable ConstructorDescriptor primaryConstructor,
-            @NotNull JetScope scopeForInitializers) {
-        if (!c.completeAnalysisNeeded(jetClassOrObject)) {
-            return;
-        }
-        List<JetClassInitializer> anonymousInitializers = jetClassOrObject.getAnonymousInitializers();
-        if (primaryConstructor != null) {
-            for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
-                processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
+        if (c.getTopDownAnalysisParameters().isLazyTopDownAnalysis()) {
+            for (Map.Entry<JetClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
+                JetClassInitializer initializer = entry.getKey();
+                ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
+                resolveAnonymousInitializer(c, initializer, descriptor);
             }
         }
         else {
-            for (JetClassInitializer anonymousInitializer : anonymousInitializers) {
-                trace.report(ANONYMOUS_INITIALIZER_IN_TRAIT.on(anonymousInitializer));
-                processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
+            for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
+                JetClassOrObject classOrObject = entry.getKey();
+                ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
+
+                if (!c.completeAnalysisNeeded(classOrObject)) return;
+                for (JetClassInitializer initializer : classOrObject.getAnonymousInitializers()) {
+                    resolveAnonymousInitializer(c, initializer, descriptor);
+                }
             }
+        }
+
+    }
+
+    public void resolveAnonymousInitializer(
+            @NotNull BodiesResolveContext c,
+            @NotNull JetClassInitializer anonymousInitializer,
+            @NotNull ClassDescriptorWithResolutionScopes classDescriptor
+    ) {
+        if (!c.completeAnalysisNeeded(anonymousInitializer)) return;
+
+        JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
+        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
+            expressionTypingServices.getType(scopeForInitializers, anonymousInitializer.getBody(), NO_EXPECTED_TYPE, c.getOuterDataFlowInfo(), trace);
+            processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
+        }
+        else {
+            trace.report(ANONYMOUS_INITIALIZER_IN_TRAIT.on(anonymousInitializer));
+            processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         }
     }
 
