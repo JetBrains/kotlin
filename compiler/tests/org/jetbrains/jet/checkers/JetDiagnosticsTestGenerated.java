@@ -3065,6 +3065,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/extensions/ExtensionFunctions.kt");
             }
             
+            @TestMetadata("extensionMemberInClassObject.kt")
+            public void testExtensionMemberInClassObject() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/extensions/extensionMemberInClassObject.kt");
+            }
+            
             @TestMetadata("ExtensionsCalledOnSuper.kt")
             public void testExtensionsCalledOnSuper() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/extensions/ExtensionsCalledOnSuper.kt");
