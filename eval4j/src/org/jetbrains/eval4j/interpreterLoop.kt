@@ -1,14 +1,14 @@
 package org.jetbrains.eval4j
 
-import org.objectweb.asm.tree.AbstractInsnNode
-import org.objectweb.asm.tree.analysis.Frame
-import org.objectweb.asm.tree.MethodNode
-import org.objectweb.asm.Type
-import org.objectweb.asm.Opcodes.*
-import org.objectweb.asm.tree.JumpInsnNode
-import org.objectweb.asm.tree.VarInsnNode
-import org.objectweb.asm.util.Printer
-import org.objectweb.asm.tree.TryCatchBlockNode
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.util.Printer
+import org.jetbrains.org.objectweb.asm.tree.TryCatchBlockNode
 import java.util.ArrayList
 
 trait InterpreterResult {
@@ -229,7 +229,7 @@ fun interpreterLoop(
     }
 }
 
-// Copied from org.objectweb.asm.tree.analysis.Analyzer.analyze()
+// Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {
     val insns = m.instructions
     val handlers = Array<MutableList<TryCatchBlockNode>?>(insns.size()) {null}

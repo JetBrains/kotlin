@@ -1,7 +1,7 @@
 package org.jetbrains.eval4j.jdi
 
 import org.jetbrains.eval4j.*
-import org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.Type
 import com.sun.jdi
 
 val CLASS = Type.getType(javaClass<Class<*>>())

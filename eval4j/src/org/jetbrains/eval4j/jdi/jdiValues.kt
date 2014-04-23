@@ -1,10 +1,10 @@
 package org.jetbrains.eval4j.jdi
 
 import org.jetbrains.eval4j.*
-import org.objectweb.asm.tree.analysis.Frame
-import org.objectweb.asm.tree.MethodNode
-import org.objectweb.asm.Type
-import org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.Opcodes.*
 import com.sun.jdi
 
 fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {

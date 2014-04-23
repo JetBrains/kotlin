@@ -1,8 +1,8 @@
 package org.jetbrains.eval4j.test
 
-import org.objectweb.asm.*
-import org.objectweb.asm.Opcodes.*
-import org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.lang.reflect.Modifier
 import org.jetbrains.eval4j.*
 import org.junit.Assert.*
@@ -13,8 +13,8 @@ import java.lang.reflect.Field
 import java.lang.reflect.Constructor
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Array as JArray
-import org.objectweb.asm.tree.analysis.Interpreter
-import org.objectweb.asm.tree.analysis.Frame
+import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
+import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 fun buildTestSuite(
         create: (MethodNode, Class<*>, InterpreterResult?) -> TestCase

@@ -1,9 +1,9 @@
 package org.jetbrains.eval4j
 
-import org.objectweb.asm.tree.MethodInsnNode
-import org.objectweb.asm.Opcodes.*
-import org.objectweb.asm.*
-import org.objectweb.asm.tree.FieldInsnNode
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 open data class MemberDescription(
         val ownerInternalName: String,
