@@ -63,7 +63,7 @@ public class PropertyCodegen extends GenerationStateAware {
     private final FieldOwnerContext context;
 
     @Nullable
-    private final MemberCodegen classBodyCodegen;
+    private final MemberCodegen<?> classBodyCodegen;
 
     @NotNull
     private final OwnerKind kind;
@@ -72,7 +72,7 @@ public class PropertyCodegen extends GenerationStateAware {
             @NotNull FieldOwnerContext context,
             @NotNull ClassBuilder v,
             @NotNull FunctionCodegen functionCodegen,
-            @Nullable MemberCodegen classBodyCodegen
+            @Nullable MemberCodegen<?> classBodyCodegen
     ) {
         super(functionCodegen.getState());
         this.v = v;

@@ -22,17 +22,16 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.GenerationStateAware;
 
 public class ParentCodegenAwareImpl extends GenerationStateAware implements ParentCodegenAware {
+    private final MemberCodegen<?> parentCodegen;
 
-    @Nullable private final MemberCodegen parentCodegen;
-
-    public ParentCodegenAwareImpl(@NotNull GenerationState state, @Nullable MemberCodegen parentCodegen) {
+    public ParentCodegenAwareImpl(@NotNull GenerationState state, @Nullable MemberCodegen<?> parentCodegen) {
         super(state);
         this.parentCodegen = parentCodegen;
     }
 
     @Nullable
     @Override
-    public MemberCodegen getParentCodegen() {
+    public MemberCodegen<?> getParentCodegen() {
         return parentCodegen;
     }
 }

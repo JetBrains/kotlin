@@ -33,9 +33,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
-import static org.jetbrains.org.objectweb.asm.Opcodes.RETURN;
 
-public abstract class ClassBodyCodegen extends MemberCodegen {
+public abstract class ClassBodyCodegen extends MemberCodegen<JetClassOrObject> {
     protected final JetClassOrObject myClass;
     protected final OwnerKind kind;
     protected final ClassDescriptor descriptor;
@@ -45,34 +44,16 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             @NotNull ClassContext context,
             @NotNull ClassBuilder v,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen
     ) {
-        super(state, parentCodegen, context, v);
+        super(state, parentCodegen, context, aClass, v);
         myClass = aClass;
         kind = context.getContextKind();
         descriptor = bindingContext.get(BindingContext.CLASS, aClass);
     }
 
-    public void generate() {
-        generateDeclaration();
-
-        generateClassBody();
-
-        generateSyntheticParts();
-
-        completeStaticInitializer();
-
-        generateKotlinAnnotation();
-    }
-
-    protected abstract void generateDeclaration();
-
-    protected abstract void generateKotlinAnnotation();
-
-    protected void generateSyntheticParts() {
-    }
-
-    private void generateClassBody() {
+    @Override
+    protected void generateBody() {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, this);
         PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
 
@@ -149,12 +130,5 @@ public abstract class ClassBodyCodegen extends MemberCodegen {
             return ((JetClass) myClass).getPrimaryConstructorParameters();
         }
         return Collections.emptyList();
-    }
-
-    private void completeStaticInitializer() {
-        if (clInit != null) {
-            clInit.v.visitInsn(RETURN);
-            FunctionCodegen.endVisit(clInit.v, "static initializer", myClass);
-        }
     }
 }

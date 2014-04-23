@@ -99,7 +99,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
 
     @Nullable
-    private final MemberCodegen parentCodegen;
+    private final MemberCodegen<?> parentCodegen;
 
     /*
      * When we create a temporary variable to hold some value not to compute it many times
@@ -120,16 +120,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
         assert classDescriptor != null;
 
-        //noinspection SuspiciousMethodCalls
-        CalculatedClosure closure = bindingContext.get(CLOSURE, classDescriptor);
-
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
-        ImplementationBodyCodegen implementationBodyCodegen =
-                new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen());
 
-        implementationBodyCodegen.generate();
+        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
 
-        return closure;
+        return bindingContext.get(CLOSURE, classDescriptor);
     }
 
     static class BlockStackElement {
@@ -167,7 +162,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull Type returnType,
             @NotNull MethodContext context,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen
     ) {
         this.myFrameMap = myMap;
         this.parentCodegen = parentCodegen;
@@ -209,7 +204,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Nullable
     @Override
-    public MemberCodegen getParentCodegen() {
+    public MemberCodegen<?> getParentCodegen() {
         return parentCodegen;
     }
 
@@ -279,7 +274,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
-        classBuilder.done();
 
         return StackValue.none();
     }
@@ -3778,7 +3772,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     @NotNull
     private ScriptCodegen getParentScriptCodegen() {
-        MemberCodegen codegen = parentCodegen;
+        MemberCodegen<?> codegen = parentCodegen;
         while (codegen != null) {
             if (codegen instanceof ScriptCodegen) {
                 return (ScriptCodegen) codegen;

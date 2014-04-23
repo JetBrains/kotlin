@@ -44,7 +44,7 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 // SCRIPT: script code generator
-public class ScriptCodegen extends MemberCodegen {
+public class ScriptCodegen extends MemberCodegen<JetScript> {
 
     public static ScriptCodegen createScriptCodegen(
             @NotNull JetScript declaration,
@@ -65,14 +65,10 @@ public class ScriptCodegen extends MemberCodegen {
         return new ScriptCodegen(declaration, state, scriptContext, state.getEarlierScriptsForReplInterpreter(), builder);
     }
 
-    @NotNull
     private final JetScript scriptDeclaration;
-
-    @NotNull
     private final ScriptContext context;
-
-    @NotNull
     private final List<ScriptDescriptor> earlierScripts;
+    private final ScriptDescriptor scriptDescriptor;
 
     private ScriptCodegen(
             @NotNull JetScript scriptDeclaration,
@@ -81,33 +77,38 @@ public class ScriptCodegen extends MemberCodegen {
             @Nullable List<ScriptDescriptor> earlierScripts,
             @NotNull ClassBuilder builder
     ) {
-        super(state, null, context, builder);
+        super(state, null, context, scriptDeclaration, builder);
         this.scriptDeclaration = scriptDeclaration;
         this.context = context;
         this.earlierScripts = earlierScripts == null ? Collections.<ScriptDescriptor>emptyList() : earlierScripts;
+        this.scriptDescriptor = context.getScriptDescriptor();
     }
 
-    public void generate() {
-        ScriptDescriptor scriptDescriptor = context.getScriptDescriptor();
-        ClassDescriptor classDescriptorForScript = context.getContextDescriptor();
-        Type classType = bindingContext.get(ASM_TYPE, classDescriptorForScript);
+    @Override
+    protected void generateDeclaration() {
+        Type classType = bindingContext.get(ASM_TYPE, context.getContextDescriptor());
         assert classType != null;
 
-        ClassBuilder classBuilder = getBuilder();
-        classBuilder.defineClass(scriptDeclaration,
-                                 V1_6,
-                                 ACC_PUBLIC,
-                                 classType.getInternalName(),
-                                 null,
-                                 "java/lang/Object",
-                                 new String[0]);
+        v.defineClass(scriptDeclaration,
+                      V1_6,
+                      ACC_PUBLIC,
+                      classType.getInternalName(),
+                      null,
+                      "java/lang/Object",
+                      new String[0]);
+    }
 
-        genMembers(context, classBuilder);
-        genFieldsForParameters(scriptDescriptor, classBuilder);
-        genConstructor(scriptDescriptor, classDescriptorForScript, classBuilder,
+    @Override
+    protected void generateBody() {
+        genMembers(context, v);
+        genFieldsForParameters(scriptDescriptor, v);
+        genConstructor(scriptDescriptor, context.getContextDescriptor(), v,
                        context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()));
+    }
 
-        classBuilder.done();
+    @Override
+    protected void generateKotlinAnnotation() {
+        // TODO
     }
 
     private void genConstructor(
@@ -154,7 +155,7 @@ public class ScriptCodegen extends MemberCodegen {
             frameMap.enter(parameter, argTypes[i + add]);
         }
 
-        generateInitializers(scriptDeclaration.getDeclarations(), new Function0<ExpressionCodegen>() {
+        generateInitializers(new Function0<ExpressionCodegen>() {
             @Override
             public ExpressionCodegen invoke() {
                 return new ExpressionCodegen(instructionAdapter, frameMap, Type.VOID_TYPE, context, state, ScriptCodegen.this);

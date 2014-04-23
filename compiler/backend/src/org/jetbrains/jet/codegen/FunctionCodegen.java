@@ -80,7 +80,12 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
 
     private final ClassBuilder v;
 
-    public FunctionCodegen(@NotNull CodegenContext owner, @NotNull ClassBuilder v, @NotNull GenerationState state, MemberCodegen parentCodegen) {
+    public FunctionCodegen(
+            @NotNull CodegenContext owner,
+            @NotNull ClassBuilder v,
+            @NotNull GenerationState state,
+            MemberCodegen<?> parentCodegen
+    ) {
         super(state, parentCodegen);
         this.owner = owner;
         this.v = v;
@@ -277,7 +282,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull MethodContext context,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionGenerationStrategy strategy,
-            @NotNull MemberCodegen parentCodegen
+            @NotNull MemberCodegen<?> parentCodegen
     ) {
         mv.visitCode();
 

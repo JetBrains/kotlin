@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 // SCRIPT: Script declaration
-public class JetScript extends JetDeclarationImpl {
+public class JetScript extends JetDeclarationImpl implements JetDeclarationContainer {
 
     public JetScript(@NotNull ASTNode node) {
         super(node);
@@ -34,6 +34,7 @@ public class JetScript extends JetDeclarationImpl {
         return findNotNullChildByClass(JetBlockExpression.class);
     }
 
+    @Override
     @NotNull
     public List<JetDeclaration> getDeclarations() {
         return PsiTreeUtil.getChildrenOfTypeAsList(getBlockExpression(), JetDeclaration.class);

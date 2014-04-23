@@ -16,12 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Stack;
-import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -240,12 +237,11 @@ public class CodegenUtil {
     }
 
     @NotNull
-    public static ImplementationBodyCodegen getParentBodyCodegen(@Nullable MemberCodegen classBodyCodegen) {
-        assert classBodyCodegen != null &&
-               classBodyCodegen
-                       .getParentCodegen() instanceof ImplementationBodyCodegen : "Class object should have appropriate parent BodyCodegen";
+    public static ImplementationBodyCodegen getParentBodyCodegen(@Nullable MemberCodegen<?> classBodyCodegen) {
+        assert classBodyCodegen != null && classBodyCodegen.getParentCodegen() instanceof ImplementationBodyCodegen
+                : "Class object should have appropriate parent BodyCodegen";
 
-        return ((ImplementationBodyCodegen) classBodyCodegen.getParentCodegen());
+        return (ImplementationBodyCodegen) classBodyCodegen.getParentCodegen();
     }
 
     static int getPathHashCode(@NotNull VirtualFile file) {

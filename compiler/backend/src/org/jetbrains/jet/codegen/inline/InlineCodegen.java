@@ -410,7 +410,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
 
     @Nullable
     @Override
-    public MemberCodegen getParentCodegen() {
+    public MemberCodegen<?> getParentCodegen() {
         return codegen.getParentCodegen();
     }
 

@@ -167,7 +167,7 @@ public class PackageCodegen extends GenerationStateAware {
                                                                    @NotNull MethodVisitor mv,
                                                                    @NotNull JvmMethodSignature signature,
                                                                    @NotNull MethodContext context,
-                                                                   @Nullable MemberCodegen parentCodegen
+                                                                   @Nullable MemberCodegen<?> parentCodegen
                                                            ) {
                                                                throw new IllegalStateException("shouldn't be called");
                                                            }
@@ -295,7 +295,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
 
-        final MemberCodegen memberCodegen = getMemberCodegen(packageFacade);
+        final MemberCodegen<?> memberCodegen = getMemberCodegen(packageFacade);
 
         for (final JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -307,8 +307,7 @@ public class PackageCodegen extends GenerationStateAware {
                         new Runnable() {
                             @Override
                             public void run() {
-                                memberCodegen.genFunctionOrProperty(
-                                        (JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                                memberCodegen.genFunctionOrProperty((JetTypeParameterListOwner) declaration, v.getClassBuilder());
                             }
                         }
                 );
@@ -319,12 +318,21 @@ public class PackageCodegen extends GenerationStateAware {
     }
 
     //TODO: FIX: Default method generated at facade without delegation
-    private MemberCodegen getMemberCodegen(@NotNull FieldOwnerContext packageFacade) {
-        return new MemberCodegen(state, null, packageFacade, null) {
-            @NotNull
+    private MemberCodegen<?> getMemberCodegen(@NotNull FieldOwnerContext packageFacade) {
+        return new MemberCodegen<JetFile>(state, null, packageFacade, null, null) {
             @Override
-            public ClassBuilder getBuilder() {
-                return PackageCodegen.this.v.getClassBuilder();
+            protected void generateDeclaration() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            protected void generateBody() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            protected void generateKotlinAnnotation() {
+                throw new UnsupportedOperationException();
             }
         };
     }

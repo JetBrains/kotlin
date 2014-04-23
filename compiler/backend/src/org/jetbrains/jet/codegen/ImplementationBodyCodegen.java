@@ -84,10 +84,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     public ImplementationBodyCodegen(
             @NotNull JetClassOrObject aClass,
-            @NotNull  ClassContext context,
-            @NotNull  ClassBuilder v,
-            @NotNull  GenerationState state,
-            @Nullable MemberCodegen parentCodegen
+            @NotNull ClassContext context,
+            @NotNull ClassBuilder v,
+            @NotNull GenerationState state,
+            @Nullable MemberCodegen<?> parentCodegen
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
@@ -478,7 +478,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateDelegatedPropertyMetadataArray() {
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generatePropertyMetadataArrayFieldIfNeeded(classAsmType, myClass);
+            generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
         }
     }
 
@@ -875,7 +875,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
                     @NotNull MethodContext context,
-                    @Nullable MemberCodegen parentCodegen
+                    @Nullable MemberCodegen<?> parentCodegen
             ) {
                 Type componentType = signature.getReturnType();
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -900,7 +900,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     @NotNull MethodVisitor mv,
                     @NotNull JvmMethodSignature signature,
                     @NotNull MethodContext context,
-                    @Nullable MemberCodegen parentCodegen
+                    @Nullable MemberCodegen<?> parentCodegen
             ) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
 
@@ -1280,14 +1280,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             final ImplementationBodyCodegen parentCodegen = getParentBodyCodegen(this);
             //generate object$
             parentCodegen.genInitSingleton(descriptor, StackValue.singleton(descriptor, typeMapper));
-            generateInitializers(myClass.getDeclarations(), new Function0<ExpressionCodegen>() {
+            generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
                     return parentCodegen.createOrGetClInitCodegen();
                 }
             });
         } else {
-            generateInitializers(myClass.getDeclarations(), new Function0<ExpressionCodegen>() {
+            generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
                     return codegen;

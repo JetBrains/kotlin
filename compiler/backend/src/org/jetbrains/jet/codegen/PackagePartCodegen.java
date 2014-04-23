@@ -24,64 +24,63 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import java.util.List;
-
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class PackagePartCodegen extends MemberCodegen {
-    private final JetFile jetFile;
+public class PackagePartCodegen extends MemberCodegen<JetFile> {
     private final Type packagePartType;
 
     public PackagePartCodegen(
             @NotNull ClassBuilder v,
-            @NotNull JetFile jetFile,
+            @NotNull JetFile file,
             @NotNull Type packagePartType,
             @NotNull FieldOwnerContext context,
             @NotNull GenerationState state
     ) {
-        super(state, null, context, v);
-        this.jetFile = jetFile;
+        super(state, null, context, file, v);
         this.packagePartType = packagePartType;
     }
 
-    public void generate() {
-        v.defineClass(jetFile, V1_6,
+    @Override
+    protected void generateDeclaration() {
+        v.defineClass(element, V1_6,
                       ACC_PUBLIC | ACC_FINAL,
                       packagePartType.getInternalName(),
                       null,
                       "java/lang/Object",
                       ArrayUtil.EMPTY_STRING_ARRAY
         );
-        v.visitSource(jetFile.getName(), null);
+        v.visitSource(element.getName(), null);
+    }
 
-        writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.PACKAGE_PART);
-
-        List<JetDeclaration> declarations = jetFile.getDeclarations();
-
-        for (JetDeclaration declaration : declarations) {
+    @Override
+    protected void generateBody() {
+        for (JetDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
                 genFunctionOrProperty((JetTypeParameterListOwner) declaration, v);
             }
         }
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateInitializers(declarations, new Function0<ExpressionCodegen>() {
+            generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
                     return createOrGetClInitCodegen();
                 }
             });
-
-            generatePropertyMetadataArrayFieldIfNeeded(packagePartType, jetFile);
-
-            if (clInit != null) {
-                clInit.v.visitInsn(RETURN);
-                FunctionCodegen.endVisit(clInit.v, "static initializer for package", jetFile);
-            }
         }
+    }
 
-        v.done();
+    @Override
+    protected void generateSyntheticParts() {
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
+        }
+    }
+
+    @Override
+    protected void generateKotlinAnnotation() {
+        writeKotlinSyntheticClassAnnotation(v, KotlinSyntheticClass.Kind.PACKAGE_PART);
     }
 }

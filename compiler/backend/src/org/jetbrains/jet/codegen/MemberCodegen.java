@@ -55,7 +55,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen extends ParentCodegenAwareImpl {
+public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> extends ParentCodegenAwareImpl {
+    protected final T element;
     protected final FieldOwnerContext context;
     protected final ClassBuilder v;
     protected ExpressionCodegen clInit;
@@ -64,13 +65,45 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
 
     public MemberCodegen(
             @NotNull GenerationState state,
-            @Nullable MemberCodegen parentCodegen,
+            @Nullable MemberCodegen<?> parentCodegen,
             @NotNull FieldOwnerContext context,
+            T element,
             ClassBuilder builder
     ) {
         super(state, parentCodegen);
+        this.element = element;
         this.context = context;
         this.v = builder;
+    }
+
+    public void generate() {
+        generateDeclaration();
+
+        generateBody();
+
+        generateSyntheticParts();
+
+        generateKotlinAnnotation();
+
+        done();
+    }
+
+    protected abstract void generateDeclaration();
+
+    protected abstract void generateBody();
+
+    protected void generateSyntheticParts() {
+    }
+
+    protected abstract void generateKotlinAnnotation();
+
+    private void done() {
+        if (clInit != null) {
+            clInit.v.visitInsn(RETURN);
+            FunctionCodegen.endVisit(clInit.v, "static initializer", element);
+        }
+
+        v.done();
     }
 
     public void genFunctionOrProperty(
@@ -115,7 +148,7 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
             @NotNull CodegenContext parentContext,
             @NotNull JetClassOrObject aClass,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen parentCodegen
+            @Nullable MemberCodegen<?> parentCodegen
     ) {
         ClassDescriptor descriptor = state.getBindingContext().get(BindingContext.CLASS, aClass);
 
@@ -131,13 +164,11 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         ClassBuilder classBuilder = state.getFactory().forClassImplementation(descriptor, aClass.getContainingFile());
         ClassContext classContext = parentContext.intoClass(descriptor, OwnerKind.IMPLEMENTATION, state);
         new ImplementationBodyCodegen(aClass, classContext, classBuilder, state, parentCodegen).generate();
-        classBuilder.done();
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
-            ClassBuilder traitBuilder = state.getFactory().forTraitImplementation(descriptor, state, aClass.getContainingFile());
-            new TraitImplBodyCodegen(aClass, parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state), traitBuilder, state, parentCodegen)
-                    .generate();
-            traitBuilder.done();
+            ClassBuilder traitImplBuilder = state.getFactory().forTraitImplementation(descriptor, state, aClass.getContainingFile());
+            ClassContext traitImplContext = parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state);
+            new TraitImplBodyCodegen(aClass, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
         }
     }
 
@@ -149,11 +180,6 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
 
     public void genClassOrObject(JetClassOrObject aClass) {
         genClassOrObject(context, aClass, state, this);
-    }
-
-    @NotNull
-    public ClassBuilder getBuilder() {
-        return v;
     }
 
     @NotNull
@@ -183,9 +209,9 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         return clInit;
     }
 
-    protected void generateInitializers(@NotNull List<JetDeclaration> declarations, @NotNull Function0<ExpressionCodegen> createCodegen) {
+    protected void generateInitializers(@NotNull Function0<ExpressionCodegen> createCodegen) {
         NotNullLazyValue<ExpressionCodegen> codegen = LockBasedStorageManager.NO_LOCKS.createLazyValue(createCodegen);
-        for (JetDeclaration declaration : declarations) {
+        for (JetDeclaration declaration : ((JetDeclarationContainer) element).getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 if (shouldInitializeProperty((JetProperty) declaration)) {
                     initializeProperty(codegen.invoke(), (JetProperty) declaration);
@@ -197,7 +223,7 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         }
     }
 
-    protected void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull JetProperty property) {
+    private void initializeProperty(@NotNull ExpressionCodegen codegen, @NotNull JetProperty property) {
         PropertyDescriptor propertyDescriptor = (PropertyDescriptor) bindingContext.get(VARIABLE, property);
         assert propertyDescriptor != null;
 
@@ -221,7 +247,7 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         propValue.store(type, codegen.v);
     }
 
-    protected boolean shouldInitializeProperty(@NotNull JetProperty property) {
+    private boolean shouldInitializeProperty(@NotNull JetProperty property) {
         JetExpression initializer = property.getDelegateExpressionOrInitializer();
         if (initializer == null) return false;
 
@@ -287,9 +313,9 @@ public abstract class MemberCodegen extends ParentCodegenAwareImpl {
         return false;
     }
 
-    protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType, @NotNull JetDeclarationContainer container) {
+    protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {
         List<JetProperty> delegatedProperties = new ArrayList<JetProperty>();
-        for (JetDeclaration declaration : container.getDeclarations()) {
+        for (JetDeclaration declaration : ((JetDeclarationContainer) element).getDeclarations()) {
             if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
                 if (property.getDelegate() != null) {

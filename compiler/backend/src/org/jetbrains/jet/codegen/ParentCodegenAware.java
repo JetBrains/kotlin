@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.Nullable;
 
 public interface ParentCodegenAware {
-
     @Nullable
-    MemberCodegen getParentCodegen();
+    MemberCodegen<?> getParentCodegen();
 }
