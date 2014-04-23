@@ -196,10 +196,10 @@ public class JetPositionManager implements PositionManager {
             value = CachedValuesManager.getManager(file.getProject()).createCachedValue(new CachedValueProvider<JetTypeMapper>() {
                 @Override
                 public Result<JetTypeMapper> compute() {
-                    AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
-                    analyzeExhaust.throwIfError();
-
                     Collection<JetFile> packageFiles = JetFilesProvider.getInstance(file.getProject()).allPackageFiles(file);
+
+                    AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
+                    analyzeExhaust.throwIfError();
 
                     DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
                     JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
