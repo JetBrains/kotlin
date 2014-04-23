@@ -36,9 +36,7 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @InnerTestClasses({Formatter.ModifierList.class})
     public static class Formatter extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatter() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                         new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"),
-                                                         true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
         
         @TestMetadata("BinaryExpressions.after.kt")
@@ -104,6 +102,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("ElseOnNewLine.after.kt")
         public void testElseOnNewLine() throws Exception {
             doTest("idea/testData/formatter/ElseOnNewLine.after.kt");
+        }
+        
+        @TestMetadata("Elvis.after.kt")
+        public void testElvis() throws Exception {
+            doTest("idea/testData/formatter/Elvis.after.kt");
         }
         
         @TestMetadata("EmptyLineAfterPackage.after.kt")
