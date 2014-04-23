@@ -401,6 +401,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitEscapeStringTemplateEntry(entry, null);
     }
 
+    public void visitPackageDirective(@NotNull JetPackageDirective directive) {
+        super.visitPackageDirective(directive, null);
+    }
+
     // hidden methods
     @Override
     public final Void visitJetElement(@NotNull JetElement element, Void data) {
@@ -971,6 +975,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     @Override
     public final Void visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry, Void data) {
         visitEscapeStringTemplateEntry(entry);
+        return null;
+    }
+
+    @Override
+    public Void visitPackageDirective(@NotNull JetPackageDirective directive, Void data) {
+        visitPackageDirective(directive);
         return null;
     }
 }

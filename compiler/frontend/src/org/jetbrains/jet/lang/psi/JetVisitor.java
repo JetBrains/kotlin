@@ -405,4 +405,8 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     public R visitEscapeStringTemplateEntry(@NotNull JetEscapeStringTemplateEntry entry, D data) {
         return visitStringTemplateEntry(entry, data);
     }
+
+    public R visitPackageDirective(@NotNull JetPackageDirective directive, D data) {
+        return visitExpression(directive, data);
+    }
 }

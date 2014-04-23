@@ -124,13 +124,18 @@ public class LazyTopDownAnalyzer {
 
                                 c.addFile(file);
 
-                                DescriptorResolver.resolvePackageHeader(packageDirective, moduleDescriptor, trace);
+                                packageDirective.accept(this);
                                 DescriptorResolver.registerFileInPackage(trace, file);
 
                                 registerDeclarations(file.getDeclarations());
 
                                 topLevelFqNames.put(file.getPackageFqName(), packageDirective);
                             }
+                        }
+
+                        @Override
+                        public void visitPackageDirective(@NotNull JetPackageDirective directive) {
+                            DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace);
                         }
 
                         private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {

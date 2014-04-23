@@ -137,5 +137,10 @@ public class JetPackageDirective extends JetReferenceExpression {
     public void subtreeChanged() {
         qualifiedNameCache = null;
     }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitPackageDirective(this, data);
+    }
 }
 
