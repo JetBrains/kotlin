@@ -297,10 +297,9 @@ public class CandidateResolver {
 
             TemporaryBindingTrace temporaryBindingTrace = TemporaryBindingTrace.create(
                     context.trace, "Trace to complete a candidate that is not a resulting call");
-            ResolvedCallImpl<D> callToCompleteInference = mutableResolvedCall.getCallToCompleteTypeArgumentInference();
 
             CallCandidateResolutionContext<D> callCandidateResolutionContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    callToCompleteInference, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY);
+                    mutableResolvedCall, context.replaceBindingTrace(temporaryBindingTrace), TracingStrategy.EMPTY);
 
             completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
             mutableResolvedCall.markCallAsCompleted();
@@ -474,11 +473,6 @@ public class CandidateResolver {
         if (storedContextForArgument == null) return;
 
         storedContextForArgument.candidateCall.markCallAsCompleted();
-
-        // clean data for "invoke" calls
-        MutableResolvedCall<?> resolvedCall = context.resolutionResultsCache.getCallForArgument(keyExpression);
-        assert resolvedCall != null : "Resolved call for '" + keyExpression + "' is not stored, but CallCandidateResolutionContext is.";
-        resolvedCall.markCallAsCompleted();
     }
 
     @Nullable

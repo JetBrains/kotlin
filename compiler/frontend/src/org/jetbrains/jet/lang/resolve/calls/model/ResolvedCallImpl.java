@@ -324,12 +324,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return dataFlowInfoForArguments;
     }
 
-    @NotNull
-    @Override
-    public ResolvedCallImpl<D> getCallToCompleteTypeArgumentInference() {
-        return this;
-    }
-
     @Override
     public boolean hasInferredReturnType() {
         if (!completed) {

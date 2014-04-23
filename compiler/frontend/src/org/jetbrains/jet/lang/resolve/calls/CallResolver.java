@@ -376,7 +376,7 @@ public class CallResolver {
         }
 
         CallCandidateResolutionContext<D> candidateContext = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
+                results.getResultingCall(), context, tracing);
         candidateResolver.completeTypeInferenceDependentOnFunctionLiteralsForCall(candidateContext);
     }
 
@@ -395,20 +395,19 @@ public class CallResolver {
         }
 
         MutableResolvedCall<D> resolvedCall = results.getResultingCall();
-        ResolvedCallImpl<D> callToCompleteInference = resolvedCall.getCallToCompleteTypeArgumentInference();
 
-        Set<ValueArgument> unmappedArguments = callToCompleteInference.getUnmappedArguments();
+        Set<ValueArgument> unmappedArguments = resolvedCall.getUnmappedArguments();
         argumentTypeResolver.checkUnmappedArgumentTypes(context, unmappedArguments);
         candidateResolver.completeUnmappedArguments(context, unmappedArguments);
 
         CallCandidateResolutionContext<D> callCandidateResolutionContext =
-                CallCandidateResolutionContext.createForCallBeingAnalyzed(callToCompleteInference, context, tracing);
+                CallCandidateResolutionContext.createForCallBeingAnalyzed(resolvedCall, context, tracing);
         candidateResolver.completeTypeInferenceDependentOnExpectedTypeForCall(callCandidateResolutionContext, false);
 
         resolvedCall.markCallAsCompleted();
         candidateResolver.completeTypeInferenceForAllCandidates(context, results);
 
-        if (callToCompleteInference.getStatus().isSuccess()) {
+        if (resolvedCall.getStatus().isSuccess()) {
             return OverloadResolutionResultsImpl.success(resolvedCall);
         }
         return results;
@@ -431,10 +430,9 @@ public class CallResolver {
         context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
 
         if (results.isSingleResult()) {
-            MutableResolvedCall<F> resultingCall = results.getResultingCall();
-            CallCandidateResolutionContext<F> contextForCallToCompleteTypeArgumentInference = CallCandidateResolutionContext.createForCallBeingAnalyzed(
-                    results.getResultingCall().getCallToCompleteTypeArgumentInference(), context, tracing);
-            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, resultingCall, contextForCallToCompleteTypeArgumentInference);
+            CallCandidateResolutionContext<F> contextForCallToCompleteTypeArgumentInference =
+                    CallCandidateResolutionContext.createForCallBeingAnalyzed(results.getResultingCall(), context, tracing);
+            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, contextForCallToCompleteTypeArgumentInference);
         }
     }
 

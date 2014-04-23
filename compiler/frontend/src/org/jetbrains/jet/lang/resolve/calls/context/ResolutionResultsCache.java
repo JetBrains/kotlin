@@ -37,16 +37,11 @@ public interface ResolutionResultsCache {
     @Nullable
     DelegatingBindingTrace getResolutionTrace(@NotNull CallKey callKey);
 
-    //For VariableAsFunctionCall deferredComputation is taken for its function call, but resolvedCall is the VariableAsFunctionCall itself.
     <D extends CallableDescriptor> void recordDeferredComputationForCall(
             @NotNull CallKey callKey,
-            @NotNull MutableResolvedCall<D> resolvedCall,
             @NotNull CallCandidateResolutionContext<D> deferredComputation
     );
 
     @Nullable
     CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression);
-
-    @Nullable
-    MutableResolvedCall<?> getCallForArgument(@Nullable JetExpression expression);
 }
