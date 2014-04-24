@@ -25,6 +25,7 @@ import com.intellij.ui.EditorTextField;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetClassBody;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
@@ -34,6 +35,8 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.*;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +73,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
     private boolean isVisibilitySectionAvailable() {
         PsiElement target = originalDescriptor.getDescriptor().getExtractionData().getNextSibling().getParent();
-        return target instanceof JetClassOrObject || target instanceof JetFile;
+        return target instanceof JetClassBody || target instanceof JetFile;
     }
 
     private String getFunctionName() {
@@ -125,6 +128,14 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             String visibility = originalDescriptor.getDescriptor().getVisibility();
             visibilityBox.setSelectedItem(visibility.isEmpty() ? "internal" : visibility);
         }
+        visibilityBox.addItemListener(
+                new ItemListener() {
+                    @Override
+                    public void itemStateChanged(@NotNull ItemEvent e) {
+                        update(true);
+                    }
+                }
+        );
 
         parameterTablePanel = new KotlinParameterTablePanel() {
             @Override
