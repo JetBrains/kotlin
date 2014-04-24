@@ -168,8 +168,12 @@ public class JetBlock extends AbstractBlock {
             return super.getChildAttributes(newChildIndex);
         }
 
-        if (isIncomplete()) {
-            return super.getChildAttributes(newChildIndex);
+        List<Block> blocks = getSubBlocks();
+        if (newChildIndex != 0) {
+            boolean isIncomplete = newChildIndex < blocks.size() ? blocks.get(newChildIndex - 1).isIncomplete() : isIncomplete();
+            if (isIncomplete) {
+                return super.getChildAttributes(newChildIndex);
+            }
         }
 
         return new ChildAttributes(Indent.getNoneIndent(), null);

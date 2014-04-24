@@ -40,6 +40,11 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/AfterCatch.after.kt");
         }
         
+        @TestMetadata("AfterClassNameBeforeFun.after.kt")
+        public void testAfterClassNameBeforeFun() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/AfterClassNameBeforeFun.after.kt");
+        }
+        
         @TestMetadata("AfterFinally.after.kt")
         public void testAfterFinally() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/AfterFinally.after.kt");
