@@ -35,7 +35,10 @@ public class GenerateRangesCodegenTestData {
     private static final File TEST_DATA_DIR = new File("compiler/testData/codegen/boxWithStdlib/ranges");
     private static final File AS_LITERAL_DIR = new File(TEST_DATA_DIR, "literal");
     private static final File AS_EXPRESSION_DIR = new File(TEST_DATA_DIR, "expression");
-    private static final File SOURCE_TEST_FILE = new File("libraries/stdlib/test/language/RangeIterationTest.kt");
+    private static final File[] SOURCE_TEST_FILES = {
+            new File("libraries/stdlib/test/language/RangeIterationTest.kt"),
+            new File("libraries/stdlib/test/language/RangeIterationTestJVM.kt")
+    };
 
     private static final Pattern TEST_FUN_PATTERN = Pattern.compile("test fun (\\w+)\\(\\) \\{.+?}", Pattern.DOTALL);
     private static final Pattern SUBTEST_INVOCATION_PATTERN = Pattern.compile("doTest\\(([^,]+), [^,]+, [^,]+, [^,]+,\\s+listOf[\\w<>]*\\(([^\\n]*)\\)\\)", Pattern.DOTALL);
@@ -144,33 +147,35 @@ public class GenerateRangesCodegenTestData {
             //noinspection ResultOfMethodCallIgnored
             AS_EXPRESSION_DIR.mkdirs();
 
-            String sourceContent = FileUtil.loadFile(SOURCE_TEST_FILE);
-            Matcher testFunMatcher = TEST_FUN_PATTERN.matcher(sourceContent);
-            while (testFunMatcher.find()) {
-                String testFunName = testFunMatcher.group(1);
-                if (testFunName.equals("emptyConstant")) {
-                    continue;
+            for (File file : SOURCE_TEST_FILES) {
+                String sourceContent = FileUtil.loadFile(file);
+                Matcher testFunMatcher = TEST_FUN_PATTERN.matcher(sourceContent);
+                while (testFunMatcher.find()) {
+                    String testFunName = testFunMatcher.group(1);
+                    if (testFunName.equals("emptyConstant")) {
+                        continue;
+                    }
+
+                    String testFunText = testFunMatcher.group();
+
+                    StringBuilder asLiteralBody = new StringBuilder();
+                    StringBuilder asExpressionBody = new StringBuilder();
+                    int index = 0;
+
+                    Matcher matcher = SUBTEST_INVOCATION_PATTERN.matcher(testFunText);
+                    while (matcher.find()) {
+                        index++;
+                        String rangeExpression = matcher.group(1);
+                        String expectedListElements = matcher.group(2);
+                        String elementType = detectElementType(rangeExpression);
+                        asLiteralBody.append(renderTemplate(LITERAL_TEMPLATE, index, elementType, rangeExpression, expectedListElements));
+                        asExpressionBody.append(renderTemplate(EXPRESSION_TEMPLATE, index, elementType, rangeExpression, expectedListElements));
+                    }
+
+                    String fileName = testFunName + ".kt";
+                    writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString());
+                    writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString());
                 }
-
-                String testFunText = testFunMatcher.group();
-
-                StringBuilder asLiteralBody = new StringBuilder();
-                StringBuilder asExpressionBody = new StringBuilder();
-                int index = 0;
-
-                Matcher matcher = SUBTEST_INVOCATION_PATTERN.matcher(testFunText);
-                while (matcher.find()) {
-                    index++;
-                    String rangeExpression = matcher.group(1);
-                    String expectedListElements = matcher.group(2);
-                    String elementType = detectElementType(rangeExpression);
-                    asLiteralBody.append(renderTemplate(LITERAL_TEMPLATE, index, elementType, rangeExpression, expectedListElements));
-                    asExpressionBody.append(renderTemplate(EXPRESSION_TEMPLATE, index, elementType, rangeExpression, expectedListElements));
-                }
-
-                String fileName = testFunName + ".kt";
-                writeToFile(new File(AS_LITERAL_DIR, fileName), asLiteralBody.toString());
-                writeToFile(new File(AS_EXPRESSION_DIR, fileName), asExpressionBody.toString());
             }
 
         }
