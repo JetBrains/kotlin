@@ -89,6 +89,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/ConsecutiveSafeCallsIndent.after.kt");
         }
         
+        @TestMetadata("DelegationList.after.kt")
+        public void testDelegationList() throws Exception {
+            doTest("idea/testData/formatter/DelegationList.after.kt");
+        }
+        
         @TestMetadata("DoWhileLineBreak.after.kt")
         public void testDoWhileLineBreak() throws Exception {
             doTest("idea/testData/formatter/DoWhileLineBreak.after.kt");
@@ -455,6 +460,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("ColonSpaces.after.inv.kt")
         public void testColonSpaces() throws Exception {
             doTestInverted("idea/testData/formatter/ColonSpaces.after.inv.kt");
+        }
+        
+        @TestMetadata("DelegationList.after.inv.kt")
+        public void testDelegationList() throws Exception {
+            doTestInverted("idea/testData/formatter/DelegationList.after.inv.kt");
         }
         
         @TestMetadata("DoWhileLineBreak.after.inv.kt")

@@ -207,6 +207,10 @@ public class JetBlock extends AbstractBlock {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
         }
+        else if (parentType == DELEGATION_SPECIFIER_LIST) {
+            return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
+                    createAlignment(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())));
+        }
         else if (parentType == PARENTHESIZED) {
             return new NodeAlignmentStrategy() {
                 Alignment bracketsAlignment = jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION ? Alignment.createAlignment() : null;
@@ -312,6 +316,10 @@ public class JetBlock extends AbstractBlock {
             ASTIndentStrategy.forNode("Chained calls")
                     .in(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
                     .set(Indent.getContinuationWithoutFirstIndent(true)),
+
+            ASTIndentStrategy.forNode("Delegation list")
+                    .in(DELEGATION_SPECIFIER_LIST)
+                    .set(Indent.getContinuationIndent(false)),
 
             ASTIndentStrategy.forNode("Binary expressions")
                     .in(BINARY_EXPRESSION)

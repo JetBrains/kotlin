@@ -61,9 +61,7 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         }
         
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                         new File("idea/testData/indentationOnNewline"),
-                                                         Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
         
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")
@@ -124,6 +122,21 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.kt")
         public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.kt");
+        }
+        
+        @TestMetadata("InDelegationListAfterColon.after.kt")
+        public void testInDelegationListAfterColon() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.kt");
+        }
+        
+        @TestMetadata("InDelegationListAfterComma.after.kt")
+        public void testInDelegationListAfterComma() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InDelegationListAfterComma.after.kt");
+        }
+        
+        @TestMetadata("InDelegationListNotEmpty.after.kt")
+        public void testInDelegationListNotEmpty() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InDelegationListNotEmpty.after.kt");
         }
         
         @TestMetadata("InExpressionsParentheses.after.kt")
@@ -196,9 +209,7 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
     @InnerTestClasses({})
     public static class InvertedSettings extends AbstractJetTypingIndentationTestBase {
         public void testAllFilesPresentInInvertedSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                         new File("idea/testData/indentationOnNewline"),
-                                                         Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
         }
         
         @TestMetadata("InBinaryExpressionInMiddle.after.inv.kt")
@@ -214,6 +225,21 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         @TestMetadata("InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt")
         public void testInBinaryExpressionsBeforeCloseParenthesis() throws Exception {
             doNewlineTestWithInvert("idea/testData/indentationOnNewline/InBinaryExpressionsBeforeCloseParenthesis.after.inv.kt");
+        }
+        
+        @TestMetadata("InDelegationListAfterColon.after.inv.kt")
+        public void testInDelegationListAfterColon() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InDelegationListAfterColon.after.inv.kt");
+        }
+        
+        @TestMetadata("InDelegationListAfterComma.after.inv.kt")
+        public void testInDelegationListAfterComma() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InDelegationListAfterComma.after.inv.kt");
+        }
+        
+        @TestMetadata("InDelegationListNotEmpty.after.inv.kt")
+        public void testInDelegationListNotEmpty() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InDelegationListNotEmpty.after.inv.kt");
         }
         
         @TestMetadata("InExpressionsParentheses.after.inv.kt")
