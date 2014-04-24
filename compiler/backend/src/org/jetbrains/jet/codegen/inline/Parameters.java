@@ -88,10 +88,10 @@ public class Parameters implements Iterable<ParameterInfo> {
         ArrayList<Type> result = new ArrayList<Type>();
         for (CapturedParamInfo info : captured) {
             if(info != CapturedParamInfo.STUB) {
-                Type type = info.getType();
-                result.add(type);
+                result.add(info.getType());
             }
         }
         return result;
     }
+
 }

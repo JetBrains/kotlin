@@ -41,9 +41,19 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite");
     }
     
-    @TestMetadata("anonymousObjectSuperParams")
-    public void testAnonymousObjectSuperParams() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectSuperParams");
+    @TestMetadata("anonymousObjectOnCallSiteSuperParams")
+    public void testAnonymousObjectOnCallSiteSuperParams() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams");
+    }
+    
+    @TestMetadata("anonymousObjectOnDeclarationSite")
+    public void testAnonymousObjectOnDeclarationSite() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite");
+    }
+    
+    @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams")
+    public void testAnonymousObjectOnDeclarationSiteSuperParams() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams");
     }
     
     @TestMetadata("builders")

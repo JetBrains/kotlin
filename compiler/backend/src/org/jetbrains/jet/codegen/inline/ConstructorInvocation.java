@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.codegen.inline;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.Map;
 public class ConstructorInvocation {
 
     private final String ownerInternalName;
+
+    private final String desc;
 
     private final Map<Integer, LambdaInfo> lambdasToInline;
 
@@ -37,15 +40,17 @@ public class ConstructorInvocation {
 
     private Map<String, LambdaInfo> capturedLambdasToInline;
 
-    private boolean capturedOuterRegenerated;
+    private final boolean capturedOuterRegenerated;
 
     ConstructorInvocation(
-            String ownerInternalName,
-            Map<Integer, LambdaInfo> lambdasToInline,
+            @NotNull String ownerInternalName,
+            @NotNull String desc,
+            @NotNull Map<Integer, LambdaInfo> lambdasToInline,
             boolean isSameModule,
             boolean capturedOuterRegenerated
     ) {
         this.ownerInternalName = ownerInternalName;
+        this.desc = desc;
         this.lambdasToInline = lambdasToInline;
         this.isSameModule = isSameModule;
         this.capturedOuterRegenerated = capturedOuterRegenerated;
@@ -95,4 +100,7 @@ public class ConstructorInvocation {
         this.capturedLambdasToInline = capturedLambdasToInline;
     }
 
+    public String getDesc() {
+        return desc;
+    }
 }

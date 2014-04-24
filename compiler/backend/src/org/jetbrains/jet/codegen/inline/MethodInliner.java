@@ -352,7 +352,7 @@ public class MethodInliner {
                             }
                         }
 
-                        constructorInvocations.add(new ConstructorInvocation(owner, lambdaMapping, isSameModule, inliningContext.classRegeneration));
+                        constructorInvocations.add(new ConstructorInvocation(owner, desc, lambdaMapping, isSameModule, inliningContext.classRegeneration));
                     }
                 }
             }

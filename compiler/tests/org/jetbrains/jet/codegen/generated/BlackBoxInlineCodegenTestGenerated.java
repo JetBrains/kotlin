@@ -41,9 +41,19 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
         doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite");
     }
     
-    @TestMetadata("anonymousObjectSuperParams")
-    public void testAnonymousObjectSuperParams() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectSuperParams");
+    @TestMetadata("anonymousObjectOnCallSiteSuperParams")
+    public void testAnonymousObjectOnCallSiteSuperParams() throws Exception {
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams");
+    }
+    
+    @TestMetadata("anonymousObjectOnDeclarationSite")
+    public void testAnonymousObjectOnDeclarationSite() throws Exception {
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite");
+    }
+    
+    @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams")
+    public void testAnonymousObjectOnDeclarationSiteSuperParams() throws Exception {
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams");
     }
     
     @TestMetadata("builders")

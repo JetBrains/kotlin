@@ -28,6 +28,8 @@ class ParameterInfo {
 
     protected final int index;
 
+    private boolean isCaptured;
+
     public final Type type;
 
     //for skipped parameter: e.g. inlined lambda
@@ -86,5 +88,13 @@ class ParameterInfo {
 
     public void setRemapValue(StackValue remapValue) {
         this.remapValue = remapValue;
+    }
+
+    public boolean isCaptured() {
+        return isCaptured;
+    }
+
+    public void setCaptured(boolean isCaptured) {
+        this.isCaptured = isCaptured;
     }
 }
