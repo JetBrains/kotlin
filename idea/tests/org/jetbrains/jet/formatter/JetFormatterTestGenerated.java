@@ -269,6 +269,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/SpacesAroundUnaryOperations.after.kt");
         }
         
+        @TestMetadata("SpacesInDeclarations.after.kt")
+        public void testSpacesInDeclarations() throws Exception {
+            doTest("idea/testData/formatter/SpacesInDeclarations.after.kt");
+        }
+        
         @TestMetadata("TryCatchLineBreak.after.kt")
         public void testTryCatchLineBreak() throws Exception {
             doTest("idea/testData/formatter/TryCatchLineBreak.after.kt");
@@ -322,7 +327,9 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("idea/testData/formatter/modifierList")
         public static class ModifierList extends AbstractJetFormatterTest {
             public void testAllFilesPresentInModifierList() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter/modifierList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                             new File("idea/testData/formatter/modifierList"),
+                                                             Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
             }
             
             @TestMetadata("funAnnotationBeforeAnnotation.after.kt")

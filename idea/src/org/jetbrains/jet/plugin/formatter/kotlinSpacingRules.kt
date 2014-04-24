@@ -28,6 +28,8 @@ import com.intellij.lang.ASTNode
 import com.intellij.formatting.ASTBlock
 import org.jetbrains.jet.plugin.formatter.KotlinSpacingBuilder.CustomSpacingBuilder
 
+val MODIFIERS_LIST_ENTRIES = TokenSet.orSet(TokenSet.create(ANNOTATION_ENTRY, ANNOTATION), MODIFIER_KEYWORDS)
+
 fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
     val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
     val jetCommonSettings = settings.getCommonSettings(JetLanguage.INSTANCE)!!
@@ -57,6 +59,29 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             around(TokenSet.create(PLUSPLUS, MINUSMINUS, EXCLEXCL, MINUS, PLUS, EXCL)).spaceIf(jetCommonSettings.SPACE_AROUND_UNARY_OPERATOR)
             around(ELVIS).spaces(1)
             around(RANGE).spaceIf(jetSettings.SPACE_AROUND_RANGE)
+
+            after(MODIFIER_LIST).spaces(1)
+
+            beforeInside(IDENTIFIER, CLASS).spaces(1)
+            beforeInside(OBJECT_DECLARATION_NAME, OBJECT_DECLARATION).spaces(1)
+
+            betweenInside(VAL_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
+            betweenInside(VAR_KEYWORD, IDENTIFIER, PROPERTY).spaces(1)
+            betweenInside(VAL_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
+            betweenInside(VAR_KEYWORD, TYPE_REFERENCE, PROPERTY).spaces(1)
+            betweenInside(TYPE_REFERENCE, DOT, PROPERTY).spacing(0, 0, 0, false, 0)
+            betweenInside(DOT, IDENTIFIER, PROPERTY).spacing(0, 0, 0, false, 0)
+
+            betweenInside(FUN_KEYWORD, IDENTIFIER, FUN).spaces(1)
+            betweenInside(FUN_KEYWORD, TYPE_REFERENCE, FUN).spaces(1)
+            betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)
+            betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
+            afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
+
+            between(MODIFIERS_LIST_ENTRIES, MODIFIERS_LIST_ENTRIES).spaces(1)
+
+            after(LBRACKET).spaces(0)
+            before(RBRACKET).spaces(0)
 
             afterInside(LPAR, VALUE_PARAMETER_LIST).spaces(0)
             beforeInside(RPAR, VALUE_PARAMETER_LIST).spaces(0)
