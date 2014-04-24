@@ -68,6 +68,8 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer HTML_FOR_UNINFERRED_TYPE_PARAMS = new DescriptorRendererBuilder()
             .setUninferredTypeParameterAsName(true)
+            .setModifiers()
+            .setShortNames(true)
             .setTextFormat(TextFormat.HTML).build();
 
     @NotNull

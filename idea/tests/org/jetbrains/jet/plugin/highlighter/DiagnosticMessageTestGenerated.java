@@ -101,6 +101,11 @@ public class DiagnosticMessageTestGenerated extends AbstractDiagnosticMessageTes
         doTest("idea/testData/diagnosticMessage/noneApplicable.kt");
     }
     
+    @TestMetadata("noneApplicableGeneric.kt")
+    public void testNoneApplicableGeneric() throws Exception {
+        doTest("idea/testData/diagnosticMessage/noneApplicableGeneric.kt");
+    }
+    
     @TestMetadata("numberValueTypes.kt")
     public void testNumberValueTypes() throws Exception {
         doTest("idea/testData/diagnosticMessage/numberValueTypes.kt");

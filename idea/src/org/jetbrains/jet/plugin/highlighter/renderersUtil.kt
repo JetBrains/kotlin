@@ -28,9 +28,16 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.highlighter.IdeRenderers
+import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 
 fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
-    val htmlRenderer = DescriptorRenderer.HTML
+    val htmlRenderer = DescriptorRenderer.HTML_FOR_UNINFERRED_TYPE_PARAMS
+    val stringBuilder = StringBuilder("")
+    val indent = "&nbsp;&nbsp;"
+
+    fun append(any: Any): StringBuilder = stringBuilder.append(any)
+
     fun renderParameter(parameter: ValueParameterDescriptor): String {
         val varargElementType = parameter.getVarargElementType()
         val parameterType = varargElementType ?: parameter.getType()
@@ -44,21 +51,54 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
         return renderedParameter
     }
 
-    val stringBuilder = StringBuilder("")
-    val funDescriptor = resolvedCall.getResultingDescriptor()
+    fun appendTypeParametersSubstitution() {
+        val parametersToArgumentsMap = resolvedCall.getTypeArguments()
+        fun TypeParameterDescriptor.isInferred(): Boolean {
+            val typeArgument = parametersToArgumentsMap[this]
+            if (typeArgument == null) return false
+            return !ErrorUtils.isUninferredParameter(typeArgument)
+        }
 
-    val receiverParameter = funDescriptor.getReceiverParameter()
-    if (receiverParameter != null) {
-        stringBuilder.append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
+        val typeParameters = resolvedCall.getCandidateDescriptor().getTypeParameters()
+        val (inferredTypeParameters, notInferredTypeParameters) = typeParameters.partition { parameter -> parameter.isInferred() }
+
+        append("<br/>$indent<i>where</i> ")
+        if (!notInferredTypeParameters.isEmpty()) {
+            append(notInferredTypeParameters.map { typeParameter -> IdeRenderers.error(typeParameter.getName()) }.makeString())
+            append("<i> cannot be inferred</i>")
+            if (!inferredTypeParameters.isEmpty()) {
+                append("; ")
+            }
+        }
+
+        val typeParameterToTypeArgumentMap = resolvedCall.getTypeArguments()
+        if (!inferredTypeParameters.isEmpty()) {
+            append(inferredTypeParameters.map { typeParameter ->
+                "${typeParameter.getName()} = ${htmlRenderer.renderType(typeParameterToTypeArgumentMap[typeParameter]!!)}"
+            }.makeString())
+        }
     }
-    stringBuilder.append(funDescriptor.getName()).append("(")
-    stringBuilder.append(funDescriptor.getValueParameters().map(::renderParameter).makeString(","))
-    stringBuilder.append(if (resolvedCall.hasUnmappedArguments()) IdeRenderers.error(")") else ")")
 
-    stringBuilder.append(" <i>defined in</i> ")
-    val containingDeclaration = funDescriptor.getContainingDeclaration()
-    val fqName = DescriptorUtils.getFqName(containingDeclaration)
-    stringBuilder.append(if (FqName.ROOT.equalsTo(fqName)) "root package" else fqName.asString())
+    val resultingDescriptor = resolvedCall.getResultingDescriptor()
+    val receiverParameter = resultingDescriptor.getReceiverParameter()
+    if (receiverParameter != null) {
+        append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
+    }
+    append(resultingDescriptor.getName()).append("(")
+    append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.makeString())
+    append(if (resolvedCall.hasUnmappedArguments()) IdeRenderers.error(")") else ")")
+
+    if (!resolvedCall.getCandidateDescriptor().getTypeParameters().isEmpty()) {
+        appendTypeParametersSubstitution()
+        append("<i> for </i><br/>$indent")
+        append(htmlRenderer.render(resolvedCall.getCandidateDescriptor()))
+    }
+    else {
+        append(" <i>defined in</i> ")
+        val containingDeclaration = resultingDescriptor.getContainingDeclaration()
+        val fqName = DescriptorUtils.getFqName(containingDeclaration)
+        append(if (FqName.ROOT.equalsTo(fqName)) "root package" else fqName.asString())
+    }
     return stringBuilder.toString()
 }
 
