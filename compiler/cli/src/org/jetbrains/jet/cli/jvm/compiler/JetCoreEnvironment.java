@@ -211,8 +211,6 @@ public class JetCoreEnvironment {
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
 
         project.registerService(VirtualFileFinder.class, new CliVirtualFileFinder(classPath));
-
-        project.registerService(PsiDocumentManager.class, new MockPsiDocumentManager());
     }
 
     public CompilerConfiguration getConfiguration() {
