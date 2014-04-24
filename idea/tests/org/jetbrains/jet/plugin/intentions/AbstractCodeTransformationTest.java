@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.PathUtil;
@@ -261,6 +262,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         configureByFile(path);
 
         String fileText = FileUtil.loadFile(new File(path), true);
+
+        String minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ");
+        if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return;
+
         boolean isWithRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null;
 
         try {
