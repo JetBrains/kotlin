@@ -18,11 +18,11 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.LocalTimeCounter;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.ImportPath;
@@ -122,7 +122,7 @@ public class JetPsiFactory {
     public static Pair<PsiElement, PsiElement> createWhitespaceAndArrow(Project project) {
         JetFunctionType functionType = (JetFunctionType) createType(project, "() -> Int").getTypeElement();
         assert functionType != null;
-        return Pair.create(functionType.findElementAt(2), functionType.findElementAt(3));
+        return new Pair<PsiElement, PsiElement>(functionType.findElementAt(2), functionType.findElementAt(3));
     }
 
     @NotNull

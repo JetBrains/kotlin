@@ -28,7 +28,6 @@ import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
@@ -43,6 +42,7 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
 import com.intellij.util.Function;
+import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
@@ -284,7 +284,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                         ? nextSibling.copy() : null;
 
                 Pair<PsiElement, PsiElement> whitespaceAndArrow = JetPsiFactory.createWhitespaceAndArrow(containingFile.getProject());
-                functionLiteral.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, openBraceElement);
+                functionLiteral.addRangeAfter(whitespaceAndArrow.getFirst(), whitespaceAndArrow.getSecond(), openBraceElement);
 
                 functionLiteral.addAfter(newParameterList, openBraceElement);
                 if (whitespaceToAdd != null) {
