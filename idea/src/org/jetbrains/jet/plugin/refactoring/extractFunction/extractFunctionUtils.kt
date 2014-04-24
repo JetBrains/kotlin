@@ -560,7 +560,7 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
     val bindingContext = AnalyzerFacadeWithCache.getContextForElement(function.getBodyExpression()!!)
 
     for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
-        if (resolveResult.declaration in extractionData.originalElements) continue
+        if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
 
         val currentRefExpr = nameByOffset[originalOffset] as JetSimpleNameExpression?
         if (currentRefExpr == null) continue
