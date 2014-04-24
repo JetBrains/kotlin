@@ -367,10 +367,6 @@ private fun ExtractionData.inferParametersInfo(
                             } ?: DEFAULT_PARAMETER_TYPE
                         }
                         else bindingContext[BindingContext.EXPRESSION_TYPE, originalRef] ?: DEFAULT_PARAMETER_TYPE
-                if (!parameterType.canBeReferencedViaImport()) {
-                    nonDenotableTypes.add(parameterType)
-                    continue
-                }
 
                 val existingParameter = extractedDescriptorToParameter[descriptorToExtract]
                 val parameter: Parameter =
@@ -411,7 +407,7 @@ private fun ExtractionData.inferParametersInfo(
                                     if (hasThisReceiver && extractThis)
                                         "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
                                     else
-                                        (thisExpr ?: ref).getText()!!
+                                        (thisExpr ?: ref).getText()
 
                             val parameter = Parameter(argumentText, parameterName, mirrorVarName, parameterType, extractThis)
 
@@ -426,8 +422,9 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    if (resultType != null && !resultType.canBeReferencedViaImport()) {
-        nonDenotableTypes.add(resultType)
+    resultType?.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)
+    for (typeToCheck in typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
+        typeToCheck.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)
     }
 
     if (nonDenotableTypes.isNotEmpty()) {
@@ -615,7 +612,9 @@ fun ExtractionDescriptor.getFunctionText(
     return FunctionBuilder().let { builder ->
         builder.modifier(visibility)
 
-        receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) } ?: builder.noReceiver()
+        builder.typeParams(typeParameters.map { it.originalDeclaration.getText() })
+
+        receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) }
 
         builder.name(name)
 
@@ -626,6 +625,8 @@ fun ExtractionDescriptor.getFunctionText(
         with(controlFlow.returnType) {
             if (isDefault()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
         }
+
+        builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText() })
 
         if (withBody) {
             builder.blockBody(extractionData.getCodeFragmentText())
@@ -744,7 +745,7 @@ fun ExtractionDescriptor.generateFunction(
 
             is ExpressionEvaluation ->
                 body.getStatements().last?.let {
-                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText()!!)).getReturnedExpression()!!
+                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText())).getReturnedExpression()!!
                     val counterpartMap = createNameCounterpartMap(it, newExpr)
                     nameByOffset.entrySet().forEach { it.setValue(counterpartMap[it.getValue()]!!) }
                 }
