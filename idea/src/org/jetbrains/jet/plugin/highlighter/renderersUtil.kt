@@ -30,40 +30,35 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.plugin.highlighter.IdeRenderers
 
 fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
+    val htmlRenderer = DescriptorRenderer.HTML
+    fun renderParameter(parameter: ValueParameterDescriptor): String {
+        val varargElementType = parameter.getVarargElementType()
+        val parameterType = varargElementType ?: parameter.getType()
+        val renderedParameter =
+                (if (varargElementType != null) "<b>vararg</b> " else "") +
+                htmlRenderer.renderType(parameterType) +
+                if (parameter.hasDefaultValue()) " = ..." else ""
+        if (resolvedCall.hasErrorOnParameter(parameter)) {
+            return IdeRenderers.error(renderedParameter)
+        }
+        return renderedParameter
+    }
+
     val stringBuilder = StringBuilder("")
     val funDescriptor = resolvedCall.getResultingDescriptor()
 
-    val htmlRenderer = DescriptorRenderer.HTML
     val receiverParameter = funDescriptor.getReceiverParameter()
     if (receiverParameter != null) {
         stringBuilder.append(htmlRenderer.renderType(receiverParameter.getType())).append(".")
     }
     stringBuilder.append(funDescriptor.getName()).append("(")
-    var first = true
-    for (parameter in funDescriptor.getValueParameters()) {
-        if (!first) {
-            stringBuilder.append(", ")
-        }
-        var parameterType = parameter.getType()
-        val varargElementType = parameter.getVarargElementType()
-        if (varargElementType != null) {
-            parameterType = varargElementType
-        }
-        var paramString: String = (if (varargElementType != null) "<b>vararg</b> " else "") + htmlRenderer.renderType(parameterType)
-        if (parameter.hasDefaultValue()) {
-            paramString += " = ..."
-        }
-        if (resolvedCall.hasErrorOnParameter(parameter)) {
-            paramString = IdeRenderers.error(paramString)
-        }
-        stringBuilder.append(paramString)
-
-        first = false
-    }
+    stringBuilder.append(funDescriptor.getValueParameters().map(::renderParameter).makeString(","))
     stringBuilder.append(if (resolvedCall.hasUnmappedArguments()) IdeRenderers.error(")") else ")")
+
     stringBuilder.append(" <i>defined in</i> ")
     val containingDeclaration = funDescriptor.getContainingDeclaration()
     val fqName = DescriptorUtils.getFqName(containingDeclaration)
     stringBuilder.append(if (FqName.ROOT.equalsTo(fqName)) "root package" else fqName.asString())
     return stringBuilder.toString()
 }
+
