@@ -96,7 +96,7 @@ public class ImportInsertHelper {
     }
 
     public static void writeImportToFile(@NotNull ImportPath importPath, @NotNull JetFile file) {
-        if (file instanceof JetCodeFragmentImpl) {
+        if (file instanceof JetCodeFragment) {
             // TODO Insert import doesn't work for codeFragments yet
             return;
         }

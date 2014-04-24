@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
 
-public class JetTypeCodeFragmentImpl extends JetCodeFragmentImpl implements JetTypeCodeFragment {
+public class JetTypeCodeFragmentImpl extends JetCodeFragment implements JetTypeCodeFragment {
     public JetTypeCodeFragmentImpl(Project project, String name, CharSequence text, PsiElement context) {
         super(project, name, text, JetNodeTypes.TYPE_CODE_FRAGMENT, context);
     }

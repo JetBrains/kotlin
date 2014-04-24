@@ -40,7 +40,7 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
-import org.jetbrains.jet.lang.psi.JetCodeFragmentImpl;
+import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
@@ -93,7 +93,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        if (!(JetPluginUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragmentImpl)
+        if (!(JetPluginUtil.isInSource(element) || element.getContainingFile() instanceof JetCodeFragment)
                 || JetPluginUtil.isKtFileInGradleProjectInWrongFolder(element)) {
             return;
         }
@@ -105,7 +105,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
         JetFile file = (JetFile) element.getContainingFile();
 
         BindingContext bindingContext;
-        if (file instanceof JetCodeFragmentImpl) {
+        if (file instanceof JetCodeFragment) {
             if (element instanceof JetElement) {
                 ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetElement) element);
                 bindingContext = resolveSession.resolveToElement((JetElement) element);
@@ -129,7 +129,7 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
             element.accept(visitor);
         }
 
-        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false) || file instanceof JetCodeFragmentImpl) {
+        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false) || file instanceof JetCodeFragment) {
             ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
             for (Diagnostic diagnostic : bindingContext.getDiagnostics().forElement(element)) {
                 elementAnnotator.registerDiagnosticAnnotations(diagnostic);

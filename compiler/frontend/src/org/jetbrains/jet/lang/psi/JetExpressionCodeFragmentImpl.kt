@@ -28,7 +28,7 @@ class JetExpressionCodeFragmentImpl(
         name: String,
         text: CharSequence,
         context: PsiElement?
-) : JetCodeFragmentImpl(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context), JetExpressionCodeFragment {
+) : JetCodeFragment(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context), JetExpressionCodeFragment {
 
     private var _thisType: PsiType? = null
     private var _superType: PsiType? = null

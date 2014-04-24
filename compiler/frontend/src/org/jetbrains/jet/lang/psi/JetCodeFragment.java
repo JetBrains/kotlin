@@ -27,13 +27,13 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.plugin.JetFileType;
 
-public abstract class JetCodeFragmentImpl extends JetFile implements PsiCodeFragment {
+public abstract class JetCodeFragment extends JetFile implements PsiCodeFragment {
     private final Project project;
 
     protected PsiElement context;
     private GlobalSearchScope resolveScope;
 
-    public JetCodeFragmentImpl(Project project, String name, CharSequence text, IElementType elementType, PsiElement context) {
+    public JetCodeFragment(Project project, String name, CharSequence text, IElementType elementType, PsiElement context) {
         super(((PsiManagerEx) PsiManager.getInstance(project)).getFileManager().createFileViewProvider(
                 new LightVirtualFile(name, JetFileType.INSTANCE, text), true), false);
         ((SingleRootFileViewProvider)getViewProvider()).forceCachedPsi(this);
@@ -75,8 +75,8 @@ public abstract class JetCodeFragmentImpl extends JetFile implements PsiCodeFrag
     }
 
     @Override
-    protected JetCodeFragmentImpl clone() {
-        JetCodeFragmentImpl clone = (JetCodeFragmentImpl)cloneImpl((FileElement)calcTreeElement().clone());
+    protected JetCodeFragment clone() {
+        JetCodeFragment clone = (JetCodeFragment)cloneImpl((FileElement)calcTreeElement().clone());
         clone.myOriginalFile = this;
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(project)).getFileManager();
         SingleRootFileViewProvider cloneViewProvider = (SingleRootFileViewProvider)fileManager.createFileViewProvider(new LightVirtualFile(
