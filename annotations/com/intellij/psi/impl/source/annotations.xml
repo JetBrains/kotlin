@@ -1,0 +1,5 @@
+<root>
+  <item name='com.intellij.psi.impl.source.PsiFileImpl com.intellij.psi.impl.source.tree.FileElement calcTreeElement()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>
