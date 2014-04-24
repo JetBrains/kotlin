@@ -23,10 +23,14 @@ import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.analyzer.computeTypeInfoInContext
+import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import org.jetbrains.jet.lang.types.PackageType
+import org.jetbrains.jet.plugin.JetBundle
 
-public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
+public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
         throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
     }
@@ -54,11 +58,12 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
             if (typeArguments?.getArguments()?.size() ?: 0 == 0 &&
                 numOfTotalValueArguments == 1 &&
                 callee != null) {
+
                 if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
-                    val file: JetFile = element.getContainingJetFile()
+                    val file = element.getContainingJetFile()
                     val bindingContext = file.getBindingContext()
-                    val descriptor = bindingContext.get(BindingContext.RESOLVED_CALL, callee)
-                    val valueArgumentsMap = descriptor?.getValueArguments()
+                    val resolvedCallDescriptor = bindingContext[BindingContext.RESOLVED_CALL, callee]
+                    val valueArgumentsMap = resolvedCallDescriptor?.getValueArguments()
                     val firstArgument = valueArguments?.getArguments()?.first()
 
                     return valueArgumentsMap?.keySet()?.any { it.getName().asString() == firstArgument?.getArgumentName()?.getText() && it.getIndex() == 0 } ?: false
@@ -73,13 +78,34 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
         }
     }
 
+    open fun intentionFailed(editor: Editor, messageID: String) {
+        JBPopupFactory.getInstance()!!.createMessage("Intention failed: ${JetBundle.message("replace.with.infix.function.call.intention.error.$messageID")}").showInBestPositionFor(editor)
+    }
+
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val parent = element.getParent() as JetDotQualifiedExpression
+        val receiver = parent.getReceiverExpression()
         val leftHandText = parent.getReceiverExpression().getText()
         val rightHandTextStringBuilder = StringBuilder()
         val operatorText = element.getCalleeExpression()!!.getText()
         val valueArguments = element.getValueArgumentList()?.getArguments() ?: listOf<JetValueArgument>()
         val functionLiteralArguments = element.getFunctionLiteralArguments()
+        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(parent)
+        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
+
+        when {
+            scope == null -> {
+                intentionFailed(editor, "resolution.failed")
+                return
+            }
+            else ->
+                    when (receiver.computeTypeInfoInContext(scope).getType()) {
+                        is PackageType -> {
+                            intentionFailed(editor, "package.call")
+                            return
+                        }
+                    }
+        }
 
         rightHandTextStringBuilder.append(
                 if (valueArguments.size() > 0)
@@ -93,4 +119,3 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
         parent.replace(replacement)
     }
 }
-
