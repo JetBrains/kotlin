@@ -254,6 +254,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
         }
         
+        @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
+        public void testSpaceAroundExtendColonInObjects() throws Exception {
+            doTest("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
+        }
+        
         @TestMetadata("SpaceBeforeFunctionLiteral.after.kt")
         public void testSpaceBeforeFunctionLiteral() throws Exception {
             doTest("idea/testData/formatter/SpaceBeforeFunctionLiteral.after.kt");
@@ -327,9 +332,7 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("idea/testData/formatter/modifierList")
         public static class ModifierList extends AbstractJetFormatterTest {
             public void testAllFilesPresentInModifierList() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                             new File("idea/testData/formatter/modifierList"),
-                                                             Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter/modifierList"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
             }
             
             @TestMetadata("funAnnotationBeforeAnnotation.after.kt")
@@ -512,6 +515,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpaceAroundExtendColon.after.inv.kt")
         public void testSpaceAroundExtendColon() throws Exception {
             doTestInverted("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
+        }
+        
+        @TestMetadata("SpaceAroundExtendColonInObjects.after.inv.kt")
+        public void testSpaceAroundExtendColonInObjects() throws Exception {
+            doTestInverted("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.inv.kt");
         }
         
         @TestMetadata("SpacesAroundOperations.after.inv.kt")
