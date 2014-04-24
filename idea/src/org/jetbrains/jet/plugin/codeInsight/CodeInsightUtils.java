@@ -97,18 +97,11 @@ public class CodeInsightUtils {
         }
         if (endOffset != element2.getTextRange().getEndOffset()) return PsiElement.EMPTY_ARRAY;
 
-        PsiElement[] children = parent.getChildren();
         ArrayList<PsiElement> array = new ArrayList<PsiElement>();
-        boolean flag = false;
-        for (PsiElement child : children) {
-            if (child.equals(element1)) {
-                flag = true;
-            }
-            if (flag && !(child instanceof PsiWhiteSpace)) {
-                array.add(child);
-            }
-            if (child.equals(element2)) {
-                break;
+        PsiElement stopElement = element2.getNextSibling();
+        for (PsiElement currentElement = element1; currentElement != stopElement; currentElement = currentElement.getNextSibling()) {
+            if (!(currentElement instanceof PsiWhiteSpace)) {
+                array.add(currentElement);
             }
         }
 

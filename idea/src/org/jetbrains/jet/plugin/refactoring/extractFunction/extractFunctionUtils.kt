@@ -681,10 +681,7 @@ fun ExtractionDescriptor.generateFunction(
         val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
         val originalOffsetByExpr = HashMap<JetElement, Int>()
 
-        val range = body.getStatements().first?.getTextRange()
-        if (range == null) return
-
-        val bodyOffset = range.getStartOffset()
+        val bodyOffset = body.getBlockContentOffset()
         val file = body.getContainingFile()!!
 
         for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration) {

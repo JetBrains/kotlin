@@ -106,7 +106,7 @@ class ExtractionData(
     }
 
     fun getBrokenReferencesInfo(body: JetBlockExpression): List<ResolvedReferenceInfo> {
-        val startOffset = body.getStatements().first!!.getTextRange()!!.getStartOffset()
+        val startOffset = body.getBlockContentOffset()
 
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
         for ((ref, context) in JetFileReferencesResolver.resolve(body)) {
@@ -138,4 +138,11 @@ private fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescri
     return d1 == d2 ||
             (d1 != null && d2 != null &&
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2))
+}
+
+// Hack:
+// we can't get first element offset through getStatement()/getChildren() since they skip comments and whitespaces
+// So we take offset of the left brace instead and increase it by 2 (which is length of "{\n" separating block start and its first element)
+private fun JetBlockExpression.getBlockContentOffset(): Int {
+    return getLBrace()!!.getTextRange()!!.getStartOffset() + 2
 }

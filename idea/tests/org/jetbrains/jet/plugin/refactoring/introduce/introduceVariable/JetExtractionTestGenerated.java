@@ -198,6 +198,16 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/refactoring/extractFunction/basic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("fragmentWithComment.kt")
+            public void testFragmentWithComment() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithComment.kt");
+            }
+            
+            @TestMetadata("fragmentWithMultilineComment.kt")
+            public void testFragmentWithMultilineComment() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/fragmentWithMultilineComment.kt");
+            }
+            
             @TestMetadata("localClassFunctionRef.kt")
             public void testLocalClassFunctionRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassFunctionRef.kt");
