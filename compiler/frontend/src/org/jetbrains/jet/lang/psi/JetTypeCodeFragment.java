@@ -16,11 +16,42 @@
 
 package org.jetbrains.jet.lang.psi;
 
-import com.intellij.psi.PsiCodeFragment;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.lexer.JetTokens;
 
-public interface JetTypeCodeFragment extends PsiCodeFragment {
+public class JetTypeCodeFragment extends JetCodeFragment {
+    public JetTypeCodeFragment(Project project, String name, CharSequence text, PsiElement context) {
+        super(project, name, text, JetNodeTypes.TYPE_CODE_FRAGMENT, context);
+    }
+
     @Nullable
-    JetType getType();
+    public JetType getType() {
+        JetType type = null;
+
+        for (PsiElement child : getChildren()) {
+            IElementType elementType = child.getNode().getElementType();
+
+            if (elementType == JetNodeTypes.TYPE_CODE_FRAGMENT) {
+                for (PsiElement grChild : child.getChildren()) {
+                    if (grChild instanceof JetTypeReference) {
+                        if (!grChild.getText().isEmpty())
+                            //TODO return the actual type
+                            type = KotlinBuiltIns.getInstance().getAnyType();
+                    }
+                    else if (!JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(elementType))
+                        return null;
+                }
+            }
+            else if (!JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(elementType))
+                return null;
+        }
+
+        return type;
+    }
 }

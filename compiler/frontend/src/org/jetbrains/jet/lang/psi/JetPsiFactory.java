@@ -334,7 +334,7 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetTypeCodeFragment createTypeCodeFragment(Project project, String text, PsiElement context) {
-        return new JetTypeCodeFragmentImpl(project, "fragment.kt", text, context);
+        return new JetTypeCodeFragment(project, "fragment.kt", text, context);
     }
 
     @NotNull
