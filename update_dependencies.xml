@@ -144,9 +144,6 @@
         <!-- dx.jar -->
         <get-maven-library prefix="com/google/android/tools" lib="dx" version="1.7" target.jar.name.base="dx"/>
 
-        <!-- hamcrest-core.jar -->
-        <get-maven-library prefix="org/hamcrest" lib="hamcrest-core" version="1.3" target.jar.name.base="hamcrest-core"/>
-
         <!-- jflex 1.4 -->
         <mkdir dir="dependencies/jflex"/>
         <get src="https://raw.github.com/JetBrains/intellij-community/master/tools/lexer/jflex-1.4/lib/JFlex.jar"
