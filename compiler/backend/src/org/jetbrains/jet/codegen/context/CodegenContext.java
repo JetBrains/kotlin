@@ -47,29 +47,18 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
 public abstract class CodegenContext<T extends DeclarationDescriptor> {
-
     public static final CodegenContext STATIC = new RootContext();
 
-    @NotNull
     private final T contextDescriptor;
-
-    @NotNull
     private final OwnerKind contextKind;
-
-    @Nullable
     private final CodegenContext parentContext;
-
     private final ClassDescriptor thisDescriptor;
-
     public final MutableClosure closure;
+    private final LocalLookup enclosingLocalLookup;
 
     private Map<DeclarationDescriptor, DeclarationDescriptor> accessors;
-
     private Map<DeclarationDescriptor, CodegenContext> childContexts;
-
     private NullableLazyValue<StackValue> lazyOuterExpression;
-
-    private final LocalLookup enclosingLocalLookup;
 
     public CodegenContext(
             @NotNull T contextDescriptor,

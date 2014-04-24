@@ -50,11 +50,4 @@ public class ConstructorContext extends MethodContext {
     public String toString() {
         return "Constructor: " + getContextDescriptor();
     }
-
-    @NotNull
-    @Override
-    public CodegenContext getParentContext() {
-        //noinspection ConstantConditions
-        return super.getParentContext();
-    }
 }

@@ -1818,7 +1818,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || methodKind == MethodKind.SYNTHETIC_ACCESSOR || methodKind == MethodKind.INITIALIZER;
             if (!skipPropertyAccessors) {
-                //noinspection ConstantConditions
                 propertyDescriptor = (PropertyDescriptor) backingFieldContext.getAccessor(propertyDescriptor, true, delegateType);
             }
             isStatic = true;
@@ -1872,7 +1871,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         String name;
-        //noinspection ConstantConditions
         if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
             assert backingFieldContext instanceof FieldOwnerContext : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext" ;
             name = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);

@@ -18,19 +18,17 @@ package org.jetbrains.jet.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.jet.codegen.OwnerKind;
 import org.jetbrains.jet.codegen.StackValue;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
+import org.jetbrains.org.objectweb.asm.Label;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
-
-    private Label methodStartLabel;
-
     private final boolean isInliningLambda;
+    private Label methodStartLabel;
 
     protected MethodContext(
             @NotNull FunctionDescriptor contextDescriptor,
@@ -46,25 +44,29 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         this.isInliningLambda = isInliningLambda;
     }
 
+    @NotNull
+    @Override
+    public CodegenContext getParentContext() {
+        //noinspection ConstantConditions
+        return super.getParentContext();
+    }
+
     @Override
     public StackValue lookupInContext(DeclarationDescriptor d, @Nullable StackValue result, GenerationState state, boolean ignoreNoOuter) {
         if (getContextDescriptor() == d) {
             return result != null ? result : StackValue.local(0, AsmTypeConstants.OBJECT_TYPE);
         }
 
-        //noinspection ConstantConditions
         return getParentContext().lookupInContext(d, result, state, ignoreNoOuter);
     }
 
     @Override
     public boolean isStatic() {
-        //noinspection ConstantConditions
         return getParentContext().isStatic();
     }
 
     @Override
     public StackValue getOuterExpression(StackValue prefix, boolean ignoreNoOuter) {
-        //noinspection ConstantConditions
         return getParentContext().getOuterExpression(prefix, false);
     }
 
