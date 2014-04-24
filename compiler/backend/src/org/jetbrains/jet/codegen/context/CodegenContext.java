@@ -36,6 +36,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.CAPTURED_THIS_FIELD;
@@ -198,8 +199,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     // SCRIPT: generate into script, move to ScriptingUtil
     @NotNull
-    public ScriptContext intoScript(@NotNull ScriptDescriptor script, @NotNull ClassDescriptor classDescriptor) {
-        return new ScriptContext(script, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
+    public ScriptContext intoScript(
+            @NotNull ScriptDescriptor script,
+            @NotNull List<ScriptDescriptor> earlierScripts,
+            @NotNull ClassDescriptor classDescriptor
+    ) {
+        return new ScriptContext(script, earlierScripts, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
     }
 
     @NotNull

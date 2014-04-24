@@ -70,6 +70,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -340,15 +341,12 @@ public class ReplInterpreter {
             @NotNull GenerationState state,
             @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts
     ) {
-        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
-            ScriptDescriptor earlierDescriptor = t.first;
-            Type earlierClassType = t.second;
-            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassType);
-        }
+        List<ScriptDescriptor> earlierScriptDescriptors = new ArrayList<ScriptDescriptor>(earlierScripts.size());
+        for (Pair<ScriptDescriptor, Type> pair : earlierScripts) {
+            ScriptDescriptor earlierDescriptor = pair.first;
+            Type earlierClassType = pair.second;
 
-        List<ScriptDescriptor> earlierScriptDescriptors = Lists.newArrayList();
-        for (Pair<ScriptDescriptor, Type> t : earlierScripts) {
-            ScriptDescriptor earlierDescriptor = t.first;
+            registerClassNameForScript(state.getBindingTrace(), earlierDescriptor, earlierClassType);
             earlierScriptDescriptors.add(earlierDescriptor);
         }
         state.setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);

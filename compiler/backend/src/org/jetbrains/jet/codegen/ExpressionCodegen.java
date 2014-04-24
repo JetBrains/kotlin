@@ -2175,7 +2175,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 }
                 else {
                     Type classType = asmTypeForScriptDescriptor(bindingContext, receiver.getDeclarationDescriptor());
-                    String fieldName = getParentScriptCodegen().getScriptFieldName(receiver.getDeclarationDescriptor());
+                    String fieldName = scriptContext.getScriptFieldName(receiver.getDeclarationDescriptor());
                     result.put(currentScriptType, v);
                     StackValue.field(classType, currentScriptType, fieldName, false).put(classType, v);
                 }
@@ -3894,18 +3894,6 @@ The "returned" value of try expression with no finally is either the last expres
     @Override
     public String toString() {
         return context.getContextDescriptor().toString();
-    }
-
-    @NotNull
-    private ScriptCodegen getParentScriptCodegen() {
-        MemberCodegen<?> codegen = parentCodegen;
-        while (codegen != null) {
-            if (codegen instanceof ScriptCodegen) {
-                return (ScriptCodegen) codegen;
-            }
-            codegen = codegen.getParentCodegen();
-        }
-        throw new IllegalStateException("Script codegen should be present in codegen tree");
     }
 
     @NotNull

@@ -23,26 +23,43 @@ import org.jetbrains.jet.codegen.binding.MutableClosure;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 
+import java.util.List;
+
 // SCRIPT: script as field owner context
 public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
-    @NotNull
     private final ScriptDescriptor scriptDescriptor;
+    private final List<ScriptDescriptor> earlierScripts;
 
     public ScriptContext(
             @NotNull ScriptDescriptor scriptDescriptor,
+            @NotNull List<ScriptDescriptor> earlierScripts,
             @NotNull ClassDescriptor contextDescriptor,
             @NotNull OwnerKind contextKind,
             @Nullable CodegenContext parentContext,
             @Nullable MutableClosure closure
     ) {
         super(contextDescriptor, contextKind, parentContext, closure, contextDescriptor, null);
-
         this.scriptDescriptor = scriptDescriptor;
+        this.earlierScripts = earlierScripts;
     }
 
     @NotNull
     public ScriptDescriptor getScriptDescriptor() {
         return scriptDescriptor;
+    }
+
+    @NotNull
+    public List<ScriptDescriptor> getEarlierScripts() {
+        return earlierScripts;
+    }
+
+    @NotNull
+    public String getScriptFieldName(@NotNull ScriptDescriptor scriptDescriptor) {
+        int index = earlierScripts.indexOf(scriptDescriptor);
+        if (index < 0) {
+            throw new IllegalStateException("Unregistered script: " + scriptDescriptor);
+        }
+        return "script$" + (index + 1);
     }
 
     @Override
