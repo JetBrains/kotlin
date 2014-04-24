@@ -22,7 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaCodeFragment
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import com.intellij.psi.PsiCodeBlock
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.psi.JavaCodeFragmentFactory
@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetExpression
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            val codeFragment = JetExpressionCodeFragmentImpl(project, "fragment.kt", item.getText(), getContextElement(context))
+            val codeFragment = JetExpressionCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
             if (item.getImports().isNotEmpty()) {
                 codeFragment.addImportsFromString(item.getImports())
             }

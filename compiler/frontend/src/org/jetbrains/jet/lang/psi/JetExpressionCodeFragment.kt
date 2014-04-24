@@ -23,12 +23,12 @@ import com.intellij.psi.JavaCodeFragment
 import com.intellij.psi.PsiType
 import com.intellij.psi.PsiClass
 
-class JetExpressionCodeFragmentImpl(
+public class JetExpressionCodeFragment(
         project: Project,
         name: String,
         text: CharSequence,
         context: PsiElement?
-) : JetCodeFragment(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context), JetExpressionCodeFragment {
+) : JetCodeFragment(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context), JavaCodeFragment {
 
     private var _thisType: PsiType? = null
     private var _superType: PsiType? = null
@@ -73,7 +73,7 @@ class JetExpressionCodeFragmentImpl(
         return true
     }
 
-    override fun getExpression(): JetExpression? {
+    fun getExpression(): JetExpression? {
         var resultingExpression: JetExpression? = null
         this.accept(object: JetTreeVisitor<Void>() {
             override fun visitExpression(expression: JetExpression, data: Void?): Void? {

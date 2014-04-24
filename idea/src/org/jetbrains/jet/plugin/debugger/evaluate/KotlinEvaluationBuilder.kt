@@ -63,7 +63,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
@@ -222,7 +222,7 @@ private fun createFileForDebugger(codeFragment: JetExpressionCodeFragment,
 ): JetFile {
     var fileText = template.replace("!IMPORT_LIST!",
                                     codeFragment.importsToString()
-                                            .split(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR)
+                                            .split(JetExpressionCodeFragment.IMPORT_SEPARATOR)
                                             .makeString("\n"))
 
     fileText = fileText.replace("!FUNCTION!", extractedFunction.getText())

@@ -339,7 +339,7 @@ public class JetPsiFactory {
 
     @NotNull
     public static JetExpressionCodeFragment createExpressionCodeFragment(Project project, String text, PsiElement context) {
-        return new JetExpressionCodeFragmentImpl(project, "fragment.kt", text, context);
+        return new JetExpressionCodeFragment(project, "fragment.kt", text, context);
     }
 
     @NotNull

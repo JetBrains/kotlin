@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.psi.JetThisExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.psi.JetOperationExpression
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragmentImpl
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 
 class KotlinEditorTextProvider : EditorTextProvider {
@@ -55,7 +55,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
 
             return containingFile.getImportList()?.getImports()
                                 ?.map { it.getText() }
-                                ?.makeString(JetExpressionCodeFragmentImpl.IMPORT_SEPARATOR) ?: ""
+                                ?.makeString(JetExpressionCodeFragment.IMPORT_SEPARATOR) ?: ""
         }
 
         fun findExpressionInner(element: PsiElement): JetExpression? {
