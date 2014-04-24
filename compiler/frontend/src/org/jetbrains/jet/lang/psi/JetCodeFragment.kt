@@ -24,6 +24,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.jet.plugin.JetFileType
+import java.util.HashSet
 
 public abstract class JetCodeFragment(
         val _project: Project,
@@ -31,15 +32,20 @@ public abstract class JetCodeFragment(
         text: CharSequence,
         elementType: IElementType,
         val _context: PsiElement?
-): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), PsiCodeFragment {
+): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), JavaCodeFragment {
+
+    private var _viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
+    private var _myImports = HashSet<String>();
 
     {
-        (getViewProvider() as SingleRootFileViewProvider).forceCachedPsi(this)
+        getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
     }
 
     private var _resolveScope: GlobalSearchScope? = null
-    private var _viewProvider: FileViewProvider? = null
+    private var _thisType: PsiType? = null
+    private var _superType: PsiType? = null
+    private var _exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {
         _resolveScope = scope
@@ -58,12 +64,51 @@ public abstract class JetCodeFragment(
     override fun clone(): JetCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as JetCodeFragment
         clone.setOriginalFile(this)
-        val fileManager = (PsiManager.getInstance(_project) as PsiManagerEx).getFileManager()
-        val cloneViewProvider = fileManager.createFileViewProvider(LightVirtualFile(getName(), JetFileType.INSTANCE, getText()), true) as SingleRootFileViewProvider
-        cloneViewProvider.forceCachedPsi(clone)
-        clone._viewProvider = cloneViewProvider
+        clone._myImports = _myImports
+        clone._viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(getName(), JetFileType.INSTANCE, getText()), true)
+        clone._viewProvider.forceCachedPsi(clone)
         return clone
     }
 
-    override fun getViewProvider() = _viewProvider ?: super<JetFile>.getViewProvider()
+    override fun getViewProvider() = _viewProvider
+
+    override fun getThisType() = _thisType
+
+    override fun setThisType(psiType: PsiType?) {
+        _thisType = psiType
+    }
+
+    override fun getSuperType() = _superType
+
+    override fun setSuperType(superType: PsiType?) {
+        _superType = superType
+    }
+
+    override fun importsToString(): String {
+        return _myImports.makeString(IMPORT_SEPARATOR)
+    }
+
+    override fun addImportsFromString(imports: String?) {
+        if (imports == null) return
+
+        _myImports.addAll(imports.split(IMPORT_SEPARATOR))
+    }
+
+    override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
+
+    override fun getVisibilityChecker() = JavaCodeFragment.VisibilityChecker.EVERYTHING_VISIBLE
+
+    override fun setExceptionHandler(checker: JavaCodeFragment.ExceptionHandler?) {
+        _exceptionHandler = checker
+    }
+
+    override fun getExceptionHandler() = _exceptionHandler
+
+    override fun importClass(aClass: PsiClass?): Boolean {
+        return true
+    }
+
+    class object {
+        val IMPORT_SEPARATOR = ","
+    }
 }

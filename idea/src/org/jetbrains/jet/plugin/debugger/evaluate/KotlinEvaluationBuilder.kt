@@ -65,6 +65,7 @@ import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
+import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -222,7 +223,7 @@ private fun createFileForDebugger(codeFragment: JetExpressionCodeFragment,
 ): JetFile {
     var fileText = template.replace("!IMPORT_LIST!",
                                     codeFragment.importsToString()
-                                            .split(JetExpressionCodeFragment.IMPORT_SEPARATOR)
+                                            .split(JetCodeFragment.IMPORT_SEPARATOR)
                                             .makeString("\n"))
 
     fileText = fileText.replace("!FUNCTION!", extractedFunction.getText())
