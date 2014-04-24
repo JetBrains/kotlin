@@ -112,7 +112,6 @@ fun Value.obj(expectedType: Type = asmType): Any? {
         return v
     }
     return when {
-        expectedType == asmType -> (this as AbstractValue<*>).value
         expectedType == Type.BOOLEAN_TYPE -> this.boolean
         expectedType == Type.SHORT_TYPE -> (this as IntValue).int.toShort()
         expectedType == Type.BYTE_TYPE -> (this as IntValue).int.toByte()

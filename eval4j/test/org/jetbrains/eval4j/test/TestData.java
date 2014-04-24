@@ -124,6 +124,10 @@ class TestData {
         Long l = klass.lm;
         Float f = klass.fm;
         Double d = klass.dm;
+
+        int i2 = klass.bm;
+        int i3 = klass.sm;
+        int i4 = klass.cm;
     }
 
     static class CastFieldType {
