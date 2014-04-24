@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import org.jetbrains.jet.lang.psi.JetPostfixExpression
 
 public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
@@ -44,7 +46,7 @@ public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<J
 
         val parent = element.getParent()
 
-        if (parent is JetDotQualifiedExpression) {
+        if (parent is JetDotQualifiedExpression && (parent.getReceiverExpression() is JetSimpleNameExpression || parent.getReceiverExpression() is JetPostfixExpression)) {
             val callee = element.getCalleeExpression()
             val typeArguments = element.getTypeArgumentList()
             val valueArguments = element.getValueArgumentList()
