@@ -169,11 +169,10 @@ private fun List<Instruction>.analyzeControlFlow(
                 val element = it.getElement()
                 if (element is JetReturnExpression
                         || element is JetBreakExpression
-                        || element is JetContinueExpression
-                        || element is JetThrowExpression) {
+                        || element is JetContinueExpression) {
                     jumpExits.add(it)
                 }
-                else {
+                else if (element !is JetThrowExpression) {
                     defaultExits.add(it)
                 }
             }
