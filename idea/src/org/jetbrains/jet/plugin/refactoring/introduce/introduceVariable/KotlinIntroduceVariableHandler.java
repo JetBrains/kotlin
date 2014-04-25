@@ -34,9 +34,9 @@ import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
+import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -55,7 +55,10 @@ import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils;
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
-import org.jetbrains.jet.plugin.refactoring.*;
+import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
+import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringUtil;
 import org.jetbrains.jet.plugin.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
@@ -133,10 +136,9 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             }
 
             ObservableBindingTrace bindingTrace = new ObservableBindingTrace(new BindingTraceContext());
-            InjectorForMacros injector = new InjectorForMacros(project, resolveSession.getModuleDescriptor());
-            JetType typeNoExpectedType = injector.getExpressionTypingServices().getType(scope, expression,
-                                                                                TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
-                                                                                bindingTrace);
+            JetType typeNoExpectedType = AnalyzerPackage.computeTypeInfoInContext(
+                    expression, scope, bindingTrace, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor()
+            ).getType();
             if (expressionType != null && typeNoExpectedType != null && !JetTypeChecker.INSTANCE.equalTypes(expressionType,
                                                                                                            typeNoExpectedType)) {
                 noTypeInference = true;

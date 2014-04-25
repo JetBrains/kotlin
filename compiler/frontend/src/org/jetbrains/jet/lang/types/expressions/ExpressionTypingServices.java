@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -147,10 +148,7 @@ public class ExpressionTypingServices {
     @NotNull
     public JetType safeGetType(@NotNull JetScope scope, @NotNull JetExpression expression, @NotNull JetType expectedType, @NotNull DataFlowInfo dataFlowInfo, @NotNull BindingTrace trace) {
         JetType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
-        if (type != null) {
-            return type;
-        }
-        return ErrorUtils.createErrorType("Type for " + expression.getText());
+        return AnalyzerPackage.safeType(type, expression);
     }
 
     @NotNull

@@ -26,8 +26,8 @@ import com.intellij.psi.util.*;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.analyzer.AnalyzerPackage;
 import org.jetbrains.jet.di.InjectorForBodyResolve;
-import org.jetbrains.jet.di.InjectorForMacros;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
 import org.jetbrains.jet.lang.psi.*;
@@ -229,13 +229,13 @@ public class ResolveElementCache {
         JetScope scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scopeForContextElement != null) {
             DataFlowInfo dataFlowInfoForContextElement = contextForElement.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, contextExpression);
-            InjectorForMacros injectorForMacros = new InjectorForMacros(codeFragment.getProject(), resolveSession.getModuleDescriptor());
-            injectorForMacros.getExpressionTypingServices().getType(
+            AnalyzerPackage.computeTypeInContext(
+                    codeFragment.getExpression(),
                     scopeForContextElement,
-                    codeFragmentExpression,
-                    TypeUtils.NO_EXPECTED_TYPE,
+                    trace,
                     dataFlowInfoForContextElement == null ? DataFlowInfo.EMPTY : dataFlowInfoForContextElement,
-                    trace
+                    TypeUtils.NO_EXPECTED_TYPE,
+                    resolveSession.getModuleDescriptor()
             );
         }
     }
