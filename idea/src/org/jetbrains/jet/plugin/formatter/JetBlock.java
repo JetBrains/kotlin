@@ -321,6 +321,10 @@ public class JetBlock extends AbstractBlock {
                     .in(DELEGATION_SPECIFIER_LIST)
                     .set(Indent.getContinuationIndent(false)),
 
+            ASTIndentStrategy.forNode("Indices")
+                    .in(INDICES)
+                    .set(Indent.getContinuationIndent(false)),
+
             ASTIndentStrategy.forNode("Binary expressions")
                     .in(BINARY_EXPRESSION)
                     .set(Indent.getContinuationWithoutFirstIndent(false)),

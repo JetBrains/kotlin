@@ -39,6 +39,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
         
+        @TestMetadata("ArrayAccess.after.kt")
+        public void testArrayAccess() throws Exception {
+            doTest("idea/testData/formatter/ArrayAccess.after.kt");
+        }
+        
         @TestMetadata("BinaryExpressions.after.kt")
         public void testBinaryExpressions() throws Exception {
             doTest("idea/testData/formatter/BinaryExpressions.after.kt");
