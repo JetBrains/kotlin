@@ -69,6 +69,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 import org.jetbrains.jet.plugin.JetLanguage;
 import org.jetbrains.jet.test.InnerTestClasses;
 import org.jetbrains.jet.test.TestMetadata;
+import org.jetbrains.jet.test.util.UtilPackage;
 import org.jetbrains.jet.util.slicedmap.ReadOnlySlice;
 import org.jetbrains.jet.util.slicedmap.SlicedMap;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
@@ -437,9 +438,11 @@ public class JetTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            // compare with hard copy: make sure nothing is lost in output
-            String expectedText = StringUtil.convertLineSeparators(expected.trim());
-            String actualText = StringUtil.convertLineSeparators(actual.trim());
+            String expectedText = UtilPackage.removeTrailingWhitespacesFromEachLine(
+                    StringUtil.convertLineSeparators(expected.trim()));
+            String actualText = UtilPackage.removeTrailingWhitespacesFromEachLine(
+                    StringUtil.convertLineSeparators(actual.trim()));
+
             if (!Comparing.equal(expectedText, actualText)) {
                 throw new FileComparisonFailure("Actual data differs from file content: " + expectedFile.getName(),
                                                 expected, actual, expectedFile.getAbsolutePath());
