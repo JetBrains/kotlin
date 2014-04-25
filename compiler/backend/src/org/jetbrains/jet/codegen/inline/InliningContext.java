@@ -16,32 +16,24 @@
 
 package org.jetbrains.jet.codegen.inline;
 
-import org.jetbrains.jet.codegen.context.CodegenContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.psi.Call;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class InliningContext {
 
+    @Nullable
+    private final InliningContext parent;
+
     public final Map<Integer, LambdaInfo> expressionMap;
-
-    public final List<InvokeCall> invokeCalls;
-
-    public final List<ConstructorInvocation> constructorInvocation;
-
-    public final LocalVarRemapper remapper;
 
     public final GenerationState state;
 
     public final NameGenerator nameGenerator;
-
-    public final CodegenContext startContext;
-
-    public final Call call;
 
     public final Map<String, String> typeMapping;
 
@@ -49,27 +41,19 @@ public class InliningContext {
 
     public final boolean classRegeneration;
 
-    public InliningContext(
-            Map<Integer, LambdaInfo> map,
-            List<InvokeCall> accesses,
-            List<ConstructorInvocation> invocation,
-            LocalVarRemapper remapper,
-            GenerationState state,
-            NameGenerator nameGenerator,
-            CodegenContext startContext,
-            Call call,
-            Map<String, String> typeMapping,
+    protected InliningContext(
+            @Nullable InliningContext parent,
+            @NotNull Map<Integer, LambdaInfo> map,
+            @NotNull GenerationState state,
+            @NotNull NameGenerator nameGenerator,
+            @NotNull Map<String, String> typeMapping,
             boolean isInliningLambda,
             boolean classRegeneration
     ) {
+        this.parent = parent;
         expressionMap = map;
-        invokeCalls = accesses;
-        constructorInvocation = invocation;
-        this.remapper = remapper;
         this.state = state;
         this.nameGenerator = nameGenerator;
-        this.startContext = startContext;
-        this.call = call;
         this.typeMapping = typeMapping;
         this.isInliningLambda = isInliningLambda;
         this.classRegeneration = classRegeneration;
@@ -80,7 +64,7 @@ public class InliningContext {
     }
 
     public InliningContext subInlineLambda(LambdaInfo lambdaInfo) {
-        Map<String, String> map = new HashMap();
+        Map<String, String> map = new HashMap<String, String>();
         map.put(lambdaInfo.getLambdaClassType().getInternalName(), null); //mark lambda inlined
         return subInline(nameGenerator.subGenerator("lambda"), map, true);
     }
@@ -89,15 +73,58 @@ public class InliningContext {
         return subInline(generator, additionalTypeMappings, isInliningLambda);
     }
 
-    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {
+    public InliningContext subInlineWithClassRegeneration(@NotNull NameGenerator generator,
+            @NotNull Map<String, String> additionalTypeMappings,
+            @NotNull ConstructorInvocation constructorInvocation) {
         Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
         newTypeMappings.putAll(additionalTypeMappings);
-        return new InliningContext(expressionMap, invokeCalls, constructorInvocation, remapper, state, generator, startContext, call,
-                                newTypeMappings, isInliningLambda, classRegeneration);
+        return new RegenetedClassContext(this, expressionMap, state, generator,
+                                   newTypeMappings, isInliningLambda, constructorInvocation);
+
     }
 
-    public InliningContext classRegeneration() {
-        return new InliningContext(expressionMap, invokeCalls, constructorInvocation, remapper, state, nameGenerator, startContext, call,
-                                   typeMapping, isInliningLambda, true);
+    public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {
+        return subInline(generator, additionalTypeMappings, isInliningLambda, classRegeneration);
+    }
+
+    private InliningContext subInline(
+            NameGenerator generator,
+            Map<String, String> additionalTypeMappings,
+            boolean isInliningLambda,
+            boolean isRegeneration
+    ) {
+        Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
+        newTypeMappings.putAll(additionalTypeMappings);
+        return new InliningContext(this, expressionMap, state, generator,
+                                   newTypeMappings, isInliningLambda, isRegeneration);
+    }
+
+    public boolean isRoot() {
+        return parent == null;
+    }
+
+    @NotNull
+    public RootInliningContext getRoot() {
+        if (isRoot()) {
+            return (RootInliningContext) this;
+        }
+        else {
+            return parent.getRoot();
+        }
+    }
+
+    @Nullable
+    public InliningContext getParent() {
+        return parent;
+    }
+
+    public boolean isInliningLambdaRootContext() {
+        //noinspection ConstantConditions
+        return isInliningLambda && !getParent().isInliningLambda;
+    }
+
+    public String getClassNameToInline() {
+        assert parent != null : "At least root context should return proper value";
+        return parent.getClassNameToInline();
     }
 }

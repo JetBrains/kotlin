@@ -196,10 +196,13 @@ public class InlineCodegen implements CallGenerator {
 
         Parameters parameters = new Parameters(realParams, Parameters.shiftAndAddStubs(captured, realParams.size()));
 
-        InliningContext info =
-                new InliningContext(expressionMap, null, null, null, state,
-                                 codegen.getInlineNameGenerator().subGenerator(functionDescriptor.getName().asString()),
-                                 codegen.getContext(), call, Collections.<String, String>emptyMap(), false, false);
+        InliningContext info = new RootInliningContext(expressionMap,
+                                                       state,
+                                                       codegen.getInlineNameGenerator()
+                                                               .subGenerator(functionDescriptor.getName().asString()),
+                                                       codegen.getContext(),
+                                                       call,
+                                                       codegen.getParentCodegen().getClassName());
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + call.getCallElement().getText()); //with captured
 

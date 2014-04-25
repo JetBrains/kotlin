@@ -346,4 +346,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         iv.putstatic(thisAsmType.getInternalName(), JvmAbi.PROPERTY_METADATA_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
     }
+
+    public String getClassName() {
+        return v.getThisName();
+    }
 }

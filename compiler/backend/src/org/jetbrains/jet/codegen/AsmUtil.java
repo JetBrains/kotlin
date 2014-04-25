@@ -22,11 +22,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
-import org.jetbrains.org.objectweb.asm.Label;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
@@ -39,19 +34,24 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
+import org.jetbrains.org.objectweb.asm.Label;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.ABI_VERSION_FIELD_NAME;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.mapping.PrimitiveTypesUtil.asmTypeForPrimitive;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class AsmUtil {
     private static final Set<ClassDescriptor> PRIMITIVE_NUMBER_CLASSES = Sets.newHashSet(
@@ -212,6 +212,24 @@ public class AsmUtil {
             return ACC_PUBLIC;
         }
         return NO_FLAG_PACKAGE_PRIVATE;
+    }
+
+
+    public static int getVisibilityAccessFlagForAnonymous(@NotNull ClassDescriptor descriptor) {
+        if (isDeclarationInsideInlineFunction(descriptor)) {
+            return ACC_PUBLIC;
+        }
+        return NO_FLAG_PACKAGE_PRIVATE;
+    }
+
+    public static boolean isDeclarationInsideInlineFunction(@NotNull ClassDescriptor descriptor) {
+        //NB: constructor context couldn't be inline
+        DeclarationDescriptor parentDeclaration = descriptor.getContainingDeclaration();
+        if (parentDeclaration instanceof SimpleFunctionDescriptor &&
+            ((SimpleFunctionDescriptor) parentDeclaration).getInlineStrategy().isInline()) {
+            return true;
+        }
+        return false;
     }
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {

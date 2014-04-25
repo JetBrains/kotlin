@@ -101,6 +101,21 @@ public class AnonymousObjectTransformer {
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
 
             @Override
+            public void visitOuterClass(@NotNull String owner, String name, String desc) {
+                InliningContext parent = inliningContext.getParent();
+                assert parent != null : "Context for transformer should have parent one: " + inliningContext;
+
+                //we don't write owner info for lamdbas and SAMs just only for objects
+                if (parent.isRoot() || parent.isInliningLambdaRootContext()) {
+                    //TODO: think about writing method info - there is some problem with new constructor desc calculation
+                    super.visitOuterClass(inliningContext.getParent().getClassNameToInline(), null, null);
+                    return;
+                }
+
+                super.visitOuterClass(owner, name, desc);
+            }
+
+            @Override
             public MethodVisitor visitMethod(
                     int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
             ) {
@@ -267,7 +282,7 @@ public class AnonymousObjectTransformer {
 
     @NotNull
     private ClassBuilder createClassBuilder() {
-        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.call.getCallElement().getContainingFile()),
+        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.getRoot().call.getCallElement().getContainingFile()),
                      new TypeRemapper(inliningContext.typeMapping));
     }
 
