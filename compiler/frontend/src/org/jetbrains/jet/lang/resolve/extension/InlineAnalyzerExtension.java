@@ -63,12 +63,20 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
 
             @Override
             public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor));
+                if (declaration.getParent() instanceof JetObjectLiteralExpression) {
+                    super.visitObjectDeclaration(declaration);
+                } else {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor));
+                }
             }
 
             @Override
             public void visitNamedFunction(@NotNull JetNamedFunction function) {
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor));
+                if (function.getParent().getParent() instanceof JetObjectDeclaration) {
+                    super.visitNamedFunction(function);
+                } else {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(function, function, descriptor));
+                }
             }
         };
 
