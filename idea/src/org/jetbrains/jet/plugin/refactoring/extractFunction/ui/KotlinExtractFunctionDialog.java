@@ -125,8 +125,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            String visibility = originalDescriptor.getDescriptor().getVisibility();
-            visibilityBox.setSelectedItem(visibility.isEmpty() ? "internal" : visibility);
+            visibilityBox.setSelectedItem("private");
         }
         visibilityBox.addItemListener(
                 new ItemListener() {
