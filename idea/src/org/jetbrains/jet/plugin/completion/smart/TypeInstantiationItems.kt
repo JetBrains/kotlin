@@ -21,14 +21,12 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.codeInsight.completion.InsertHandler
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.Modality
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.plugin.codeInsight.ImplementMethodsHandler
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.codeInsight.completion.InsertionContext
@@ -36,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
+import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 
 class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
@@ -53,7 +52,7 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
         if (!(classifier is ClassDescriptor)) return
         //TODO: check for constructor's visibility
 
-        var lookupElement = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, classifier)
+        var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
 
         var lookupString = lookupElement.getLookupString()
 
@@ -85,12 +84,12 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
             itemText += "()"
             val constructors = classifier.getConstructors()
             val baseInsertHandler =
-                    if (constructors.size == 0)
+                    (if (constructors.size == 0)
                         JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
                     else if (constructors.size == 1)
                         DescriptorLookupConverter.getDefaultInsertHandler(constructors.first())!!
                     else
-                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER
+                        JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
@@ -101,7 +100,10 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
                     shortenReferences(context, context.getStartOffset(), context.getTailOffset())
                 }
             }
-            if ((baseInsertHandler as JetFunctionInsertHandler).lambdaInfo != null) {
+            if (baseInsertHandler.caretPosition == CaretPosition.IN_BRACKETS) {
+                lookupElement = lookupElement.keepOldArgumentListOnTab()
+            }
+            if (baseInsertHandler.lambdaInfo != null) {
                 lookupElement.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
             }
         }

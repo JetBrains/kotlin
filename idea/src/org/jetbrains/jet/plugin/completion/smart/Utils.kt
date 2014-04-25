@@ -31,9 +31,13 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.jet.plugin.completion.handlers.WithTailStringInsertHandler
 import java.util.ArrayList
 import org.jetbrains.jet.plugin.completion.*
+import com.intellij.openapi.util.Key
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.plugin.completion.handlers.WithTailStringInsertHandler
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -82,6 +86,13 @@ fun LookupElement.addTail(matchedExpectedInfos: Collection<ExpectedInfo>): Looku
     = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
 
 fun LookupElement.suppressAutoInsertion() = AutoCompletionPolicy.NEVER_AUTOCOMPLETE.applyPolicy(this)
+
+val KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY = Key<Unit>("KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY")
+
+fun LookupElement.keepOldArgumentListOnTab(): LookupElement {
+    putUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY, Unit.VALUE)
+    return this
+}
 
 enum class ExpectedInfoClassification {
     MATCHES
@@ -149,6 +160,11 @@ fun functionType(function: FunctionDescriptor): JetType? {
                                                         null,
                                                         function.getValueParameters().map { it.getType() },
                                                         function.getReturnType() ?: return null)
+}
+
+fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: ResolveSessionForBodies, bindingContext: BindingContext): LookupElement {
+    val element = DescriptorLookupConverter.createLookupElement(resolveSession, bindingContext, descriptor)
+    return if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) element.keepOldArgumentListOnTab() else element
 }
 
 fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.INSTANCE.isSubtypeOf(this, expectedType)

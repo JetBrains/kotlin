@@ -176,6 +176,16 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/ConstructorWithParameters.kt");
     }
     
+    @TestMetadata("DoNotEraseBraceOnTab.kt")
+    public void testDoNotEraseBraceOnTab() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/DoNotEraseBraceOnTab.kt");
+    }
+    
+    @TestMetadata("DoNotReplaceOnEnter.kt")
+    public void testDoNotReplaceOnEnter() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/DoNotReplaceOnEnter.kt");
+    }
+    
     @TestMetadata("EnumMember.kt")
     public void testEnumMember() throws Exception {
         doTest("idea/testData/completion/handlers/smart/EnumMember.kt");
@@ -286,6 +296,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/NullableValue3.kt");
     }
     
+    @TestMetadata("NullableValueKeepOldArguments.kt")
+    public void testNullableValueKeepOldArguments() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/NullableValueKeepOldArguments.kt");
+    }
+    
     @TestMetadata("TabReplaceComma1.kt")
     public void testTabReplaceComma1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/TabReplaceComma1.kt");
@@ -309,6 +324,26 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("TabReplaceExpression3.kt")
     public void testTabReplaceExpression3() throws Exception {
         doTest("idea/testData/completion/handlers/smart/TabReplaceExpression3.kt");
+    }
+    
+    @TestMetadata("TabReplaceExpression4.kt")
+    public void testTabReplaceExpression4() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceExpression4.kt");
+    }
+    
+    @TestMetadata("TabReplaceFunctionName1.kt")
+    public void testTabReplaceFunctionName1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceFunctionName1.kt");
+    }
+    
+    @TestMetadata("TabReplaceFunctionName2.kt")
+    public void testTabReplaceFunctionName2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceFunctionName2.kt");
+    }
+    
+    @TestMetadata("TabReplaceFunctionName3.kt")
+    public void testTabReplaceFunctionName3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/TabReplaceFunctionName3.kt");
     }
     
     @TestMetadata("TabReplaceIdentifier.kt")

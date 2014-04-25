@@ -15,7 +15,17 @@
       name='com.intellij.codeInsight.completion.InsertHandler void handleInsert(com.intellij.codeInsight.completion.InsertionContext, T) 1'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.codeInsight.completion.InsertionContext com.intellij.codeInsight.completion.OffsetMap getOffsetMap()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.codeInsight.completion.InsertionContext com.intellij.openapi.project.Project getProject()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.codeInsight.completion.OffsetKey com.intellij.codeInsight.completion.OffsetKey create(java.lang.String)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.codeInsight.completion.OffsetKey com.intellij.codeInsight.completion.OffsetKey create(java.lang.String, boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>

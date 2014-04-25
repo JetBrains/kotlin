@@ -18,43 +18,27 @@ package org.jetbrains.jet.plugin.completion.handlers
 
 import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.editor.event.*
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.codeInsight.AutoPopupController
+import com.intellij.codeInsight.lookup.Lookup
+import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
+import org.jetbrains.jet.plugin.completion.smart.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
 
 abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
     protected abstract fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean)
 
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val document = context.getDocument()
-        val caretModel = context.getEditor().getCaretModel()
 
-        var maxChangeOffset = caretModel.getOffset()
-        val documentListener = object: DocumentListener {
-            override fun documentChanged(event: DocumentEvent) {
-                val oldEndOffset = event.getOffset() + event.getOldLength()
-                if (oldEndOffset < maxChangeOffset) {
-                    maxChangeOffset += event.getNewLength() - event.getOldLength()
-                }
-                else {
-                    maxChangeOffset = event.getOffset() + event.getNewLength()
-                }
-            }
+        item.handleInsert(context)
+        PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
 
-            override fun beforeDocumentChange(event: DocumentEvent) {
-            }
+        var tailOffset = context.getTailOffset()
+        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR && item.getUserData(KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY) != null) {
+            val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
+            if (offset != -1) tailOffset = offset
         }
-
-        document.addDocumentListener(documentListener)
-        try{
-            item.handleInsert(context)
-            PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(document)
-        }
-        finally {
-            document.removeDocumentListener(documentListener)
-        }
-
-        insertTail(context, maxChangeOffset, caretModel.getOffset() == maxChangeOffset)
+        insertTail(context, tailOffset, context.getEditor().getCaretModel().getOffset() == tailOffset)
     }
 }
 

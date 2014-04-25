@@ -20,19 +20,20 @@ import com.intellij.codeInsight.completion.*;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.JetNodeTypes;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetBlockExpression;
+import org.jetbrains.jet.lang.psi.JetCallExpression;
+import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.completion.smart.SmartCompletion;
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference;
 
 public class JetCompletionContributor extends CompletionContributor {
     public JetCompletionContributor() {
-        final CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
+        CompletionProvider<CompletionParameters> provider = new CompletionProvider<CompletionParameters>() {
             @Override
             protected void addCompletions(
                     @NotNull CompletionParameters parameters,
@@ -125,7 +126,7 @@ public class JetCompletionContributor extends CompletionContributor {
                 PsiElement tokenAt = context.getFile().findElementAt(Math.max(0, offset));
                 if (tokenAt != null) {
                     PsiElement parent = tokenAt.getParent();
-                    if (parent instanceof JetExpression) {
+                    if (parent instanceof JetExpression && !(parent instanceof JetBlockExpression)) {
                         // search expression to be replaced - go up while we are the first child of parent expression
                         JetExpression expression = (JetExpression) parent;
                         parent = expression.getParent();
@@ -133,7 +134,16 @@ public class JetCompletionContributor extends CompletionContributor {
                             expression = (JetExpression) parent;
                             parent = expression.getParent();
                         }
-                        context.setReplacementOffset(expression.getTextRange().getEndOffset());
+
+                        int expressionEnd = expression.getTextRange().getEndOffset();
+                        if (expression instanceof JetCallExpression) {
+                            JetExpression calleeExpression = ((JetCallExpression) expression).getCalleeExpression();
+                            context.setReplacementOffset(calleeExpression != null ? calleeExpression.getTextRange().getEndOffset() : expressionEnd);
+                        }
+                        else{
+                            context.setReplacementOffset(expressionEnd);
+                        }
+                        context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expressionEnd);
                     }
                 }
             }

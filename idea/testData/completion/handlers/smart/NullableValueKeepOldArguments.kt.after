@@ -1,0 +1,10 @@
+fun foo(s: String, c: Char){ }
+
+fun takeString(p: Int): String? = null
+
+fun bar() {
+    foo(takeString(<caret>1, 2, 3)!!, )
+}
+
+// ELEMENT_TEXT: "!! takeString"
+// CHAR: \t
