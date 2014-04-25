@@ -41,7 +41,7 @@ abstract class JetTypeParameterListOwnerStub<T extends PsiJetStubWithFqName> ext
     }
 
     @Nullable
-    JetTypeConstraintList getTypeConstraintList() {
+    public JetTypeConstraintList getTypeConstraintList() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_CONSTRAINT_LIST);
     }
 

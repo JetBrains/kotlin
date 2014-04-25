@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
@@ -63,11 +63,16 @@ public class JetEnumEntry extends JetClass {
     @NotNull
     @Override
     public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        JetInitializerList initializerList = getStubOrPsiChild(JetStubElementTypes.INITIALIZER_LIST);
+        JetInitializerList initializerList = getInitializerList();
         if (initializerList == null) {
             return Collections.emptyList();
         }
         return initializerList.getInitializers();
+    }
+
+    @Nullable
+    public JetInitializerList getInitializerList() {
+        return getStubOrPsiChild(JetStubElementTypes.INITIALIZER_LIST);
     }
 
     @Override
