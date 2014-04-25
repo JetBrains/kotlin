@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.*;
 import java.io.IOException;
 import java.util.*;
 
-public class LambdaTransformer {
+public class AnonymousObjectTransformer {
 
     protected final GenerationState state;
 
@@ -54,7 +54,12 @@ public class LambdaTransformer {
 
     private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
 
-    public LambdaTransformer(@NotNull String objectInternalName, @NotNull InliningContext inliningContext, boolean isSameModule, @NotNull Type newLambdaType) {
+    public AnonymousObjectTransformer(
+            @NotNull String objectInternalName,
+            @NotNull InliningContext inliningContext,
+            boolean isSameModule,
+            @NotNull Type newLambdaType
+    ) {
         this.isSameModule = isSameModule;
         this.state = inliningContext.state;
         this.typeMapper = state.getTypeMapper();

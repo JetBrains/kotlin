@@ -141,7 +141,7 @@ public class MethodInliner {
                         //TODO: need poping of type but what to do with local funs???
                         Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
                         currentTypeMapping.put(invocation.getOwnerInternalName(), newLambdaType.getInternalName());
-                        LambdaTransformer transformer = new LambdaTransformer(invocation.getOwnerInternalName(),
+                        AnonymousObjectTransformer transformer = new AnonymousObjectTransformer(invocation.getOwnerInternalName(),
                                                                               inliningContext.subInline(inliningContext.nameGenerator, currentTypeMapping).classRegeneration(),
                                                                               isSameModule, newLambdaType);
 
