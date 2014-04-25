@@ -1,2 +1,2 @@
 while (true)
-return 1
+    return 1

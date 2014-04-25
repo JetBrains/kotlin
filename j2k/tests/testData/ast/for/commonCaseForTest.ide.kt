@@ -1,10 +1,9 @@
 {
-init()
-while (condition())
-{
-body()
-{
-update()
-}
-}
+    init()
+    while (condition()) {
+        body()
+        {
+            update()
+        }
+    }
 }

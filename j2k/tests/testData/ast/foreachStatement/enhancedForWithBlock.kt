@@ -1,5 +1,4 @@
-for (n in list)
-{
-var i: Int = 1
-i++
+for (n in list) {
+    var i: Int = 1
+    i++
 }

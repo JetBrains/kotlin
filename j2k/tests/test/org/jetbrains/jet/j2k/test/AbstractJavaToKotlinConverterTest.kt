@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.application.Result
+import java.io.BufferedReader
+import java.io.StringReader
 
 public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
 public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
@@ -66,18 +68,32 @@ abstract class AbstractJavaToKotlinConverterTest(
             else -> throw IllegalStateException("Specify what is it: file, class, method, statement or expression " +
                                                 "using the first line of test data file")
         }
-        val actual = reformat(rawConverted, project)
+
+        val reformatInFun = when (prefix) {
+            "element", "expression", "statement" -> true
+            else -> false
+        }
+
+        val actual = reformat(rawConverted, project, reformatInFun)
         val kotlinPath = javaPath.replace(".java", ".$kotlinFileExtension")
         val expectedFile = File(kotlinPath)
         JetTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
-    private fun reformat(text: String, project: Project): String {
-        val convertedFile = JetTestUtils.createFile("converted", text, project)
+    private fun reformat(text: String, project: Project, inFunContext: Boolean): String {
+        val textToFormat = if (inFunContext) "fun convertedTemp() {\n$text\n}" else text
+
+        val convertedFile = JetTestUtils.createFile("converted", textToFormat, project)
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
         }
-        return convertedFile.getText()!!
+
+        val reformattedText = convertedFile.getText()!!
+
+        return if (inFunContext)
+            reformattedText.removeFirstLine().removeLastLine().trimIndent()
+        else
+            reformattedText
     }
 
     private fun elementToKotlin(converter: Converter, text: String): String {
@@ -120,5 +136,43 @@ abstract class AbstractJavaToKotlinConverterTest(
 
     override fun getProjectJDK(): Sdk? {
         return PluginTestCaseBase.jdkFromIdeaHome()
+    }
+
+    private fun String.removeFirstLine(): String {
+        val lastNewLine = indexOf('\n')
+        return if (lastNewLine == -1) "" else substring(lastNewLine)
+    }
+
+    private fun String.removeLastLine(): String {
+        val lastNewLine = lastIndexOf('\n')
+        return if (lastNewLine == -1) "" else substring(0, lastNewLine)
+    }
+
+    private fun String.trimIndent(): String {
+        val lines = split('\n')
+
+        val firstNonEmpty = lines.firstOrNull { !it.trim().isEmpty() }
+        if (firstNonEmpty == null) {
+            return this
+        }
+
+        val trimmedPrefix = firstNonEmpty.takeWhile { ch -> ch.isWhitespace() }
+        if (trimmedPrefix.isEmpty()) {
+            return this
+        }
+
+        return lines.map { line ->
+            if (line.trim().isEmpty()) {
+                ""
+            }
+            else {
+                if (!line.startsWith(trimmedPrefix)) {
+                    throw IllegalArgumentException(
+                            """Invalid line "$line", ${trimmedPrefix.size} whitespace character are expected""")
+                }
+
+                line.substring(trimmedPrefix.length)
+            }
+        }.makeString(separator = "\n")
     }
 }

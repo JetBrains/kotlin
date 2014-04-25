@@ -1,3 +1,3 @@
 do
-return 1
+    return 1
 while (true)

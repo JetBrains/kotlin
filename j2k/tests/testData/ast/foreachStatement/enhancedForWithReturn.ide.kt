@@ -1,2 +1,2 @@
 for (n in list)
-return n
+    return n

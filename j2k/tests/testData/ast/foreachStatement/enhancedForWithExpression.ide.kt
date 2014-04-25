@@ -1,2 +1,2 @@
 for (n in list)
-i++
+    i++

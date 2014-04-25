@@ -1,5 +1,4 @@
-for (n in list)
-{
-val i = 1
-i++
+for (n in list) {
+    val i = 1
+    i++
 }

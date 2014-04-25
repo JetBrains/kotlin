@@ -1,3 +1,3 @@
 synchronized (s) {
-doSomething(s)
+    doSomething(s)
 }
