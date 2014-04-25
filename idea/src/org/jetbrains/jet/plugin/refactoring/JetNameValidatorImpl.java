@@ -18,9 +18,9 @@ package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
@@ -33,17 +33,13 @@ import java.util.Collection;
 public class JetNameValidatorImpl extends JetNameValidator {
     private final PsiElement myContainer;
     private final PsiElement myAnchor;
-    private final boolean myOnlyVariables;
+    private final Function1<DeclarationDescriptor, Boolean> myFilter;
 
-    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, boolean onlyVariables) {
+    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, Function1<DeclarationDescriptor, Boolean> filter) {
         super(container.getProject());
         myContainer = container;
         myAnchor = anchor;
-        myOnlyVariables = onlyVariables;
-    }
-
-    public JetNameValidatorImpl(PsiElement container, PsiElement anchor) {
-        this(container, anchor, true);
+        myFilter = filter;
     }
 
     @Override
@@ -85,7 +81,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
             public void visitExpression(@NotNull JetExpression expression) {
                 Collection<DeclarationDescriptor> variants = TipsManager.getVariantsNoReceiver(expression, bindingContext);
                 for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().asString().equals(name) && (!myOnlyVariables || variant instanceof VariableDescriptor)) {
+                    if (variant.getName().asString().equals(name) && myFilter.invoke(variant)) {
                         result.set(false);
                         return;
                     }

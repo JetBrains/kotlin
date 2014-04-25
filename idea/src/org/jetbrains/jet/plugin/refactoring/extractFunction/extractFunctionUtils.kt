@@ -89,6 +89,7 @@ import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -234,7 +235,11 @@ private fun ExtractionData.inferParametersInfo(
         replacementMap: MutableMap<Int, Replacement>,
         parameters: MutableSet<Parameter>
 ): MaybeError<ExtractionDescriptor, String>? {
-    val varNameValidator = JetNameValidatorImpl(commonParent.getParentByType(javaClass<JetExpression>()), originalElements.first, true)
+    val varNameValidator = JetNameValidatorImpl(
+            commonParent.getParentByType(javaClass<JetExpression>()),
+            originalElements.first,
+            { it is VariableDescriptor }
+    )
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, Parameter>()
@@ -448,7 +453,11 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
     val outOfScopeError = checkDeclarationsMovingOutOfScope(controlFlow)
     if (outOfScopeError != null) return outOfScopeError
 
-    val functionNameValidator = JetNameValidatorImpl(nextSibling.getParent(), nextSibling, false)
+    val functionNameValidator = JetNameValidatorImpl(
+            nextSibling.getParent(),
+            nextSibling,
+            {it is FunctionDescriptor || it is ClassDescriptor}
+    )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
 
     val receiverCandidates = parameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }

@@ -31,9 +31,12 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.di.InjectorForMacros;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -187,10 +190,17 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
-                JetNameValidatorImpl validator = new JetNameValidatorImpl(commonContainer,
-                                                                          calculateAnchor(commonParent,
-                                                                                          commonContainer,
-                                                                                          allReplaces));
+                JetNameValidatorImpl validator = new JetNameValidatorImpl(
+                        commonContainer,
+                        calculateAnchor(commonParent, commonContainer, allReplaces),
+                        new Function1<DeclarationDescriptor, Boolean>() {
+                            @Override
+                            public Boolean invoke(DeclarationDescriptor descriptor) {
+                                return descriptor instanceof VariableDescriptor;
+                            }
+                        }
+
+                );
                 String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator, "value");
                 final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
                 Collections.addAll(suggestedNamesSet, suggestedNames);
