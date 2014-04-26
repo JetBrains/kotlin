@@ -264,6 +264,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/SpaceAroundExtendColon.after.kt");
         }
         
+        @TestMetadata("SpaceAroundExtendColonInEnums.after.kt")
+        public void testSpaceAroundExtendColonInEnums() throws Exception {
+            doTest("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.kt");
+        }
+        
         @TestMetadata("SpaceAroundExtendColonInObjects.after.kt")
         public void testSpaceAroundExtendColonInObjects() throws Exception {
             doTest("idea/testData/formatter/SpaceAroundExtendColonInObjects.after.kt");
@@ -530,6 +535,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpaceAroundExtendColon.after.inv.kt")
         public void testSpaceAroundExtendColon() throws Exception {
             doTestInverted("idea/testData/formatter/SpaceAroundExtendColon.after.inv.kt");
+        }
+        
+        @TestMetadata("SpaceAroundExtendColonInEnums.after.inv.kt")
+        public void testSpaceAroundExtendColonInEnums() throws Exception {
+            doTestInverted("idea/testData/formatter/SpaceAroundExtendColonInEnums.after.inv.kt");
         }
         
         @TestMetadata("SpaceAroundExtendColonInObjects.after.inv.kt")

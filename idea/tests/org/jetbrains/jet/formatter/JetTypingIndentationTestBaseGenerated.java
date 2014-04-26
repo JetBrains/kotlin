@@ -139,6 +139,21 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/InDelegationListNotEmpty.after.kt");
         }
         
+        @TestMetadata("InEnumInitializerListAfterColon.after.kt")
+        public void testInEnumInitializerListAfterColon() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InEnumInitializerListAfterColon.after.kt");
+        }
+        
+        @TestMetadata("InEnumInitializerListAfterComma.after.kt")
+        public void testInEnumInitializerListAfterComma() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.kt");
+        }
+        
+        @TestMetadata("InEnumInitializerListNotEmpty.after.kt")
+        public void testInEnumInitializerListNotEmpty() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InEnumInitializerListNotEmpty.after.kt");
+        }
+        
         @TestMetadata("InExpressionsParentheses.after.kt")
         public void testInExpressionsParentheses() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/InExpressionsParentheses.after.kt");
@@ -240,6 +255,21 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         @TestMetadata("InDelegationListNotEmpty.after.inv.kt")
         public void testInDelegationListNotEmpty() throws Exception {
             doNewlineTestWithInvert("idea/testData/indentationOnNewline/InDelegationListNotEmpty.after.inv.kt");
+        }
+        
+        @TestMetadata("InEnumInitializerListAfterColon.after.inv.kt")
+        public void testInEnumInitializerListAfterColon() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InEnumInitializerListAfterColon.after.inv.kt");
+        }
+        
+        @TestMetadata("InEnumInitializerListAfterComma.after.inv.kt")
+        public void testInEnumInitializerListAfterComma() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InEnumInitializerListAfterComma.after.inv.kt");
+        }
+        
+        @TestMetadata("InEnumInitializerListNotEmpty.after.inv.kt")
+        public void testInEnumInitializerListNotEmpty() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/InEnumInitializerListNotEmpty.after.inv.kt");
         }
         
         @TestMetadata("InExpressionsParentheses.after.inv.kt")

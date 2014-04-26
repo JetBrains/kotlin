@@ -207,7 +207,7 @@ public class JetBlock extends AbstractBlock {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
         }
-        else if (parentType == DELEGATION_SPECIFIER_LIST) {
+        else if (parentType == DELEGATION_SPECIFIER_LIST || parentType == INITIALIZER_LIST) {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())));
         }
@@ -318,7 +318,7 @@ public class JetBlock extends AbstractBlock {
                     .set(Indent.getContinuationWithoutFirstIndent(true)),
 
             ASTIndentStrategy.forNode("Delegation list")
-                    .in(DELEGATION_SPECIFIER_LIST)
+                    .in(DELEGATION_SPECIFIER_LIST, INITIALIZER_LIST)
                     .set(Indent.getContinuationIndent(false)),
 
             ASTIndentStrategy.forNode("Indices")
