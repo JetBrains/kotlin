@@ -35,7 +35,7 @@ public abstract class JetSingleIntentionActionFactory implements JetIntentionAct
     public final List<IntentionAction> createActions(Diagnostic diagnostic) {
         List<IntentionAction> intentionActionList = new LinkedList<IntentionAction>();
 
-        if (diagnostic.getPsiElement().getContainingFile() instanceof JetCodeFragment) {
+        if (diagnostic.getPsiElement().getContainingFile() instanceof JetCodeFragment && !isApplicableForCodeFragment()) {
             return intentionActionList;
         }
 
@@ -44,5 +44,9 @@ public abstract class JetSingleIntentionActionFactory implements JetIntentionAct
             intentionActionList.add(intentionAction);
         }
         return intentionActionList;
+    }
+
+    public boolean isApplicableForCodeFragment() {
+        return false;
     }
 }

@@ -24,12 +24,28 @@ import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.jet.plugin.quickfix.ImportInsertHelper
+import org.jetbrains.jet.lang.psi.JetFile
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.lang.resolve.name.FqName
+import org.jetbrains.jet.InTextDirectivesUtils
 
-abstract class AbstractCodeFragmentHighlightingTest: AbstractJetPsiCheckerTest() {
+abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
+        myFixture.checkHighlighting(true, false, false)
+    }
+
+    fun doTestWithImport(filePath: String) {
+        myFixture.configureByCodeFragment(filePath)
+
+        ApplicationManager.getApplication()?.runWriteAction {
+            val fileText = FileUtil.loadFile(File(filePath), true)
+            InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
+                ImportInsertHelper.addImportDirectiveIfNeeded(FqName(it), (myFixture.getFile() as JetFile))
+            }
+        }
+
         myFixture.checkHighlighting(true, false, false)
     }
 }

@@ -66,6 +66,9 @@ import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
+import org.jetbrains.jet.lang.resolve.ImportPath
+import org.jetbrains.jet.lang.psi.JetImportList
+import org.jetbrains.jet.lang.psi.JetExpression
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -75,18 +78,16 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
 
         val elementAt = position.getElementAt()
         if (elementAt != null) {
-            codeFragment.addImportsFromString(KotlinEditorTextProvider.getImports(elementAt))
-
             val packageName = (elementAt.getContainingFile() as JetFile).getPackageDirective()?.getFqName()?.asString()
             if (packageName != null) {
                 codeFragment.addImportsFromString("import $packageName.*")
             }
         }
-        return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment, position))
+        return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetExpressionCodeFragment, position))
     }
 }
 
-class KotlinEvaluator(val codeFragment: PsiElement,
+class KotlinEvaluator(val codeFragment: JetExpressionCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
@@ -234,8 +235,36 @@ private fun createFileForDebugger(codeFragment: JetExpressionCodeFragment,
             .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
 }
 
+fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
+    if (newImportList != null) {
+        val tmpFileImportList = tmpFile.getImportList()
+        val packageDirective = tmpFile.getPackageDirective()
+        if (tmpFileImportList == null) {
+            tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
+            tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
+        }
+        else {
+            tmpFileImportList.replace(newImportList)
+        }
+        tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
+    }
+}
+
+fun addDebugExpressionBeforeContextElement(debugExpression: JetExpression, contextElement: PsiElement): JetExpression? {
+    val parent = contextElement.getParent()
+    if (parent == null) return null
+
+    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
+    val newDebugExpression = parent.addBefore(debugExpression, contextElement)
+    if (newDebugExpression == null) return null
+
+    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
+
+    return newDebugExpression as JetExpression
+}
+
 private fun getFunctionForExtractedFragment(
-        codeFragment: PsiElement,
+        codeFragment: JetExpressionCodeFragment,
         breakpointFile: PsiFile,
         breakpointLine: Int
 ): JetNamedFunction? {
@@ -252,18 +281,13 @@ private fun getFunctionForExtractedFragment(
             val elementAtOffset = tmpFile.findElementAt(lineStart)
             if (elementAtOffset == null) return null
 
-            val element: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+            val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
+
+            addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
             val debugExpression = JetPsiFactory.createExpression(project, codeFragment.getText())
-
-            val parent = element.getParent()
-            if (parent == null) return null
-
-            parent.addBefore(JetPsiFactory.createNewLine(project), element)
-            val newDebugExpression = parent.addBefore(debugExpression, element)
+            val newDebugExpression = addDebugExpressionBeforeContextElement(debugExpression, contextElement)
             if (newDebugExpression == null) return null
-
-            parent.addBefore(JetPsiFactory.createNewLine(project), element)
 
             val nextSibling = tmpFile.getDeclarations().firstOrNull()
             if (nextSibling == null) return null

@@ -32,6 +32,7 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.Value
 import org.jetbrains.eval4j.ObjectValue
 import com.sun.jdi.ObjectReference
+import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     fun doTest(path: String) {
@@ -85,7 +86,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
                               KotlinCodeFragmentFactory().isContextAccepted(contextElement))
 
             val evaluator = DebuggerInvocationUtil.commitAndRunReadAction(getProject()) {
-                EvaluatorBuilderImpl.build(TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expression, KotlinEditorTextProvider.getImports(contextElement), JetFileType.INSTANCE),
+                EvaluatorBuilderImpl.build(TextWithImportsImpl(
+                                                    CodeFragmentKind.EXPRESSION,
+                                                    expression,
+                                                    JetCodeFragment.getImportsForElement(contextElement),
+                                                    JetFileType.INSTANCE),
                                            contextElement,
                                            sourcePosition)
             }

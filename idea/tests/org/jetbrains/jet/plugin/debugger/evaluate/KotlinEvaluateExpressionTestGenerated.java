@@ -46,6 +46,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/arrays.kt");
     }
     
+    @TestMetadata("classFromAnotherPackage.kt")
+    public void testClassFromAnotherPackage() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/classFromAnotherPackage.kt");
+    }
+    
     @TestMetadata("classObjectVal.kt")
     public void testClassObjectVal() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/classObjectVal.kt");

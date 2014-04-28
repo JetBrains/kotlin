@@ -40,6 +40,9 @@ public abstract class JetCodeFragment(
     {
         getViewProvider().forceCachedPsi(this)
         init(TokenType.CODE_FRAGMENT, elementType)
+        if (_context != null) {
+            addImportsFromString(getImportsForElement(_context))
+        }
     }
 
     private var _resolveScope: GlobalSearchScope? = null
@@ -89,9 +92,13 @@ public abstract class JetCodeFragment(
     }
 
     override fun addImportsFromString(imports: String?) {
-        if (imports == null) return
+        if (imports == null || imports.isEmpty()) return
 
         _myImports.addAll(imports.split(IMPORT_SEPARATOR))
+    }
+
+    fun importsAsImportList(): JetImportList? {
+        return JetPsiFactory.createFile(_project, _myImports.makeString("\n")).getImportList()
     }
 
     override fun setVisibilityChecker(checker: JavaCodeFragment.VisibilityChecker?) { }
@@ -110,5 +117,14 @@ public abstract class JetCodeFragment(
 
     class object {
         val IMPORT_SEPARATOR = ","
+
+        fun getImportsForElement(elementAtCaret: PsiElement): String {
+            val containingFile = elementAtCaret.getContainingFile()
+            if (containingFile !is JetFile) return ""
+
+            return containingFile.getImportList()?.getImports()
+                        ?.map { it.getText() }
+                        ?.makeString(JetCodeFragment.IMPORT_SEPARATOR) ?: ""
+        }
     }
 }

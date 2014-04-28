@@ -309,6 +309,11 @@ public class AutoImportFix extends JetHintAction<JetSimpleNameExpression> implem
 
                 return null;
             }
+
+            @Override
+            public boolean isApplicableForCodeFragment() {
+                return true;
+            }
         };
     }
 }

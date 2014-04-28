@@ -269,7 +269,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractCodeFragmentHighlightingTest>()) {
-            model("checker/codeFragments", extension = "kt")
+            model("checker/codeFragments", extension = "kt", recursive = false)
+            model("checker/codeFragments/imports", testMethod = "doTestWithImport", extension = "kt")
         }
 
         testClass(javaClass<AbstractJetJsCheckerTest>()) {

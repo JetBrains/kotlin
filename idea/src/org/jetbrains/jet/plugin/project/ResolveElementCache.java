@@ -38,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.ChainedScope;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -228,10 +229,18 @@ public class ResolveElementCache {
 
         JetScope scopeForContextElement = contextForElement.get(BindingContext.RESOLUTION_SCOPE, contextExpression);
         if (scopeForContextElement != null) {
+            JetScope codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment);
+            ChainedScope chainedScope = new ChainedScope(
+                    scopeForContextElement.getContainingDeclaration(),
+                    "Scope for resolve code fragment",
+                    scopeForContextElement,
+                    codeFragmentScope
+            );
+
             DataFlowInfo dataFlowInfoForContextElement = contextForElement.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, contextExpression);
             AnalyzerPackage.computeTypeInContext(
                     codeFragment.getExpression(),
-                    scopeForContextElement,
+                    chainedScope,
                     trace,
                     dataFlowInfoForContextElement == null ? DataFlowInfo.EMPTY : dataFlowInfoForContextElement,
                     TypeUtils.NO_EXPECTED_TYPE,

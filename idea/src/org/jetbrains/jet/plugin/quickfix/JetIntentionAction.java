@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.lang.psi.JetFile;
 
 public abstract class JetIntentionAction<T extends PsiElement> implements IntentionAction {
@@ -35,7 +36,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
-        return element.isValid() && file.getManager().isInProject(file) && (file instanceof JetFile);
+        return element.isValid() && (file.getManager().isInProject(file) || file instanceof JetCodeFragment) && (file instanceof JetFile);
     }
 
     //Don't override this method. Use the method with JetFile instead.

@@ -24,8 +24,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetCodeFragment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetImportDirective;
+import org.jetbrains.jet.lang.psi.JetImportList;
 import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -158,10 +160,19 @@ public class LazyImportScope implements JetScope, LazyEntity {
             @NotNull BindingTrace traceForImportResolve,
             @NotNull String debugName
     ) {
+        List<JetImportDirective> importDirectives;
+        if (jetFile instanceof JetCodeFragment) {
+            JetImportList importList = ((JetCodeFragment) jetFile).importsAsImportList();
+            importDirectives = importList != null ? importList.getImports() : Collections.<JetImportDirective>emptyList();
+        }
+        else {
+            importDirectives = jetFile.getImportDirectives();
+        }
+
         return new LazyImportScope(
                 resolveSession,
                 packageDescriptor,
-                Lists.reverse(jetFile.getImportDirectives()),
+                Lists.reverse(importDirectives),
                 traceForImportResolve,
                 debugName,
                 packageDescriptor.getFqName().isRoot());
