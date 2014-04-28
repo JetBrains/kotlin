@@ -40,7 +40,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull JetType expectedType
     ) {
         return newContext(trace, scope, dataFlowInfo, expectedType,
-                          ContextDependency.INDEPENDENT, ResolutionResultsCacheImpl.create(), LabelResolver.create(),
+                          ContextDependency.INDEPENDENT, new ResolutionResultsCacheImpl(), LabelResolver.create(),
                           expressionTypingServices.createExtension(scope, false), false);
     }
 

@@ -60,7 +60,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean isAnnotationContext
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-             ResolutionResultsCacheImpl.create(), LabelResolver.create(), null,
+             new ResolutionResultsCacheImpl(), LabelResolver.create(), null,
              callResolverExtension, isAnnotationContext, false);
     }
 

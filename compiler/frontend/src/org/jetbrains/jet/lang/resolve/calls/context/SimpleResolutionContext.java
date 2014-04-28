@@ -49,7 +49,7 @@ public class SimpleResolutionContext extends ResolutionContext<SimpleResolutionC
             @NotNull ContextDependency contextDependency,
             @NotNull CallResolverExtension callResolverExtension
     ) {
-        this(trace, scope, expectedType, dataFlowInfo, contextDependency, ResolutionResultsCacheImpl.create(),
+        this(trace, scope, expectedType, dataFlowInfo, contextDependency, new ResolutionResultsCacheImpl(),
              LabelResolver.create(), callResolverExtension, false, false);
     }
 
