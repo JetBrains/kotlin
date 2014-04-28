@@ -31,10 +31,11 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val args = element.getValueArguments()
-        val literal = args.last!!.getArgumentExpression()?.getText() // we know args.last is non null
+        val literalExpr = args.last!!.getArgumentExpression()
+        val literal = literalExpr?.getText() // we know args.last is non null
         val callText = element.getText()
-        if (callText == null || literal == null) return
-        val endIndex = callText.lastIndexOf(",")
+        if (callText == null || literal == null || literalExpr == null) return
+        val endIndex = callText.substring(0,literalExpr.getTextOffset() - element.getTextOffset()).lastIndexOf(",")
         val newCall = if (endIndex > 0) {
             "${callText.substring(0, endIndex)}) $literal"
         } else {
