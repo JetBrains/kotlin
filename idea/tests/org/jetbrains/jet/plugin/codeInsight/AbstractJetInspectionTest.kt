@@ -49,23 +49,28 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
         val inspectionsTestDir = optionsFile.getParentFile()!!
         val srcDir = inspectionsTestDir.getParentFile()!!
 
-        with(myFixture!!) {
+        with(myFixture) {
             setTestDataPath("${JetTestCaseBuilder.getHomeDirectory()}/$srcDir")
 
-            val virtualFiles = srcDir
+            val psiFiles = srcDir
                     .listFiles { it.getName().endsWith(".kt") }!!
-                    .map { configureByFile(it.getName())!!.getVirtualFile()!! }
+                    .map {
+                        file ->
+                        val text = FileUtil.loadFile(file, true)
+                        val fileText = if (text.startsWith("package")) text else "package ${file.getName().trimTrailing(".kt")};$text"
+                        configureByText(file.getName(), fileText)!!
+                    }
 
-            val isWithRuntime = virtualFiles.any({ file ->
-                InTextDirectivesUtils.findStringWithPrefixes(String(file.contentsToByteArray(), "utf-8"), "// WITH_RUNTIME") != null
+            val isWithRuntime = psiFiles.any({ file ->
+                InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
              })
 
             try {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.configureKotlinRuntime(myFixture!!.getModule(), getFullJavaJDK());
+                    ConfigLibraryUtil.configureKotlinRuntime(myFixture.getModule(), getFullJavaJDK());
                 }
 
-                val scope = AnalysisScope(getProject(), virtualFiles)
+                val scope = AnalysisScope(getProject(), psiFiles.map { it.getVirtualFile()!! })
                 scope.invalidate()
 
                 val inspectionManager = (InspectionManager.getInstance(getProject()) as InspectionManagerEx)
@@ -76,7 +81,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
             }
             finally {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture!!.getModule(), IdeaTestUtil.getMockJdk17());
+                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.getModule(), IdeaTestUtil.getMockJdk17());
                 }
             }
         }
