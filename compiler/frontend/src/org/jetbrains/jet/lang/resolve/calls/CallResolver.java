@@ -564,7 +564,8 @@ public class CallResolver {
             };
             TemporaryBindingTrace temporaryTrace =
                     TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments");
-            ResolutionTask<D, F> newTask = task.replaceBindingTrace(temporaryTrace).replaceCall(callWithoutFLArgs);
+            ResolutionTask<D, F> newTask = new ResolutionTask<D, F>(task.getCandidates(), task.toBasic(), task.tracing).
+                    replaceBindingTrace(temporaryTrace).replaceCall(callWithoutFLArgs);
 
             OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer);
             if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
