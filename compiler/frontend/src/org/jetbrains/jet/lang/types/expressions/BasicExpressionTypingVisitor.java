@@ -1230,7 +1230,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetTypeInfo arrayTypeInfo = facade.getTypeInfo(arrayExpression, oldContext.replaceExpectedType(NO_EXPECTED_TYPE)
                 .replaceContextDependency(INDEPENDENT));
         JetType arrayType = arrayTypeInfo.getType();
-        if (arrayType == null) return arrayTypeInfo;
+        if (arrayType == null) {
+            for (JetExpression indexExpression : arrayAccessExpression.getIndexExpressions()) {
+                facade.getTypeInfo(indexExpression, oldContext);
+            }
+            return arrayTypeInfo;
+        }
 
         DataFlowInfo dataFlowInfo = arrayTypeInfo.getDataFlowInfo();
         ExpressionTypingContext context = oldContext.replaceDataFlowInfo(dataFlowInfo);

@@ -3472,6 +3472,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/kt2014.kt");
             }
             
+            @TestMetadata("kt4866UnresolvedArrayAccess.kt")
+            public void testKt4866UnresolvedArrayAccess() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/kt4866UnresolvedArrayAccess.kt");
+            }
+            
             @TestMetadata("NoSenselessComparisonForErrorType.kt")
             public void testNoSenselessComparisonForErrorType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/NoSenselessComparisonForErrorType.kt");
