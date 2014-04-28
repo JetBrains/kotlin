@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -72,14 +71,8 @@ public class TypeSubstitutor {
         return create(new CompositeTypeSubstitution(substitutions));
     }
 
-    /** No assertion for immediate recursion */
-    public static TypeSubstitutor createUnsafe(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        Map<TypeConstructor, TypeProjection> cleanContext = removeTrivialSubstitutions(substitutionContext);
-        return create(new MapToTypeSubstitutionAdapter(cleanContext));
-    }
-
     public static TypeSubstitutor create(@NotNull Map<TypeConstructor, TypeProjection> substitutionContext) {
-        return createUnsafe(removeTrivialSubstitutions(substitutionContext));
+        return create(new MapToTypeSubstitutionAdapter(substitutionContext));
     }
 
     public static TypeSubstitutor create(@NotNull JetType context) {
@@ -224,22 +217,6 @@ public class TypeSubstitutor {
             substitutedArguments.add(substitutedTypeArgument);
         }
         return substitutedArguments;
-    }
-
-    @NotNull
-    private static Map<TypeConstructor, TypeProjection> removeTrivialSubstitutions(@NotNull Map<TypeConstructor, TypeProjection> context) {
-        Map<TypeConstructor, TypeProjection> clean = new HashMap<TypeConstructor, TypeProjection>(context);
-        boolean changed = false;
-        for (Iterator<Map.Entry<TypeConstructor, TypeProjection>> iterator = clean.entrySet().iterator(); iterator.hasNext(); ) {
-            Map.Entry<TypeConstructor, TypeProjection> entry = iterator.next();
-            TypeConstructor key = entry.getKey();
-            TypeProjection value = entry.getValue();
-            if (key == value.getType().getConstructor() && value.getProjectionKind() == Variance.INVARIANT) {
-                iterator.remove();
-                changed = true;
-            }
-        }
-        return changed ? clean : context;
     }
 
     private static Variance combine(Variance typeParameterVariance, Variance projectionKind) {

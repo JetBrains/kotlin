@@ -6773,6 +6773,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/substitutions/kt1558-short.kt");
             }
             
+            @TestMetadata("kt4887.kt")
+            public void testKt4887() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/substitutions/kt4887.kt");
+            }
+            
             @TestMetadata("upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt")
             public void testUpperBoundsSubstitutionForOverloadResolutionWithAmbiguity() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/substitutions/upperBoundsSubstitutionForOverloadResolutionWithAmbiguity.kt");
