@@ -53,6 +53,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
         }
         
+        @TestMetadata("javaFun.kt")
+        public void testJavaFun() throws Exception {
+            doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
+        }
+        
         @TestMetadata("memberFunFromClass.kt")
         public void testMemberFunFromClass() throws Exception {
             doStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/memberFunFromClass.kt");
@@ -119,6 +124,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("extFun.kt")
         public void testExtFun() throws Exception {
             doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/extFun.kt");
+        }
+        
+        @TestMetadata("javaFun.kt")
+        public void testJavaFun() throws Exception {
+            doSmartStepIntoTest("idea/testData/debugger/tinyApp/src/stepInto/javaFun.kt");
         }
         
         @TestMetadata("memberFunFromClass.kt")

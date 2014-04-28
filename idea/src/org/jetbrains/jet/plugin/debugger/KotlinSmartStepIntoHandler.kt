@@ -42,6 +42,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiClass
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
@@ -172,6 +173,9 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                         if (psiMethod != null) {
                             result.add(KotlinMethodSmartStepTarget(function, psiMethod, null, expression, false, lines))
                         }
+                    }
+                    else if (function is PsiMethod) {
+                        result.add(MethodSmartStepTarget(function, null, expression, false, lines))
                     }
                 }
             }

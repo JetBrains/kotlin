@@ -31,6 +31,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
 import java.io.File
+import com.intellij.debugger.actions.MethodSmartStepTarget
+import com.intellij.debugger.engine.BasicStepMethodFilter
 
 abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
@@ -84,7 +86,7 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
         }
     }
 
-    private fun createSmartStepIntoFilters(): List<KotlinBasicStepMethodFilter> {
+    private fun createSmartStepIntoFilters(): List<BasicStepMethodFilter> {
         val breakpointManager = DebuggerManagerEx.getInstanceEx(getProject())?.getBreakpointManager()
         val breakpoint = breakpointManager?.getBreakpoints()?.first { it is LineBreakpoint }
 
@@ -97,6 +99,12 @@ abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestCase() {
 
         val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
 
-        return stepTargets.filter { it is KotlinMethodSmartStepTarget }.map { KotlinBasicStepMethodFilter(it as KotlinMethodSmartStepTarget) }
+        return stepTargets.filterIsInstance(javaClass<MethodSmartStepTarget>()).map {
+            stepTarget ->
+            when (stepTarget) {
+                is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget as KotlinMethodSmartStepTarget)
+                else -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+            }
+        }
     }
 }

@@ -25,7 +25,6 @@ import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
@@ -33,6 +32,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.MockLibraryUtil;
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.codegen.forTestCompile.ForTestCompileRuntime;
@@ -44,6 +44,9 @@ import org.jetbrains.jet.plugin.framework.JavaRuntimeLibraryDescription;
 import org.jetbrains.jet.testing.ConfigLibraryUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     protected static final String TINY_APP = PluginTestCaseBase.getTestDataPathBase() + "/debugger/tinyApp";
@@ -90,10 +93,36 @@ public abstract class KotlinDebuggerTestCase extends DebuggerTestCase {
     protected void ensureCompiledAppExists() throws Exception {
         if (!IS_TINY_APP_COMPILED) {
             String modulePath = getTestAppPath();
-            MockLibraryUtil.compileKotlin(modulePath + File.separator + "src", new File(modulePath + File.separator + "classes"));
+
+            String outputDir = modulePath + File.separator + "classes";
+            String sourcesDir = modulePath + File.separator + "src";
+
+            MockLibraryUtil.compileKotlin(sourcesDir, new File(outputDir));
+
+            List<String> options = Arrays.asList("-d", outputDir);
+            JetTestUtils.compileJavaFiles(findJavaFiles(new File(sourcesDir)), options);
+
             //noinspection AssignmentToStaticFieldFromInstanceMethod
             IS_TINY_APP_COMPILED = true;
         }
+    }
+
+    private static List<File> findJavaFiles(@NotNull File directory) {
+        List<File> result = new ArrayList<File>();
+        if (directory.isDirectory()) {
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        result.addAll(findJavaFiles(file));
+                    }
+                    else if (file.getName().endsWith(".java")) {
+                        result.add(file);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     private static class KotlinOutputChecker extends OutputChecker {
