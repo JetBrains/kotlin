@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.CallableReference.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -7047,6 +7047,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/typedefs")
+        public static class Typedefs extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInTypedefs() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/typedefs"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("TypedefsUnsupported.kt")
+            public void testTypedefsUnsupported() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/typedefs/TypedefsUnsupported.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/unit")
         public static class Unit extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInUnit() throws Exception {
@@ -7228,6 +7241,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTestSuite(Subtyping.class);
             suite.addTest(Suppress.innerSuite());
             suite.addTestSuite(ThisAndSuper.class);
+            suite.addTestSuite(Typedefs.class);
             suite.addTestSuite(Unit.class);
             suite.addTestSuite(Varargs.class);
             suite.addTestSuite(When.class);

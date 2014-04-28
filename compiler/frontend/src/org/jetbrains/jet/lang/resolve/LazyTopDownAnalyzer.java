@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.MANY_CLASS_OBJECTS;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNSUPPORTED;
 
 public class LazyTopDownAnalyzer {
 
@@ -205,6 +206,11 @@ public class LazyTopDownAnalyzer {
                         @Override
                         public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
                             registerScope(c, resolveSession, initializer);
+                        }
+
+                        @Override
+                        public void visitTypedef(@NotNull JetTypedef typedef) {
+                            trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"));
                         }
 
                         @Override
