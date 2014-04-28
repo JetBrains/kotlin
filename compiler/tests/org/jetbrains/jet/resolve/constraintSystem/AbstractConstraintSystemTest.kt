@@ -41,8 +41,13 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE)\s+${typePattern}\s+${typePattern}\s+(weak)?""", Pattern.MULTILINE)
     val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
 
-    private var typeResolver: TypeResolver by Delegates.notNull()
-    private var myDeclarations: MyDeclarations by Delegates.notNull()
+    private var _typeResolver: TypeResolver? = null
+    private val typeResolver: TypeResolver
+        get() = _typeResolver!!
+
+    private var _myDeclarations: MyDeclarations? = null
+    private val myDeclarations: MyDeclarations
+        get() = _myDeclarations!!
 
     override fun createEnvironment(): JetCoreEnvironment {
         return createEnvironmentWithMockJdk(ConfigurationKind.ALL)
@@ -52,8 +57,14 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         super.setUp()
 
         val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule()!!)
-        typeResolver = injector.getTypeResolver()!!
-        myDeclarations = analyzeDeclarations()
+        _typeResolver = injector.getTypeResolver()!!
+        _myDeclarations = analyzeDeclarations()
+    }
+
+    override fun tearDown() {
+        _typeResolver = null
+        _myDeclarations = null
+        super<JetLiteFixture>.tearDown()
     }
 
     override fun getTestDataPath(): String {

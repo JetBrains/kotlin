@@ -38,12 +38,8 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
     protected abstract val completionType : CompletionType
     protected abstract val testDataRelativePath: String
 
-    protected var fixture: JavaCodeInsightTestFixture by Delegates.notNull<JavaCodeInsightTestFixture>()
-
-    protected override fun setUp() {
-        super.setUp()
-        fixture = myFixture
-    }
+    protected val fixture: JavaCodeInsightTestFixture
+        get() = myFixture
 
     protected fun doTest() : Unit = doTest(2, null, null, null, '\n')
 
