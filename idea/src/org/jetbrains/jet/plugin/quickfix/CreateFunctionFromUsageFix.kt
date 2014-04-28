@@ -25,7 +25,6 @@ import com.intellij.codeInsight.template.impl.TemplateImpl
 import com.intellij.codeInsight.template.impl.Variable
 import com.intellij.ide.fileTemplates.FileTemplate
 import com.intellij.ide.fileTemplates.FileTemplateManager
-import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.editor.Editor
@@ -56,10 +55,8 @@ import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.plugin.JetBundle
-import org.jetbrains.jet.plugin.caches.resolve
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.plugin.presentation.JetClassPresenter
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.plugin.refactoring.JetNameValidator
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference
@@ -71,7 +68,6 @@ import java.util.Collections
 import java.util.HashSet
 import java.util.HashMap
 import java.util.ArrayList
-import java.awt.Component
 import java.util.Properties
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
@@ -118,23 +114,6 @@ private class ClassCandidate(public val typeCandidate: TypeCandidate, file: JetF
             DescriptorUtils.getClassDescriptorForType(typeCandidate.theType),
             context
     ) as JetClass
-}
-
-/**
- * Renders a <code>ClassCandidate</code>.
- */
-private class ClassCandidateListCellRenderer : PsiElementListCellRenderer<JetClass>() {
-    private val presenter: JetClassPresenter = JetClassPresenter();
-
-    override fun getElementText(element: JetClass?) = presenter.getPresentation(element!!)?.getPresentableText()
-
-    override fun getContainerText(element: JetClass?, name: String?) = presenter.getPresentation(element!!)?.getLocationString()
-
-    override fun getIconFlags() = 0
-
-    override fun getListCellRendererComponent(list: JList<out Any?>, value: Any?, index: Int, isSelected: Boolean, cellHasFocus: Boolean): Component? {
-        return super.getListCellRendererComponent(list, (value as ClassCandidate).jetClass, index, isSelected, cellHasFocus)
-    }
 }
 
 /**
@@ -570,7 +549,7 @@ public class CreateFunctionFromUsageFix internal (
         else {
             // class selection
             val list = JBList(ownerTypeCandidates.map { ClassCandidate(it, currentFile, currentFileContext) })
-            val renderer = ClassCandidateListCellRenderer()
+            val renderer = QuickFixUtil.ClassCandidateListCellRenderer()
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
             list.setCellRenderer(renderer)
             val builder = PopupChooserBuilder(list)
