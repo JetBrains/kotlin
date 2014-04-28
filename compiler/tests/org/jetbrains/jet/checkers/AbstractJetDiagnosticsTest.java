@@ -18,23 +18,30 @@ package org.jetbrains.jet.checkers;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
+import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
 public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
@@ -78,8 +85,52 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             DiagnosticUtils.LineAndColumn lineAndColumn =
                     DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
 
-            assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " in not completed",
+            assertTrue("Resolved call for '" + element.getText() + "'" + lineAndColumn + " is not completed",
                        ((MutableResolvedCall<?>) resolvedCall).isCompleted());
         }
+
+        checkResolvedCallsInDiagnostics(bindingContext);
+    }
+
+    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    private static void checkResolvedCallsInDiagnostics(BindingContext bindingContext) {
+        Set<DiagnosticFactory> diagnosticsStoringResolvedCalls1 = Sets.<DiagnosticFactory>newHashSet(
+                OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
+                ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY);
+        Set<DiagnosticFactory> diagnosticsStoringResolvedCalls2 = Sets.<DiagnosticFactory>newHashSet(
+                COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE);
+        Diagnostics diagnostics = bindingContext.getDiagnostics();
+        for (Diagnostic diagnostic : diagnostics) {
+            DiagnosticFactory factory = diagnostic.getFactory();
+            if (diagnosticsStoringResolvedCalls1.contains(factory)) {
+                assertResolvedCallsAreCompleted(
+                        diagnostic, ((DiagnosticWithParameters1<PsiElement, Collection<? extends ResolvedCall<?>>>) diagnostic).getA());
+
+            }
+            if (diagnosticsStoringResolvedCalls2.contains(factory)) {
+                assertResolvedCallsAreCompleted(
+                        diagnostic,
+                        ((DiagnosticWithParameters2<PsiElement, Object, Collection<? extends ResolvedCall<?>>>)diagnostic).getB());
+            }
+        }
+    }
+
+    private static void assertResolvedCallsAreCompleted(
+            @NotNull Diagnostic diagnostic, @NotNull Collection<? extends ResolvedCall<?>> resolvedCalls
+    ) {
+        boolean allCallsAreCompleted = true;
+        for (ResolvedCall<?> resolvedCall : resolvedCalls) {
+            if (!((MutableResolvedCall<?>) resolvedCall).isCompleted()) {
+                allCallsAreCompleted = false;
+            }
+        }
+
+        PsiElement element = diagnostic.getPsiElement();
+        DiagnosticUtils.LineAndColumn lineAndColumn =
+                DiagnosticUtils.getLineAndColumnInPsiFile(element.getContainingFile(), element.getTextRange());
+
+        assertTrue("Resolved calls stored in " + diagnostic.getFactory().getName() + "\n" +
+                   "for '" + element.getText() + "'" + lineAndColumn + " are not completed",
+                   allCallsAreCompleted);
     }
 }
