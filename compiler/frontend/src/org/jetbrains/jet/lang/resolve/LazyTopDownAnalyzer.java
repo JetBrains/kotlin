@@ -214,6 +214,11 @@ public class LazyTopDownAnalyzer {
                         }
 
                         @Override
+                        public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
+                            // Ignore: multi-declarations are only allowed locally
+                        }
+
+                        @Override
                         public void visitNamedFunction(@NotNull JetNamedFunction function) {
                             functions.add(function);
                         }
