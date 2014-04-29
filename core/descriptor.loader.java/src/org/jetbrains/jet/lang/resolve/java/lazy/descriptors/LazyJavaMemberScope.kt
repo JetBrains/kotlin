@@ -124,12 +124,13 @@ public abstract class LazyJavaMemberScope(
         val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature
         if (_containingDeclaration is PackageFragmentDescriptor) {
             superFunctions = Collections.emptyList()
-            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(method, false, returnType, null, valueParameters,
-                                                                                               methodTypeParameters, false)
+            effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+                    method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
             signatureErrors = effectiveSignature.getErrors()
         }
         else if (_containingDeclaration is ClassDescriptor) {
-            val propagated = c.externalSignatureResolver.resolvePropagatedSignature(method, _containingDeclaration, returnType, null, valueParameters, methodTypeParameters)
+            val propagated = c.externalSignatureResolver.resolvePropagatedSignature(
+                    method, _containingDeclaration, returnType, null, valueParameters.descriptors, methodTypeParameters)
             superFunctions = propagated.getSuperMethods()
             effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
                     method, !superFunctions.isEmpty(), propagated.getReturnType(),
@@ -154,6 +155,7 @@ public abstract class LazyJavaMemberScope(
         )
 
         functionDescriptorImpl.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
+        functionDescriptorImpl.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 
         if (record) {
             c.javaResolverCache.recordMethod(method, functionDescriptorImpl)
@@ -164,12 +166,14 @@ public abstract class LazyJavaMemberScope(
         return functionDescriptorImpl
     }
 
+    protected class ResolvedValueParameters(val descriptors: List<ValueParameterDescriptor>, val hasSynthesizedNames: Boolean)
     protected fun resolveValueParameters(
             c: LazyJavaResolverContextWithTypes,
             function: FunctionDescriptor,
             jValueParameters: List<JavaValueParameter>
-    ): List<ValueParameterDescriptor> {
-        return jValueParameters.withIndices_tmp().map_tmp {
+    ): ResolvedValueParameters {
+        var synthesizedNames = false
+        val descriptors = jValueParameters.withIndices_tmp().map_tmp {
             pair ->
             val (index, javaParameter) = pair
 
@@ -203,7 +207,9 @@ public abstract class LazyJavaMemberScope(
             }
             else {
                 // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
-                javaParameter.getName() ?: Name.identifier("p$index")
+                val javaName = javaParameter.getName()
+                if (javaName == null) synthesizedNames = true
+                javaName ?: Name.identifier("p$index")
             }
 
             ValueParameterDescriptorImpl(
@@ -217,6 +223,7 @@ public abstract class LazyJavaMemberScope(
                     varargElementType
             )
         }.toList()
+        return ResolvedValueParameters(descriptors, synthesizedNames)
     }
 
     private fun resolveSamAdapter(original: SimpleFunctionDescriptor): SimpleFunctionDescriptor? {

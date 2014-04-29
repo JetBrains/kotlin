@@ -34,4 +34,9 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     ) {
         super(containingDeclaration, null, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION);
     }
+
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        return false;
+    }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
     private Boolean hasStableParameterNames = null;
+    private Boolean hasSynthesizedParameterNames = null;
 
     private JavaMethodDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -58,6 +59,16 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         this.hasStableParameterNames = hasStableParameterNames;
     }
 
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        assert hasSynthesizedParameterNames != null : "hasSynthesizedParameterNames was not set: " + this;
+        return hasSynthesizedParameterNames;
+    }
+
+    public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
+        this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
+    }
+
     @NotNull
     @Override
     protected FunctionDescriptorImpl createSubstitutedCopy(
@@ -73,6 +84,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
                 kind
         );
         result.setHasStableParameterNames(hasStableParameterNames());
+        result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
     }
 }

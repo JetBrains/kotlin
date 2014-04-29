@@ -24,8 +24,9 @@ import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 
-public class JavaConstructorDescriptor extends ConstructorDescriptorImpl {
-    private Boolean hasStableParameterNames;
+public class JavaConstructorDescriptor extends ConstructorDescriptorImpl implements JavaCallableMemberDescriptor {
+    private Boolean hasStableParameterNames = null;
+    private Boolean hasSynthesizedParameterNames = null;
 
     private JavaConstructorDescriptor(
             @NotNull ClassDescriptor containingDeclaration,
@@ -55,6 +56,16 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl {
         this.hasStableParameterNames = hasStableParameterNames;
     }
 
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        assert hasSynthesizedParameterNames != null : "hasSynthesizedParameterNames was not set: " + this;
+        return hasSynthesizedParameterNames;
+    }
+
+    public void setHasSynthesizedParameterNames(boolean hasSynthesizedParameterNames) {
+        this.hasSynthesizedParameterNames = hasSynthesizedParameterNames;
+    }
+
     @NotNull
     @Override
     protected JavaConstructorDescriptor createSubstitutedCopy(
@@ -71,6 +82,7 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl {
         JavaConstructorDescriptor result =
                 new JavaConstructorDescriptor((ClassDescriptor) newOwner, this, Annotations.EMPTY /* TODO */, isPrimary);
         result.setHasStableParameterNames(hasStableParameterNames());
+        result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
     }
 }

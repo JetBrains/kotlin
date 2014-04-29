@@ -19,4 +19,5 @@ package org.jetbrains.jet.lang.resolve.java.descriptor;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 
 public interface JavaCallableMemberDescriptor extends CallableMemberDescriptor {
+    boolean hasSynthesizedParameterNames();
 }
