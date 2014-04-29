@@ -3796,45 +3796,45 @@ public final class DebugJavaProtoBuf {
     java.lang.String[] descriptorData = {
       "\n8core/serialization.java/src/java_descr" +
       "iptors.debug.proto\022+org.jetbrains.jet.de" +
-      "scriptors.serialization\032;compiler/fronte" +
-      "nd/serialization/src/descriptors.debug.p" +
-      "roto\"\213\002\n\010JavaType\022[\n\016primitive_type\030\001 \001(" +
-      "\0162C.org.jetbrains.jet.descriptors.serial" +
-      "ization.JavaType.PrimitiveType\022\025\n\rclass_" +
-      "fq_name\030\002 \001(\005\022\032\n\017array_dimension\030\003 \001(\005:\001" +
-      "0\"o\n\rPrimitiveType\022\010\n\004VOID\020\000\022\013\n\007BOOLEAN\020" +
-      "\001\022\010\n\004CHAR\020\002\022\010\n\004BYTE\020\003\022\t\n\005SHORT\020\004\022\007\n\003INT\020",
-      "\005\022\t\n\005FLOAT\020\006\022\010\n\004LONG\020\007\022\n\n\006DOUBLE\020\010\"\276\001\n\023J" +
-      "avaMethodSignature\022\014\n\004name\030\001 \002(\005\022J\n\013retu" +
-      "rn_type\030\002 \002(\01325.org.jetbrains.jet.descri" +
-      "ptors.serialization.JavaType\022M\n\016paramete" +
-      "r_type\030\003 \003(\01325.org.jetbrains.jet.descrip" +
-      "tors.serialization.JavaType\"\212\001\n\022JavaFiel" +
-      "dSignature\022\014\n\004name\030\001 \002(\005\022C\n\004type\030\002 \002(\01325" +
-      ".org.jetbrains.jet.descriptors.serializa" +
-      "tion.JavaType\022!\n\022is_static_in_outer\030\003 \001(" +
-      "\010:\005false\"\347\002\n\025JavaPropertySignature\022N\n\005fi",
-      "eld\030\001 \001(\0132?.org.jetbrains.jet.descriptor" +
-      "s.serialization.JavaFieldSignature\022Z\n\020sy" +
-      "nthetic_method\030\002 \001(\0132@.org.jetbrains.jet" +
-      ".descriptors.serialization.JavaMethodSig" +
-      "nature\022P\n\006getter\030\003 \001(\0132@.org.jetbrains.j" +
-      "et.descriptors.serialization.JavaMethodS" +
-      "ignature\022P\n\006setter\030\004 \001(\0132@.org.jetbrains" +
-      ".jet.descriptors.serialization.JavaMetho" +
-      "dSignature:\221\001\n\020method_signature\0225.org.je" +
-      "tbrains.jet.descriptors.serialization.Ca",
-      "llable\030d \001(\0132@.org.jetbrains.jet.descrip" +
-      "tors.serialization.JavaMethodSignature:\225" +
-      "\001\n\022property_signature\0225.org.jetbrains.je" +
-      "t.descriptors.serialization.Callable\030e \001" +
-      "(\0132B.org.jetbrains.jet.descriptors.seria" +
-      "lization.JavaPropertySignature:N\n\017impl_c" +
-      "lass_name\0225.org.jetbrains.jet.descriptor" +
-      "s.serialization.Callable\030f \001(\005:S\n\005index\022" +
-      "D.org.jetbrains.jet.descriptors.serializ" +
-      "ation.Callable.ValueParameter\030d \001(\005B\023B\021D",
-      "ebugJavaProtoBuf"
+      "scriptors.serialization\032.core/serializat" +
+      "ion/src/descriptors.debug.proto\"\213\002\n\010Java" +
+      "Type\022[\n\016primitive_type\030\001 \001(\0162C.org.jetbr" +
+      "ains.jet.descriptors.serialization.JavaT" +
+      "ype.PrimitiveType\022\025\n\rclass_fq_name\030\002 \001(\005" +
+      "\022\032\n\017array_dimension\030\003 \001(\005:\0010\"o\n\rPrimitiv" +
+      "eType\022\010\n\004VOID\020\000\022\013\n\007BOOLEAN\020\001\022\010\n\004CHAR\020\002\022\010" +
+      "\n\004BYTE\020\003\022\t\n\005SHORT\020\004\022\007\n\003INT\020\005\022\t\n\005FLOAT\020\006\022",
+      "\010\n\004LONG\020\007\022\n\n\006DOUBLE\020\010\"\276\001\n\023JavaMethodSign" +
+      "ature\022\014\n\004name\030\001 \002(\005\022J\n\013return_type\030\002 \002(\013" +
+      "25.org.jetbrains.jet.descriptors.seriali" +
+      "zation.JavaType\022M\n\016parameter_type\030\003 \003(\0132" +
+      "5.org.jetbrains.jet.descriptors.serializ" +
+      "ation.JavaType\"\212\001\n\022JavaFieldSignature\022\014\n" +
+      "\004name\030\001 \002(\005\022C\n\004type\030\002 \002(\01325.org.jetbrain" +
+      "s.jet.descriptors.serialization.JavaType" +
+      "\022!\n\022is_static_in_outer\030\003 \001(\010:\005false\"\347\002\n\025" +
+      "JavaPropertySignature\022N\n\005field\030\001 \001(\0132?.o",
+      "rg.jetbrains.jet.descriptors.serializati" +
+      "on.JavaFieldSignature\022Z\n\020synthetic_metho" +
+      "d\030\002 \001(\0132@.org.jetbrains.jet.descriptors." +
+      "serialization.JavaMethodSignature\022P\n\006get" +
+      "ter\030\003 \001(\0132@.org.jetbrains.jet.descriptor" +
+      "s.serialization.JavaMethodSignature\022P\n\006s" +
+      "etter\030\004 \001(\0132@.org.jetbrains.jet.descript" +
+      "ors.serialization.JavaMethodSignature:\221\001" +
+      "\n\020method_signature\0225.org.jetbrains.jet.d" +
+      "escriptors.serialization.Callable\030d \001(\0132",
+      "@.org.jetbrains.jet.descriptors.serializ" +
+      "ation.JavaMethodSignature:\225\001\n\022property_s" +
+      "ignature\0225.org.jetbrains.jet.descriptors" +
+      ".serialization.Callable\030e \001(\0132B.org.jetb" +
+      "rains.jet.descriptors.serialization.Java" +
+      "PropertySignature:N\n\017impl_class_name\0225.o" +
+      "rg.jetbrains.jet.descriptors.serializati" +
+      "on.Callable\030f \001(\005:S\n\005index\022D.org.jetbrai" +
+      "ns.jet.descriptors.serialization.Callabl" +
+      "e.ValueParameter\030d \001(\005B\023B\021DebugJavaProto",
+      "Buf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

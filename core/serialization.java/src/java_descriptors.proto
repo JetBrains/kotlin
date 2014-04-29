@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.descriptors.serialization;
 
-import "compiler/frontend/serialization/src/descriptors.proto";
+import "core/serialization/src/descriptors.proto";
 
 option java_outer_classname = "JavaProtoBuf";
 option optimize_for = LITE_RUNTIME;

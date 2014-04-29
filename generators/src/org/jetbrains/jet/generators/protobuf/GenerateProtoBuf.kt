@@ -36,10 +36,10 @@ fun main(args: Array<String>) {
     try {
         checkVersion()
 
-        val commonProto = "compiler/frontend/serialization/src/descriptors.proto"
+        val commonProto = "core/serialization/src/descriptors.proto"
         val javaProto = "core/serialization.java/src/java_descriptors.proto"
 
-        execProtoc(commonProto, "compiler/frontend/serialization/src")
+        execProtoc(commonProto, "core/serialization/src")
         execProtoc(javaProto, "core/serialization.java/src")
 
         modifyAndExecProtoc(commonProto, "compiler/tests")
