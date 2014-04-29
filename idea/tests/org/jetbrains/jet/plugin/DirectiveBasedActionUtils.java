@@ -25,7 +25,6 @@ import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.testFramework.UsefulTestCase;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -45,9 +44,7 @@ public class DirectiveBasedActionUtils {
             return;
         }
 
-        AnalyzeExhaust exhaust = ResolvePackage.getAnalysisResults(file);
-
-        Collection<Diagnostic> diagnostics = exhaust.getBindingContext().getDiagnostics().all();
+        Collection<Diagnostic> diagnostics = ResolvePackage.getBindingContext(file).getDiagnostics().all();
         Collection<Diagnostic> errorDiagnostics = Collections2.filter(diagnostics, new Predicate<Diagnostic>() {
             @Override
             public boolean apply(@Nullable Diagnostic diagnostic) {

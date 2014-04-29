@@ -22,7 +22,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
-import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.checkers.DebugInfoUtil;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils;
@@ -30,6 +29,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
@@ -97,8 +97,8 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
     }
 
     private static void checkNoUnresolvedReferences(@NotNull final JetFile file) {
-        AnalyzeExhaust exhaust = ResolvePackage.getAnalysisResults(file);
-        for (Diagnostic diagnostic : exhaust.getBindingContext().getDiagnostics()) {
+        BindingContext bindingContext = ResolvePackage.getBindingContext(file);
+        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 List<TextRange> textRanges = diagnostic.getTextRanges();
                 String diagnosticText = DefaultErrorMessages.RENDERER.render(diagnostic);
@@ -108,7 +108,7 @@ public abstract class AbstractInsertImportOnPasteTest extends JetLightCodeInsigh
                 }
             }
         }
-        DebugInfoUtil.markDebugAnnotations(file, exhaust.getBindingContext(), new DebugInfoUtil.DebugInfoReporter() {
+        DebugInfoUtil.markDebugAnnotations(file, bindingContext, new DebugInfoUtil.DebugInfoReporter() {
             @Override
             public void reportElementWithErrorType(@NotNull JetReferenceExpression expression) {
                 //do nothing
