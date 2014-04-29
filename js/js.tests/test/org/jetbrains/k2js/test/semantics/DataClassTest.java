@@ -26,4 +26,8 @@ public class DataClassTest extends SingleFileTranslationTest {
     public void testTostring() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testKeyrole() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

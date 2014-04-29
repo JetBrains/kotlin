@@ -58,6 +58,9 @@
         var objType = typeof obj;
         if ("object" == objType || "function" == objType) {
             return getObjectHashCode(obj);
+        } else if ("number" == objType) {
+            // TODO: a more elaborate code is needed for floating point values.
+            return obj | 0;
         } if ("boolean" == objType) {
             return Number(obj)
         }
@@ -117,6 +120,7 @@
 
     /** @const */
     var POW_2_32 = 4294967296;
+    // TODO: consider switching to Symbol type once we are on ES6.
     /** @const */
     var OBJECT_HASH_CODE_PROPERTY_NAME = "kotlinHashCodeValue$";
 
