@@ -18,60 +18,68 @@ package org.jetbrains.jet.plugin.refactoring;
 
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.plugin.codeInsight.TipsManager;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
-import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JetNameValidatorImpl extends JetNameValidator {
+    public static enum Target {
+        FUNCTIONS_AND_CLASSES,
+        PROPERTIES
+    }
+
     private final PsiElement myContainer;
     private final PsiElement myAnchor;
-    private final Function1<DeclarationDescriptor, Boolean> myFilter;
+    private final Target myTarget;
 
-    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, Function1<DeclarationDescriptor, Boolean> filter) {
+    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, Target target) {
         super(container.getProject());
         myContainer = container;
         myAnchor = anchor;
-        myFilter = filter;
+        myTarget = target;
     }
 
     @Override
     protected boolean validateInner(String name) {
+        Set<JetScope> visitedScopes = new HashSet<JetScope>();
+
         PsiElement sibling;
         if (myAnchor != null) {
             sibling = myAnchor;
         }
         else {
             if (myContainer instanceof JetExpression) {
-                return checkElement(name, myContainer);
+                return checkElement(name, myContainer, visitedScopes);
             }
             sibling = myContainer.getFirstChild();
         }
 
         while (sibling != null) {
-            if (!checkElement(name, sibling)) return false;
+            if (!checkElement(name, sibling, visitedScopes)) return false;
             sibling = sibling.getNextSibling();
         }
 
         return true;
     }
 
-    private boolean checkElement(final String name, PsiElement sibling) {
+    private boolean checkElement(String name, PsiElement sibling, final Set<JetScope> visitedScopes) {
         if (!(sibling instanceof JetElement)) return true;
 
-        final BindingContext bindingContext  = AnalyzerFacadeWithCache.getContextForElement((JetElement) sibling);
+        final BindingContext bindingContext = AnalyzerFacadeWithCache.getContextForElement((JetElement) sibling);
+        final Name identifier = Name.identifier(name);
 
         final Ref<Boolean> result = new Ref<Boolean>(true);
         JetVisitorVoid visitor = new JetVisitorVoid() {
             @Override
-            public void visitElement(PsiElement element) {
+            public void visitElement(@NotNull PsiElement element) {
                 if (result.get()) {
                     element.acceptChildren(this);
                 }
@@ -79,13 +87,26 @@ public class JetNameValidatorImpl extends JetNameValidator {
 
             @Override
             public void visitExpression(@NotNull JetExpression expression) {
-                Collection<DeclarationDescriptor> variants = TipsManager.getVariantsNoReceiver(expression, bindingContext);
-                for (DeclarationDescriptor variant : variants) {
-                    if (variant.getName().asString().equals(name) && myFilter.invoke(variant)) {
+                JetScope resolutionScope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, expression);
+                if (!visitedScopes.add(resolutionScope)) return;
+
+                if (resolutionScope != null) {
+                    boolean noConflict;
+                    if (myTarget == Target.PROPERTIES) {
+                        noConflict = resolutionScope.getProperties(identifier).isEmpty()
+                                     && resolutionScope.getLocalVariable(identifier) == null;
+                    }
+                    else {
+                        noConflict = resolutionScope.getFunctions(identifier).isEmpty()
+                                     && resolutionScope.getClassifier(identifier) == null;
+                    }
+
+                    if (!noConflict) {
                         result.set(false);
                         return;
                     }
                 }
+
                 super.visitExpression(expression);
             }
         };

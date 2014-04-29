@@ -195,13 +195,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 JetNameValidatorImpl validator = new JetNameValidatorImpl(
                         commonContainer,
                         calculateAnchor(commonParent, commonContainer, allReplaces),
-                        new Function1<DeclarationDescriptor, Boolean>() {
-                            @Override
-                            public Boolean invoke(DeclarationDescriptor descriptor) {
-                                return descriptor instanceof VariableDescriptor;
-                            }
-                        }
-
+                        JetNameValidatorImpl.Target.PROPERTIES
                 );
                 String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator, "value");
                 final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();

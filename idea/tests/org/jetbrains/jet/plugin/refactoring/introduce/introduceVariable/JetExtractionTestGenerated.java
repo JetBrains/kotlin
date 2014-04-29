@@ -128,6 +128,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/ManyOccurrences.kt");
         }
         
+        @TestMetadata("noConflictWithInnerVariable.kt")
+        public void testNoConflictWithInnerVariable() throws Exception {
+            doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/noConflictWithInnerVariable.kt");
+        }
+        
         @TestMetadata("nonEquivalentReceivers.kt")
         public void testNonEquivalentReceivers() throws Exception {
             doIntroduceVariableTest("idea/testData/refactoring/introduceVariable/nonEquivalentReceivers.kt");
@@ -236,6 +241,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("misdirectedRef.kt")
             public void testMisdirectedRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/misdirectedRef.kt");
+            }
+            
+            @TestMetadata("noConflictWithInnerFunction.kt")
+            public void testNoConflictWithInnerFunction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/noConflictWithInnerFunction.kt");
             }
             
             @TestMetadata("privateMemberRef.kt")

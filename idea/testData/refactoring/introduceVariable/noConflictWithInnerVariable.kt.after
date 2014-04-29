@@ -1,0 +1,8 @@
+fun foo() {
+    val a = 1
+    val b1 = a > 0
+    if (b1) {
+        val b = 0
+        println(b)
+    }
+}

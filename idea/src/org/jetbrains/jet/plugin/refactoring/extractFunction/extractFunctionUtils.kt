@@ -168,8 +168,8 @@ private fun List<Instruction>.analyzeControlFlow(
             is AbstractJumpInstruction -> {
                 val element = it.getElement()
                 if (element is JetReturnExpression
-                        || element is JetBreakExpression
-                        || element is JetContinueExpression) {
+                || element is JetBreakExpression
+                || element is JetContinueExpression) {
                     jumpExits.add(it)
                 }
                 else if (element !is JetThrowExpression) {
@@ -312,7 +312,7 @@ private fun ExtractionData.inferParametersInfo(
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
             originalElements.first,
-            { it is VariableDescriptor }
+            JetNameValidatorImpl.Target.PROPERTIES
     )
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
@@ -536,7 +536,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     val functionNameValidator = JetNameValidatorImpl(
             nextSibling.getParent(),
             nextSibling,
-            {it is FunctionDescriptor || it is ClassDescriptor}
+            JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
     )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
 
@@ -584,12 +584,12 @@ fun ExtractionDescriptor.validate(): ExtractionDescriptorWithConflicts {
         } as? PsiNamedElement
         if (currentTarget is JetParameter && currentTarget.getParent() == function.getValueParameterList()) continue
         if (currentDescriptor is LocalVariableDescriptor
-                && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
+        && parameters.any { it.mirrorVarName == currentDescriptor.getName().asString() }) continue
 
         if (diagnostics.any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
-                || (currentDescriptor != null
-                        && !ErrorUtils.isError(currentDescriptor)
-                        && !compareDescriptors(currentDescriptor, resolveResult.descriptor))) {
+        || (currentDescriptor != null
+        && !ErrorUtils.isError(currentDescriptor)
+        && !compareDescriptors(currentDescriptor, resolveResult.descriptor))) {
             conflicts.putValue(
                     currentRefExpr,
                     JetRefactoringBundle.message(
