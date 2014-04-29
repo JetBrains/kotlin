@@ -112,7 +112,7 @@ public final class AnalyzerFacadeForJS {
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(topDownAnalysisContext) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, owner);
+            return AnalyzeExhaust.success(trace.getBindingContext(), owner);
         }
         finally {
             injector.destroy();

@@ -232,7 +232,7 @@ private class KotlinResolveCache(
                             resolveSession.getModuleDescriptor(),
                             MemberFilter.ALWAYS_TRUE
                     )
-                    val resultingContext = injector.getLazyTopDownAnalyzer()!!.analyzeDeclarations(
+                    injector.getLazyTopDownAnalyzer()!!.analyzeDeclarations(
                             resolveSession,
                             TopDownAnalysisParameters.createForLazy(
                                     resolveSession.getStorageManager(),
@@ -245,7 +245,6 @@ private class KotlinResolveCache(
                     )
                     return AnalyzeExhaust.success(
                             trace.getBindingContext(),
-                            resultingContext,
                             resolveSession.getModuleDescriptor()
                     )
                 }

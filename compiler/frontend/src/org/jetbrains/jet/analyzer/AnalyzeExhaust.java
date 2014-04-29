@@ -20,49 +20,33 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BodiesResolveContext;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 
 public class AnalyzeExhaust {
     public static final AnalyzeExhaust EMPTY = success(BindingContext.EMPTY, ErrorUtils.getErrorModule());
 
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleDescriptor module) {
-        return new AnalyzeExhaust(bindingContext, module, null, null);
-    }
-
     @NotNull
-    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext,
-            @Nullable BodiesResolveContext bodiesResolveContext,
-            @NotNull ModuleDescriptor module
-    ) {
-        return new AnalyzeExhaust(bindingContext, module, bodiesResolveContext, null);
+    public static AnalyzeExhaust success(@NotNull BindingContext bindingContext, @NotNull ModuleDescriptor module) {
+        return new AnalyzeExhaust(bindingContext, module, null);
     }
 
     @NotNull
     public static AnalyzeExhaust error(@NotNull BindingContext bindingContext, @NotNull Throwable error) {
-        return new AnalyzeExhaust(bindingContext, ErrorUtils.getErrorModule(), null, error);
+        return new AnalyzeExhaust(bindingContext, ErrorUtils.getErrorModule(), error);
     }
 
     private final BindingContext bindingContext;
     private final Throwable error;
-    private final BodiesResolveContext bodiesResolveContext;
     private final ModuleDescriptor moduleDescriptor;
 
     private AnalyzeExhaust(
             @NotNull BindingContext bindingContext,
             @NotNull ModuleDescriptor moduleDescriptor,
-            @Nullable BodiesResolveContext bodiesResolveContext,
             @Nullable Throwable error
     ) {
         this.bindingContext = bindingContext;
         this.error = error;
-        this.bodiesResolveContext = bodiesResolveContext;
         this.moduleDescriptor = moduleDescriptor;
-    }
-
-    @Nullable
-    public BodiesResolveContext getBodiesResolveContext() {
-        return bodiesResolveContext;
     }
 
     @NotNull

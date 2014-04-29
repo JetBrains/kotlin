@@ -142,7 +142,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BodiesResolveContext bodiesResolveContext = storeContextForBodiesResolve ?
                                                         new CachedBodiesResolveContext(topDownAnalysisContext) :
                                                         null;
-            return AnalyzeExhaust.success(trace.getBindingContext(), bodiesResolveContext, module);
+            return AnalyzeExhaust.success(trace.getBindingContext(), module);
         }
         finally {
             injector.destroy();
