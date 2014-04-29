@@ -90,7 +90,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(EMPTY_MEMBER_INDEX)
 
     override fun getAllClassNames(): Collection<Name> {
-        return jPackage.getClasses().iterator()
+        return jPackage.getClasses().stream()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
                 .map { c -> c.getName() }.toList()
     }
@@ -126,7 +126,7 @@ public class LazyPackageFragmentScopeForJavaClass(
 
     // We do not filter by hasStaticMembers() because it's slow (e.g. it triggers light class generation),
     // and there's no harm in having some names in the result that can not be resolved
-    override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().iterator()
+    override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().stream()
                                                                 .filter { c -> c.isStatic() }
                                                                 .map { c -> c.getFqName().sure("Nested class has no fqName: $c}") }.toList()
 }

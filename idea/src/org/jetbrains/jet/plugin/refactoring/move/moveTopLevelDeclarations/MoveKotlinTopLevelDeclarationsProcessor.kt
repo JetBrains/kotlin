@@ -265,7 +265,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
                 }
 
                 getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
-                for ((oldElement, newElement) in oldLightElements.iterator() zip newDeclaration.toLightElements().iterator()) {
+                for ((oldElement, newElement) in oldLightElements.stream() zip newDeclaration.toLightElements().stream()) {
                     oldToNewElementsMapping[oldElement] = newElement
                 }
             }

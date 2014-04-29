@@ -19,8 +19,7 @@ package org.jetbrains.jet.utils
 import java.util.LinkedHashMap
 import java.util.ArrayList
 
-[deprecated("use streams instead")]
-public fun <K, V> Iterator<V>.valuesToMap(key: (V) -> K): Map<K, V> {
+public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (v in this) {
         map[key(v)] = v
@@ -28,8 +27,7 @@ public fun <K, V> Iterator<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     return map
 }
 
-[deprecated("use streams instead")]
-public fun <K, V> Iterator<K>.keysToMap(value: (K) -> V): Map<K, V> {
+public fun <K, V> Stream<K>.keysToMap(value: (K) -> V): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         map[k] = value(k)
@@ -37,8 +35,7 @@ public fun <K, V> Iterator<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return map
 }
 
-[deprecated("use streams instead")]
-public fun <K, V: Any> Iterator<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+public fun <K, V: Any> Stream<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         val v = value(k)

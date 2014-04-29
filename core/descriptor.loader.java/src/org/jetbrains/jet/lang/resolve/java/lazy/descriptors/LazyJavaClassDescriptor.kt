@@ -196,7 +196,7 @@ class LazyJavaClassDescriptor(
                     listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
                 }
             else
-                supertypes.iterator()
+                supertypes.stream()
                         .map {
                             supertype ->
                             c.typeResolver.transformJavaType(supertype, TypeUsage.SUPERTYPE.toAttributes())
