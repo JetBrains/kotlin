@@ -103,13 +103,15 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
         }
 
         if (receiver == null) {
-            TypeInstantiationItems(bindingContext, resolveSession).addToCollection(result, expectedInfos)
+            TypeInstantiationItems(bindingContext, resolveSession, visibilityFilter).addToCollection(result, expectedInfos)
 
             StaticMembers(bindingContext, resolveSession).addToCollection(result, expectedInfos, expression)
 
             ThisItems(bindingContext).addToCollection(result, expressionWithType, expectedInfos)
 
             LambdaItems.addToCollection(result, functionExpectedInfos)
+
+            KeywordValues.addToCollection(result, expectedInfos)
         }
 
         return result

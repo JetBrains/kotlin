@@ -91,6 +91,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/BeforeArgumentWithBinaryOperation3.kt");
     }
     
+    @TestMetadata("BooleanExpected.kt")
+    public void testBooleanExpected() throws Exception {
+        doTest("idea/testData/completion/smart/BooleanExpected.kt");
+    }
+    
     @TestMetadata("ChainedCall.kt")
     public void testChainedCall() throws Exception {
         doTest("idea/testData/completion/smart/ChainedCall.kt");
@@ -114,6 +119,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("ConstructorForGenericType.kt")
     public void testConstructorForGenericType() throws Exception {
         doTest("idea/testData/completion/smart/ConstructorForGenericType.kt");
+    }
+    
+    @TestMetadata("ConstructorForJavaClass.kt")
+    public void testConstructorForJavaClass() throws Exception {
+        doTest("idea/testData/completion/smart/ConstructorForJavaClass.kt");
     }
     
     @TestMetadata("ConstructorForNullable.kt")
@@ -169,6 +179,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("FunctionReference9.kt")
     public void testFunctionReference9() throws Exception {
         doTest("idea/testData/completion/smart/FunctionReference9.kt");
+    }
+    
+    @TestMetadata("InaccessibleConstructor.kt")
+    public void testInaccessibleConstructor() throws Exception {
+        doTest("idea/testData/completion/smart/InaccessibleConstructor.kt");
     }
     
     @TestMetadata("InsideIdentifier.kt")
@@ -284,6 +299,16 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("OverloadedMethodCallArgument2.kt")
     public void testOverloadedMethodCallArgument2() throws Exception {
         doTest("idea/testData/completion/smart/OverloadedMethodCallArgument2.kt");
+    }
+    
+    @TestMetadata("PrivateConstructorForAbstract.kt")
+    public void testPrivateConstructorForAbstract() throws Exception {
+        doTest("idea/testData/completion/smart/PrivateConstructorForAbstract.kt");
+    }
+    
+    @TestMetadata("ProtectedConstructorForAbstract.kt")
+    public void testProtectedConstructorForAbstract() throws Exception {
+        doTest("idea/testData/completion/smart/ProtectedConstructorForAbstract.kt");
     }
     
     @TestMetadata("QualifiedOverloadedMethodCallArgument1.kt")

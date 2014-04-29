@@ -356,4 +356,9 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/TabReplaceOperand.kt");
     }
     
+    @TestMetadata("True.kt")
+    public void testTrue() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/True.kt");
+    }
+    
 }

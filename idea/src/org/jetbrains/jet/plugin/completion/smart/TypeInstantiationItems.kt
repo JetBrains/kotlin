@@ -35,8 +35,12 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.Visibilities
 
-class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
+class TypeInstantiationItems(val bindingContext: BindingContext,
+                             val resolveSession: ResolveSessionForBodies,
+                             val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { TypeUtils.makeNotNullable(it.`type`) }
         for ((jetType, types) in expectedInfosGrouped) {
@@ -50,7 +54,16 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
 
         val classifier = jetType.getConstructor().getDeclarationDescriptor()
         if (!(classifier is ClassDescriptor)) return
-        //TODO: check for constructor's visibility
+
+        val isAbstract = classifier.getModality() == Modality.ABSTRACT
+        val allConstructors = classifier.getConstructors()
+        val visibleConstructors = allConstructors.filter {
+            if (isAbstract)
+                visibilityFilter(it) || it.getVisibility() == Visibilities.PROTECTED
+            else
+                visibilityFilter(it)
+        }
+        if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return
 
         var lookupElement = createLookupElement(classifier, resolveSession, bindingContext)
 
@@ -61,7 +74,7 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
 
         val insertHandler: InsertHandler<LookupElement>
         val typeText = DescriptorUtils.getFqName(classifier).toString() + DescriptorRenderer.SOURCE_CODE.renderTypeArguments(typeArgs)
-        if (classifier.getModality() == Modality.ABSTRACT) {
+        if (isAbstract) {
             val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
             itemText += constructorParenthesis
             itemText = "object: " + itemText + "{...}"
@@ -82,12 +95,11 @@ class TypeInstantiationItems(val bindingContext: BindingContext, val resolveSess
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
             itemText += "()"
-            val constructors = classifier.getConstructors()
             val baseInsertHandler =
-                    (if (constructors.size == 0)
+                    (if (visibleConstructors.size == 0)
                         JetFunctionInsertHandler.NO_PARAMETERS_HANDLER
-                    else if (constructors.size == 1)
-                        DescriptorLookupConverter.getDefaultInsertHandler(constructors.first())!!
+                    else if (visibleConstructors.size == 1)
+                        DescriptorLookupConverter.getDefaultInsertHandler(visibleConstructors.single())!!
                     else
                         JetFunctionInsertHandler.WITH_PARAMETERS_HANDLER) as JetFunctionInsertHandler
             insertHandler = object : InsertHandler<LookupElement> {
