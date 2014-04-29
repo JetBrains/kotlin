@@ -880,6 +880,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/psi/recovery"), Pattern.compile("^(.*)\\.kts?$"), true);
             }
             
+            @TestMetadata("EnumEntryInitList.kt")
+            public void testEnumEntryInitList() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/EnumEntryInitList.kt");
+            }
+            
             @TestMetadata("ForRecovery.kt")
             public void testForRecovery() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/ForRecovery.kt");

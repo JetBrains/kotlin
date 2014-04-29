@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1732,22 +1732,24 @@ public class JetExpressionParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
 
         myBuilder.disableNewlines();
-        expect(LPAR, "Expecting an argument list", EXPRESSION_FOLLOW);
 
-        if (!at(RPAR)) {
-            while (true) {
-                while (at(COMMA)) errorAndAdvance("Expecting an argument");
-                parseValueArgument();
-                if (!at(COMMA)) break;
-                advance(); // COMMA
-                if (at(RPAR)) {
-                    error("Expecting an argument");
-                    break;
+        if (expect(LPAR, "Expecting an argument list", EXPRESSION_FOLLOW)) {
+            if (!at(RPAR)) {
+                while (true) {
+                    while (at(COMMA)) errorAndAdvance("Expecting an argument");
+                    parseValueArgument();
+                    if (!at(COMMA)) break;
+                    advance(); // COMMA
+                    if (at(RPAR)) {
+                        error("Expecting an argument");
+                        break;
+                    }
                 }
             }
+
+            expect(RPAR, "Expecting ')'", EXPRESSION_FOLLOW);
         }
 
-        expect(RPAR, "Expecting ')'", EXPRESSION_FOLLOW);
         myBuilder.restoreNewlinesState();
 
         list.done(VALUE_ARGUMENT_LIST);
