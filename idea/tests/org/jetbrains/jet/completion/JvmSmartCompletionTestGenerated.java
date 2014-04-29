@@ -281,6 +281,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NotSillyAssignment.kt");
     }
     
+    @TestMetadata("Null.kt")
+    public void testNull() throws Exception {
+        doTest("idea/testData/completion/smart/Null.kt");
+    }
+    
     @TestMetadata("NullableThis.kt")
     public void testNullableThis() throws Exception {
         doTest("idea/testData/completion/smart/NullableThis.kt");

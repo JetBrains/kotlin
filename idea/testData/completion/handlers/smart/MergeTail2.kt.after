@@ -6,3 +6,5 @@ fun foo(c: C?, i: Int){}
 fun foo() {
     foo(C()<caret>
 }
+
+// ELEMENT: C
