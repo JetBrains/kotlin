@@ -6,5 +6,5 @@ class Foo(val prop1 : Any, val prop2 : Any){
     }
 }
 
-// EXIST: prop1
-// ABSENT: prop2
+// EXIST: { itemText:"prop1" }
+// ABSENT: { itemText:"prop2" }

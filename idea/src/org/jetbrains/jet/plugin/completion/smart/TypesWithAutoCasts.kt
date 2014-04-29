@@ -34,6 +34,7 @@ import com.google.common.collect.SetMultimap
 import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
 
 class TypesWithAutoCasts(val bindingContext: BindingContext) {
     public fun calculate(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
@@ -77,43 +78,43 @@ class TypesWithAutoCasts(val bindingContext: BindingContext) {
     )
 
     private fun processDataFlowInfo(dataFlowInfo: DataFlowInfo?, receiver: JetExpression?): ProcessDataFlowInfoResult {
-        if (dataFlowInfo != null) {
-            val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
-            if (receiver != null) {
-                val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
-                if (receiverType != null) {
-                    val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
-                    dataFlowValueToVariable = {(value) ->
-                        val id = value.getId()
-                        if (id is com.intellij.openapi.util.Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
-                    }
-                }
-                else {
-                    return ProcessDataFlowInfoResult()
-                }
-            }
-            else {
-                dataFlowValueToVariable = {(value) -> value.getId() as? VariableDescriptor }
-            }
+        if (dataFlowInfo == null) return ProcessDataFlowInfoResult()
 
-            val variableToType = HashMap<VariableDescriptor, Collection<JetType>>()
-            val typeInfo: SetMultimap<DataFlowValue, JetType> = dataFlowInfo.getCompleteTypeInfo()
-            for ((dataFlowValue, types) in typeInfo.asMap().entrySet()) {
-                val variable = dataFlowValueToVariable.invoke(dataFlowValue)
-                if (variable != null) {
-                    variableToType[variable] = types
+        val dataFlowValueToVariable: (DataFlowValue) -> VariableDescriptor?
+        if (receiver != null) {
+            val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver] ?: return ProcessDataFlowInfoResult()
+            val receiverId = DataFlowValueFactory.createDataFlowValue(receiver, receiverType, bindingContext).getId()
+            dataFlowValueToVariable = {(value) ->
+                val id = value.getId()
+                if (id is com.intellij.openapi.util.Pair<*, *> && id.first == receiverId) id.second as? VariableDescriptor else null
+            }
+        }
+        else {
+            dataFlowValueToVariable = {(value) ->
+                val id = value.getId()
+                when {
+                    id is VariableDescriptor -> id
+                    id is com.intellij.openapi.util.Pair<*, *> && id.first is ThisReceiver -> id.second as? VariableDescriptor
+                    else -> null
                 }
             }
-
-            val nullabilityInfo: Map<DataFlowValue, Nullability> = dataFlowInfo.getCompleteNullabilityInfo()
-            val notNullVariables = nullabilityInfo
-                    .filter { it.getValue() == Nullability.NOT_NULL }
-                    .map { dataFlowValueToVariable(it.getKey()) }
-                    .filterNotNullTo(HashSet<VariableDescriptor>())
-
-            return ProcessDataFlowInfoResult(variableToType, notNullVariables)
         }
 
-        return ProcessDataFlowInfoResult()
+        val variableToType = HashMap<VariableDescriptor, Collection<JetType>>()
+        val typeInfo: SetMultimap<DataFlowValue, JetType> = dataFlowInfo.getCompleteTypeInfo()
+        for ((dataFlowValue, types) in typeInfo.asMap().entrySet()) {
+            val variable = dataFlowValueToVariable.invoke(dataFlowValue)
+            if (variable != null) {
+                variableToType[variable] = types
+            }
+        }
+
+        val nullabilityInfo: Map<DataFlowValue, Nullability> = dataFlowInfo.getCompleteNullabilityInfo()
+        val notNullVariables = nullabilityInfo
+                .filter { it.getValue() == Nullability.NOT_NULL }
+                .map { dataFlowValueToVariable(it.getKey()) }
+                .filterNotNullTo(HashSet<VariableDescriptor>())
+
+        return ProcessDataFlowInfoResult(variableToType, notNullVariables)
     }
 }

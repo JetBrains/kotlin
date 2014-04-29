@@ -4,4 +4,4 @@ fun f(p: String?) {
     }
 }
 
-// EXIST: p
+// EXIST: { itemText:"p" }

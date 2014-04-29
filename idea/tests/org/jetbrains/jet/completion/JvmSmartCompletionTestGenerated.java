@@ -71,6 +71,16 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/AutoNotNullType.kt");
     }
     
+    @TestMetadata("AutoNotNullType2.kt")
+    public void testAutoNotNullType2() throws Exception {
+        doTest("idea/testData/completion/smart/AutoNotNullType2.kt");
+    }
+    
+    @TestMetadata("AutoNotNullTypeForConstructorParameter.kt")
+    public void testAutoNotNullTypeForConstructorParameter() throws Exception {
+        doTest("idea/testData/completion/smart/AutoNotNullTypeForConstructorParameter.kt");
+    }
+    
     @TestMetadata("AutoNotNullTypeWithQualifier.kt")
     public void testAutoNotNullTypeWithQualifier() throws Exception {
         doTest("idea/testData/completion/smart/AutoNotNullTypeWithQualifier.kt");

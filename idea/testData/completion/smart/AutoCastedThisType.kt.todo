@@ -9,4 +9,4 @@ open class Foo{
 class Bar : Foo
 
 
-// EXIST: this
+// EXIST: { itemText:"this" }

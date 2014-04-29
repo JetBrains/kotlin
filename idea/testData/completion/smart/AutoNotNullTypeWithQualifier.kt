@@ -6,7 +6,7 @@ class Foo(val prop1 : String?, val prop2 : String?){
     }
 }
 
-// EXIST: prop1
-// ABSENT: { lookupString:"prop2", itemText:"prop2" }
-// EXIST: { lookupString:"prop2", itemText:"!! prop2" }
-// EXIST: { lookupString:"prop2", itemText:"?: prop2" }
+// EXIST: { itemText:"prop1" }
+// ABSENT: { itemText:"prop2" }
+// EXIST: { itemText:"!! prop2" }
+// EXIST: { itemText:"?: prop2" }

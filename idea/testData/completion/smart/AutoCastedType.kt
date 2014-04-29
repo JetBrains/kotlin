@@ -4,4 +4,4 @@ fun f(p: Any) {
     }
 }
 
-// EXIST: p
+// EXIST: { itemText:"p" }
