@@ -274,13 +274,16 @@ public class CandidateResolver {
         return returnType;
     }
 
-    private <D extends CallableDescriptor> void completeTypeInferenceForAllCandidates(
+    private <D extends CallableDescriptor> void completeTypeInferenceForAllCandidatesForArgument(
             @NotNull CallCandidateResolutionContext<D> context,
-            @Nullable JetExpression expression
+            @Nullable JetExpression argumentExpression
     ) {
-        if (expression == null) return;
+        // All candidates for inner calls are not needed, so there is no need to complete them
+        if (context.collectAllCandidates) return;
 
-        CallKey callKey = CallKey.create(expression);
+        if (argumentExpression == null) return;
+
+        CallKey callKey = CallKey.create(argumentExpression);
         OverloadResolutionResultsImpl<CallableDescriptor> resolutionResults = context.resolutionResultsCache.getResolutionResults(callKey);
         if (resolutionResults == null) return;
 
@@ -412,7 +415,7 @@ public class CandidateResolver {
         if (storedContextForArgument == null) {
             JetType type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
-            completeTypeInferenceForAllCandidates(context, keyExpression);
+            completeTypeInferenceForAllCandidatesForArgument(context, keyExpression);
             return;
         }
 
@@ -427,7 +430,7 @@ public class CandidateResolver {
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
-        completeTypeInferenceForAllCandidates(context, keyExpression);
+        completeTypeInferenceForAllCandidatesForArgument(context, keyExpression);
 
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }
