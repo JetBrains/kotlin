@@ -60,8 +60,6 @@ import org.jetbrains.jet.lang.psi.JetTypeReference
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.diagnostics.DiagnosticUtils
 import org.jetbrains.jet.plugin.imports.*
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.utils.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
@@ -358,7 +356,7 @@ private val ReferenceData.fqName: FqName
 
 private fun zip(first: IntArray, second: IntArray): Iterable<Pair<Int, Int>> {
     assert(first.size == second.size)
-    return first.toList().zip_tmp(second.toList())
+    return first.zip(second.toList())
 }
 
 private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: IntArray, endOffsets: IntArray): Boolean {

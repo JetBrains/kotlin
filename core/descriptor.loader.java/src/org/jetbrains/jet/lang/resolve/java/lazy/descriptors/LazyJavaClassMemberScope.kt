@@ -132,7 +132,7 @@ public class LazyJavaClassMemberScope(
         val methods = jClass.getMethods()
         val result = ArrayList<ValueParameterDescriptor>(methods.size())
 
-        for ((index, method) in methods.withIndices_tmp()) {
+        for ((index, method) in methods.withIndices()) {
             assert(method.getValueParameters().isEmpty(), "Annotation method can't have parameters: " + method)
 
             val jReturnType = method.getReturnType() ?: throw AssertionError("Annotation method has no return type: " + method)

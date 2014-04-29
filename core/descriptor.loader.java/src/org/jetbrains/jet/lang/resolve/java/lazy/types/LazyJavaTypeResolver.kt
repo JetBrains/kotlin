@@ -191,7 +191,7 @@ class LazyJavaTypeResolver(
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
             }
             var howTheProjectionIsUsed = if (attr.howThisTypeIsUsed == SUPERTYPE) SUPERTYPE_ARGUMENT else TYPE_ARGUMENT
-            return javaType.getTypeArguments().withIndices_tmp().map_tmp {
+            return javaType.getTypeArguments().withIndices().map {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
                 val parameter = if (i >= typeParameters.size)

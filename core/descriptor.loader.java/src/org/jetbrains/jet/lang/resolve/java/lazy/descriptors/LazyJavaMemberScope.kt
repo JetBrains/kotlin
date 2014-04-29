@@ -173,7 +173,7 @@ public abstract class LazyJavaMemberScope(
             jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndices_tmp().map_tmp {
+        val descriptors = jValueParameters.withIndices().map {
             pair ->
             val (index, javaParameter) = pair
 

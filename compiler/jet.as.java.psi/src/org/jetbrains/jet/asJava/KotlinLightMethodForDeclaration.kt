@@ -52,7 +52,7 @@ public class KotlinLightMethodForDeclaration(
         cacheManager.createCachedValue<PsiParameterList>({
             val parameterBuilder = LightParameterListBuilder(getManager(), JetLanguage.INSTANCE)
 
-            for ((index, parameter) in delegate.getParameterList().getParameters().withIndices_tmp()) {
+            for ((index, parameter) in delegate.getParameterList().getParameters().withIndices()) {
                 parameterBuilder.addParameter(KotlinLightParameter(parameter, index, this))
             }
 

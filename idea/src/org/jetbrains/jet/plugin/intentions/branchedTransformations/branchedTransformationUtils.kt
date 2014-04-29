@@ -329,7 +329,7 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
         val conditions1 = e1.getConditions().toList()
         val conditions2 = e2.getConditions().toList()
         return conditions1.size == conditions2.size &&
-            (conditions1 zip_tmp conditions2).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
+            (conditions1 zip conditions2).all { pair -> JetPsiMatcher.checkElementMatch(pair.first, pair.second)}
     }
 
     fun JetWhenEntry.declarationNames(): Set<String> =
@@ -354,7 +354,7 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
 
     val entries1 = getEntries()
     val entries2 = sibling.getEntries()
-    return entries1.size == entries2.size && (entries1 zip_tmp entries2).all { pair ->
+    return entries1.size == entries2.size && (entries1 zip entries2).all { pair ->
         checkConditions(pair.first, pair.second) && checkBodies(pair.first, pair.second)
     }
 }
@@ -374,7 +374,7 @@ public fun JetWhenExpression.mergeWithNext() {
     }
 
     val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>()) as JetWhenExpression
-    for ((entry1, entry2) in getEntries() zip_tmp sibling.getEntries()) {
+    for ((entry1, entry2) in getEntries() zip sibling.getEntries()) {
         entry1.getExpression() mergeWith entry2.getExpression()
     }
 
