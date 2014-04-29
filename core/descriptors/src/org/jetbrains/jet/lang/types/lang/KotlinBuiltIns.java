@@ -38,10 +38,7 @@ import java.util.*;
 import static org.jetbrains.jet.lang.types.lang.PrimitiveType.*;
 
 public class KotlinBuiltIns {
-    public static final JetScope STUB = JetScope.EMPTY;
-
-    public static final String BUILT_INS_PACKAGE_NAME_STRING = "kotlin";
-    public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier(BUILT_INS_PACKAGE_NAME_STRING);
+    public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
 
     public static final int FUNCTION_TRAIT_COUNT = 23;
@@ -99,68 +96,30 @@ public class KotlinBuiltIns {
     private volatile ImmutableSet<ClassDescriptor> nonPhysicalClasses;
 
     private final ImmutableSet<ClassDescriptor> functionClassesSet;
-
     private final ImmutableSet<ClassDescriptor> extensionFunctionClassesSet;
 
-    private final EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToClass;
-    private final EnumMap<PrimitiveType, ClassDescriptor> primitiveTypeToArrayClass;
-    private final EnumMap<PrimitiveType, JetType> primitiveTypeToJetType;
-    private final EnumMap<PrimitiveType, JetType> primitiveTypeToNullableJetType;
-    private final EnumMap<PrimitiveType, JetType> primitiveTypeToArrayJetType;
+    private final Map<PrimitiveType, JetType> primitiveTypeToNullableJetType;
+    private final Map<PrimitiveType, JetType> primitiveTypeToArrayJetType;
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
-    private final ClassDescriptor nothingClass;
-    private final ClassDescriptor arrayClass;
-    private final ClassDescriptor deprecatedAnnotationClass;
-    private final ClassDescriptor dataAnnotationClass;
-    private final ClassDescriptor[] functionClasses;
-
-    private volatile JetType anyType;
-    private volatile JetType nullableAnyType;
-    private volatile JetType nothingType;
-    private volatile JetType nullableNothingType;
-    private volatile JetType unitType;
-    private volatile JetType stringType;
-    private volatile JetType annotationType;
-
     private KotlinBuiltIns() {
-        this.builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
-                                                       Collections.<ImportPath>emptyList(),
-                                                       PlatformToKotlinClassMap.EMPTY);
+        builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
+                                                  Collections.<ImportPath>emptyList(),
+                                                  PlatformToKotlinClassMap.EMPTY);
         builtinsPackageFragment = new BuiltinsPackageFragment(new LockBasedStorageManager(), builtInsModule);
         builtInsModule.addFragmentProvider(DependencyKind.SOURCES, builtinsPackageFragment.getProvider());
 
-        this.functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
-        this.extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
+        functionClassesSet = computeIndexedClasses("Function", FUNCTION_TRAIT_COUNT);
+        extensionFunctionClassesSet = computeIndexedClasses("ExtensionFunction", FUNCTION_TRAIT_COUNT);
 
-        this.primitiveTypeToClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-        this.primitiveTypeToJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-        this.primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-        this.primitiveTypeToArrayClass = new EnumMap<PrimitiveType, ClassDescriptor>(PrimitiveType.class);
-        this.primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
-        this.primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
-        this.jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
-
-        this.nothingClass = getBuiltInClassByName("Nothing");
-        this.arrayClass = getBuiltInClassByName("Array");
-        this.deprecatedAnnotationClass = getBuiltInClassByName("deprecated");
-        this.dataAnnotationClass = getBuiltInClassByName("data");
-        this.functionClasses = new ClassDescriptor[FUNCTION_TRAIT_COUNT];
-        for (int i = 0; i < functionClasses.length; i++) {
-            functionClasses[i] = getBuiltInClassByName("Function" + i);
-        }
+        primitiveTypeToNullableJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        primitiveTypeToArrayJetType = new EnumMap<PrimitiveType, JetType>(PrimitiveType.class);
+        primitiveJetTypeToJetArrayType = new HashMap<JetType, JetType>();
+        jetArrayTypeToPrimitiveJetType = new HashMap<JetType, JetType>();
     }
 
     private void doInitialize() {
-        anyType = getBuiltInTypeByClassName("Any");
-        nullableAnyType = TypeUtils.makeNullable(anyType);
-        nothingType = getBuiltInTypeByClassName("Nothing");
-        nullableNothingType = TypeUtils.makeNullable(nothingType);
-        unitType = getBuiltInTypeByClassName("Unit");
-        stringType = getBuiltInTypeByClassName("String");
-        annotationType = getBuiltInTypeByClassName("Annotation");
-
         for (PrimitiveType primitive : PrimitiveType.values()) {
             makePrimitive(primitive);
         }
@@ -174,10 +133,7 @@ public class KotlinBuiltIns {
         ClassDescriptor arrayClass = getBuiltInClassByName(primitiveType.getArrayTypeName().asString());
         JetType arrayType = new JetTypeImpl(arrayClass);
 
-        primitiveTypeToClass.put(primitiveType, theClass);
-        primitiveTypeToJetType.put(primitiveType, type);
         primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
-        primitiveTypeToArrayClass.put(primitiveType, arrayClass);
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
@@ -455,14 +411,14 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getBuiltInClassByName("Map"), "Entry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMap(), "Entry");
         assert classDescriptor != null : "Can't find Map.Entry";
         return classDescriptor;
     }
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getBuiltInClassByName("MutableMap"), "MutableEntry");
+        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry");
         assert classDescriptor != null : "Can't find MutableMap.MutableEntry";
         return classDescriptor;
     }
@@ -694,11 +650,6 @@ public class KotlinBuiltIns {
     @NotNull
     public JetType getAnnotationType() {
         return getBuiltInTypeByClassName("Annotation");
-    }
-
-    @NotNull
-    public ClassDescriptor getPropertyMetadata() {
-        return getBuiltInClassByName("PropertyMetadata");
     }
 
     @NotNull

@@ -52,7 +52,7 @@ import java.util.*;
 public class LightClassUtil {
     private static final Logger LOG = Logger.getInstance(LightClassUtil.class);
 
-    public static final File BUILT_INS_SRC_DIR = new File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
+    public static final File BUILT_INS_SRC_DIR = new File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString());
 
     /**
      * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
@@ -85,7 +85,7 @@ public class LightClassUtil {
 
     @NotNull
     public static URL getBuiltInsDirUrl() {
-        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING + "/Library.kt";
+        String builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME + "/Library.kt";
 
         URL url = KotlinBuiltIns.class.getResource(builtInFilePath);
 

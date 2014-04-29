@@ -164,7 +164,7 @@ public class CommonSupertypes {
         }
 
         // TODO : attributes?
-        JetScope newScope = KotlinBuiltIns.getInstance().STUB;
+        JetScope newScope = JetScope.EMPTY;
         DeclarationDescriptor declarationDescriptor = constructor.getDeclarationDescriptor();
         if (declarationDescriptor instanceof ClassDescriptor) {
             newScope = ((ClassDescriptor) declarationDescriptor).getMemberScope(newProjections);

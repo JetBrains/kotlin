@@ -59,7 +59,8 @@ import java.util.Set;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.unwrapFakeOverride;
 
 public class BuiltInsReferenceResolver extends AbstractProjectComponent {
-    private static final File BUILT_INS_COMPILABLE_SRC_DIR = new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME_STRING);
+    private static final File BUILT_INS_COMPILABLE_SRC_DIR =
+            new File("core/builtins/src", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString());
 
     private volatile BindingContext bindingContext;
     private volatile Set<JetFile> builtInsSources;
