@@ -31,6 +31,8 @@ import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.psi.JetTypeConstraint
+import kotlin.properties.Delegates
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 
 data class Parameter(
         val argumentText: String,
@@ -131,6 +133,18 @@ data class ExtractionDescriptor(
         val replacementMap: Map<Int, Replacement>,
         val controlFlow: ControlFlow
 )
+
+class AnalysisResult (
+        val descriptor: ExtractionDescriptor?,
+        val status: Status,
+        val messages: List<String>
+) {
+    enum class Status {
+        SUCCESS
+        NON_CRITICAL_ERROR
+        CRITICAL_ERROR
+    }
+}
 
 class ExtractionDescriptorWithConflicts(
         val descriptor: ExtractionDescriptor,

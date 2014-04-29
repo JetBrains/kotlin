@@ -31,13 +31,10 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil
-import org.jetbrains.jet.plugin.util.MaybeValue
-import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
 import java.util.HashSet
 import org.jetbrains.jet.lang.cfg.pseudocode.WriteValueInstruction
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.lang.psi.psiUtil.appendElement
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
@@ -92,7 +89,6 @@ import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.utils.DFS
 import org.jetbrains.jet.utils.DFS.Neighbors
 import org.jetbrains.jet.utils.DFS.VisitedWithSet
-import org.jetbrains.jet.utils.DFS.AbstractNodeHandler
 import org.jetbrains.jet.utils.DFS.CollectingNodeHandler
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
@@ -100,6 +96,7 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
@@ -147,13 +144,16 @@ private fun List<Instruction>.analyzeControlFlow(
         bindingContext: BindingContext,
         parameters: Set<Parameter>,
         inferredType: JetType?
-): Maybe<ControlFlow, String> {
+): Pair<ControlFlow, String?> {
     val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
 
     if (outParameters.size > 1) {
         val outValuesStr = outParameters.map { it.argumentText }.sort().makeString(separator = "\n")
 
-        return MaybeError("${JetRefactoringBundle.message("selected.code.fragment.has.multiple.output.values")!!}\n$outValuesStr")
+        return Pair(
+                DefaultControlFlow,
+                "${JetRefactoringBundle.message("selected.code.fragment.has.multiple.output.values")!!}\n$outValuesStr"
+        )
     }
 
     val exitPoints = getExitPoints()
@@ -188,19 +188,21 @@ private fun List<Instruction>.analyzeControlFlow(
 
     if (outParameters.isNotEmpty()) {
         if (hasMeaningfulType || valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) {
-            return MaybeError(JetRefactoringBundle.message("selected.code.fragment.has.output.values.and.exit.points")!!)
+            return Pair(DefaultControlFlow, JetRefactoringBundle.message("selected.code.fragment.has.output.values.and.exit.points")!!)
         }
 
-        return MaybeValue(ParameterUpdate(outParameters.first()))
+        return Pair(ParameterUpdate(outParameters.first()), null)
     }
 
-    val multipleExitsError =
-            MaybeError<ControlFlow, String>(JetRefactoringBundle.message("selected.code.fragment.has.multiple.exit.points")!!)
+    val multipleExitsError = Pair(
+            DefaultControlFlow,
+            JetRefactoringBundle.message("selected.code.fragment.has.multiple.exit.points")!!
+    )
 
     if (hasMeaningfulType) {
         if (valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) return multipleExitsError
 
-        return MaybeValue(ExpressionEvaluation(inferredType!!))
+        return Pair(ExpressionEvaluation(inferredType!!), null)
     }
 
     if (valuedReturnExits.isNotEmpty()) {
@@ -210,22 +212,22 @@ private fun List<Instruction>.analyzeControlFlow(
             if (valuedReturnExits.size != 1) return multipleExitsError
 
             val element = valuedReturnExits.first!!.getElement()
-            return MaybeValue(ConditionalJump(listOf(element), element))
+            return Pair(ConditionalJump(listOf(element), element), null)
         }
 
         if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
-        return MaybeValue(ExpressionEvaluationWithCallSiteReturn(valuedReturnExits.getResultType(bindingContext)))
+        return Pair(ExpressionEvaluationWithCallSiteReturn(valuedReturnExits.getResultType(bindingContext)), null)
     }
 
     if (jumpExits.isNotEmpty()) {
         if (!jumpExits.checkEquivalence(true)) return multipleExitsError
 
         val elements = jumpExits.map { it.getElement() }
-        if (defaultExits.isNotEmpty()) return MaybeValue(ConditionalJump(elements, elements.first!!))
-        return MaybeValue(UnconditionalJump(elements, elements.first!!))
+        if (defaultExits.isNotEmpty()) return Pair(ConditionalJump(elements, elements.first!!), null)
+        return Pair(UnconditionalJump(elements, elements.first!!), null)
     }
 
-    return MaybeValue(DefaultControlFlow)
+    return Pair(DefaultControlFlow, null)
 }
 
 private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression {
@@ -306,7 +308,7 @@ private fun ExtractionData.inferParametersInfo(
         replacementMap: MutableMap<Int, Replacement>,
         parameters: MutableSet<Parameter>,
         typeParameters: MutableSet<TypeParameter>
-): MaybeError<ExtractionDescriptor, String>? {
+): String? {
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
             originalElements.first,
@@ -324,7 +326,7 @@ private fun ExtractionData.inferParametersInfo(
         val selector = (ref.getParent() as? JetCallExpression) ?: ref
         val superExpr = (selector.getParent() as? JetQualifiedExpression)?.getReceiverExpression() as? JetSuperExpression
         if (superExpr != null) {
-            return MaybeError(JetRefactoringBundle.message("cannot.extract.super.call")!!)
+            return JetRefactoringBundle.message("cannot.extract.super.call")!!
         }
 
         val receiverArgument = resolvedCall?.getReceiverArgument()
@@ -343,7 +345,7 @@ private fun ExtractionData.inferParametersInfo(
 
         if (classObjectClassDescriptor != null) {
             if (!classObjectClassDescriptor.canBeReferencedViaImport()) {
-                return MaybeError(JetRefactoringBundle.message("cannot.extract.non.local.declaration.ref")!!)
+                return JetRefactoringBundle.message("cannot.extract.non.local.declaration.ref")!!
             }
 
             replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
@@ -366,6 +368,8 @@ private fun ExtractionData.inferParametersInfo(
                             } ?: DEFAULT_PARAMETER_TYPE
                         }
                         else bindingContext[BindingContext.EXPRESSION_TYPE, originalRef] ?: DEFAULT_PARAMETER_TYPE
+
+                if (!parameterType.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)) continue
 
                 val existingParameter = extractedDescriptorToParameter[descriptorToExtract]
                 val parameter: Parameter =
@@ -431,7 +435,7 @@ private fun ExtractionData.inferParametersInfo(
             DescriptorRenderer.HTML.renderType(it)
         }.sort().makeString(separator = "\n")
 
-        return MaybeError("${JetRefactoringBundle.message("parameter.types.are.not.denotable")!!}\n$typeStr")
+        return "${JetRefactoringBundle.message("parameter.types.are.not.denotable")!!}\n$typeStr"
     }
 
     parameters.addAll(extractedDescriptorToParameter.values())
@@ -443,7 +447,7 @@ private fun ExtractionData.checkLocalDeclarationsWithNonLocalUsages(
         allInstructions: List<Instruction>,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext
-): MaybeError<ExtractionDescriptor, String>? {
+): String? {
     // todo: non-locally used declaration can be turned into the output value
 
     val declarations = ArrayList<JetNamedDeclaration>()
@@ -460,13 +464,13 @@ private fun ExtractionData.checkLocalDeclarationsWithNonLocalUsages(
 
     if (declarations.isNotEmpty()) {
         val localVarStr = declarations.map { it.getName()!! }.sort().makeString(separator = "\n")
-        return MaybeError("${JetRefactoringBundle.message("variables.are.used.outside.of.selected.code.fragment")!!}\n$localVarStr")
+        return "${JetRefactoringBundle.message("variables.are.used.outside.of.selected.code.fragment")!!}\n$localVarStr"
     }
 
     return null
 }
 
-private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: ControlFlow): MaybeError<ExtractionDescriptor, String>? {
+private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: ControlFlow): String? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
     if (controlFlow is JumpBasedControlFlow) {
         controlFlow.elementToInsertAfterCall.accept(
@@ -483,19 +487,23 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: Contro
 
     if (declarationsOutOfScope.isNotEmpty()) {
         val declStr = declarationsOutOfScope.map { it.getName()!! }.sort().makeString(separator = "\n")
-        return MaybeError("${JetRefactoringBundle.message("declarations.will.move.out.of.scope")!!}\n$declStr")
+        return "${JetRefactoringBundle.message("declarations.will.move.out.of.scope")!!}\n$declStr"
     }
 
     return null
 }
 
-fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
-    if (originalElements.empty) return MaybeError(JetRefactoringBundle.message("cannot.refactor.no.expresson")!!)
+fun ExtractionData.performAnalysis(): AnalysisResult {
+    if (originalElements.empty) {
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(JetRefactoringBundle.message("cannot.refactor.no.expresson")!!))
+    }
 
     val commonParent = PsiTreeUtil.findCommonParent(originalElements)!!
 
     val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclarationWithBody>())
-    if (enclosingDeclaration == null) return MaybeError(JetRefactoringBundle.message("cannot.refactor.no.container")!!)
+    if (enclosingDeclaration == null) {
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(JetRefactoringBundle.message("cannot.refactor.no.container")!!))
+    }
 
     val resolveSession = originalFile.getLazyResolveSession()
     val bindingContext = resolveSession.resolveToElement(enclosingDeclaration.getBodyExpression())
@@ -513,17 +521,17 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
     val parameterError = inferParametersInfo(
             commonParent, localInstructions, bindingContext, inferredResultType, replacementMap, parameters, typeParameters
     )
-    if (parameterError != null) return parameterError
+    if (parameterError != null) {
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
+    }
 
-    val controlFlowInfo = localInstructions.analyzeControlFlow(bindingContext, parameters, inferredResultType)
-    if (controlFlowInfo is MaybeError) return MaybeError(controlFlowInfo.error)
-    val controlFlow = (controlFlowInfo as MaybeValue).value
+    val messages = ArrayList<String>()
 
-    val localDeclError = checkLocalDeclarationsWithNonLocalUsages(pseudocode.getInstructions(), localInstructions, bindingContext)
-    if (localDeclError != null) return localDeclError
+    val (controlFlow, controlFlowMessage) = localInstructions.analyzeControlFlow(bindingContext, parameters, inferredResultType)
+    controlFlowMessage?.let { messages.add(it) }
 
-    val outOfScopeError = checkDeclarationsMovingOutOfScope(controlFlow)
-    if (outOfScopeError != null) return outOfScopeError
+    checkLocalDeclarationsWithNonLocalUsages(pseudocode.getInstructions(), localInstructions, bindingContext)?.let { messages.add(it) }
+    checkDeclarationsMovingOutOfScope(controlFlow)?.let { messages.add(it) }
 
     val functionNameValidator = JetNameValidatorImpl(
             nextSibling.getParent(),
@@ -536,7 +544,7 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
     val receiverParameter = if (receiverCandidates.size == 1) receiverCandidates.first() else null
     receiverParameter?.let { parameters.remove(it) }
 
-    return MaybeValue(
+    return AnalysisResult(
             ExtractionDescriptor(
                     this,
                     functionName,
@@ -546,7 +554,9 @@ fun ExtractionData.performAnalysis(): Maybe<ExtractionDescriptor, String> {
                     typeParameters.sortBy { it.originalDeclaration.getName()!! },
                     replacementMap,
                     controlFlow
-            )
+            ),
+            if (messages.empty) Status.SUCCESS else Status.NON_CRITICAL_ERROR,
+            messages
     )
 }
 

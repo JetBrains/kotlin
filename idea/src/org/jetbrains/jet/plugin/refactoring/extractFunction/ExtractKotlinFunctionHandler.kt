@@ -35,19 +35,21 @@ import org.jetbrains.jet.plugin.refactoring.getAllExtractionContainers
 import com.intellij.refactoring.IntroduceTargetChooser
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.application.ApplicationManager
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.psiUtil.getOutermostParentContainedIn
 import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
 import org.jetbrains.jet.plugin.refactoring.executeWriteCommand
-import org.jetbrains.jet.plugin.util.MaybeError
-import org.jetbrains.jet.plugin.util.MaybeValue
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetClassBody
-import org.jetbrains.jet.lang.psi.JetNamedFunction
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import kotlin.test.fail
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.MessageType
+import javax.swing.event.HyperlinkEvent
+import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
+import com.intellij.ui.awt.RelativePoint
+import com.intellij.openapi.ui.popup.Balloon.Position
 
 public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
     fun doInvoke(
@@ -59,26 +61,59 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
         val project = file.getProject()
 
         val analysisResult = ExtractionData(file, elements, nextSibling).performAnalysis()
-        if (analysisResult is MaybeError) {
-            showErrorHint(project, editor, analysisResult.error)
-            return
+
+        if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
+            throw ConflictsInTestsException(analysisResult.messages)
         }
 
-        val validationResult = (analysisResult as MaybeValue).value.validate()
-        if (!project.checkConflictsInteractively(validationResult.conflicts)) return
+        fun proceedWithExtraction() {
+            val validationResult = analysisResult.descriptor!!.validate()
+            if (!project.checkConflictsInteractively(validationResult.conflicts)) return
 
-        val descriptor =
-                if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
-                    validationResult.descriptor
-                }
-                else {
-                    val dialog = KotlinExtractFunctionDialog(project, validationResult)
-                    if (!dialog.showAndGet()) return
+            val descriptor =
+                    if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
+                        validationResult.descriptor
+                    }
+                    else {
+                        val dialog = KotlinExtractFunctionDialog(project, validationResult)
+                        if (!dialog.showAndGet()) return
 
-                    dialog.getCurrentDescriptor()
-                }
+                        dialog.getCurrentDescriptor()
+                    }
 
-        project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
+            project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
+        }
+
+        val message = analysisResult.messages.makeString("\n")
+        when (analysisResult.status) {
+            Status.CRITICAL_ERROR -> {
+                showErrorHint(project, editor, message)
+            }
+
+            Status.NON_CRITICAL_ERROR -> {
+                val anchorPoint = RelativePoint(
+                        editor.getContentComponent(),
+                        editor.visualPositionToXY(editor.getSelectionModel().getSelectionStartPosition()!!)
+                )
+                JBPopupFactory.getInstance()!!
+                        .createHtmlTextBalloonBuilder(
+                                "$message<br/><br/><a href=\"EXTRACT\">Proceed with extraction</a>",
+                                MessageType.WARNING,
+                                { event ->
+                                    if (event?.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                                        proceedWithExtraction()
+                                    }
+                                }
+                        )
+                        .setHideOnClickOutside(true)
+                        .setHideOnFrameResize(false)
+                        .setHideOnLinkClick(true)
+                        .createBalloon()
+                        .show(anchorPoint, Position.below)
+            }
+
+            Status.SUCCESS -> proceedWithExtraction()
+        }
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {

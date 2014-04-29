@@ -62,6 +62,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -286,11 +287,11 @@ private fun getFunctionForExtractedFragment(
             if (nextSibling == null) return null
 
             val analysisResult = ExtractionData(tmpFile, Collections.singletonList(newDebugExpression), nextSibling).performAnalysis()
-            if (analysisResult is MaybeError) {
-                throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
+            if (analysisResult.status != Status.SUCCESS) {
+                throw EvaluateExceptionUtil.createEvaluateException(analysisResult.messages.makeString("\n"))
             }
 
-            val validationResult = (analysisResult as MaybeValue).value.validate()
+            val validationResult = analysisResult.descriptor!!.validate()
             if (!validationResult.conflicts.isEmpty()) {
                 throw EvaluateExceptionUtil.createEvaluateException("Some declarations are unavailable")
             }
