@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
 
 public class GenerateMockJdk {
 
@@ -88,6 +89,7 @@ public class GenerateMockJdk {
             "java/lang/annotation/RetentionPolicy.class",
             "java/lang/annotation/Target.class",
             "java/lang/Appendable.class",
+            "java/lang/AutoCloseable.class",
             "java/lang/ArithmeticException.class",
             "java/lang/ArrayIndexOutOfBoundsException.class",
             "java/lang/ArrayStoreException.class",
@@ -289,8 +291,8 @@ public class GenerateMockJdk {
             String topLevelClassFile = entry.getName().replaceAll("\\$.+\\.class$", ".class");
 
             if (entryNamesToInclude.contains(topLevelClassFile)) {
-                targetJar.putNextEntry(entry);
-                FileUtil.copy(sourceJar.getInputStream(entry), (int) entry.getSize(), targetJar);
+                targetJar.putNextEntry(new ZipEntry(entry.getName()));
+                FileUtil.copy(sourceJar.getInputStream(entry), targetJar);
                 foundEntries.add(topLevelClassFile);
             }
         }
@@ -314,7 +316,8 @@ public class GenerateMockJdk {
     private static Set<String> getSourceFileEntries() {
         Set<String> entrySet = Sets.newHashSet();
         for (String entry : ENTRIES) {
-            String javaFile = "src/" + entry.replaceAll(".class$", ".java");
+            String javaFile = // "src/" + (in jdk 1.7 under Mac there is no src folder in src.zip)
+                    entry.replaceAll(".class$", ".java");
             entrySet.add(javaFile);
         }
         return entrySet;
