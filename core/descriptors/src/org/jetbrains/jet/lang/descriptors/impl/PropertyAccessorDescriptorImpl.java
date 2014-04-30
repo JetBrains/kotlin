@@ -89,6 +89,11 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
         return false;
     }
 
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Modality getModality() {

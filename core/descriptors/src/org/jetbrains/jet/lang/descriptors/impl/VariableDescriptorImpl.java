@@ -85,6 +85,11 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
         return false;
     }
 
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Set<? extends CallableDescriptor> getOverriddenDescriptors() {

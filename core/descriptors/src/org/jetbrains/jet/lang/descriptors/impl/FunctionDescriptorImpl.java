@@ -160,6 +160,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public boolean hasSynthesizedParameterNames() {
+        return false;
+    }
+
+    @Override
     public JetType getReturnType() {
         return unsubstitutedReturnType;
     }

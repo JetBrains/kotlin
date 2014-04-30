@@ -51,7 +51,18 @@ public interface CallableDescriptor extends DeclarationDescriptorWithVisibility,
     @NotNull
     List<ValueParameterDescriptor> getValueParameters();
 
+    /**
+     * Kotlin functions always have stable parameter names that can be reliably used when calling them with named arguments.
+     * Functions loaded from platform definitions (e.g. Java binaries or JS) may have unstable parameter names that vary from
+     * one platform installation to another. These names can not be used reliably for calls with named arguments.
+     */
     boolean hasStableParameterNames();
+
+    /**
+     * Sometimes parameter names are not available at all (e.g. Java binaries with not enough debug information).
+     * In this case, getName() returns synthetic names such as "p0", "p1" etc.
+     */
+    boolean hasSynthesizedParameterNames();
 
     // Workaround for KT-4609 Wildcard types (super/extends) shouldn't be loaded as nullable
     @KotlinSignature("fun getOverriddenDescriptors(): Set<out CallableDescriptor>")

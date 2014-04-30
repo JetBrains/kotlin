@@ -87,6 +87,11 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         return false;
     }
 
+    @Override
+    public boolean hasSynthesizedParameterNames() {
+        return false;
+    }
+
     @NotNull
     @Override
     public Set<? extends CallableDescriptor> getOverriddenDescriptors() {
