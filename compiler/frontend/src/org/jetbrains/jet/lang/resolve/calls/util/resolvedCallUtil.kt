@@ -24,20 +24,20 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 
-fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
+public fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
     return getCall().getValueArguments().all { argument -> !getArgumentMapping(argument!!).isError() }
 }
 
-fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {
+public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {
     return getCall().getValueArguments().any { argument -> getArgumentMapping(argument!!) == ArgumentUnmapped }
 }
 
-fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
+public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
     val parameterToArgumentMap = getValueArguments()
     return !parameterToArgumentMap.keySet().containsAll(getResultingDescriptor().getValueParameters())
 }
 
-fun <D : CallableDescriptor> ResolvedCall<D>.hasErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
+public fun <D : CallableDescriptor> ResolvedCall<D>.hasErrorOnParameter(parameter: ValueParameterDescriptor): Boolean {
     val resolvedValueArgument = getValueArguments()[parameter]
     if (resolvedValueArgument == null) return true
 

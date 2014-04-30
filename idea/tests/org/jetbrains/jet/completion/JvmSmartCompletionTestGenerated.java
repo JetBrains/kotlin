@@ -336,6 +336,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/OverloadedMethodCallArgument2.kt");
     }
     
+    @TestMetadata("OverloadedMethodCallArgument3.kt")
+    public void testOverloadedMethodCallArgument3() throws Exception {
+        doTest("idea/testData/completion/smart/OverloadedMethodCallArgument3.kt");
+    }
+    
     @TestMetadata("PrivateConstructorForAbstract.kt")
     public void testPrivateConstructorForAbstract() throws Exception {
         doTest("idea/testData/completion/smart/PrivateConstructorForAbstract.kt");

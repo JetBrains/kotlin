@@ -46,6 +46,9 @@ import org.jetbrains.jet.lang.psi.JetIfExpression
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.psi.JetContainerNode
 import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
+import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
+import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
+import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
 
 enum class Tail {
     COMMA
@@ -57,8 +60,7 @@ data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
 
 class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        val forArgument = calculateForArgument(expressionWithType)
-        return forArgument
+        return calculateForArgument(expressionWithType)
             ?: calculateForFunctionLiteralArgument(expressionWithType)
             ?: calculateForEq(expressionWithType)
             ?: calculateForIf(expressionWithType)
@@ -101,7 +103,14 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             receiver = ReceiverValue.NO_RECEIVER
             callOperationNode = null
         }
-        val call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
+        var call = CallMaker.makeCall(receiver, callOperationNode, callExpression)
+
+        if (!isFunctionLiteralArgument) { // leave only arguments before the current one
+            call = object : DelegatingCall(call) {
+                override fun getValueArguments() = super.getValueArguments().subList(0, argumentIndex)
+                override fun getValueArgumentList() = null
+            }
+        }
 
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
@@ -120,16 +129,19 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
 
         val expectedInfos = HashSet<ExpectedInfo>()
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
-            val parameters = candidate.getResultingDescriptor().getValueParameters()
-            if (isFunctionLiteralArgument) {
-                if (argumentIndex != parameters.size - 1) continue
+            // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
+            if (candidate.noErrorsInValueArguments() && (isFunctionLiteralArgument || candidate.hasUnmappedParameters())) {
+                val parameters = candidate.getResultingDescriptor().getValueParameters()
+                if (isFunctionLiteralArgument) {
+                    if (argumentIndex != parameters.size - 1) continue
+                }
+                else {
+                    if (parameters.size <= argumentIndex) continue
+                }
+                val parameterDescriptor = parameters[argumentIndex]
+                val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
+                expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
             }
-            else {
-                if (parameters.size <= argumentIndex) continue
-            }
-            val parameterDescriptor = parameters[argumentIndex]
-            val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
-            expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
         }
         return expectedInfos
     }
