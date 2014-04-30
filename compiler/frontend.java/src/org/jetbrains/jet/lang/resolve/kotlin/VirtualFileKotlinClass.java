@@ -90,7 +90,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
             return new VirtualFileKotlinClass(file, nameAndHeader.first, nameAndHeader.second);
         }
         catch (Throwable e) {
-            LOG.warn(renderFileReadingErrorMessage(file), e);
+            LOG.warn(renderFileReadingErrorMessage(file));
             return null;
         }
     }
@@ -232,9 +232,9 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
 
     @NotNull
     private static String renderFileReadingErrorMessage(@NotNull VirtualFile file) {
-        return "Could not read file: " + file.getPath() + "\n"
-               + "Size in bytes: " + file.getLength() + "\n"
-               + "File type: " + file.getFileType().getName();
+        return "Could not read file: " + file.getPath() + "; "
+               + "size in bytes: " + file.getLength() + "; "
+               + "file type: " + file.getFileType().getName();
     }
 
     @Override
