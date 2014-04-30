@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
 import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.psi.JetBlockExpression
 
 enum class Tail {
     COMMA
@@ -66,6 +67,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             ?: calculateForEq(expressionWithType)
             ?: calculateForIf(expressionWithType)
             ?: calculateForElvis(expressionWithType)
+            ?: calculateForBlockExpression(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -206,6 +208,12 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             }
         }
         return null
+    }
+
+    private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
+        if (expressionWithType != block.getStatements().last()) return null
+        return calculate(block)?.map { ExpectedInfo(it.`type`, null) }
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

@@ -226,6 +226,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/IfValue3.kt");
     }
     
+    @TestMetadata("IfValueInBlock.kt")
+    public void testIfValueInBlock() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/IfValueInBlock.kt");
+    }
+    
     @TestMetadata("InElvisOperator.kt")
     public void testInElvisOperator() throws Exception {
         doTest("idea/testData/completion/handlers/smart/InElvisOperator.kt");
