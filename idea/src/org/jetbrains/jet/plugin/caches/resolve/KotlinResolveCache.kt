@@ -33,7 +33,6 @@ import org.jetbrains.jet.context.SimpleGlobalContext
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters
 import com.intellij.openapi.progress.ProcessCanceledException
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.jet.asJava.LightClassUtil
 import com.intellij.openapi.roots.libraries.LibraryUtil
@@ -41,6 +40,24 @@ import org.jetbrains.jet.lang.resolve.LibrarySourceHacks
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.analyzer.AnalyzerFacade
+import java.util.HashMap
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.JetClassInitializer
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetImportDirective
+import org.jetbrains.jet.lang.psi.JetAnnotationEntry
+import org.jetbrains.jet.lang.psi.JetTypeConstraint
+import org.jetbrains.jet.lang.psi.JetPackageDirective
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.resolve.CompositeBindingContext
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetDelegationSpecifierList
+import org.jetbrains.jet.lang.psi.JetTypeParameter
+import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 
 public trait CacheExtension<T> {
     val platform: TargetPlatform
@@ -69,90 +86,183 @@ private class KotlinResolveCache(
         return extension.getData(sessionAndSetup.setup)
     }
 
-    private data class Task(
-            val elements: Set<JetElement>
-    )
-
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue ({
         val resolveSession = getLazyResolveSession()
-        val results = object : SLRUCache<Task, AnalyzeExhaust>(2, 3) {
-            override fun createValue(task: Task?): AnalyzeExhaust {
-                if (DumbService.isDumb(project)) {
-                    return AnalyzeExhaust.EMPTY
-                }
-
-                ApplicationUtils.warnTimeConsuming(LOG)
-
-                try {
-                    for (element in task!!.elements) {
-                        val file = element.getContainingJetFile()
-                        val virtualFile = file.getVirtualFile()
-                        if (LightClassUtil.belongsToKotlinBuiltIns(file)
-                            || virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, file.getProject()) != null) {
-                            // Library sources: mark file to skip
-                            file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
-                        }
-                    }
-
-                    // todo: look for pre-existing results for this element or its parents
-                    val trace = DelegatingBindingTrace(resolveSession.getBindingContext(), "Trace for resolution of " + task.elements.makeString(", "))
-                    val injector = InjectorForTopDownAnalyzerForJvm(
-                            project,
-                            SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker()),
-                            trace,
-                            resolveSession.getModuleDescriptor(),
-                            MemberFilter.ALWAYS_TRUE
-                    )
-                    injector.getLazyTopDownAnalyzer()!!.analyzeDeclarations(
-                            resolveSession,
-                            TopDownAnalysisParameters.createForLazy(
-                                    resolveSession.getStorageManager(),
-                                    resolveSession.getExceptionTracker(),
-                                    analyzeCompletely = { true },
-                                    analyzingBootstrapLibrary = false,
-                                    declaredLocally = false
-                            ),
-                            task.elements.map { getContainingNonlocalDeclaration(it) }
-                    )
-                    return AnalyzeExhaust.success(
-                            trace.getBindingContext(),
-                            resolveSession.getModuleDescriptor()
-                    )
-                }
-                catch (e: ProcessCanceledException) {
-                    throw e
-                }
-                catch (e: Throwable) {
-                    handleError(e)
-
-                    val bindingTraceContext = BindingTraceContext()
-                    return AnalyzeExhaust.error(bindingTraceContext.getBindingContext(), e)
-                }
+        val results = object : SLRUCache<JetFile, PerFileAnalysisCache>(2, 3) {
+            override fun createValue(file: JetFile?): PerFileAnalysisCache {
+                return PerFileAnalysisCache(file!!, resolveSession)
             }
         }
 
         CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolveSession.getExceptionTracker())
     }, false)
 
-    private fun getAnalysisResults(task: Task): AnalyzeExhaust {
+    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
         val slruCache = synchronized(analysisResults) {
             analysisResults.getValue()!!
         }
-        return synchronized(slruCache) {
-            slruCache[task]
+        val results = elements.map {
+            val perFileCache = synchronized(slruCache) {
+                slruCache[it.getContainingJetFile()]
+            }
+            perFileCache.getAnalysisResults(it)
+        }
+        val error = results.firstOrNull { it.isError() }
+        val bindingContext = CompositeBindingContext.create(results.map { it.getBindingContext() })
+        return if (error != null)
+                   AnalyzeExhaust.error(bindingContext, error.getError())
+               else
+                   AnalyzeExhaust.success(bindingContext, getLazyResolveSession().getModuleDescriptor())
+    }
+}
+
+private class PerFileAnalysisCache(val file: JetFile, val resolveSession: ResolveSessionForBodies) {
+    private val cache = HashMap<PsiElement, AnalyzeExhaust>()
+
+    private fun lookUp(analyzableElement: JetElement): AnalyzeExhaust? {
+        // Looking for parent elements that are already analyzed
+        // Also removing all elements whose parents are already analyzed, to guarantee consistency
+        val descendantsOfCurrent = arrayListOf<PsiElement>()
+        val toRemove = hashSetOf<PsiElement>()
+
+        var current: PsiElement? = analyzableElement
+        var result: AnalyzeExhaust? = null
+        while (current != null) {
+            val cached = cache[current]
+            if (cached != null) {
+                result = cached
+                toRemove.addAll(descendantsOfCurrent)
+                descendantsOfCurrent.clear()
+            }
+
+            descendantsOfCurrent.add(current!!)
+            current = current!!.getParent()
+        }
+
+        cache.keySet().removeAll(toRemove)
+
+        return result
+    }
+
+    fun getAnalysisResults(element: JetElement): AnalyzeExhaust {
+        assert (element.getContainingJetFile() == file, "Wrong file. Expected $file, but was ${element.getContainingJetFile()}")
+
+        val analyzableParent = KotlinResolveDataProvider.findAnalyzableParent(element)
+
+        return synchronized(this) { (): AnalyzeExhaust ->
+
+            val cached = lookUp(analyzableParent)
+            if (cached != null) return@synchronized cached
+
+            val result = analyze(analyzableParent)
+
+            cache[analyzableParent] = result
+
+            return@synchronized result
         }
     }
 
-    fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
-        return getAnalysisResults(Task(elements.toSet()))
+    private fun analyze(analyzableElement: JetElement): AnalyzeExhaust {
+        val project = analyzableElement.getProject()
+        if (DumbService.isDumb(project)) {
+            return AnalyzeExhaust.EMPTY
+        }
+
+        ApplicationUtils.warnTimeConsuming(LOG)
+
+        try {
+            println("Analyzing ${analyzableElement} in ${analyzableElement.getContainingJetFile()}")
+            return KotlinResolveDataProvider.analyze(project, resolveSession, analyzableElement)
+        }
+        catch (e: ProcessCanceledException) {
+            throw e
+        }
+        catch (e: Throwable) {
+            DiagnosticUtils.throwIfRunningOnServer(e)
+            LOG.error(e)
+
+            return AnalyzeExhaust.error(BindingContext.EMPTY, e)
+        }
+    }
+}
+
+private object KotlinResolveDataProvider {
+    private val topmostElementTypes = array<Class<out PsiElement?>?>(
+            javaClass<JetNamedFunction>(),
+            javaClass<JetClassInitializer>(),
+            javaClass<JetProperty>(),
+            javaClass<JetImportDirective>(),
+            javaClass<JetPackageDirective>(),
+            // TODO: Non-analyzable so far, add more granular analysis
+            javaClass<JetAnnotationEntry>(),
+            javaClass<JetTypeConstraint>(),
+            javaClass<JetDelegationSpecifierList>(),
+            javaClass<JetTypeParameter>(),
+            javaClass<JetParameter>()
+    )
+
+    fun findAnalyzableParent(element: JetElement): JetElement {
+        val topmostElement = JetPsiUtil.getTopmostParentOfTypes(element, *topmostElementTypes) as JetElement?
+        // parameters and supertype lists are not analyzable by themselves, but if we don't count them as topmost, we'll stop inside, say,
+        // object expressions inside arguments of super constructors of classes (note that classes themselves are not topmost elements)
+        val analyzableElement = when (topmostElement) {
+            is JetAnnotationEntry,
+            is JetTypeConstraint,
+            is JetDelegationSpecifierList,
+            is JetTypeParameter,
+            is JetParameter -> PsiTreeUtil.getParentOfType(topmostElement, javaClass<JetClassOrObject>(), javaClass<JetCallableDeclaration>())
+            else -> topmostElement
+        }
+        return analyzableElement
+                    // if none of the above worked, take the outermost declaration
+                    ?: PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetDeclaration>())
+                    // if even that didn't work, take the whole file
+                    ?: element.getContainingJetFile()
     }
 
-    private fun getContainingNonlocalDeclaration(element: JetElement): JetElement? {
-        return PsiTreeUtil.getParentOfType(element, javaClass<JetFile>(), false);
-    }
+    fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalyzeExhaust {
+        try {
+            val file = analyzableElement.getContainingJetFile()
+            val virtualFile = file.getVirtualFile()
+            if (LightClassUtil.belongsToKotlinBuiltIns(file)
+                || virtualFile != null && LibraryUtil.findLibraryEntry(virtualFile, file.getProject()) != null) {
+                // Library sources: mark file to skip
+                file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
+            }
 
-    private fun handleError(e: Throwable) {
-        DiagnosticUtils.throwIfRunningOnServer(e)
-        LOG.error(e)
+            val trace = DelegatingBindingTrace(resolveSession.getBindingContext(), "Trace for resolution of " + analyzableElement)
+            val injector = InjectorForTopDownAnalyzerForJvm(
+                    project,
+                    SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker()),
+                    trace,
+                    resolveSession.getModuleDescriptor(),
+                    MemberFilter.ALWAYS_TRUE
+            )
+            injector.getLazyTopDownAnalyzer()!!.analyzeDeclarations(
+                    resolveSession,
+                    TopDownAnalysisParameters.createForLazy(
+                            resolveSession.getStorageManager(),
+                            resolveSession.getExceptionTracker(),
+                            analyzeCompletely = { true },
+                            analyzingBootstrapLibrary = false,
+                            declaredLocally = false
+                    ),
+                    listOf(analyzableElement)
+            )
+            return AnalyzeExhaust.success(
+                    trace.getBindingContext(),
+                    resolveSession.getModuleDescriptor()
+            )
+        }
+        catch (e: ProcessCanceledException) {
+            throw e
+        }
+        catch (e: Throwable) {
+            DiagnosticUtils.throwIfRunningOnServer(e)
+            LOG.error(e)
+
+            return AnalyzeExhaust.error(BindingContext.EMPTY, e)
+        }
+
     }
 }
