@@ -2579,6 +2579,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/incompleteTypeInference.kt");
             }
             
+            @TestMetadata("kt4640.kt")
+            public void testKt4640() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/delegatedProperty/kt4640.kt");
+            }
+            
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/delegatedProperty/localVariable.kt");
