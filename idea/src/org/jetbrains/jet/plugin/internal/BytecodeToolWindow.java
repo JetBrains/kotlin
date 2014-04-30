@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.plugin.internal.codewindow;
+package org.jetbrains.jet.plugin.internal;
 
 import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.Disposable;

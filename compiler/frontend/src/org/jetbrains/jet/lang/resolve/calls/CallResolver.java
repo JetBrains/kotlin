@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
-import org.jetbrains.jet.lang.resolve.calls.results.ResolutionDebugInfo;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionResultsHandler;
 import org.jetbrains.jet.lang.resolve.calls.tasks.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
@@ -446,23 +445,13 @@ public class CallResolver {
             @NotNull CallTransformer<D, F> callTransformer,
             @NotNull TracingStrategy tracing
     ) {
-        ResolutionDebugInfo.Data debugInfo = ResolutionDebugInfo.create();
-        if (context.call.getCallType() != Call.CallType.INVOKE) {
-            context.trace.record(ResolutionDebugInfo.RESOLUTION_DEBUG_INFO, context.call.getCallElement(), debugInfo);
-        }
         context.trace.record(RESOLUTION_SCOPE, context.call.getCalleeExpression(), context.scope);
 
         if (context.dataFlowInfo.hasTypeInfoConstraints()) {
             context.trace.record(NON_DEFAULT_EXPRESSION_DATA_FLOW, context.call.getCalleeExpression(), context.dataFlowInfo);
         }
 
-        debugInfo.set(ResolutionDebugInfo.TASKS, prioritizedTasks);
-
-        OverloadResolutionResultsImpl<F> results = doResolveCall(context, prioritizedTasks, callTransformer, tracing);
-        if (results.isSingleResult()) {
-            debugInfo.set(ResolutionDebugInfo.RESULT, results.getResultingCall());
-        }
-        return results;
+        return doResolveCall(context, prioritizedTasks, callTransformer, tracing);
     }
 
     @NotNull
