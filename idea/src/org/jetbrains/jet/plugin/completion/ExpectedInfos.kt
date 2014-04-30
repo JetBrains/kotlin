@@ -52,7 +52,7 @@ import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
 
 enum class Tail {
     COMMA
-    PARENTHESIS
+    RPARENTH
     ELSE
 }
 
@@ -139,7 +139,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                     if (parameters.size <= argumentIndex) continue
                 }
                 val parameterDescriptor = parameters[argumentIndex]
-                val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.PARENTHESIS else Tail.COMMA
+                val tail = if (isFunctionLiteralArgument) null else if (argumentIndex == parameters.size - 1) Tail.RPARENTH else Tail.COMMA
                 expectedInfos.add(ExpectedInfo(parameterDescriptor.getType(), tail))
             }
         }
@@ -164,7 +164,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
     private fun calculateForIf(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val ifExpression = (expressionWithType.getParent() as? JetContainerNode)?.getParent() as? JetIfExpression ?: return null
         return when (expressionWithType) {
-            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), Tail.PARENTHESIS))
+            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), Tail.RPARENTH))
 
             ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.`type`, Tail.ELSE) }
 

@@ -73,7 +73,7 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
             }
         }
 
-        Tail.PARENTHESIS -> object: LookupElementDecorator<LookupElement>(this) {
+        Tail.RPARENTH -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
                 handlers.WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
             }
