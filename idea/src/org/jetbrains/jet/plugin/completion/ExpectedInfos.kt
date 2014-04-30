@@ -49,6 +49,8 @@ import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
 import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
 import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
+import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 
 enum class Tail {
     COMMA
@@ -131,7 +133,10 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         for (candidate: ResolvedCall<FunctionDescriptor> in results.getAllCandidates()!!) {
             // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
             if (candidate.noErrorsInValueArguments() && (isFunctionLiteralArgument || candidate.hasUnmappedParameters())) {
-                val parameters = candidate.getResultingDescriptor().getValueParameters()
+                val descriptor = candidate.getResultingDescriptor()
+                if (!Visibilities.isVisible(descriptor, resolutionScope.getContainingDeclaration())) continue
+
+                val parameters = descriptor.getValueParameters()
                 if (isFunctionLiteralArgument) {
                     if (argumentIndex != parameters.size - 1) continue
                 }

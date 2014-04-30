@@ -301,6 +301,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/NoNothing.kt");
     }
     
+    @TestMetadata("NoPrivateOverload.kt")
+    public void testNoPrivateOverload() throws Exception {
+        doTest("idea/testData/completion/smart/NoPrivateOverload.kt");
+    }
+    
     @TestMetadata("NoSillyAssignment.kt")
     public void testNoSillyAssignment() throws Exception {
         doTest("idea/testData/completion/smart/NoSillyAssignment.kt");
