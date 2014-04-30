@@ -191,6 +191,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/FunctionReference9.kt");
     }
     
+    @TestMetadata("GenericMethodArgument.kt")
+    public void testGenericMethodArgument() throws Exception {
+        doTest("idea/testData/completion/smart/GenericMethodArgument.kt");
+    }
+    
     @TestMetadata("IfCondition.kt")
     public void testIfCondition() throws Exception {
         doTest("idea/testData/completion/smart/IfCondition.kt");
