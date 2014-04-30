@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import jet.runtime.typeinfo.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
@@ -261,6 +262,7 @@ public interface BindingContext {
 
     // slice.isCollective() must be true
     @NotNull
+    @ReadOnly
     <K, V> Collection<K> getKeys(WritableSlice<K, V> slice);
 
     /** This method should be used only for debug and testing */
