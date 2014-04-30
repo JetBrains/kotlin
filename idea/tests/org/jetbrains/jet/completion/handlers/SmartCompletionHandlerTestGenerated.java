@@ -206,6 +206,26 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/GenericFunction.kt");
     }
     
+    @TestMetadata("IfCondition.kt")
+    public void testIfCondition() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/IfCondition.kt");
+    }
+    
+    @TestMetadata("IfValue1.kt")
+    public void testIfValue1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/IfValue1.kt");
+    }
+    
+    @TestMetadata("IfValue2.kt")
+    public void testIfValue2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/IfValue2.kt");
+    }
+    
+    @TestMetadata("IfValue3.kt")
+    public void testIfValue3() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/IfValue3.kt");
+    }
+    
     @TestMetadata("JavaEnumMemberInsertsImport.kt")
     public void testJavaEnumMemberInsertsImport() throws Exception {
         doTest("idea/testData/completion/handlers/smart/JavaEnumMemberInsertsImport.kt");

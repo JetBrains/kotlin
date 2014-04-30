@@ -23,10 +23,12 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.lookup.Lookup
 import org.jetbrains.jet.plugin.completion.smart.SmartCompletion
 import org.jetbrains.jet.plugin.completion.smart.KEEP_OLD_ARGUMENT_LIST_ON_TAB_KEY
+import com.intellij.openapi.util.TextRange
 
-abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
-    protected abstract fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean)
-
+class WithTailInsertHandler(val tailText: String,
+                            val spaceBefore: Boolean,
+                            val spaceAfter: Boolean,
+                            val overwriteText: Boolean = true) : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val document = context.getDocument()
 
@@ -38,40 +40,39 @@ abstract class WithTailInsertHandlerBase : InsertHandler<LookupElement> {
             val offset = context.getOffsetMap().getOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET)
             if (offset != -1) tailOffset = offset
         }
-        insertTail(context, tailOffset, context.getEditor().getCaretModel().getOffset() == tailOffset)
-    }
-}
 
-class WithTailCharInsertHandler(val tailChar: Char, val spaceAfter: Boolean) : WithTailInsertHandlerBase() {
-    override fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean) {
-        val document = context.getDocument()
+        val moveCaret = context.getEditor().getCaretModel().getOffset() == tailOffset
+
         fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
+        fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
 
-        if (isCharAt(offset, tailChar)) {
-            document.deleteString(offset, offset + 1)
+        if (overwriteText) {
+            if (spaceBefore && isCharAt(tailOffset, ' ')) {
+                document.deleteString(tailOffset, tailOffset + 1)
+            }
 
-            if (spaceAfter && isCharAt(offset, ' ')) {
-                document.deleteString(offset, offset + 1)
+            if (isTextAt(tailOffset, tailText)) {
+                document.deleteString(tailOffset, tailOffset + tailText.length)
+
+                if (spaceAfter && isCharAt(tailOffset, ' ')) {
+                    document.deleteString(tailOffset, tailOffset + 1)
+                }
             }
         }
 
-        val textToInsert = if (spaceAfter) tailChar + " " else tailChar.toString()
-        document.insertString(offset, textToInsert)
-        if (moveCaret) {
-            context.getEditor().getCaretModel().moveToOffset(offset + textToInsert.length)
 
-            if (tailChar == ',') {
+        var textToInsert = tailText
+        if (spaceBefore) textToInsert = " " + textToInsert
+        if (spaceAfter) textToInsert += " "
+
+        document.insertString(tailOffset, textToInsert)
+
+        if (moveCaret) {
+            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length)
+
+            if (tailText == ",") {
                 AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)
             }
-        }
-    }
-}
-
-class WithTailStringInsertHandler(val tail: String) : WithTailInsertHandlerBase() {
-    override fun insertTail(context: InsertionContext, offset: Int, moveCaret: Boolean) {
-        context.getDocument().insertString(offset, tail)
-        if (moveCaret) {
-            context.getEditor().getCaretModel().moveToOffset(offset + tail.length)
         }
     }
 }

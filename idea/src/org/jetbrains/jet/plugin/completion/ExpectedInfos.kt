@@ -42,19 +42,26 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lexer.JetTokens
+import org.jetbrains.jet.lang.psi.JetIfExpression
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.psi.JetContainerNode
+import org.jetbrains.jet.plugin.completion.smart.isSubtypeOf
 
 enum class Tail {
     COMMA
     PARENTHESIS
+    ELSE
 }
 
 data class ExpectedInfo(val `type`: JetType, val tail: Tail?)
 
 class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: ModuleDescriptor) {
     public fun calculate(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
-        return calculateForArgument(expressionWithType)
+        val forArgument = calculateForArgument(expressionWithType)
+        return forArgument
             ?: calculateForFunctionLiteralArgument(expressionWithType)
             ?: calculateForEq(expressionWithType)
+            ?: calculateForIf(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -140,6 +147,26 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             }
         }
         return null
+    }
+
+    private fun calculateForIf(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val ifExpression = (expressionWithType.getParent() as? JetContainerNode)?.getParent() as? JetIfExpression ?: return null
+        return when (expressionWithType) {
+            ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), Tail.PARENTHESIS))
+
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.`type`, Tail.ELSE) }
+
+            ifExpression.getElse() -> {
+                val ifExpectedInfo = calculate(ifExpression)
+                val thenType = bindingContext[BindingContext.EXPRESSION_TYPE, ifExpression.getThen()]
+                if (thenType != null)
+                    ifExpectedInfo?.filter { it.`type`.isSubtypeOf(thenType) }
+                else
+                    ifExpectedInfo
+            }
+
+            else -> return null
+        }
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

@@ -191,6 +191,26 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/FunctionReference9.kt");
     }
     
+    @TestMetadata("IfCondition.kt")
+    public void testIfCondition() throws Exception {
+        doTest("idea/testData/completion/smart/IfCondition.kt");
+    }
+    
+    @TestMetadata("IfValue1.kt")
+    public void testIfValue1() throws Exception {
+        doTest("idea/testData/completion/smart/IfValue1.kt");
+    }
+    
+    @TestMetadata("IfValue2.kt")
+    public void testIfValue2() throws Exception {
+        doTest("idea/testData/completion/smart/IfValue2.kt");
+    }
+    
+    @TestMetadata("IfValue3.kt")
+    public void testIfValue3() throws Exception {
+        doTest("idea/testData/completion/smart/IfValue3.kt");
+    }
+    
     @TestMetadata("InaccessibleConstructor.kt")
     public void testInaccessibleConstructor() throws Exception {
         doTest("idea/testData/completion/smart/InaccessibleConstructor.kt");

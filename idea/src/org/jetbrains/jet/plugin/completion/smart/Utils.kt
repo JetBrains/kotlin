@@ -24,7 +24,6 @@ import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 import java.util.HashSet
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import org.jetbrains.jet.plugin.completion.handlers.WithTailCharInsertHandler
 import com.intellij.codeInsight.lookup.AutoCompletionPolicy
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.types.JetType
@@ -37,7 +36,7 @@ import com.intellij.openapi.util.Key
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.plugin.completion.handlers.WithTailStringInsertHandler
+import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -70,13 +69,19 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
 
         Tail.COMMA -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailCharInsertHandler(',', true /*TODO: use code style option*/).handleInsert(context, getDelegate())
+                WithTailInsertHandler(",", spaceBefore = false, spaceAfter = true /*TODO: use code style option*/).handleInsert(context, getDelegate())
             }
         }
 
         Tail.PARENTHESIS -> object: LookupElementDecorator<LookupElement>(this) {
             override fun handleInsert(context: InsertionContext) {
-                WithTailCharInsertHandler(')', false).handleInsert(context, getDelegate())
+                handlers.WithTailInsertHandler(")", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
+            }
+        }
+
+        Tail.ELSE -> object: LookupElementDecorator<LookupElement>(this) {
+            override fun handleInsert(context: InsertionContext) {
+                handlers.WithTailInsertHandler("else", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate())
             }
         }
     }
@@ -132,7 +137,7 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
                 presentation.setItemText("!! " + presentation.getItemText())
             }
             override fun handleInsert(context: InsertionContext) {
-                WithTailStringInsertHandler("!!").handleInsert(context, getDelegate())
+                WithTailInsertHandler("!!", spaceBefore = false, spaceAfter = false).handleInsert(context, getDelegate())
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
@@ -147,7 +152,7 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
                 presentation.setItemText("?: " + presentation.getItemText())
             }
             override fun handleInsert(context: InsertionContext) {
-                WithTailStringInsertHandler(" ?: ").handleInsert(context, getDelegate()) //TODO: code style
+                handlers.WithTailInsertHandler("?:", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate()) //TODO: code style
             }
         }
         lookupElement = lookupElement!!.suppressAutoInsertion()
