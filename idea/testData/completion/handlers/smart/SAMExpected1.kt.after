@@ -1,0 +1,3 @@
+var a : Runnable = Runnable { <caret> }
+
+// ELEMENT: Runnable

@@ -253,6 +253,7 @@ public class GenerateMockJdk {
             "java/util/Set.class",
             "java/util/SortedMap.class",
             "java/util/SortedSet.class",
+            "java/util/TimeZone.class",
             "java/util/TreeMap.class",
             "javax/swing/AbstractButton.class",
             "javax/swing/Icon.class",

@@ -56,7 +56,7 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();
 
-    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setShortNames(true).build();
+    DescriptorRenderer SHORT_NAMES_IN_TYPES = new DescriptorRendererBuilder().setShortNames(true).setIncludeSynthesizedParameterNames(false).build();
 
     DescriptorRenderer DEBUG_TEXT = new DescriptorRendererBuilder().setDebugMode(true).build();
 

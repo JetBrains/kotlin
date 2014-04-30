@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
@@ -63,9 +62,7 @@ public final class JetLookupObject {
 
     @Override
     public int hashCode() {
-        int result = descriptor != null ? descriptor.hashCode() : 0;
-        result = 31 * result + (psiElement != null ? psiElement.hashCode() : 0);
-        return result;
+        return descriptor != null ? descriptor.hashCode() : 0;
     }
 
     @Override
@@ -80,9 +77,6 @@ public final class JetLookupObject {
             return false;
         }
 
-        if (descriptor != null ? !descriptor.equals(lookupObject.descriptor) : lookupObject.descriptor != null) return false;
-        if (psiElement != null ? !psiElement.equals(lookupObject.psiElement) : lookupObject.psiElement != null) return false;
-
-        return true;
+        return descriptor != null ? descriptor.equals(lookupObject.descriptor) : lookupObject.descriptor == null;
     }
 }

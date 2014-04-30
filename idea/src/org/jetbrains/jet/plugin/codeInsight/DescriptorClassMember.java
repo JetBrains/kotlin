@@ -54,7 +54,7 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
             int flags = isClass ? 0 : Iconable.ICON_FLAG_VISIBILITY;
             if (element instanceof JetDeclaration) {  // kotlin declaration
                 // visibility and abstraction better detect by a descriptor
-                return JetDescriptorIconProvider.getIcon(declarationDescriptor, flags);
+                return JetDescriptorIconProvider.getIcon(declarationDescriptor, element, flags);
             }
             else {
                 // it is better to show java icons for java code
@@ -62,7 +62,7 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
             }
         }
 
-        return JetDescriptorIconProvider.getIcon(declarationDescriptor, 0);
+        return JetDescriptorIconProvider.getIcon(declarationDescriptor, element, 0);
     }
 
     @Override

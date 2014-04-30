@@ -18,26 +18,24 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.completion.InsertHandler;
-import com.intellij.codeInsight.completion.InsertionContext;
-import com.intellij.codeInsight.completion.JavaMethodCallElement;
-import com.intellij.codeInsight.completion.JavaPsiClassReferenceElement;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementBuilder;
-import com.intellij.codeInsight.lookup.VariableLookupItem;
 import com.intellij.openapi.util.Iconable;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
-import org.jetbrains.jet.plugin.completion.handlers.*;
+import org.jetbrains.jet.plugin.completion.handlers.CaretPosition;
+import org.jetbrains.jet.plugin.completion.handlers.GenerateLambdaInfo;
+import org.jetbrains.jet.plugin.completion.handlers.JetClassInsertHandler;
+import org.jetbrains.jet.plugin.completion.handlers.JetFunctionInsertHandler;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import java.util.List;
@@ -48,13 +46,6 @@ public final class DescriptorLookupConverter {
     @NotNull
     public static LookupElement createLookupElement(@NotNull KotlinCodeAnalyzer analyzer,
             @NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration) {
-        if (declaration != null) {
-            LookupElement javaLookupElement = createJavaLookupElementIfPossible(declaration, descriptor);
-            if (javaLookupElement != null) {
-                return javaLookupElement;
-            }
-        }
-
         LookupElementBuilder element = LookupElementBuilder.create(
                 new JetLookupObject(descriptor, analyzer, declaration), descriptor.getName().asString());
 
@@ -94,7 +85,7 @@ public final class DescriptorLookupConverter {
             element.putUserData(JetCompletionCharFilter.ACCEPT_OPENING_BRACE, true);
         }
         element = element.withTailText(tailText, true).withTypeText(typeText).withPresentableText(presentableText);
-        element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, Iconable.ICON_FLAG_VISIBILITY));
+        element = element.withIcon(JetDescriptorIconProvider.getIcon(descriptor, declaration, Iconable.ICON_FLAG_VISIBILITY));
         element = element.withStrikeoutness(KotlinBuiltIns.getInstance().isDeprecated(descriptor));
 
         return element;
@@ -130,40 +121,6 @@ public final class DescriptorLookupConverter {
         return null;
     }
 
-    @Nullable
-    private static LookupElement createJavaLookupElementIfPossible(@NotNull PsiElement declaration, @NotNull DeclarationDescriptor descriptor) {
-        if (declaration instanceof PsiClass) {
-            PsiClass psiClass = (PsiClass) declaration;
-            if (!JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(psiClass)) {
-                return setCustomInsertHandler(new JavaPsiClassReferenceElement(psiClass));
-            }
-        }
-
-        if (declaration instanceof PsiMember) {
-            PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
-            if (containingClass != null && !JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass)) {
-                if (declaration instanceof PsiMethod) {
-                    InsertHandler<LookupElement> handler = getDefaultInsertHandler(descriptor);
-                    assert handler != null:
-                            "Special kotlin handler is expected for function: " + declaration.getText() +
-                            " and descriptor: " + DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor);
-
-                    return new JavaMethodCallElementWithCustomHandler(declaration).setInsertHandler(handler);
-                }
-
-                if (declaration instanceof PsiField) {
-                    return new JavaVariableLookupItemWithCustomHandler(declaration);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public static LookupElement setCustomInsertHandler(JavaPsiClassReferenceElement javaPsiReferenceElement) {
-        return javaPsiReferenceElement.setInsertHandler(JetJavaClassInsertHandler.INSTANCE);
-    }
-
     @NotNull
     public static LookupElement createLookupElement(
             @NotNull KotlinCodeAnalyzer analyzer,
@@ -186,41 +143,5 @@ public final class DescriptorLookupConverter {
         }
 
         return result.toArray(new LookupElement[result.size()]);
-    }
-
-    private static class JavaMethodCallElementWithCustomHandler extends JavaMethodCallElement {
-        public JavaMethodCallElementWithCustomHandler(PsiElement declaration) {
-            super((PsiMethod) declaration);
-        }
-
-        @Override
-        public void handleInsert(InsertionContext context) {
-            InsertHandler<? extends LookupElement> handler = getInsertHandler();
-            if (handler != null) {
-                //noinspection unchecked
-                ((InsertHandler)handler).handleInsert(context, this);
-                return;
-            }
-
-            super.handleInsert(context);
-        }
-    }
-
-    private static class JavaVariableLookupItemWithCustomHandler extends VariableLookupItem {
-        public JavaVariableLookupItemWithCustomHandler(PsiElement declaration) {
-            super((PsiField) declaration);
-        }
-
-        @Override
-        public void handleInsert(InsertionContext context) {
-            InsertHandler<? extends LookupElement> handler = getInsertHandler();
-            if (handler != null) {
-                //noinspection unchecked
-                ((InsertHandler)handler).handleInsert(context, this);
-                return;
-            }
-
-            super.handleInsert(context);
-        }
     }
 }

@@ -18,11 +18,17 @@ package org.jetbrains.jet.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Iconable;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMember;
 import com.intellij.ui.RowIcon;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.resolve.java.JavaResolverPsiUtils;
 
 import javax.swing.*;
 
@@ -33,7 +39,11 @@ public final class JetDescriptorIconProvider {
     private JetDescriptorIconProvider() {
     }
 
-    public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Iconable.IconFlags int flags) {
+    public static Icon getIcon(@NotNull DeclarationDescriptor descriptor, @Nullable PsiElement declaration, @Iconable.IconFlags int flags) {
+        if (declaration != null && !isKotlinDeclaration(declaration)) {
+            return declaration.getIcon(flags);
+        }
+
         Icon result = getBaseIcon(descriptor);
         if ((flags & Iconable.ICON_FLAG_VISIBILITY) > 0) {
             RowIcon rowIcon = new RowIcon(2);
@@ -45,7 +55,7 @@ public final class JetDescriptorIconProvider {
         return result;
     }
 
-    public static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
+    private static Icon getVisibilityIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof DeclarationDescriptorWithVisibility) {
             DeclarationDescriptorWithVisibility descriptorWithVisibility = (DeclarationDescriptorWithVisibility) descriptor;
             Visibility visibility = descriptorWithVisibility.getVisibility();
@@ -69,7 +79,7 @@ public final class JetDescriptorIconProvider {
         return null;
     }
 
-    public static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
+    private static Icon getBaseIcon(@NotNull DeclarationDescriptor descriptor) {
         if (descriptor instanceof PackageFragmentDescriptor || descriptor instanceof PackageViewDescriptor) {
             return PlatformIcons.PACKAGE_ICON;
         }
@@ -130,5 +140,21 @@ public final class JetDescriptorIconProvider {
 
         LOG.warn("No icon for descriptor: " + descriptor);
         return null;
+    }
+
+    private static boolean isKotlinDeclaration(@NotNull PsiElement declaration) {
+        if (declaration instanceof JetElement) {
+            return true;
+        }
+        else if (declaration instanceof PsiClass) {
+            return JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass((PsiClass) declaration);
+        }
+        else if (declaration instanceof PsiMember) {
+            PsiClass containingClass = ((PsiMember) declaration).getContainingClass();
+            return containingClass != null && JavaResolverPsiUtils.isCompiledKotlinClassOrPackageClass(containingClass);
+        }
+        else {
+            return false;
+        }
     }
 }

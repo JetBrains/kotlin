@@ -57,6 +57,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean showInternalKeyword;
     private final boolean prettyFunctionTypes;
     private final boolean uninferredTypeParameterAsName;
+    private final boolean includeSynthesizedParameterNames;
 
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
@@ -85,7 +86,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull ValueParametersHandler handler,
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses,
-            boolean includePropertyConstant
+            boolean includePropertyConstant,
+            boolean includeSynthesizedParameterNames
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -104,6 +106,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.excludedAnnotationClasses = Sets.newHashSet(excludedAnnotationClasses);
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
+        this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
     }
 
     /* FORMATTING */
@@ -322,7 +325,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
         sb.append("(");
         appendTypeProjections(KotlinBuiltIns.getInstance().getParameterTypeProjectionsFromFunctionType(type), sb);
-        sb.append(") " + arrow() + " ");
+        sb.append(") ").append(arrow()).append(" ");
         sb.append(renderType(KotlinBuiltIns.getInstance().getReturnTypeFromFunctionType(type)));
 
         if (type.isNullable()) {
@@ -582,7 +585,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         renderName(function, builder);
+
         renderValueParameters(function, builder);
+
         JetType returnType = function.getReturnType();
         if (unitReturnType || !KotlinBuiltIns.getInstance().isUnit(returnType)) {
             builder.append(": ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
@@ -635,17 +640,18 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
+        boolean includeNames = includeSynthesizedParameterNames || !function.hasSynthesizedParameterNames();
         handler.appendBeforeValueParameters(function, builder);
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             handler.appendBeforeValueParameter(parameter, builder);
-            renderValueParameter(parameter, builder, false);
+            renderValueParameter(parameter, includeNames, builder, false);
             handler.appendAfterValueParameter(parameter, builder);
         }
         handler.appendAfterValueParameters(function, builder);
     }
 
     /* VARIABLES */
-    private void renderValueParameter(@NotNull ValueParameterDescriptor valueParameter, @NotNull StringBuilder builder, boolean topLevel) {
+    private void renderValueParameter(@NotNull ValueParameterDescriptor valueParameter, boolean includeName, @NotNull StringBuilder builder, boolean topLevel) {
         if (topLevel) {
             builder.append(renderKeyword("value-parameter")).append(" ");
         }
@@ -655,7 +661,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         renderAnnotations(valueParameter, builder);
-        renderVariable(valueParameter, builder, topLevel);
+        renderVariable(valueParameter, includeName, builder, topLevel);
         boolean withDefaultValue = debugMode ? valueParameter.declaresDefaultValue() : valueParameter.hasDefaultValue();
         if (withDefaultValue) {
             builder.append(" = ...");
@@ -666,7 +672,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         builder.append(renderKeyword(variable.isVar() ? "var" : "val")).append(" ");
     }
 
-    private void renderVariable(@NotNull VariableDescriptor variable, @NotNull StringBuilder builder, boolean topLevel) {
+    private void renderVariable(@NotNull VariableDescriptor variable, boolean includeName, @NotNull StringBuilder builder, boolean topLevel) {
         JetType realType = variable.getType();
 
         JetType varargElementType = variable instanceof ValueParameterDescriptor
@@ -681,8 +687,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderValVarPrefix(variable, builder);
         }
 
-        renderName(variable, builder);
-        builder.append(": ").append(escape(renderType(typeToRender)));
+        if (includeName) {
+            renderName(variable, builder);
+            builder.append(": ");
+        }
+
+        builder.append(escape(renderType(typeToRender)));
 
         renderInitializer(variable, builder);
 
@@ -824,13 +834,13 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private class RenderDeclarationDescriptorVisitor extends DeclarationDescriptorVisitorEmptyBodies<Void, StringBuilder> {
         @Override
         public Void visitValueParameterDescriptor(ValueParameterDescriptor descriptor, StringBuilder builder) {
-            renderValueParameter(descriptor, builder, true);
+            renderValueParameter(descriptor, true, builder, true);
             return null;
         }
 
         @Override
         public Void visitVariableDescriptor(VariableDescriptor descriptor, StringBuilder builder) {
-            renderVariable(descriptor, builder, true);
+            renderVariable(descriptor, true, builder, true);
             return null;
         }
 

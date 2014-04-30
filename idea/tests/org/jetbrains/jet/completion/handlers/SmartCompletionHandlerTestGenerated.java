@@ -321,6 +321,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/NullableValueKeepOldArguments.kt");
     }
     
+    @TestMetadata("SAMExpected1.kt")
+    public void testSAMExpected1() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/SAMExpected1.kt");
+    }
+    
     @TestMetadata("TabReplaceComma1.kt")
     public void testTabReplaceComma1() throws Exception {
         doTest("idea/testData/completion/handlers/smart/TabReplaceComma1.kt");

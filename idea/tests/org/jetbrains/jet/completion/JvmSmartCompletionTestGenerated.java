@@ -386,6 +386,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/QualifiedThisOfExtensionLambda3.kt");
     }
     
+    @TestMetadata("SAMExpected1.kt")
+    public void testSAMExpected1() throws Exception {
+        doTest("idea/testData/completion/smart/SAMExpected1.kt");
+    }
+    
     @TestMetadata("SkipUnresolvedTypes.kt")
     public void testSkipUnresolvedTypes() throws Exception {
         doTest("idea/testData/completion/smart/SkipUnresolvedTypes.kt");

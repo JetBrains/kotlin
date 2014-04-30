@@ -18,6 +18,7 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -32,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.caches.JetFromJavaDescriptorHelper;
 import org.jetbrains.jet.plugin.caches.JetShortNamesCache;
+import org.jetbrains.jet.plugin.completion.handlers.JetJavaClassInsertHandler;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
 
 public class JetTypesCompletionHelper {
@@ -73,14 +75,19 @@ public class JetTypesCompletionHelper {
                     @Override
                     public void consume(LookupElement lookupElement) {
                         if (lookupElement instanceof JavaPsiClassReferenceElement) {
-                            JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
+                            final JavaPsiClassReferenceElement javaPsiReferenceElement = (JavaPsiClassReferenceElement) lookupElement;
 
                             PsiClass psiClass = javaPsiReferenceElement.getObject();
                             if (addJavaClassAsJetLookupElement(psiClass, jetCompletionResult)) {
                                 return;
                             }
 
-                            jetCompletionResult.addElement(DescriptorLookupConverter.setCustomInsertHandler(javaPsiReferenceElement));
+                            jetCompletionResult.addElement(new LookupElementDecorator<LookupElement>(javaPsiReferenceElement) {
+                                @Override
+                                public void handleInsert(InsertionContext context) {
+                                    JetJavaClassInsertHandler.INSTANCE.handleInsert(context, javaPsiReferenceElement);
+                                }
+                            });
                         }
                     }
                 });
