@@ -44,7 +44,7 @@ public class JetExpressionCodeFragmentType extends JetFileElementType {
         Project project = psi.getProject();
         Language languageForParser = getLanguageForParser(psi);
         PsiBuilder builder = PsiBuilderFactory.getInstance().createBuilder(project, chameleon, null, languageForParser, chameleon.getChars());
-        return JetParser.parseExpressionCodeFragment(builder);
+        return JetParser.parseExpressionCodeFragment(builder).getFirstChildNode();
     }
 }
 

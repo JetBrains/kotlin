@@ -30,17 +30,5 @@ public class JetExpressionCodeFragment(
         context: PsiElement?
 ) : JetCodeFragment(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context) {
 
-    fun getExpression(): JetExpression? {
-        var resultingExpression: JetExpression? = null
-        this.accept(object: JetTreeVisitor<Void>() {
-            override fun visitExpression(expression: JetExpression, data: Void?): Void? {
-                resultingExpression = expression
-                return null
-            }
-
-            override fun visitElement(element: PsiElement) = element.acceptChildren(this)
-
-        }, null)
-        return resultingExpression
-    }
+    fun getExpression() = findChildByClass(javaClass<JetExpression>())
 }
