@@ -50,7 +50,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.DelegatingCall
 import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
 import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
 import org.jetbrains.jet.lang.descriptors.Visibilities
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility
 
 enum class Tail {
     COMMA
@@ -66,6 +65,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             ?: calculateForFunctionLiteralArgument(expressionWithType)
             ?: calculateForEq(expressionWithType)
             ?: calculateForIf(expressionWithType)
+            ?: calculateForElvis(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -184,6 +184,28 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
 
             else -> return null
         }
+    }
+
+    private fun calculateForElvis(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val binaryExpression = expressionWithType.getParent() as? JetBinaryExpression
+        if (binaryExpression != null) {
+            val operationToken = binaryExpression.getOperationToken()
+            if (operationToken == JetTokens.ELVIS && expressionWithType == binaryExpression.getRight()) {
+                val otherOperand = binaryExpression.getLeft() ?: return null
+                val otherOperandType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand]
+                val expectedInfos = calculate(binaryExpression)
+                if (expectedInfos != null) {
+                    return if (otherOperandType != null)
+                        expectedInfos.filter { it.`type`.isSubtypeOf(otherOperandType) }
+                    else
+                        expectedInfos
+                }
+                else if (otherOperandType != null) {
+                    return listOf(ExpectedInfo(TypeUtils.makeNotNullable(otherOperandType), null))
+                }
+            }
+        }
+        return null
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

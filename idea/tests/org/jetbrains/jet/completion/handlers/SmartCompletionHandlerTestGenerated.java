@@ -226,6 +226,11 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/IfValue3.kt");
     }
     
+    @TestMetadata("InElvisOperator.kt")
+    public void testInElvisOperator() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/InElvisOperator.kt");
+    }
+    
     @TestMetadata("JavaEnumMemberInsertsImport.kt")
     public void testJavaEnumMemberInsertsImport() throws Exception {
         doTest("idea/testData/completion/handlers/smart/JavaEnumMemberInsertsImport.kt");
