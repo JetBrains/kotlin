@@ -43,6 +43,9 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
         val parentPrecedence = JetPsiPrecedences.getPrecedence(element)
         val leftPrecedence = JetPsiPrecedences.getPrecedence(left)
         val rightPrecedence = JetPsiPrecedences.getPrecedence(right)
+        println("parent prec is " + parentPrecedence)
+        println("left prec is " + leftPrecedence)
+        println("right prec is " + rightPrecedence)
         return when (position) {
             FIRST_LEFT -> if (leftPrecedence < parentPrecedence) left
                 else if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT)
@@ -50,10 +53,10 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
             FIRST_RIGHT -> if (rightPrecedence < parentPrecedence) right
                 else if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT)
                 else right as JetExpression
-            NEXT_LEFT -> if (left is JetBinaryExpression)
-                getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
-            NEXT_RIGHT -> if (right is JetBinaryExpression)
-                getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
+            NEXT_LEFT -> if (leftPrecedence < parentPrecedence || left !is JetBinaryExpression) left
+                else getInnermostOperand(left, NEXT_LEFT) else left as JetExpression
+            NEXT_RIGHT -> if (rightPrecedence < parentPrecedence || right !is JetBinaryExpression) right
+                else getInnermostOperand(right, NEXT_RIGHT) else right as JetExpression
         }
     }
 
