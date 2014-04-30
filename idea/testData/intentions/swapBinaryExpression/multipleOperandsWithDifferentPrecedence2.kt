@@ -1,3 +1,3 @@
 fun main() {
-    val rabbit = 1 + 2 &&<caret> 4 * 5 * 2
+    val rabbit = 4 + 2 <caret>* 5
 }
