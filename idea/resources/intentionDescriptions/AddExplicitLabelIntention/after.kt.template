@@ -1,0 +1,3 @@
+@loop while (true) {
+    <spot>break@loop</spot>
+}

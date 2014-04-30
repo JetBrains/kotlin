@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+<problem>
+  <file>unnecessaryLabel_this_InsideFunction.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="unnecessaryLabel_this_InsideFunction.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+  <description>Unnecessary label '@Foo'</description>
+</problem>
+
+<problem>
+  <file>unnecessaryLabel_super.kt</file>
+  <line>6</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="unnecessaryLabel_super.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+  <description>Unnecessary label '@B'</description>
+</problem>
+
+<problem>
+  <file>unnecessaryLabel_continue.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="unnecessaryLabel_continue.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+  <description>Unnecessary label '@loop'</description>
+</problem>
+
+<problem>
+  <file>unnecessaryLabel_this_InsideProperty.kt</file>
+  <line>2</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="unnecessaryLabel_this_InsideProperty.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+  <description>Unnecessary label '@Foo'</description>
+</problem>
+
+<problem>
+  <file>unnecessaryLabel_break.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="unnecessaryLabel_break.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary label</problem_class>
+  <description>Unnecessary label '@loop'</description>
+</problem>
+</problems>

@@ -411,6 +411,10 @@ fun main(args: Array<String>) {
             model("intentions/convertIfToAssert", testMethod = "doTestConvertIfWithThrowToAssertIntention")
             model("intentions/makeTypeExplicitInLambda", testMethod = "doTestMakeTypeExplicitInLambda")
             model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
+            model("intentions/removeUnnecessaryLabel", testMethod = "doTestRemoveUnnecessaryLabel")
+            model("intentions/addExplicitLabel", testMethod = "doTestAddExplicitLabel")
+            model("intentions/removeUnnecessaryTypeParameterFromSuper", testMethod = "doTestRemoveUnnecessaryTypeParameterFromSuper")
+            model("intentions/addExplicitTypeParameterToSuper", testMethod = "doTestAddExplicitTypeParameterToSuper")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

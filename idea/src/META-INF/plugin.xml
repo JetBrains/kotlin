@@ -697,6 +697,16 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.AddExplicitLabelIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.AddExplicitTypeParameterToSuperIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
@@ -713,6 +723,20 @@
 
     <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.IfThenToSafeAccessInspection"
         displayName="If-Then foldable to '?.'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.UnnecessaryLabelInspection"
+        displayName="Unnecessary label"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.UnnecessaryTypeParameterInSuperInspection"
+        displayName="Unnecessary type parameter"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"

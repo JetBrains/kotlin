@@ -1,0 +1,3 @@
+class C() : Any() {
+  override fun toString() = <spot>super</spot>.toString() + "!"
+}

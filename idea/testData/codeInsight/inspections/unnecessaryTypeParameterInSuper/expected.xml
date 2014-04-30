@@ -1,0 +1,19 @@
+<problems>
+  <problem>
+    <file>unnecessary.kt</file>
+    <line>11</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessary.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type parameter in ''super''</problem_class>
+    <description>Remove unnecessary type parameter 'A'</description>
+  </problem>
+
+  <problem>
+    <file>unnecessary.kt</file>
+    <line>15</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/src/unnecessary.kt"/>
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary type parameter in ''super''</problem_class>
+    <description>Remove unnecessary type parameter 'A'</description>
+  </problem>
+</problems>
