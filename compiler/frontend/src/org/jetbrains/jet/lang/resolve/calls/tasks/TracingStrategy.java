@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
@@ -33,6 +34,9 @@ import java.util.List;
 
 public interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
+
+        @Override
+        public void bindCall(@NotNull BindingTrace trace, @NotNull Call call) {}
 
         @Override
         public <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {}
@@ -94,6 +98,8 @@ public interface TracingStrategy {
         @Override
         public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
     };
+
+    void bindCall(@NotNull BindingTrace trace, @NotNull Call call);
 
     <D extends CallableDescriptor> void bindReference(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall);
 

@@ -30,7 +30,9 @@ import java.util.Collection;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER;
-import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
+import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
+import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
 
 public class TracingStrategyImpl extends AbstractTracingStrategy {
     private final JetReferenceExpression reference;
@@ -43,6 +45,11 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     @NotNull
     public static TracingStrategy create(@NotNull JetReferenceExpression reference, @NotNull Call call) {
         return new TracingStrategyImpl(reference, call);
+    }
+
+    @Override
+    public void bindCall(@NotNull BindingTrace trace, @NotNull Call call) {
+        trace.record(CALL, call.getCalleeExpression(), call);
     }
 
     @Override
@@ -60,7 +67,6 @@ public class TracingStrategyImpl extends AbstractTracingStrategy {
     @Override
     public <D extends CallableDescriptor> void bindResolvedCall(@NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall) {
         trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
-        trace.record(CALL, call.getCalleeExpression(), call);
     }
 
     @Override

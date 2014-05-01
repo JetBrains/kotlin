@@ -323,12 +323,15 @@ public class ControlStructureTypingUtils {
             }
 
             @Override
+            public void bindCall(@NotNull BindingTrace trace, @NotNull Call call) {
+                trace.record(CALL, call.getCalleeExpression(), call);
+            }
+
+            @Override
             public <D extends CallableDescriptor> void bindResolvedCall(
                     @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
             ) {
                 trace.record(RESOLVED_CALL, call.getCalleeExpression(), resolvedCall);
-                trace.record(CALL, call.getCalleeExpression(), call);
-
             }
 
             @Override

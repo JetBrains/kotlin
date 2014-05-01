@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.types.JetType;
@@ -43,6 +44,14 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
     }
 
     @Override
+    public void bindCall(@NotNull BindingTrace trace, @NotNull Call call) {
+        // If reference is a simple name, it's 'variable as function call' case ('foo(a, b)' where 'foo' is a variable).
+        // The outer call is bound ('foo(a, b)'), while 'invoke' call for this case is 'foo.invoke(a, b)' and shouldn't be bound.
+        if (reference instanceof JetSimpleNameExpression) return;
+        trace.record(CALL, reference, call);
+    }
+
+    @Override
     public <D extends CallableDescriptor> void bindReference(
             @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
@@ -53,7 +62,6 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
             @NotNull BindingTrace trace, @NotNull ResolvedCall<D> resolvedCall
     ) {
         trace.record(RESOLVED_CALL, reference, resolvedCall);
-        trace.record(CALL, reference, call);
     }
 
     @Override
