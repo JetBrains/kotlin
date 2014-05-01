@@ -27,8 +27,8 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
-public abstract class ASTIndentStrategy {
-    public static ASTIndentStrategy constIndent(Indent indent) {
+public abstract class NodeIndentStrategy {
+    public static NodeIndentStrategy constIndent(Indent indent) {
         return new ConstIndentStrategy(indent);
     }
 
@@ -39,7 +39,7 @@ public abstract class ASTIndentStrategy {
     @Nullable
     public abstract Indent getIndent(@NotNull ASTNode node);
 
-    public static class ConstIndentStrategy extends ASTIndentStrategy {
+    public static class ConstIndentStrategy extends NodeIndentStrategy {
         private final Indent indent;
 
         public ConstIndentStrategy(Indent indent) {
@@ -53,7 +53,7 @@ public abstract class ASTIndentStrategy {
         }
     }
 
-    public static class PositionStrategy extends ASTIndentStrategy {
+    public static class PositionStrategy extends NodeIndentStrategy {
         private Indent defaultIndent = Indent.getNoneIndent();
 
         private final List<IElementType> in = new ArrayList<IElementType>();

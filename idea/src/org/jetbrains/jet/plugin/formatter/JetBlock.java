@@ -37,7 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
-import static org.jetbrains.jet.plugin.formatter.ASTIndentStrategy.strategy;
+import static org.jetbrains.jet.plugin.formatter.NodeIndentStrategy.strategy;
 
 /**
  * @see Block for good JavaDoc documentation
@@ -279,7 +279,7 @@ public class JetBlock extends AbstractBlock {
         }
     }
 
-    private static final ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
+    private static final NodeIndentStrategy[] INDENT_RULES = new NodeIndentStrategy[] {
             strategy("No indent for braces in blocks")
                     .in(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
                     .forType(RBRACE, LBRACE)
@@ -357,7 +357,7 @@ public class JetBlock extends AbstractBlock {
             }
         }
 
-        for (ASTIndentStrategy strategy : INDENT_RULES) {
+        for (NodeIndentStrategy strategy : INDENT_RULES) {
             Indent indent = strategy.getIndent(child);
             if (indent != null) {
                 return indent;
