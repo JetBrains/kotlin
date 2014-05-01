@@ -88,6 +88,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
 
+            aroundInside(DOT, DOT_QUALIFIED_EXPRESSION).spaces(0)
+            aroundInside(SAFE_ACCESS, SAFE_ACCESS_EXPRESSION).spaces(0)
+
             between(MODIFIERS_LIST_ENTRIES, MODIFIERS_LIST_ENTRIES).spaces(1)
 
             after(LBRACKET).spaces(0)

@@ -19,12 +19,14 @@ package org.jetbrains.jet.plugin.formatter;
 import com.intellij.formatting.*;
 import com.intellij.formatting.alignment.AlignmentStrategy;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.Condition;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.formatter.common.AbstractBlock;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.kdoc.lexer.KDocTokens;
@@ -51,6 +53,7 @@ public class JetBlock extends AbstractBlock {
 
     private List<Block> mySubBlocks;
 
+    private static final TokenSet QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
             BLOCK,
             CLASS_BODY,
@@ -81,9 +84,30 @@ public class JetBlock extends AbstractBlock {
     @Override
     protected List<Block> buildChildren() {
         if (mySubBlocks == null) {
-            mySubBlocks = buildSubBlocks();
+            List<Block> nodeSubBlocks = buildSubBlocks();
+
+            if (getNode().getElementType() == DOT_QUALIFIED_EXPRESSION || getNode().getElementType() == SAFE_ACCESS_EXPRESSION) {
+                int operationBlockIndex = findNodeBlockIndex(nodeSubBlocks, QUALIFIED_OPERATION);
+                if (operationBlockIndex != -1) {
+                    // Create fake ".something" or "?.something" block here, so child indentation will be
+                    // relative to it when it starts from new line (see Indent javadoc).
+
+                    Block operationBlock = nodeSubBlocks.get(operationBlockIndex);
+                    SyntheticKotlinBlock operationSynteticBlock =
+                            new SyntheticKotlinBlock(
+                                    ((ASTBlock) operationBlock).getNode(),
+                                    nodeSubBlocks.subList(operationBlockIndex, nodeSubBlocks.size()),
+                                    null, operationBlock.getIndent(), null, mySpacingBuilder);
+
+                    nodeSubBlocks = ContainerUtil.addAll(
+                            ContainerUtil.newArrayList(nodeSubBlocks.subList(0, operationBlockIndex)),
+                            operationSynteticBlock);
+                }
+            }
+
+            mySubBlocks = nodeSubBlocks;
         }
-        return new ArrayList<Block>(mySubBlocks);
+        return mySubBlocks;
     }
 
     private List<Block> buildSubBlocks() {
@@ -102,6 +126,7 @@ public class JetBlock extends AbstractBlock {
 
             blocks.add(buildSubBlock(child, childrenAlignmentStrategy));
         }
+
         return Collections.unmodifiableList(blocks);
     }
 
@@ -288,7 +313,7 @@ public class JetBlock extends AbstractBlock {
             strategy("Indent for block content")
                     .in(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
                     .notForType(RBRACE, LBRACE, BLOCK)
-                    .set(Indent.getNormalIndent()),
+                    .set(Indent.getNormalIndent(false)),
 
             strategy("Indent for property accessors")
                     .in(PROPERTY)
@@ -316,7 +341,7 @@ public class JetBlock extends AbstractBlock {
 
             strategy("Chained calls")
                     .in(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
-                    .set(Indent.getContinuationWithoutFirstIndent(true)),
+                    .set(Indent.getContinuationWithoutFirstIndent(false)),
 
             strategy("Delegation list")
                     .in(DELEGATION_SPECIFIER_LIST, INITIALIZER_LIST)
@@ -396,5 +421,17 @@ public class JetBlock extends AbstractBlock {
             return base == null ? Alignment.createAlignment() : Alignment.createChildAlignment(base);
         }
         return defaultAlignment;
+    }
+
+    private static int findNodeBlockIndex(List<Block> blocks, final TokenSet tokenSet) {
+        return ContainerUtil.indexOf(blocks, new Condition<Block>() {
+            @Override
+            public boolean value(Block block) {
+                if (!(block instanceof ASTBlock)) return false;
+
+                ASTNode node = ((ASTBlock) block).getNode();
+                return node != null && tokenSet.contains(node.getElementType());
+            }
+        });
     }
 }

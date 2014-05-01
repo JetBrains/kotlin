@@ -154,6 +154,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/FunctionLineBreak.after.kt");
         }
         
+        @TestMetadata("FunctionLiteralsInChainCalls.after.kt")
+        public void testFunctionLiteralsInChainCalls() throws Exception {
+            doTest("idea/testData/formatter/FunctionLiteralsInChainCalls.after.kt");
+        }
+        
         @TestMetadata("FunctionWithInference.after.kt")
         public void testFunctionWithInference() throws Exception {
             doTest("idea/testData/formatter/FunctionWithInference.after.kt");
@@ -292,6 +297,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("SpacesInDeclarations.after.kt")
         public void testSpacesInDeclarations() throws Exception {
             doTest("idea/testData/formatter/SpacesInDeclarations.after.kt");
+        }
+        
+        @TestMetadata("SpacesInQualifiedExpressions.after.kt")
+        public void testSpacesInQualifiedExpressions() throws Exception {
+            doTest("idea/testData/formatter/SpacesInQualifiedExpressions.after.kt");
         }
         
         @TestMetadata("TryCatchLineBreak.after.kt")
