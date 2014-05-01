@@ -1,6 +1,6 @@
 package foo
 
-data class D(val start: String, middle: String, val end: String) {
+data class Dat(val start: String, middle: String, val end: String) {
     fun getLabel() : String {
         return start + end
     }
@@ -15,7 +15,7 @@ fun assertNotEqual<T>(expected: T, actual: T) {
 }
 
 fun box(): String {
-    val d = D("max", "-", "min")
+    val d = Dat("max", "-", "min")
     assertEquals("maxmin", d.getLabel())
     val (p1, p2) = d
     assertEquals("max", p1)

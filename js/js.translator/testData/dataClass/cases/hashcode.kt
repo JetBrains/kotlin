@@ -5,9 +5,9 @@ import java.util.ArrayList
 
 data class Holder<T>(val v: T)
 
-data class D(val start: String, val end: String)
+data class Dat(val start: String, val end: String)
 
-class O(val start: String, val end: String)
+class Obj(val start: String, val end: String)
 
 
 fun assertEquals<T>(expected: T, actual: T) {
@@ -25,6 +25,7 @@ fun assertSomeNotEqual<T>(c: Iterable<T>) {
     }
     throw Exception("All elements are the same: $first")
 }
+
 fun assertAllEqual<T>(c: Iterable<out T>) {
     val it = c.iterator()
     val first = it.next()
@@ -34,82 +35,58 @@ fun assertAllEqual<T>(c: Iterable<out T>) {
     }
 }
 
-// This is described in documenctation at http://confluence.jetbrains.com/display/Kotlin/Functions
-// but can't seem to work:
-//
-// fun asList<T>(vararg<ArrayList<T>> ts : T) : List<T> = ts
+val hashCoder: (o: Any) -> Int = { o -> o.hashCode() }
 
+val <T> wrapInH = { (t: T) -> Holder(t) }
 
-// Two duplicated functions, because vararg Array does not implement Iterable.
-fun listOf<T>(vararg a: T): ArrayList<T> = makeList(a)
-    val list = ArrayList<T>();
+fun box(): String {
+
+    // Check that same Dat's have the same hashcode.
+    val sameDs = listOf(Dat("a", "b"), Dat("a", "b"))
+    assertAllEqual(map(sameDs, hashCoder))
+
+    // Check that different Dat's have different hashcodes (at least some of them).
+    val differentDs = listOf(Dat("a", "b"), Dat("a", "c"), Dat("a", "d"))
+    assertSomeNotEqual(map(differentDs, hashCoder))
+
+    // Check the same on Obj's, which should be always different and with different hashcodes.
+    val sameOs = listOf(Obj("a", "b"), Obj("a", "b"), Obj("a", "b"))
+    val differentOs = listOf(Obj("a", "b"), Obj("a", "b"), Obj("a", "b"))
+
+    // Blocked since we cannot actually call hashCode on Any, which happens inside.
+    // TODO: unblock it once hashcode call works on Any.
+    if (false) {
+        // Obj's are always different.
+        assertSomeNotEqual(map(sameOs, hashCoder))
+        assertSomeNotEqual(map(differentOs, hashCoder))
+    }
+
+    // Both Dat's and Obj's wrapped as Holder should retain their hashcode relations.
+    val sameHDs = map(sameDs, wrapInH)
+    assertAllEqual(map(sameHDs, hashCoder))
+    val differentHDs = map(differentDs, wrapInH)
+    assertSomeNotEqual(map(differentHDs, hashCoder))
+
+    val sameHOs = map(sameOs, wrapInH)
+    assertSomeNotEqual(map(sameHOs, hashCoder))
+    val differentHOs = map(differentOs, wrapInH)
+    assertSomeNotEqual(map(differentHOs, hashCoder))
+
+    return "OK"
+}
+
+fun listOf<T>(vararg a: T): List<T> {
+    val list = ArrayList<T>()
     for (e in a) {
         list.add(e)
     }
     return list
 }
 
-fun makeList<T>(i: Iterable<T>): List<T> {
-    val result = ArrayList<T>()
-    for (element in i) {
-        result.add(element)
+fun map<T, S>(c : Iterable<T>, transform : (T) -> S) : List<S> {
+    val list = ArrayList<S>()
+    for (t in c) {
+        list.add(transform(t))
     }
-    return result
-}
-
-
-fun map<T, S>(c : Iterable<T>, transform : (T) -> S) : Iterable<S> {
-  return object : Iterable<S> {
-      public override fun iterator() : Iterator<S> {
-          val it = c.iterator()
-          return object : Iterator<S> {
-              public override fun next(): S = transform(it.next())
-              public override fun hasNext(): Boolean = it.hasNext()
-          }
-      }
-  }
-}
-
-// Unclear how to refer regular 'fun' as a function value.
-//fun hashCoder(o : Any) : Int = o.hashCode()
-val hashCoder: (o: Any) -> Int = { o -> o.hashCode() }
-
-// Unclear how to create generic function value.
-// val wrapInH: <T> (t: T) -> Holder<T> = { t -> Holder(t) }
-fun wrapInHBuilder<T>(): (t: T) -> Holder<T> = { t -> Holder(t) }
-
-fun box(): String {
-
-    // Check that same D's have the same hashcode.
-    val sameDs: Collection<D> = listOf(D("a", "b"), D("a", "b"))
-    assertAllEqual(map(sameDs, hashCoder))
-
-    // Check that different D's have different hashcodes (at least some of them).
-    val differentDs: Collection<D> = listOf(D("a", "b"), D("a", "c"), D("a", "d"))
-    assertSomeNotEqual(map(differentDs, hashCoder))
-
-    // Check the same on O's, which should be always different and with different hashcodes.
-    // Blocked since we cannot actually call hashCode on Any.
-    val sameOs: Collection<O> = listOf(O("a", "b"), O("a", "b"), O("a", "b"))
-    val differentOs: Collection<O> = listOf(O("a", "b"), O("a", "b"), O("a", "b"))
-
-    if (false) {
-        // O's are always different.
-        assertSomeNotEqual(map(sameOs, hashCoder))
-
-        assertSomeNotEqual(map(differentOs, hashCoder))
-    }
-
-    // Both D's and O's wrapped as Holder should retain their hashcode relations.
-    val sameHDs = makeList(map(sameDs, wrapInHBuilder<D>()))
-    assertAllEqual(map(sameHDs, hashCoder))
-    val differentHDs = makeList(map(differentDs, wrapInHBuilder<D>()))
-    assertSomeNotEqual(map(differentHDs, hashCoder))
-
-    val sameHOs = makeList(map(sameOs, wrapInHBuilder<O>()))
-    assertSomeNotEqual(map(sameHOs, hashCoder))
-    val differentHOs = makeList(map(differentOs, wrapInHBuilder<O>()))
-    assertSomeNotEqual(map(differentHOs, hashCoder))
-
-    return "OK"
+    return list
 }
