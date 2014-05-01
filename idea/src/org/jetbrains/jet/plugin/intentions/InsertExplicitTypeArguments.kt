@@ -20,11 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
-import kotlin.properties.Delegates
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
@@ -32,22 +28,31 @@ import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {
 
-    private var resolvedCall: ResolvedCall<out CallableDescriptor?> by Delegates.notNull()
-
     override fun isApplicableTo(element: JetCallExpression): Boolean {
+        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
+    }
+
+    override fun isApplicableTo(element: JetCallExpression, editor: Editor): Boolean {
         if (!element.getTypeArguments().isEmpty()) return false
+
+        val textRange = element.getCalleeExpression()?.getTextRange()
+        if (textRange == null || !textRange.contains(editor.getCaretModel().getOffset())) return false
+
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
-        val nullableResolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
-        if (nullableResolvedCall == null) return false
-        resolvedCall = nullableResolvedCall
+        val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        if (resolvedCall == null) return false
+
         val types = resolvedCall.getTypeArguments()
         return !types.isEmpty() && types.values().none { ErrorUtils.containsErrorType(it) }
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
+        val context = AnalyzerFacadeWithCache.getContextForElement(element)
+        val resolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
+        if (resolvedCall == null) return
+
         val args = resolvedCall.getTypeArguments()
-        val types = resolvedCall.getCandidateDescriptor()?.getTypeParameters()
-        if (types == null) return
+        val types = resolvedCall.getCandidateDescriptor().getTypeParameters()
 
         val typeArgs = types.map {
             assert(args[it] != null, "there is a null in the type arguments to transform")
@@ -58,9 +63,9 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         }.makeString(", ", "<", ">")
 
         val name = element.getCalleeExpression()?.getText()
-        val text = element.getText()
-        if (name == null || text == null) return
-        val valueAndFunctionArguments = text.substring(name.size)
+        if (name == null) return
+
+        val valueAndFunctionArguments = element.getText().substring(name.size)
         val expr = JetPsiFactory.createExpression(element.getProject(), "$name$typeArgs${valueAndFunctionArguments}")
         element.replace(expr)
     }
