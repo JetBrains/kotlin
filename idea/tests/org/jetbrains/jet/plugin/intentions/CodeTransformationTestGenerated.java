@@ -3646,6 +3646,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestInsertExplicitTypeArguments("idea/testData/intentions/insertExplicitTypeArguments/inapplicableNotGeneric.kt");
         }
         
+        @TestMetadata("inapplicableNotInCallable.kt")
+        public void testInapplicableNotInCallable() throws Exception {
+            doTestInsertExplicitTypeArguments("idea/testData/intentions/insertExplicitTypeArguments/inapplicableNotInCallable.kt");
+        }
+        
+        @TestMetadata("inapplicableNotInCallable2.kt")
+        public void testInapplicableNotInCallable2() throws Exception {
+            doTestInsertExplicitTypeArguments("idea/testData/intentions/insertExplicitTypeArguments/inapplicableNotInCallable2.kt");
+        }
+        
         @TestMetadata("inapplicableTypeNotInferred.kt")
         public void testInapplicableTypeNotInferred() throws Exception {
             doTestInsertExplicitTypeArguments("idea/testData/intentions/insertExplicitTypeArguments/inapplicableTypeNotInferred.kt");
