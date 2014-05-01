@@ -26,12 +26,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("UnusedDeclaration")
 public abstract class ASTIndentStrategy {
     public static ASTIndentStrategy constIndent(Indent indent) {
         return new ConstIndentStrategy(indent);
     }
 
-    public static PositionStrategy forNode(@Nullable String debugInfo) {
+    public static PositionStrategy strategy(@Nullable String debugInfo) {
         return new PositionStrategy(debugInfo);
     }
 
@@ -77,16 +78,12 @@ public abstract class ASTIndentStrategy {
         }
 
         public PositionStrategy in(@NotNull IElementType parentType, @NotNull IElementType... orParentTypes) {
-            in.clear();
-            in.add(parentType);
-            Collections.addAll(in, orParentTypes);
+            fillTypes(in, parentType, orParentTypes);
             return this;
         }
 
         public PositionStrategy notIn(@NotNull IElementType parentType, @NotNull IElementType... orParentTypes) {
-            notIn.clear();
-            notIn.add(parentType);
-            Collections.addAll(notIn, orParentTypes);
+            fillTypes(notIn, parentType, orParentTypes);
             return this;
         }
 
@@ -97,18 +94,12 @@ public abstract class ASTIndentStrategy {
         }
 
         public PositionStrategy forType(@NotNull IElementType elementType, @NotNull IElementType... otherTypes) {
-            forElement.clear();
-            forElement.add(elementType);
-            Collections.addAll(forElement, otherTypes);
-
+            fillTypes(forElement, elementType, otherTypes);
             return this;
         }
 
         public PositionStrategy notForType(@NotNull IElementType elementType, @NotNull IElementType... otherTypes) {
-            notForElement.clear();
-            notForElement.add(elementType);
-            Collections.addAll(notForElement, otherTypes);
-
+            fillTypes(notForElement, elementType, otherTypes);
             return this;
         }
 
@@ -150,6 +141,12 @@ public abstract class ASTIndentStrategy {
             }
 
             return defaultIndent;
+        }
+
+        private static void fillTypes(List<IElementType> resultCollection, IElementType singleType, IElementType[] otherTypes) {
+            resultCollection.clear();
+            resultCollection.add(singleType);
+            Collections.addAll(resultCollection, otherTypes);
         }
     }
 }

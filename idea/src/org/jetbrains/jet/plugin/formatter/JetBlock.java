@@ -37,6 +37,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.JetNodeTypes.*;
 import static org.jetbrains.jet.lexer.JetTokens.*;
+import static org.jetbrains.jet.plugin.formatter.ASTIndentStrategy.strategy;
 
 /**
  * @see Block for good JavaDoc documentation
@@ -278,67 +279,67 @@ public class JetBlock extends AbstractBlock {
         }
     }
 
-    static ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
-            ASTIndentStrategy.forNode("No indent for braces in blocks")
+    private static final ASTIndentStrategy[] INDENT_RULES = new ASTIndentStrategy[] {
+            strategy("No indent for braces in blocks")
                     .in(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
                     .forType(RBRACE, LBRACE)
                     .set(Indent.getNoneIndent()),
 
-            ASTIndentStrategy.forNode("Indent for block content")
+            strategy("Indent for block content")
                     .in(BLOCK, CLASS_BODY, FUNCTION_LITERAL)
                     .notForType(RBRACE, LBRACE, BLOCK)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("Indent for property accessors")
+            strategy("Indent for property accessors")
                     .in(PROPERTY)
                     .forType(PROPERTY_ACCESSOR)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("For a single statement in 'for'")
+            strategy("For a single statement in 'for'")
                     .in(BODY)
                     .notForType(BLOCK)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("For the entry in when")
+            strategy("For the entry in when")
                     .forType(WHEN_ENTRY)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("For single statement in THEN and ELSE")
+            strategy("For single statement in THEN and ELSE")
                     .in(THEN, ELSE)
                     .notForType(BLOCK)
                     .set(Indent.getNormalIndent()),
 
-            ASTIndentStrategy.forNode("Indent for parts")
+            strategy("Indent for parts")
                     .in(PROPERTY, FUN)
                     .notForType(BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
                     .set(Indent.getContinuationWithoutFirstIndent()),
 
-            ASTIndentStrategy.forNode("Chained calls")
+            strategy("Chained calls")
                     .in(DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION)
                     .set(Indent.getContinuationWithoutFirstIndent(true)),
 
-            ASTIndentStrategy.forNode("Delegation list")
+            strategy("Delegation list")
                     .in(DELEGATION_SPECIFIER_LIST, INITIALIZER_LIST)
                     .set(Indent.getContinuationIndent(false)),
 
-            ASTIndentStrategy.forNode("Indices")
+            strategy("Indices")
                     .in(INDICES)
                     .set(Indent.getContinuationIndent(false)),
 
-            ASTIndentStrategy.forNode("Binary expressions")
+            strategy("Binary expressions")
                     .in(BINARY_EXPRESSION)
                     .set(Indent.getContinuationWithoutFirstIndent(false)),
 
-            ASTIndentStrategy.forNode("Parenthesized expression")
+            strategy("Parenthesized expression")
                     .in(PARENTHESIZED)
                     .set(Indent.getContinuationWithoutFirstIndent(false)),
 
-            ASTIndentStrategy.forNode("KDoc comment indent")
+            strategy("KDoc comment indent")
                     .in(DOC_COMMENT)
                     .forType(KDocTokens.LEADING_ASTERISK, KDocTokens.END)
                     .set(Indent.getSpaceIndent(KDOC_COMMENT_INDENT)),
 
-            ASTIndentStrategy.forNode("Block in when entry")
+            strategy("Block in when entry")
                     .in(WHEN_ENTRY)
                     .notForType(BLOCK, WHEN_CONDITION_EXPRESSION, WHEN_CONDITION_IN_RANGE, WHEN_CONDITION_IS_PATTERN, ELSE_KEYWORD, ARROW)
                     .set(Indent.getNormalIndent()),
