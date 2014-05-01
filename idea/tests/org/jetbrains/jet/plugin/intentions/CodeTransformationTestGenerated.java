@@ -4149,6 +4149,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestConvertToForEachLoop("idea/testData/intentions/convertToForEachLoop/infixCall.kt");
         }
         
+        @TestMetadata("parenthesizedExpression.kt")
+        public void testParenthesizedExpression() throws Exception {
+            doTestConvertToForEachLoop("idea/testData/intentions/convertToForEachLoop/parenthesizedExpression.kt");
+        }
+        
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             doTestConvertToForEachLoop("idea/testData/intentions/convertToForEachLoop/simple.kt");
@@ -4175,6 +4180,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     public static class ConvertToForEachFunctionCall extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInConvertToForEachFunctionCall() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/convertToForEachFunctionCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+        
+        @TestMetadata("binaryExpressionLoopRange.kt")
+        public void testBinaryExpressionLoopRange() throws Exception {
+            doTestConvertToForEachFunctionCall("idea/testData/intentions/convertToForEachFunctionCall/binaryExpressionLoopRange.kt");
         }
         
         @TestMetadata("blockBodyExpression.kt")

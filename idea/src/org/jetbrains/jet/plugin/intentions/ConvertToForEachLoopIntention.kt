@@ -25,10 +25,9 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 
 public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpression>("convert.to.for.each.loop.intention", javaClass()) {
     private fun getFunctionLiteralArgument(element: JetExpression): JetFunctionLiteralExpression? {
@@ -95,10 +94,17 @@ public class ConvertToForEachLoopIntention : JetSelfTargetingIntention<JetExpres
     }
 
     override fun applyTo(element: JetExpression, editor: Editor) {
+        fun buildLoopRangeText(receiver: JetExpression): String? {
+            return when (receiver) {
+                is JetParenthesizedExpression -> receiver.getExpression()?.getText()
+                else -> receiver.getText()
+            }
+        }
+
         fun generateLoopText(receiver: JetExpression, functionLiteral: JetFunctionLiteralExpression): String {
             return when {
-                functionLiteral.getValueParameters().size() == 0 -> "for (it in ${receiver.getText()}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
-                else -> "for (${functionLiteral.getValueParameters()[0].getText()} in ${receiver.getText()}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
+                functionLiteral.getValueParameters().size() == 0 -> "for (it in ${buildLoopRangeText(receiver)}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
+                else -> "for (${functionLiteral.getValueParameters()[0].getText()} in ${buildLoopRangeText(receiver)}) { ${functionLiteral.getBodyExpression()!!.getText()} }"
             }
         }
 

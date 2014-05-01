@@ -21,6 +21,8 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetOperationExpression
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>("convert.to.for.each.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetForExpression): Boolean {
@@ -36,21 +38,30 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
             }
         }
 
-        val body = element.getBody()!!
-        val loopParameter = element.getLoopParameter()!!
-        val bodyText = when (body) {
-            is JetBlockExpression ->
-                when {
-                    loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> ${buildStatements(body.getStatements())}"
-                    else -> "${loopParameter.getText()} -> ${buildStatements(body.getStatements())}"
-                }
-            else ->
-                when {
-                    loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> ${body.getText()}"
-                    else -> "${loopParameter.getText()} -> ${body.getText()}"
-                }
+        fun buildReplacementBodyText(loopParameter: JetParameter, functionBodyText: String): String {
+            return when {
+                loopParameter.getTypeReference() != null -> " (${loopParameter.getText()}) -> $functionBodyText"
+                else -> "${loopParameter.getText()} -> $functionBodyText"
+            }
         }
 
-        element.replace(JetPsiFactory.createExpression(element.getProject(), "${element.getLoopRange()!!.getText()}.forEach { $bodyText }"))
+        fun buildReceiverText(element: JetForExpression): String {
+            val loopRange = element.getLoopRange()!!
+
+            return when (loopRange) {
+                is JetOperationExpression -> "(${loopRange.getText()})"
+                else -> loopRange.getText()
+            }
+        }
+
+        val body = element.getBody()!!
+        val loopParameter = element.getLoopParameter()!!
+
+        val bodyText = buildReplacementBodyText(loopParameter, when (body) {
+            is JetBlockExpression -> buildStatements(body.getStatements())
+            else -> body.getText()
+        })
+
+        element.replace(JetPsiFactory.createExpression(element.getProject(), "${buildReceiverText(element)}.forEach { $bodyText }"))
     }
 }
