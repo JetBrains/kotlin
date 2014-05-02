@@ -115,7 +115,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
         JetBlockExpression thenBlock = JetPsiFactory.wrapInABlock(thenBranch);
         JetBlockExpression elseBlock = JetPsiFactory.wrapInABlock(elseBranch);
-        Call callForIf = createCallForSpecialConstruction(ifExpression, Lists.newArrayList(thenBlock, elseBlock));
+        Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(

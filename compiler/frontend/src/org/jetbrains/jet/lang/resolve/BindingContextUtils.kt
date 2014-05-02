@@ -32,7 +32,10 @@ import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
- *  returns a corresponding call
+ *  returns a corresponding call.
+ *
+ *  Note: special construction like <code>a!!, a ?: b, if (c) a else b</code> are resolved as calls,
+ *  so there is a corresponding call for them.
  */
 fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
     val expr = JetPsiUtil.deparenthesize(this)

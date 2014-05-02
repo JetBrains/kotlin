@@ -713,7 +713,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         assert operationSign.getReferencedNameElementType() == JetTokens.EXCLEXCL;
 
-        Call call = createCallForSpecialConstruction(expression, Collections.singletonList(baseExpression));
+        Call call = createCallForSpecialConstruction(expression, expression.getOperationReference(), Collections.singletonList(baseExpression));
         components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "ExclExcl", Collections.singletonList("baseExpr"), Collections.singletonList(true), context, null);
         JetTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
@@ -982,7 +982,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return JetTypeInfo.create(null, context.dataFlowInfo);
         }
 
-        Call call = createCallForSpecialConstruction(expression, Lists.newArrayList(left, right));
+        Call call = createCallForSpecialConstruction(expression, expression.getOperationReference(), Lists.newArrayList(left, right));
         ResolvedCall<FunctionDescriptor> resolvedCall = components.controlStructureTypingUtils.resolveSpecialConstructionAsCall(
                 call, "Elvis", Lists.newArrayList("left", "right"), Lists.newArrayList(true, false), contextWithExpectedType, null);
         JetTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());

@@ -158,6 +158,7 @@ public class ControlStructureTypingUtils {
 
     /*package*/ static Call createCallForSpecialConstruction(
             @NotNull final JetExpression expression,
+            @NotNull final JetExpression calleeExpression,
             @NotNull List<? extends JetExpression> arguments
     ) {
         final List<ValueArgument> valueArguments = Lists.newArrayList();
@@ -186,7 +187,7 @@ public class ControlStructureTypingUtils {
             @Nullable
             @Override
             public JetExpression getCalleeExpression() {
-                return expression;
+                return calleeExpression;
             }
 
             @Nullable
@@ -345,8 +346,7 @@ public class ControlStructureTypingUtils {
                 if (status.hasErrorInConstrainingTypes()) {
                     return;
                 }
-                JetExpression expression = call.getCalleeExpression();
-                if (expression == null) return;
+                JetExpression expression = (JetExpression) call.getCallElement();
                 if (status.hasOnlyErrorsFromPosition(ConstraintPosition.EXPECTED_TYPE_POSITION) || status.hasConflictingConstraints()) {
                     expression.accept(checkTypeVisitor, new CheckTypeContext(trace, data.expectedType));
                     return;
