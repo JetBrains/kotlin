@@ -102,16 +102,6 @@ public class CallResolverUtil {
         return true;
     }
 
-    @Nullable
-    public static CallKey createCallKey(@NotNull BasicCallResolutionContext context) {
-        if (isInvokeCallOnVariable(context.call)) {
-            return null;
-        }
-        PsiElement callElement = context.call.getCallElement();
-        if (!(callElement instanceof JetExpression)) return null;
-        return CallKey.create(context.call.getCallType(), (JetExpression) callElement);
-    }
-
     @NotNull
     public static JetType getErasedReceiverType(
             @NotNull ReceiverParameterDescriptor receiverParameterDescriptor,

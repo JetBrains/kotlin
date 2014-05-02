@@ -526,4 +526,20 @@ public class ExpressionTypingUtils {
         }
         return false;
     }
+
+    public static boolean dependsOnExpectedType(@Nullable JetExpression expression) {
+        JetExpression expr = JetPsiUtil.deparenthesize(expression, false);
+        if (expr == null) return false;
+
+        if (expr instanceof JetBinaryExpressionWithTypeRHS) {
+            return false;
+        }
+        if (expr instanceof JetBinaryExpression) {
+            return isBinaryExpressionDependentOnExpectedType((JetBinaryExpression) expr);
+        }
+        if (expr instanceof JetUnaryExpression) {
+            return isUnaryExpressionDependentOnExpectedType((JetUnaryExpression) expr);
+        }
+        return true;
+    }
 }

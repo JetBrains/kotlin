@@ -19,29 +19,27 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.psi.CallKey;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
 public interface ResolutionResultsCache {
 
-    <D extends CallableDescriptor> void recordResolutionResults(@NotNull CallKey callKey, @NotNull OverloadResolutionResultsImpl<D> results);
+    <D extends CallableDescriptor> void recordResolutionResults(@NotNull Call call, @NotNull OverloadResolutionResultsImpl<D> results);
 
     @Nullable
-    <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(@NotNull CallKey callKey);
+    <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(@NotNull Call call);
 
-    void recordResolutionTrace(@NotNull CallKey callKey, @NotNull DelegatingBindingTrace delegatingTrace);
+    void recordResolutionTrace(@NotNull Call call, @NotNull DelegatingBindingTrace delegatingTrace);
 
     @Nullable
-    DelegatingBindingTrace getResolutionTrace(@NotNull CallKey callKey);
+    DelegatingBindingTrace getResolutionTrace(@NotNull Call call);
 
     <D extends CallableDescriptor> void recordDeferredComputationForCall(
-            @NotNull CallKey callKey,
+            @NotNull Call call,
             @NotNull CallCandidateResolutionContext<D> deferredComputation
     );
 
     @Nullable
-    CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression);
+    CallCandidateResolutionContext<?> getDeferredComputation(@Nullable Call call);
 }

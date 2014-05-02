@@ -326,15 +326,15 @@ public class CallResolver {
             @NotNull CallTransformer<D, F> callTransformer,
             @NotNull TracingStrategy tracing
     ) {
-        tracing.bindCall(context.trace, context.call);
+        Call call = context.call;
+        tracing.bindCall(context.trace, call);
 
         OverloadResolutionResultsImpl<F> results = null;
-        TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", context.call);
-        CallKey callKey = CallResolverUtil.createCallKey(context);
-        if (callKey != null) {
-            OverloadResolutionResultsImpl<F> cachedResults = context.resolutionResultsCache.getResolutionResults(callKey);
+        TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);
+        if (!CallResolverUtil.isInvokeCallOnVariable(call)) {
+            OverloadResolutionResultsImpl<F> cachedResults = context.resolutionResultsCache.getResolutionResults(call);
             if (cachedResults != null) {
-                DelegatingBindingTrace deltasTraceForResolve = context.resolutionResultsCache.getResolutionTrace(callKey);
+                DelegatingBindingTrace deltasTraceForResolve = context.resolutionResultsCache.getResolutionTrace(call);
                 assert deltasTraceForResolve != null;
                 deltasTraceForResolve.addAllMyDataTo(traceToResolveCall);
                 results = cachedResults;
@@ -419,20 +419,20 @@ public class CallResolver {
             @NotNull DelegatingBindingTrace traceToResolveCall,
             @NotNull TracingStrategy tracing
     ) {
-        CallKey callKey = CallResolverUtil.createCallKey(context);
-        if (callKey == null) return;
+        Call call = context.call;
+        if (CallResolverUtil.isInvokeCallOnVariable(call)) return;
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
                 BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
         traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
 
-        context.resolutionResultsCache.recordResolutionResults(callKey, results);
-        context.resolutionResultsCache.recordResolutionTrace(callKey, deltasTraceToCacheResolve);
+        context.resolutionResultsCache.recordResolutionResults(call, results);
+        context.resolutionResultsCache.recordResolutionTrace(call, deltasTraceToCacheResolve);
 
         if (results.isSingleResult()) {
             CallCandidateResolutionContext<F> contextForCallToCompleteTypeArgumentInference =
                     CallCandidateResolutionContext.createForCallBeingAnalyzed(results.getResultingCall(), context, tracing);
-            context.resolutionResultsCache.recordDeferredComputationForCall(callKey, contextForCallToCompleteTypeArgumentInference);
+            context.resolutionResultsCache.recordDeferredComputationForCall(call, contextForCallToCompleteTypeArgumentInference);
         }
     }
 
@@ -586,12 +586,13 @@ public class CallResolver {
                 to have a binding to variable while 'invoke' call resolve */
                 task.tracing.bindReference(context.candidateCall.getTrace(), context.candidateCall);
 
-                Collection<MutableResolvedCall<F>> calls = callTransformer.transformCall(context, this, task);
+                Collection<MutableResolvedCall<F>> resolvedCalls = callTransformer.transformCall(context, this, task);
 
-                for (MutableResolvedCall<F> call : calls) {
-                    task.tracing.bindReference(call.getTrace(), call);
-                    task.tracing.bindResolvedCall(call.getTrace(), call);
-                    task.addResolvedCall(call);
+                for (MutableResolvedCall<F> resolvedCall : resolvedCalls) {
+                    BindingTrace trace = resolvedCall.getTrace();
+                    task.tracing.bindReference(trace, resolvedCall);
+                    task.tracing.bindResolvedCall(trace, resolvedCall);
+                    task.addResolvedCall(resolvedCall);
                 }
             }
         }

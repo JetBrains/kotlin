@@ -17,12 +17,11 @@
 package org.jetbrains.jet.lang.resolve.calls.context
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
-import org.jetbrains.jet.lang.psi.CallKey
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.lang.psi.JetExpression
 import java.util.HashMap
-import org.jetbrains.jet.lang.psi.Call.CallType.*
+import org.jetbrains.jet.lang.psi.Call
 
 class ResolutionResultsCacheImpl : ResolutionResultsCache {
     private class CachedData(
@@ -31,40 +30,34 @@ class ResolutionResultsCacheImpl : ResolutionResultsCache {
             var deferredComputation: CallCandidateResolutionContext<*>? = null
     )
 
-    private val data = HashMap<CallKey, CachedData>()
+    private val data = HashMap<Call, CachedData>()
 
-    private fun getOrCreateCachedInfo(callKey: CallKey) = data.getOrPut(callKey, { CachedData() })
+    private fun getOrCreateCachedInfo(call: Call) = data.getOrPut(call, { CachedData() })
 
-    override fun <D : CallableDescriptor?> recordResolutionResults(callKey: CallKey, results: OverloadResolutionResultsImpl<D>) {
-        getOrCreateCachedInfo(callKey).results = results
+    override fun <D : CallableDescriptor?> recordResolutionResults(call: Call, results: OverloadResolutionResultsImpl<D>) {
+        getOrCreateCachedInfo(call).results = results
     }
 
-    override fun <D : CallableDescriptor?> getResolutionResults(callKey: CallKey): OverloadResolutionResultsImpl<D>? {
-        return data[callKey]?.results as OverloadResolutionResultsImpl<D>?
+    override fun <D : CallableDescriptor?> getResolutionResults(call: Call): OverloadResolutionResultsImpl<D>? {
+        return data[call]?.results as OverloadResolutionResultsImpl<D>?
     }
 
-    override fun recordResolutionTrace(callKey: CallKey, delegatingTrace: DelegatingBindingTrace) {
-        getOrCreateCachedInfo(callKey).resolutionTrace = delegatingTrace
+    override fun recordResolutionTrace(call: Call, delegatingTrace: DelegatingBindingTrace) {
+        getOrCreateCachedInfo(call).resolutionTrace = delegatingTrace
     }
 
-    override fun getResolutionTrace(callKey: CallKey): DelegatingBindingTrace? {
-        return data[callKey]?.resolutionTrace
+    override fun getResolutionTrace(call: Call): DelegatingBindingTrace? {
+        return data[call]?.resolutionTrace
     }
 
-    override fun <D : CallableDescriptor?> recordDeferredComputationForCall(callKey: CallKey, deferredComputation: CallCandidateResolutionContext<D>) {
-        getOrCreateCachedInfo(callKey).deferredComputation = deferredComputation
+    override fun <D : CallableDescriptor?> recordDeferredComputationForCall(call: Call, deferredComputation: CallCandidateResolutionContext<D>) {
+        getOrCreateCachedInfo(call).deferredComputation = deferredComputation
     }
 
-    override fun getDeferredComputation(expression: JetExpression?): CallCandidateResolutionContext<out CallableDescriptor?>? {
-        if (expression == null) return null
+    override fun getDeferredComputation(call: Call?): CallCandidateResolutionContext<out CallableDescriptor?>? {
+        if (call == null) return null
 
-        for (callType in listOf(DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, INVOKE)) {
-            val deferredComputation = data[CallKey.create(callType, expression)]?.deferredComputation
-            if (deferredComputation != null) {
-                return deferredComputation
-            }
-        }
-        return null
+        return data[call]?.deferredComputation
     }
 
     fun addData(cache: ResolutionResultsCacheImpl) {

@@ -19,8 +19,7 @@ package org.jetbrains.jet.lang.resolve.calls.context;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
-import org.jetbrains.jet.lang.psi.CallKey;
-import org.jetbrains.jet.lang.psi.JetExpression;
+import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 
@@ -37,57 +36,57 @@ public class TemporaryResolutionResultsCache implements ResolutionResultsCache {
 
     @Override
     public <D extends CallableDescriptor> void recordResolutionResults(
-            @NotNull CallKey callKey,
+            @NotNull Call call,
             @NotNull OverloadResolutionResultsImpl<D> results
     ) {
-        innerCache.recordResolutionResults(callKey, results);
+        innerCache.recordResolutionResults(call, results);
     }
 
     @Nullable
     @Override
     public <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> getResolutionResults(
-            @NotNull CallKey callKey
+            @NotNull Call call
     ) {
-        OverloadResolutionResultsImpl<D> results = innerCache.getResolutionResults(callKey);
+        OverloadResolutionResultsImpl<D> results = innerCache.getResolutionResults(call);
         if (results != null) {
             return results;
         }
-        return parentCache.getResolutionResults(callKey);
+        return parentCache.getResolutionResults(call);
     }
 
     @Override
     public void recordResolutionTrace(
-            @NotNull CallKey callKey, @NotNull DelegatingBindingTrace delegatingTrace
+            @NotNull Call call, @NotNull DelegatingBindingTrace delegatingTrace
     ) {
-        innerCache.recordResolutionTrace(callKey, delegatingTrace);
+        innerCache.recordResolutionTrace(call, delegatingTrace);
     }
 
     @Nullable
     @Override
-    public DelegatingBindingTrace getResolutionTrace(@NotNull CallKey callKey) {
-        DelegatingBindingTrace trace = innerCache.getResolutionTrace(callKey);
+    public DelegatingBindingTrace getResolutionTrace(@NotNull Call call) {
+        DelegatingBindingTrace trace = innerCache.getResolutionTrace(call);
         if (trace != null) {
             return trace;
         }
-        return parentCache.getResolutionTrace(callKey);
+        return parentCache.getResolutionTrace(call);
     }
 
     @Override
     public <D extends CallableDescriptor> void recordDeferredComputationForCall(
-            @NotNull CallKey callKey,
+            @NotNull Call call,
             @NotNull CallCandidateResolutionContext<D> deferredComputation
     ) {
-        innerCache.recordDeferredComputationForCall(callKey, deferredComputation);
+        innerCache.recordDeferredComputationForCall(call, deferredComputation);
     }
 
     @Nullable
     @Override
-    public CallCandidateResolutionContext<?> getDeferredComputation(@Nullable JetExpression expression) {
-        CallCandidateResolutionContext<?> computation = innerCache.getDeferredComputation(expression);
+    public CallCandidateResolutionContext<?> getDeferredComputation(@Nullable Call call) {
+        CallCandidateResolutionContext<?> computation = innerCache.getDeferredComputation(call);
         if (computation != null) {
             return computation;
         }
-        return parentCache.getDeferredComputation(expression);
+        return parentCache.getDeferredComputation(call);
     }
 
     public void commit() {

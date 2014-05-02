@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.AutoCastUtils;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowValue;
@@ -273,15 +274,14 @@ public class CandidateResolver {
 
     private <D extends CallableDescriptor> void completeTypeInferenceForAllCandidatesForArgument(
             @NotNull CallCandidateResolutionContext<D> context,
-            @Nullable JetExpression argumentExpression
+            @Nullable Call call
     ) {
         // All candidates for inner calls are not needed, so there is no need to complete them
         if (context.collectAllCandidates) return;
 
-        if (argumentExpression == null) return;
+        if (call == null) return;
 
-        CallKey callKey = CallKey.create(argumentExpression);
-        OverloadResolutionResultsImpl<CallableDescriptor> resolutionResults = context.resolutionResultsCache.getResolutionResults(callKey);
+        OverloadResolutionResultsImpl<CallableDescriptor> resolutionResults = context.resolutionResultsCache.getResolutionResults(call);
         if (resolutionResults == null) return;
 
         completeTypeInferenceForAllCandidates(context.toBasic(), resolutionResults);
@@ -390,6 +390,20 @@ public class CandidateResolver {
         recordReferenceForInvokeFunction(context);
     }
 
+    @Nullable
+    private static Call getCallForArgument(@Nullable JetExpression argument, @NotNull BindingContext bindingContext) {
+        if (!ExpressionTypingUtils.dependsOnExpectedType(argument)) {
+            return null;
+        }
+        if (argument instanceof JetBlockExpression) {
+            JetElement lastStatement = JetPsiUtil.getLastStatementInABlock((JetBlockExpression) argument);
+            if (lastStatement instanceof JetExpression) {
+                return getCallForArgument((JetExpression) lastStatement, bindingContext);
+            }
+        }
+        return BindingContextUtilPackage.getCorrespondingCall(argument, bindingContext);
+    }
+
     private <D extends CallableDescriptor> void completeInferenceForArgument(
             @NotNull ValueArgument argument,
             @NotNull ValueParameterDescriptor parameterDescriptor,
@@ -401,8 +415,8 @@ public class CandidateResolver {
         JetType expectedType = getEffectiveExpectedType(parameterDescriptor, argument);
         context = context.replaceExpectedType(expectedType);
 
-        JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(keyExpression);
+        Call call = getCallForArgument(expression, context.trace.getBindingContext());
+        CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(call);
 
         PsiElement parent = expression.getParent();
         if (parent instanceof JetWhenExpression && expression == ((JetWhenExpression) parent).getSubjectExpression()
@@ -412,7 +426,7 @@ public class CandidateResolver {
         if (storedContextForArgument == null) {
             JetType type = ArgumentTypeResolver.updateResultArgumentTypeIfNotDenotable(context, expression);
             checkResultArgumentType(type, argument, context);
-            completeTypeInferenceForAllCandidatesForArgument(context, keyExpression);
+            completeTypeInferenceForAllCandidatesForArgument(context, call);
             return;
         }
 
@@ -427,7 +441,7 @@ public class CandidateResolver {
         JetType result = BindingContextUtils.updateRecordedType(
                 type, expression, context.trace, isFairSafeCallExpression(expression, context.trace));
 
-        completeTypeInferenceForAllCandidatesForArgument(context, keyExpression);
+        completeTypeInferenceForAllCandidatesForArgument(context, call);
 
         DataFlowUtils.checkType(result, expression, contextForArgument);
     }
@@ -447,10 +461,8 @@ public class CandidateResolver {
         for (ValueArgument argument : arguments) {
             JetExpression expression = argument.getArgumentExpression();
 
-            JetExpression keyExpression = getDeferredComputationKeyExpression(expression);
-
-            CallCandidateResolutionContext<?> storedContextForArgument =
-                    context.resolutionResultsCache.getDeferredComputation(keyExpression);
+            Call call = getCallForArgument(expression, context.trace.getBindingContext());
+            CallCandidateResolutionContext<?> storedContextForArgument = context.resolutionResultsCache.getDeferredComputation(call);
             if (storedContextForArgument == null) continue;
             if (storedContextForArgument.candidateCall.isCompleted()) continue;
 
@@ -458,57 +470,6 @@ public class CandidateResolver {
                     storedContextForArgument.replaceBindingTrace(context.trace).replaceContextDependency(INDEPENDENT);
             completeTypeInferenceDependentOnExpectedTypeForCall(newContext, true);
         }
-    }
-
-    @Nullable
-    private JetExpression getDeferredComputationKeyExpression(@Nullable JetExpression expression) {
-        if (expression == null) return null;
-        return expression.accept(new JetVisitor<JetExpression, Void>() {
-            @Nullable
-            private JetExpression visitInnerExpression(@Nullable JetElement expression) {
-                if (expression == null) return null;
-                return expression.accept(this, null);
-            }
-
-            @Override
-            public JetExpression visitQualifiedExpression(@NotNull JetQualifiedExpression expression, Void data) {
-                return visitInnerExpression(expression.getSelectorExpression());
-            }
-
-            @Override
-            public JetExpression visitExpression(@NotNull JetExpression expression, Void data) {
-                return expression;
-            }
-
-            @Override
-            public JetExpression visitParenthesizedExpression(@NotNull JetParenthesizedExpression expression, Void data) {
-                return visitInnerExpression(expression.getExpression());
-            }
-
-            @Override
-            public JetExpression visitUnaryExpression(@NotNull JetUnaryExpression expression, Void data) {
-                return ExpressionTypingUtils.isUnaryExpressionDependentOnExpectedType(expression) ? expression : null;
-            }
-
-            @Override
-            public JetExpression visitLabeledExpression(@NotNull JetLabeledExpression expression, Void data) {
-                return visitInnerExpression(expression.getBaseExpression());
-            }
-
-            @Override
-            public JetExpression visitBlockExpression(@NotNull JetBlockExpression expression, Void data) {
-                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
-                if (lastStatement != null) {
-                    return visitInnerExpression(lastStatement);
-                }
-                return expression;
-            }
-
-            @Override
-            public JetExpression visitBinaryExpression(@NotNull JetBinaryExpression expression, Void data) {
-                return ExpressionTypingUtils.isBinaryExpressionDependentOnExpectedType(expression) ? expression : null;
-            }
-        }, null);
     }
 
     private static boolean isFairSafeCallExpression(@NotNull JetExpression expression, @NotNull BindingTrace trace) {
