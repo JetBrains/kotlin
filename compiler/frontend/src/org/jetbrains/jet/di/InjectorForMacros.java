@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.jet.lang.resolve.calls.CallCompleter;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
@@ -64,6 +65,7 @@ public class InjectorForMacros {
     private final ForLoopConventionsChecker forLoopConventionsChecker;
     private final ReflectionTypes reflectionTypes;
     private final ArgumentTypeResolver argumentTypeResolver;
+    private final CallCompleter callCompleter;
     private final CandidateResolver candidateResolver;
     
     public InjectorForMacros(
@@ -91,6 +93,7 @@ public class InjectorForMacros {
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
+        this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
 
         this.expressionTypingServices.setAnnotationResolver(annotationResolver);
         this.expressionTypingServices.setCallExpressionResolver(callExpressionResolver);
@@ -110,6 +113,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setReflectionTypes(reflectionTypes);
 
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
+        this.callResolver.setCallCompleter(callCompleter);
         this.callResolver.setCandidateResolver(candidateResolver);
         this.callResolver.setExpressionTypingServices(expressionTypingServices);
         this.callResolver.setTypeResolver(typeResolver);
