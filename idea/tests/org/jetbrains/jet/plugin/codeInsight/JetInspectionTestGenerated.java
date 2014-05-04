@@ -51,4 +51,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
     }
     
+    @TestMetadata("simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test")
+    public void testSimplifyNegatedBinaryExpressionIntention_inspectionData_Inspections_test() throws Exception {
+        doTest("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/inspectionData/inspections.test");
+    }
+    
 }
