@@ -36,17 +36,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void setStatusToSuccess();
 
-    /**
-     * Resolved call can have incomplete type parameters
-     * if ResolutionStatus is INCOMPLETE_TYPE_INFERENCE (might be completed successfully)
-     * or OTHER_ERROR (cannot be completed successfully, but if there's only one candidate, should be completed anyway).
-     * @return true if resolved call has unknown type parameters (inference is incomplete)
-     */
-    //todo remove, replace with "typeArguments.isEmpty() && !typeParameters.isEmpty()"
-    boolean hasIncompleteTypeParameters();
-
-    void setHasIncompleteTypeParameters(boolean hasIncompleteTypeParameters);
-
     //todo remove: use value to parameter map status
     boolean isDirty();
 

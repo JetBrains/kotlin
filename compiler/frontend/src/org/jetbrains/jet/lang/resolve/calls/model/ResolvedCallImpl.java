@@ -87,7 +87,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private DelegatingBindingTrace trace;
     private TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
-    private boolean hasUnknownTypeParameters = false;
     private ConstraintSystem constraintSystem = null;
     private Boolean hasInferredReturnType = null;
     private boolean completed = false;
@@ -124,16 +123,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     public void setStatusToSuccess() {
         assert status == INCOMPLETE_TYPE_INFERENCE || status == UNKNOWN_STATUS;
         status = ResolutionStatus.SUCCESS;
-    }
-
-    @Override
-    public boolean hasIncompleteTypeParameters() {
-        return hasUnknownTypeParameters;
-    }
-
-    @Override
-    public void setHasIncompleteTypeParameters(boolean hasIncompleteTypeParameters) {
-        this.hasUnknownTypeParameters = hasIncompleteTypeParameters;
     }
 
     @Override
