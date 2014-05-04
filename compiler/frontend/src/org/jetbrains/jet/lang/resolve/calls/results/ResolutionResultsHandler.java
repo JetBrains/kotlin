@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.jet.lang.resolve.calls.util.UtilPackage;
 
 import java.util.*;
 
@@ -159,7 +160,7 @@ public class ResolutionResultsHandler {
 
     private static <D extends CallableDescriptor> boolean allClean(@NotNull Collection<MutableResolvedCall<D>> results) {
         for (MutableResolvedCall<D> result : results) {
-            if (result.isDirty()) return false;
+            if (UtilPackage.isDirty(result)) return false;
         }
         return true;
     }
@@ -183,7 +184,7 @@ public class ResolutionResultsHandler {
         Set<MutableResolvedCall<D>> cleanCandidates = Sets.newLinkedHashSet(candidates);
         for (Iterator<MutableResolvedCall<D>> iterator = cleanCandidates.iterator(); iterator.hasNext(); ) {
             MutableResolvedCall<D> candidate = iterator.next();
-            if (candidate.isDirty()) {
+            if (UtilPackage.isDirty(candidate)) {
                 iterator.remove();
             }
         }

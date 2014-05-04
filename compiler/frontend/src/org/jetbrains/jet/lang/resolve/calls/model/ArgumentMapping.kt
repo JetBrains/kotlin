@@ -26,6 +26,12 @@ object ArgumentUnmapped: ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
-class ArgumentMatch(val valueParameter: ValueParameterDescriptor, val hasTypeMismatch: Boolean): ArgumentMapping {
-    override fun isError(): Boolean = hasTypeMismatch
+enum class ArgumentMatchStatus(val isError: Boolean) {
+    SUCCESS : ArgumentMatchStatus(false)
+    TYPE_MISMATCH : ArgumentMatchStatus(true)
+    ARGUMENT_HAS_NO_TYPE : ArgumentMatchStatus(true)
+}
+
+class ArgumentMatch(val valueParameter: ValueParameterDescriptor, val status: ArgumentMatchStatus): ArgumentMapping {
+    override fun isError(): Boolean = status.isError
 }

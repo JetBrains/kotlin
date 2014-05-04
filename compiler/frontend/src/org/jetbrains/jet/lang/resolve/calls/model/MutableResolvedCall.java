@@ -36,11 +36,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void setStatusToSuccess();
 
-    //todo remove: use value to parameter map status
-    boolean isDirty();
-
-    void argumentHasNoType();
-
     @NotNull
     DelegatingBindingTrace getTrace();
 
@@ -52,7 +47,7 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument);
 
-    void recordArgumentMatch(@NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch);
+    void recordArgumentMatch(@NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, @NotNull ArgumentMatchStatus matchStatus);
 
     @Override
     @NotNull

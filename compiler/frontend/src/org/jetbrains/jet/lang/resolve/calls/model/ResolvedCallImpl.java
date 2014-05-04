@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls.model;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +82,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
     private final Map<ValueArgument, ArgumentMatch> argumentToParameterMap = Maps.newHashMap();
 
-    private boolean someArgumentHasNoType = false;
     private DelegatingBindingTrace trace;
     private TracingStrategy tracing;
     private ResolutionStatus status = UNKNOWN_STATUS;
@@ -187,7 +185,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             ArgumentMatch argumentMatch = entry.getValue();
             ValueParameterDescriptor substitutedVersion = parameterMap.get(argumentMatch.getValueParameter().getOriginal());
             assert substitutedVersion != null : argumentMatch.getValueParameter();
-            argumentToParameterMap.put(entry.getKey(), new ArgumentMatch(substitutedVersion, argumentMatch.getHasTypeMismatch()));
+            argumentToParameterMap.put(entry.getKey(), new ArgumentMatch(substitutedVersion, argumentMatch.getStatus()));
         }
     }
 
@@ -262,9 +260,9 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     public void recordArgumentMatch(
-            @NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch
+            @NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, @NotNull ArgumentMatchStatus matchStatus
     ) {
-        argumentToParameterMap.put(valueArgument, new ArgumentMatch(parameter, hasTypeMismatch));
+        argumentToParameterMap.put(valueArgument, new ArgumentMatch(parameter, matchStatus));
     }
 
     @NotNull
@@ -275,16 +273,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             return ArgumentUnmapped.instance$;
         }
         return argumentMatch;
-    }
-
-    @Override
-    public void argumentHasNoType() {
-        this.someArgumentHasNoType = true;
-    }
-
-    @Override
-    public boolean isDirty() {
-        return someArgumentHasNoType;
     }
 
     @NotNull
