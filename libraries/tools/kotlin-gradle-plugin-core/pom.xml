@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>gradle-api</artifactId>
-            <version>1.4</version>
+            <version>1.6</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

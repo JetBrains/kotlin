@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.Project
 class BasicKotlinGradleIT : BaseGradleIT() {
 
     Test fun testSimpleCompile() {
-        val project = Project("simpleProject")
+        val project = Project("simpleProject", "1.12")
 
         project.build("compileDeployKotlin", "build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
-            assertReportExists("build/reports/tests/demo.TestSource.html")
+            assertReportExists("build/reports/tests/classes/demo.TestSource.html")
             assertContains(":compileKotlin", ":compileTestKotlin", ":compileDeployKotlin")
         }
 
@@ -32,19 +32,19 @@ class BasicKotlinGradleIT : BaseGradleIT() {
     }
 
     Test fun testKotlinCustomDirectory() {
-        Project("customSrcDir").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("customSrcDir", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }
 
     Test fun testInlineDisabled() {
-        Project("inlineDisabled").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("inlineDisabled", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }
 
     Test fun testSimpleKDoc() {
-        Project("kdocProject").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("kdocProject", "1.6").build("kdoc", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
             assertReportExists("build/docs/kdoc/demo/MyClass.html")
             assertContains(":kdoc", "Generating kdoc to")
@@ -52,7 +52,7 @@ class BasicKotlinGradleIT : BaseGradleIT() {
     }
 
     Ignore fun testKotlinExtraJavaSrc() {
-        Project("additionalJavaSrc").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
+        Project("additionalJavaSrc", "1.6").build("build", "-Pkotlin.gradle.plugin.version=0.1-SNAPSHOT") {
             assertSuccessful()
         }
     }

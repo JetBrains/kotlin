@@ -15,7 +15,7 @@ import org.gradle.api.initialization.dsl.ScriptHandler
 
 abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
-    val log = Logging.getLogger(getClass())!!
+    val log = Logging.getLogger(getClass())
 
     public override fun apply(project: Project) {
         val sourceBuildScript = findSourceBuildScript(project);
@@ -38,14 +38,14 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
 
         props.load(inputStream);
 
-        val projectVersion = props.get("project.version") as String
+        val projectVersion = props["project.version"] as String
         log.debug("Found project version [$projectVersion]")
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", projectVersion)
 
         log.debug("Creating configuration and dependency")
         val kotlinPluginCoreCoordinates = "org.jetbrains.kotlin:kotlin-gradle-plugin-core:" + projectVersion
         val dependency = dependencyHandler.create(kotlinPluginCoreCoordinates)
-        val configuration = configurationsContainer.detachedConfiguration(dependency)!!
+        val configuration = configurationsContainer.detachedConfiguration(dependency)
 
         log.debug("Resolving [" + kotlinPluginCoreCoordinates + "]")
         val kotlinPluginDependencies : List<URL> = configuration.getResolvedConfiguration().getFiles(KSpec({ dep -> true }))!!.map({(f: File):URL -> f.toURI().toURL() })
