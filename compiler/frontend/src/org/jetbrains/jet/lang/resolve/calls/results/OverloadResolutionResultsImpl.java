@@ -141,6 +141,7 @@ public class OverloadResolutionResultsImpl<D extends CallableDescriptor> impleme
         return allCandidates;
     }
 
+    @NotNull
     public OverloadResolutionResultsImpl<D> changeStatusToSuccess() {
         if (getResultCode() == Code.SUCCESS) return this;
 

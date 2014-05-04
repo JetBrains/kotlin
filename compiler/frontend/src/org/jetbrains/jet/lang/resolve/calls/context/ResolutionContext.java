@@ -26,14 +26,23 @@ import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 
 public abstract class ResolutionContext<Context extends ResolutionContext<Context>> {
+    @NotNull
     public final BindingTrace trace;
+    @NotNull
     public final JetScope scope;
+    @NotNull
     public final JetType expectedType;
+    @NotNull
     public final DataFlowInfo dataFlowInfo;
+    @NotNull
     public final ContextDependency contextDependency;
+    @NotNull
     public final ResolutionResultsCache resolutionResultsCache;
+    @NotNull
     public final CallResolverExtension callResolverExtension;
+
     public final boolean isAnnotationContext;
+
     public final boolean collectAllCandidates;
 
     protected ResolutionContext(

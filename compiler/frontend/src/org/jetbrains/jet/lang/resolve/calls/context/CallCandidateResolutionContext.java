@@ -31,8 +31,11 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
+    @NotNull
     public final MutableResolvedCall<D> candidateCall;
+    @NotNull
     public final TracingStrategy tracing;
+    @NotNull
     public final ReceiverValue explicitExtensionReceiverForInvoke;
 
     private CallCandidateResolutionContext(
@@ -84,6 +87,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return create(candidateCall, context, trace, tracing, context.call);
     }
 
+    @NotNull
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> createForCallBeingAnalyzed(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull BasicCallResolutionContext context, @NotNull TracingStrategy tracing
     ) {
