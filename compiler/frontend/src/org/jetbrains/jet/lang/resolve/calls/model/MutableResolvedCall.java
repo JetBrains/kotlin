@@ -53,9 +53,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
     @NotNull
     MutableDataFlowInfoForArguments getDataFlowInfoForArguments();
 
-    void setInitialDataFlowInfo(@NotNull DataFlowInfo info);
-
-
     @Nullable
     ConstraintSystem getConstraintSystem();
 

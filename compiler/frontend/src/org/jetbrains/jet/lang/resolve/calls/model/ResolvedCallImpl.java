@@ -286,11 +286,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         return isSafeCall;
     }
 
-    @Override
-    public void setInitialDataFlowInfo(@NotNull DataFlowInfo info) {
-        dataFlowInfoForArguments.setInitialDataFlowInfo(info);
-    }
-
     @NotNull
     @Override
     public MutableDataFlowInfoForArguments getDataFlowInfoForArguments() {

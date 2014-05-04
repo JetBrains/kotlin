@@ -66,7 +66,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
             @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull ReceiverValue explicitExtensionReceiverForInvoke
     ) {
-        candidateCall.setInitialDataFlowInfo(context.dataFlowInfo);
+        candidateCall.getDataFlowInfoForArguments().setInitialDataFlowInfo(context.dataFlowInfo);
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
