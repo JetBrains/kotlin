@@ -22,7 +22,6 @@ import com.intellij.psi.tree.TokenSet;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -43,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
@@ -445,11 +445,10 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public void visitBinaryExpression(@NotNull JetBinaryExpression expression) {
         super.visitBinaryExpression(expression);
 
-        FunctionDescriptor operationDescriptor =
-                (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
-        if (operationDescriptor == null) return;
+        DeclarationDescriptor operationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
+        if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(operationDescriptor);
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
 
         JavaClassDescriptor samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
@@ -468,24 +467,18 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public void visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression) {
         super.visitArrayAccessExpression(expression);
 
-        FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
-        if (operationDescriptor == null) {
-            return;
-        }
+        DeclarationDescriptor operationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
+        if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
         boolean isSetter = operationDescriptor.getName().asString().equals("set");
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter(operationDescriptor);
-        if (original == null) {
-            return;
-        }
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
+        if (original == null) return;
 
         List<JetExpression> indexExpressions = expression.getIndexExpressions();
         List<ValueParameterDescriptor> parameters = original.getValueParameters();
         for (ValueParameterDescriptor valueParameter : parameters) {
             JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
-            if (samInterface == null) {
-                continue;
-            }
+            if (samInterface == null) continue;
 
             if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {
                 PsiElement parent = expression.getParent();

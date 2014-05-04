@@ -27,7 +27,6 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.binding.MutableClosure;
@@ -47,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -1341,12 +1341,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetDelegatorToSuperCall superCall = closure.getSuperCall();
         if (superCall != null) {
-            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET,
-                                                                                                superCall
-                                                                                                        .getCalleeExpression()
-                                                                                                        .getConstructorReferenceExpression());
+            ConstructorDescriptor superConstructor = (ConstructorDescriptor) bindingContext
+                    .get(BindingContext.REFERENCE_TARGET, superCall.getCalleeExpression().getConstructorReferenceExpression());
             assert superConstructor != null;
-            //noinspection SuspiciousMethodCalls
             CallableMethod superCallable = typeMapper.mapToCallableMethod(superConstructor);
             Type[] argumentTypes = superCallable.getAsmMethod().getArgumentTypes();
             ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, superCall.getCalleeExpression());
@@ -2640,21 +2637,19 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         else {
             ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
-            Call call = bindingContext.get(BindingContext.CALL, reference);
+            assert resolvedCall != null : "Binary expression call is unresolved: " + expression.getText();
+            FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
-            DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, reference);
-            assert op instanceof FunctionDescriptor : String.valueOf(op);
-            Callable callable = resolveToCallable((FunctionDescriptor) op, false);
+            Callable callable = resolveToCallable(descriptor, false);
             if (callable instanceof IntrinsicMethod) {
-                //noinspection ConstantConditions
-                Type returnType = typeMapper.mapType(resolvedCall.getResultingDescriptor());
+                Type returnType = typeMapper.mapType(descriptor);
                 ((IntrinsicMethod) callable).generate(this, v, returnType, expression,
                                                       Arrays.asList(expression.getLeft(), expression.getRight()), receiver);
                 return StackValue.onStack(returnType);
             }
-            else {
-                return invokeFunction(call, receiver, resolvedCall);
-            }
+
+            Call call = bindingContext.get(BindingContext.CALL, reference);
+            return invokeFunction(call, receiver, resolvedCall);
         }
     }
 
@@ -2830,9 +2825,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateComparison(JetBinaryExpression expression, StackValue receiver) {
-        DeclarationDescriptor target = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
-        assert target instanceof FunctionDescriptor : "compareTo target should be a function: " + target;
-        FunctionDescriptor descriptor = (FunctionDescriptor) target;
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        assert resolvedCall != null : "compareTo target should be resolved: " + expression.getText();
+        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
         JetExpression left = expression.getLeft();
         JetExpression right = expression.getRight();
@@ -2847,7 +2842,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             gen(right, type);
         }
         else {
-            ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
             Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
             StackValue result = invokeFunction(call, receiver, resolvedCall);
             type = Type.INT_TYPE;
@@ -2867,52 +2861,46 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateAugmentedAssignment(JetBinaryExpression expression) {
-        DeclarationDescriptor op = bindingContext.get(BindingContext.REFERENCE_TARGET, expression.getOperationReference());
-        assert op instanceof FunctionDescriptor : String.valueOf(op);
-        Callable callable = resolveToCallable((FunctionDescriptor) op, false);
+        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getOperationReference());
+        assert resolvedCall != null : "Augmented assignment call is unresolved: " + expression.getText();
+        FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
+        Callable callable = resolveToCallable(descriptor, false);
         JetExpression lhs = expression.getLeft();
-
-        //        if (lhs instanceof JetArrayAccessExpression) {
-        //            JetArrayAccessExpression arrayAccessExpression = (JetArrayAccessExpression) lhs;
-        //            if (arrayAccessExpression.getIndexExpressions().size() != 1) {
-        //                throw new UnsupportedOperationException("Augmented assignment with multi-index");
-        //            }
-        //        }
-
         Type lhsType = expressionType(lhs);
+
+        boolean keepReturnValue;
         //noinspection ConstantConditions
         if (bindingContext.get(BindingContext.VARIABLE_REASSIGNMENT, expression)) {
             if (callable instanceof IntrinsicMethod) {
                 StackValue value = gen(lhs);              // receiver
-                value.dupReceiver(v);                                        // receiver receiver
-                value.put(lhsType, v);                                          // receiver lhs
-                IntrinsicMethod intrinsic = (IntrinsicMethod) callable;
-                JetExpression right = expression.getRight();
-                assert right != null;
-                Type returnType = typeMapper.mapType((FunctionDescriptor) op);
-                intrinsic.generate(this, v, returnType, expression, Collections.singletonList(right), StackValue.onStack(lhsType));
+                value.dupReceiver(v);                     // receiver receiver
+                value.put(lhsType, v);                    // receiver lhs
+                ((IntrinsicMethod) callable).generate(this, v, typeMapper.mapType(descriptor), expression,
+                                                      Collections.singletonList(expression.getRight()), StackValue.onStack(lhsType));
                 value.store(lhsType, v);
+                return StackValue.none();
             }
             else {
-                callAugAssignMethod(expression, (CallableMethod) callable, lhsType, true);
+                keepReturnValue = true;
             }
         }
         else {
-            JetType type = ((FunctionDescriptor) op).getReturnType();
-            assert type != null;
-            boolean keepReturnValue = !type.equals(KotlinBuiltIns.getInstance().getUnitType());
-            callAugAssignMethod(expression, (CallableMethod) callable, lhsType, keepReturnValue);
+            keepReturnValue = !KotlinBuiltIns.getInstance().getUnitType().equals(descriptor.getReturnType());
         }
+
+        callAugAssignMethod(expression, resolvedCall, (CallableMethod) callable, lhsType, keepReturnValue);
 
         return StackValue.none();
     }
 
-    private void callAugAssignMethod(JetBinaryExpression expression, CallableMethod callable, Type lhsType, boolean keepReturnValue) {
-        JetSimpleNameExpression reference = expression.getOperationReference();
-        ResolvedCall<?> resolvedCall = bindingContext.get(BindingContext.RESOLVED_CALL, reference);
-        Call call = bindingContext.get(BindingContext.CALL, reference);
-
-        assert resolvedCall != null : "Resolved call should be not null for operation reference in " + expression.getText();
+    private void callAugAssignMethod(
+            @NotNull JetBinaryExpression expression,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull CallableMethod callable,
+            @NotNull Type lhsType,
+            boolean keepReturnValue
+    ) {
+        Call call = bindingContext.get(BindingContext.CALL, expression.getOperationReference());
         assert call != null : "Call should be not null for operation reference in " + expression.getText();
 
         StackValue value = gen(expression.getLeft());
