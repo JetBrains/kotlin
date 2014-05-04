@@ -734,6 +734,13 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.SimplifyBinaryNegationInspection"
+        displayName="Simplify Negated Binary Expression"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

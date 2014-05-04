@@ -1,0 +1,93 @@
+<problems>
+
+<problem>
+  <file>notIs.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/notIs.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '!is' expression to 'is'</description>
+</problem>
+
+<problem>
+  <file>notIn.kt</file>
+  <line>8</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/notIn.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '!in' expression to 'in'</description>
+</problem>
+
+<problem>
+  <file>notEquals.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/notEquals.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '!=' expression to '=='</description>
+</problem>
+
+<problem>
+  <file>lessThanOrEquals.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/lessThanOrEquals.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '&lt;=' expression to '&gt;'</description>
+</problem>
+
+<problem>
+  <file>lessThan.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/lessThan.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '&lt;' expression to '&gt;='</description>
+</problem>
+
+<problem>
+  <file>is.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/is.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated 'is' expression to '!is'</description>
+</problem>
+
+<problem>
+  <file>in.kt</file>
+  <line>8</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/in.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated 'in' expression to '!in'</description>
+</problem>
+
+<problem>
+  <file>greaterThanOrEquals.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/greaterThanOrEquals.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '&gt;=' expression to '&lt;'</description>
+</problem>
+
+<problem>
+  <file>greaterThan.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/greaterThan.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '&gt;' expression to '&lt;='</description>
+</problem>
+
+<problem>
+  <file>equals.kt</file>
+  <line>3</line>
+  <module>light_idea_test_case</module>
+  <entry_point TYPE="file" FQNAME="temp:///src/equals.kt" />
+  <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Simplify Negated Binary Expression</problem_class>
+  <description>Simplify negated '==' expression to '!='</description>
+</problem>
+
+</problems>

@@ -2897,6 +2897,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     }
     
     @TestMetadata("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention")
+    @InnerTestClasses({})
     public static class SimplifyNegatedBinaryExpressionIntention extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInSimplifyNegatedBinaryExpressionIntention() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2962,6 +2963,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSimplifyNegatedBinaryExpressionIntention("idea/testData/intentions/simplifyNegatedBinaryExpressionIntention/simpleInvert.kt");
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("SimplifyNegatedBinaryExpressionIntention");
+            suite.addTestSuite(SimplifyNegatedBinaryExpressionIntention.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/intentions/convertNegatedBooleanSequence")
@@ -4279,7 +4285,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ReplaceBinaryInfixIntention.class);
         suite.addTestSuite(ReplaceUnaryPrefixIntention.class);
         suite.addTestSuite(ReplaceInvokeIntention.class);
-        suite.addTestSuite(SimplifyNegatedBinaryExpressionIntention.class);
+        suite.addTest(SimplifyNegatedBinaryExpressionIntention.innerSuite());
         suite.addTestSuite(ConvertNegatedBooleanSequence.class);
         suite.addTestSuite(ConvertNegatedExpressionWithDemorgansLaw.class);
         suite.addTestSuite(SwapBinaryExpression.class);
