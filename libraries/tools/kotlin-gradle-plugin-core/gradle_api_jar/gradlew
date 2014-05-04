@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##############################################################################
 ##
@@ -61,9 +61,9 @@ while [ -h "$PRG" ] ; do
     fi
 done
 SAVED="`pwd`"
-cd "`dirname \"$PRG\"`/"
+cd "`dirname \"$PRG\"`/" >&-
 APP_HOME="`pwd -P`"
-cd "$SAVED"
+cd "$SAVED" >&-
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 

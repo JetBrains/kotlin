@@ -12,7 +12,7 @@
     <groupId>org.jetbrains.kotlin</groupId>
     <artifactId>gradle-api</artifactId>
     <packaging>pom</packaging>
-    <version>1.4</version>
+    <version>1.6</version>
 
     <build>
         <plugins>
@@ -30,7 +30,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>build/libs/gradle-api-1.4.jar</file>
+                                    <file>build/libs/gradle-api-1.6.jar</file>
                                     <type>jar</type>
                                 </artifact>
                             </artifacts>
