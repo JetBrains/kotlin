@@ -81,7 +81,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final Map<TypeParameterDescriptor, JetType> typeArguments = Maps.newLinkedHashMap();
     private final Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = Maps.newLinkedHashMap();
     private final MutableDataFlowInfoForArguments dataFlowInfoForArguments;
-    private final Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
     private final Map<ValueArgument, ArgumentMatch> argumentToParameterMap = Maps.newHashMap();
 
     private boolean someArgumentHasNoType = false;
@@ -219,18 +218,6 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     public void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument) {
         assert !valueArguments.containsKey(valueParameter) : valueParameter + " -> " + valueArgument;
         valueArguments.put(valueParameter, valueArgument);
-    }
-
-    @Override
-    public void addUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments) {
-        this.unmappedArguments.addAll(unmappedArguments);
-
-    }
-
-    @Override
-    @NotNull
-    public Set<ValueArgument> getUnmappedArguments() {
-        return unmappedArguments;
     }
 
     @Override

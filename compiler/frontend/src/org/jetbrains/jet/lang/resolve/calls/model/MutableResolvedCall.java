@@ -27,9 +27,6 @@ import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.jet.lang.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.jet.lang.types.TypeSubstitutor;
 
-import java.util.Collection;
-import java.util.Set;
-
 public interface MutableResolvedCall<D extends CallableDescriptor> extends ResolvedCall<D>  {
 
     @NotNull
@@ -67,11 +64,6 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
     void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument);
 
     void recordArgumentMatch(@NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, boolean hasTypeMismatch);
-
-    @NotNull
-    Set<ValueArgument> getUnmappedArguments();
-
-    void addUnmappedArguments(@NotNull Collection<? extends ValueArgument> unmappedArguments);
 
     @Override
     @NotNull
