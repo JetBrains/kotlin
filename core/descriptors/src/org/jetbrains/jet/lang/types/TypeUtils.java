@@ -555,12 +555,12 @@ public class TypeUtils {
     private static Set<JetType> getIntersectionOfSupertypes(@NotNull Collection<JetType> types) {
         Set<JetType> upperBounds = Sets.newHashSet();
         for (JetType type : types) {
-            Set<JetType> supertypes = Sets.newHashSet(type.getConstructor().getSupertypes());
+            Collection<JetType> supertypes = type.getConstructor().getSupertypes();
             if (upperBounds.isEmpty()) {
                 upperBounds.addAll(supertypes);
             }
             else {
-                upperBounds = Sets.intersection(upperBounds, supertypes);
+                upperBounds.retainAll(supertypes);
             }
         }
         return upperBounds;
