@@ -45,7 +45,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
                 (if (varargElementType != null) "<b>vararg</b> " else "") +
                 htmlRenderer.renderType(parameterType) +
                 if (parameter.hasDefaultValue()) " = ..." else ""
-        if (resolvedCall.hasErrorOnParameter(parameter)) {
+        if (resolvedCall.hasTypeMismatchErrorOnParameter(parameter)) {
             return IdeRenderers.error(renderedParameter)
         }
         return renderedParameter

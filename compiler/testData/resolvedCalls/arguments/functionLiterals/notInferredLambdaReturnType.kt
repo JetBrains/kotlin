@@ -1,6 +1,6 @@
 // !ONLY_ARGUMENTS
 // !CALL: foo
-// !ARG_1: ArgumentMatch(f : () -> ???, SUCCESS)
+// !ARG_1: ArgumentMatch(f : () -> ???, UNINFERRED_TYPE_IN_PARAMETER)
 
 fun <T> foo(f: () -> T) {}
 

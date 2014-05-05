@@ -26,10 +26,14 @@ object ArgumentUnmapped: ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
-enum class ArgumentMatchStatus(val isError: Boolean) {
+enum class ArgumentMatchStatus(val isError: Boolean = true) {
     SUCCESS : ArgumentMatchStatus(false)
-    TYPE_MISMATCH : ArgumentMatchStatus(true)
-    ARGUMENT_HAS_NO_TYPE : ArgumentMatchStatus(true)
+    TYPE_MISMATCH : ArgumentMatchStatus()
+    ARGUMENT_HAS_NO_TYPE : ArgumentMatchStatus()
+
+    // The case when there is no type mismatch, but parameter has uninferred types:
+    // fun <T> foo(l: List<T>) {}; val l = foo(emptyList())
+    MATCH_MODULO_UNINFERRED_TYPES : ArgumentMatchStatus()
 }
 
 class ArgumentMatch(val valueParameter: ValueParameterDescriptor, val status: ArgumentMatchStatus): ArgumentMapping {
