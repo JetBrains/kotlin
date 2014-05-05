@@ -655,7 +655,6 @@
       <className>org.jetbrains.jet.plugin.intentions.SimplifyBooleanWithConstantsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
-    
 
     <intentionAction>
       <className>org.jetbrains.jet.plugin.intentions.SwapBinaryExpression</className>
@@ -713,6 +712,13 @@
 
     <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.IfThenToSafeAccessInspection"
         displayName="If-Then foldable to '?.'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.RemoveExplicitTypeArgsInspection"
+        displayName="Type arguments are unnecessary"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WARNING"

@@ -1,0 +1,101 @@
+<problems>
+  <problem>
+    <file>variableStringFartherScope.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/variableStringFartherScope.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>fourLiterals.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/fourLiterals.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>literalStringWithClass.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/literalStringWithClass.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>lambdaType.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/lambdaType.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>literalAny.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/literalAny.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>literalString.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/literalString.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>variablesAndLiterals.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/variablesAndLiterals.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>literalsWhenTypeArgHasTypeArg.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/literalsWhenTypeArgHasTypeArg.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>variableString.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/variableString.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>variableString2.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/variableString2.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+  
+  <problem>
+    <file>twoLiteralValues.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/twoLiteralValues.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+</problems>

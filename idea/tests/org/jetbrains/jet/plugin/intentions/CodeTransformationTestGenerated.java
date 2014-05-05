@@ -7,6 +7,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -3719,6 +3720,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
     }
     
     @TestMetadata("idea/testData/intentions/removeExplicitTypeArguments")
+    @InnerTestClasses({})
     public static class RemoveExplicitTypeArguments extends AbstractCodeTransformationTest {
         public void testAllFilesPresentInRemoveExplicitTypeArguments() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/removeExplicitTypeArguments"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -3799,6 +3801,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/variablesAndLiterals.kt");
         }
         
+        public static Test innerSuite() {
+            TestSuite suite = new TestSuite("RemoveExplicitTypeArguments");
+            suite.addTestSuite(RemoveExplicitTypeArguments.class);
+            return suite;
+        }
     }
     
     @TestMetadata("idea/testData/intentions/convertAssertToIf")
@@ -4171,7 +4178,7 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         suite.addTestSuite(ReplaceWithTraditionalAssignment.class);
         suite.addTestSuite(SimplifyBooleanWithConstants.class);
         suite.addTestSuite(InsertExplicitTypeArguments.class);
-        suite.addTestSuite(RemoveExplicitTypeArguments.class);
+        suite.addTest(RemoveExplicitTypeArguments.innerSuite());
         suite.addTestSuite(ConvertAssertToIf.class);
         suite.addTestSuite(ConvertIfToAssert.class);
         suite.addTestSuite(MakeTypeExplicitInLambda.class);
