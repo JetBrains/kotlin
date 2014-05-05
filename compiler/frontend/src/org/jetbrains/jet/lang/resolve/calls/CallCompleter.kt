@@ -58,6 +58,7 @@ import org.jetbrains.jet.lang.resolve.bindingContextUtil.getCorrespondingCall
 import org.jetbrains.jet.lang.psi.JetSafeQualifiedExpression
 import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
+import org.jetbrains.jet.lang.resolve.calls.util.getAllValueArguments
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
@@ -203,11 +204,10 @@ public class CallCompleter(
             getDataFlowInfoForArgument = { context.dataFlowInfo }
         }
 
-        val arguments = ArrayList(context.call.getValueArguments())
-        arguments.addAll(context.call.getFunctionLiteralArguments().map { functionLiteral -> CallMaker.makeValueArgument(functionLiteral) })
+        val arguments = context.call.getAllValueArguments()
 
         for (valueArgument in arguments) {
-            val argumentMapping = getArgumentMapping(valueArgument!!)
+            val argumentMapping = getArgumentMapping(valueArgument)
             val expectedType = when (argumentMapping) {
                 is ArgumentMatch -> CandidateResolver.getEffectiveExpectedType(argumentMapping.valueParameter, valueArgument)
                 else -> TypeUtils.NO_EXPECTED_TYPE

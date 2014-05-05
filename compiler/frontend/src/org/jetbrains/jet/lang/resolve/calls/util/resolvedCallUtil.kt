@@ -25,6 +25,9 @@ import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
+import java.util.ArrayList
+import org.jetbrains.jet.lang.psi.Call
+import org.jetbrains.jet.lang.psi.ValueArgument
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
     return getCall().getValueArguments().all { argument -> !getArgumentMapping(argument!!).isError() }
@@ -53,4 +56,11 @@ fun <D : CallableDescriptor> ResolvedCall<D>.isDirty(): Boolean {
                 val argumentMapping = getArgumentMapping(argument)
                 argumentMapping is ArgumentMatch && argumentMapping.status == ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
             }
+}
+
+fun Call.getAllValueArguments(): List<ValueArgument> {
+    val arguments = getValueArguments() +
+                    getFunctionLiteralArguments().map { functionLiteral -> CallMaker.makeValueArgument(functionLiteral) }
+    [suppress("UNCHECKED_CAST")]
+    return arguments as List<ValueArgument>
 }
