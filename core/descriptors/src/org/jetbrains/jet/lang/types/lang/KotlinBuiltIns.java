@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2012 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -824,6 +824,10 @@ public class KotlinBuiltIns {
 
     public boolean isUnit(@NotNull JetType type) {
         return !(type instanceof PackageType) && type.equals(getUnitType());
+    }
+
+    public boolean isString(@Nullable JetType type) {
+        return !(type instanceof PackageType) && getStringType().equals(type);
     }
 
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {

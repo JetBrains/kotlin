@@ -390,6 +390,7 @@ fun main(args: Array<String>) {
             model("intentions/replaceWithDotQualifiedMethodCall", testMethod = "doTestReplaceWithDotQualifiedMethodCall")
             model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
             model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
+            model("intentions/convertToStringTemplateIntention", testMethod = "doTestConvertToStringTemplate")
             model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
             model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
             model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")

@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun main(args: Array<String>){
+    val y = "abcd${listOf(1, 2)}"
+}
