@@ -23,8 +23,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.*;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -43,6 +41,8 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,10 +52,9 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 
 public class InlineCodegenUtil {
-
-    public final static int API = Opcodes.ASM5;
-
-    public final static String INVOKE = "invoke";
+    public static final int API = Opcodes.ASM5;
+    public static final String INVOKE = "invoke";
+    public static final boolean DEFAULT_INLINE_FLAG = true;
 
     @Nullable
     public static MethodNode getMethodNode(

@@ -117,8 +117,8 @@ public open class KotlinCompile(): AbstractCompile() {
         args.noJdkAnnotations = true
         args.inline = kotlinOptions.inline
 
-        if (!CompilerArgumentsUtil.checkInlineOption(args.inline)) {
-            throw GradleException(CompilerArgumentsUtil.getWrongOptionErrorMessage(args.inline))
+        if (!CompilerArgumentsUtil.checkOption(args.inline)) {
+            throw GradleException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(args.inline))
         }
 
         val messageCollector = GradleMessageCollector(logger)

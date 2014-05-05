@@ -19,27 +19,21 @@ package org.jetbrains.jet.cli.common.arguments;
 import org.jetbrains.annotations.Nullable;
 
 public class CompilerArgumentsUtil {
-    public static final boolean DEFAULT_INLINE_FLAG = true;
-    public static final boolean DEFAULT_INLINE_FLAG_FOR_TEST = true;
-
-    public static boolean optionToInlineFlag(@Nullable String option) {
-        boolean enableInline = "on".equalsIgnoreCase(option) || "true".equalsIgnoreCase(option);
-        return (enableInline || "off".equalsIgnoreCase(option) || "false".equalsIgnoreCase(option)) ? enableInline : DEFAULT_INLINE_FLAG;
+    public static boolean optionToBooleanFlag(@Nullable String option, boolean defaultValue) {
+        boolean enabled = "on".equalsIgnoreCase(option) || "true".equalsIgnoreCase(option);
+        boolean disabled = "off".equalsIgnoreCase(option) || "false".equalsIgnoreCase(option);
+        return (enabled || disabled) ? enabled : defaultValue;
     }
 
-    public static boolean checkInlineOption(@Nullable String option)  {
-        if (option == null ||
-            "on".equalsIgnoreCase(option) ||
-            "off".equalsIgnoreCase(option) ||
-            "true".equalsIgnoreCase(option) ||
-            "false".equalsIgnoreCase(option)) {
-            return true;
-        }
-
-        return false;
+    public static boolean checkOption(@Nullable String option)  {
+        return option == null ||
+               "on".equalsIgnoreCase(option) ||
+               "off".equalsIgnoreCase(option) ||
+               "true".equalsIgnoreCase(option) ||
+               "false".equalsIgnoreCase(option);
     }
 
-    public static String getWrongOptionErrorMessage(@Nullable String inline) {
+    public static String getWrongInlineOptionErrorMessage(@Nullable String inline) {
         return "Wrong value for inline option: '" + inline + "'. Should be 'on'/'off' or 'true'/'false'";
     }
 }

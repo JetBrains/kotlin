@@ -24,6 +24,7 @@ import org.jetbrains.jet.codegen.ClassBuilderMode;
 import org.jetbrains.jet.codegen.ClassFileFactory;
 import org.jetbrains.jet.codegen.SamWrapperClasses;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
@@ -100,10 +101,10 @@ public class GenerationState {
             @NotNull Project project,
             @NotNull ClassBuilderFactory builderFactory,
             @NotNull BindingContext bindingContext,
-            @NotNull List<JetFile> files,
-            boolean inlineEnabled
+            @NotNull List<JetFile> files
     ) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL, inlineEnabled);
+        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
+             InlineCodegenUtil.DEFAULT_INLINE_FLAG);
     }
 
     public GenerationState(

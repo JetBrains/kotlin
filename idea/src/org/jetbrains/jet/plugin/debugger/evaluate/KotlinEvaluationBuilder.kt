@@ -43,8 +43,6 @@ import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
@@ -53,20 +51,15 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
 import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
-import org.jetbrains.jet.plugin.refactoring.checkConflictsInteractively
 import org.jetbrains.jet.plugin.refactoring.extractFunction.generateFunction
-import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.codegen.ClassFileFactory
 import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
-import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.resolve.ImportPath
 import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.JetExpression
 
@@ -192,8 +185,8 @@ class KotlinEvaluator(val codeFragment: JetExpressionCodeFragment,
                         file.getProject(),
                         ClassBuilderFactories.BINARIES,
                         bindingContext,
-                        Collections.singletonList(file),
-                        true)
+                        listOf(file)
+                )
 
                 KotlinCodegenFacade.compileCorrectFiles(state) {
                     e, msg ->

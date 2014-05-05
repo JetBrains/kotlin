@@ -23,6 +23,7 @@ import org.jetbrains.jet.buildtools.core.BytecodeCompiler;
 import org.jetbrains.jet.buildtools.core.Util;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.cli.jvm.compiler.CompileEnvironmentException;
+import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -142,11 +143,11 @@ public class BytecodeCompilerTask extends Task {
         String[] classpath = (this.compileClasspath != null ? this.compileClasspath.list() : null);
         String[] externalAnnotationsPath = (this.externalAnnotations != null) ? this.externalAnnotations.list() : null;
 
-        if (!CompilerArgumentsUtil.checkInlineOption(inline)) {
-            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongOptionErrorMessage(inline));
+        if (!CompilerArgumentsUtil.checkOption(inline)) {
+            throw new CompileEnvironmentException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(inline));
         }
 
-        boolean enableInline = CompilerArgumentsUtil.optionToInlineFlag(inline);
+        boolean enableInline = CompilerArgumentsUtil.optionToBooleanFlag(inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG);
 
         if (this.src != null) {
 

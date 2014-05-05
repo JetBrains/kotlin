@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
@@ -41,8 +40,7 @@ public class GenerationUtils {
 
     @NotNull
     public static GenerationState compileFileGetGenerationStateForTest(@NotNull JetFile psiFile) {
-        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
-                psiFile);
+        AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile);
         return compileFilesGetGenerationState(psiFile.getProject(), analyzeExhaust, Collections.singletonList(psiFile));
     }
 
@@ -57,8 +55,7 @@ public class GenerationUtils {
     @NotNull
     public static GenerationState compileFilesGetGenerationState(@NotNull Project project, @NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
         analyzeExhaust.throwIfError();
-        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getBindingContext(), files,
-                                                    CompilerArgumentsUtil.DEFAULT_INLINE_FLAG_FOR_TEST);
+        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getBindingContext(), files);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

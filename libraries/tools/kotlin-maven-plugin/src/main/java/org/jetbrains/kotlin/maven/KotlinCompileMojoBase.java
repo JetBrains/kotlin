@@ -34,6 +34,7 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.jvm.K2JVMCompiler;
 import org.jetbrains.jet.cli.common.arguments.CompilerArgumentsUtil;
+import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -313,10 +314,10 @@ public abstract class KotlinCompileMojoBase extends AbstractMojo {
         arguments.annotations = getFullAnnotationsPath(log, annotationPaths);
         log.info("Using kotlin annotations from " + arguments.annotations);
         arguments.inline = inline;
-        if (!CompilerArgumentsUtil.checkInlineOption(arguments.inline)) {
-            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongOptionErrorMessage(arguments.inline));
+        if (!CompilerArgumentsUtil.checkOption(arguments.inline)) {
+            throw new MojoExecutionException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(arguments.inline));
         }
-        log.info("Method inlining is " + CompilerArgumentsUtil.optionToInlineFlag(arguments.inline));
+        log.info("Method inlining is " + CompilerArgumentsUtil.optionToBooleanFlag(arguments.inline, InlineCodegenUtil.DEFAULT_INLINE_FLAG));
     }
 
     protected String getFullAnnotationsPath(Log log, List<String> annotations) {
