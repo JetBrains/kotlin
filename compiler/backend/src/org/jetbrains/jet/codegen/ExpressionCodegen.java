@@ -317,7 +317,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private Type asmTypeOrVoid(@Nullable JetType type) {
+    public Type expressionType(JetExpression expression) {
+        JetType type = bindingContext.get(EXPRESSION_TYPE, expression);
         return type == null ? Type.VOID_TYPE : asmType(type);
     }
 
@@ -2406,11 +2407,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    @NotNull
-    public Type expressionType(JetExpression expr) {
-        return asmTypeOrVoid(bindingContext.get(EXPRESSION_TYPE, expr));
-    }
-
     public int indexOfLocal(JetReferenceExpression lhs) {
         DeclarationDescriptor declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, lhs);
         if (isVarCapturedInClosure(bindingContext, declarationDescriptor)) {
@@ -3301,7 +3297,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public StackValue visitArrayAccessExpression(@NotNull JetArrayAccessExpression expression, StackValue receiver) {
         JetExpression array = expression.getArrayExpression();
         JetType type = bindingContext.get(BindingContext.EXPRESSION_TYPE, array);
-        Type arrayType = asmTypeOrVoid(type);
+        Type arrayType = expressionType(array);
         List<JetExpression> indices = expression.getIndexExpressions();
         FunctionDescriptor operationDescriptor = (FunctionDescriptor) bindingContext.get(BindingContext.REFERENCE_TARGET, expression);
         assert operationDescriptor != null;
@@ -3628,8 +3624,7 @@ The "returned" value of try expression with no finally is either the last expres
 
     public StackValue generateWhenExpression(JetWhenExpression expression, boolean isStatement) {
         JetExpression expr = expression.getSubjectExpression();
-        JetType subjectJetType = bindingContext.get(BindingContext.EXPRESSION_TYPE, expr);
-        Type subjectType = asmTypeOrVoid(subjectJetType);
+        Type subjectType = expressionType(expr);
 
         Type resultType = isStatement ? Type.VOID_TYPE : expressionType(expression);
 
