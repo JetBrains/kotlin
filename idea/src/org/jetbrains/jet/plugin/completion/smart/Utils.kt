@@ -145,11 +145,10 @@ fun MutableCollection<LookupElement>.addLookupElementsForNullable(factory: () ->
 }
 
 fun functionType(function: FunctionDescriptor): JetType? {
-    return KotlinBuiltIns.getInstance().getKFunctionType(function.getAnnotations(),
-                                                         null,
-                                                         function.getValueParameters().map { it.getType() },
-                                                         function.getReturnType() ?: return null,
-                                                         function.getReceiverParameter() != null)
+    return KotlinBuiltIns.getInstance().getFunctionType(function.getAnnotations(),
+                                                        null,
+                                                        function.getValueParameters().map { it.getType() },
+                                                        function.getReturnType() ?: return null)
 }
 
 fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.INSTANCE.isSubtypeOf(this, expectedType)
