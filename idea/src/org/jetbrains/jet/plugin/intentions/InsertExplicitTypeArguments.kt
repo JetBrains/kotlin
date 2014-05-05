@@ -28,6 +28,8 @@ import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.ErrorUtils
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.lang.psi.JetExpressionImpl
 
 public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "insert.explicit.type.arguments", javaClass()) {
@@ -35,10 +37,20 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
     private var resolvedCall: ResolvedCall<out CallableDescriptor?> by Delegates.notNull()
 
     override fun isApplicableTo(element: JetCallExpression): Boolean {
+        throw IllegalStateException("isApplicableTo(JetExpressionImpl, Editor) should be called instead")
+    }
+
+    override fun isApplicableTo(element: JetCallExpression, editor: Editor): Boolean {
         if (!element.getTypeArguments().isEmpty()) return false
+
+        val callee = element.getCalleeExpression()
+        if (callee == null) return false
+        if (editor.getCaretModel().getOffset() > callee.getTextOffset() + callee.getTextLength()) return false
+
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
         val nullableResolvedCall = context[BindingContext.RESOLVED_CALL, element.getCalleeExpression()]
         if (nullableResolvedCall == null) return false
+
         resolvedCall = nullableResolvedCall
         val types = resolvedCall.getTypeArguments()
         return !types.isEmpty() && types.values().none { ErrorUtils.containsErrorType(it) }
