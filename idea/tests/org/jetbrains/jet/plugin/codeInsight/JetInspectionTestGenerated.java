@@ -51,4 +51,9 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         doTest("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
     }
     
+    @TestMetadata("removeExplicitTypeArguments/inspectionData/inspections.test")
+    public void testRemoveExplicitTypeArguments_inspectionData_Inspections_test() throws Exception {
+        doTest("idea/testData/intentions/removeExplicitTypeArguments/inspectionData/inspections.test");
+    }
+    
 }
