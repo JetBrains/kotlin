@@ -724,6 +724,11 @@
         level="WARNING"
         />
 
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.InvertIfConditionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
   </extensions>

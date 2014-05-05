@@ -1,0 +1,10 @@
+fun foo(): Int {
+    val x = 0
+
+    if (x != 1) {
+    } else {
+        x + 1
+    }
+
+    return x
+}
