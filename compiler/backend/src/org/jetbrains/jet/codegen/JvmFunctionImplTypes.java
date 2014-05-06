@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class FunctionTypesUtil {
+public class JvmFunctionImplTypes {
     private final List<ClassDescriptor> functions;
     private final List<ClassDescriptor> extensionFunctions;
     private final List<ClassDescriptor> kFunctions;
@@ -46,7 +46,7 @@ public class FunctionTypesUtil {
 
     private final ImmutableMap<ClassDescriptor, ClassDescriptor> kFunctionToImpl;
 
-    public FunctionTypesUtil(@NotNull ReflectionTypes reflectionTypes) {
+    public JvmFunctionImplTypes(@NotNull ReflectionTypes reflectionTypes) {
         int n = KotlinBuiltIns.FUNCTION_TRAIT_COUNT;
         functions = new ArrayList<ClassDescriptor>(n);
         extensionFunctions = new ArrayList<ClassDescriptor>(n);

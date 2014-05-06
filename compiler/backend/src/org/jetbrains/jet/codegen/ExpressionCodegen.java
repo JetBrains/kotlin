@@ -2418,7 +2418,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetType kFunctionType = bindingContext.get(EXPRESSION_TYPE, expression);
         assert kFunctionType != null : "Callable reference is not type checked: " + expression.getText();
-        ClassDescriptor kFunctionImpl = state.getFunctionTypesUtil().kFunctionTypeToImpl(kFunctionType);
+        ClassDescriptor kFunctionImpl = state.getJvmFunctionImplTypes().kFunctionTypeToImpl(kFunctionType);
         assert kFunctionImpl != null : "Impl type is not found for the function type: " + kFunctionType;
 
         Type closureSuperClass = typeMapper.mapType(kFunctionImpl);
