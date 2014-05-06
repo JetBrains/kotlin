@@ -171,7 +171,6 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
         ApplicationUtils.warnTimeConsuming(LOG)
 
         try {
-            println("Analyzing ${analyzableElement} in ${analyzableElement.getContainingJetFile()}")
             return KotlinResolveDataProvider.analyze(project, resolveSession, analyzableElement)
         }
         catch (e: ProcessCanceledException) {
