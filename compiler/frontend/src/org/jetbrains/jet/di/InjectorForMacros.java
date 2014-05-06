@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.annotations.NotNull;
@@ -61,6 +62,7 @@ public class InjectorForMacros {
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ExpressionTypingUtils expressionTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final ReflectionTypes reflectionTypes;
     private final ArgumentTypeResolver argumentTypeResolver;
     private final CandidateResolver candidateResolver;
     
@@ -86,6 +88,7 @@ public class InjectorForMacros {
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.expressionTypingUtils = new ExpressionTypingUtils(getExpressionTypingServices(), getCallResolver());
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.argumentTypeResolver = new ArgumentTypeResolver();
         this.candidateResolver = new CandidateResolver();
 
@@ -104,6 +107,7 @@ public class InjectorForMacros {
         this.expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         this.expressionTypingComponents.setGlobalContext(globalContext);
         this.expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
+        this.expressionTypingComponents.setReflectionTypes(reflectionTypes);
 
         this.callResolver.setArgumentTypeResolver(argumentTypeResolver);
         this.callResolver.setCandidateResolver(candidateResolver);

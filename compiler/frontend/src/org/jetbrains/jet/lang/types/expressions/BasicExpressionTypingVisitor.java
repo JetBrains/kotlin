@@ -39,7 +39,10 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.TemporaryTraceAndCache;
-import org.jetbrains.jet.lang.resolve.calls.model.*;
+import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCallImpl;
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResultsUtil;
@@ -74,7 +77,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getStaticNestedClassesScope;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
-import static org.jetbrains.jet.lang.types.TypeUtils.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.jet.lang.types.expressions.TypeReconstructionUtil.reconstructBareType;
@@ -491,7 +495,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
 
         //noinspection ConstantConditions
-        JetType type = KotlinBuiltIns.getInstance().getKFunctionType(
+        JetType type = components.reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
                 DescriptorUtils.getValueParametersTypes(descriptor.getValueParameters()),

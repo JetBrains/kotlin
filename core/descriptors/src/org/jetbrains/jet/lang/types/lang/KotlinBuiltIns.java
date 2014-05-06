@@ -673,44 +673,7 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public JetType getKFunctionType(
-            @NotNull Annotations annotations,
-            @Nullable JetType receiverType,
-            @NotNull List<JetType> parameterTypes,
-            @NotNull JetType returnType,
-            boolean extensionFunction
-    ) {
-        List<TypeProjection> arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType);
-        ClassDescriptor classDescriptor = getCorrespondingKFunctionClass(receiverType, extensionFunction, parameterTypes.size());
-
-        return new JetTypeImpl(
-                annotations,
-                classDescriptor.getTypeConstructor(),
-                false,
-                arguments,
-                classDescriptor.getMemberScope(arguments)
-        );
-    }
-
-    @NotNull
-    private ClassDescriptor getCorrespondingKFunctionClass(
-            @Nullable JetType receiverType,
-            boolean extensionFunction,
-            int numberOfParameters
-    ) {
-        if (receiverType == null) {
-            return getKFunction(numberOfParameters);
-        }
-        else if (extensionFunction) {
-            return getKExtensionFunction(numberOfParameters);
-        }
-        else {
-            return getKMemberFunction(numberOfParameters);
-        }
-    }
-
-    @NotNull
-    private static List<TypeProjection> getFunctionTypeArgumentProjections(
+    public static List<TypeProjection> getFunctionTypeArgumentProjections(
             @Nullable JetType receiverType,
             @NotNull List<JetType> parameterTypes,
             @NotNull JetType returnType

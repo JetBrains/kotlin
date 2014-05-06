@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.resolve.DelegatedPropertyResolver;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents;
 import org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils;
 import org.jetbrains.jet.lang.types.expressions.ForLoopConventionsChecker;
+import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.calls.CallExpressionResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolverExtensionProvider;
 import org.jetbrains.jet.lang.resolve.QualifiedExpressionResolver;
@@ -60,6 +61,7 @@ public class InjectorForTests {
     private final ExpressionTypingComponents expressionTypingComponents;
     private final ControlStructureTypingUtils controlStructureTypingUtils;
     private final ForLoopConventionsChecker forLoopConventionsChecker;
+    private final ReflectionTypes reflectionTypes;
     private final CallExpressionResolver callExpressionResolver;
     private final CallResolverExtensionProvider callResolverExtensionProvider;
     private final QualifiedExpressionResolver qualifiedExpressionResolver;
@@ -85,6 +87,7 @@ public class InjectorForTests {
         this.delegatedPropertyResolver = new DelegatedPropertyResolver();
         this.controlStructureTypingUtils = new ControlStructureTypingUtils(getExpressionTypingServices());
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.callExpressionResolver = new CallExpressionResolver();
         this.callResolverExtensionProvider = new CallResolverExtensionProvider();
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
@@ -131,6 +134,7 @@ public class InjectorForTests {
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setGlobalContext(globalContext);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
+        expressionTypingComponents.setReflectionTypes(reflectionTypes);
 
         forLoopConventionsChecker.setExpressionTypingServices(expressionTypingServices);
         forLoopConventionsChecker.setExpressionTypingUtils(expressionTypingUtils);
