@@ -298,7 +298,7 @@ private fun getFunctionForExtractedFragment(
 
             val validationResult = analysisResult.descriptor!!.validate()
             if (!validationResult.conflicts.isEmpty()) {
-                throw EvaluateExceptionUtil.createEvaluateException("Some declarations are unavailable")
+                throw EvaluateExceptionUtil.createEvaluateException("Some declarations are unavailable: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
             }
 
             return validationResult.descriptor.generateFunction(true)
