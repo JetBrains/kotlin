@@ -171,11 +171,11 @@ public class CodegenBinding {
     }
 
     static void recordClosure(
-            BindingTrace bindingTrace,
+            @NotNull BindingTrace bindingTrace,
             @Nullable JetElement element,
-            ClassDescriptor classDescriptor,
+            @NotNull ClassDescriptor classDescriptor,
             @Nullable ClassDescriptor enclosing,
-            Type asmType
+            @NotNull Type asmType
     ) {
         JetDelegatorToSuperCall superCall = findSuperCall(bindingTrace.getBindingContext(), element);
 
@@ -193,7 +193,7 @@ public class CodegenBinding {
 
         MutableClosure closure = new MutableClosure(superCall, enclosing, enclosingReceiver);
 
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, classDescriptor, asmType);
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace.getBindingContext(), classDescriptor, asmType);
         bindingTrace.record(ASM_TYPE, classDescriptor, asmType);
         bindingTrace.record(CLOSURE, classDescriptor, closure);
 
@@ -284,22 +284,20 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static Type getAsmType(@NotNull BindingTrace bindingTrace, @NotNull ClassDescriptor klass) {
+    public static Type getAsmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         klass = (ClassDescriptor) klass.getOriginal();
-        Type alreadyComputedType = bindingTrace.getBindingContext().get(ASM_TYPE, klass);
+        Type alreadyComputedType = bindingContext.get(ASM_TYPE, klass);
         if (alreadyComputedType != null) {
             return alreadyComputedType;
         }
 
-        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingTrace, klass));
-
-        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, klass, asmType);
-        bindingTrace.record(ASM_TYPE, klass, asmType);
+        Type asmType = Type.getObjectType(getAsmTypeImpl(bindingContext, klass));
+        assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingContext, klass, asmType);
         return asmType;
     }
 
     @NotNull
-    private static String getAsmTypeImpl(@NotNull BindingTrace bindingTrace, @NotNull ClassDescriptor klass) {
+    private static String getAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         DeclarationDescriptor container = klass.getContainingDeclaration();
 
         if (container instanceof PackageFragmentDescriptor) {
@@ -310,7 +308,7 @@ public class CodegenBinding {
 
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
-        String containerInternalName = getAsmType(bindingTrace, (ClassDescriptor) container).getInternalName();
+        String containerInternalName = getAsmType(bindingContext, (ClassDescriptor) container).getInternalName();
         if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
             if (isEnumClass(container)) {
                 return containerInternalName;

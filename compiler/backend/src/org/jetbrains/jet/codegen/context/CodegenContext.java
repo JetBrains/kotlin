@@ -304,10 +304,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         lazyOuterExpression = LockBasedStorageManager.NO_LOCKS.createNullableLazyValue(new Function0<StackValue>() {
             @Override
             public StackValue invoke() {
+                BindingContext bindingContext = typeMapper.getBindingContext();
                 ClassDescriptor enclosingClass = getEnclosingClass();
-                return enclosingClass != null && canHaveOuter(typeMapper.getBindingContext(), classDescriptor)
+                return enclosingClass != null && canHaveOuter(bindingContext, classDescriptor)
                        ? StackValue.field(typeMapper.mapType(enclosingClass),
-                                          CodegenBinding.getAsmType(typeMapper.getBindingTrace(), classDescriptor),
+                                          CodegenBinding.getAsmType(bindingContext, classDescriptor),
                                           CAPTURED_THIS_FIELD,
                                           false)
                        : null;

@@ -130,7 +130,7 @@ public class GenerationState {
         this.bindingTrace = new DelegatingBindingTrace(bindingContext, "trace in GenerationState");
         this.bindingContext = bindingTrace.getBindingContext();
 
-        this.typeMapper = new JetTypeMapper(bindingTrace, classBuilderMode);
+        this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
 
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(this);

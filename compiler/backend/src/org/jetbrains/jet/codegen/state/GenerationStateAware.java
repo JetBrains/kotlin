@@ -17,16 +17,21 @@
 package org.jetbrains.jet.codegen.state;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
-public class GenerationStateAware extends TypeMapperAware {
-    @NotNull protected final GenerationState state;
+public class GenerationStateAware {
+    protected final GenerationState state;
+    protected final JetTypeMapper typeMapper;
+    protected final BindingContext bindingContext;
 
     public GenerationStateAware(@NotNull GenerationState state) {
-        super(state.getTypeMapper());
         this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
     }
 
-    @NotNull public GenerationState getState() {
+    @NotNull
+    public GenerationState getState() {
         return state;
     }
 }

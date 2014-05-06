@@ -47,9 +47,9 @@ public final class PsiCodegenPredictor {
     }
 
     public static boolean checkPredictedNameFromPsi(
-            @NotNull BindingTrace bindingTrace, @NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors
+            @NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor, @Nullable Type nameFromDescriptors
     ) {
-        PsiElement element = descriptorToDeclaration(bindingTrace.getBindingContext(), descriptor);
+        PsiElement element = descriptorToDeclaration(bindingContext, descriptor);
         if (element instanceof JetDeclaration) {
             String classNameFromPsi = getPredefinedJvmInternalName((JetDeclaration) element);
             assert classNameFromPsi == null || Type.getObjectType(classNameFromPsi).equals(nameFromDescriptors) :

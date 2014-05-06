@@ -20,7 +20,6 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
-import org.jetbrains.jet.codegen.binding.BindingTraceAware;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -36,7 +35,6 @@ import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
@@ -59,13 +57,18 @@ import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedIn
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class JetTypeMapper extends BindingTraceAware {
-
+public class JetTypeMapper {
+    private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
 
-    public JetTypeMapper(BindingTrace bindingTrace, ClassBuilderMode mode) {
-        super(bindingTrace);
-        classBuilderMode = mode;
+    public JetTypeMapper(@NotNull BindingContext bindingContext, @NotNull ClassBuilderMode classBuilderMode) {
+        this.bindingContext = bindingContext;
+        this.classBuilderMode = classBuilderMode;
+    }
+
+    @NotNull
+    public BindingContext getBindingContext() {
+        return bindingContext;
     }
 
     private enum JetTypeMapperMode {
@@ -267,7 +270,7 @@ public class JetTypeMapper extends BindingTraceAware {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type asmType = getAsmType(bindingTrace, (ClassDescriptor) descriptor);
+            Type asmType = getAsmType(bindingContext, (ClassDescriptor) descriptor);
             writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }
@@ -286,7 +289,7 @@ public class JetTypeMapper extends BindingTraceAware {
 
     @NotNull
     public Type mapTraitImpl(@NotNull ClassDescriptor descriptor) {
-        return Type.getObjectType(getAsmType(bindingTrace, descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
+        return Type.getObjectType(getAsmType(bindingContext, descriptor).getInternalName() + JvmAbi.TRAIT_IMPL_SUFFIX);
     }
 
     @NotNull

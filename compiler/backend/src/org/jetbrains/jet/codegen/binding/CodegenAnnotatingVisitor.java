@@ -172,7 +172,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         else {
             Type asmType = bindingTrace.get(ASM_TYPE, getOuterClassDescriptor());
-            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingTrace, descriptor, asmType);
+            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingContext, descriptor, asmType);
             bindingTrace.record(ASM_TYPE, descriptor, asmType);
         }
     }
@@ -338,8 +338,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull String name
     ) {
-        CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, getOuterClassDescriptor(),
-                                     Type.getObjectType(name));
+        CodegenBinding.recordClosure(bindingTrace, element, classDescriptor, getOuterClassDescriptor(), Type.getObjectType(name));
     }
 
     @Override
