@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen.binding;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -33,8 +32,10 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.util.slicedmap.BasicWritableSlice;
 import org.jetbrains.jet.util.slicedmap.Slices;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
@@ -56,6 +57,10 @@ public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, Collection<ClassDescriptor>> INNER_CLASSES = Slices.createSimpleSlice();
 
     public static final WritableSlice<JetExpression, JavaClassDescriptor> SAM_VALUE = Slices.createSimpleSlice();
+
+    static {
+        BasicWritableSlice.initSliceDebugNames(CodegenBinding.class);
+    }
 
     private CodegenBinding() {
     }
