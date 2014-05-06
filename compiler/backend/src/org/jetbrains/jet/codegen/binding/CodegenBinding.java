@@ -66,7 +66,7 @@ public class CodegenBinding {
     }
 
     public static void initTrace(@NotNull GenerationState state) {
-        CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state.getBindingTrace(), state.getGenerateDeclaredClassFilter());
+        CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
         for (JetFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
             file.accept(visitor);
         }

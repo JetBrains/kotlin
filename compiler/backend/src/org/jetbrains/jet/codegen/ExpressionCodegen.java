@@ -69,8 +69,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.functionTypeToImpl;
-import static org.jetbrains.jet.codegen.FunctionTypesUtil.getFunctionImplType;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.getNotNull;
@@ -1312,7 +1310,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
-        Type closureSuperClass = samInterfaceClass == null ? getFunctionImplType(descriptor) : OBJECT_TYPE;
+        String functionImplClassPrefix = descriptor.getReceiverParameter() != null ? "ExtensionFunctionImpl" : "FunctionImpl";
+        Type closureSuperClass =
+                samInterfaceClass == null ?
+                Type.getObjectType("kotlin/" + functionImplClassPrefix + descriptor.getValueParameters().size()) :
+                OBJECT_TYPE;
 
         ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
                 kind, this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen);
@@ -2416,7 +2418,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         JetType kFunctionType = bindingContext.get(EXPRESSION_TYPE, expression);
         assert kFunctionType != null : "Callable reference is not type checked: " + expression.getText();
-        ClassDescriptor kFunctionImpl = functionTypeToImpl(kFunctionType);
+        ClassDescriptor kFunctionImpl = state.getFunctionTypesUtil().kFunctionTypeToImpl(kFunctionType);
         assert kFunctionImpl != null : "Impl type is not found for the function type: " + kFunctionType;
 
         Type closureSuperClass = typeMapper.mapType(kFunctionImpl);
