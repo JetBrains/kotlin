@@ -53,6 +53,26 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest("idea/testData/checker/codeFragments/contextElementAsStatement.kt");
         }
         
+        @TestMetadata("privateFunArgumentsResolve.kt")
+        public void testPrivateFunArgumentsResolve() throws Exception {
+            doTest("idea/testData/checker/codeFragments/privateFunArgumentsResolve.kt");
+        }
+        
+        @TestMetadata("privateFunTypeArguments.kt")
+        public void testPrivateFunTypeArguments() throws Exception {
+            doTest("idea/testData/checker/codeFragments/privateFunTypeArguments.kt");
+        }
+        
+        @TestMetadata("privateMember.kt")
+        public void testPrivateMember() throws Exception {
+            doTest("idea/testData/checker/codeFragments/privateMember.kt");
+        }
+        
+        @TestMetadata("protectedMember.kt")
+        public void testProtectedMember() throws Exception {
+            doTest("idea/testData/checker/codeFragments/protectedMember.kt");
+        }
+        
         @TestMetadata("simpleNameExpression.kt")
         public void testSimpleNameExpression() throws Exception {
             doTest("idea/testData/checker/codeFragments/simpleNameExpression.kt");

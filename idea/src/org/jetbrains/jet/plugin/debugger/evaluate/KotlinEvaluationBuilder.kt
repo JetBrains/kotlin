@@ -62,6 +62,7 @@ import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
@@ -225,8 +226,10 @@ private fun createFileForDebugger(codeFragment: JetExpressionCodeFragment,
 
     val virtualFile = LightVirtualFile("debugFile.kt", JetLanguage.INSTANCE, fileText)
     virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
-    return (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl)
+    val jetFile = (PsiFileFactory.getInstance(codeFragment.getProject()) as PsiFileFactoryImpl)
             .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
+    jetFile.setSkipVisibilityCheck(true)
+    return jetFile
 }
 
 fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
@@ -272,6 +275,8 @@ private fun getFunctionForExtractedFragment(
             if (lineStart == null) return null
 
             val tmpFile = originalFile.createTempCopy { it }
+            tmpFile.setSkipVisibilityCheck(true)
+
             val elementAtOffset = tmpFile.findElementAt(lineStart)
             if (elementAtOffset == null) return null
 

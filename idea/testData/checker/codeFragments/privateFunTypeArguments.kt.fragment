@@ -1,0 +1,1 @@
+"${MyClass().privateFun(1)} ${MyClass().privateFun<Int>(<error>"s"</error>)}"

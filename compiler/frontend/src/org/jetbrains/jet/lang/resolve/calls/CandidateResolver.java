@@ -98,8 +98,6 @@ public class CandidateResolver {
         if (invisibleMember != null) {
             candidateCall.addStatus(OTHER_ERROR);
             context.tracing.invisibleMember(context.trace, invisibleMember);
-            markAllArgumentsAsUnmapped(context);
-            return;
         }
 
         if (task.checkArguments == CheckValueArgumentsMode.ENABLED) {

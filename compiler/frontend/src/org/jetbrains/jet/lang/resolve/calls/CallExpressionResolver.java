@@ -24,10 +24,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace;
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.jet.lang.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
@@ -141,6 +139,9 @@ public class CallExpressionResolver {
             @NotNull ExpressionTypingContext context
     ) {
         if (!(classifier instanceof ClassDescriptor)) return;
+
+        if (CodeFragmentUtilPackage.skipVisibilityCheck(expression.getContainingJetFile())) return;
+
         ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
         assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
         DeclarationDescriptor from = context.containingDeclaration;

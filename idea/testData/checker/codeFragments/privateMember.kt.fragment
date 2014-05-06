@@ -1,0 +1,1 @@
+MyClass().privateFun() + MyClass().privateVal + MyClass.PrivateClass().a

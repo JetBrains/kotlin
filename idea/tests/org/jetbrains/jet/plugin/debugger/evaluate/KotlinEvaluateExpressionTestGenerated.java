@@ -96,6 +96,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/multilineExpressionAtBreakpoint.kt");
     }
     
+    @TestMetadata("privateMember.kt")
+    public void testPrivateMember() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/privateMember.kt");
+    }
+    
+    @TestMetadata("protectedMember.kt")
+    public void testProtectedMember() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/protectedMember.kt");
+    }
+    
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/simple.kt");

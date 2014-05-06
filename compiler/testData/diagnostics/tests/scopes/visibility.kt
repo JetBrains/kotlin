@@ -39,7 +39,7 @@ class B {
 
 fun test3(a: A) {
     a.<!INVISIBLE_MEMBER!>v<!> //todo .bMethod()
-    a.<!INVISIBLE_MEMBER!>f<!>(0, 1) //todo .bMethod()
+    a.<!INVISIBLE_MEMBER!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
 trait T

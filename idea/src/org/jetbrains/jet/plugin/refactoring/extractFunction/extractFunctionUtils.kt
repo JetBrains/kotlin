@@ -98,6 +98,8 @@ import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -676,6 +678,9 @@ fun ExtractionDescriptor.generateFunction(
                 val position = nextSibling.getTextRange()!!.getStartOffset()
                 val tmpFile = originalFile.createTempCopy { text ->
                     StringBuilder(text).insert(position, getFunctionText() + "\n").toString()
+                }
+                if (originalFile.skipVisibilityCheck()) {
+                    tmpFile.setSkipVisibilityCheck(true)
                 }
                 tmpFile.findElementAt(position)?.getParentByType(javaClass<JetNamedFunction>())!!
             }

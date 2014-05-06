@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorWithVisibility;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.inference.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
@@ -41,7 +42,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
-import static org.jetbrains.jet.lang.diagnostics.Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER;
 import static org.jetbrains.jet.lang.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
 
@@ -175,7 +175,9 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {
-        trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
+        if (!CodeFragmentUtilPackage.skipVisibilityCheck(call.getCallElement().getContainingJetFile())) {
+            trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
+        }
     }
 
     @Override

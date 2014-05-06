@@ -1,0 +1,1 @@
+MyClass().protectedFun() + MyClass().protectedVal + MyClass.ProtectedClass().a
