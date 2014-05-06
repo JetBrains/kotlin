@@ -50,7 +50,7 @@ public class CodegenBinding {
 
     public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
-    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
+    public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createCollectiveSlice();
 
     public static final WritableSlice<ClassDescriptor, Boolean> ENUM_ENTRY_CLASS_NEED_SUBCLASS = Slices.createSimpleSetSlice();
 
@@ -65,9 +65,9 @@ public class CodegenBinding {
     private CodegenBinding() {
     }
 
-    public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files, GenerationState.GenerateClassFilter filter) {
-        CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace, filter);
-        for (JetFile file : allFilesInPackages(bindingTrace.getBindingContext(), files)) {
+    public static void initTrace(@NotNull GenerationState state) {
+        CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state.getBindingTrace(), state.getGenerateDeclaredClassFilter());
+        for (JetFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
             file.accept(visitor);
         }
     }

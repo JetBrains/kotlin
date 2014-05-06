@@ -207,8 +207,7 @@ public class GenerationState {
     public void beforeCompile() {
         markUsed();
 
-        //noinspection unchecked
-        CodegenBinding.initTrace(getBindingTrace(), getFiles(), getGenerateDeclaredClassFilter());
+        CodegenBinding.initTrace(this);
     }
 
     private void markUsed() {
