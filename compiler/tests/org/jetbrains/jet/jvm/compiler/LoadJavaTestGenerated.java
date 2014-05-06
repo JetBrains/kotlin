@@ -44,6 +44,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/EnumMembers.java");
         }
         
+        @TestMetadata("InnerOfGeneric.java")
+        public void testInnerOfGeneric() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/InnerOfGeneric.java");
+        }
+        
         @TestMetadata("JavaEnum.java")
         public void testJavaEnum() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/JavaEnum.java");
