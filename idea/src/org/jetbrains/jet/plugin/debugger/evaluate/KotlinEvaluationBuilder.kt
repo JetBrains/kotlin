@@ -171,7 +171,7 @@ class KotlinEvaluator(val codeFragment: JetExpressionCodeFragment,
     private fun createClassFileFactory(extractedFunction: JetNamedFunction): ClassFileFactory {
         return ApplicationManager.getApplication()?.runReadAction(object: Computable<ClassFileFactory> {
             override fun compute(): ClassFileFactory? {
-                val file = createFileForDebugger(codeFragment as JetExpressionCodeFragment, extractedFunction)
+                val file = createFileForDebugger(codeFragment, extractedFunction)
 
                 val analyzeExhaust = file.getAnalysisResults()
                 val bindingContext = analyzeExhaust.getBindingContext()
