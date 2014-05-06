@@ -43,6 +43,10 @@ public class DataClassTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
+    public void testOverride() throws Exception {
+        checkFooBoxIsOk();
+    }
+
     public void testKeyrole() throws Exception {
         checkFooBoxIsOk();
     }
