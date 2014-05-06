@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -46,6 +47,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
     private static final TokenSet PROPERTY_SET_OPERATIONS =
             TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ,
                             JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);
+    private static final FqName JAVA_DEPRECATED = new FqName(Deprecated.class.getName());
+    private static final FqName KOTLIN_DEPRECATED = DescriptorUtils.getFqNameSafe(KotlinBuiltIns.getInstance().getDeprecatedAnnotation());
 
     protected DeprecatedAnnotationVisitor(AnnotationHolder holder, BindingContext bindingContext) {
         super(holder, bindingContext);
@@ -221,8 +224,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     @Nullable
     private static AnnotationDescriptor getDeprecated(DeclarationDescriptor descriptor) {
-        ClassDescriptor jetDeprecated = KotlinBuiltIns.getInstance().getDeprecatedAnnotation();
-        return descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(jetDeprecated));
+        AnnotationDescriptor kotlinDeprecated = descriptor.getAnnotations().findAnnotation(KOTLIN_DEPRECATED);
+        return kotlinDeprecated != null ? kotlinDeprecated : descriptor.getAnnotations().findAnnotation(JAVA_DEPRECATED);
     }
 
     private static String composeTooltipString(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull AnnotationDescriptor descriptor) {
