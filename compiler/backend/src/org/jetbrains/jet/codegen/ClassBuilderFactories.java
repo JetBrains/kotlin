@@ -25,6 +25,29 @@ import java.io.StringWriter;
 
 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
+    @NotNull
+    public static ClassBuilderFactory THROW_EXCEPTION = new ClassBuilderFactory() {
+        @NotNull
+        @Override
+        public ClassBuilderMode getClassBuilderMode() {
+            return ClassBuilderMode.FULL;
+        }
+
+        @Override
+        public ClassBuilder newClassBuilder() {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public String asText(ClassBuilder builder) {
+            throw new IllegalStateException();
+        }
+
+        @Override
+        public byte[] asBytes(ClassBuilder builder) {
+            throw new IllegalStateException();
+        }
+    };
 
     @NotNull
     public static ClassBuilderFactory TEST = new ClassBuilderFactory() {

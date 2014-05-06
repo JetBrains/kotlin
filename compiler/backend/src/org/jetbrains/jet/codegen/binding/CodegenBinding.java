@@ -65,10 +65,6 @@ public class CodegenBinding {
     private CodegenBinding() {
     }
 
-    public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files) {
-        initTrace(bindingTrace, files, GenerationState.GenerateClassFilter.GENERATE_ALL);
-    }
-
     public static void initTrace(BindingTrace bindingTrace, Collection<JetFile> files, GenerationState.GenerateClassFilter filter) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(bindingTrace, filter);
         for (JetFile file : allFilesInPackages(bindingTrace.getBindingContext(), files)) {
@@ -239,7 +235,7 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static Collection<JetFile> allFilesInPackages(BindingContext bindingContext, Collection<JetFile> files) {
+    private static Collection<JetFile> allFilesInPackages(BindingContext bindingContext, Collection<JetFile> files) {
         // todo: we use Set and add given files but ignoring other scripts because something non-clear kept in binding
         // for scripts especially in case of REPL
 

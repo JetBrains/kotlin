@@ -34,18 +34,15 @@ import com.sun.jdi.request.ClassPrepareRequest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.codegen.ClassBuilderFactories;
 import org.jetbrains.jet.codegen.PackageCodegen;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
+import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.extension.InlineAnalyzerExtension;
@@ -54,7 +51,9 @@ import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.InlineStrategy;
 import org.jetbrains.jet.lang.types.lang.InlineUtil;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.util.DebuggerUtils;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
@@ -201,11 +200,10 @@ public class JetPositionManager implements PositionManager {
                     AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(packageFiles);
                     analyzeExhaust.throwIfError();
 
-                    DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(analyzeExhaust.getBindingContext(), "trace created in JetPositionManager");
-                    JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
-                    //noinspection unchecked
-                    CodegenBinding.initTrace(bindingTrace, packageFiles);
-                    return new Result<JetTypeMapper>(typeMapper, PsiModificationTracker.MODIFICATION_COUNT);
+                    GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
+                                                                analyzeExhaust.getBindingContext(), new ArrayList<JetFile>(packageFiles));
+                    state.beforeCompile();
+                    return new Result<JetTypeMapper>(state.getTypeMapper(), PsiModificationTracker.MODIFICATION_COUNT);
                 }
             }, false);
             myTypeMappers.put(fqName, value);

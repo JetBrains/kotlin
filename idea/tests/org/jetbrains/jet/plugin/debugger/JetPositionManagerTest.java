@@ -18,12 +18,8 @@ package org.jetbrains.jet.plugin.debugger;
 
 import com.intellij.debugger.engine.DebugProcess;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.util.List;
@@ -37,6 +33,7 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         return PluginTestCaseBase.getTestDataPathBase();
     }
 
+    @NotNull
     @Override
     protected String getTestRoot() {
         return "/debugger/";
@@ -48,12 +45,8 @@ public class JetPositionManagerTest extends PositionManagerTestCase {
         JetPositionManager positionManager = (JetPositionManager) jetPositionManagerFactory.createPositionManager(process);
         assertNotNull(positionManager);
 
-        DelegatingBindingTrace bindingTrace = new DelegatingBindingTrace(state.getBindingContext(), "trace created in JetPositionManagerTest");
-        JetTypeMapper typeMapper = new JetTypeMapper(bindingTrace, ClassBuilderMode.FULL);
-        //noinspection unchecked
-        CodegenBinding.initTrace(bindingTrace, files);
         for (JetFile file : files) {
-            positionManager.addTypeMapper(file, typeMapper);
+            positionManager.addTypeMapper(file, state.getTypeMapper());
         }
 
         return positionManager;
