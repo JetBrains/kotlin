@@ -165,15 +165,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         assert descriptor != null :
                 String.format("No descriptor for enum entry \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(enumEntry));
 
-        boolean trivial = enumEntry.getDeclarations().isEmpty();
-        if (!trivial) {
+        if (!enumEntry.getDeclarations().isEmpty()) {
             bindingTrace.record(ENUM_ENTRY_CLASS_NEED_SUBCLASS, descriptor);
             super.visitEnumEntry(enumEntry);
-        }
-        else {
-            Type asmType = bindingTrace.get(ASM_TYPE, getOuterClassDescriptor());
-            assert PsiCodegenPredictor.checkPredictedNameFromPsi(bindingContext, descriptor, asmType);
-            bindingTrace.record(ASM_TYPE, descriptor, asmType);
         }
     }
 

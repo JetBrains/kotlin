@@ -2445,6 +2445,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest("compiler/testData/codegen/box/enum/name.kt");
         }
         
+        @TestMetadata("objectInEnum.kt")
+        public void testObjectInEnum() throws Exception {
+            doTest("compiler/testData/codegen/box/enum/objectInEnum.kt");
+        }
+        
         @TestMetadata("ordinal.kt")
         public void testOrdinal() throws Exception {
             doTest("compiler/testData/codegen/box/enum/ordinal.kt");

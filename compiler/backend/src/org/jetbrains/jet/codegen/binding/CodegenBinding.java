@@ -41,7 +41,6 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
-import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isEnumClass;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
@@ -85,7 +84,7 @@ public class CodegenBinding {
     public static Type asmTypeForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
         ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
         //noinspection ConstantConditions
-        return asmType(bindingContext, classDescriptor);
+        return getAsmType(bindingContext, classDescriptor);
     }
 
     // SCRIPT: Generate asmType for script, move to ScriptingUtil
@@ -113,12 +112,6 @@ public class CodegenBinding {
     }
 
     @NotNull
-    private static Type asmType(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor descriptor) {
-        //noinspection ConstantConditions
-        return bindingContext.get(ASM_TYPE, descriptor);
-    }
-
-    @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull JetElement expression) {
         if (expression instanceof JetObjectLiteralExpression) {
             JetObjectLiteralExpression jetObjectLiteralExpression = (JetObjectLiteralExpression) expression;
@@ -132,13 +125,12 @@ public class CodegenBinding {
             return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
 
-        return asmType(bindingContext, descriptor);
+        return getAsmType(bindingContext, descriptor);
     }
 
     @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull FunctionDescriptor descriptor) {
-        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, descriptor);
-        return asmType(bindingContext, classDescriptor);
+        return getAsmType(bindingContext, anonymousClassForFunction(bindingContext, descriptor));
     }
 
     // SCRIPT: register asmType for script descriptor, move to ScriptingUtil
@@ -309,18 +301,14 @@ public class CodegenBinding {
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
         String containerInternalName = getAsmType(bindingContext, (ClassDescriptor) container).getInternalName();
-        if (klass.getKind() == ClassKind.OBJECT || klass.getKind() == ClassKind.CLASS_OBJECT) {
-            if (isEnumClass(container)) {
+        switch (klass.getKind()) {
+            case ENUM_ENTRY:
                 return containerInternalName;
-            }
-            else if (klass.getKind() == ClassKind.OBJECT) {
-                return containerInternalName + "$" + klass.getName();
-            }
-            else {
+            case CLASS_OBJECT:
                 return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
-            }
+            default:
+                return containerInternalName + "$" + klass.getName().getIdentifier();
         }
-        return containerInternalName + "$" + klass.getName().getIdentifier();
     }
 
     public static boolean hasThis0(BindingContext bindingContext, ClassDescriptor classDescriptor) {
@@ -384,12 +372,6 @@ public class CodegenBinding {
 
     @NotNull
     public static String getJvmInternalName(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {
-        Type asmType = bindingContext.get(ASM_TYPE, classDescriptor);
-        assert asmType != null : "ASM_TYPE not present for " + classDescriptor;
-
-        String jvmInternalName = asmType.getClassName();
-        assert jvmInternalName != null : "No internal name for " + asmType + " for class " + classDescriptor;
-
-        return jvmInternalName;
+        return getAsmType(bindingContext, classDescriptor).getClassName();
     }
 }
