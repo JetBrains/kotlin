@@ -24,16 +24,14 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.org.objectweb.asm.Type;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.*;
 
@@ -41,19 +39,16 @@ import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClass
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 
-public final class ClassFileFactory extends GenerationStateAware implements OutputFileCollection {
-    @NotNull private ClassBuilderFactory builderFactory;
-
+public class ClassFileFactory implements OutputFileCollection {
+    private final GenerationState state;
+    private final ClassBuilderFactory builderFactory;
     private final Map<FqName, PackageCodegen> package2codegen = new HashMap<FqName, PackageCodegen>();
     private final Map<String, ClassBuilderAndSourceFileList> generators = new LinkedHashMap<String, ClassBuilderAndSourceFileList>();
+
     private boolean isDone = false;
 
-    public ClassFileFactory(@NotNull GenerationState state) {
-        super(state);
-    }
-
-    @Inject
-    public void setBuilderFactory(@NotNull ClassBuilderFactory builderFactory) {
+    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory) {
+        this.state = state;
         this.builderFactory = builderFactory;
     }
 
@@ -137,11 +132,11 @@ public final class ClassFileFactory extends GenerationStateAware implements Outp
         return newVisitor(type, sourceFile);
     }
 
-    public ClassBuilder forLambdaInlining(Type lambaType, PsiFile sourceFile) {
-        if (isPrimitive(lambaType)) {
-            throw new IllegalStateException("Codegen for primitive type is not possible: " + lambaType);
+    public ClassBuilder forLambdaInlining(Type lambdaType, PsiFile sourceFile) {
+        if (isPrimitive(lambdaType)) {
+            throw new IllegalStateException("Codegen for primitive type is not possible: " + lambdaType);
         }
-        return newVisitor(lambaType, sourceFile);
+        return newVisitor(lambdaType, sourceFile);
     }
 
     @NotNull

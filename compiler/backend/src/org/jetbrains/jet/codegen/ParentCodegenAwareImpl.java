@@ -19,13 +19,19 @@ package org.jetbrains.jet.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
-public class ParentCodegenAwareImpl extends GenerationStateAware implements ParentCodegenAware {
+public class ParentCodegenAwareImpl implements ParentCodegenAware {
+    protected final GenerationState state;
+    protected final JetTypeMapper typeMapper;
+    protected final BindingContext bindingContext;
     private final MemberCodegen<?> parentCodegen;
 
     public ParentCodegenAwareImpl(@NotNull GenerationState state, @Nullable MemberCodegen<?> parentCodegen) {
-        super(state);
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
         this.parentCodegen = parentCodegen;
     }
 

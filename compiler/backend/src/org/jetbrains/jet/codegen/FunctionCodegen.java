@@ -289,8 +289,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         Label methodBegin = new Label();
         mv.visitLabel(methodBegin);
 
-        GenerationState state = parentCodegen.getState();
-        JetTypeMapper typeMapper = state.getTypeMapper();
+        JetTypeMapper typeMapper = parentCodegen.typeMapper;
 
         if (context.getParentContext() instanceof PackageFacadeContext) {
             generateStaticDelegateMethodBody(mv, signature.getAsmMethod(), (PackageFacadeContext) context.getParentContext());
@@ -307,7 +306,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             context.setMethodStartLabel(methodEntry);
 
             if (!JetTypeMapper.isAccessor(functionDescriptor)) {
-                genNotNullAssertionsForParameters(new InstructionAdapter(mv), state, functionDescriptor, frameMap);
+                genNotNullAssertionsForParameters(new InstructionAdapter(mv), parentCodegen.state, functionDescriptor, frameMap);
             }
 
             strategy.generateBody(mv, signature, context, parentCodegen);

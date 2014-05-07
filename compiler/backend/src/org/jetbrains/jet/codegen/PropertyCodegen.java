@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -52,20 +52,14 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.PROPERTY_METADATA_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class PropertyCodegen extends GenerationStateAware {
-    @NotNull
-    private final FunctionCodegen functionCodegen;
-
-    @NotNull
+public class PropertyCodegen {
+    private final GenerationState state;
     private final ClassBuilder v;
-
-    @NotNull
+    private final FunctionCodegen functionCodegen;
+    private final JetTypeMapper typeMapper;
+    private final BindingContext bindingContext;
     private final FieldOwnerContext context;
-
-    @Nullable
     private final MemberCodegen<?> classBodyCodegen;
-
-    @NotNull
     private final OwnerKind kind;
 
     public PropertyCodegen(
@@ -74,9 +68,11 @@ public class PropertyCodegen extends GenerationStateAware {
             @NotNull FunctionCodegen functionCodegen,
             @Nullable MemberCodegen<?> classBodyCodegen
     ) {
-        super(functionCodegen.getState());
+        this.state = functionCodegen.state;
         this.v = v;
         this.functionCodegen = functionCodegen;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
         this.context = context;
         this.classBodyCodegen = classBodyCodegen;
         this.kind = context.getContextKind();
@@ -130,13 +126,13 @@ public class PropertyCodegen extends GenerationStateAware {
     }
 
     public void generateConstructorPropertyAsMethodForAnnotationClass(JetParameter p, PropertyDescriptor descriptor) {
-        Type type = state.getTypeMapper().mapType(descriptor);
+        Type type = typeMapper.mapType(descriptor);
         String name = p.getName();
         assert name != null : "Annotation parameter has no name: " + p.getText();
         MethodVisitor visitor = v.newMethod(p, ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
         JetExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
-            CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, state.getBindingContext());
+            CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
             assert constant != null : "Default value for annotation parameter should be compile time value: " + defaultValue.getText();
             AnnotationCodegen annotationCodegen = AnnotationCodegen.forAnnotationDefaultValue(visitor, typeMapper);
             annotationCodegen.generateAnnotationDefaultValue(constant, descriptor.getType());

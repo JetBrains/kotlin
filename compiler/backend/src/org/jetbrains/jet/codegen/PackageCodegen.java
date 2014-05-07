@@ -34,7 +34,6 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
 import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.codegen.state.GenerationStateAware;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
 import org.jetbrains.jet.descriptors.serialization.DescriptorSerializer;
@@ -69,11 +68,9 @@ import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class PackageCodegen extends GenerationStateAware {
-    @NotNull
+public class PackageCodegen {
+    private final GenerationState state;
     private final ClassBuilderOnDemand v;
-
-    @NotNull
     private final Collection<JetFile> files;
     private final PackageFragmentDescriptor packageFragment;
     private final PackageFragmentDescriptor compiledPackageFragment;
@@ -84,8 +81,7 @@ public class PackageCodegen extends GenerationStateAware {
             @NotNull GenerationState state,
             @NotNull Collection<JetFile> packageFiles
     ) {
-        super(state);
-
+        this.state = state;
         this.v = v;
         this.files = packageFiles;
         this.packageFragment = getOnlyPackageFragment();
@@ -159,7 +155,7 @@ public class PackageCodegen extends GenerationStateAware {
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
-                        JvmMethodSignature signature = typeMapper.mapSignature(function, OwnerKind.PACKAGE);
+                        JvmMethodSignature signature = state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE);
                         functionCodegen.generateMethod(null, signature, function,
                                                        new FunctionGenerationStrategy() {
                                                            @Override
@@ -299,7 +295,7 @@ public class PackageCodegen extends GenerationStateAware {
 
         for (final JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
+                DeclarationDescriptor descriptor = state.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
                 assert descriptor instanceof CallableMemberDescriptor :
                         "Expected callable member, was " + descriptor + " for " + declaration.getText();
                 generateCallableMemberTasks.put(
@@ -341,7 +337,7 @@ public class PackageCodegen extends GenerationStateAware {
     private PackageFragmentDescriptor getOnlyPackageFragment() {
         SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
         for (JetFile file : files) {
-            PackageFragmentDescriptor fragment = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
+            PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
             assert fragment != null : "package fragment is null for " + file;
 
             if (!fragments.contains(fragment)) {

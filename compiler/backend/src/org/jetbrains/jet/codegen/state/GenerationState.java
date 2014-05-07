@@ -133,8 +133,7 @@ public class GenerationState {
         this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
 
         this.intrinsics = new IntrinsicMethods();
-        this.classFileFactory = new ClassFileFactory(this);
-        this.classFileFactory.setBuilderFactory(builderFactory);
+        this.classFileFactory = new ClassFileFactory(this, builderFactory);
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
