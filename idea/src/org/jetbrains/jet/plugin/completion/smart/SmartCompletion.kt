@@ -27,6 +27,7 @@ import com.intellij.codeInsight.completion.*
 import java.util.*
 import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class SmartCompletion(val expression: JetSimpleNameExpression,
                       val resolveSession: ResolveSessionForBodies,
@@ -87,7 +88,7 @@ class SmartCompletion(val expression: JetSimpleNameExpression,
             if (itemsToSkip.contains(descriptor)) continue
 
             val types = typesWithAutoCasts(descriptor)
-            val nonNullTypes = types.map { TypeUtils.makeNotNullable(it) }
+            val nonNullTypes = types.map { it.makeNotNullable() }
             val classifier = { (expectedInfo: ExpectedInfo) ->
                 when {
                     types.any { it.isSubtypeOf(expectedInfo.`type`) } -> ExpectedInfoClassification.MATCHES

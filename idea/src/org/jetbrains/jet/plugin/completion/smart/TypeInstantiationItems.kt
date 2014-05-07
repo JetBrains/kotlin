@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.renderer.DescriptorRenderer
@@ -37,12 +36,13 @@ import org.jetbrains.jet.plugin.completion.*
 import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.Visibilities
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class TypeInstantiationItems(val bindingContext: BindingContext,
                              val resolveSession: ResolveSessionForBodies,
                              val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
-        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { TypeUtils.makeNotNullable(it.`type`) }
+        val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.`type`.makeNotNullable() }
         for ((jetType, types) in expectedInfosGrouped) {
             val tail = mergeTails(types.map { it.tail })
             addToCollection(collection, jetType, tail)

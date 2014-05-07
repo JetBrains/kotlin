@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import java.util.Collections
@@ -35,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.Nullability
 import java.util.HashSet
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class TypesWithAutoCasts(val bindingContext: BindingContext) {
     public fun calculate(expression: JetExpression, receiver: JetExpression?): (DeclarationDescriptor) -> Iterable<JetType> {
@@ -50,8 +50,8 @@ class TypesWithAutoCasts(val bindingContext: BindingContext) {
                     return listOf()
                 }
                 if (descriptor is VariableDescriptor) {
-                    if (notNullVariables.contains(descriptor) && returnType != null) {
-                        returnType = TypeUtils.makeNotNullable(returnType!!)
+                    if (notNullVariables.contains(descriptor)) {
+                        returnType = returnType?.makeNotNullable()
                     }
 
                     val autoCastTypes = variableToTypes[descriptor]

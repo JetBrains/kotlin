@@ -26,9 +26,7 @@ import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor
-import org.jetbrains.jet.plugin.completion.DescriptorLookupConverter
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.plugin.completion.handlers.CaretPosition
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
@@ -38,7 +36,7 @@ import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
-import java.util.ArrayList
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
@@ -71,7 +69,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
                     expectedInfo ->
                         when {
                             returnType.isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MATCHES
-                            returnType.isNullable() && TypeUtils.makeNotNullable(returnType).isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                            returnType.isNullable() && returnType.makeNotNullable().isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
                             else -> ExpectedInfoClassification.NOT_MATCHES
                         }
                 }

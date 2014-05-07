@@ -33,8 +33,8 @@ import org.jetbrains.jet.lang.psi.JetValueArgumentList
 import org.jetbrains.jet.lang.psi.JetCallExpression
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 class ThisItems(val bindingContext: BindingContext) {
     public fun addToCollection(collection: MutableCollection<LookupElement>, context: JetExpression, expectedInfos: Collection<ExpectedInfo>) {
@@ -48,7 +48,7 @@ class ThisItems(val bindingContext: BindingContext) {
             val classifier = { (expectedInfo: ExpectedInfo) ->
                 when {
                     thisType.isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MATCHES
-                    thisType.isNullable() && TypeUtils.makeNotNullable(thisType).isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
+                    thisType.isNullable() && thisType.makeNotNullable().isSubtypeOf(expectedInfo.`type`) -> ExpectedInfoClassification.MAKE_NOT_NULLABLE
                     else -> ExpectedInfoClassification.NOT_MATCHES
                 }
             }
