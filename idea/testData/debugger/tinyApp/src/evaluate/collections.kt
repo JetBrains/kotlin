@@ -1,6 +1,7 @@
 package collections
 
 fun main(args: Array<String>) {
+    val ar = intArray(1, 2, 100, 200)
     //Breakpoint!
     args.size
 }

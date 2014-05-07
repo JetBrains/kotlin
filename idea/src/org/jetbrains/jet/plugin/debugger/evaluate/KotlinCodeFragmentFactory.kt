@@ -29,17 +29,19 @@ import com.intellij.psi.JavaCodeFragmentFactory
 import org.jetbrains.jet.plugin.debugger.KotlinEditorTextProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.lang.psi.JetBlockCodeFragment
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
-        if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            val codeFragment = JetExpressionCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
-            if (item.getImports().isNotEmpty()) {
-                codeFragment.addImportsFromString(item.getImports())
-            }
-            return codeFragment
+        val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
+            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
         }
-        return JavaCodeFragmentFactory.getInstance(project)!!.createCodeBlockCodeFragment(item.getText(), context, true)
+        else {
+            JetBlockCodeFragment(project, "fragment.kt", item.getText(), getContextElement(context))
+        }
+        codeFragment.addImportsFromString(item.getImports())
+        return codeFragment
     }
 
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
