@@ -20,6 +20,7 @@ public fun <K, V> MutableMap<K, V>.set(key : K, value : V) : V? = this.put(key, 
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
 = if (this != null) this else Collections.emptyMap<K,V>() as Map<K,V>
 
+public fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 
 /** Returns the key of the entry */
 public val <K,V> Map.Entry<K,V>.key : K

@@ -105,6 +105,12 @@ class MapTest {
         assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
     }
 
+    test fun contains() {
+        val map = hashMapOf("a" to 1, "b" to 2)
+        assert("a" in map)
+        assert("c" !in map)
+    }
+
     test fun map() {
         val m1 = TreeMap<String, String>()
         m1["beverage"] = "beer"
