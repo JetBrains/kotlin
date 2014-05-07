@@ -99,8 +99,7 @@ public open class HashMap<K, V>(capacity: Int = 0) : MutableMap<K, V> {
 }
 
 library
-public class NoSuchElementException() : Exception() {
-}
+public class NoSuchElementException(message: String? = null) : Exception() {}
 
 library
 public trait Enumeration<E> {

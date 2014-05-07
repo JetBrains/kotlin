@@ -160,14 +160,14 @@ fun elements(): List<GenericFunction> {
             when (this) {
                 is List<*> -> {
                     if (size == 0)
-                        throw IllegalArgumentException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty")
                     else
                         return this[0] as T
                 }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw IllegalArgumentException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty")
                     return iterator.next()
                 }
             }
@@ -176,7 +176,7 @@ fun elements(): List<GenericFunction> {
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (size == 0)
-                throw IllegalArgumentException("Collection is empty")
+                throw NoSuchElementException("Collection is empty")
             return this[0]
             """
         }
@@ -217,7 +217,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             for (element in this) if (predicate(element)) return element
-            throw IllegalArgumentException("No element matching predicate was found")
+            throw NoSuchElementException("No element matching predicate was found")
             """
         }
     }
@@ -243,14 +243,14 @@ fun elements(): List<GenericFunction> {
             when (this) {
                 is List<*> -> {
                     if (size == 0)
-                        throw IllegalArgumentException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty")
                     else
                         return this[size - 1] as T
                 }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw IllegalArgumentException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty")
                     var last = iterator.next()
                     while (iterator.hasNext())
                         last = iterator.next()
@@ -262,7 +262,7 @@ fun elements(): List<GenericFunction> {
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (size == 0)
-                throw IllegalArgumentException("Collection is empty")
+                throw NoSuchElementException("Collection is empty")
             return this[size - 1]
             """
         }
@@ -308,7 +308,7 @@ fun elements(): List<GenericFunction> {
                     found = true
                 }
             }
-            if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
             return last as T
             """
         }
@@ -338,11 +338,15 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (size == 1) this[0] as T else throw IllegalArgumentException("Collection has ${bucks}size elements")
+                is List<*> -> return when (size) {
+                    0 -> throw NoSuchElementException("Collection is empty")
+                    1 -> this[0] as T
+                    else -> throw IllegalArgumentException("Collection has more than one element")
+                }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw IllegalArgumentException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty")
                     var single = iterator.next()
                     if (iterator.hasNext())
                         throw IllegalArgumentException("Collection has more than one element")
@@ -353,9 +357,11 @@ fun elements(): List<GenericFunction> {
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size != 1)
-                throw IllegalArgumentException("Collection has ${bucks}size elements")
-            return this[0]
+            return when (size) {
+                0 -> throw NoSuchElementException("Collection is empty")
+                1 -> this[0]
+                else -> throw IllegalArgumentException("Collection has more than one element")
+            }
             """
         }
     }
@@ -366,7 +372,11 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List<*> -> return if (size == 1) this[0] as T else if (size == 0) null else throw IllegalArgumentException("Collection has ${bucks}size elements")
+                is List<*> -> return when (size) {
+                    0 -> null
+                    1 -> this[0] as T?
+                    else -> throw IllegalArgumentException("Collection has more than one element")
+                }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -381,11 +391,11 @@ fun elements(): List<GenericFunction> {
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            if (size == 0)
-                return null
-            if (size != 1)
-                throw IllegalArgumentException("Collection has ${bucks}size elements")
-            return this[0]
+            return when (size) {
+                0 -> throw NoSuchElementException("Collection is empty")
+                1 -> this[0]
+                else -> throw IllegalArgumentException("Collection has more than one element")
+            }
             """
         }
     }
@@ -405,7 +415,7 @@ fun elements(): List<GenericFunction> {
                     found = true
                 }
             }
-            if (!found) throw IllegalArgumentException("Collection doesn't contain any element matching predicate")
+            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
             return single as T
             """
         }
