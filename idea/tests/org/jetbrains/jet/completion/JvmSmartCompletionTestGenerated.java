@@ -236,6 +236,26 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/InElvisOperator2.kt");
     }
     
+    @TestMetadata("InElvisOperator3.kt")
+    public void testInElvisOperator3() throws Exception {
+        doTest("idea/testData/completion/smart/InElvisOperator3.kt");
+    }
+    
+    @TestMetadata("InElvisOperator4.kt")
+    public void testInElvisOperator4() throws Exception {
+        doTest("idea/testData/completion/smart/InElvisOperator4.kt");
+    }
+    
+    @TestMetadata("InElvisOperator5.kt")
+    public void testInElvisOperator5() throws Exception {
+        doTest("idea/testData/completion/smart/InElvisOperator5.kt");
+    }
+    
+    @TestMetadata("InElvisOperator6.kt")
+    public void testInElvisOperator6() throws Exception {
+        doTest("idea/testData/completion/smart/InElvisOperator6.kt");
+    }
+    
     @TestMetadata("InaccessibleConstructor.kt")
     public void testInaccessibleConstructor() throws Exception {
         doTest("idea/testData/completion/smart/InaccessibleConstructor.kt");

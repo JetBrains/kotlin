@@ -51,6 +51,8 @@ import org.jetbrains.jet.lang.resolve.calls.util.noErrorsInValueArguments
 import org.jetbrains.jet.lang.resolve.calls.util.hasUnmappedParameters
 import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.JetBlockExpression
+import org.jetbrains.jet.plugin.util.makeNullable
+import org.jetbrains.jet.plugin.util.makeNotNullable
 
 enum class Tail {
     COMMA
@@ -161,7 +163,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
                 val otherOperand = if (expressionWithType == binaryExpression.getRight()) binaryExpression.getLeft() else binaryExpression.getRight()
                 if (otherOperand != null) {
                     val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand] ?: return null
-                    return listOf(ExpectedInfo(TypeUtils.makeNullable(expressionType), null))
+                    return listOf(ExpectedInfo(expressionType.makeNullable(), null))
                 }
             }
         }
@@ -193,17 +195,18 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         if (binaryExpression != null) {
             val operationToken = binaryExpression.getOperationToken()
             if (operationToken == JetTokens.ELVIS && expressionWithType == binaryExpression.getRight()) {
-                val otherOperand = binaryExpression.getLeft() ?: return null
-                val otherOperandType = bindingContext[BindingContext.EXPRESSION_TYPE, otherOperand]
+                val leftExpression = binaryExpression.getLeft() ?: return null
+                val leftType = bindingContext[BindingContext.EXPRESSION_TYPE, leftExpression]
+                val leftTypeNotNullable = leftType?.makeNotNullable()
                 val expectedInfos = calculate(binaryExpression)
                 if (expectedInfos != null) {
-                    return if (otherOperandType != null)
-                        expectedInfos.filter { it.`type`.isSubtypeOf(otherOperandType) }
+                    return if (leftTypeNotNullable != null)
+                        expectedInfos.filter { leftTypeNotNullable.isSubtypeOf(it.`type`) }
                     else
                         expectedInfos
                 }
-                else if (otherOperandType != null) {
-                    return listOf(ExpectedInfo(TypeUtils.makeNotNullable(otherOperandType), null))
+                else if (leftTypeNotNullable != null) {
+                    return listOf(ExpectedInfo(leftTypeNotNullable, null))
                 }
             }
         }
