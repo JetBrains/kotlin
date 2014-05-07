@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.reflect
 
 public trait KFunction0<out R> : Function0<R>
 public trait KFunction1<in P1, out R> : Function1<P1, R>

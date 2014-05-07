@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.reflect
 
 public trait KMemberFunction0<in T, out R> : ExtensionFunction0<T, R>
 public trait KMemberFunction1<in T, in P1, out R> : ExtensionFunction1<T, P1, R>

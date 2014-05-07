@@ -33,7 +33,7 @@ enum class FunctionKind(
     K_MEMBER_FUNCTION : FunctionKind("KMemberFunction", true, "ExtensionFunction")
     K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", true, "ExtensionFunction")
 
-    fun getFileName() = classNamePrefix + "s.kt"
+    fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
     fun getImplFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "sImpl.kt"
     fun getClassName(i: Int) = classNamePrefix + i
     fun getImplClassName(i: Int) = classNamePrefix + "Impl" + i
@@ -43,6 +43,8 @@ enum class FunctionKind(
 }
 
 abstract class GenerateFunctionsBase(out: PrintWriter, val kind: FunctionKind): BuiltInsSourceGenerator(out) {
+    override fun getPackage() = if (kind.isReflection()) "kotlin.reflect" else "kotlin"
+
     fun generateTypeParameters(i: Int, variance: Boolean) {
         out.print("<")
         if (kind.hasReceiverParameter) {
@@ -102,11 +104,6 @@ class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunction
 }
 
 class GenerateFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
-    override fun getPackage() = when (kind) {
-        FUNCTION, EXTENSION_FUNCTION -> "kotlin"
-        K_FUNCTION, K_MEMBER_FUNCTION, K_EXTENSION_FUNCTION -> "kotlin.reflect"
-    }
-
     override fun generateBody() {
         out.println("import java.io.Serializable")
         out.println()

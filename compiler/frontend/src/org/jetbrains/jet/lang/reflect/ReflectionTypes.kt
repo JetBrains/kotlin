@@ -30,9 +30,8 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     private val kotlinReflect: JetScope by Delegates.lazy {
         // TODO: handle errors gracefully (error types)
         val kotlin = module.getPackage(FqName("kotlin")) ?: error("Package kotlin not found in $module")
-        // TODO: move K*FunctionN under kotlin.reflect.*
-        // val reflect = kotlin.getMemberScope().getPackage(Name.identifier("reflect")) ?: error("Package reflect not found in $kotlin")
-        kotlin.getMemberScope()
+        val reflect = kotlin.getMemberScope().getPackage(Name.identifier("reflect")) ?: error("Package reflect not found in $kotlin")
+        reflect.getMemberScope()
     }
 
     fun find(className: String): ClassDescriptor {
