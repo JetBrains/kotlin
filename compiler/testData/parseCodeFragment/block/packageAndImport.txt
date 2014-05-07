@@ -1,0 +1,27 @@
+JetFile: fragment.kt
+  BLOCK
+    PsiErrorElement:Package directive and imports are forbidden in code fragments
+      PACKAGE_DIRECTIVE
+        PsiElement(package)('package')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n\n')
+      IMPORT_LIST
+        IMPORT_DIRECTIVE
+          PsiElement(import)('import')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          PsiElement(DOT)('.')
+          PsiElement(MUL)('*')
+    PsiWhiteSpace('\n\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')

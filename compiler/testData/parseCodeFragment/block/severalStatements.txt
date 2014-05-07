@@ -1,0 +1,21 @@
+JetFile: fragment.kt
+  BLOCK
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace('\n')
+    PROPERTY
+      PsiElement(val)('val')
+      PsiWhiteSpace(' ')
+      PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
+      PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('2')

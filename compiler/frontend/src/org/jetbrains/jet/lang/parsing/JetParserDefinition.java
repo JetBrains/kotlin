@@ -97,7 +97,9 @@ public class JetParserDefinition implements ParserDefinition {
         if (elementType instanceof JetStubElementType) {
             return ((JetStubElementType) elementType).createPsiFromAst(astNode);
         }
-        else if (elementType == JetNodeTypes.TYPE_CODE_FRAGMENT || elementType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT) {
+        else if (elementType == JetNodeTypes.TYPE_CODE_FRAGMENT ||
+                 elementType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT  ||
+                 elementType == JetNodeTypes.BLOCK_CODE_FRAGMENT) {
             return new ASTWrapperPsiElement(astNode);
         }
         else {

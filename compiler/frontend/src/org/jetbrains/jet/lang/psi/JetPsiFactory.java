@@ -345,6 +345,11 @@ public class JetPsiFactory {
     }
 
     @NotNull
+    public static JetBlockCodeFragment createBlockCodeFragment(Project project, String text, PsiElement context) {
+        return new JetBlockCodeFragment(project, "fragment.kt", text, context);
+    }
+
+    @NotNull
     public static JetReturnExpression createReturn(Project project, @NotNull String text) {
         return (JetReturnExpression) createExpression(project, "return " + text);
     }

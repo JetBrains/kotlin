@@ -65,4 +65,11 @@ public class JetParser implements PsiParser {
         jetParsing.parseExpressionCodeFragment();
         return psiBuilder.getTreeBuilt();
     }
+
+    @NotNull
+    public static ASTNode parseBlockCodeFragment(PsiBuilder psiBuilder) {
+        JetParsing jetParsing = JetParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        jetParsing.parseBlockCodeFragment();
+        return psiBuilder.getTreeBuilt();
+    }
 }

@@ -1,0 +1,9 @@
+JetFile: fragment.kt
+  BINARY_EXPRESSION
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('1')
+    PsiWhiteSpace(' ')
+    OPERATION_REFERENCE
+      PsiElement(PLUS)('+')
+    PsiErrorElement:Expecting an element
+      <empty list>

@@ -18,14 +18,18 @@ package org.jetbrains.jet.parsing;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiErrorElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.ParsingTestCase;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.JetNodeTypes;
 import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.parsing.JetParserDefinition;
 import org.jetbrains.jet.lang.psi.IfNotParsed;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.psi.JetVisitorVoid;
 
 import java.lang.annotation.Annotation;
@@ -72,8 +76,20 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
     }
 
     protected void doParsingTest(@NotNull String filePath) throws Exception {
+        doBaseTest(filePath, JetNodeTypes.JET_FILE);
+    }
+
+    protected void doExpressionCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
+        doBaseTest(filePath, JetNodeTypes.EXPRESSION_CODE_FRAGMENT);
+    }
+
+    protected void doBlockCodeFragmentParsingTest(@NotNull String filePath) throws Exception {
+        doBaseTest(filePath, JetNodeTypes.BLOCK_CODE_FRAGMENT);
+    }
+
+    private void doBaseTest(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
         myFileExt = FileUtil.getExtension(PathUtil.getFileName(filePath));
-        myFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath));
+        myFile = createFile(filePath, fileType);
 
         myFile.acceptChildren(new JetVisitorVoid() {
             @Override
@@ -89,5 +105,17 @@ public abstract class AbstractJetParsingTest extends ParsingTestCase {
         });
 
         doCheckResult(myFullDataPath, filePath.replaceAll("\\.kts?", ".txt"), toParseTreeText(myFile, false, false).trim());
+    }
+
+    private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType) throws Exception {
+        if (fileType == JetNodeTypes.EXPRESSION_CODE_FRAGMENT) {
+            return JetPsiFactory.createExpressionCodeFragment(myProject, loadFile(filePath), null);
+        }
+        else if (fileType == JetNodeTypes.BLOCK_CODE_FRAGMENT) {
+            return JetPsiFactory.createBlockCodeFragment(myProject, loadFile(filePath), null);
+        }
+        else {
+            return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath));
+        }
     }
 }

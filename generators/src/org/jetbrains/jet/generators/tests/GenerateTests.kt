@@ -139,6 +139,8 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetParsingTest>()) {
             model("psi", testMethod = "doParsingTest", pattern = "^(.*)\\.kts?$")
+            model("parseCodeFragment/expression", testMethod = "doExpressionCodeFragmentParsingTest", extension = "kt")
+            model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
         }
 
         GenerateRangesCodegenTestData.main(array<String>())

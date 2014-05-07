@@ -152,4 +152,5 @@ public interface JetNodeTypes {
 
     IFileElementType TYPE_CODE_FRAGMENT = new JetTypeCodeFragmentType();
     IFileElementType EXPRESSION_CODE_FRAGMENT = new JetExpressionCodeFragmentType();
+    IFileElementType BLOCK_CODE_FRAGMENT = new JetBlockCodeFragmentType();
 }

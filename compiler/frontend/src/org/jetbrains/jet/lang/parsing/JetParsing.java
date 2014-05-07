@@ -106,10 +106,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker marker = mark();
         parseTypeRef();
 
-        while (!eof()) {
-            error("unexpected symbol");
-            advance();
-        }
+        checkForUnexpectedSymbols();
 
         marker.done(TYPE_CODE_FRAGMENT);
     }
@@ -118,12 +115,27 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker marker = mark();
         myExpressionParsing.parseExpression();
 
-        while (!eof()) {
-            error("unexpected symbol");
-            advance();
-        }
+        checkForUnexpectedSymbols();
 
         marker.done(EXPRESSION_CODE_FRAGMENT);
+    }
+
+    void parseBlockCodeFragment() {
+        PsiBuilder.Marker marker = mark();
+        PsiBuilder.Marker blockMarker = mark();
+
+        if (at(PACKAGE_KEYWORD) || at(IMPORT_KEYWORD)) {
+            PsiBuilder.Marker err = mark();
+            parsePreamble();
+            err.error("Package directive and imports are forbidden in code fragments");
+        }
+
+        myExpressionParsing.parseStatements();
+
+        checkForUnexpectedSymbols();
+
+        blockMarker.done(BLOCK);
+        marker.done(BLOCK_CODE_FRAGMENT);
     }
 
     void parseScript() {
@@ -137,9 +149,17 @@ public class JetParsing extends AbstractJetParsing {
 
         myExpressionParsing.parseStatements();
 
+        checkForUnexpectedSymbols();
+
         blockMarker.done(BLOCK);
         scriptMarker.done(SCRIPT);
         fileMarker.done(JET_FILE);
+    }
+
+    private void checkForUnexpectedSymbols() {
+        while (!eof()) {
+            errorAndAdvance("unexpected symbol");
+        }
     }
 
     /*
