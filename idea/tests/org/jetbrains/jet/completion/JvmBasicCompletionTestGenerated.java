@@ -189,6 +189,11 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest("idea/testData/completion/basic/common/FunctionCompletionFormatting.kt");
         }
         
+        @TestMetadata("FunctionVariableCallArgument.kt")
+        public void testFunctionVariableCallArgument() throws Exception {
+            doTest("idea/testData/completion/basic/common/FunctionVariableCallArgument.kt");
+        }
+        
         @TestMetadata("HigherOrderFunction1.kt")
         public void testHigherOrderFunction1() throws Exception {
             doTest("idea/testData/completion/basic/common/HigherOrderFunction1.kt");

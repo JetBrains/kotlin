@@ -65,12 +65,10 @@ public class JetTypesCompletionHelper {
             @NotNull CompletionParameters parameters,
             @NotNull final JetCompletionResultSet jetCompletionResult
     ) {
-        CompletionResultSet tempResult = jetCompletionResult.getResult().withPrefixMatcher(
-                CompletionUtil.findReferenceOrAlphanumericPrefix(parameters));
         JavaClassNameCompletionContributor.addAllClasses(
                 parameters,
                 false,
-                JavaCompletionSorting.addJavaSorting(parameters, tempResult).getPrefixMatcher(),
+                JavaCompletionSorting.addJavaSorting(parameters, jetCompletionResult.getResult()).getPrefixMatcher(),
                 new Consumer<LookupElement>() {
                     @Override
                     public void consume(LookupElement lookupElement) {

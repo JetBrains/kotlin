@@ -18,10 +18,7 @@ package org.jetbrains.jet.plugin.completion;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.intellij.codeInsight.completion.CompletionParameters;
-import com.intellij.codeInsight.completion.CompletionResultSet;
-import com.intellij.codeInsight.completion.CompletionType;
-import com.intellij.codeInsight.completion.JavaCompletionContributor;
+import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
@@ -69,18 +66,20 @@ class CompletionSession {
         JetScope scope = expressionBindingContext.get(BindingContext.RESOLUTION_SCOPE, jetReference.getExpression());
 
         inDescriptor = scope != null ? scope.getContainingDeclaration() : null;
-
         Condition<DeclarationDescriptor> descriptorFilter = new Condition<DeclarationDescriptor>() {
             @Override
             public boolean value(DeclarationDescriptor descriptor) {
                 return isVisibleDescriptor(descriptor);
             }
         };
-        this.jetResult = new JetCompletionResultSet(
-                WeigherPackage.addJetSorting(result, parameters),
-                resolveSession,
-                expressionBindingContext,
-                descriptorFilter);
+
+        // set prefix matcher here to override default one which relies on CompletionUtil.findReferencePrefix()
+        // which sometimes works incorrectly for Kotlin
+        result = result.withPrefixMatcher(CompletionUtil.findJavaIdentifierPrefix(parameters));
+
+        result = WeigherPackage.addJetSorting(result, parameters);
+
+        this.jetResult = new JetCompletionResultSet(result, resolveSession, expressionBindingContext, descriptorFilter);
     }
 
     public void completeForReference() {

@@ -266,6 +266,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/InsideIdentifier.kt");
     }
     
+    @TestMetadata("InvokeFunctionVariable.kt")
+    public void testInvokeFunctionVariable() throws Exception {
+        doTest("idea/testData/completion/smart/InvokeFunctionVariable.kt");
+    }
+    
     @TestMetadata("JavaEnumMembers.kt")
     public void testJavaEnumMembers() throws Exception {
         doTest("idea/testData/completion/smart/JavaEnumMembers.kt");
