@@ -22,7 +22,6 @@ import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupElementDecorator;
 import com.intellij.codeInsight.lookup.LookupElementPresentation;
 import com.intellij.openapi.util.Condition;
-import com.intellij.openapi.util.Conditions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -44,13 +43,6 @@ public class JetCompletionResultSet {
     private final Condition<DeclarationDescriptor> descriptorFilter;
     private final CompletionResultSet result;
     private boolean isSomethingAdded;
-
-    public JetCompletionResultSet(
-            @NotNull CompletionResultSet result,
-            @NotNull ResolveSessionForBodies resolveSession,
-            @NotNull BindingContext bindingContext) {
-        this(result, resolveSession, bindingContext, Conditions.<DeclarationDescriptor>alwaysTrue());
-    }
 
     public JetCompletionResultSet(
             @NotNull CompletionResultSet result,
