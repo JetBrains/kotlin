@@ -1,6 +1,6 @@
 <project name="Update Dependencies" default="update">
-    <property name="jb.buildserver.build.id" value="2490715"/>
-    <property name="public.buildserver.build.id" value="131091"/>
+    <property name="jb.buildserver.build.id" value="2510212"/>
+    <property name="public.buildserver.build.id" value="132618"/>
 
     <condition property="os.tag" value="win.zip">
       <os family="windows" />
