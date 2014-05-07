@@ -27,11 +27,11 @@ import org.jetbrains.jet.plugin.JetFileType
 import java.util.HashSet
 
 public abstract class JetCodeFragment(
-        val _project: Project,
+        private val _project: Project,
         name: String,
         text: CharSequence,
         elementType: IElementType,
-        val _context: PsiElement?
+        private val _context: PsiElement?
 ): JetFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, JetFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
     private var _viewProvider = super<JetFile>.getViewProvider() as SingleRootFileViewProvider
