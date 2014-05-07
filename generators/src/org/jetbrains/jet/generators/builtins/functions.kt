@@ -39,7 +39,7 @@ enum class FunctionKind(
     fun getImplClassName(i: Int) = classNamePrefix + "Impl" + i
     fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
 
-    private fun isReflection() = superClassNamePrefix != null
+    fun isReflection() = superClassNamePrefix != null
 }
 
 abstract class GenerateFunctionsBase(out: PrintWriter, val kind: FunctionKind): BuiltInsSourceGenerator(out) {

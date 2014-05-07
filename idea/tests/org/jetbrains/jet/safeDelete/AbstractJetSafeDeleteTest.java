@@ -28,7 +28,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public abstract class AbstractJetSafeDeleteTest extends LightCodeInsightFixtureT
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @Override

@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 public class ForTestCompileRuntime {
     private static final String BUILT_INS_SRC_PATH = "core/builtins/src";
     private static final String RUNTIME_JVM_SRC_PATH = "core/runtime.jvm/src";
+    private static final String REFLECTION_SRC_PATH = "core/reflection/src";
 
     private ForTestCompileRuntime() {
     }
@@ -57,7 +58,7 @@ public class ForTestCompileRuntime {
     }
 
     private static void compileBuiltIns(@NotNull File destDir) throws IOException {
-        String src = BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH;
+        String src = BUILT_INS_SRC_PATH + File.pathSeparator + RUNTIME_JVM_SRC_PATH + File.pathSeparator + REFLECTION_SRC_PATH;
         compileKotlinToJvm("built-ins", destDir, src, src);
 
         JetTestUtils.compileJavaFiles(

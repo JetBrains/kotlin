@@ -48,7 +48,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.jet.plugin.findUsages.KotlinFunctionFindUsagesOptions;
@@ -257,7 +257,7 @@ public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureT
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return JetLightProjectDescriptor.INSTANCE;
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @Override

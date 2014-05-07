@@ -31,6 +31,7 @@ fun assertExists(file: File): Unit =
 
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/kotlin/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/kotlin/")
+val REFLECTION_DIR = File("core/reflection/src/kotlin/")
 val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/kotlin/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
@@ -54,10 +55,11 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
 fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit) {
     assertExists(BUILT_INS_NATIVE_DIR)
     assertExists(BUILT_INS_SRC_DIR)
+    assertExists(REFLECTION_DIR)
     assertExists(RUNTIME_JVM_DIR)
 
     for (kind in FunctionKind.values()) {
-        generate(File(BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
+        generate(File(if (kind.isReflection()) REFLECTION_DIR else BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
         generate(File(RUNTIME_JVM_DIR, kind.getImplFileName()), { GenerateFunctionsImpl(it, kind) })
     }
 
