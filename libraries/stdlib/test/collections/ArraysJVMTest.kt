@@ -5,6 +5,14 @@ import org.junit.Test as test
 
 class ArraysJVMTest {
 
+    test fun sort() {
+        var a = intArray(5, 2, 1, 4, 3)
+        var b = intArray(1, 2, 3, 4, 5)
+        a.sort()
+        for (i in a.indices)
+            expect(b[i]) { a[i] }
+    }
+
     test fun copyOf() {
         checkContent(booleanArray(true, false, true, false, true, false).copyOf().iterator(), 6) { it % 2 == 0 }
         checkContent(byteArray(0, 1, 2, 3, 4, 5).copyOf().iterator(), 6) { it.toByte() }
