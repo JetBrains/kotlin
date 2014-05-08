@@ -163,7 +163,7 @@ fun interpreterLoop(
                         TABLESWITCH -> UnsupportedByteCodeException("TABLESWITCH is not supported yet")
 
                         IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
-                            val value = frame.getStack(0)!!
+                            val value = frame.getStackTop()
                             val expectedType = Type.getReturnType(m.desc)
                             if (expectedType.getSort() == Type.OBJECT) {
                                 val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
@@ -187,14 +187,14 @@ fun interpreterLoop(
                         }
                         RETURN -> return ValueReturned(VOID_VALUE)
                         IFEQ, IFNE, IFLT, IFGE, IFGT, IFLE, IFNULL, IFNONNULL -> {
-                            if (interpreter.checkUnaryCondition(frame.getStack(0)!!, insnOpcode)) {
+                            if (interpreter.checkUnaryCondition(frame.getStackTop(), insnOpcode)) {
                                 frame.execute(currentInsn, interpreter)
                                 goto((currentInsn as JumpInsnNode).label)
                                 continue
                             }
                         }
                         IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
-                            if (interpreter.checkBinaryCondition(frame.getStack(0)!!, frame.getStack(1)!!, insnOpcode)) {
+                            if (interpreter.checkBinaryCondition(frame.getStackTop(1), frame.getStackTop(0), insnOpcode)) {
                                 frame.execute(currentInsn, interpreter)
                                 goto((currentInsn as JumpInsnNode).label)
                                 continue
@@ -202,7 +202,7 @@ fun interpreterLoop(
                         }
 
                         ATHROW -> {
-                            val exceptionValue = frame.getStack(0)!!
+                            val exceptionValue = frame.getStackTop()
                             val handled = handler.exceptionThrown(frame, currentInsn, exceptionValue)
                             if (handled != null) return handled
                             if (exceptionCaught(exceptionValue)) continue
@@ -244,6 +244,8 @@ fun interpreterLoop(
         return e.result
     }
 }
+
+private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.getStackSize() - 1 - i) ?: throwEvalException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
 
 // Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {

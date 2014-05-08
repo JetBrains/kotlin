@@ -681,6 +681,16 @@ class TestData {
         Number n = 1;
         return n.intValue();
     }
+
+    static void getValueFromStack() {
+        int i = 1;
+        boolean b = true;
+        Integer[] IFEQ = new Integer[] { b ? 100 : 200 };
+        Integer[] IF_ICMPNE = new Integer[] { i == 1  ? 100 : 200 };
+
+        long l = 1;
+        Long[] IFEQ_L = new Long[] { b ? 100L : 200L };
+    }
 }
 
 
