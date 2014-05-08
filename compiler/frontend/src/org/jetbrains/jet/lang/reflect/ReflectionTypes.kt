@@ -21,11 +21,10 @@ import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.types.*
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.ErrorUtils
+import java.util.ArrayList
 
 private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
@@ -40,9 +39,22 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
                 ?: ErrorUtils.createErrorClass(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 
+    private object ClassLookup {
+        fun get(types: ReflectionTypes, property: PropertyMetadata): ClassDescriptor {
+            return types.find(property.name.capitalize())
+        }
+    }
+
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
     public fun getKExtensionFunction(n: Int): ClassDescriptor = find("KExtensionFunction$n")
     public fun getKMemberFunction(n: Int): ClassDescriptor = find("KMemberFunction$n")
+
+    public val kTopLevelProperty: ClassDescriptor by ClassLookup
+    public val kMutableTopLevelProperty: ClassDescriptor by ClassLookup
+    public val kMemberProperty: ClassDescriptor by ClassLookup
+    public val kMutableMemberProperty: ClassDescriptor by ClassLookup
+    public val kExtensionProperty: ClassDescriptor by ClassLookup
+    public val kMutableExtensionProperty: ClassDescriptor by ClassLookup
 
     public fun getKFunctionType(
             annotations: Annotations,
@@ -51,26 +63,47 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             returnType: JetType,
             extensionFunction: Boolean
     ): JetType {
-        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
-        val classDescriptor = correspondingKFunctionClass(receiverType, extensionFunction, parameterTypes.size)
+        val arity = parameterTypes.size()
+        val classDescriptor =
+                if (extensionFunction) getKExtensionFunction(arity)
+                else if (receiverType != null) getKMemberFunction(arity)
+                else getKFunction(arity)
 
-        return if (ErrorUtils.isError(classDescriptor))
-                   classDescriptor.getDefaultType()
-               else
-                   JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
+        if (ErrorUtils.isError(classDescriptor)) {
+            return classDescriptor.getDefaultType()
+        }
+
+        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+        return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 
-    private fun correspondingKFunctionClass(
+    public fun getKPropertyType(
+            annotations: Annotations,
             receiverType: JetType?,
-            extensionFunction: Boolean,
-            numberOfParameters: Int
-    ): ClassDescriptor {
-        if (extensionFunction) {
-            return getKExtensionFunction(numberOfParameters)
+            returnType: JetType,
+            extensionProperty: Boolean,
+            mutable: Boolean
+    ): JetType {
+        val classDescriptor = if (mutable) when {
+            extensionProperty -> kMutableExtensionProperty
+            receiverType != null -> kMutableMemberProperty
+            else -> kMutableTopLevelProperty
         }
+        else when {
+            extensionProperty -> kExtensionProperty
+            receiverType != null -> kMemberProperty
+            else -> kTopLevelProperty
+        }
+
+        if (ErrorUtils.isError(classDescriptor)) {
+            return classDescriptor.getDefaultType()
+        }
+
+        val arguments = ArrayList<TypeProjection>(2)
         if (receiverType != null) {
-            return getKMemberFunction(numberOfParameters)
+            arguments.add(TypeProjectionImpl(receiverType))
         }
-        return getKFunction(numberOfParameters)
+        arguments.add(TypeProjectionImpl(returnType))
+        return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 }
