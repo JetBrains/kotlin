@@ -17,9 +17,9 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -41,17 +41,16 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class SamWrapperCodegen extends ParentCodegenAwareImpl {
+public class SamWrapperCodegen {
     private static final String FUNCTION_FIELD_NAME = "function";
 
-    @NotNull private final JavaClassDescriptor samInterface;
+    private final GenerationState state;
+    private final JetTypeMapper typeMapper;
+    private final JavaClassDescriptor samInterface;
 
-    public SamWrapperCodegen(
-            @NotNull GenerationState state,
-            @NotNull JavaClassDescriptor samInterface,
-            @Nullable MemberCodegen<?> parentCodegen
-    ) {
-        super(state, parentCodegen);
+    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull JavaClassDescriptor samInterface) {
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
         this.samInterface = samInterface;
     }
 
@@ -79,7 +78,7 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
         writeKotlinSyntheticClassAnnotation(cv, KotlinSyntheticClass.Kind.SAM_WRAPPER);
 
         // e.g. ASM type for Function2
-        Type functionAsmType = state.getTypeMapper().mapType(functionType);
+        Type functionAsmType = typeMapper.mapType(functionType);
 
         cv.newField(null,
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
@@ -124,9 +123,8 @@ public class SamWrapperCodegen extends ParentCodegenAwareImpl {
             SimpleFunctionDescriptor interfaceFunction,
             JetType functionJetType
     ) {
-
         // using static context to avoid creating ClassDescriptor and everything else
-        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC, cv, state, getParentCodegen());
+        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC, cv, state, null);
 
         FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
