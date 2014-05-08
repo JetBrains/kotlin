@@ -77,7 +77,7 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetExpression deparenthesize(@Nullable JetExpression expression) {
-        return deparenthesize(expression, true);
+        return deparenthesize(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ true);
     }
 
     @Nullable
@@ -85,14 +85,33 @@ public class JetPsiUtil {
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
-        return deparenthesizeWithResolutionStrategy(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
+        return deparenthesizeWithResolutionStrategy(
+                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ true, null);
     }
 
     @Nullable
-    @Deprecated //Use JetPsiUtil.deparenthesize() or ExpressionTypingServices.deparenthesize()
+    public static JetExpression deparenthesizeOnce(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS
+    ) {
+        return deparenthesizeWithResolutionStrategy(
+                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ false, null);
+    }
+
+    @Nullable
     public static JetExpression deparenthesizeWithResolutionStrategy(
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS,
+            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
+    ) {
+        return deparenthesizeWithResolutionStrategy(expression, true, true, typeResolutionStrategy);
+    }
+
+    @Nullable
+    private static JetExpression deparenthesizeWithResolutionStrategy(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS,
+            boolean deparenthesizeRecursively,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
         if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
@@ -117,8 +136,8 @@ public class JetPsiUtil {
         }
         if (expression instanceof JetParenthesizedExpression) {
             JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null ? deparenthesizeWithResolutionStrategy(
-                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy) : null;
+            return innerExpression != null && deparenthesizeRecursively ? deparenthesizeWithResolutionStrategy(
+                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, true, typeResolutionStrategy) : innerExpression;
         }
         return expression;
     }
