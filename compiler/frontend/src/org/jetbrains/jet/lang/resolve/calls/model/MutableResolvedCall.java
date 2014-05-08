@@ -47,7 +47,7 @@ public interface MutableResolvedCall<D extends CallableDescriptor> extends Resol
 
     void recordValueArgument(@NotNull ValueParameterDescriptor valueParameter, @NotNull ResolvedValueArgument valueArgument);
 
-    void recordArgumentMatch(@NotNull ValueArgument valueArgument, @NotNull ValueParameterDescriptor parameter, @NotNull ArgumentMatchStatus matchStatus);
+    void recordArgumentMatchStatus(@NotNull ValueArgument valueArgument, @NotNull ArgumentMatchStatus matchStatus);
 
     @Override
     @NotNull

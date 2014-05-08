@@ -203,6 +203,10 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 }
             }
 
+            for (Map.Entry<ValueParameterDescriptor, VarargValueArgument> entry : varargs.entrySet()) {
+                candidateCall.recordValueArgument(entry.getKey(), entry.getValue());
+            }
+
             processFunctionLiteralArguments();
             reportUnmappedParameters();
             checkReceiverArgument();
@@ -296,7 +300,6 @@ import static org.jetbrains.jet.lang.resolve.calls.ValueArgumentsToParametersMap
                 if (vararg == null) {
                     vararg = new VarargValueArgument();
                     varargs.put(valueParameterDescriptor, vararg);
-                    candidateCall.recordValueArgument(valueParameterDescriptor, vararg);
                 }
                 vararg.addArgument(valueArgument);
             }

@@ -36,6 +36,22 @@ enum class ArgumentMatchStatus(val isError: Boolean = true) {
     MATCH_MODULO_UNINFERRED_TYPES : ArgumentMatchStatus()
 }
 
-class ArgumentMatch(val valueParameter: ValueParameterDescriptor, val status: ArgumentMatchStatus): ArgumentMapping {
+trait ArgumentMatch : ArgumentMapping {
+    val valueParameter: ValueParameterDescriptor
+    val status: ArgumentMatchStatus
+
     override fun isError(): Boolean = status.isError
+}
+
+class ArgumentMatchImpl(override val valueParameter: ValueParameterDescriptor): ArgumentMatch {
+    private var _status: ArgumentMatchStatus? = null
+    override val status: ArgumentMatchStatus get() = _status!!
+    fun recordMatchStatus(status: ArgumentMatchStatus) {
+        _status = status
+    }
+    fun replaceValueParameter(newValueParameter: ValueParameterDescriptor): ArgumentMatchImpl {
+        val newArgumentMatch = ArgumentMatchImpl(newValueParameter)
+        newArgumentMatch._status = _status
+        return newArgumentMatch
+    }
 }
