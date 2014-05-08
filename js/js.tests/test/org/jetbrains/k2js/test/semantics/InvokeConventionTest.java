@@ -53,4 +53,8 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
     public void testInvokeWithThisObjectAndReceiver() throws Exception {
         fooBoxTest();
     }
+
+    public void testInfixCall() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

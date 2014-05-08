@@ -146,4 +146,8 @@ public class FunctionTest extends AbstractExpressionTest {
     public void testLocalExtFunction() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testInfixCall() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

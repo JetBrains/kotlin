@@ -116,4 +116,8 @@ public final class OperatorOverloadingTest extends SingleFileTranslationTest {
     public void testOverloadUnaryOperationsViaExtensionFunctions() throws Exception {
         fooBoxTest();
     }
+
+    public void testOverloadByLambda() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
