@@ -174,16 +174,19 @@ public final class BindingUtils {
     }
 
     @Nullable
-    public static FunctionDescriptor getFunctionDescriptorForOperationExpression(@NotNull BindingContext context,
-            @NotNull JetOperationExpression expression) {
-        DeclarationDescriptor descriptorForReferenceExpression = getNullableDescriptorForReferenceExpression
-                (context, expression.getOperationReference());
+    public static CallableDescriptor getCallableDescriptorForOperationExpression(
+            @NotNull BindingContext context,
+            @NotNull JetOperationExpression expression
+    ) {
+        JetSimpleNameExpression operationReference = expression.getOperationReference();
+        DeclarationDescriptor descriptorForReferenceExpression =
+                getNullableDescriptorForReferenceExpression(context, operationReference);
 
         if (descriptorForReferenceExpression == null) return null;
 
-        assert descriptorForReferenceExpression instanceof FunctionDescriptor
-                : message(expression.getOperationReference(), "Operation should resolve to function descriptor");
-        return (FunctionDescriptor) descriptorForReferenceExpression;
+        assert descriptorForReferenceExpression instanceof CallableDescriptor :
+                message(operationReference, "Operation should resolve to callable descriptor");
+        return (CallableDescriptor) descriptorForReferenceExpression;
     }
 
     @NotNull

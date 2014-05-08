@@ -19,6 +19,7 @@ package org.jetbrains.k2js.translate.operation;
 import com.google.dart.compiler.backend.js.ast.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -38,7 +39,7 @@ import org.jetbrains.k2js.translate.utils.mutator.LastExpressionMutator;
 
 import static org.jetbrains.k2js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.k2js.translate.operation.CompareToTranslator.isCompareToCall;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionResolvedCall;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.convertToStatement;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.not;
@@ -67,14 +68,13 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
     private final JetBinaryExpression expression;
 
     @Nullable
-    private final FunctionDescriptor operationDescriptor;
+    private final CallableDescriptor operationDescriptor;
 
     private BinaryOperationTranslator(@NotNull JetBinaryExpression expression,
             @NotNull TranslationContext context) {
         super(context);
         this.expression = expression;
-        this.operationDescriptor =
-                getFunctionDescriptorForOperationExpression(bindingContext(), expression);
+        this.operationDescriptor = getCallableDescriptorForOperationExpression(bindingContext(), expression);
     }
 
     @NotNull

@@ -21,6 +21,7 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsLiteral;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -36,7 +37,7 @@ import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
 public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
@@ -46,9 +47,10 @@ public final class EqualsIntrinsic implements BinaryOperationIntrinsic {
         if (!OperatorConventions.EQUALS_OPERATIONS.contains(getOperationToken(expression))) {
             return false;
         }
-        FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
-        assert functionDescriptor != null;
-        return JsDescriptorUtils.isBuiltin(functionDescriptor) || TopLevelFIF.EQUALS_IN_ANY.apply(functionDescriptor);
+        CallableDescriptor functionDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+        if (!(functionDescriptor instanceof FunctionDescriptor)) return false;
+
+        return JsDescriptorUtils.isBuiltin(functionDescriptor) || TopLevelFIF.EQUALS_IN_ANY.apply((FunctionDescriptor) functionDescriptor);
     }
 
     @Override

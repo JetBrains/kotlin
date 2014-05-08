@@ -56,8 +56,8 @@ public final class JsDescriptorUtils {
         return (valueParametersCount(functionDescriptor) > 0);
     }
 
-    public static boolean isCompareTo(@NotNull FunctionDescriptor functionDescriptor) {
-        return (functionDescriptor.getName().equals(OperatorConventions.COMPARE_TO));
+    public static boolean isCompareTo(@NotNull CallableDescriptor descriptor) {
+        return descriptor.getName().equals(OperatorConventions.COMPARE_TO);
     }
 
     @Nullable

@@ -38,7 +38,7 @@ import java.util.*;
 import static com.google.dart.compiler.backend.js.ast.JsBinaryOperator.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.k2js.translate.context.Namer.getKotlinBackingFieldName;
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.assignment;
 import static org.jetbrains.k2js.translate.utils.JsAstUtils.createDataDescriptor;
 
@@ -352,10 +352,10 @@ public final class TranslationUtils {
 
     public static boolean hasCorrespondingFunctionIntrinsic(@NotNull TranslationContext context,
             @NotNull JetOperationExpression expression) {
-        FunctionDescriptor operationDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
+        CallableDescriptor operationDescriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
 
-        if (operationDescriptor == null) return true;
-        if (context.intrinsics().getFunctionIntrinsics().getIntrinsic(operationDescriptor).exists()) return true;
+        if (operationDescriptor == null || !(operationDescriptor instanceof FunctionDescriptor)) return true;
+        if (context.intrinsics().getFunctionIntrinsics().getIntrinsic((FunctionDescriptor) operationDescriptor).exists()) return true;
 
         return false;
     }

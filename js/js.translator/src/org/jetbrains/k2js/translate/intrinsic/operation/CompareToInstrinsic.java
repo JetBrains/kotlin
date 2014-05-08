@@ -20,14 +20,14 @@ import com.google.dart.compiler.backend.js.ast.JsBinaryOperation;
 import com.google.dart.compiler.backend.js.ast.JsBinaryOperator;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetBinaryExpression;
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions;
 import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.operation.OperatorTable;
 import org.jetbrains.k2js.translate.utils.JsDescriptorUtils;
 
-import static org.jetbrains.k2js.translate.utils.BindingUtils.getFunctionDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
 public final class CompareToInstrinsic implements BinaryOperationIntrinsic {
@@ -36,9 +36,10 @@ public final class CompareToInstrinsic implements BinaryOperationIntrinsic {
         if (!OperatorConventions.COMPARISON_OPERATIONS.contains(getOperationToken(expression))) {
             return false;
         }
-        FunctionDescriptor functionDescriptor = getFunctionDescriptorForOperationExpression(context.bindingContext(), expression);
-        assert functionDescriptor != null;
-        return JsDescriptorUtils.isBuiltin(functionDescriptor);
+
+        CallableDescriptor descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
+        assert descriptor != null;
+        return JsDescriptorUtils.isBuiltin(descriptor);
     }
 
     @NotNull
