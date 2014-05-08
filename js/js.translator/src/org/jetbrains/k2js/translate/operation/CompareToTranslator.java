@@ -27,13 +27,18 @@ import org.jetbrains.k2js.translate.context.TranslationContext;
 import org.jetbrains.k2js.translate.general.AbstractTranslator;
 
 import static org.jetbrains.k2js.translate.utils.BindingUtils.getCallableDescriptorForOperationExpression;
+import static org.jetbrains.k2js.translate.utils.ErrorReportingUtils.message;
 import static org.jetbrains.k2js.translate.utils.JsDescriptorUtils.isCompareTo;
 import static org.jetbrains.k2js.translate.utils.PsiUtils.getOperationToken;
 
 public final class CompareToTranslator extends AbstractTranslator {
 
-    public static boolean isCompareToCall(@NotNull JetBinaryExpression expression,
-            @NotNull TranslationContext context) {
+    public static boolean isCompareToCall(
+            @NotNull JetBinaryExpression expression,
+            @NotNull TranslationContext context
+    ) {
+        if (!OperatorConventions.COMPARISON_OPERATIONS.contains(getOperationToken(expression))) return false;
+
         CallableDescriptor operationDescriptor =
                 getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
 
@@ -51,13 +56,17 @@ public final class CompareToTranslator extends AbstractTranslator {
     @NotNull
     private final JetBinaryExpression expression;
 
-    private CompareToTranslator(@NotNull JetBinaryExpression expression,
-            @NotNull TranslationContext context) {
+    private CompareToTranslator(
+            @NotNull JetBinaryExpression expression,
+            @NotNull TranslationContext context
+    ) {
         super(context);
         this.expression = expression;
         CallableDescriptor descriptor = getCallableDescriptorForOperationExpression(context.bindingContext(), expression);
         assert descriptor != null : "CompareTo should always have a descriptor";
-        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(getOperationToken(expression)));
+        assert (OperatorConventions.COMPARISON_OPERATIONS.contains(getOperationToken(expression))) :
+                message(expression, "CompareToTranslator supported only expressions with operation token from COMPARISON_OPERATIONS, " +
+                                    "expression: " + expression.getText());
     }
 
     @NotNull
