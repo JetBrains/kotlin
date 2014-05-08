@@ -57,37 +57,25 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 
-public class InlineCodegen implements ParentCodegenAware, CallGenerator {
-
-    private final JetTypeMapper typeMapper;
-
-    private final ExpressionCodegen codegen;
-
-    private final boolean asFunctionInline;
-
+public class InlineCodegen implements CallGenerator {
     private final GenerationState state;
-
-    private final Call call;
-
-    private final SimpleFunctionDescriptor functionDescriptor;
-
+    private final JetTypeMapper typeMapper;
     private final BindingContext bindingContext;
 
-    private final MethodContext context;
-
-    private final FrameMap originalFunctionFrame;
-
-    private final int initialFrameSize;
-
+    private final SimpleFunctionDescriptor functionDescriptor;
     private final JvmMethodSignature jvmSignature;
-
+    private final Call call;
+    private final MethodContext context;
+    private final ExpressionCodegen codegen;
+    private final FrameMap originalFunctionFrame;
+    private final boolean asFunctionInline;
+    private final int initialFrameSize;
     private final boolean isSameModule;
 
-    private LambdaInfo activeLambda;
-
     protected final List<ParameterInfo> actualParameters = new ArrayList<ParameterInfo>();
-
     protected final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
+
+    private LambdaInfo activeLambda;
 
     public InlineCodegen(
             @NotNull ExpressionCodegen codegen,
@@ -190,7 +178,7 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
                                                new FunctionGenerationStrategy.FunctionDefault(state,
                                                                                               functionDescriptor,
                                                                                               (JetDeclarationWithBody) element),
-                                               getParentCodegen());
+                                               codegen.getParentCodegen());
             adapter.visitMaxs(-1, -1);
             adapter.visitEnd();
         }
@@ -406,12 +394,6 @@ public class InlineCodegen implements ParentCodegenAware, CallGenerator {
             }
         }
         return result;
-    }
-
-    @Nullable
-    @Override
-    public MemberCodegen<?> getParentCodegen() {
-        return codegen.getParentCodegen();
     }
 
     public static CodegenContext getContext(DeclarationDescriptor descriptor, GenerationState state) {
