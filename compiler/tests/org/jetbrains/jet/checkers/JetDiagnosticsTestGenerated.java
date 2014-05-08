@@ -374,6 +374,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/RecursiveTypeInference.kt");
         }
         
+        @TestMetadata("ReflectionTypesNotLoaded.kt")
+        public void testReflectionTypesNotLoaded() throws Exception {
+            doTest("compiler/testData/diagnostics/tests/ReflectionTypesNotLoaded.kt");
+        }
+        
         @TestMetadata("ResolveOfJavaGenerics.kt")
         public void testResolveOfJavaGenerics() throws Exception {
             doTest("compiler/testData/diagnostics/tests/ResolveOfJavaGenerics.kt");

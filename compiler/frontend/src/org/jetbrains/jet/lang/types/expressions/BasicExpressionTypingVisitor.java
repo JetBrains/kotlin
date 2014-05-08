@@ -503,6 +503,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 receiverParameter != null
         );
 
+        if (type.isError()) {
+            context.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
+            return null;
+        }
+
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
                 Annotations.EMPTY,

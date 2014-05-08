@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.error;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -32,13 +33,12 @@ import java.util.List;
 
 import static org.jetbrains.jet.lang.types.ErrorUtils.*;
 
-public final class ErrorClassDescriptor extends ClassDescriptorImpl {
-    public ErrorClassDescriptor(@NotNull String debugMessage) {
-        super(getErrorModule(), Name.special("<ERROR CLASS: " + debugMessage + ">"), Modality.OPEN, Collections.<JetType>emptyList());
+public class ErrorClassDescriptor extends ClassDescriptorImpl {
+    public ErrorClassDescriptor(@Nullable String name) {
+        super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
+              Modality.OPEN, Collections.<JetType>emptyList());
 
-        ConstructorDescriptorImpl errorConstructor =
-                ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true);
-
+        ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true);
         errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
                                     Visibilities.INTERNAL, false);
         errorConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"));

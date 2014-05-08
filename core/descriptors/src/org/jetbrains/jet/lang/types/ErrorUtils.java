@@ -227,7 +227,7 @@ public class ErrorUtils {
         }
     }
 
-    private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor("");
+    private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor(null);
 
     @NotNull
     public static JetScope createErrorScope(@NotNull String debugMessage) {

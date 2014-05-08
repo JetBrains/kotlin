@@ -25,18 +25,19 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.JetTypeImpl
+import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor
+
+private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflect: JetScope by Delegates.lazy {
-        // TODO: handle errors gracefully (error types)
-        val kotlin = module.getPackage(FqName("kotlin")) ?: error("Package kotlin not found in $module")
-        val reflect = kotlin.getMemberScope().getPackage(Name.identifier("reflect")) ?: error("Package reflect not found in $kotlin")
-        reflect.getMemberScope()
+    private val kotlinReflectScope: JetScope? by Delegates.lazy {
+        module.getPackage(KOTLIN_REFLECT_FQ_NAME)?.getMemberScope()
     }
 
     fun find(className: String): ClassDescriptor {
         val name = Name.identifier(className)
-        return kotlinReflect.getClassifier(name) as? ClassDescriptor ?: error("Reflection class not found: $name")
+        return kotlinReflectScope?.getClassifier(name) as? ClassDescriptor
+                ?: ErrorClassDescriptor(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
@@ -53,7 +54,10 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
         val classDescriptor = correspondingKFunctionClass(receiverType, extensionFunction, parameterTypes.size)
 
-        return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
+        return if (classDescriptor is ErrorClassDescriptor)
+                   classDescriptor.getDefaultType()
+               else
+                   JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 
     private fun correspondingKFunctionClass(

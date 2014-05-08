@@ -367,7 +367,9 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, InferenceErrorData> TYPE_INFERENCE_UPPER_BOUND_VIOLATED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<JetExpression, JetType, JetType> TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
-    // Callable references
+    // Reflection
+
+    DiagnosticFactory0<PsiElement> REFLECTION_TYPES_NOT_LOADED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<JetExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);

@@ -34,14 +34,19 @@ public class JetCallableReferenceExpression extends JetExpressionImpl {
     }
 
     @NotNull
+    public PsiElement getDoubleColonTokenReference() {
+        //noinspection ConstantConditions
+        return findChildByType(JetTokens.COLONCOLON);
+    }
+
+    @NotNull
     public JetSimpleNameExpression getCallableReference() {
-        ASTNode node = getNode().findChildByType(JetTokens.COLONCOLON);
-        while (node != null) {
-            PsiElement psi = node.getPsi();
+        PsiElement psi = getDoubleColonTokenReference();
+        while (psi != null) {
             if (psi instanceof JetSimpleNameExpression) {
                 return (JetSimpleNameExpression) psi;
             }
-            node = node.getTreeNext();
+            psi = psi.getNextSibling();
         }
 
         throw new IllegalStateException("Callable reference simple name shouldn't be parsed to null");

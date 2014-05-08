@@ -471,6 +471,8 @@ public class DefaultErrorMessages {
 
         MAP.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", TO_STRING);
 
+        MAP.put(REFLECTION_TYPES_NOT_LOADED, "Reflection types can't be loaded. Please ensure that you have Kotlin Runtime in your classpath");
+
         MAP.put(EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED,
                 "''{0}'' is a member and an extension at the same time. References to such elements are not allowed", NAME);
         MAP.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Callable reference left-hand side cannot be a type parameter");
