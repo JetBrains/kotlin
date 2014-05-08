@@ -164,6 +164,46 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.kt");
         }
         
+        @TestMetadata("InLabmdaAfterArrow.after.kt")
+        public void testInLabmdaAfterArrow() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLabmdaAfterArrow.after.kt");
+        }
+        
+        @TestMetadata("InLambdaAfterArrowWithSpaces.after.kt")
+        public void testInLambdaAfterArrowWithSpaces() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaAfterArrowWithSpaces.after.kt");
+        }
+        
+        @TestMetadata("InLambdaBeforeParams.after.kt")
+        public void testInLambdaBeforeParams() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaBeforeParams.after.kt");
+        }
+        
+        @TestMetadata("InLambdaInsideChainCallSameLine.after.kt")
+        public void testInLambdaInsideChainCallSameLine() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLine.after.kt");
+        }
+        
+        @TestMetadata("InLambdaInsideChainCallSameLineWithSpaces.after.kt")
+        public void testInLambdaInsideChainCallSameLineWithSpaces() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaInsideChainCallSameLineWithSpaces.after.kt");
+        }
+        
+        @TestMetadata("InLambdaInsideChainCallWithNewLine.after.kt")
+        public void testInLambdaInsideChainCallWithNewLine() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLine.after.kt");
+        }
+        
+        @TestMetadata("InLambdaInsideChainCallWithNewLineWithSpaces.after.kt")
+        public void testInLambdaInsideChainCallWithNewLineWithSpaces() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InLambdaInsideChainCallWithNewLineWithSpaces.after.kt");
+        }
+        
+        @TestMetadata("InMultilineLambdaAfterArrow.after.kt")
+        public void testInMultilineLambdaAfterArrow() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/InMultilineLambdaAfterArrow.after.kt");
+        }
+        
         @TestMetadata("NotFirstParameter.after.kt")
         public void testNotFirstParameter() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/NotFirstParameter.after.kt");
