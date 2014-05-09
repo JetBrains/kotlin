@@ -1,4 +1,4 @@
-//ERROR: Unresolved reference: withIndices
+//WITH_RUNTIME
 fun foo(bar: List<Int>) {
     for (b: Int in bar) {
 

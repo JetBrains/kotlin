@@ -18,25 +18,16 @@ package org.jetbrains.jet.plugin.intentions
 
 import org.jetbrains.jet.lang.psi.JetForExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetPsiUtil
-import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState
-import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.lang.psi.JetFile
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.cfg.JetFlowInformationProvider
-import org.jetbrains.jet.lang.cfg.JetControlFlowProcessor
-import com.intellij.debugger.jdi.LocalVariablesUtil
-import com.siyeh.ig.psiutils.VariableAccessUtils
-import com.google.dart.compiler.util.AstUtil
 import com.intellij.find.FindManager
 import com.intellij.find.impl.FindManagerImpl
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.jet.plugin.findUsages.KotlinPropertyFindUsagesOptions
+import org.jetbrains.jet.lang.resolve.BindingContext
+import org.jetbrains.jet.lang.psi.JetCallExpression
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
 
 public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
         "remove.for.loop.indices", javaClass()) {
@@ -46,7 +37,8 @@ public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExp
         val parameters = parameter.getEntries()
         if (parameters.size() == 2) {
             parameter.replace(parameters[1])
-        } else {
+        }
+        else {
             JetPsiUtil.deleteElementWithDelimiters(parameters[0])
         }
 
@@ -54,30 +46,25 @@ public class RemoveForLoopIndicesIntention : JetSelfTargetingIntention<JetForExp
     }
 
     override fun isApplicableTo(element: JetForExpression): Boolean {
-        if (element.getMultiParameter() == null) return false
+        val multiParameter = element.getMultiParameter() ?: return false
         val range = element.getLoopRange() as? JetDotQualifiedExpression ?: return false
-        val selector = range.getSelectorExpression() ?: return false
+        val selector = range.getSelectorExpression() as? JetCallExpression ?: return false
+
         if (!selector.textMatches("withIndices()")) return false
 
-        val indexVar = element.getMultiParameter()!!.getEntries()[0]
+        val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
+        val callResolution = bindingContext[BindingContext.RESOLVED_CALL, selector.getCalleeExpression()!!] ?: return false
+        val fqName = DescriptorUtils.getFqNameSafe(callResolution.getCandidateDescriptor())
+        if (fqName.toString() != "kotlin.withIndices") return false
 
+        val indexVar = multiParameter.getEntries()[0]
         val findManager = FindManager.getInstance(element.getProject()) as FindManagerImpl
-        val findHandler = findManager.getFindUsagesManager().getFindUsagesHandler(indexVar,false) ?: return false
+        val findHandler = findManager.getFindUsagesManager().getFindUsagesHandler(indexVar, false) ?: return false
         val options = KotlinPropertyFindUsagesOptions(element.getProject())
-        val usageCount = array(0)
-        val usageFinderRunnable = object : Runnable {
-            override fun run() {
-                val processor = object : Processor<UsageInfo> {
-                    override fun process(t: UsageInfo?): Boolean {
-                        usageCount[0] = usageCount[0] + 1
-                        return true
-                    }
-                }
-                findHandler.processElementUsages(indexVar,processor,options)
-            }
-        }
-        usageFinderRunnable.run()
-        return usageCount[0] == 0
+        var usageCount = 0
+        val processorLambda: (UsageInfo?) -> Boolean = { t -> usageCount++; false }
+        findHandler.processElementUsages(indexVar, processorLambda, options)
+        return usageCount == 0
     }
 
 }

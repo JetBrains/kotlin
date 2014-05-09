@@ -4252,9 +4252,29 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/inapplicableExistingIndices.kt");
         }
         
+        @TestMetadata("inapplicableOverridenFunction.kt")
+        public void testInapplicableOverridenFunction() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/inapplicableOverridenFunction.kt");
+        }
+        
+        @TestMetadata("inapplicableSyntaxError.kt")
+        public void testInapplicableSyntaxError() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/inapplicableSyntaxError.kt");
+        }
+        
         @TestMetadata("inapplicableUnorderedCollection.kt")
         public void testInapplicableUnorderedCollection() throws Exception {
             doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/inapplicableUnorderedCollection.kt");
+        }
+        
+        @TestMetadata("intArray.kt")
+        public void testIntArray() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/intArray.kt");
+        }
+        
+        @TestMetadata("iterable.kt")
+        public void testIterable() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/iterable.kt");
         }
         
         @TestMetadata("listWithType.kt")
@@ -4262,14 +4282,24 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/listWithType.kt");
         }
         
+        @TestMetadata("objectArray.kt")
+        public void testObjectArray() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/objectArray.kt");
+        }
+        
         @TestMetadata("simpleIntList.kt")
         public void testSimpleIntList() throws Exception {
             doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/simpleIntList.kt");
         }
         
-        @TestMetadata("simpleSortedMap.kt")
-        public void testSimpleSortedMap() throws Exception {
-            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/simpleSortedMap.kt");
+        @TestMetadata("stream.kt")
+        public void testStream() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/stream.kt");
+        }
+        
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            doTestAddForLoopIndicesIntention("idea/testData/intentions/addForLoopIndicesIntention/string.kt");
         }
         
     }
@@ -4288,6 +4318,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("inapplicableIndexUse.kt")
         public void testInapplicableIndexUse() throws Exception {
             doTestRemoveForLoopIndicesIntention("idea/testData/intentions/removeForLoopIndicesIntention/inapplicableIndexUse.kt");
+        }
+        
+        @TestMetadata("inapplicableOverridenFunction.kt")
+        public void testInapplicableOverridenFunction() throws Exception {
+            doTestRemoveForLoopIndicesIntention("idea/testData/intentions/removeForLoopIndicesIntention/inapplicableOverridenFunction.kt");
         }
         
         @TestMetadata("loopWithType.kt")

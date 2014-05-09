@@ -1,5 +1,5 @@
 //IS_APPLICABLE: FALSE
-//ERROR: Unresolved reference: withIndices
+// WITH_RUNTIME
 fun b(c: List<String>) {
     for ((<caret>indexVariable, d) in c.withIndices()) {
 

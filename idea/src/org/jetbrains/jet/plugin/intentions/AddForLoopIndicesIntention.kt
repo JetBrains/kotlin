@@ -23,18 +23,13 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.types.TypeUtils
-import org.jetbrains.jet.lang.resolve.ObservableBindingTrace
-import org.jetbrains.jet.lang.resolve.BindingTraceContext
-import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
-
+import org.jetbrains.jet.analyzer.analyzeInContext
+import org.jetbrains.jet.lang.psi.JetCallExpression
 
 public class AddForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpression>(
         "add.for.loop.indices", javaClass()) {
@@ -69,19 +64,20 @@ public class AddForLoopIndicesIntention : JetSelfTargetingIntention<JetForExpres
         if (element.getLoopParameter() == null) return false
         val range = element.getLoopRange() ?: return false
         if (range is JetDotQualifiedExpression) {
-            val selector = (range as JetDotQualifiedExpression).getSelectorExpression() ?: return true
-            if (selector.getText().equals("withIndices()")) return false
+            val selector = range.getSelectorExpression() ?: return true
+            if (selector.getText() == "withIndices()") return false
         }
 
-        val potentialExpression = JetPsiFactory.createExpression(element.getProject(), "${range.getText()}.withIndices()")
+        val potentialExpression = JetPsiFactory.createExpression(element.getProject(),
+                                                                 "${range.getText()}.withIndices()") as JetDotQualifiedExpression
+
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(element)
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, element] ?: return false
-        val module = DescriptorUtils.getParentOfType(scope.getContainingDeclaration(), javaClass<ModuleDescriptor>())!!
-        val components = InjectorForMacros(element.getProject(), module)
-        val dataFlowInfo = bindingContext[BindingContext.NON_DEFAULT_EXPRESSION_DATA_FLOW, element] ?: DataFlowInfo.EMPTY
-        val bindingTrace = ObservableBindingTrace(BindingTraceContext())
-        val expressionType = components.getExpressionTypingServices()!!.getTypeInfo(scope, potentialExpression, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo, bindingTrace)
-        return expressionType.getType() != null
+        val functionSelector = potentialExpression.getSelectorExpression() as JetCallExpression
+        val updatedContext = potentialExpression.analyzeInContext(scope)
+        val callScope = updatedContext[BindingContext.RESOLVED_CALL, functionSelector.getCalleeExpression()!!] ?: return false
+        val callFqName = DescriptorUtils.getFqNameSafe(callScope.getCandidateDescriptor())
+        return callFqName.toString() == "kotlin.withIndices"
     }
 
 }
