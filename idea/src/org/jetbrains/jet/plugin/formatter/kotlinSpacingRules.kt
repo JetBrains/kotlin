@@ -82,6 +82,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(TYPE_REFERENCE, DOT, PROPERTY).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, PROPERTY).spacing(0, 0, 0, false, 0)
 
+            betweenInside(RETURN_KEYWORD, LABEL_QUALIFIER, RETURN).spaces(0)
+            afterInside(RETURN_KEYWORD, RETURN).spaces(1)
+            afterInside(LABEL_QUALIFIER, RETURN).spaces(1)
+
             betweenInside(FUN_KEYWORD, IDENTIFIER, FUN).spaces(1)
             betweenInside(FUN_KEYWORD, TYPE_REFERENCE, FUN).spaces(1)
             betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)

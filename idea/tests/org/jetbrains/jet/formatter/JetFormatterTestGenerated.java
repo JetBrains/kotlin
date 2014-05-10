@@ -244,6 +244,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/RemoveSpacesAroundOperations.after.kt");
         }
         
+        @TestMetadata("ReturnExpression.after.kt")
+        public void testReturnExpression() throws Exception {
+            doTest("idea/testData/formatter/ReturnExpression.after.kt");
+        }
+        
         @TestMetadata("RightBracketOnNewLine.after.kt")
         public void testRightBracketOnNewLine() throws Exception {
             doTest("idea/testData/formatter/RightBracketOnNewLine.after.kt");
@@ -454,7 +459,9 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @InnerTestClasses({})
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                         new File("idea/testData/formatter"),
+                                                         Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
         }
         
         @TestMetadata("BinaryExpressions.after.inv.kt")
