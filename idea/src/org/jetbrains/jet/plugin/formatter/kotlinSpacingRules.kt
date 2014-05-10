@@ -131,7 +131,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
         }
         custom {
 
-            fun CustomSpacingBuilder.ruleForKeywordOnNewLine(shouldBeOnNewLine: Boolean, keyword: IElementType, parent: IElementType) {
+            fun CustomSpacingBuilder.ruleForKeywordOnNewLine(
+                    shouldBeOnNewLine: Boolean,
+                    keyword: IElementType,
+                    parent: IElementType,
+                    afterBlockFilter: (wordParent: ASTNode, block: ASTNode) -> Boolean = { keywordParent, block -> true }) {
                 if (shouldBeOnNewLine) {
                     inPosition(parent = parent, right = keyword)
                             .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1, allowBlankLines = false)
@@ -139,16 +143,27 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                 else {
                     inPosition(parent = parent, right = keyword).customRule {
                         parent, left, right ->
-                        // do not remove linebreak if expression to the left is not a block
-                        val previousNonWhitespaceLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(right.getNode())
-                        val keepLineBreaks = previousNonWhitespaceLeaf == null || previousNonWhitespaceLeaf.getElementType() != RBRACE
-                        Spacing.createSpacing(1, 1, 0, keepLineBreaks, 0)
+
+                        val previousLeaf = FormatterUtil.getPreviousNonWhitespaceLeaf(right.getNode())
+                        val leftBlock = if (
+                                previousLeaf != null &&
+                                previousLeaf.getElementType() == RBRACE &&
+                                previousLeaf.getTreeParent()?.getElementType() == BLOCK) {
+                                previousLeaf.getTreeParent()!!
+                        } else null
+
+                        val removeLineBreaks = leftBlock != null && afterBlockFilter(right.getNode()?.getTreeParent()!!, leftBlock)
+                        Spacing.createSpacing(1, 1, 0, !removeLineBreaks, 0)
                     }
                 }
             }
 
-            ruleForKeywordOnNewLine(jetCommonSettings.ELSE_ON_NEW_LINE, keyword = ELSE_KEYWORD, parent = IF)
-            ruleForKeywordOnNewLine(jetCommonSettings.WHILE_ON_NEW_LINE, keyword = WHILE_KEYWORD, parent = DO_WHILE)
+            ruleForKeywordOnNewLine(jetCommonSettings.ELSE_ON_NEW_LINE, keyword = ELSE_KEYWORD, parent = IF) { keywordParent, block ->
+                block.getTreeParent()?.getElementType() == THEN && block.getTreeParent()?.getTreeParent() == keywordParent
+            }
+            ruleForKeywordOnNewLine(jetCommonSettings.WHILE_ON_NEW_LINE, keyword = WHILE_KEYWORD, parent = DO_WHILE) { keywordParent, block ->
+                block.getTreeParent()?.getElementType() == BODY && block.getTreeParent()?.getTreeParent() == keywordParent
+            }
             ruleForKeywordOnNewLine(jetCommonSettings.CATCH_ON_NEW_LINE, keyword = CATCH, parent = TRY)
             ruleForKeywordOnNewLine(jetCommonSettings.FINALLY_ON_NEW_LINE, keyword = FINALLY, parent = TRY)
 
