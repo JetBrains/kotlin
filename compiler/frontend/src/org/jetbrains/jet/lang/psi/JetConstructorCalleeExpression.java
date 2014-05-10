@@ -31,6 +31,11 @@ public class JetConstructorCalleeExpression extends JetExpressionImplStub<PsiJet
         super(stub, JetStubElementTypes.CONSTRUCTOR_CALLEE);
     }
 
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitConstructorCalleeExpression(this, data);
+    }
+
     @Nullable @IfNotParsed
     public JetTypeReference getTypeReference() {
         return getStubOrPsiChild(JetStubElementTypes.TYPE_REFERENCE);

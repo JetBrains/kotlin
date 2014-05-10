@@ -90,6 +90,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitJetElement(annotationEntry, data);
     }
 
+    public R visitConstructorCalleeExpression(@NotNull JetConstructorCalleeExpression constructorCalleeExpression, D data) {
+        return visitJetElement(constructorCalleeExpression, data);
+    }
+
     public R visitTypeParameterList(@NotNull JetTypeParameterList list, D data) {
         return visitJetElement(list, data);
     }

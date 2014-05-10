@@ -89,6 +89,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitAnnotationEntry(annotationEntry, null);
     }
 
+    public void visitConstructorCalleeExpression(@NotNull JetConstructorCalleeExpression constructorCalleeExpression) {
+        super.visitConstructorCalleeExpression(constructorCalleeExpression, null);
+    }
+
     public void visitTypeParameterList(@NotNull JetTypeParameterList list) {
         super.visitTypeParameterList(list, null);
     }

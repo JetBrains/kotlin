@@ -90,6 +90,10 @@ public class JetVisitorVoidWithParameter<P> extends JetVisitor<Void, P> {
         super.visitAnnotationEntry(annotationEntry, data);
     }
 
+    public void visitConstructorCalleeExpressionVoid(@NotNull JetConstructorCalleeExpression constructorCalleeExpression, P data) {
+        super.visitConstructorCalleeExpression(constructorCalleeExpression, data);
+    }
+
     public void visitTypeParameterListVoid(@NotNull JetTypeParameterList list, P data) {
         super.visitTypeParameterList(list, data);
     }
