@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 public class LeafElementFilter implements ElementFilter {
     private static final ClassFilter LEAF_CLASS_FILTER = new ClassFilter(LeafPsiElement.class);
 
-    private IElementType myElementType;
+    private final IElementType myElementType;
 
     LeafElementFilter(IElementType elementType) {
         myElementType = elementType;
