@@ -179,7 +179,7 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
     }
 
     public void doTestReplaceWithInfixFunctionCall(@NotNull String path) throws Exception {
-        doTestIntention(path, new ReplaceWithInfixFunctionCallIntention());
+        doTestIntention(path, new TestableReplaceWithInfixFunctionCallIntention());
     }
 
     public void doTestReplaceExplicitFunctionLiteralParamWithIt(@NotNull String path) throws Exception {
