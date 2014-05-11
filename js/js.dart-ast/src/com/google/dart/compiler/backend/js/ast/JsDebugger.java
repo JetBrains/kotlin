@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a JavaScript debugger statement.
  */
@@ -25,5 +27,11 @@ public class JsDebugger extends SourceInfoAwareJsNode implements JsStatement {
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         v.visit(this, ctx);
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsDebugger deepCopy() {
+        return this;
     }
 }

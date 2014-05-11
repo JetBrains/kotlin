@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -71,5 +73,15 @@ public class JsTry extends SourceInfoAwareJsNode implements JsStatement {
             }
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsTry deepCopy() {
+        JsBlock tryCopy = AstUtil.deepCopy(tryBlock);
+        List<JsCatch> catchCopy = AstUtil.deepCopy(catches);
+        JsBlock finallyCopy = AstUtil.deepCopy(finallyBlock);
+
+        return new JsTry(tryCopy, catchCopy, finallyCopy);
     }
 }

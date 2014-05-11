@@ -5,6 +5,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.Symbol;
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,5 +88,16 @@ public final class JsFunction extends JsLiteral implements HasName {
             body = v.accept(body);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsFunction deepCopy() {
+        JsFunction functionCopy = new JsFunction(scope.getParent(), scope.getDescription(), name);
+        functionCopy.getScope().copyOwnNames(scope);
+        functionCopy.setBody(body.deepCopy());
+        functionCopy.params = AstUtil.deepCopy(params);
+
+        return functionCopy;
     }
 }

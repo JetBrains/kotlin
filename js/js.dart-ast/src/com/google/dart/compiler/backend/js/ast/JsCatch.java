@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a JavaScript catch clause.
  */
@@ -71,5 +74,23 @@ public class JsCatch extends SourceInfoAwareJsNode implements HasCondition {
             body = v.accept(body);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsCatch deepCopy() {
+        JsCatchScope scopeCopy = scope.copy();
+        JsBlock bodyCopy = AstUtil.deepCopy(body);
+        JsExpression conditionCopy = AstUtil.deepCopy(condition);
+        JsParameter paramCopy = AstUtil.deepCopy(param);
+
+        return new JsCatch(scopeCopy, bodyCopy, conditionCopy, paramCopy);
+    }
+
+    private JsCatch(JsCatchScope scope, JsBlock body, JsExpression condition, JsParameter param) {
+        this.scope = scope;
+        this.body = body;
+        this.condition = condition;
+        this.param = param;
     }
 }

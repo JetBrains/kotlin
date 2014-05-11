@@ -30,6 +30,11 @@ public class JsCatchScope extends JsScope {
         return findOwnName(name) != null;
     }
 
+    @NotNull
+    public JsCatchScope copy() {
+        return new JsCatchScope(getParent(), name.getIdent());
+    }
+
     @Override
     protected JsName findOwnName(@NotNull String ident) {
         return name.getIdent().equals(ident) ? name : null;

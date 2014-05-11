@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public abstract class JsLiteral extends JsExpressionImpl {
     public static final JsValueLiteral THIS = new JsThisRef();
     public static final JsNameRef UNDEFINED = new JsNameRef("undefined");
@@ -68,6 +70,12 @@ public abstract class JsLiteral extends JsExpressionImpl {
         @Override
         public final boolean isLeaf() {
             return true;
+        }
+
+        @NotNull
+        @Override
+        public JsExpression deepCopy() {
+            return this;
         }
     }
 }

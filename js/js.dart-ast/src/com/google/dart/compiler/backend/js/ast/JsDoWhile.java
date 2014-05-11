@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a JavaScript do..while statement.
  */
@@ -27,5 +30,14 @@ public class JsDoWhile extends JsWhile {
             condition = v.accept(condition);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsDoWhile deepCopy() {
+        JsExpression conditionCopy = AstUtil.deepCopy(condition);
+        JsStatement bodyCopy = AstUtil.deepCopy(body);
+
+        return new JsDoWhile(conditionCopy, bodyCopy);
     }
 }

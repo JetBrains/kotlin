@@ -1,4 +1,7 @@
 package com.google.dart.compiler.backend.js.ast;
+import com.google.dart.compiler.util.AstUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -55,5 +58,11 @@ public class ChameleonJsExpression implements JsExpression {
     @Override
     public void traverse(JsVisitorWithContext visitor, JsContext ctx) {
         expression.traverse(visitor, ctx);
+    }
+
+    @NotNull
+    @Override
+    public ChameleonJsExpression deepCopy() {
+        return new ChameleonJsExpression(AstUtil.deepCopy(expression));
     }
 }

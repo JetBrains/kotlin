@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
     private JsStatement body;
     private JsExpression iterExpression;
@@ -18,6 +21,14 @@ public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
 
     public JsForIn(JsName iterVarName) {
         this.iterVarName = iterVarName;
+    }
+
+    public JsForIn(JsName iterVarName, JsExpression iterExpression, JsExpression objectExpression, JsStatement body) {
+
+        this.iterVarName = iterVarName;
+        this.iterExpression = iterExpression;
+        this.objectExpression = objectExpression;
+        this.body = body;
     }
 
     public JsStatement getBody() {
@@ -72,5 +83,15 @@ public class JsForIn extends SourceInfoAwareJsNode implements JsStatement {
             body = v.acceptStatement(body);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsForIn deepCopy() {
+        JsStatement bodyCopy = AstUtil.deepCopy(body);
+        JsExpression iterCopy = AstUtil.deepCopy(iterExpression);
+        JsExpression objectCopy = AstUtil.deepCopy(objectExpression);
+
+        return new JsForIn(iterVarName, iterCopy, objectCopy, bodyCopy);
     }
 }

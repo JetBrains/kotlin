@@ -1,5 +1,7 @@
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -29,5 +31,11 @@ public class JsDocComment extends JsExpressionImpl {
 
     @Override
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
+    }
+
+    @NotNull
+    @Override
+    public JsDocComment deepCopy() {
+        return new JsDocComment(tags);
     }
 }

@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A <code>for</code> statement. If specified at all, the initializer part is
  * either a declaration of one or more variables, in which case
@@ -117,5 +120,25 @@ public class JsFor extends SourceInfoAwareJsNode implements JsStatement {
             body = v.acceptStatement(body);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsFor deepCopy() {
+        JsStatement bodyCopy = AstUtil.deepCopy(body);
+        JsExpression conditionCopy = AstUtil.deepCopy(condition);
+        JsExpression incrementalExprCopy = AstUtil.deepCopy(incrementExpression);
+
+        if (initVars != null) {
+            return new JsFor(initVars.deepCopy(),
+                             conditionCopy,
+                             incrementalExprCopy,
+                             bodyCopy);
+        } else {
+            return new JsFor(initExpression.deepCopy(),
+                             conditionCopy,
+                             incrementExpression,
+                             bodyCopy);
+        }
     }
 }

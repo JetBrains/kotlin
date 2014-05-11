@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents the default option in a JavaScript swtich statement.
  */
@@ -19,5 +22,13 @@ public final class JsDefault extends JsSwitchMember {
             v.acceptStatementList(statements);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsDefault deepCopy() {
+        JsDefault defaultCopy = new JsDefault();
+        defaultCopy.statements.addAll(AstUtil.deepCopy(statements));
+        return defaultCopy;
     }
 }

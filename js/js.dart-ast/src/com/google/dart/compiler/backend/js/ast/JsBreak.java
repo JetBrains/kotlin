@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents the JavaScript break statement.
  */
@@ -30,5 +33,11 @@ public final class JsBreak extends JsContinue {
         }
 
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsBreak deepCopy() {
+        return new JsBreak(AstUtil.deepCopy(label));
     }
 }

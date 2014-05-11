@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 public final class JsPrefixOperation extends JsUnaryOperation {
     public JsPrefixOperation(JsUnaryOperator op) {
         this(op, null);
@@ -24,5 +27,11 @@ public final class JsPrefixOperation extends JsUnaryOperation {
             super.traverse(v, ctx);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsPrefixOperation deepCopy() {
+        return new JsPrefixOperation(getOperator(), AstUtil.deepCopy(getArg()));
     }
 }

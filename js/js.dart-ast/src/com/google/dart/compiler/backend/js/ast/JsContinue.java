@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
@@ -43,5 +45,13 @@ public class JsContinue extends SourceInfoAwareJsNode implements JsStatement {
         }
 
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsContinue deepCopy() {
+        if (label == null) return new JsContinue();
+
+        return new JsContinue(AstUtil.deepCopy(label));
     }
 }

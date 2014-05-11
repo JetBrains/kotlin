@@ -40,4 +40,12 @@ public final class JsParameter extends SourceInfoAwareJsNode implements HasName 
         v.visit(this, ctx);
         v.endVisit(this, ctx);
     }
+
+    @NotNull
+    @Override
+    public JsParameter deepCopy() {
+        JsParameter parameter = new JsParameter(name);
+        parameter.setHasDefaultValue(hasDefaultValue);
+        return parameter;
+    }
 }

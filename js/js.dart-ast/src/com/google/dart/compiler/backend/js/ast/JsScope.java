@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.google.dart.compiler.backend.js.ast.AstPackage.JsObjectScope;
@@ -152,6 +153,16 @@ public abstract class JsScope {
         else {
             return description;
         }
+    }
+
+    public void copyOwnNames(JsScope other) {
+        names = new HashMap<String, JsName>(names);
+        names.putAll(other.names);
+    }
+
+    @NotNull
+    public String getDescription() {
+        return description;
     }
 
     @NotNull

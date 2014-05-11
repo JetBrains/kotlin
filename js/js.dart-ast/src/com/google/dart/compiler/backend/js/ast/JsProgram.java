@@ -8,6 +8,7 @@ import gnu.trove.TDoubleObjectHashMap;
 import gnu.trove.THashMap;
 import gnu.trove.TIntObjectHashMap;
 import org.jetbrains.annotations.NotNull;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.Map;
 
@@ -138,5 +139,11 @@ public final class JsProgram extends SourceInfoAwareJsNode {
             }
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsProgram deepCopy() {
+        throw new NotImplementedException();
     }
 }

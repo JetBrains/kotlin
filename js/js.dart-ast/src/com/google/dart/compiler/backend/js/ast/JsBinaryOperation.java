@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class JsBinaryOperation extends JsExpressionImpl {
@@ -27,6 +29,14 @@ public final class JsBinaryOperation extends JsExpressionImpl {
 
     public JsExpression getArg2() {
         return arg2;
+    }
+
+    public void setArg1(JsExpression arg1) {
+        this.arg1 = arg1;
+    }
+
+    public void setArg2(JsExpression arg2) {
+        this.arg2 = arg2;
     }
 
     public JsBinaryOperator getOperator() {
@@ -60,5 +70,11 @@ public final class JsBinaryOperation extends JsExpressionImpl {
             arg2 = v.accept(arg2);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsExpression deepCopy() {
+        return new JsBinaryOperation(op, AstUtil.deepCopy(arg1), AstUtil.deepCopy(arg2));
     }
 }

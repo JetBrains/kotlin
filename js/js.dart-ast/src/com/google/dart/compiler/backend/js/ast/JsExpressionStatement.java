@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class JsExpressionStatement extends AbstractNode implements JsStatement {
     @NotNull
     private JsExpression expression;
@@ -48,5 +50,11 @@ public final class JsExpressionStatement extends AbstractNode implements JsState
             expression = v.accept(expression);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsExpressionStatement deepCopy() {
+        return new JsExpressionStatement(expression.deepCopy());
     }
 }

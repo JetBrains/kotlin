@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a JavaScript if statement.
  */
@@ -74,5 +77,15 @@ public final class JsIf extends SourceInfoAwareJsNode implements JsStatement {
             }
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsIf deepCopy() {
+        JsExpression ifCopy = AstUtil.deepCopy(ifExpression);
+        JsStatement thenCopy = AstUtil.deepCopy(thenStatement);
+        JsStatement elseCopy = AstUtil.deepCopy(elseStatement);
+
+        return new JsIf(ifCopy, thenCopy, elseCopy);
     }
 }

@@ -4,6 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  * One independently loadable fragment of a {@link JsProgram}.
  */
@@ -34,5 +37,11 @@ public class JsProgramFragment extends SourceInfoAwareJsNode {
             v.accept(globalBlock);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsProgramFragment deepCopy() {
+        throw new NotImplementedException();
     }
 }

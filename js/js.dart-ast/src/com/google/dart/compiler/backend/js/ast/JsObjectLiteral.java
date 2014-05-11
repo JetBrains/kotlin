@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -54,5 +56,11 @@ public final class JsObjectLiteral extends JsLiteral {
             v.acceptList(properties);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsObjectLiteral deepCopy() {
+        return new JsObjectLiteral(AstUtil.deepCopy(properties), multiline);
     }
 }

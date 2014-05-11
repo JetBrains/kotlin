@@ -4,6 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,5 +68,15 @@ public final class JsInvocation extends JsExpressionImpl.JsExpressionHasArgument
             v.acceptList(arguments);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsInvocation deepCopy() {
+        JsExpression qualifierCopy = AstUtil.deepCopy(qualifier);
+        List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
+        JsInvocation copy = new JsInvocation(qualifierCopy, argumentsCopy);
+        copy.setInlineStatus(getInlineStatus());
+        return copy;
     }
 }

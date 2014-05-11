@@ -4,7 +4,9 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -42,5 +44,13 @@ public final class JsNew extends JsExpressionImpl.JsExpressionHasArguments {
             v.acceptList(arguments);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsNew deepCopy() {
+        JsExpression constructorCopy = AstUtil.deepCopy(constructorExpression);
+        List<JsExpression> argumentsCopy = AstUtil.deepCopy(arguments);
+        return new JsNew(constructorCopy, argumentsCopy);
     }
 }

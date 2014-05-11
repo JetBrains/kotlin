@@ -4,6 +4,7 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import com.google.dart.compiler.util.AstUtil;
 import org.jetbrains.annotations.NotNull;
 import com.intellij.util.SmartList;
 
@@ -62,5 +63,11 @@ public class JsBlock extends SourceInfoAwareJsNode implements JsStatement {
             v.acceptStatementList(statements);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsBlock deepCopy() {
+        return new JsBlock(AstUtil.deepCopy(statements));
     }
 }

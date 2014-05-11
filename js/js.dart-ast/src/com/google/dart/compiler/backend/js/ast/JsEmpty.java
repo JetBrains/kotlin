@@ -4,6 +4,8 @@
 
 package com.google.dart.compiler.backend.js.ast;
 
+import org.jetbrains.annotations.NotNull;
+
 public class JsEmpty extends SourceInfoAwareJsNode implements JsStatement {
     JsEmpty() {
     }
@@ -17,5 +19,11 @@ public class JsEmpty extends SourceInfoAwareJsNode implements JsStatement {
     public void traverse(JsVisitorWithContext v, JsContext ctx) {
         v.visit(this, ctx);
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsEmpty deepCopy() {
+        return this;
     }
 }

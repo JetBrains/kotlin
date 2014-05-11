@@ -5,7 +5,9 @@
 package com.google.dart.compiler.backend.js.ast;
 
 import com.google.dart.compiler.common.Symbol;
+import com.google.dart.compiler.util.AstUtil;
 import com.intellij.util.SmartList;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -98,6 +100,14 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
             }
             v.endVisit(this, ctx);
         }
+
+        @NotNull
+        @Override
+        public JsVar deepCopy() {
+            if (initExpression == null) return new JsVar(name);
+
+            return new JsVar(name, initExpression.deepCopy());
+        }
     }
 
     public void add(JsVar var) {
@@ -127,6 +137,10 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
         return vars.iterator();
     }
 
+    public List<JsVar> getVars() {
+        return vars;
+    }
+
     @Override
     public void accept(JsVisitor v) {
         v.visitVars(this);
@@ -143,5 +157,11 @@ public class JsVars extends SourceInfoAwareJsNode implements JsStatement, Iterab
             v.acceptList(vars);
         }
         v.endVisit(this, ctx);
+    }
+
+    @NotNull
+    @Override
+    public JsVars deepCopy() {
+        return new JsVars(AstUtil.deepCopy(vars), multiline);
     }
 }
