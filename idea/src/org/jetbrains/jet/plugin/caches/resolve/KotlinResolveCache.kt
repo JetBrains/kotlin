@@ -58,6 +58,12 @@ import org.jetbrains.jet.lang.psi.JetDelegationSpecifierList
 import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetCallableDeclaration
+import org.jetbrains.jet.lang.psi.JetExpressionCodeFragment
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo
+import org.jetbrains.jet.analyzer.analyzeInContext
+import org.jetbrains.jet.lang.resolve.BindingTraceContext
+import org.jetbrains.jet.lang.types.TypeUtils
 
 public trait CacheExtension<T> {
     val platform: TargetPlatform
@@ -192,6 +198,7 @@ private object KotlinResolveDataProvider {
             javaClass<JetProperty>(),
             javaClass<JetImportDirective>(),
             javaClass<JetPackageDirective>(),
+            javaClass<JetExpressionCodeFragment>(),
             // TODO: Non-analyzable so far, add more granular analysis
             javaClass<JetAnnotationEntry>(),
             javaClass<JetTypeConstraint>(),
@@ -221,6 +228,13 @@ private object KotlinResolveDataProvider {
 
     fun analyze(project: Project, resolveSession: ResolveSessionForBodies, analyzableElement: JetElement): AnalyzeExhaust {
         try {
+            if (analyzableElement is JetExpressionCodeFragment) {
+                return AnalyzeExhaust.success(
+                        analyzeExpressionCodeFragment(resolveSession, analyzableElement),
+                        resolveSession.getModuleDescriptor()
+                )
+            }
+
             val file = analyzableElement.getContainingJetFile()
             val virtualFile = file.getVirtualFile()
             if (LightClassUtil.belongsToKotlinBuiltIns(file)
@@ -262,6 +276,27 @@ private object KotlinResolveDataProvider {
 
             return AnalyzeExhaust.error(BindingContext.EMPTY, e)
         }
+    }
 
+    private fun analyzeExpressionCodeFragment(resolveSession: ResolveSessionForBodies, codeFragment: JetExpressionCodeFragment): BindingContext {
+        val codeFragmentExpression = codeFragment.getExpression()
+        if (codeFragmentExpression == null) return BindingContext.EMPTY
+
+        val contextElement = codeFragment.getContext()
+        if (contextElement !is JetExpression) return BindingContext.EMPTY
+
+        val contextForElement = contextElement.getBindingContext()
+
+        val scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
+        if (scopeForContextElement == null) return BindingContext.EMPTY
+        val dataFlowInfoForContextElement = contextForElement[BindingContext.EXPRESSION_DATA_FLOW_INFO, contextElement]
+        val dataFlowInfo = dataFlowInfoForContextElement ?: DataFlowInfo.EMPTY
+        return codeFragmentExpression.analyzeInContext(
+                scopeForContextElement,
+                BindingTraceContext(),
+                dataFlowInfo,
+                TypeUtils.NO_EXPECTED_TYPE,
+                resolveSession.getModuleDescriptor()
+        )
     }
 }
