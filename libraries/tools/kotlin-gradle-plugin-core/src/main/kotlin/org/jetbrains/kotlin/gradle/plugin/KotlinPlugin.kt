@@ -39,6 +39,7 @@ import org.gradle.api.artifacts.Dependency
 import java.util.HashSet
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.initialization.dsl.ScriptHandler
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -250,7 +251,7 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
                     }
                     val basePlugin : BasePlugin = plugin as BasePlugin
                     val javaSources = project.files(javaSourceList)
-                    val androidRT = project.files(basePlugin.getRuntimeJarList())
+                    val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(basePlugin))
                     val fullClasspath = (javaTask.getClasspath() + (javaSources + androidRT)) - project.files(kotlinTask.kotlinDestinationDir)
                     (task as AbstractCompile).setClasspath(fullClasspath)
                 })

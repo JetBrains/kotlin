@@ -73,6 +73,12 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.gmaven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <version>1.5</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -90,9 +96,38 @@
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
             </resource>
+            <resource>
+                <directory>${project.build.outputDirectory}/../groovyOutput</directory>
+            </resource>
         </resources>
 
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmaven</groupId>
+                <artifactId>gmaven-plugin</artifactId>
+                <version>1.5</version>
+                <configuration>
+                    <providerSelection>2.0</providerSelection>
+                    <source/>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals> <goal>compile</goal></goals>
+                        <configuration>
+                            <sources>
+                                <fileset>
+                                    <directory>${project.basedir}/src/main/kotlin</directory>
+                                    <includes>
+                                        <include>**/*.groovy</include>
+                                    </includes>
+                                </fileset>
+                            </sources>
+                            <outputDirectory>${project.build.outputDirectory}/../groovyOutput</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -108,6 +143,12 @@
                         <id>compile</id>
                         <phase>compile</phase>
                         <goals> <goal>compile</goal> </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                                <sourceDir>${project.build.outputDirectory}/../groovyOutput</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
 
                     <execution>
