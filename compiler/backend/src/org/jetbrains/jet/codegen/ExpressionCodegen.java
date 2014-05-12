@@ -1310,15 +1310,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
-        String functionImplClassPrefix = descriptor.getReceiverParameter() != null ? "ExtensionFunctionImpl" : "FunctionImpl";
-        Type closureSuperClass =
-                samInterfaceClass == null ?
-                Type.getObjectType("kotlin/" + functionImplClassPrefix + descriptor.getValueParameters().size()) :
-                OBJECT_TYPE;
-
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, declaration, descriptor, samInterfaceClass, closureSuperClass, context,
-                kind, this, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen);
-
+        ClosureCodegen closureCodegen = new ClosureCodegen(
+                state, declaration, descriptor, samInterfaceClass, context, kind, this,
+                new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), parentCodegen
+        );
         closureCodegen.gen();
 
         return closureCodegen.putInstanceOnStack(v, this);
@@ -2414,16 +2409,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
 
-        JetType kFunctionType = bindingContext.get(EXPRESSION_TYPE, expression);
-        assert kFunctionType != null : "Callable reference is not type checked: " + expression.getText();
-        ClassDescriptor kFunctionImpl = state.getJvmFunctionImplTypes().kFunctionTypeToImpl(kFunctionType);
-        assert kFunctionImpl != null : "Impl type is not found for the function type: " + kFunctionType;
-
-        Type closureSuperClass = typeMapper.mapType(kFunctionImpl);
-
         CallableReferenceGenerationStrategy strategy =
                 new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall(expression.getCallableReference()));
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, closureSuperClass, context,
+        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
                                                            KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
                                                            this, strategy, getParentCodegen());
 

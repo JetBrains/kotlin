@@ -30,6 +30,7 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -40,7 +41,8 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
@@ -53,7 +55,8 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
     private final PsiElement fun;
     private final FunctionDescriptor funDescriptor;
     private final ClassDescriptor samInterface;
-    private final Type superClass;
+    private final JetType superClassType;
+    private final List<JetType> superInterfaceTypes;
     private final CodegenContext context;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
@@ -68,7 +71,6 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             @NotNull PsiElement fun,
             @NotNull FunctionDescriptor funDescriptor,
             @Nullable ClassDescriptor samInterface,
-            @NotNull Type closureSuperClass,
             @NotNull CodegenContext parentContext,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @NotNull LocalLookup localLookup,
@@ -80,12 +82,36 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         this.fun = fun;
         this.funDescriptor = funDescriptor;
         this.samInterface = samInterface;
-        this.superClass = closureSuperClass;
         this.context = parentContext.intoClosure(funDescriptor, localLookup, typeMapper);
         this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
 
         ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
+
+        if (samInterface == null) {
+            this.superInterfaceTypes = new ArrayList<JetType>();
+
+            JetType superClassType = null;
+            for (JetType supertype : classDescriptor.getTypeConstructor().getSupertypes()) {
+                ClassifierDescriptor classifier = supertype.getConstructor().getDeclarationDescriptor();
+                if (DescriptorUtils.isTrait(classifier)) {
+                    superInterfaceTypes.add(supertype);
+                }
+                else {
+                    assert superClassType == null : "Closure class can't have more than one superclass: " + funDescriptor;
+                    superClassType = supertype;
+                }
+            }
+            assert superClassType != null : "Closure class should have a superclass: " + funDescriptor;
+
+            this.superClassType = superClassType;
+        }
+        else {
+            // TODO: getDefaultType() is incorrect here
+            this.superInterfaceTypes = Collections.singletonList(samInterface.getDefaultType());
+            this.superClassType = KotlinBuiltIns.getInstance().getAnyType();
+        }
+
         this.closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure must be calculated for class: " + classDescriptor;
 
@@ -98,24 +124,32 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         ClassBuilder cv = state.getFactory().newVisitor(asmType, fun.getContainingFile());
 
         FunctionDescriptor interfaceFunction;
-        String[] superInterfaces;
-
         if (samInterface == null) {
             interfaceFunction = getInvokeFunction(funDescriptor);
-            superInterfaces = ArrayUtil.EMPTY_STRING_ARRAY;
         }
         else {
             interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
-            superInterfaces = new String[] { typeMapper.mapType(samInterface).getInternalName() };
+        }
+
+        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        sw.writeSuperclass();
+        Type superClassAsmType = typeMapper.mapSupertype(superClassType, sw);
+        sw.writeSuperclassEnd();
+        String[] superInterfaceAsmTypes = new String[superInterfaceTypes.size()];
+        for (int i = 0; i < superInterfaceTypes.size(); i++) {
+            JetType superInterfaceType = superInterfaceTypes.get(i);
+            sw.writeInterface();
+            superInterfaceAsmTypes[i] = typeMapper.mapSupertype(superInterfaceType, sw).getInternalName();
+            sw.writeInterfaceEnd();
         }
 
         cv.defineClass(fun,
                        V1_6,
                        ACC_FINAL | ACC_SUPER | visibilityFlag,
                        asmType.getInternalName(),
-                       getGenericSignature(),
-                       superClass.getInternalName(),
-                       superInterfaces
+                       sw.makeJavaGenericSignature(),
+                       superClassAsmType.getInternalName(),
+                       superInterfaceAsmTypes
         );
         cv.visitSource(fun.getContainingFile().getName(), null);
 
@@ -127,7 +161,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
         fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
 
-        this.constructor = generateConstructor(cv);
+        this.constructor = generateConstructor(cv, superClassAsmType);
 
         if (isConst(closure)) {
             generateConstInstance(cv);
@@ -212,10 +246,10 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
     }
 
     @NotNull
-    private Method generateConstructor(@NotNull ClassBuilder cv) {
+    private Method generateConstructor(@NotNull ClassBuilder cv, @NotNull Type superClassAsmType) {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
 
-        return generateConstructor(cv, args, fun, superClass, state, visibilityFlag);
+        return generateConstructor(cv, args, fun, superClassAsmType, state, visibilityFlag);
     }
 
     public static Method generateConstructor(
@@ -294,23 +328,6 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             argTypes[i] = args.get(i).getFieldType();
         }
         return argTypes;
-    }
-
-    @NotNull
-    private String getGenericSignature() {
-        ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
-        Collection<JetType> supertypes = classDescriptor.getTypeConstructor().getSupertypes();
-        assert supertypes.size() == 1 : "Closure must have exactly one supertype: " + funDescriptor;
-        JetType supertype = supertypes.iterator().next();
-
-        BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
-        sw.writeSuperclass();
-        typeMapper.mapSupertype(supertype, sw);
-        sw.writeSuperclassEnd();
-
-        String signature = sw.makeJavaGenericSignature();
-        assert signature != null : "Closure superclass must have a generic signature: " + funDescriptor;
-        return signature;
     }
 
     public static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {

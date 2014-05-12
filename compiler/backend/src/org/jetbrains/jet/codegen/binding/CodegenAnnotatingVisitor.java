@@ -98,10 +98,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     }
 
     @NotNull
-    private ClassDescriptor recordClassForFunction(@NotNull FunctionDescriptor funDescriptor, @NotNull JetType superType) {
+    private ClassDescriptor recordClassForFunction(@NotNull FunctionDescriptor funDescriptor, @NotNull Collection<JetType> supertypes) {
         ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(funDescriptor.getContainingDeclaration(), Name.special("<closure>"), Modality.FINAL,
-                                        Collections.singleton(superType));
+                new ClassDescriptorImpl(funDescriptor.getContainingDeclaration(), Name.special("<closure>"), Modality.FINAL, supertypes);
         classDescriptor.initialize(JetScope.EMPTY, Collections.<ConstructorDescriptor>emptySet(), null);
 
         bindingTrace.record(CLASS_FOR_FUNCTION, funDescriptor, classDescriptor);
@@ -264,8 +263,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         if (functionDescriptor == null) return;
 
         String name = inventAnonymousClassName(expression);
-        JetType superType = functionImplTypes.getSuperTypeForClosure(functionDescriptor, false);
-        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
+        Collection<JetType> supertypes = functionImplTypes.getSupertypesForClosure(functionDescriptor);
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, supertypes);
         recordClosure(functionLiteral, classDescriptor, name);
 
         pushClassDescriptor(classDescriptor);
@@ -312,11 +311,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         ResolvedCall<?> referencedFunction = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
         if (referencedFunction == null) return;
-        JetType superType =
-                functionImplTypes.getSuperTypeForClosure((FunctionDescriptor) referencedFunction.getResultingDescriptor(), true);
+        JetType supertype =
+                functionImplTypes.getSupertypeForCallableReference((FunctionDescriptor) referencedFunction.getResultingDescriptor());
 
         String name = inventAnonymousClassName(expression);
-        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, Collections.singleton(supertype));
         recordClosure(expression, classDescriptor, name);
 
         pushClassDescriptor(classDescriptor);
@@ -366,8 +365,8 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         }
         else {
             String name = inventAnonymousClassName(function);
-            JetType superType = functionImplTypes.getSuperTypeForClosure(functionDescriptor, false);
-            ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, superType);
+            Collection<JetType> supertypes = functionImplTypes.getSupertypesForClosure(functionDescriptor);
+            ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, supertypes);
             recordClosure(function, classDescriptor, name);
 
             pushClassDescriptor(classDescriptor);

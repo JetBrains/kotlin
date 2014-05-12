@@ -265,11 +265,11 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.ANNOTATION_CLASS);
     }
 
-    public static boolean isTrait(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isTrait(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.TRAIT);
     }
 
-    public static boolean isClass(@NotNull DeclarationDescriptor descriptor) {
+    public static boolean isClass(@Nullable DeclarationDescriptor descriptor) {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
