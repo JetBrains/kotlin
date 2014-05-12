@@ -258,6 +258,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new SimplifyBooleanWithConstantsIntention());
     }
 
+    public void doTestInvertIfCondition(@NotNull String path) throws Exception {
+        doTestIntention(path, new InvertIfConditionIntention());
+    }
+
     public void doTestMakeTypeExplicitInLambda(@NotNull String path) throws Exception {
         doTestIntention(path, new MakeTypeExplicitInLambdaIntention());
     }
