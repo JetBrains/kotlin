@@ -68,4 +68,4 @@ public fun JetType?.safeType(expression: JetExpression): JetType {
     return ErrorUtils.createErrorType("Type for " + expression.getText())
 }
 
-private fun JetScope.getModule(): ModuleDescriptor = DescriptorUtils.getParentOfType(this.getContainingDeclaration(), javaClass<ModuleDescriptor>())!!
+private fun JetScope.getModule(): ModuleDescriptor = DescriptorUtils.getContainingModule(this.getContainingDeclaration())

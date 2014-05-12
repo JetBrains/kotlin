@@ -148,10 +148,7 @@ public class DescriptorUtils {
     }
 
     public static boolean areInSameModule(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {
-        ModuleDescriptor parentModule = getParentOfType(first, ModuleDescriptor.class, false);
-        ModuleDescriptor fromModule = getParentOfType(second, ModuleDescriptor.class, false);
-        assert parentModule != null && fromModule != null;
-        return parentModule.equals(fromModule);
+        return getContainingModule(first).equals(getContainingModule(second));
     }
 
     @Nullable
@@ -192,6 +189,13 @@ public class DescriptorUtils {
             descriptor = descriptor.getContainingDeclaration();
         }
         return null;
+    }
+
+    @NotNull
+    public static ModuleDescriptor getContainingModule(@NotNull DeclarationDescriptor descriptor) {
+        ModuleDescriptor module = getParentOfType(descriptor, ModuleDescriptor.class, false);
+        assert module != null : "Descriptor without a containing module: " + descriptor;
+        return module;
     }
 
     public static boolean isAncestor(
