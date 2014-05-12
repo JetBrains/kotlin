@@ -114,7 +114,7 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetElement resolveControlLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
+    private JetElement resolveControlLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, ExpressionTypingContext context) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
 
@@ -131,7 +131,11 @@ public class LabelResolver {
             return element;
         }
         else if (size == 0) {
-            return resolveNamedLabel(labelName, labelExpression, reportUnresolved, context);
+            JetElement element = resolveNamedLabel(labelName, labelExpression, context);
+            if (element == null) {
+                context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression, labelExpression));
+            }
+            return element;
         }
         BindingContextUtils.reportAmbiguousLabel(context.trace, labelExpression, declarationsByLabel);
         return null;
@@ -142,20 +146,16 @@ public class LabelResolver {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement != null) {
             Name labelName = Name.identifierForLabel(expression.getLabelName());
-            return resolveControlLabel(labelName, labelElement, true, context);
+            return resolveControlLabel(labelName, labelElement, context);
         }
         return null;
     }
 
-    private JetElement resolveNamedLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
+    private JetElement resolveNamedLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, ExpressionTypingContext context) {
         List<JetElement> list = getElementsByLabelName(labelName, labelExpression);
-        if (list.isEmpty()) {
-            if (reportUnresolved) {
-                context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression, labelExpression));
-            }
-            return null;
-        }
-        else if (list.size() > 1) {
+        if (list.isEmpty()) return null;
+
+        if (list.size() > 1) {
             context.trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
@@ -202,7 +202,7 @@ public class LabelResolver {
             return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
         }
         else if (size == 0) {
-            JetElement element = resolveNamedLabel(labelName, targetLabel, false, context);
+            JetElement element = resolveNamedLabel(labelName, targetLabel, context);
             if (element instanceof JetFunctionLiteral) {
                 DeclarationDescriptor declarationDescriptor =
                         context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
