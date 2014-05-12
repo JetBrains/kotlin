@@ -1,0 +1,3 @@
+for ((i, x) in foo.withIndices()) {
+
+}

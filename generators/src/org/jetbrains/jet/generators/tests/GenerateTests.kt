@@ -414,6 +414,8 @@ fun main(args: Array<String>) {
             model("intentions/makeTypeImplicitInLambda", testMethod = "doTestMakeTypeImplicitInLambda")
             model("intentions/convertToForEachLoop", testMethod = "doTestConvertToForEachLoop")
             model("intentions/convertToForEachFunctionCall", testMethod = "doTestConvertToForEachFunctionCall")
+            model("intentions/addForLoopIndicesIntention", testMethod = "doTestAddForLoopIndicesIntention")
+            model("intentions/removeForLoopIndicesIntention", testMethod = "doTestRemoveForLoopIndicesIntention")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {
