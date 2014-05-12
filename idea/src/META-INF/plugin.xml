@@ -706,7 +706,12 @@
       <category>Kotlin</category>
     </intentionAction>
 
-  <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
+    <intentionAction>
+      <className>org.jetbrains.jet.plugin.intentions.OperatorToFunctionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <localInspection implementationClass="org.jetbrains.jet.plugin.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
         enabledByDefault="true"
@@ -747,6 +752,7 @@
     </intentionAction>
 
     <project.converterProvider implementation="org.jetbrains.jet.plugin.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
+
 
   </extensions>
 

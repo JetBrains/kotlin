@@ -270,6 +270,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new MakeTypeImplicitInLambdaIntention());
     }
 
+    public void doTestOperatorToFunction(@NotNull String path) throws Exception {
+        doTestIntention(path, new OperatorToFunctionIntention());
+    }
+
     public void doTestConvertToForEachLoop(@NotNull String path) throws Exception {
         doTestIntention(path, new ConvertToForEachLoopIntention());
     }
