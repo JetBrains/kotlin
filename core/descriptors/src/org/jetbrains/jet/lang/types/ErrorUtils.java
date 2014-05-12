@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
-import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
@@ -122,7 +121,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
+        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
             return Collections.emptyList();
         }
 
@@ -194,7 +193,7 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName) {
+        public Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName) {
             throw new IllegalStateException();
         }
 

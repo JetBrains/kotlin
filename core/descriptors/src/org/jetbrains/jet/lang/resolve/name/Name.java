@@ -69,6 +69,13 @@ public final class Name implements Comparable<Name> {
     }
 
     @NotNull
+    public static Name identifierForLabel(@NotNull String name) {
+        // might be empty ('@' label)
+        if (name.isEmpty()) return identifierNoValidate(name);
+        return identifier(name);
+    }
+
+    @NotNull
     public static Name special(@NotNull String name) {
         if (!name.startsWith("<")) {
             throw new IllegalArgumentException("special name must start with '<': " + name);

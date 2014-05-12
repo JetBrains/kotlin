@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstantChecker;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
-import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScopeImpl;
@@ -378,7 +377,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         String labelName = expression.getLabelName();
         if (labelName != null) {
             LabelResolver.LabeledReceiverResolutionResult resolutionResult = context.labelResolver.resolveThisLabel(
-                    expression.getInstanceReference(), expression.getTargetLabel(), context, new LabelName(labelName));
+                    expression.getInstanceReference(), expression.getTargetLabel(), context, Name.identifierForLabel(labelName));
             if (onlyClassReceivers && resolutionResult.success()) {
                 if (!isDeclaredInClass(resolutionResult.getReceiverParameterDescriptor())) {
                     return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);
@@ -750,7 +749,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert JetTokens.LABELS.contains(operationSign.getReferencedNameElementType());
 
         String referencedName = operationSign.getReferencedName();
-        context.labelResolver.enterLabeledElement(new LabelName(referencedName.substring(1)), baseExpression);
+        context.labelResolver.enterLabeledElement(Name.identifierForLabel(referencedName.substring(1)), baseExpression);
         // TODO : Some processing for the label?
         JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
         context.labelResolver.exitLabeledElement(baseExpression);

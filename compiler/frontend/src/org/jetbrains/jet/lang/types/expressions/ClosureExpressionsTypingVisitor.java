@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
@@ -106,7 +105,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
 
         Name callerName = getCallerName(expression);
         if (callerName != null) {
-            context.labelResolver.enterLabeledElement(new LabelName(callerName.asString()), expression);
+            context.labelResolver.enterLabeledElement(callerName, expression);
         }
 
         JetType expectedType = context.expectedType;

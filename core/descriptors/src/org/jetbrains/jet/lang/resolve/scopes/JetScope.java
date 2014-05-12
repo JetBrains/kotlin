@@ -21,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.name.LabelName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.utils.Printer;
 
@@ -72,7 +71,7 @@ public interface JetScope {
 
     @NotNull
     @ReadOnly
-    Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull LabelName labelName);
+    Collection<DeclarationDescriptor> getDeclarationsByLabel(@NotNull Name labelName);
 
     /**
      * All visible descriptors from current scope.

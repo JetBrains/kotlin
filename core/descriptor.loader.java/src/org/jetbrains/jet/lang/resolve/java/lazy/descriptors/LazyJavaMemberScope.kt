@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve.java.lazy.descriptors
 
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.storage.NotNullLazyValue
-import org.jetbrains.jet.lang.resolve.name.LabelName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
@@ -333,7 +332,7 @@ public abstract class LazyJavaMemberScope(
     protected open fun getAllPropertyNames(): Collection<Name> = memberIndex().getAllFieldNames()
 
     override fun getLocalVariable(name: Name): VariableDescriptor? = null
-    override fun getDeclarationsByLabel(labelName: LabelName) = listOf<DeclarationDescriptor>()
+    override fun getDeclarationsByLabel(labelName: Name) = listOf<DeclarationDescriptor>()
 
     override fun getOwnDeclaredDescriptors() = getAllDescriptors()
     override fun getAllDescriptors() = _allDescriptors()
