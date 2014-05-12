@@ -122,11 +122,6 @@ public class CachedBodiesResolveContext implements BodiesResolveContext {
     }
 
     @Override
-    public void setTopDownAnalysisParameters(@NotNull TopDownAnalysisParameters parameters) {
-        topDownAnalysisParameters = parameters;
-    }
-
-    @Override
     public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         return containingFile != null && topDownAnalysisParameters.getAnalyzeCompletely().apply(containingFile);

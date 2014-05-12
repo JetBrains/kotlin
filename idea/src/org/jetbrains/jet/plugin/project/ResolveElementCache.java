@@ -538,10 +538,6 @@ public class ResolveElementCache {
         }
 
         @Override
-        public void setTopDownAnalysisParameters(TopDownAnalysisParameters parameters) {
-        }
-
-        @Override
         public boolean completeAnalysisNeeded(@NotNull PsiElement element) {
             return true;
         }

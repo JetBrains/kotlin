@@ -62,9 +62,9 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
-    private StringBuilder debugOutput;
+    private final TopDownAnalysisParameters topDownAnalysisParameters;
 
-    private TopDownAnalysisParameters topDownAnalysisParameters;
+    private StringBuilder debugOutput;
 
     public TopDownAnalysisContext(@NotNull TopDownAnalysisParameters topDownAnalysisParameters) {
         this.topDownAnalysisParameters = topDownAnalysisParameters;
@@ -74,11 +74,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     @NotNull
     public TopDownAnalysisParameters getTopDownAnalysisParameters() {
         return topDownAnalysisParameters;
-    }
-
-    @Override
-    public void setTopDownAnalysisParameters(TopDownAnalysisParameters topDownAnalysisParameters) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
     }
 
     public void debug(Object message) {

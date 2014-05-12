@@ -63,7 +63,6 @@ public interface BodiesResolveContext extends GlobalContext {
 
     @NotNull
     TopDownAnalysisParameters getTopDownAnalysisParameters();
-    void setTopDownAnalysisParameters(TopDownAnalysisParameters parameters);
 
     boolean completeAnalysisNeeded(@NotNull PsiElement element);
 }
