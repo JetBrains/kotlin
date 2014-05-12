@@ -2,7 +2,7 @@
 // ERROR: Unresolved reference: SomeTest
 // ACTION: Edit intention settings
 // ACTION: Replace safe access expression with 'if' expression
-// ACTION: Disable 'Replace Safe Access Expression With 'if' Expression'
+// ACTION: Disable 'Replace Safe Access Expression with 'if' Expression'
 
 package testing
 
