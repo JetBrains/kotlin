@@ -19,6 +19,7 @@ package org.jetbrains.jet.plugin.completion.handlers;
 import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
+import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -38,14 +39,29 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                 JetLookupObject lookupObject = (JetLookupObject)item.getObject();
                 DeclarationDescriptor descriptor = lookupObject.getDescriptor();
                 if (descriptor != null) {
-                    String text = DescriptorUtils.getFqName(descriptor).asString();
                     int startOffset = context.getStartOffset();
-                    context.getDocument().replaceString(startOffset, context.getTailOffset(), text);
+                    Document document = context.getDocument();
+                    if (!isAfterDot(document, startOffset)) {
+                        String text = DescriptorUtils.getFqName(descriptor).asString();
+                        document.replaceString(startOffset, context.getTailOffset(), text);
 
-                    PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-                    ShortenReferences.instance$.process((JetFile) context.getFile(), startOffset, startOffset + text.length());
+                        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+                        ShortenReferences.instance$.process((JetFile) context.getFile(), startOffset, startOffset + text.length());
+                    }
                 }
             }
         }
+    }
+
+    private static boolean isAfterDot(Document document, int offset) {
+        CharSequence chars = document.getCharsSequence();
+        while(offset > 0) {
+            offset--;
+            char c = chars.charAt(offset);
+            if (!Character.isWhitespace(c)) {
+                return c == '.';
+            }
+        }
+        return false;
     }
 }

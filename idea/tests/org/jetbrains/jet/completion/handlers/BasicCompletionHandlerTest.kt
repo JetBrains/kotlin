@@ -125,4 +125,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     }
 
     fun testObject() = doTest()
+
+    fun testEnumMember() = doTest(1, "A", null, '\n')
+    fun testEnumMember1() = doTest(1, "A", null, '\n')
 }
