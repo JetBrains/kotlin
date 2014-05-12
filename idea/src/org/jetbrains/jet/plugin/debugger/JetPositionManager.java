@@ -201,7 +201,8 @@ public class JetPositionManager implements PositionManager {
                     analyzeExhaust.throwIfError();
 
                     GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
-                                                                analyzeExhaust.getBindingContext(), new ArrayList<JetFile>(packageFiles));
+                                                                analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
+                                                                new ArrayList<JetFile>(packageFiles));
                     state.beforeCompile();
                     return new Result<JetTypeMapper>(state.getTypeMapper(), PsiModificationTracker.MODIFICATION_COUNT);
                 }

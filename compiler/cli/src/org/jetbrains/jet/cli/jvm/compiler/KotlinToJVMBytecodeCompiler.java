@@ -304,7 +304,8 @@ public class KotlinToJVMBytecodeCompiler {
     private static GenerationState generate(@NotNull JetCoreEnvironment environment, @NotNull AnalyzeExhaust exhaust) {
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState generationState = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF, exhaust.getBindingContext(), environment.getSourceFiles(),
+                environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF,
+                exhaust.getModuleDescriptor(), exhaust.getBindingContext(), environment.getSourceFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, false),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, false),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,

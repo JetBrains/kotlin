@@ -24,7 +24,6 @@ import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -32,7 +31,6 @@ import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.List;
 
@@ -103,10 +101,11 @@ public class GenerationState {
     public GenerationState(
             @NotNull Project project,
             @NotNull ClassBuilderFactory builderFactory,
+            @NotNull ModuleDescriptor module,
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files
     ) {
-        this(project, builderFactory, Progress.DEAF, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
+        this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
              InlineCodegenUtil.DEFAULT_INLINE_FLAG);
     }
 
@@ -114,6 +113,7 @@ public class GenerationState {
             @NotNull Project project,
             @NotNull ClassBuilderFactory builderFactory,
             @NotNull Progress progress,
+            @NotNull ModuleDescriptor module,
             @NotNull BindingContext bindingContext,
             @NotNull List<JetFile> files,
             boolean generateNotNullAssertions,
@@ -139,23 +139,8 @@ public class GenerationState {
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
         this.generateClassFilter = generateClassFilter;
 
-        ReflectionTypes reflectionTypes = new ReflectionTypes(getAnyModule());
+        ReflectionTypes reflectionTypes = new ReflectionTypes(module);
         this.functionImplTypes = new JvmFunctionImplTypes(reflectionTypes);
-    }
-
-    @NotNull
-    private ModuleDescriptor getAnyModule() {
-        // TODO: this shouldn't be happening once we have modules in the compiler (there simply will be a ModuleDescriptor instance here)
-
-        if (files.isEmpty()) {
-            // This is a hackish workaround for this code not to fail when invoked for an empty file list. Technically it doesn't matter
-            // which module we return here: if we're not compiling anything, we should never reach a point where we need this module
-            return KotlinBuiltIns.getInstance().getBuiltInsModule();
-        }
-
-        PackageFragmentDescriptor descriptor = bindingContext.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, files.get(0));
-        assert descriptor != null : "File is not under any module: " + files.get(0);
-        return descriptor.getContainingDeclaration();
     }
 
     @NotNull

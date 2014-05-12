@@ -74,7 +74,8 @@ public class DebuggerUtils {
         // TODO: this code is not entirely correct, because it takes a session for only one file
         AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResultsForElements(files);
 
-        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getBindingContext(), allPackageFiles, className.getInternalName());
+        return PsiCodegenPredictor.getFileForCodegenNamedClass(analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
+                                                               allPackageFiles, className.getInternalName());
     }
 
     @NotNull

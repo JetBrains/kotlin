@@ -117,7 +117,7 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @NotNull
     private LightClassConstructionContext getContext() {
-        return new LightClassConstructionContext(getTrace().getBindingContext(), null);
+        return new LightClassConstructionContext(getTrace().getBindingContext(), getModule());
     }
 
     @NotNull

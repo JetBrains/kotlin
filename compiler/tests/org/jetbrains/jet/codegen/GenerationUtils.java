@@ -48,14 +48,18 @@ public class GenerationUtils {
     public static GenerationState compileManyFilesGetGenerationStateForTest(@NotNull Project project, @NotNull List<JetFile> files) {
         AnalyzeExhaust analyzeExhaust = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 project, files, Predicates.<PsiFile>alwaysTrue());
-        return compileFilesGetGenerationState(project,analyzeExhaust, files);
+        return compileFilesGetGenerationState(project, analyzeExhaust, files);
     }
 
-
     @NotNull
-    public static GenerationState compileFilesGetGenerationState(@NotNull Project project, @NotNull AnalyzeExhaust analyzeExhaust, @NotNull List<JetFile> files) {
+    public static GenerationState compileFilesGetGenerationState(
+            @NotNull Project project,
+            @NotNull AnalyzeExhaust analyzeExhaust,
+            @NotNull List<JetFile> files
+    ) {
         analyzeExhaust.throwIfError();
-        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getBindingContext(), files);
+        GenerationState state = new GenerationState(project, ClassBuilderFactories.TEST, analyzeExhaust.getModuleDescriptor(),
+                                                    analyzeExhaust.getBindingContext(), files);
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         return state;
     }

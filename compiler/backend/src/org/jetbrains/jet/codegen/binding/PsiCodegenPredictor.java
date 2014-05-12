@@ -26,6 +26,7 @@ import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -144,13 +145,14 @@ public final class PsiCodegenPredictor {
 
     @Nullable
     public static JetFile getFileForCodegenNamedClass(
+            @NotNull ModuleDescriptor module,
             @NotNull BindingContext context,
             @NotNull Collection<JetFile> allPackageFiles,
             @NotNull String classInternalName
     ) {
         Project project = allPackageFiles.iterator().next().getProject();
-        GenerationState state =
-                new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, context, new ArrayList<JetFile>(allPackageFiles));
+        GenerationState state = new GenerationState(project, ClassBuilderFactories.THROW_EXCEPTION, module, context,
+                                                    new ArrayList<JetFile>(allPackageFiles));
         state.beforeCompile();
 
         BindingTrace trace = state.getBindingTrace();

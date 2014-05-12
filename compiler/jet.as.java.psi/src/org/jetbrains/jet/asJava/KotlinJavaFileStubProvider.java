@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.lang.InlineUtil;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -262,10 +261,6 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
         checkForBuiltIns(packageFqName, files);
 
         LightClassConstructionContext context = stubGenerationStrategy.getContext(files);
-        Throwable error = context.getError();
-        if (error != null) {
-            throw new IllegalStateException("failed to analyze: " + error, error);
-        }
 
         PsiJavaFileStub javaFileStub = createJavaFileStub(packageFqName, getRepresentativeVirtualFile(files));
         BindingContext bindingContext;
@@ -277,11 +272,13 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     project,
                     new KotlinLightClassBuilderFactory(stubStack),
                     Progress.DEAF,
+                    context.getModule(),
                     context.getBindingContext(),
                     Lists.newArrayList(files),
                     /*not-null assertions*/false, false,
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
-                    /*to generate inline flag on methods*/true);
+                    /*to generate inline flag on methods*/true
+            );
             state.beforeCompile();
 
             bindingContext = state.getBindingContext();

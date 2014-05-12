@@ -17,16 +17,16 @@
 package org.jetbrains.jet.asJava;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 public class LightClassConstructionContext {
     private final BindingContext bindingContext;
-    private final Throwable error;
+    private final ModuleDescriptor module;
 
-    public LightClassConstructionContext(@NotNull BindingContext bindingContext, @Nullable Throwable error) {
+    public LightClassConstructionContext(@NotNull BindingContext bindingContext, @NotNull ModuleDescriptor module) {
         this.bindingContext = bindingContext;
-        this.error = error;
+        this.module = module;
     }
 
     @NotNull
@@ -34,8 +34,8 @@ public class LightClassConstructionContext {
         return bindingContext;
     }
 
-    @Nullable
-    public Throwable getError() {
-        return error;
+    @NotNull
+    public ModuleDescriptor getModule() {
+        return module;
     }
 }

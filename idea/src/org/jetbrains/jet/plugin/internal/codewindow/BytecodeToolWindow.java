@@ -108,7 +108,8 @@ public class BytecodeToolWindow extends JPanel implements Disposable {
                 if (exhaust.isError()) {
                     return printStackTraceToString(exhaust.getError());
                 }
-                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, exhaust.getBindingContext(),
+                state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+                                            exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
                                             Collections.singletonList(jetFile), true, true,
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
                                             enableInline.isSelected());

@@ -57,7 +57,8 @@ public class CodegenTestUtil {
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
         GenerationState state = new GenerationState(
-                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF, analyzeExhaust.getBindingContext(), files.getPsiFiles(),
+                environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
+                analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(), files.getPsiFiles(),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_ASSERTIONS, true),
                 configuration.get(JVMConfigurationKeys.GENERATE_NOT_NULL_PARAMETER_ASSERTIONS, true),
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
