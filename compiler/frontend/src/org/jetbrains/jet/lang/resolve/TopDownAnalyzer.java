@@ -28,7 +28,6 @@ import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
 import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerBasic;
-import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor;
@@ -39,7 +38,6 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope;
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingContext;
@@ -204,10 +202,6 @@ public class TopDownAnalyzer {
             @NotNull final DeclarationDescriptor containingDeclaration,
             @NotNull JetClassOrObject object
     ) {
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<dummy for object>"),
-                                                                         Collections.<ImportPath>emptyList(),
-                                                                         PlatformToKotlinClassMap.EMPTY);
-
         TopDownAnalysisParameters topDownAnalysisParameters =
                 TopDownAnalysisParameters.createForLocalDeclarations(
                         globalContext.getStorageManager(),
@@ -216,7 +210,7 @@ public class TopDownAnalyzer {
                 );
 
         InjectorForTopDownAnalyzerBasic injector = new InjectorForTopDownAnalyzerBasic(
-                object.getProject(), topDownAnalysisParameters, context.trace, moduleDescriptor
+                object.getProject(), topDownAnalysisParameters, context.trace, DescriptorUtils.getContainingModule(containingDeclaration)
         );
 
         TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters);

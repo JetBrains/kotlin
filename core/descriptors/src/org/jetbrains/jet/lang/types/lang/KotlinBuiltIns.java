@@ -276,21 +276,6 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
-    public ClassDescriptor getKFunction(int parameterCount) {
-        return getBuiltInClassByName("KFunction" + parameterCount);
-    }
-
-    @NotNull
-    public ClassDescriptor getKMemberFunction(int parameterCount) {
-        return getBuiltInClassByName("KMemberFunction" + parameterCount);
-    }
-
-    @NotNull
-    public ClassDescriptor getKExtensionFunction(int parameterCount) {
-        return getBuiltInClassByName("KExtensionFunction" + parameterCount);
-    }
-
-    @NotNull
     public ClassDescriptor getThrowable() {
         return getBuiltInClassByName("Throwable");
     }
@@ -300,6 +285,7 @@ public class KotlinBuiltIns {
         return getBuiltInClassByName("data");
     }
 
+    @NotNull
     public ClassDescriptor getNoinlineClassAnnotation() {
         return getBuiltInClassByName("noinline");
     }
