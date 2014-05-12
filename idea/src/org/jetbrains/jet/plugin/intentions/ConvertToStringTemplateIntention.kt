@@ -15,16 +15,27 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.jet.lexer.JetTokens
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.psi.JetPsiUtil
+import com.intellij.psi.PsiErrorElement
+import com.intellij.openapi.util.text.StringUtil
 
 
 public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBinaryExpression>("convert.to.string.template", javaClass()) {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if ( element.getOperationToken() != JetTokens.PLUS) return false
+        if (element.getOperationToken() != JetTokens.PLUS) return false
+
         val context = AnalyzerFacadeWithCache.getContextForElement(element)
+
         val elementType = BindingContextUtils.getRecordedTypeInfo(element, context)?.getType()
         val constructorDescriptor = (elementType?.getConstructor()?.getDeclarationDescriptor())
         if (constructorDescriptor == null) return false
-        return DescriptorUtils.getFqName(constructorDescriptor).asString() == "kotlin.String"
+        if (DescriptorUtils.getFqName(constructorDescriptor).asString() != "kotlin.String") return false
+
+        val (left, right) = Pair(element.getLeft(), element.getRight())
+        if (left == null || right == null) return false
+
+        return left.getChildren().none({ c -> c is PsiErrorElement }) &&
+        right.getChildren().none({ c -> c is PsiErrorElement })
+
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
@@ -39,7 +50,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
 
 
     private fun fold(left: JetExpression?, right: String): String {
-        val needsBraces = right.first() != '$' && Character.isJavaIdentifierPart(right.first())
+        val needsBraces = !right.isEmpty() && right.first() != '$' && Character.isJavaIdentifierPart(right.first())
         if (left is JetBinaryExpression && isApplicableTo(left)) {
             val l_right = mkString(left.getRight(), needsBraces)
             val newBase = "%s%s".format(l_right, right)
@@ -53,6 +64,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
 
     private fun mkString(expr: JetExpression?, needsBraces: Boolean): String {
         val expression = JetPsiUtil.deparenthesize(expr)
+        val expressionText = expression?.getText() ?: ""
         return when (expression) {
             is JetConstantExpression -> {
                 val context = AnalyzerFacadeWithCache.getContextForElement(expression)
@@ -67,24 +79,25 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingIntention<JetBin
                 }
             }
             is JetStringTemplateExpression -> {
-                val base = unquote(expression.getText())
-                if (needsBraces && base.endsWith('$'))
+                val base = if (expressionText.startsWith("\"\"\"") && (expressionText.endsWith("\"\"\""))) {
+                    val unquoted = expressionText.substring(3, expressionText.length - 3)
+                    StringUtil.escapeStringCharacters(unquoted)
+                }
+                else {
+                    StringUtil.unquoteString(expressionText)
+                }
+                if (needsBraces && base.endsWith('$')) {
                     base.substring(0, base.length - 1) + "\\$"
-                else
+                }
+                else {
                     base
+                }
             }
             is JetSimpleNameExpression ->
-                if (needsBraces) "\${${expression.getText()}}" else "\$${expression.getText()}"
+                if (needsBraces) "\${${expressionText}}" else "\$${expressionText}"
             null -> ""
-            else -> "\${${expression.getText().replace('\n', ' ')}}"
+            else -> "\${${expressionText.replaceAll("\n+", " ")}}"
         }
     }
 
-    private fun unquote(str: String): String {
-        val length = str.length
-        if (length < 2 || str.first() != '"' || str.last() != '"')
-            throw IllegalStateException("Cannot unquote string: ${str}")
-        else
-            return str.substring(1, length - 1)
-    }
 }
