@@ -64,6 +64,13 @@ public class AsmUtil {
             KotlinBuiltIns.getInstance().getChar()
     );
 
+    private static final Set<String> STRINGBULDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
+            String.class.getName(),
+            StringBuilder.class.getName(),
+            StringBuffer.class.getName(),
+            CharSequence.class.getName()
+    );
+
     private static final int NO_FLAG_LOCAL = 0;
     public static final int NO_FLAG_PACKAGE_PRIVATE = 0;
 
@@ -288,9 +295,21 @@ public class AsmUtil {
 
     private static Type stringValueOfOrStringBuilderAppendType(Type type) {
         int sort = type.getSort();
-        return sort == Type.OBJECT || sort == Type.ARRAY
-                   ? AsmTypeConstants.OBJECT_TYPE
-                   : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
+        switch (sort) {
+            case Type.OBJECT:
+                if(STRINGBULDER_OBJECT_APPEND_ARG_TYPES.contains(type.getClassName())) {
+                    return type;
+                } else {
+                    return AsmTypeConstants.OBJECT_TYPE;
+                }
+            case Type.ARRAY:
+                return AsmTypeConstants.OBJECT_TYPE;
+            case Type.BYTE:
+            case Type.SHORT:
+                return Type.INT_TYPE;
+            default:
+                return type;
+        }
     }
 
     public static void genThrow(@NotNull MethodVisitor mv, @NotNull String exception, @NotNull String message) {
