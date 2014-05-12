@@ -396,4 +396,9 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/True.kt");
     }
     
+    @TestMetadata("True2.kt")
+    public void testTrue2() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/True2.kt");
+    }
+    
 }
