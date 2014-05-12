@@ -49,6 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
+import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
@@ -66,6 +68,13 @@ public class AsmUtil {
             KotlinBuiltIns.getInstance().getFloat(),
             KotlinBuiltIns.getInstance().getDouble(),
             KotlinBuiltIns.getInstance().getChar()
+    );
+
+    private static final Set<Type> STRINGBULDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
+            getType(String.class),
+            getType(StringBuilder.class),
+            getType(StringBuffer.class),
+            getType(CharSequence.class)
     );
 
     private static final int NO_FLAG_LOCAL = 0;
@@ -308,11 +317,30 @@ public class AsmUtil {
         return type;
     }
 
-    private static Type stringValueOfOrStringBuilderAppendType(Type type) {
+    private static Type stringValueOfType(Type type) {
         int sort = type.getSort();
         return sort == Type.OBJECT || sort == Type.ARRAY
-                   ? AsmTypeConstants.OBJECT_TYPE
-                   : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
+               ? AsmTypeConstants.OBJECT_TYPE
+               : sort == Type.BYTE || sort == Type.SHORT ? Type.INT_TYPE : type;
+    }
+
+    private static Type stringBuilderAppendType(Type type) {
+        int sort = type.getSort();
+        switch (sort) {
+            case Type.OBJECT:
+                if (STRINGBULDER_OBJECT_APPEND_ARG_TYPES.contains(type)) {
+                    return type;
+                } else {
+                    return AsmTypeConstants.OBJECT_TYPE;
+                }
+            case Type.ARRAY:
+                return AsmTypeConstants.OBJECT_TYPE;
+            case Type.BYTE:
+            case Type.SHORT:
+                return Type.INT_TYPE;
+            default:
+                return type;
+        }
     }
 
     public static void genThrow(@NotNull MethodVisitor mv, @NotNull String exception, @NotNull String message) {
@@ -374,12 +402,12 @@ public class AsmUtil {
     }
 
     public static void genInvokeAppendMethod(InstructionAdapter v, Type type) {
-        type = stringValueOfOrStringBuilderAppendType(type);
+        type = stringBuilderAppendType(type);
         v.invokevirtual("java/lang/StringBuilder", "append", "(" + type.getDescriptor() + ")Ljava/lang/StringBuilder;");
     }
 
     public static StackValue genToString(InstructionAdapter v, StackValue receiver, Type receiverType) {
-        Type type = stringValueOfOrStringBuilderAppendType(receiverType);
+        Type type = stringValueOfType(receiverType);
         receiver.put(type, v);
         v.invokestatic("java/lang/String", "valueOf", "(" + type.getDescriptor() + ")Ljava/lang/String;");
         return StackValue.onStack(JAVA_STRING_TYPE);
