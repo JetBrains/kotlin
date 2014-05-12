@@ -103,11 +103,6 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
         JetBlockExpression bodyExpression = expression.getFunctionLiteral().getBodyExpression();
         if (bodyExpression == null) return null;
 
-        Name callerName = getCallerName(expression);
-        if (callerName != null) {
-            context.labelResolver.enterLabeledElement(callerName, expression);
-        }
-
         JetType expectedType = context.expectedType;
         boolean functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.getInstance().isFunctionOrExtensionFunctionType(
                 expectedType);
@@ -125,46 +120,7 @@ public class ClosureExpressionsTypingVisitor extends ExpressionTypingVisitor {
             return JetTypeInfo.create(resultType, context.dataFlowInfo);
         }
 
-        if (callerName != null) {
-            context.labelResolver.exitLabeledElement(expression);
-        }
-
         return DataFlowUtils.checkType(resultType, expression, context, context.dataFlowInfo);
-    }
-
-    @Nullable
-    private static Name getCallerName(@NotNull JetFunctionLiteralExpression expression) {
-        JetCallExpression callExpression = getContainingCallExpression(expression);
-        if (callExpression == null) return null;
-
-        JetExpression calleeExpression = callExpression.getCalleeExpression();
-        if (calleeExpression instanceof JetSimpleNameExpression) {
-            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
-            return nameExpression.getReferencedNameAsName();
-        }
-
-        return null;
-    }
-
-    @Nullable
-    private static JetCallExpression getContainingCallExpression(JetFunctionLiteralExpression expression) {
-        PsiElement parent = expression.getParent();
-        if (parent instanceof JetCallExpression) {
-            // f {}
-            return (JetCallExpression) parent;
-        }
-
-        if (parent instanceof JetValueArgument) {
-            // f ({}) or f(p = {})
-            JetValueArgument argument = (JetValueArgument) parent;
-            PsiElement argList = argument.getParent();
-            if (argList == null) return null;
-            PsiElement call = argList.getParent();
-            if (call instanceof JetCallExpression) {
-                return (JetCallExpression) call;
-            }
-        }
-        return null;
     }
 
     @NotNull

@@ -137,6 +137,14 @@ public class JetPsiUtil {
     }
 
     @NotNull
+    public static String getLabelName(@NotNull JetPrefixExpression expression) {
+        assert isLabeledExpression(expression);
+        String labelName = expression.getOperationReference().getReferencedName();
+        assert labelName.startsWith("@") : "Incorrect label name " + expression.getText();
+        return labelName.substring(1);
+    }
+
+    @NotNull
     public static Name safeName(@Nullable String name) {
         return name == null ? SpecialNames.NO_NAME_PROVIDED : Name.identifier(name);
     }

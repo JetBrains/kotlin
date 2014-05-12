@@ -748,12 +748,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
         assert JetTokens.LABELS.contains(operationSign.getReferencedNameElementType());
 
-        String referencedName = operationSign.getReferencedName();
-        context.labelResolver.enterLabeledElement(Name.identifierForLabel(referencedName.substring(1)), baseExpression);
-        // TODO : Some processing for the label?
-        JetTypeInfo typeInfo = facade.getTypeInfo(baseExpression, context, isStatement);
-        context.labelResolver.exitLabeledElement(baseExpression);
-        return typeInfo;
+        return facade.getTypeInfo(baseExpression, context, isStatement);
     }
 
     private static boolean isKnownToBeNotNull(JetExpression expression, ExpressionTypingContext context) {

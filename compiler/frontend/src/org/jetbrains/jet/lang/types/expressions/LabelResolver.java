@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.lang.types.expressions;
 
+import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -28,9 +28,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.LABEL_NAME_CLASH;
 import static org.jetbrains.jet.lang.diagnostics.Errors.UNRESOLVED_REFERENCE;
@@ -44,48 +42,78 @@ public class LabelResolver {
         return new LabelResolver();
     }
 
-    private final Map<Name, Stack<JetElement>> labeledElements = new HashMap<Name, Stack<JetElement>>();
-
     private LabelResolver() {}
 
-    public void enterLabeledElement(@NotNull Name labelName, @NotNull JetExpression labeledExpression) {
-        JetExpression cacheExpression = getCachingExpression(labeledExpression);
-        if (cacheExpression != null) {
-            Stack<JetElement> stack = labeledElements.get(labelName);
-            if (stack == null) {
-                stack = new Stack<JetElement>();
-                labeledElements.put(labelName, stack);
+    @NotNull
+    private List<JetElement> getElementsByLabelName(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression) {
+        List<JetElement> elements = Lists.newArrayList();
+        PsiElement parent = labelExpression.getParent();
+        while (parent != null) {
+            Name name = getLabelNameIfAny(parent);
+            if (name != null && name.equals(labelName)) {
+                elements.add(getExpressionUnderLabel((JetExpression) parent));
             }
-            stack.push(cacheExpression);
+            parent = parent.getParent();
         }
+        return elements;
     }
 
-    public void exitLabeledElement(@NotNull JetExpression expression) {
-        JetExpression cacheExpression = getCachingExpression(expression);
-
-        // TODO : really suboptimal
-        for (Iterator<Map.Entry<Name,Stack<JetElement>>> mapIter = labeledElements.entrySet().iterator(); mapIter.hasNext(); ) {
-            Map.Entry<Name, Stack<JetElement>> entry = mapIter.next();
-            Stack<JetElement> stack = entry.getValue();
-            for (Iterator<JetElement> stackIter = stack.iterator(); stackIter.hasNext(); ) {
-                JetElement recorded = stackIter.next();
-                if (recorded == cacheExpression) {
-                    stackIter.remove();
-                }
-            }
-            if (stack.isEmpty()) {
-                mapIter.remove();
+    @Nullable
+    private Name getLabelNameIfAny(@NotNull PsiElement element) {
+        if (element instanceof JetPrefixExpression) {
+            JetPrefixExpression prefixExpression = (JetPrefixExpression) element;
+            if (JetPsiUtil.isLabeledExpression(prefixExpression)) {
+                return Name.identifierForLabel(JetPsiUtil.getLabelName(prefixExpression));
             }
         }
+        else if (element instanceof JetFunctionLiteralExpression) {
+            return getCallerName((JetFunctionLiteralExpression) element);
+        }
+        return null;
     }
 
     @NotNull
-    private JetExpression getCachingExpression(@NotNull JetExpression labeledExpression) {
-        JetExpression expression = JetPsiUtil.deparenthesize(labeledExpression);
+    private JetExpression getExpressionUnderLabel(@NotNull JetExpression labeledExpression) {
+        JetExpression expression = JetPsiUtil.safeDeparenthesize(labeledExpression, true);
         if (expression instanceof JetFunctionLiteralExpression) {
-            expression = ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
+            return ((JetFunctionLiteralExpression) expression).getFunctionLiteral();
         }
         return expression;
+    }
+
+    @Nullable
+    private Name getCallerName(@NotNull JetFunctionLiteralExpression expression) {
+        JetCallExpression callExpression = getContainingCallExpression(expression);
+        if (callExpression == null) return null;
+
+        JetExpression calleeExpression = callExpression.getCalleeExpression();
+        if (calleeExpression instanceof JetSimpleNameExpression) {
+            JetSimpleNameExpression nameExpression = (JetSimpleNameExpression) calleeExpression;
+            return nameExpression.getReferencedNameAsName();
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private JetCallExpression getContainingCallExpression(JetFunctionLiteralExpression expression) {
+        PsiElement parent = expression.getParent();
+        if (parent instanceof JetCallExpression) {
+            // f {}
+            return (JetCallExpression) parent;
+        }
+
+        if (parent instanceof JetValueArgument) {
+            // f ({}) or f(p = {})
+            JetValueArgument argument = (JetValueArgument) parent;
+            PsiElement argList = argument.getParent();
+            if (argList == null) return null;
+            PsiElement call = argList.getParent();
+            if (call instanceof JetCallExpression) {
+                return (JetCallExpression) call;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -123,18 +151,18 @@ public class LabelResolver {
     }
 
     private JetElement resolveNamedLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, boolean reportUnresolved, ExpressionTypingContext context) {
-        Stack<JetElement> stack = labeledElements.get(labelName);
-        if (stack == null || stack.isEmpty()) {
+        List<JetElement> list = getElementsByLabelName(labelName, labelExpression);
+        if (list.isEmpty()) {
             if (reportUnresolved) {
                 context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression, labelExpression));
             }
             return null;
         }
-        else if (stack.size() > 1) {
+        else if (list.size() > 1) {
             context.trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
-        JetElement result = stack.peek();
+        JetElement result = list.get(0);
         context.trace.record(LABEL_TARGET, labelExpression, result);
         return result;
     }
