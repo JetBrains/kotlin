@@ -216,6 +216,11 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/IfValue3.kt");
     }
     
+    @TestMetadata("IfValue4.kt")
+    public void testIfValue4() throws Exception {
+        doTest("idea/testData/completion/smart/IfValue4.kt");
+    }
+    
     @TestMetadata("IfValueInBlock1.kt")
     public void testIfValueInBlock1() throws Exception {
         doTest("idea/testData/completion/smart/IfValueInBlock1.kt");
