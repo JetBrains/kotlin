@@ -61,7 +61,7 @@ public class JvmResolveUtil {
         }
 
         AnalyzeExhaust analyzeExhaust = analyzeFilesWithJavaIntegration(
-                project, files, filesToAnalyzeCompletely, false);
+                project, files, filesToAnalyzeCompletely);
 
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
 
@@ -74,21 +74,10 @@ public class JvmResolveUtil {
             Collection<JetFile> files,
             Predicate<PsiFile> filesToAnalyzeCompletely
     ) {
-        return analyzeFilesWithJavaIntegration(
-                project, files, filesToAnalyzeCompletely, false);
-    }
-
-    @NotNull
-    public static AnalyzeExhaust analyzeFilesWithJavaIntegration(
-            Project project,
-            Collection<JetFile> files,
-            Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve
-    ) {
         BindingTraceContext bindingTraceContext = new BindingTraceContext();
 
-        return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
-                                               storeContextForBodiesResolve);
+        return analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely
+        );
     }
 
     @NotNull
@@ -96,11 +85,9 @@ public class JvmResolveUtil {
             Project project,
             Collection<JetFile> files,
             BindingTrace trace,
-            Predicate<PsiFile> filesToAnalyzeCompletely,
-            boolean storeContextForBodiesResolve
+            Predicate<PsiFile> filesToAnalyzeCompletely
     ) {
         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, trace, filesToAnalyzeCompletely,
-                                                                    storeContextForBodiesResolve,
                                                                     AnalyzerFacadeForJVM.createJavaModule("<module>"),
                                                                     MemberFilter.ALWAYS_TRUE);
     }

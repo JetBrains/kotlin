@@ -53,7 +53,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                 getProject(), jetFiles, support.getTrace(),
-                Predicates.<PsiFile>alwaysTrue(), false, support.getModule(),
+                Predicates.<PsiFile>alwaysTrue(), support.getModule(),
                 MemberFilter.ALWAYS_TRUE).getBindingContext();
 
         boolean ok = true;

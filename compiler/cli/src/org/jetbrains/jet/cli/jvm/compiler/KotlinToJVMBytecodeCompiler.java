@@ -282,7 +282,6 @@ public class KotlinToJVMBytecodeCompiler {
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 Predicates.<PsiFile>alwaysTrue(),
-                                false,
                                 sharedModule,
                                 new CliSourcesMemberFilter(environment));
                     }
