@@ -1,7 +1,7 @@
 fun doSomething<T>(a: T) {}
 
 fun test(n: Int): String {
-    <caret>when(n) {
+    <caret>when (n) {
         1 -> {
             doSomething("***")
             return "one"

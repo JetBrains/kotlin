@@ -1,6 +1,6 @@
 fun foo() {
     val a = "aa"
-    when(a.capitalize()) {
+    when (a.capitalize()) {
         <caret> -> {
         }
         else -> {

@@ -1,6 +1,6 @@
 fun foo() {
     val a = "aa"
-    when(a) {
+    when (a) {
         <caret> -> {
         }
         else -> {

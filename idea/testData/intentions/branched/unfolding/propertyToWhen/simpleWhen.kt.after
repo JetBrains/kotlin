@@ -1,6 +1,6 @@
 fun test(n: Int): String? {
     val res: String?
-    <caret>when(n) {
+    <caret>when (n) {
         1 -> res = "one"
         2 -> res = "two"
         else -> res = null

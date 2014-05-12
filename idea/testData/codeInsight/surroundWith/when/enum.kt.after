@@ -5,7 +5,7 @@ enum class MyEnum {
 
 fun foo() {
     val a = MyEnum.FIRST
-    when(a) {
+    when (a) {
         <caret> -> {
         }
     }

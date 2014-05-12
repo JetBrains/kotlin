@@ -61,9 +61,7 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         }
         
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                         new File("idea/testData/indentationOnNewline"),
-                                                         Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
         }
         
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")

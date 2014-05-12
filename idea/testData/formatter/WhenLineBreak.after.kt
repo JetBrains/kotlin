@@ -1,6 +1,6 @@
 fun f()
 {
-    when(c)
+    when (c)
     {
         a ->
         {
@@ -11,7 +11,7 @@ fun f()
         }
     }
 
-    when(c)
+    when (c)
     {
         a ->
         {
@@ -22,7 +22,7 @@ fun f()
         }
     }
 
-    when(c)
+    when (c)
     {
         a ->
         {
@@ -33,7 +33,7 @@ fun f()
         }
     }
 
-    when(c) //eol comment
+    when (c) //eol comment
     {
         a -> //eol comment
         {

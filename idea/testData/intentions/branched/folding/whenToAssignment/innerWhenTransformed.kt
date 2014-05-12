@@ -4,7 +4,7 @@ fun test(n: Int): String {
     var res: String
 
     if (3 > 2) {
-        <caret>when(n) {
+        <caret>when (n) {
             1 -> {
                 doSomething("***")
                 res = "one"
