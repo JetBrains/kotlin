@@ -18,16 +18,18 @@ fun get(_this: Any, p: PropertyMetadata): Int = 0
 L0:
   1 <START>
     v(_this: Any)
-    w(_this)
+    magic(_this: Any) -> <v0>
+    w(_this|<v0>)
     v(p: PropertyMetadata)
-    w(p)
-    r(0)
+    magic(p: PropertyMetadata) -> <v1>
+    w(p|<v1>)
+    r(0) -> <v2>
 L1:
-    <END>                     NEXT:[<SINK>]
+    <END>                                 NEXT:[<SINK>]
 error:
-    <ERROR>                   PREV:[]
+    <ERROR>                               PREV:[]
 sink:
-    <SINK>                    PREV:[<ERROR>, <END>]
+    <SINK>                                PREV:[<ERROR>, <END>]
 =====================
 == a ==
 val a = Delegate()
@@ -36,14 +38,14 @@ L0:
   1 <START>
     v(val a = Delegate())
     mark(Delegate())
-    call(Delegate, <init>)
-    w(a)
+    call(Delegate, <init>) -> <v0>
+    w(a|<v0>)
 L1:
-    <END>                     NEXT:[<SINK>]
+    <END>                             NEXT:[<SINK>]
 error:
-    <ERROR>                   PREV:[]
+    <ERROR>                           PREV:[]
 sink:
-    <SINK>                    PREV:[<ERROR>, <END>]
+    <SINK>                            PREV:[<ERROR>, <END>]
 =====================
 == b ==
 val b by a
@@ -51,7 +53,7 @@ val b by a
 L0:
   1 <START>
     v(val b by a)
-    r(a)
+    r(a) -> <v0>
 L1:
     <END>            NEXT:[<SINK>]
 error:

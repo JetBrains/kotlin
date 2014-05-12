@@ -20,18 +20,31 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetThrowExpression;
 
+import java.util.Collections;
+import java.util.List;
+
 public class ThrowExceptionInstruction extends AbstractJumpInstruction {
+    private final PseudoValue usedValue;
+
     public ThrowExceptionInstruction(
             @NotNull JetThrowExpression expression,
             @NotNull LexicalScope lexicalScope,
-            @NotNull Label errorLabel
+            @NotNull Label errorLabel,
+            @NotNull PseudoValue usedValue
     ) {
         super(expression, errorLabel, lexicalScope);
+        this.usedValue = usedValue;
     }
 
     @Override
     public String toString() {
-        return "throw (" + element.getText() + ")";
+        return "throw (" + element.getText() + "|" + usedValue + ")";
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return Collections.singletonList(usedValue);
     }
 
     @Override
@@ -46,6 +59,6 @@ public class ThrowExceptionInstruction extends AbstractJumpInstruction {
 
     @Override
     protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
-        return new ThrowExceptionInstruction((JetThrowExpression) element, lexicalScope, newLabel);
+        return new ThrowExceptionInstruction((JetThrowExpression) element, lexicalScope, newLabel, usedValue);
     }
 }

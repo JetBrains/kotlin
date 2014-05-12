@@ -1,0 +1,58 @@
+== doSomething ==
+fun Any?.doSomething() {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== bar ==
+fun bar(): Nothing = throw Exception()
+---------------------
+L0:
+  1 <START>
+    mark(throw Exception())
+    mark(Exception())
+    call(Exception, <init>) -> <v0>
+    throw (throw Exception()|<v0>)     NEXT:[<ERROR>]
+L1:
+    <END>                              NEXT:[<SINK>]                             PREV:[]
+error:
+    <ERROR>                            PREV:[throw (throw Exception()|<v0>)]
+sink:
+    <SINK>                             PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo() {
+    null!!.doSomething()
+    bar().doSomething
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ null!!.doSomething() bar().doSomething })
+    mark(null!!.doSomething())
+    mark(doSomething())
+    mark(null!!)
+    r(null) -> <v0>
+    magic(null!!|<v0>) -> <v1>
+    jmp(error)                                          NEXT:[<ERROR>]
+-   call(doSomething, doSomething|<v1>) -> <v2>         PREV:[]
+-   mark(bar().doSomething)                             PREV:[]
+-   mark(bar())                                         PREV:[]
+-   call(bar, bar)                                      PREV:[]
+-   jmp(error)                                          NEXT:[<ERROR>]                                             PREV:[]
+-   call(doSomething, doSomething) -> <v3>              PREV:[]
+L1:
+  1 <END>                                               NEXT:[<SINK>]                                              PREV:[]
+error:
+    <ERROR>                                             PREV:[jmp(error)]
+sink:
+    <SINK>                                              PREV:[<ERROR>, <END>]
+=====================

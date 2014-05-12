@@ -53,6 +53,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/arrays/arrayAccessExpression.kt");
         }
         
+        @TestMetadata("arrayInc.kt")
+        public void testArrayInc() throws Exception {
+            doTest("compiler/testData/cfg/arrays/arrayInc.kt");
+        }
+        
         @TestMetadata("ArrayOfFunctions.kt")
         public void testArrayOfFunctions() throws Exception {
             doTest("compiler/testData/cfg/arrays/ArrayOfFunctions.kt");
@@ -359,6 +364,11 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/expressions/LazyBooleans.kt");
         }
         
+        @TestMetadata("nothingExpr.kt")
+        public void testNothingExpr() throws Exception {
+            doTest("compiler/testData/cfg/expressions/nothingExpr.kt");
+        }
+        
         @TestMetadata("propertySafeCall.kt")
         public void testPropertySafeCall() throws Exception {
             doTest("compiler/testData/cfg/expressions/propertySafeCall.kt");
@@ -379,9 +389,14 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest("compiler/testData/cfg/expressions/thisExpression.kt");
         }
         
-        @TestMetadata("unresolved.kt")
-        public void testUnresolved() throws Exception {
-            doTest("compiler/testData/cfg/expressions/unresolved.kt");
+        @TestMetadata("unresolvedCall.kt")
+        public void testUnresolvedCall() throws Exception {
+            doTest("compiler/testData/cfg/expressions/unresolvedCall.kt");
+        }
+        
+        @TestMetadata("unresolvedProperty.kt")
+        public void testUnresolvedProperty() throws Exception {
+            doTest("compiler/testData/cfg/expressions/unresolvedProperty.kt");
         }
         
         @TestMetadata("unusedExpressionSimpleName.kt")

@@ -32,19 +32,20 @@ fun test(ab: Ab) {
 L0:
   1 <START>
     v(ab: Ab)
-    w(ab)
+    magic(ab: Ab) -> <v0>
+    w(ab|<v0>)
   2 mark({ ab.getArray()[1] })
     mark(ab.getArray()[1])
     mark(ab.getArray())
     mark(getArray())
-    r(ab)
-    call(getArray, getArray)
-    r(1)
-    call(ab.getArray()[1], get)
+    r(ab) -> <v1>
+    call(getArray, getArray|<v1>) -> <v2>
+    r(1) -> <v3>
+    call(ab.getArray()[1], get|<v2>, <v3>) -> <v4>
 L1:
-  1 <END>                          NEXT:[<SINK>]
+  1 <END>                                             NEXT:[<SINK>]
 error:
-    <ERROR>                        PREV:[]
+    <ERROR>                                           PREV:[]
 sink:
-    <SINK>                         PREV:[<ERROR>, <END>]
+    <SINK>                                            PREV:[<ERROR>, <END>]
 =====================

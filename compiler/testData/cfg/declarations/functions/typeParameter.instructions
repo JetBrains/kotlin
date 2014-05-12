@@ -7,6 +7,7 @@ L0:
   1 <START>
   2 mark({ T })
     error(T, No resolved call)
+    magic(T) -> <v0>
 L1:
   1 <END>                         NEXT:[<SINK>]
 error:

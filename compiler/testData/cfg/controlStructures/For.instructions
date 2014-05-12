@@ -10,20 +10,21 @@ L0:
   2 mark({ for (i in 1..2) { doSmth(i) } })
   3 mark(for (i in 1..2) { doSmth(i) })
     mark(1..2)
-    r(1)
-    r(2)
-    call(.., rangeTo)
+    r(1) -> <v0>
+    r(2) -> <v1>
+    call(.., rangeTo|<v0>, <v1>) -> <v2>
     v(i)
 L3:
-    jmp?(L2)                                   NEXT:[read (Unit), w(i)]
+    jmp?(L2)                                   NEXT:[read (Unit), magic(1..2|<v2>) -> <v3>]
 L4 [loop entry point]:
 L5 [body entry point]:
-    w(i)                                       PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    magic(1..2|<v2>) -> <v3>                   PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    w(i|<v3>)
   4 mark({ doSmth(i) })
     mark(doSmth(i))
-    r(i)
-    call(doSmth, doSmth)
-  3 jmp?(L4 [loop entry point])                NEXT:[w(i), read (Unit)]
+    r(i) -> <v4>
+    call(doSmth, doSmth|<v4>) -> <v5>
+  3 jmp?(L4 [loop entry point])                NEXT:[magic(1..2|<v2>) -> <v3>, read (Unit)]
 L2:
     read (Unit)                                PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
@@ -39,13 +40,14 @@ fun doSmth(i: Int) {}
 L0:
   1 <START>
     v(i: Int)
-    w(i)
+    magic(i: Int) -> <v0>
+    w(i|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>          NEXT:[<SINK>]
+  1 <END>                    NEXT:[<SINK>]
 error:
-    <ERROR>        PREV:[]
+    <ERROR>                  PREV:[]
 sink:
-    <SINK>         PREV:[<ERROR>, <END>]
+    <SINK>                   PREV:[<ERROR>, <END>]
 =====================

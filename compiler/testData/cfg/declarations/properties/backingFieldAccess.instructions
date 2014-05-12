@@ -12,7 +12,7 @@ L0:
   1 <START>
     v(val a: Int get() = 1)
   2 mark({ $a })
-    r($a)
+    r($a) -> <v0>
 L1:
   1 <END>                      NEXT:[<SINK>]
 error:

@@ -38,8 +38,8 @@ L3:
   4 mark({ val x = "" fun loc() { val x3 = "" } })
     v(val x = "")
     mark("")
-    r("")
-    w(x)
+    r("") -> <v0>
+    w(x|<v0>)
     jmp?(L5)                                          NEXT:[<END>, d(fun loc() { val x3 = "" })]
     d(fun loc() { val x3 = "" })                      NEXT:[<SINK>]
 L4:
@@ -60,8 +60,8 @@ L6:
   6 mark({ val x3 = "" })
     v(val x3 = "")
     mark("")
-    r("")
-    w(x3)
+    r("") -> <v0>
+    w(x3|<v0>)
 L7:
   5 <END>                    NEXT:[<SINK>]
 error:

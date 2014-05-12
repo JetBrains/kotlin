@@ -16,21 +16,36 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     private final boolean onTrue;
     private Instruction nextOnTrue;
     private Instruction nextOnFalse;
+    private final PseudoValue conditionValue;
 
-    public ConditionalJumpInstruction(@NotNull JetElement element, boolean onTrue, LexicalScope lexicalScope, Label targetLabel) {
+    public ConditionalJumpInstruction(
+            @NotNull JetElement element,
+            boolean onTrue,
+            LexicalScope lexicalScope,
+            Label targetLabel,
+            PseudoValue conditionValue) {
         super(element, targetLabel, lexicalScope);
         this.onTrue = onTrue;
+        this.conditionValue = conditionValue;
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return ContainerUtil.createMaybeSingletonList(conditionValue);
     }
 
     public boolean onTrue() {
@@ -72,11 +87,12 @@ public class ConditionalJumpInstruction extends AbstractJumpInstruction {
     @Override
     public String toString() {
         String instr = onTrue ? "jt" : "jf";
-        return instr + "(" + getTargetLabel().getName() + ")";
+        String inValue = conditionValue != null ? "|" + conditionValue : "";
+        return instr + "(" + getTargetLabel().getName() + inValue + ")";
     }
 
     @Override
     protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
-        return new ConditionalJumpInstruction(element, onTrue, lexicalScope, newLabel);
+        return new ConditionalJumpInstruction(element, onTrue, lexicalScope, newLabel, conditionValue);
     }
 }

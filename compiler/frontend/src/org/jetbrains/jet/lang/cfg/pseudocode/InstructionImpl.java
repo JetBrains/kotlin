@@ -17,11 +17,14 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import com.google.common.collect.Sets;
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public abstract class InstructionImpl implements Instruction {
     private Pseudocode owner;
@@ -109,5 +112,17 @@ public abstract class InstructionImpl implements Instruction {
         addCopy(instruction);
         ((InstructionImpl)instruction).setOriginal(this);
         return instruction;
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public PseudoValue getOutputValue() {
+        return null;
     }
 }

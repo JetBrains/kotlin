@@ -26,55 +26,65 @@ fun assignments() : Unit {
 
     val t = Test();
     t.x = 1
+    t.x += 1
 }
 ---------------------
 L0:
   1 <START>
-  2 mark({ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 })
+  2 mark({ var x = 1 x = 2 x += 2 x = if (true) 1 else 2 val y = true && false val z = false && true val t = Test(); t.x = 1 t.x += 1 })
     v(var x = 1)
-    r(1)
-    w(x)
-    r(2)
-    w(x)
+    r(1) -> <v0>
+    w(x|<v0>)
+    r(2) -> <v1>
+    w(x|<v1>)
     mark(x += 2)
-    r(x)
-    r(2)
-    call(+=, plus)
-    w(x)
+    r(x) -> <v2>
+    r(2) -> <v3>
+    call(+=, plus|<v2>, <v3>) -> <v4>
+    w(x|<v4>)
     mark(if (true) 1 else 2)
-    r(true)
-    jf(L2)                                                                                                                         NEXT:[r(2), r(1)]
-    r(1)
-    jmp(L3)                                                                                                                        NEXT:[w(x)]
+    r(true) -> <v5>
+    jf(L2|<v5>)                                                                                                                             NEXT:[r(2) -> <v7>, r(1) -> <v6>]
+    r(1) -> <v6>
+    jmp(L3)                                                                                                                                 NEXT:[magic(if (true) 1 else 2|<v6>, <v7>) -> <v8>]
 L2:
-    r(2)                                                                                                                           PREV:[jf(L2)]
+    r(2) -> <v7>                                                                                                                            PREV:[jf(L2|<v5>)]
 L3:
-    w(x)                                                                                                                           PREV:[jmp(L3), r(2)]
+    magic(if (true) 1 else 2|<v6>, <v7>) -> <v8>                                                                                            PREV:[jmp(L3), r(2) -> <v7>]
+    w(x|<v8>)
     v(val y = true && false)
-    r(true)
-    jf(L4)                                                                                                                         NEXT:[r(true && false), r(false)]
-    r(false)
+    r(true) -> <v9>
+    jf(L4|<v9>)                                                                                                                             NEXT:[magic(true && false|<v9>, <v10>) -> <v11>, r(false) -> <v10>]
+    r(false) -> <v10>
 L4:
-    r(true && false)                                                                                                               PREV:[jf(L4), r(false)]
-    w(y)
+    magic(true && false|<v9>, <v10>) -> <v11>                                                                                               PREV:[jf(L4|<v9>), r(false) -> <v10>]
+    w(y|<v11>)
     v(val z = false && true)
-    r(false)
-    jf(L5)                                                                                                                         NEXT:[r(false && true), r(true)]
-    r(true)
+    r(false) -> <v12>
+    jf(L5|<v12>)                                                                                                                            NEXT:[magic(false && true|<v12>, <v13>) -> <v14>, r(true) -> <v13>]
+    r(true) -> <v13>
 L5:
-    r(false && true)                                                                                                               PREV:[jf(L5), r(true)]
-    w(z)
+    magic(false && true|<v12>, <v13>) -> <v14>                                                                                              PREV:[jf(L5|<v12>), r(true) -> <v13>]
+    w(z|<v14>)
     v(val t = Test())
     mark(Test())
-    call(Test, <init>)
-    w(t)
-    r(1)
-    r(t)
-    w(t.x)
+    call(Test, <init>) -> <v15>
+    w(t|<v15>)
+    r(1) -> <v16>
+    r(t) -> <v17>
+    w(t.x|<v17>, <v16>)
+    mark(t.x += 1)
+    mark(t.x)
+    r(t) -> <v18>
+    r(x|<v18>) -> <v19>
+    r(1) -> <v20>
+    call(+=, plus|<v19>, <v20>) -> <v21>
+    r(t) -> <v22>
+    w(t.x|<v22>, <v21>)
 L1:
-  1 <END>                                                                                                                          NEXT:[<SINK>]
+  1 <END>                                                                                                                                   NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                                                        PREV:[]
+    <ERROR>                                                                                                                                 PREV:[]
 sink:
-    <SINK>                                                                                                                         PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                                                  PREV:[<ERROR>, <END>]
 =====================

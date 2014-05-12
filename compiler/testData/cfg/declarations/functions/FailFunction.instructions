@@ -9,12 +9,12 @@ L0:
     mark(throw java.lang.RuntimeException())
     mark(java.lang.RuntimeException())
     mark(RuntimeException())
-    call(RuntimeException, <init>)
-    throw (throw java.lang.RuntimeException())      NEXT:[<ERROR>]
+    call(RuntimeException, <init>) -> <v0>
+    throw (throw java.lang.RuntimeException()|<v0>)    NEXT:[<ERROR>]
 L1:
-  1 <END>                                           NEXT:[<SINK>]                                          PREV:[]
+  1 <END>                                              NEXT:[<SINK>]                                             PREV:[]
 error:
-    <ERROR>                                         PREV:[throw (throw java.lang.RuntimeException())]
+    <ERROR>                                            PREV:[throw (throw java.lang.RuntimeException()|<v0>)]
 sink:
-    <SINK>                                          PREV:[<ERROR>, <END>]
+    <SINK>                                             PREV:[<ERROR>, <END>]
 =====================

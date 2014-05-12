@@ -14,4 +14,5 @@ fun assignments() : Unit {
 
     val t = Test();
     t.x = 1
+    t.x += 1
 }

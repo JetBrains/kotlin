@@ -19,41 +19,42 @@ fun t1(b: Boolean) {
 L0:
   1 <START>
     v(b: Boolean)
-    w(b)
+    magic(b: Boolean) -> <v0>
+    w(b|<v0>)
   2 mark({ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) })
     v(var u: String)
     mark(if (b) { u = "s" })
-    r(b)
-    jf(L2)                                                                                                              NEXT:[read (Unit), mark({ u = "s" })]
+    r(b) -> <v1>
+    jf(L2|<v1>)                                                                                                         NEXT:[read (Unit), mark({ u = "s" })]
   3 mark({ u = "s" })
     mark("s")
-    r("s")
-    w(u)
+    r("s") -> <v2>
+    w(u|<v2>)
   2 jmp(L3)                                                                                                             NEXT:[mark(doSmth(u))]
 L2:
-    read (Unit)                                                                                                         PREV:[jf(L2)]
+    read (Unit)                                                                                                         PREV:[jf(L2|<v1>)]
 L3:
     mark(doSmth(u))                                                                                                     PREV:[jmp(L3), read (Unit)]
-    r(u)
-    call(doSmth, doSmth)
+    r(u) -> <v3>
+    call(doSmth, doSmth|<v3>) -> <v4>
     v(var r: String)
     mark(if (b) { r = "s" } else { r = "t" })
-    r(b)
-    jf(L4)                                                                                                              NEXT:[mark({ r = "t" }), mark({ r = "s" })]
+    r(b) -> <v5>
+    jf(L4|<v5>)                                                                                                         NEXT:[mark({ r = "t" }), mark({ r = "s" })]
   3 mark({ r = "s" })
     mark("s")
-    r("s")
-    w(r)
+    r("s") -> <v6>
+    w(r|<v6>)
   2 jmp(L5)                                                                                                             NEXT:[mark(doSmth(r))]
 L4:
-  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4)]
+  3 mark({ r = "t" })                                                                                                   PREV:[jf(L4|<v5>)]
     mark("t")
-    r("t")
-    w(r)
+    r("t") -> <v7>
+    w(r|<v7>)
 L5:
-  2 mark(doSmth(r))                                                                                                     PREV:[jmp(L5), w(r)]
-    r(r)
-    call(doSmth, doSmth)
+  2 mark(doSmth(r))                                                                                                     PREV:[jmp(L5), w(r|<v7>)]
+    r(r) -> <v8>
+    call(doSmth, doSmth|<v8>) -> <v9>
 L1:
   1 <END>                                                                                                               NEXT:[<SINK>]
 error:
@@ -76,32 +77,34 @@ fun t2(b: Boolean) {
 L0:
   1 <START>
     v(b: Boolean)
-    w(b)
+    magic(b: Boolean) -> <v0>
+    w(b|<v0>)
   2 mark({ val i = 3 if (b) { return; } doSmth(i) if (i is Int) { return; } })
     v(val i = 3)
-    r(3)
-    w(i)
+    r(3) -> <v1>
+    w(i|<v1>)
     mark(if (b) { return; })
-    r(b)
-    jf(L2)                                                                        NEXT:[read (Unit), mark({ return; })]
+    r(b) -> <v2>
+    jf(L2|<v2>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
 - 2 jmp(L3)                                                                       NEXT:[mark(doSmth(i))]                                                               PREV:[]
 L2:
-    read (Unit)                                                                   PREV:[jf(L2)]
+    read (Unit)                                                                   PREV:[jf(L2|<v2>)]
 L3:
     mark(doSmth(i))
-    r(i)
-    call(doSmth, doSmth)
+    r(i) -> <v3>
+    call(doSmth, doSmth|<v3>) -> <v4>
     mark(if (i is Int) { return; })
     mark(i is Int)
-    r(i)
-    jf(L4)                                                                        NEXT:[read (Unit), mark({ return; })]
+    r(i) -> <v5>
+    magic(i is Int|<v5>) -> <v6>
+    jf(L4|<v6>)                                                                   NEXT:[read (Unit), mark({ return; })]
   3 mark({ return; })
     ret L1                                                                        NEXT:[<END>]
 - 2 jmp(L5)                                                                       NEXT:[<END>]                                                                         PREV:[]
 L4:
-    read (Unit)                                                                   PREV:[jf(L4)]
+    read (Unit)                                                                   PREV:[jf(L4|<v6>)]
 L1:
 L5:
   1 <END>                                                                         NEXT:[<SINK>]                                                                        PREV:[ret L1, ret L1, read (Unit)]
@@ -116,13 +119,14 @@ fun doSmth(s: String) {}
 L0:
   1 <START>
     v(s: String)
-    w(s)
+    magic(s: String) -> <v0>
+    w(s|<v0>)
   2 mark({})
     read (Unit)
 L1:
-  1 <END>           NEXT:[<SINK>]
+  1 <END>                       NEXT:[<SINK>]
 error:
-    <ERROR>         PREV:[]
+    <ERROR>                     PREV:[]
 sink:
-    <SINK>          PREV:[<ERROR>, <END>]
+    <SINK>                      PREV:[<ERROR>, <END>]
 =====================

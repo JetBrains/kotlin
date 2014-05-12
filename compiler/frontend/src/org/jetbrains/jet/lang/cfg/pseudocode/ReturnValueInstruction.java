@@ -20,12 +20,25 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetExpression;
 
+import java.util.Collections;
+import java.util.List;
+
 public class ReturnValueInstruction extends AbstractJumpInstruction {
+    private final PseudoValue usedValue;
+
     public ReturnValueInstruction(
             @NotNull JetExpression returnExpression,
             @NotNull LexicalScope lexicalScope,
-            @NotNull Label targetLabel) {
+            @NotNull Label targetLabel,
+            @NotNull PseudoValue usedValue) {
         super(returnExpression, targetLabel, lexicalScope);
+        this.usedValue = usedValue;
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return Collections.singletonList(usedValue);
     }
 
     @Override
@@ -40,11 +53,11 @@ public class ReturnValueInstruction extends AbstractJumpInstruction {
 
     @Override
     public String toString() {
-        return "ret(*) " + getTargetLabel();
+        return "ret(*|" + usedValue + ") " + getTargetLabel();
     }
 
     @Override
     protected AbstractJumpInstruction createCopy(@NotNull Label newLabel, @NotNull LexicalScope lexicalScope) {
-        return new ReturnValueInstruction((JetExpression) element, lexicalScope, newLabel);
+        return new ReturnValueInstruction((JetExpression) element, lexicalScope, newLabel, usedValue);
     }
 }

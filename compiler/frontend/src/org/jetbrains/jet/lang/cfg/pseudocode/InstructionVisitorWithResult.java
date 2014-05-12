@@ -19,8 +19,12 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 public abstract class InstructionVisitorWithResult<R> {
     public abstract R visitInstruction(Instruction instruction);
 
-    public R visitReadValue(ReadValueInstruction instruction) {
+    public R visitInstructionWithReceiver(InstructionWithReceiver instruction) {
         return visitInstructionWithNext(instruction);
+    }
+
+    public R visitReadValue(ReadValueInstruction instruction) {
+        return visitInstructionWithReceiver(instruction);
     }
 
     public R visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
@@ -80,15 +84,19 @@ public abstract class InstructionVisitorWithResult<R> {
     }
 
     public R visitWriteValue(WriteValueInstruction instruction) {
-        return visitInstructionWithNext(instruction);
+        return visitInstructionWithReceiver(instruction);
     }
 
     public R visitLoadUnitValue(LoadUnitValueInstruction instruction) {
         return visitInstructionWithNext(instruction);
     }
 
-    public R visitCallInstruction(CallInstruction instruction) {
+    public R visitOperation(OperationInstruction instruction) {
         return visitInstructionWithNext(instruction);
+    }
+
+    public R visitCallInstruction(CallInstruction instruction) {
+        return visitOperation(instruction);
     }
 
     public R visitCompilationErrorInstruction(CompilationErrorInstruction instruction) {
@@ -99,4 +107,7 @@ public abstract class InstructionVisitorWithResult<R> {
         return visitInstructionWithNext(instruction);
     }
 
+    public R visitMagic(MagicInstruction instruction) {
+        return visitOperation(instruction);
+    }
 }

@@ -35,6 +35,7 @@ public abstract class JetElementInstructionImpl extends InstructionImpl implemen
         return element;
     }
 
+    @NotNull
     protected String render(PsiElement element) {
         return element.getText().replaceAll("\\s+", " ");
     }

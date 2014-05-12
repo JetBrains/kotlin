@@ -78,6 +78,8 @@ public class PseudocodeImpl implements Pseudocode {
     private final List<Instruction> mutableInstructionList = new ArrayList<Instruction>();
     private final List<Instruction> instructions = new ArrayList<Instruction>();
 
+    private final Map<JetElement, PseudoValue> elementsToValues = new HashMap<JetElement, PseudoValue>();
+
     private Pseudocode parent = null;
     private Set<LocalFunctionDeclarationInstruction> localDeclarations = null;
     //todo getters
@@ -252,6 +254,16 @@ public class PseudocodeImpl implements Pseudocode {
     @NotNull
     public SubroutineEnterInstruction getEnterInstruction() {
         return (SubroutineEnterInstruction) mutableInstructionList.get(0);
+    }
+
+    @Nullable
+    @Override
+    public PseudoValue getElementValue(@Nullable JetElement element) {
+        return elementsToValues.get(element);
+    }
+
+    /*package*/ void bindElementToValue(@NotNull JetElement element, @NotNull PseudoValue value) {
+        elementsToValues.put(element, value);
     }
 
     /*package*/ void bindLabel(Label label) {

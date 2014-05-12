@@ -18,16 +18,16 @@ class AnonymousInitializers() {
 L0:
   1 <START>
     v(val k = 34)
-    r(34)
-    w(k)
+    r(34) -> <v0>
+    w(k|<v0>)
     v(val i: Int)
   2 mark({ $i = 12 })
-    r(12)
-    w($i)
+    r(12) -> <v1>
+    w($i|<v1>)
   1 v(val j: Int get() = 20)
   2 mark({ $i = 13 })
-    r(13)
-    w($i)
+    r(13) -> <v2>
+    w($i|<v2>)
 L1:
   1 <END>                       NEXT:[<SINK>]
 error:

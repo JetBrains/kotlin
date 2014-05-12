@@ -64,4 +64,9 @@ public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean>
     public Boolean visitMarkInstruction(MarkInstruction instruction) {
         return true;
     }
+
+    @Override
+    public Boolean visitMagic(MagicInstruction instruction) {
+        return instruction.getSynthetic();
+    }
 }

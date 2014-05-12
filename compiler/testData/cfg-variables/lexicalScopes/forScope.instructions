@@ -11,27 +11,28 @@ L0:
   1 <START>                                                      INIT: in: {} out: {}
   2 mark({ "before" for (i in 1..10) { val a = i } "after" })
     mark("before")
-    r("before")                                                                                             USE: in: {} out: {}
+    r("before") -> <v0>                                                                                     USE: in: {} out: {}
   3 mark(for (i in 1..10) { val a = i })
     mark(1..10)
-    r(1)
-    r(10)
-    call(.., rangeTo)
+    r(1) -> <v1>
+    r(10) -> <v2>
+    call(.., rangeTo|<v1>, <v2>) -> <v3>
     v(i)                                                         INIT: in: {} out: {i=D}
 L3:
     jmp?(L2)                                                     INIT: in: {i=D} out: {i=D}
 L4 [loop entry point]:
 L5 [body entry point]:
-    w(i)                                                         INIT: in: {i=D} out: {i=ID}
+    magic(1..10|<v3>) -> <v4>
+    w(i|<v4>)                                                    INIT: in: {i=D} out: {i=ID}
   4 mark({ val a = i })                                          INIT: in: {i=ID} out: {i=ID}
     v(val a = i)                                                 INIT: in: {i=ID} out: {a=D, i=ID}
-    r(i)                                                         INIT: in: {a=D, i=ID} out: {a=D, i=ID}
-    w(a)                                                         INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
+    r(i) -> <v5>                                                 INIT: in: {a=D, i=ID} out: {a=D, i=ID}
+    w(a|<v5>)                                                    INIT: in: {a=D, i=ID} out: {a=ID, i=ID}
   3 jmp?(L4 [loop entry point])                                  INIT: in: {i=ID} out: {i=ID}               USE: in: {i=READ} out: {i=READ}
 L2:
     read (Unit)                                                  INIT: in: {i=D} out: {i=D}
   2 mark("after")                                                INIT: in: {} out: {}
-    r("after")
+    r("after") -> <v6>
 L1:
   1 <END>
 error:

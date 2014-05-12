@@ -6,9 +6,10 @@ fun Int.bar(c: C) {
 L0:
   1 <START>
     v(c: C)
-    w(c)
+    magic(c: C) -> <v0>
+    w(c|<v0>)
   2 mark({ this = c })
-    r(c)
+    r(c) -> <v1>
     unsupported(BINARY_EXPRESSION : this = c)
 L1:
   1 <END>                                        NEXT:[<SINK>]

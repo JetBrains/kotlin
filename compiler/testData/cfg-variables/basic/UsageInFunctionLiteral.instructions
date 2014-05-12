@@ -11,15 +11,15 @@ L0:
   1 <START>                                                             INIT: in: {} out: {}                       USE: in: {} out: {}
   2 mark({ val a = 1 val f = { (x: Int) -> val y = x + a use(a) } })
     v(val a = 1)                                                        INIT: in: {} out: {a=D}
-    r(1)                                                                INIT: in: {a=D} out: {a=D}
-    w(a)                                                                INIT: in: {a=D} out: {a=ID}
+    r(1) -> <v0>                                                        INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                                           INIT: in: {a=D} out: {a=ID}
     v(val f = { (x: Int) -> val y = x + a use(a) })                     INIT: in: {a=ID} out: {a=ID, f=D}
     mark({ (x: Int) -> val y = x + a use(a) })                          INIT: in: {a=ID, f=D} out: {a=ID, f=D}
     jmp?(L2)
     d({ (x: Int) -> val y = x + a use(a) })                                                                        USE: in: {a=READ} out: {a=READ}
 L2:
-    r({ (x: Int) -> val y = x + a use(a) })
-    w(f)                                                                INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
+    r({ (x: Int) -> val y = x + a use(a) }) -> <v1>
+    w(f|<v1>)                                                           INIT: in: {a=ID, f=D} out: {a=ID, f=ID}
 L1:
   1 <END>                                                               INIT: in: {} out: {}
 error:
@@ -34,38 +34,40 @@ sink:
     }
 ---------------------
 L3:
-  3 <START>                       INIT: in: {} out: {}
-    v(x: Int)                     INIT: in: {} out: {x=D}
-    w(x)                          INIT: in: {x=D} out: {x=ID}
-  4 mark(val y = x + a use(a))    INIT: in: {x=ID} out: {x=ID}
-    v(val y = x + a)              INIT: in: {x=ID} out: {x=ID, y=D}
-    mark(x + a)                   INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
-    r(x)                                                                      USE: in: {a=READ} out: {a=READ, x=READ}
-    r(a)
-    call(+, plus)
-    w(y)                          INIT: in: {x=ID, y=D} out: {x=ID, y=ID}
-    mark(use(a))                  INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {a=READ} out: {a=READ}
-    r(a)                                                                      USE: in: {} out: {a=READ}
-    call(use, use)
+  3 <START>                             INIT: in: {} out: {}
+    v(x: Int)                           INIT: in: {} out: {x=D}
+    magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}
+  4 mark(val y = x + a use(a))          INIT: in: {x=ID} out: {x=ID}
+    v(val y = x + a)                    INIT: in: {x=ID} out: {x=ID, y=D}
+    mark(x + a)                         INIT: in: {x=ID, y=D} out: {x=ID, y=D}      USE: in: {a=READ, x=READ} out: {a=READ, x=READ}
+    r(x) -> <v1>                                                                    USE: in: {a=READ} out: {a=READ, x=READ}
+    r(a) -> <v2>
+    call(+, plus|<v1>, <v2>) -> <v3>
+    w(y|<v3>)                           INIT: in: {x=ID, y=D} out: {x=ID, y=ID}
+    mark(use(a))                        INIT: in: {x=ID, y=ID} out: {x=ID, y=ID}    USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v4>                                                                    USE: in: {} out: {a=READ}
+    call(use, use|<v4>) -> <v5>
 L4:
-  3 <END>                         INIT: in: {x=ID} out: {x=ID}
+  3 <END>                               INIT: in: {x=ID} out: {x=ID}
 error:
-    <ERROR>                       INIT: in: {} out: {}
+    <ERROR>                             INIT: in: {} out: {}
 sink:
-    <SINK>                        INIT: in: {x=ID} out: {x=ID}                USE: in: {} out: {}
+    <SINK>                              INIT: in: {x=ID} out: {x=ID}                USE: in: {} out: {}
 =====================
 == use ==
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>              INIT: in: {} out: {}
-    v(vararg a: Any?)    INIT: in: {} out: {a=D}
-    w(a)                 INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a)                 INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                          INIT: in: {} out: {}
+    v(vararg a: Any?)                INIT: in: {} out: {a=D}
+    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
 L1:
     <END>
 error:
-    <ERROR>              INIT: in: {} out: {}
+    <ERROR>                          INIT: in: {} out: {}
 sink:
-    <SINK>               INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

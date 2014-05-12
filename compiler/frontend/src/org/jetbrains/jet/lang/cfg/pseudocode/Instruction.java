@@ -16,9 +16,13 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
+import kotlin.jvm.KotlinSignature;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface Instruction {
     @NotNull
@@ -40,4 +44,11 @@ public interface Instruction {
 
     @NotNull
     LexicalScope getLexicalScope();
+
+    @ReadOnly
+    @NotNull
+    List<PseudoValue> getInputValues();
+
+    @Nullable
+    PseudoValue getOutputValue();
 }

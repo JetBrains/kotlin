@@ -16,7 +16,7 @@ fun test(arr: Array<Int>) {
     }
 
     while (true) {
-        <!UNREACHABLE_CODE!>arr[1]<!> = break
+        <!UNREACHABLE_CODE!>arr[1] = break<!>
     }
 
     while (true) {

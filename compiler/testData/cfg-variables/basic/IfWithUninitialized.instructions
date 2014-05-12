@@ -15,19 +15,19 @@ L0:
     v(val b: Boolean)                                                   INIT: in: {} out: {b=D}
     mark(if (1 < 2) { use(b) } else { b = true })                       INIT: in: {b=D} out: {b=D}
     mark(1 < 2)
-    r(1)
-    r(2)
-    call(<, compareTo)
-    jf(L2)
+    r(1) -> <v0>
+    r(2) -> <v1>
+    call(<, compareTo|<v0>, <v1>) -> <v2>
+    jf(L2|<v2>)
   3 mark({ use(b) })
     mark(use(b))                                                                                       USE: in: {b=READ} out: {b=READ}
-    r(b)                                                                                               USE: in: {} out: {b=READ}
-    call(use, use)
+    r(b) -> <v3>                                                                                       USE: in: {} out: {b=READ}
+    call(use, use|<v3>) -> <v4>
   2 jmp(L3)                                                                                            USE: in: {} out: {}
 L2:
   3 mark({ b = true })
-    r(true)                                                                                            USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
-    w(b)                                                                INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
+    r(true) -> <v5>                                                                                    USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
+    w(b|<v5>)                                                           INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
 L1:
 L3:
   1 <END>                                                               INIT: in: {} out: {}
@@ -40,14 +40,15 @@ sink:
 fun use(vararg a: Any?) = a
 ---------------------
 L0:
-  1 <START>              INIT: in: {} out: {}
-    v(vararg a: Any?)    INIT: in: {} out: {a=D}
-    w(a)                 INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a)                 INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                          INIT: in: {} out: {}
+    v(vararg a: Any?)                INIT: in: {} out: {a=D}
+    magic(vararg a: Any?) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                        INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
 L1:
     <END>
 error:
-    <ERROR>              INIT: in: {} out: {}
+    <ERROR>                          INIT: in: {} out: {}
 sink:
-    <SINK>               INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                           INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

@@ -6,19 +6,20 @@ fun test(array: Array<(Int)->Unit>) {
 L0:
   1 <START>
     v(array: Array<(Int)->Unit>)
-    w(array)
+    magic(array: Array<(Int)->Unit>) -> <v0>
+    w(array|<v0>)
   2 mark({ array[11](3) })
     mark(array[11](3))
     mark(array[11])
-    r(array)
-    r(11)
-    call(array[11], get)
-    r(3)
-    call(array[11], invoke)
+    r(array) -> <v1>
+    r(11) -> <v2>
+    call(array[11], get|<v1>, <v2>) -> <v3>
+    r(3) -> <v4>
+    call(array[11], invoke|<v3>, <v4>) -> <v5>
 L1:
-  1 <END>                           NEXT:[<SINK>]
+  1 <END>                                         NEXT:[<SINK>]
 error:
-    <ERROR>                         PREV:[]
+    <ERROR>                                       PREV:[]
 sink:
-    <SINK>                          PREV:[<ERROR>, <END>]
+    <SINK>                                        PREV:[<ERROR>, <END>]
 =====================

@@ -12,8 +12,8 @@ L0:
     jmp?(L2)
     d({ (x: Int) -> sum(x - 1) + x })                                                              USE: in: {sum=READ} out: {sum=READ}
 L2:
-    r({ (x: Int) -> sum(x - 1) + x })
-    w(sum)                                                     INIT: in: {sum=D} out: {sum=ID}
+    r({ (x: Int) -> sum(x - 1) + x }) -> <v0>
+    w(sum|<v0>)                                                INIT: in: {sum=D} out: {sum=ID}
 L1:
     <END>                                                      INIT: in: {sum=ID} out: {sum=ID}
 error:
@@ -27,40 +27,42 @@ sink:
     }
 ---------------------
 L3:
-  2 <START>                 INIT: in: {} out: {}
-    v(x: Int)               INIT: in: {} out: {x=D}
-    w(x)                    INIT: in: {x=D} out: {x=ID}
-  3 mark(sum(x - 1) + x)    INIT: in: {x=ID} out: {x=ID}
+  2 <START>                                 INIT: in: {} out: {}
+    v(x: Int)                               INIT: in: {} out: {x=D}
+    magic(x: Int) -> <v0>                   INIT: in: {x=D} out: {x=D}
+    w(x|<v0>)                               INIT: in: {x=D} out: {x=ID}
+  3 mark(sum(x - 1) + x)                    INIT: in: {x=ID} out: {x=ID}
     mark(sum(x - 1) + x)
-    mark(sum(x - 1))                                        USE: in: {sum=READ, x=READ} out: {sum=READ, x=READ}
-    r(sum)                                                  USE: in: {x=READ} out: {sum=READ, x=READ}
+    mark(sum(x - 1))                                                        USE: in: {sum=READ, x=READ} out: {sum=READ, x=READ}
+    r(sum) -> <v1>                                                          USE: in: {x=READ} out: {sum=READ, x=READ}
     mark(x - 1)
-    r(x)
-    r(1)
-    call(-, minus)
-    call(sum, invoke)                                       USE: in: {x=READ} out: {x=READ}
-    r(x)                                                    USE: in: {} out: {x=READ}
-    call(+, plus)
+    r(x) -> <v2>
+    r(1) -> <v3>
+    call(-, minus|<v2>, <v3>) -> <v4>
+    call(sum, invoke|<v1>, <v4>) -> <v5>                                    USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v6>                                                            USE: in: {} out: {x=READ}
+    call(+, plus|<v5>, <v6>) -> <v7>
 L4:
   2 <END>
 error:
-    <ERROR>                 INIT: in: {} out: {}
+    <ERROR>                                 INIT: in: {} out: {}
 sink:
-    <SINK>                  INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+    <SINK>                                  INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 =====================
 == A ==
 open class A(val a: A)
 ---------------------
 L0:
-  1 <START>        INIT: in: {} out: {}
-    v(val a: A)    INIT: in: {} out: {a=D}
-    w(a)           INIT: in: {a=D} out: {a=ID}
+  1 <START>                    INIT: in: {} out: {}
+    v(val a: A)                INIT: in: {} out: {a=D}
+    magic(val a: A) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                  INIT: in: {a=D} out: {a=ID}
 L1:
-    <END>          INIT: in: {a=ID} out: {a=ID}
+    <END>                      INIT: in: {a=ID} out: {a=ID}
 error:
-    <ERROR>        INIT: in: {} out: {}
+    <ERROR>                    INIT: in: {} out: {}
 sink:
-    <SINK>         INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                     INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================
 == TestObjectLiteral ==
 class TestObjectLiteral {
@@ -78,16 +80,16 @@ L0:
   1 <START>                                                                         INIT: in: {} out: {}
     v(val obj: A = object: A(obj) { { val x = obj } fun foo() { val y = obj } })    INIT: in: {} out: {obj=D}
     mark(object: A(obj) { { val x = obj } fun foo() { val y = obj } })              INIT: in: {obj=D} out: {obj=D}
-    r(obj)
+    r(obj) -> <v0>
   2 mark({ val x = obj })
     v(val x = obj)                                                                  INIT: in: {obj=D} out: {obj=D, x=D}
-    r(obj)                                                                          INIT: in: {obj=D, x=D} out: {obj=D, x=D}
-    w(x)                                                                            INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
+    r(obj) -> <v1>                                                                  INIT: in: {obj=D, x=D} out: {obj=D, x=D}
+    w(x|<v1>)                                                                       INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
   1 jmp?(L2)                                                                        INIT: in: {obj=D} out: {obj=D}
     d(fun foo() { val y = obj })                                                                                                 USE: in: {obj=READ} out: {obj=READ}
 L2:
-    r(object: A(obj) { { val x = obj } fun foo() { val y = obj } })
-    w(obj)                                                                          INIT: in: {obj=D} out: {obj=ID}
+    r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v2>
+    w(obj|<v2>)                                                                     INIT: in: {obj=D} out: {obj=ID}
 L1:
     <END>                                                                           INIT: in: {obj=ID} out: {obj=ID}
 error:
@@ -104,8 +106,8 @@ L3:
   2 <START>                  INIT: in: {} out: {}
   3 mark({ val y = obj })
     v(val y = obj)           INIT: in: {} out: {y=D}        USE: in: {obj=READ} out: {obj=READ}
-    r(obj)                   INIT: in: {y=D} out: {y=D}     USE: in: {} out: {obj=READ}
-    w(y)                     INIT: in: {y=D} out: {y=ID}
+    r(obj) -> <v0>           INIT: in: {y=D} out: {y=D}     USE: in: {} out: {obj=READ}
+    w(y|<v0>)                INIT: in: {y=D} out: {y=ID}
 L4:
   2 <END>                    INIT: in: {} out: {}
 error:
@@ -119,17 +121,17 @@ class TestOther {
 }
 ---------------------
 L0:
-  1 <START>                  INIT: in: {} out: {}
-    v(val x: Int = x + 1)    INIT: in: {} out: {x=D}
-    mark(x + 1)              INIT: in: {x=D} out: {x=D}      USE: in: {x=READ} out: {x=READ}
-    r(x)                                                     USE: in: {} out: {x=READ}
-    r(1)
-    call(+, plus)
-    w(x)                     INIT: in: {x=D} out: {x=ID}
+  1 <START>                             INIT: in: {} out: {}
+    v(val x: Int = x + 1)               INIT: in: {} out: {x=D}
+    mark(x + 1)                         INIT: in: {x=D} out: {x=D}      USE: in: {x=READ} out: {x=READ}
+    r(x) -> <v0>                                                        USE: in: {} out: {x=READ}
+    r(1) -> <v1>
+    call(+, plus|<v0>, <v1>) -> <v2>
+    w(x|<v2>)                           INIT: in: {x=D} out: {x=ID}
 L1:
-    <END>                    INIT: in: {x=ID} out: {x=ID}
+    <END>                               INIT: in: {x=ID} out: {x=ID}
 error:
-    <ERROR>                  INIT: in: {} out: {}
+    <ERROR>                             INIT: in: {} out: {}
 sink:
-    <SINK>                   INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
+    <SINK>                              INIT: in: {x=ID} out: {x=ID}    USE: in: {} out: {}
 =====================

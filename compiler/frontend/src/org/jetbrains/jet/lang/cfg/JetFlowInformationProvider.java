@@ -27,11 +27,11 @@ import kotlin.Function3;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.PseudocodeTraverserPackage;
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
@@ -225,10 +225,12 @@ public class JetFlowInformationProvider {
                 }
 
                 @Override
-                public void visitExpression(@NotNull JetExpression expression) {
+                public void visitJetElement(@NotNull JetElement element) {
+                    if (!(element instanceof JetExpression || element instanceof JetWhenCondition)) return;
+
                     if (blockBody && !noExpectedType(expectedReturnType)
                             && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType)
-                            && !rootUnreachableElements.contains(expression)) {
+                            && !rootUnreachableElements.contains(element)) {
                         noReturnError[0] = true;
                     }
                 }
@@ -242,7 +244,9 @@ public class JetFlowInformationProvider {
     private Set<JetElement> collectUnreachableCode() {
         Collection<JetElement> unreachableElements = Lists.newArrayList();
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
-            if (!(deadInstruction instanceof JetElementInstruction) || deadInstruction instanceof LoadUnitValueInstruction) continue;
+            if (!(deadInstruction instanceof JetElementInstruction)
+                    || deadInstruction instanceof LoadUnitValueInstruction
+                    || (deadInstruction instanceof MagicInstruction && ((MagicInstruction) deadInstruction).getSynthetic())) continue;
 
             JetElement element = ((JetElementInstruction) deadInstruction).getElement();
 
@@ -643,16 +647,18 @@ public class JetFlowInformationProvider {
                 pseudocode, FORWARD, new FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
-                        if (!(instruction instanceof ReadValueInstruction)) return;
-                        VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
-                        JetElement element =
-                                ((ReadValueInstruction) instruction).getElement();
+                        if (!(instruction instanceof ReadValueInstruction || instruction instanceof MagicInstruction)) return;
+
+                        JetElement element = ((JetElementInstruction) instruction).getElement();
                         if (!(element instanceof JetFunctionLiteralExpression
                               || element instanceof JetConstantExpression
                               || element instanceof JetStringTemplateExpression
-                              || element instanceof JetSimpleNameExpression)) {
-                            return;
-                        }
+                              || element instanceof JetSimpleNameExpression)) return;
+
+                        if (!(element instanceof JetStringTemplateExpression || instruction instanceof ReadValueInstruction)) return;
+
+                        VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
+
                         PsiElement parent = element.getParent();
                         if (parent instanceof JetBlockExpression) {
                             if (!JetPsiUtil.isImplicitlyUsed(element)) {

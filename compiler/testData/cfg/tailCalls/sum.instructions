@@ -7,38 +7,40 @@ tailRecursive fun sum(x: Long, sum: Long): Long {
 L0:
   1 <START>
     v(x: Long)
-    w(x)
+    magic(x: Long) -> <v0>
+    w(x|<v0>)
     v(sum: Long)
-    w(sum)
+    magic(sum: Long) -> <v1>
+    w(sum|<v1>)
   2 mark({ if (x == 0.toLong()) return sum return sum(x - 1, sum + x) })
     mark(if (x == 0.toLong()) return sum)
     mark(x == 0.toLong())
-    r(x)
+    r(x) -> <v2>
     mark(0.toLong())
     mark(toLong())
-    r(0)
-    call(toLong, toLong)
-    call(==, equals)
-    jf(L2)                                                                  NEXT:[read (Unit), r(sum)]
-    r(sum)
-    ret(*) L1                                                               NEXT:[<END>]
+    r(0) -> <v3>
+    call(toLong, toLong|<v3>) -> <v4>
+    call(==, equals|<v2>, <v4>) -> <v5>
+    jf(L2|<v5>)                                                             NEXT:[read (Unit), r(sum) -> <v6>]
+    r(sum) -> <v6>
+    ret(*|<v6>) L1                                                          NEXT:[<END>]
 -   jmp(L3)                                                                 NEXT:[mark(sum(x - 1, sum + x))]                                               PREV:[]
 L2:
-    read (Unit)                                                             PREV:[jf(L2)]
+    read (Unit)                                                             PREV:[jf(L2|<v5>)]
 L3:
     mark(sum(x - 1, sum + x))
     mark(x - 1)
-    r(x)
-    r(1)
-    call(-, minus)
+    r(x) -> <v7>
+    r(1) -> <v8>
+    call(-, minus|<v7>, <v8>) -> <v9>
     mark(sum + x)
-    r(sum)
-    r(x)
-    call(+, plus)
-    call(sum, sum)
-    ret(*) L1
+    r(sum) -> <v10>
+    r(x) -> <v11>
+    call(+, plus|<v10>, <v11>) -> <v12>
+    call(sum, sum|<v9>, <v12>) -> <v13>
+    ret(*|<v13>) L1
 L1:
-  1 <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*) L1, ret(*) L1]
+  1 <END>                                                                   NEXT:[<SINK>]                                                                  PREV:[ret(*|<v6>) L1, ret(*|<v13>) L1]
 error:
     <ERROR>                                                                 PREV:[]
 sink:

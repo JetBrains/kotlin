@@ -16,16 +16,41 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode
 
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
+import kotlin.properties.Delegates
 
-class CallInstruction(
+abstract class OperationInstruction protected(
         element: JetElement,
         lexicalScope: LexicalScope,
-        val resolvedCall: ResolvedCall<*>
+        val usedValues: List<PseudoValue>
 ) : InstructionWithNext(element, lexicalScope) {
+    protected var resultValue: PseudoValue? = null
 
+    override fun getInputValues(): List<PseudoValue> = usedValues
+    override fun getOutputValue(): PseudoValue? = resultValue
+
+    protected fun renderInstruction(name: String, desc: String): String =
+            "$name($desc" +
+            (if (usedValues.notEmpty) "|${usedValues.makeString(", ")})" else ")") +
+            (if (resultValue != null) " -> $resultValue" else "")
+
+    protected fun setResult(value: PseudoValue?): OperationInstruction {
+        this.resultValue = value
+        return this
+    }
+
+    protected fun setResult(factory: PseudoValueFactory?, valueElement: JetElement? = element): OperationInstruction {
+        return setResult(factory?.newValue(valueElement, this))
+    }
+}
+
+class CallInstruction private(
+        element: JetElement,
+        lexicalScope: LexicalScope,
+        val resolvedCall: ResolvedCall<*>,
+        usedValues: List<PseudoValue>
+) : OperationInstruction(element, lexicalScope, usedValues) {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCallInstruction(this)
     }
@@ -34,9 +59,61 @@ class CallInstruction(
         return visitor.visitCallInstruction(this)
     }
 
-    override fun createCopy() = CallInstruction(element, lexicalScope, resolvedCall)
+    override fun createCopy() =
+            CallInstruction(element, lexicalScope, resolvedCall, usedValues).setResult(resultValue)
 
-    override fun toString() = "call(${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()})"
+    override fun toString() =
+            renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
+
+    class object {
+        fun create (
+                element: JetElement,
+                lexicalScope: LexicalScope,
+                resolvedCall: ResolvedCall<*>,
+                usedValues: List<PseudoValue>,
+                factory: PseudoValueFactory?
+        ): CallInstruction = CallInstruction(element, lexicalScope, resolvedCall, usedValues).setResult(factory) as CallInstruction
+    }
+}
+
+// Introduces black-box operation
+// Used to:
+//      consume input values (so that they aren't considered unused)
+//      denote value transformation which can't be expressed by other instructions (such as call or read)
+//      pass more than one value to instruction which formally requires only one (e.g. jump)
+// "Synthetic" means that the instruction does not correspond to some operation explicitly expressed by PSI element
+//      Examples: merging branches of 'if', 'when' and 'try' expressions, providing initial values for parameters, etc.
+class MagicInstruction(
+        element: JetElement,
+        lexicalScope: LexicalScope,
+        val synthetic: Boolean,
+        usedValues: List<PseudoValue>
+) : OperationInstruction(element, lexicalScope, usedValues) {
+    override fun getOutputValue(): PseudoValue = resultValue!!
+
+    override fun accept(visitor: InstructionVisitor) {
+        visitor.visitMagic(this)
+    }
+
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R? {
+        return visitor.visitMagic(this)
+    }
+
+    override fun createCopy() =
+            MagicInstruction(element, lexicalScope, synthetic, usedValues).setResult(resultValue)
+
+    override fun toString() = renderInstruction("magic", render(element))
+
+    class object {
+        fun create(
+                element: JetElement,
+                valueElement: JetElement?,
+                lexicalScope: LexicalScope,
+                synthetic: Boolean,
+                usedValues: List<PseudoValue>,
+                factory: PseudoValueFactory
+        ): MagicInstruction = MagicInstruction(element, lexicalScope, synthetic, usedValues).setResult(factory, valueElement) as MagicInstruction
+    }
 }
 
 class CompilationErrorInstruction(
@@ -65,7 +142,6 @@ class MarkInstruction(
         element: JetElement,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
-
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMarkInstruction(this)
     }

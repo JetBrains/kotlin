@@ -10,16 +10,16 @@ L0:
   1 <START>                                    INIT: in: {} out: {}            USE: in: {} out: {}
   2 mark({ var a = 1 use(a) a = 2 use(a) })
     v(var a = 1)                               INIT: in: {} out: {a=D}
-    r(1)                                       INIT: in: {a=D} out: {a=D}
-    w(a)                                       INIT: in: {a=D} out: {a=ID}
+    r(1) -> <v0>                               INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                                  INIT: in: {a=D} out: {a=ID}
     mark(use(a))                               INIT: in: {a=ID} out: {a=ID}    USE: in: {a=READ} out: {a=READ}
-    r(a)                                                                       USE: in: {a=WRITTEN_AFTER_READ} out: {a=READ}
-    call(use, use)
-    r(2)                                                                       USE: in: {a=WRITTEN_AFTER_READ} out: {a=WRITTEN_AFTER_READ}
-    w(a)                                                                       USE: in: {a=READ} out: {a=WRITTEN_AFTER_READ}
+    r(a) -> <v1>                                                               USE: in: {a=WRITTEN_AFTER_READ} out: {a=READ}
+    call(use, use|<v1>) -> <v2>
+    r(2) -> <v3>                                                               USE: in: {a=WRITTEN_AFTER_READ} out: {a=WRITTEN_AFTER_READ}
+    w(a|<v3>)                                                                  USE: in: {a=READ} out: {a=WRITTEN_AFTER_READ}
     mark(use(a))                                                               USE: in: {a=READ} out: {a=READ}
-    r(a)                                                                       USE: in: {} out: {a=READ}
-    call(use, use)
+    r(a) -> <v4>                                                               USE: in: {} out: {a=READ}
+    call(use, use|<v4>) -> <v5>
 L1:
   1 <END>                                      INIT: in: {} out: {}
 error:
@@ -37,8 +37,8 @@ L0:
   1 <START>                       INIT: in: {} out: {}           USE: in: {} out: {}
   2 mark({ val b: Int b = 3 })
     v(val b: Int)                 INIT: in: {} out: {b=D}
-    r(3)                          INIT: in: {b=D} out: {b=D}     USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
-    w(b)                          INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
+    r(3) -> <v0>                  INIT: in: {b=D} out: {b=D}     USE: in: {b=ONLY_WRITTEN_NEVER_READ} out: {b=ONLY_WRITTEN_NEVER_READ}
+    w(b|<v0>)                     INIT: in: {b=D} out: {b=ID}    USE: in: {} out: {b=ONLY_WRITTEN_NEVER_READ}
 L1:
   1 <END>                         INIT: in: {} out: {}
 error:
@@ -50,14 +50,15 @@ sink:
 fun use(a: Int) = a
 ---------------------
 L0:
-  1 <START>      INIT: in: {} out: {}
-    v(a: Int)    INIT: in: {} out: {a=D}
-    w(a)         INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
-    r(a)         INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
+  1 <START>                  INIT: in: {} out: {}
+    v(a: Int)                INIT: in: {} out: {a=D}
+    magic(a: Int) -> <v0>    INIT: in: {a=D} out: {a=D}
+    w(a|<v0>)                INIT: in: {a=D} out: {a=ID}     USE: in: {a=READ} out: {a=READ}
+    r(a) -> <v1>             INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {a=READ}
 L1:
     <END>
 error:
-    <ERROR>      INIT: in: {} out: {}
+    <ERROR>                  INIT: in: {} out: {}
 sink:
-    <SINK>       INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
+    <SINK>                   INIT: in: {a=ID} out: {a=ID}    USE: in: {} out: {}
 =====================

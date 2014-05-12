@@ -33,8 +33,8 @@ L3:
   3 <START>
   4 mark({ val b: Int return b })
     v(val b: Int)
-    r(b)
-    ret(*) L4
+    r(b) -> <v0>
+    ret(*|<v0>) L4
 L4:
   3 <END>                            NEXT:[<SINK>]
 error:

@@ -16,23 +16,24 @@ L0:
     v(val b: Boolean)                                                             INIT: in: {} out: {b=D}
     mark(if (1 < 2) { b = false } else { b = true })                              INIT: in: {b=D} out: {b=D}
     mark(1 < 2)
-    r(1)
-    r(2)
-    call(<, compareTo)
-    jf(L2)
+    r(1) -> <v0>
+    r(2) -> <v1>
+    call(<, compareTo|<v0>, <v1>) -> <v2>
+    jf(L2|<v2>)
   3 mark({ b = false })
-    r(false)                                                                                                      USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b)                                                                          INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(false) -> <v3>                                                                                              USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v3>)                                                                     INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
   2 jmp(L3)                                                                       INIT: in: {b=ID} out: {b=ID}    USE: in: {b=READ} out: {b=READ}
 L2:
   3 mark({ b = true })                                                            INIT: in: {b=D} out: {b=D}
-    r(true)                                                                                                       USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
-    w(b)                                                                          INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
+    r(true) -> <v4>                                                                                               USE: in: {b=WRITTEN_AFTER_READ} out: {b=WRITTEN_AFTER_READ}
+    w(b|<v4>)                                                                     INIT: in: {b=D} out: {b=ID}     USE: in: {b=READ} out: {b=WRITTEN_AFTER_READ}
 L3:
   2 mark(use(b))                                                                  INIT: in: {b=ID} out: {b=ID}
     error(use, No resolved call)                                                                                  USE: in: {b=READ} out: {b=READ}
-    r(b)                                                                                                          USE: in: {} out: {b=READ}
+    r(b) -> <v5>                                                                                                  USE: in: {} out: {b=READ}
     error(use, No resolved call)
+    magic(use|<v5>) -> <v6>
 L1:
   1 <END>                                                                         INIT: in: {} out: {}
 error:

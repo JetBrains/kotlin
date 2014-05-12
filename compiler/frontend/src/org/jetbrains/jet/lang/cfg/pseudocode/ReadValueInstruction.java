@@ -17,12 +17,34 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 
-public class ReadValueInstruction extends InstructionWithNext {
+public class ReadValueInstruction extends InstructionWithReceiver {
+    private final PseudoValue resultValue;
 
-    public ReadValueInstruction(@NotNull JetElement element, @NotNull LexicalScope lexicalScope) {
-        super(element, lexicalScope);
+    private ReadValueInstruction(
+            @NotNull JetElement element,
+            @NotNull LexicalScope lexicalScope,
+            @Nullable PseudoValue receiverValue,
+            @NotNull PseudoValue resultValue) {
+        super(element, lexicalScope, receiverValue);
+        this.resultValue = resultValue;
+    }
+
+    public ReadValueInstruction(
+            @NotNull JetElement element,
+            @NotNull LexicalScope lexicalScope,
+            @Nullable PseudoValue receiverValue,
+            @NotNull PseudoValueFactory valueFactory) {
+        super(element, lexicalScope, receiverValue);
+        this.resultValue = valueFactory.newValue(element, this);
+    }
+
+    @NotNull
+    @Override
+    public PseudoValue getOutputValue() {
+        return resultValue;
     }
 
     @Override
@@ -37,12 +59,12 @@ public class ReadValueInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        return "r(" + render(element) + ")";
+        return "r(" + render(element) + (receiverValue != null ? ("|" + receiverValue) : "") + ") -> " + resultValue;
     }
 
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new ReadValueInstruction(element, lexicalScope);
+        return new ReadValueInstruction(element, lexicalScope, receiverValue, resultValue);
     }
 }

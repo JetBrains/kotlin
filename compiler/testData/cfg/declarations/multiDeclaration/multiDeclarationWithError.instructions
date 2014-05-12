@@ -7,14 +7,17 @@ fun foo(x: Int) {
 L0:
   1 <START>
     v(x: Int)
-    w(x)
+    magic(x: Int) -> <v0>
+    w(x|<v0>)
   2 mark({ val (a, b) = x a })
-    r(x)
+    r(x) -> <v1>
     v(a)
-    w(a)
+    magic(a|<v1>) -> <v2>
+    w(a|<v2>)
     v(b)
-    w(b)
-    r(a)
+    magic(b|<v1>) -> <v3>
+    w(b|<v3>)
+    r(a) -> <v4>
 L1:
   1 <END>                         NEXT:[<SINK>]
 error:

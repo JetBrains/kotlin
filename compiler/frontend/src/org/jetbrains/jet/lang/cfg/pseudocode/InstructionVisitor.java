@@ -17,8 +17,12 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 public class InstructionVisitor {
-    public void visitReadValue(ReadValueInstruction instruction) {
+    public void visitInstructionWithReceiver(InstructionWithReceiver instruction) {
         visitInstructionWithNext(instruction);
+    }
+
+    public void visitReadValue(ReadValueInstruction instruction) {
+        visitInstructionWithReceiver(instruction);
     }
 
     public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
@@ -81,15 +85,19 @@ public class InstructionVisitor {
     }
 
     public void visitWriteValue(WriteValueInstruction instruction) {
-        visitInstructionWithNext(instruction);
+        visitInstructionWithReceiver(instruction);
     }
 
     public void visitLoadUnitValue(LoadUnitValueInstruction instruction) {
         visitInstructionWithNext(instruction);
     }
 
-    public void visitCallInstruction(CallInstruction instruction) {
+    public void visitOperation(OperationInstruction instruction) {
         visitInstructionWithNext(instruction);
+    }
+
+    public void visitCallInstruction(CallInstruction instruction) {
+        visitOperation(instruction);
     }
 
     public void visitCompilationErrorInstruction(CompilationErrorInstruction instruction) {
@@ -100,4 +108,7 @@ public class InstructionVisitor {
         visitInstructionWithNext(instruction);
     }
 
+    public void visitMagic(MagicInstruction instruction) {
+        visitOperation(instruction);
+    }
 }

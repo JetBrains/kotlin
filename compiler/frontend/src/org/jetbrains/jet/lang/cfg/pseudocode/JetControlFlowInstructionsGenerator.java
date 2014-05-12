@@ -25,6 +25,8 @@ import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
-
     private JetControlFlowBuilder builder = null;
 
     private final Stack<BreakableBlockInfo> loopInfo = new Stack<BreakableBlockInfo>();
@@ -100,6 +101,18 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         private final Label error;
         private final Label sink;
         private final JetElement returnSubroutine;
+
+        private final PseudoValueFactory valueFactory = new PseudoValueFactoryImpl() {
+            @NotNull
+            @Override
+            public PseudoValue newValue(@Nullable JetElement element, @NotNull Instruction instruction) {
+                PseudoValue value = super.newValue(element, instruction);
+                if (element != null) {
+                    bindValue(value, element);
+                }
+                return value;
+            }
+        };
 
         private JetControlFlowInstructionsGeneratorWorker(@NotNull JetElement scopingElement, @NotNull JetElement returnSubroutine) {
             this.pseudocode = new PseudocodeImpl(scopingElement);
@@ -258,23 +271,40 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             add(new MarkInstruction(element, getCurrentScope()));
         }
 
+        @Nullable
         @Override
-        public void returnValue(@NotNull JetExpression returnExpression, @NotNull JetElement subroutine) {
-            Label exitPoint = getExitPoint(subroutine);
-            handleJumpInsideTryFinally(exitPoint);
-            add(new ReturnValueInstruction(returnExpression, getCurrentScope(), exitPoint));
+        public PseudoValue getBoundValue(@Nullable JetElement element) {
+            return pseudocode.getElementValue(element);
         }
 
         @Override
-        public void returnNoValue(@NotNull JetElement returnExpression, @NotNull JetElement subroutine) {
+        public void bindValue(@NotNull PseudoValue value, @NotNull JetElement element) {
+            pseudocode.bindElementToValue(element, value);
+        }
+
+        @Override
+        public void returnValue(
+                @NotNull JetReturnExpression returnExpression, @NotNull PseudoValue returnValue, @NotNull JetElement subroutine
+        ) {
+            Label exitPoint = getExitPoint(subroutine);
+            handleJumpInsideTryFinally(exitPoint);
+            add(new ReturnValueInstruction(returnExpression, getCurrentScope(), exitPoint, returnValue));
+        }
+
+        @Override
+        public void returnNoValue(@NotNull JetReturnExpression returnExpression, @NotNull JetElement subroutine) {
             Label exitPoint = getExitPoint(subroutine);
             handleJumpInsideTryFinally(exitPoint);
             add(new ReturnNoValueInstruction(returnExpression, getCurrentScope(), exitPoint));
         }
 
         @Override
-        public void write(@NotNull JetElement assignment, @NotNull JetElement lValue) {
-            add(new WriteValueInstruction(assignment, lValue, getCurrentScope()));
+        public void write(
+                @NotNull JetElement assignment,
+                @NotNull JetElement lValue,
+                @NotNull PseudoValue rValue,
+                @Nullable PseudoValue receiverValue) {
+            add(new WriteValueInstruction(assignment, lValue, rValue, receiverValue, getCurrentScope()));
         }
 
         @Override
@@ -304,15 +334,15 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void jumpOnFalse(@NotNull Label label, @NotNull JetElement element) {
+        public void jumpOnFalse(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue conditionValue) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(element, false, getCurrentScope(), label));
+            add(new ConditionalJumpInstruction(element, false, getCurrentScope(), label, conditionValue));
         }
 
         @Override
-        public void jumpOnTrue(@NotNull Label label, @NotNull JetElement element) {
+        public void jumpOnTrue(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue conditionValue) {
             handleJumpInsideTryFinally(label);
-            add(new ConditionalJumpInstruction(element, true, getCurrentScope(), label));
+            add(new ConditionalJumpInstruction(element, true, getCurrentScope(), label, conditionValue));
         }
 
         @Override
@@ -321,16 +351,16 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void nondeterministicJump(@NotNull Label label, @NotNull JetElement element) {
+        public void nondeterministicJump(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue inputValue) {
             handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(element, label, getCurrentScope()));
+            add(new NondeterministicJumpInstruction(element, label, getCurrentScope(), inputValue));
         }
 
         @Override
         public void nondeterministicJump(@NotNull List<Label> labels, @NotNull JetElement element) {
             //todo
             //handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(element, labels, getCurrentScope()));
+            add(new NondeterministicJumpInstruction(element, labels, getCurrentScope(), null));
         }
 
         @Override
@@ -345,9 +375,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @Override
-        public void throwException(@NotNull JetThrowExpression expression) {
+        public void throwException(@NotNull JetThrowExpression expression, @NotNull PseudoValue thrownValue) {
             handleJumpInsideTryFinally(error);
-            add(new ThrowExceptionInstruction(expression, getCurrentScope(), error));
+            add(new ThrowExceptionInstruction(expression, getCurrentScope(), error, thrownValue));
         }
 
         @Override
@@ -366,44 +396,87 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             pseudocode.repeatPart(startLabel, finishLabel);
         }
 
+        @NotNull
         @Override
-        public void loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
-            read(expression);
+        public PseudoValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+            return read(expression, null);
         }
 
+        @NotNull
         @Override
-        public void createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
-            read(expression);
+        public PseudoValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+            return read(expression, null);
         }
 
+        @NotNull
         @Override
-        public void createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
-            read(expression);
+        public PseudoValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+            return read(expression, null);
         }
 
+        @NotNull
         @Override
-        public void loadStringTemplate(@NotNull JetStringTemplateExpression expression) {
-            read(expression);
+        public PseudoValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
+            return inputValues.isEmpty() ? read(expression, null) : magic(expression, expression, inputValues, false);
         }
 
+        @NotNull
         @Override
-        public void readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
-            read(expression);
+        public PseudoValue magic(
+                @NotNull JetElement instructionElement,
+                @Nullable JetElement valueElement,
+                @NotNull List<PseudoValue> inputValues,
+                boolean synthetic
+        ) {
+            MagicInstruction instruction =
+                    MagicInstruction.object$.create(instructionElement, valueElement, getCurrentScope(), synthetic, inputValues, valueFactory);
+            add(instruction);
+            return instruction.getOutputValue();
         }
 
+        @NotNull
         @Override
-        public void readVariable(@NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor) {
-            read(expression);
+        public PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
+            return read(expression, null);
         }
 
+        @NotNull
         @Override
-        public void call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall) {
-            add(new CallInstruction(expression, getCurrentScope(), resolvedCall));
+        public PseudoValue readVariable(
+                @NotNull JetExpression expression,
+                @Nullable VariableDescriptor variableDescriptor,
+                @Nullable PseudoValue receiverValue
+        ) {
+            return read(expression, receiverValue);
         }
 
+        @Nullable
         @Override
-        public void predefinedOperation(@NotNull JetExpression expression, @Nullable PredefinedOperation operation) {
-            read(expression);
+        public PseudoValue call(
+                @NotNull JetExpression expression,
+                @NotNull ResolvedCall<?> resolvedCall,
+                @NotNull List<PseudoValue> inputValues
+        ) {
+            JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
+            OperationInstruction instruction = CallInstruction.object$.create(
+                    expression,
+                    getCurrentScope(),
+                    resolvedCall,
+                    inputValues,
+                    returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType) ? null : valueFactory
+            );
+            add(instruction);
+            return instruction.getOutputValue();
+        }
+
+        @NotNull
+        @Override
+        public PseudoValue predefinedOperation(
+                @NotNull JetExpression expression,
+                @NotNull PredefinedOperation operation,
+                @NotNull List<PseudoValue> inputValues
+        ) {
+            return magic(expression, expression, inputValues, false);
         }
 
         @Override
@@ -411,8 +484,11 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             add(new CompilationErrorInstruction(element, getCurrentScope(), message));
         }
 
-        private void read(@NotNull JetElement element) {
-            add(new ReadValueInstruction(element, getCurrentScope()));
+        @NotNull
+        private PseudoValue read(@NotNull JetExpression expression, @Nullable PseudoValue receiverValue) {
+            ReadValueInstruction instruction = new ReadValueInstruction(expression, getCurrentScope(), receiverValue, valueFactory);
+            add(instruction);
+            return instruction.getOutputValue();
         }
     }
 

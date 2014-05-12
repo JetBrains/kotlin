@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.cfg.pseudocode;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.Label;
 import org.jetbrains.jet.lang.psi.JetElement;
 
@@ -28,15 +29,33 @@ public class NondeterministicJumpInstruction extends JetElementInstructionImpl i
     private Instruction next;
     private final List<Label> targetLabels;
     private final Map<Label, Instruction> resolvedTargets;
+    private final PseudoValue inputValue;
 
-    public NondeterministicJumpInstruction(@NotNull JetElement element, List<Label> targetLabels, LexicalScope lexicalScope) {
+    public NondeterministicJumpInstruction(
+            @NotNull JetElement element,
+            List<Label> targetLabels,
+            LexicalScope lexicalScope,
+            @Nullable PseudoValue inputValue
+    ) {
         super(element, lexicalScope);
         this.targetLabels = Lists.newArrayList(targetLabels);
         resolvedTargets = Maps.newLinkedHashMap();
+        this.inputValue = inputValue;
     }
 
-    public NondeterministicJumpInstruction(@NotNull JetElement element, Label targetLabel, LexicalScope lexicalScope) {
-        this(element, Lists.newArrayList(targetLabel), lexicalScope);
+    public NondeterministicJumpInstruction(
+            @NotNull JetElement element,
+            Label targetLabel,
+            LexicalScope lexicalScope,
+            @Nullable PseudoValue inputValue
+    ) {
+        this(element, Lists.newArrayList(targetLabel), lexicalScope, inputValue);
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return Collections.singletonList(inputValue);
     }
 
     public List<Label> getTargetLabels() {
@@ -88,6 +107,9 @@ public class NondeterministicJumpInstruction extends JetElementInstructionImpl i
                 sb.append(", ");
             }
         }
+        if (inputValue != null) {
+            sb.append("|").append(inputValue);
+        }
         sb.append(")");
         return sb.toString();
     }
@@ -104,6 +126,6 @@ public class NondeterministicJumpInstruction extends JetElementInstructionImpl i
     }
 
     private Instruction createCopy(@NotNull List<Label> newTargetLabels) {
-        return new NondeterministicJumpInstruction(getElement(), newTargetLabels, lexicalScope);
+        return new NondeterministicJumpInstruction(getElement(), newTargetLabels, lexicalScope, inputValue);
     }
 }

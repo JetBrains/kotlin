@@ -14,32 +14,30 @@ L0:
   2 mark({ val a = Array<Int> 3 a[10] = 4 2 a[10] 100 a[10] += 1 })
     v(val a = Array<Int>)
     mark(Array<Int>)
-    call(Array, <init>)
-    w(a)
-    r(3)
+    call(Array, <init>) -> <v0>
+    w(a|<v0>)
+    r(3) -> <v1>
     mark(a[10])
-    r(a)
-    r(10)
-    r(4)
-    call(a[10], set)
-    r(2)
+    r(a) -> <v2>
+    r(10) -> <v3>
+    r(4) -> <v4>
+    call(a[10] = 4, set|<v2>, <v3>, <v4>) -> <v5>
+    r(2) -> <v6>
     mark(a[10])
-    r(a)
-    r(10)
-    call(a[10], get)
-    r(100)
+    r(a) -> <v7>
+    r(10) -> <v8>
+    call(a[10], get|<v7>, <v8>) -> <v9>
+    r(100) -> <v10>
     mark(a[10] += 1)
     mark(a[10])
-    r(a)
-    r(10)
-    call(a[10], get)
-    r(1)
-    call(+=, plus)
-    mark(a[10])
-    r(a)
-    r(10)
-    r(1)
-    call(a[10], set)
+    r(a) -> <v11>
+    r(10) -> <v12>
+    call(a[10], get|<v11>, <v12>) -> <v13>
+    r(1) -> <v14>
+    call(+=, plus|<v13>, <v14>) -> <v15>
+    r(a) -> <v16>
+    r(10) -> <v17>
+    call(a[10] += 1, set|<v16>, <v17>, <v15>) -> <v18>
 L1:
   1 <END>                                                              NEXT:[<SINK>]
 error:

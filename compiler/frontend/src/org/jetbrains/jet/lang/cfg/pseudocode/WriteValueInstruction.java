@@ -17,21 +17,41 @@
 package org.jetbrains.jet.lang.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 
-public class WriteValueInstruction extends InstructionWithNext {
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class WriteValueInstruction extends InstructionWithReceiver {
     @NotNull
     private final JetElement lValue;
 
-    public WriteValueInstruction(@NotNull JetElement assignment, @NotNull JetElement lValue, @NotNull LexicalScope lexicalScope) {
-        super(assignment, lexicalScope);
+    @NotNull
+    private final PseudoValue rValue;
+
+    public WriteValueInstruction(
+            @NotNull JetElement assignment,
+            @NotNull JetElement lValue,
+            @NotNull PseudoValue rValue,
+            @Nullable PseudoValue receiverValue,
+            @NotNull LexicalScope lexicalScope) {
+        super(assignment, lexicalScope, receiverValue);
         this.lValue = lValue;
+        this.rValue = rValue;
     }
 
     @NotNull
     public JetElement getlValue() {
         return lValue;
+    }
+
+    @NotNull
+    @Override
+    public List<PseudoValue> getInputValues() {
+        return receiverValue != null ? Arrays.asList(rValue, receiverValue) : Collections.singletonList(rValue);
     }
 
     @Override
@@ -46,16 +66,13 @@ public class WriteValueInstruction extends InstructionWithNext {
 
     @Override
     public String toString() {
-        if (lValue instanceof JetNamedDeclaration) {
-            JetNamedDeclaration value = (JetNamedDeclaration) lValue;
-            return "w(" + value.getName() + ")";
-        }
-        return "w(" + render(lValue) + ")";
+        String lhs = lValue instanceof JetNamedDeclaration ? lValue.getName() : render(lValue);
+        return "w(" + lhs + "|" + (receiverValue != null ? (receiverValue + ", ") : "") + rValue.toString() + ")";
     }
 
     @NotNull
     @Override
     protected Instruction createCopy() {
-        return new WriteValueInstruction(element, lValue, lexicalScope);
+        return new WriteValueInstruction(element, lValue, rValue, receiverValue, lexicalScope);
     }
 }
