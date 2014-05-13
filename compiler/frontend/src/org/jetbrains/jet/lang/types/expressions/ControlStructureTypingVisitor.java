@@ -52,7 +52,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.*;
 import static org.jetbrains.jet.lang.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.jet.lang.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.jet.lang.types.TypeUtils.noExpectedType;
-import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.*;
+import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createCallForSpecialConstruction;
+import static org.jetbrains.jet.lang.types.expressions.ControlStructureTypingUtils.createDataFlowInfoForArgumentsForIfCall;
 import static org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils.*;
 
 public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
@@ -437,7 +438,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitReturnExpression(@NotNull JetReturnExpression expression, ExpressionTypingContext context) {
-        JetElement labelTargetElement = LabelResolver.INSTANCE.resolveLabel(expression, context);
+        JetElement labelTargetElement = LabelResolver.INSTANCE.resolveControlLabel(expression, context);
 
         JetExpression returnedExpression = expression.getReturnedExpression();
 
@@ -509,13 +510,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
-        LabelResolver.INSTANCE.resolveLabel(expression, context);
+        LabelResolver.INSTANCE.resolveControlLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }
 
     @Override
     public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
-        LabelResolver.INSTANCE.resolveLabel(expression, context);
+        LabelResolver.INSTANCE.resolveControlLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }
 

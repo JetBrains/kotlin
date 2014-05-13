@@ -24,7 +24,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DescriptorResolver;
+import org.jetbrains.jet.lang.resolve.calls.context.ResolutionContext;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
 import java.util.Collection;
@@ -93,7 +95,7 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetCallExpression getContainingCallExpression(JetFunctionLiteralExpression expression) {
+    private JetCallExpression getContainingCallExpression(@NotNull JetFunctionLiteralExpression expression) {
         PsiElement parent = expression.getParent();
         if (parent instanceof JetCallExpression) {
             // f {}
@@ -114,61 +116,70 @@ public class LabelResolver {
     }
 
     @Nullable
-    private JetElement resolveControlLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, ExpressionTypingContext context) {
+    public JetElement resolveControlLabel(
+            @NotNull JetLabelQualifiedExpression expression,
+            @NotNull ResolutionContext context
+    ) {
+        JetSimpleNameExpression labelElement = expression.getTargetLabel();
+        String name = expression.getLabelName();
+        if (labelElement == null || name == null) return null;
+
+        Name labelName = Name.identifierForLabel(name);
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
 
-        if (size == 1) {
-            DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
-            JetElement element;
-            if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
-                element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
-            }
-            else {
-                throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
-            }
-            context.trace.record(LABEL_TARGET, labelExpression, element);
-            return element;
+        if (size > 1) {
+            BindingContextUtils.reportAmbiguousLabel(context.trace, labelElement, declarationsByLabel);
+            return null;
         }
-        else if (size == 0) {
-            JetElement element = resolveNamedLabel(labelName, labelExpression, context);
+        if (size == 0) {
+            JetElement element = resolveNamedLabel(labelName, labelElement, context.trace);
             if (element == null) {
-                context.trace.report(UNRESOLVED_REFERENCE.on(labelExpression, labelExpression));
+                context.trace.report(UNRESOLVED_REFERENCE.on(labelElement, labelElement));
             }
             return element;
         }
-        BindingContextUtils.reportAmbiguousLabel(context.trace, labelExpression, declarationsByLabel);
-        return null;
-    }
-
-    @Nullable
-    public JetElement resolveLabel(JetLabelQualifiedExpression expression, ExpressionTypingContext context) {
-        JetSimpleNameExpression labelElement = expression.getTargetLabel();
-        if (labelElement != null) {
-            Name labelName = Name.identifierForLabel(expression.getLabelName());
-            return resolveControlLabel(labelName, labelElement, context);
+        DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
+        JetElement element;
+        if (declarationDescriptor instanceof FunctionDescriptor || declarationDescriptor instanceof ClassDescriptor) {
+            element = (JetElement) BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
         }
-        return null;
+        else {
+            throw new UnsupportedOperationException(declarationDescriptor.getClass().toString()); // TODO
+        }
+        context.trace.record(LABEL_TARGET, labelElement, element);
+        return element;
     }
 
-    private JetElement resolveNamedLabel(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression, ExpressionTypingContext context) {
+    private JetElement resolveNamedLabel(
+            @NotNull Name labelName, 
+            @NotNull JetSimpleNameExpression labelExpression, 
+            @NotNull BindingTrace trace
+    ) {
         List<JetElement> list = getElementsByLabelName(labelName, labelExpression);
         if (list.isEmpty()) return null;
 
         if (list.size() > 1) {
-            context.trace.report(LABEL_NAME_CLASH.on(labelExpression));
+            trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
         JetElement result = list.get(0);
-        context.trace.record(LABEL_TARGET, labelExpression, result);
+        trace.record(LABEL_TARGET, labelExpression, result);
         return result;
     }
+    
+    @NotNull
+    public LabeledReceiverResolutionResult resolveThisOrSuperLabel(
+            @NotNull JetLabelQualifiedInstanceExpression expression,
+            @NotNull ResolutionContext context,
+            @NotNull Name labelName
+    ) {
+        JetReferenceExpression referenceExpression = expression.getInstanceReference();
+        JetSimpleNameExpression targetLabel = expression.getTargetLabel();
+        assert targetLabel != null : expression;
 
-    public LabeledReceiverResolutionResult resolveThisLabel(JetReferenceExpression thisReference, JetSimpleNameExpression targetLabel,
-            ExpressionTypingContext context, Name labelName) {
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
-        assert targetLabel != null;
         if (size == 1) {
             DeclarationDescriptor declarationDescriptor = declarationsByLabel.iterator().next();
             ReceiverParameterDescriptor thisReceiver;
@@ -190,7 +201,7 @@ public class LabelResolver {
             PsiElement element = BindingContextUtils.descriptorToDeclaration(context.trace.getBindingContext(), declarationDescriptor);
             assert element != null : "No PSI element for descriptor: " + declarationDescriptor;
             context.trace.record(LABEL_TARGET, targetLabel, element);
-            context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
+            context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);
 
             if (declarationDescriptor instanceof ClassDescriptor) {
                 ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
@@ -202,7 +213,7 @@ public class LabelResolver {
             return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
         }
         else if (size == 0) {
-            JetElement element = resolveNamedLabel(labelName, targetLabel, context);
+            JetElement element = resolveNamedLabel(labelName, targetLabel, context.trace);
             if (element instanceof JetFunctionLiteral) {
                 DeclarationDescriptor declarationDescriptor =
                         context.trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
@@ -210,7 +221,7 @@ public class LabelResolver {
                     ReceiverParameterDescriptor thisReceiver = ((FunctionDescriptor) declarationDescriptor).getReceiverParameter();
                     if (thisReceiver != null) {
                         context.trace.record(LABEL_TARGET, targetLabel, element);
-                        context.trace.record(REFERENCE_TARGET, thisReference, declarationDescriptor);
+                        context.trace.record(REFERENCE_TARGET, referenceExpression, declarationDescriptor);
                     }
                     return LabeledReceiverResolutionResult.labelResolutionSuccess(thisReceiver);
                 }
