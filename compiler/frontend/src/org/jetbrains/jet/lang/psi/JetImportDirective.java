@@ -121,6 +121,10 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
     }
 
     public boolean isValidImport() {
+        PsiJetImportDirectiveStub stub = getStub();
+        if (stub != null) {
+            return stub.isValid();
+        }
         return !PsiTreeUtil.hasErrorElements(this);
     }
 
