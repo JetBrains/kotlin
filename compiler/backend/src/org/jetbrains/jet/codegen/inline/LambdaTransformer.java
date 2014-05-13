@@ -200,7 +200,6 @@ public class LambdaTransformer {
         Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
 
         AbstractInsnNode cur = constructor.instructions.getFirst();
-        cur = cur.getNext(); //skip super call
         List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
         CapturedParamOwner owner = new CapturedParamOwner() {
             @Override

@@ -241,13 +241,13 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             mv.visitCode();
             InstructionAdapter iv = new InstructionAdapter(mv);
 
-            iv.load(0, superClass);
-            iv.invokespecial(superClass.getInternalName(), "<init>", "()V");
-
             int k = 1;
             for (FieldInfo fieldInfo : args) {
                 k = AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, iv);
             }
+
+            iv.load(0, superClass);
+            iv.invokespecial(superClass.getInternalName(), "<init>", "()V");
 
             iv.visitInsn(RETURN);
 

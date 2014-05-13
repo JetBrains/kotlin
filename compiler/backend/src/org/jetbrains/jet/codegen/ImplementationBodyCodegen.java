@@ -1156,6 +1156,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         InstructionAdapter iv = codegen.v;
 
+        if (closure != null) {
+            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
+            int k = 1;
+            for (FieldInfo info : argsFromClosure) {
+                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
+            }
+        }
+
         if (superCall == null) {
             genSimpleSuperCall(iv);
         }
@@ -1164,14 +1172,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         else {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
-        }
-
-        if (closure != null) {
-            List<FieldInfo> argsFromClosure = ClosureCodegen.calculateConstructorParameters(typeMapper, closure, classAsmType);
-            int k = 1;
-            for (FieldInfo info : argsFromClosure) {
-                k = AsmUtil.genAssignInstanceFieldFromParam(info, k, iv);
-            }
         }
 
         int n = 0;
