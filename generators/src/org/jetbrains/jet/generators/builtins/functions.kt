@@ -34,7 +34,7 @@ enum class FunctionKind(
     K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", true, "ExtensionFunction")
 
     fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
-    fun getImplFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "sImpl.kt"
+    fun getImplFileName() = "reflect/" + classNamePrefix + "sImpl.kt"
     fun getClassName(i: Int) = classNamePrefix + i
     fun getImplClassName(i: Int) = classNamePrefix + "Impl" + i
     fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
