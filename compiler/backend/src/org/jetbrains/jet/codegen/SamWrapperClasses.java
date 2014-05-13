@@ -21,29 +21,28 @@ import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Map;
 
 public class SamWrapperClasses {
     private final GenerationState state;
 
-    private final Map<Pair<JavaClassDescriptor, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
+    private final Map<Pair<SamType, JetFile>, Type> samInterfaceToWrapperClass = Maps.newHashMap();
 
-    public SamWrapperClasses(GenerationState state) {
+    public SamWrapperClasses(@NotNull GenerationState state) {
         this.state = state;
     }
 
     @NotNull
-    public Type getSamWrapperClass(@NotNull final JavaClassDescriptor samInterface, @NotNull final JetFile file) {
-        return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samInterface, file),
+    public Type getSamWrapperClass(@NotNull final SamType samType, @NotNull final JetFile file) {
+        return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samType, file),
                                          new Factory<Type>() {
                                              @Override
                                              public Type create() {
-                                                 return new SamWrapperCodegen(state, samInterface).genWrapper(file);
+                                                 return new SamWrapperCodegen(state, samType).genWrapper(file);
                                              }
                                          });
     }

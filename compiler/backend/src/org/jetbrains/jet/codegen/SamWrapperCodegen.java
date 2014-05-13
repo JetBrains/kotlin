@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
@@ -46,12 +45,12 @@ public class SamWrapperCodegen {
 
     private final GenerationState state;
     private final JetTypeMapper typeMapper;
-    private final JavaClassDescriptor samInterface;
+    private final SamType samType;
 
-    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull JavaClassDescriptor samInterface) {
+    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull SamType samType) {
         this.state = state;
         this.typeMapper = state.getTypeMapper();
-        this.samInterface = samInterface;
+        this.samType = samType;
     }
 
     public Type genWrapper(@NotNull JetFile file) {
@@ -59,10 +58,9 @@ public class SamWrapperCodegen {
         Type asmType = Type.getObjectType(getWrapperName(file));
 
         // e.g. (T, T) -> Int
-        JetType functionType = samInterface.getFunctionTypeForSamInterface();
-        assert functionType != null : samInterface.toString();
+        JetType functionType = samType.getKotlinFunctionType();
         // e.g. compare(T, T)
-        SimpleFunctionDescriptor interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
+        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
 
         ClassBuilder cv = state.getFactory().newVisitor(asmType, file);
         cv.defineClass(file,
@@ -71,7 +69,7 @@ public class SamWrapperCodegen {
                        asmType.getInternalName(),
                        null,
                        OBJECT_TYPE.getInternalName(),
-                       new String[]{ typeMapper.mapType(samInterface).getInternalName() }
+                       new String[]{ typeMapper.mapType(samType.getType()).getInternalName() }
         );
         cv.visitSource(file.getName(), null);
 
@@ -88,7 +86,7 @@ public class SamWrapperCodegen {
                     null);
 
         generateConstructor(asmType, functionAsmType, cv);
-        generateMethod(asmType, functionAsmType, cv, interfaceFunction, functionType);
+        generateMethod(asmType, functionAsmType, cv, erasedInterfaceFunction, functionType);
 
         cv.done();
 
@@ -120,7 +118,7 @@ public class SamWrapperCodegen {
             Type ownerType,
             Type functionType,
             ClassBuilder cv,
-            SimpleFunctionDescriptor interfaceFunction,
+            SimpleFunctionDescriptor erasedInterfaceFunction,
             JetType functionJetType
     ) {
         // using static context to avoid creating ClassDescriptor and everything else
@@ -129,14 +127,18 @@ public class SamWrapperCodegen {
         FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
         StackValue functionField = StackValue.field(functionType, ownerType, FUNCTION_FIELD_NAME, false);
-        codegen.genDelegate(interfaceFunction, invokeFunction, functionField);
+        codegen.genDelegate(erasedInterfaceFunction, invokeFunction, functionField);
     }
 
+    @NotNull
     private String getWrapperName(@NotNull JetFile containingFile) {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
         String packageInternalName = JvmClassName.byFqNameWithoutInnerClasses(packageClassFqName).getInternalName();
-        return packageInternalName + "$sam$" + samInterface.getName().asString() + "$" +
-               Integer.toHexString(JvmCodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 + DescriptorUtils.getFqNameSafe(
-                       samInterface).hashCode());
+        JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
+        return packageInternalName + "$sam$" + descriptor.getName().asString() + "$" +
+               Integer.toHexString(
+                       JvmCodegenUtil.getPathHashCode(containingFile.getVirtualFile()) * 31 +
+                       DescriptorUtils.getFqNameSafe(descriptor).hashCode()
+               );
     }
 }

@@ -238,6 +238,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava("compiler/testData/codegen/boxWithJava/sam/differentFqNames.kt");
         }
         
+        @TestMetadata("samConstructorGenericSignature.kt")
+        public void testSamConstructorGenericSignature() throws Exception {
+            doTestWithJava("compiler/testData/codegen/boxWithJava/sam/samConstructorGenericSignature.kt");
+        }
+        
         @TestMetadata("compiler/testData/codegen/boxWithJava/sam/adapters")
         @InnerTestClasses({Adapters.Operators.class})
         public static class Adapters extends AbstractBlackBoxCodegenTest {
@@ -263,6 +268,11 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             @TestMetadata("fileFilter.kt")
             public void testFileFilter() throws Exception {
                 doTestWithJava("compiler/testData/codegen/boxWithJava/sam/adapters/fileFilter.kt");
+            }
+            
+            @TestMetadata("genericSignature.kt")
+            public void testGenericSignature() throws Exception {
+                doTestWithJava("compiler/testData/codegen/boxWithJava/sam/adapters/genericSignature.kt");
             }
             
             @TestMetadata("implementAdapter.kt")

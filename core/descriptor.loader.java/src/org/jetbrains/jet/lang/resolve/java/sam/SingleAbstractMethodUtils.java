@@ -285,16 +285,6 @@ public class SingleAbstractMethodUtils {
         return new TypeParameters(typeParameters, typeParametersSubstitutor);
     }
 
-    @NotNull
-    public static SimpleFunctionDescriptor getAbstractMethodOfSamType(@NotNull JetType type) {
-        return (SimpleFunctionDescriptor) getAbstractMembers(type).get(0);
-    }
-
-    @NotNull
-    public static SimpleFunctionDescriptor getAbstractMethodOfSamInterface(@NotNull ClassDescriptor samInterface) {
-        return getAbstractMethodOfSamType(samInterface.getDefaultType());
-    }
-
     public static boolean isSamInterface(@NotNull JavaClass javaClass) {
         return getSamInterfaceMethod(javaClass) != null;
     }

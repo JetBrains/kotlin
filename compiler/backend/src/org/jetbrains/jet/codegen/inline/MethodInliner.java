@@ -19,6 +19,9 @@ package org.jetbrains.jet.codegen.inline;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.codegen.ClosureCodegen;
+import org.jetbrains.jet.codegen.StackValue;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -28,9 +31,6 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.commons.RemappingMethodAdapter;
 import org.jetbrains.org.objectweb.asm.tree.*;
 import org.jetbrains.org.objectweb.asm.tree.analysis.*;
-import org.jetbrains.jet.codegen.ClosureCodegen;
-import org.jetbrains.jet.codegen.StackValue;
-import org.jetbrains.jet.codegen.state.JetTypeMapper;
 
 import java.util.*;
 
@@ -197,7 +197,8 @@ public class MethodInliner {
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
-                    Method bridge = typeMapper.mapSignature(ClosureCodegen.getInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
+                    Method bridge =
+                            typeMapper.mapSignature(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
                     Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
                     setInlining(false);

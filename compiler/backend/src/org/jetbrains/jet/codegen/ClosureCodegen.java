@@ -32,7 +32,6 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -54,7 +53,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class ClosureCodegen extends ParentCodegenAwareImpl {
     private final PsiElement fun;
     private final FunctionDescriptor funDescriptor;
-    private final ClassDescriptor samInterface;
+    private final SamType samType;
     private final JetType superClassType;
     private final List<JetType> superInterfaceTypes;
     private final CodegenContext context;
@@ -70,7 +69,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             @NotNull GenerationState state,
             @NotNull PsiElement fun,
             @NotNull FunctionDescriptor funDescriptor,
-            @Nullable ClassDescriptor samInterface,
+            @Nullable SamType samType,
             @NotNull CodegenContext parentContext,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
             @NotNull LocalLookup localLookup,
@@ -81,14 +80,14 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
 
         this.fun = fun;
         this.funDescriptor = funDescriptor;
-        this.samInterface = samInterface;
+        this.samType = samType;
         this.context = parentContext.intoClosure(funDescriptor, localLookup, typeMapper);
         this.syntheticClassKind = syntheticClassKind;
         this.strategy = strategy;
 
         ClassDescriptor classDescriptor = anonymousClassForFunction(bindingContext, funDescriptor);
 
-        if (samInterface == null) {
+        if (samType == null) {
             this.superInterfaceTypes = new ArrayList<JetType>();
 
             JetType superClassType = null;
@@ -107,8 +106,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
             this.superClassType = superClassType;
         }
         else {
-            // TODO: getDefaultType() is incorrect here
-            this.superInterfaceTypes = Collections.singletonList(samInterface.getDefaultType());
+            this.superInterfaceTypes = Collections.singletonList(samType.getType());
             this.superClassType = KotlinBuiltIns.getInstance().getAnyType();
         }
 
@@ -123,15 +121,18 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
     public void gen() {
         ClassBuilder cv = state.getFactory().newVisitor(asmType, fun.getContainingFile());
 
-        FunctionDescriptor interfaceFunction;
-        if (samInterface == null) {
-            interfaceFunction = getInvokeFunction(funDescriptor);
+        FunctionDescriptor erasedInterfaceFunction;
+        if (samType == null) {
+            erasedInterfaceFunction = getErasedInvokeFunction(funDescriptor);
         }
         else {
-            interfaceFunction = SingleAbstractMethodUtils.getAbstractMethodOfSamInterface(samInterface);
+            erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
         }
 
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
+        if (samType != null) {
+            typeMapper.writeFormalTypeParameters(samType.getType().getConstructor().getParameters(), sw);
+        }
         sw.writeSuperclass();
         Type superClassAsmType = typeMapper.mapSupertype(superClassType, sw);
         sw.writeSuperclassEnd();
@@ -155,8 +156,9 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
 
         writeKotlinSyntheticClassAnnotation(cv, syntheticClassKind);
 
-        JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(funDescriptor).replaceName(interfaceFunction.getName().toString());
-        generateBridge(cv, typeMapper.mapSignature(interfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
+        JvmMethodSignature jvmMethodSignature =
+                typeMapper.mapSignature(funDescriptor).replaceName(erasedInterfaceFunction.getName().toString());
+        generateBridge(cv, typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
         fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
@@ -330,12 +332,12 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
         return argTypes;
     }
 
-    public static FunctionDescriptor getInvokeFunction(FunctionDescriptor funDescriptor) {
-        int paramCount = funDescriptor.getValueParameters().size();
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+    @NotNull
+    public static FunctionDescriptor getErasedInvokeFunction(@NotNull FunctionDescriptor funDescriptor) {
+        int arity = funDescriptor.getValueParameters().size();
         ClassDescriptor funClass = funDescriptor.getReceiverParameter() == null
-                                   ? builtIns.getFunction(paramCount)
-                                   : builtIns.getExtensionFunction(paramCount);
+                                   ? KotlinBuiltIns.getInstance().getFunction(arity)
+                                   : KotlinBuiltIns.getInstance().getExtensionFunction(arity);
         return funClass.getDefaultType().getMemberScope().getFunctions(Name.identifier("invoke")).iterator().next();
     }
 }

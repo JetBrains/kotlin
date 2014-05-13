@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JvmFunctionImplTypes;
 import org.jetbrains.jet.codegen.SamCodegenUtil;
+import org.jetbrains.jet.codegen.SamType;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
@@ -37,8 +38,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -401,28 +400,21 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
     public void visitCallExpression(@NotNull JetCallExpression expression) {
         super.visitCallExpression(expression);
         ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression.getCalleeExpression());
-        if (call == null) {
-            return;
-        }
+        if (call == null) return;
 
         CallableDescriptor descriptor = call.getResultingDescriptor();
-        if (!(descriptor instanceof FunctionDescriptor)) {
-            return;
-        }
-        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
+        if (!(descriptor instanceof FunctionDescriptor)) return;
 
-        if (original == null) {
-            return;
-        }
+        FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
+        if (original == null) return;
+
         List<ResolvedValueArgument> valueArguments = call.getValueArgumentsByIndex();
         if (valueArguments == null) {
             throw new IllegalStateException("Failed to arrange value arguments by index: " + descriptor);
         }
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
-            JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
-            if (samInterface == null) {
-                continue;
-            }
+            SamType samType = SamType.create(valueParameter.getType());
+            if (samType == null) continue;
 
             ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
             assert resolvedValueArgument instanceof ExpressionValueArgument : resolvedValueArgument;
@@ -431,7 +423,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             JetExpression argumentExpression = valueArgument.getArgumentExpression();
             assert argumentExpression != null : valueArgument.asElement().getText();
 
-            bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samInterface);
+            bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samType);
         }
     }
 
@@ -445,15 +437,15 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
 
-        JavaClassDescriptor samInterfaceOfParameter = getInterfaceIfSamType(original.getValueParameters().get(0).getType());
-        if (samInterfaceOfParameter == null) return;
+        SamType samType = SamType.create(original.getValueParameters().get(0).getType());
+        if (samType == null) return;
 
         IElementType token = expression.getOperationToken();
         if (BINARY_OPERATIONS.contains(token)) {
-            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samInterfaceOfParameter);
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getRight(), samType);
         }
         else if (token == IN_KEYWORD || token == NOT_IN) {
-            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getLeft(), samInterfaceOfParameter);
+            bindingTrace.record(CodegenBinding.SAM_VALUE, expression.getLeft(), samType);
         }
     }
 
@@ -471,31 +463,20 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         List<JetExpression> indexExpressions = expression.getIndexExpressions();
         List<ValueParameterDescriptor> parameters = original.getValueParameters();
         for (ValueParameterDescriptor valueParameter : parameters) {
-            JavaClassDescriptor samInterface = getInterfaceIfSamType(valueParameter.getType());
-            if (samInterface == null) continue;
+            SamType samType = SamType.create(valueParameter.getType());
+            if (samType == null) continue;
 
             if (isSetter && valueParameter.getIndex() == parameters.size() - 1) {
                 PsiElement parent = expression.getParent();
                 if (parent instanceof JetBinaryExpression && ((JetBinaryExpression) parent).getOperationToken() == EQ) {
                     JetExpression right = ((JetBinaryExpression) parent).getRight();
-                    bindingTrace.record(CodegenBinding.SAM_VALUE, right, samInterface);
+                    bindingTrace.record(CodegenBinding.SAM_VALUE, right, samType);
                 }
             }
             else {
                 JetExpression indexExpression = indexExpressions.get(valueParameter.getIndex());
-                bindingTrace.record(CodegenBinding.SAM_VALUE, indexExpression, samInterface);
+                bindingTrace.record(CodegenBinding.SAM_VALUE, indexExpression, samType);
             }
         }
-    }
-
-    @Nullable
-    private static JavaClassDescriptor getInterfaceIfSamType(@NotNull JetType originalType) {
-        if (!SingleAbstractMethodUtils.isSamType(originalType)) {
-            return null;
-        }
-        JavaClassDescriptor samInterface =
-                (JavaClassDescriptor) originalType.getConstructor().getDeclarationDescriptor();
-        assert samInterface != null;
-        return samInterface;
     }
 }
