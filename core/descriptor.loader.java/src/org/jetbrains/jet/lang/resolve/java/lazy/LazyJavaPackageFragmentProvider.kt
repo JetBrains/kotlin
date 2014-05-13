@@ -61,9 +61,8 @@ public class LazyJavaPackageFragmentProvider(
         }
         else {
             val jClass = c.findJavaClass(fqName)
-            if (jClass != null && DescriptorResolverUtils.hasStaticMembers(jClass)) {
-                val correspondingClass = c.javaClassResolver.resolveClass(jClass)
-                if (correspondingClass != null) LazyPackageFragmentForJavaClass(c, _module, jClass) else null
+            if (jClass != null) {
+                packageFragmentsForClasses(jClass)
             }
             else null
         }
@@ -85,7 +84,17 @@ public class LazyJavaPackageFragmentProvider(
         )
     }
 
+    private val packageFragmentsForClasses: MemoizedFunctionToNullable<JavaClass, LazyPackageFragmentForJavaClass> = c.storageManager.createMemoizedFunctionWithNullableValues {
+        jClass ->
+        if (DescriptorResolverUtils.hasStaticMembers(jClass)) {
+            val correspondingClass = c.javaClassResolver.resolveClass(jClass)
+            if (correspondingClass != null) LazyPackageFragmentForJavaClass(c, _module, jClass) else null
+        }
+        else null
+    }
+
     override fun getPackageFragment(fqName: FqName) = _packageFragments(fqName)
+    fun getPackageFragment(javaClass: JavaClass) = packageFragmentsForClasses(javaClass)
 
     override fun getPackageFragments(fqName: FqName) = getPackageFragment(fqName)?.let {listOf(it)}.orEmpty()
 

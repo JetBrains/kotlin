@@ -65,4 +65,9 @@ public class JavaDescriptorResolver implements DependencyClassByQualifiedNameRes
     public PackageFragmentDescriptor getPackageFragment(@NotNull FqName fqName) {
         return lazyJavaPackageFragmentProvider.getPackageFragment(fqName);
     }
+
+    @Nullable
+    public PackageFragmentDescriptor getPackageFragment(@NotNull JavaClass javaClass) {
+        return lazyJavaPackageFragmentProvider.getPackageFragment(javaClass);
+    }
 }
