@@ -1,0 +1,9 @@
+class Test {
+    class object {
+        class Some
+    }
+}
+
+fun test() {
+    Test.Some<caret>
+}
