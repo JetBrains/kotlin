@@ -1,2 +1,1 @@
-private class Test() {
-}
+private class Test() {}

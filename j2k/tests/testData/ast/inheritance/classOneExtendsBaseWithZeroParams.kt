@@ -1,5 +1,3 @@
-open class Base() {
-}
+open class Base() {}
 
-open class One() : Base() {
-}
+open class One() : Base() {}

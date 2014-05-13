@@ -1,8 +1,6 @@
-open class `$$$$$`() {
-}
+open class `$$$$$`() {}
 
-open class `$`() {
-}
+open class `$`() {}
 
 open class `$$`(`$$$$`: `$$$$$`?) : `$`() {
     val `$$$`: `$$$$$`?

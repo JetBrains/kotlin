@@ -1,2 +1,1 @@
-trait Test {
-}
+trait Test {}

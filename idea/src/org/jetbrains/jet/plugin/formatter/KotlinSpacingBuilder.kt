@@ -77,7 +77,11 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
             }
         }
 
-        fun customRule(block: (ASTBlock, ASTBlock, ASTBlock) -> Spacing?) {
+        fun spacing(spacing: Spacing) {
+            newRule { (parent, left, right) -> spacing }
+        }
+
+        fun customRule(block: (parent: ASTBlock, left: ASTBlock, right: ASTBlock) -> Spacing?) {
             newRule(block)
         }
 

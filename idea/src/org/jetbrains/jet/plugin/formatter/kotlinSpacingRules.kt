@@ -57,6 +57,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(FUN, PROPERTY).blankLines(1)
 
             // =============== Spacing ================
+            betweenInside(LBRACE, RBRACE, CLASS_BODY).spaces(0)
+
             before(COMMA).spaceIf(jetCommonSettings.SPACE_BEFORE_COMMA)
             after(COMMA).spaceIf(jetCommonSettings.SPACE_AFTER_COMMA)
 
@@ -224,6 +226,11 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
                        left = ARROW,
                        right = BLOCK)
                     .lineBreakIfLineBreakInParent(numSpacesOtherwise = 1)
+
+            inPosition(parent = FUNCTION_LITERAL,
+                       left = LBRACE,
+                       right = RBRACE)
+                    .spacing(Spacing.createSpacing(0, 1, 0, settings.KEEP_LINE_BREAKS, settings.KEEP_BLANK_LINES_IN_CODE))
 
             inPosition(parent = FUNCTION_LITERAL,
                        right = RBRACE)

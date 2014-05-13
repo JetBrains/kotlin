@@ -1,5 +1,3 @@
-class Base(name: String) {
-}
+class Base(name: String) {}
 
-class One(name: String, second: String) : Base(name) {
-}
+class One(name: String, second: String) : Base(name) {}

@@ -1,2 +1,1 @@
-private trait Test {
-}
+private trait Test {}

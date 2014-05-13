@@ -1,2 +1,1 @@
-class Test() {
-}
+class Test() {}

@@ -504,6 +504,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTestInverted("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
         }
         
+        @TestMetadata("EmptyBlocks.after.inv.kt")
+        public void testEmptyBlocks() throws Exception {
+            doTestInverted("idea/testData/formatter/EmptyBlocks.after.inv.kt");
+        }
+        
         @TestMetadata("ForLineBreak.after.inv.kt")
         public void testForLineBreak() throws Exception {
             doTestInverted("idea/testData/formatter/ForLineBreak.after.inv.kt");

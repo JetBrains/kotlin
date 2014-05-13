@@ -2,8 +2,7 @@ package demo
 
 open class Foo() {
     class object {
-        open class Bar() {
-        }
+        open class Bar() {}
     }
 }
 

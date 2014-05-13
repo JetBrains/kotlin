@@ -13,11 +13,9 @@ object Some3
 
         A
 
-val a = object :A {
-}
+val a = object :A {}
 
-val b = object :A {
-}
+val b = object :A {}
 
 class B {
     class object :A {

@@ -1,8 +1,7 @@
 package org.test
 
 open class OuterClass() {
-    open class InnerClass() {
-    }
+    open class InnerClass() {}
 }
 
 open class User() {

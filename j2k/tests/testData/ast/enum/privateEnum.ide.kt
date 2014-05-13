@@ -1,2 +1,1 @@
-private enum class Test {
-}
+private enum class Test {}

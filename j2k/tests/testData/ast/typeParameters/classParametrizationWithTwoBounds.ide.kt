@@ -1,2 +1,1 @@
-class C<T : INode>() where T : Comparable<in T> {
-}
+class C<T : INode>() where T : Comparable<in T> {}

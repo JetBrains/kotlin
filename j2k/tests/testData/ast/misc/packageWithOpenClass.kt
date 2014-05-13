@@ -1,4 +1,3 @@
 package test
 
-open class C() {
-}
+open class C() {}
