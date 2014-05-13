@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.resolve.java.kotlinSignature;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiNamedElement;
 import com.intellij.util.containers.ComparatorUtil;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
@@ -37,9 +38,7 @@ import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.MEMBER_SIGNATURE_CONTRAVARIANT;
 import static org.jetbrains.jet.lang.resolve.java.resolver.TypeUsage.UPPER_BOUND;
@@ -232,41 +231,35 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             TypeParameterDescriptorImpl altParamDescriptor = originalToAltTypeParameters.get(originalTypeParamDescriptor);
             JetTypeParameter altTypeParameter = altFunDeclaration.getTypeParameters().get(i);
 
-            int upperBoundIndex = 0;
-            for (JetType upperBound : originalTypeParamDescriptor.getUpperBounds()) {
-                JetTypeElement altTypeElement;
-
-                if (upperBoundIndex == 0) {
-                    JetTypeReference extendsBound = altTypeParameter.getExtendsBound();
-                    if (extendsBound == null) { // default upper bound
-                        assert originalTypeParamDescriptor.getUpperBounds().size() == 1;
-                        altParamDescriptor.addDefaultUpperBound();
-                        break;
-                    }
-                    else {
-                        altTypeElement = extendsBound.getTypeElement();
-                    }
+            Set<JetType> originalUpperBounds = originalTypeParamDescriptor.getUpperBounds();
+            List<JetTypeReference> altUpperBounds = getUpperBounds(altFunDeclaration, altTypeParameter);
+            if (altUpperBounds.size() != originalUpperBounds.size()) {
+                if (altUpperBounds.isEmpty()
+                    && originalUpperBounds.equals(Collections.singleton(KotlinBuiltIns.getInstance().getDefaultBound()))) {
+                    // Only default bound => no error
                 }
                 else {
-                    JetTypeConstraint constraint =
-                            findTypeParameterConstraint(altFunDeclaration, originalTypeParamDescriptor.getName(), upperBoundIndex);
-                    if (constraint == null) {
-                        throw new AlternativeSignatureMismatchException("Upper bound #%d for type parameter %s is missing",
-                                                                        upperBoundIndex, originalTypeParamDescriptor.getName());
-                    }
-                    //noinspection ConstantConditions
-                    altTypeElement = constraint.getBoundTypeReference().getTypeElement();
+                    throw new AlternativeSignatureMismatchException("Upper bound number mismatch for %s. Expected %d, but found %d",
+                                                                    originalTypeParamDescriptor.getName(),
+                                                                    originalUpperBounds.size(),
+                                                                    altUpperBounds.size());
                 }
-
-                assert (altTypeElement != null);
-
-                altParamDescriptor.addUpperBound(TypeTransformingVisitor.computeType(altTypeElement, upperBound,
-                                                                                     originalToAltTypeParameters, UPPER_BOUND));
-                upperBoundIndex++;
             }
 
-            if (findTypeParameterConstraint(altFunDeclaration, originalTypeParamDescriptor.getName(), upperBoundIndex) != null) {
-                throw new AlternativeSignatureMismatchException("Extra upper bound #%d for type parameter %s", upperBoundIndex, originalTypeParamDescriptor.getName());
+            if (altUpperBounds.isEmpty()) {
+                altParamDescriptor.addDefaultUpperBound();
+            }
+            else {
+                int upperBoundIndex = 0;
+                for (JetType upperBound : originalUpperBounds) {
+
+                    JetTypeElement altTypeElement = altUpperBounds.get(upperBoundIndex).getTypeElement();
+                    assert altTypeElement != null;
+
+                    altParamDescriptor.addUpperBound(TypeTransformingVisitor.computeType(altTypeElement, upperBound,
+                                                                                         originalToAltTypeParameters, UPPER_BOUND));
+                    upperBoundIndex++;
+                }
             }
 
             altParamDescriptor.setInitialized();
@@ -274,22 +267,23 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
         }
     }
 
-    @Nullable
-    private static JetTypeConstraint findTypeParameterConstraint(@NotNull JetFunction function, @NotNull Name typeParameterName, int index) {
-        if (index != 0) {
-            int currentIndex = 0;
-            for (JetTypeConstraint constraint : function.getTypeConstraints()) {
-                JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
-                assert parameterName != null;
-                if (typeParameterName.equals(parameterName.getReferencedNameAsName())) {
-                    currentIndex++;
-                }
-                if (currentIndex == index) {
-                    return constraint;
-                }
+    @NotNull
+    private static List<JetTypeReference> getUpperBounds(@NotNull JetFunction function, @NotNull JetTypeParameter jetTypeParameter) {
+        List<JetTypeReference> result = new ArrayList<JetTypeReference>();
+        ContainerUtil.addIfNotNull(result, jetTypeParameter.getExtendsBound());
+
+        Name name = jetTypeParameter.getNameAsName();
+        if (name == null) return result;
+
+        for (JetTypeConstraint constraint : function.getTypeConstraints()) {
+            JetSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
+            assert parameterName != null : "No parameter name in constraint " + constraint.getText();
+            if (name.equals(parameterName.getReferencedNameAsName())) {
+                result.add(constraint.getBoundTypeReference());
             }
         }
-        return null;
+
+        return result;
     }
 
     private static void checkEqualFunctionNames(@NotNull PsiNamedElement namedElement, @NotNull JavaMethod method) {

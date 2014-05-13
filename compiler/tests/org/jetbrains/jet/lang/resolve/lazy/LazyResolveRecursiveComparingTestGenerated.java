@@ -1736,6 +1736,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
         @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature")
         @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
         public static class KotlinSignature extends AbstractLazyResolveRecursiveComparingTest {
+            @TestMetadata("AllBoundsInWhen.kt")
+            public void testAllBoundsInWhen() throws Exception {
+                doTestNotCheckingPrimaryConstructors("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature/AllBoundsInWhen.kt");
+            }
+            
             public void testAllFilesPresentInKotlinSignature() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }

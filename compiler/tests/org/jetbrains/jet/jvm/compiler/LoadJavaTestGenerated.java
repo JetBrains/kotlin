@@ -778,6 +778,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         @TestMetadata("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature")
         @InnerTestClasses({KotlinSignature.Error.class, KotlinSignature.Propagation.class})
         public static class KotlinSignature extends AbstractLoadJavaTest {
+            @TestMetadata("AllBoundsInWhen.java")
+            public void testAllBoundsInWhen() throws Exception {
+                doTestCompiledJavaCompareWithKotlin("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature/AllBoundsInWhen.java");
+            }
+            
             public void testAllFilesPresentInKotlinSignature() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/compiledJavaCompareWithKotlin/kotlinSignature"), Pattern.compile("^(.+)\\.java$"), true);
             }
