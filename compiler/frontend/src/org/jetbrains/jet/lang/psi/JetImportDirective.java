@@ -120,7 +120,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
         return new ImportPath(importFqn, isAllUnder(), alias);
     }
 
-    private boolean isValidImport() {
+    public boolean isValidImport() {
         return !PsiTreeUtil.hasErrorElements(this);
     }
 

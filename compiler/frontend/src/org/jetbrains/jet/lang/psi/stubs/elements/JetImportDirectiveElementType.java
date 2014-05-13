@@ -36,7 +36,8 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
     @Override
     public PsiJetImportDirectiveStub createStub(@NotNull JetImportDirective psi, StubElement parentStub) {
         StringRef aliasName = StringRef.fromString(psi.getAliasName());
-        return new PsiJetImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(), aliasName);
+        return new PsiJetImportDirectiveStubImpl(parentStub, psi.isAbsoluteInRootPackage(), psi.isAllUnder(),
+                                                 aliasName, psi.isValidImport());
     }
 
     @Override
@@ -44,6 +45,7 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
         dataStream.writeBoolean(stub.isAbsoluteInRootPackage());
         dataStream.writeBoolean(stub.isAllUnder());
         dataStream.writeName(stub.getAliasName());
+        dataStream.writeBoolean(stub.isValid());
     }
 
     @NotNull
@@ -52,6 +54,7 @@ public class JetImportDirectiveElementType extends JetStubElementType<PsiJetImpo
         boolean isAbsoluteInRootPackage = dataStream.readBoolean();
         boolean isAllUnder = dataStream.readBoolean();
         StringRef aliasName = dataStream.readName();
-        return new PsiJetImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, aliasName);
+        boolean isValid = dataStream.readBoolean();
+        return new PsiJetImportDirectiveStubImpl(parentStub, isAbsoluteInRootPackage, isAllUnder, aliasName, isValid);
     }
 }

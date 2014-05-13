@@ -29,17 +29,20 @@ public class PsiJetImportDirectiveStubImpl extends StubBase<JetImportDirective> 
     private final boolean isAllUnder;
     @Nullable
     private final StringRef aliasName;
+    private final boolean isValid;
 
     public PsiJetImportDirectiveStubImpl(
             StubElement parent,
             boolean isAbsoluteInRootPackage,
             boolean isAllUnder,
-            @Nullable StringRef aliasName
+            @Nullable StringRef aliasName,
+            boolean isValid
     ) {
         super(parent, JetStubElementTypes.IMPORT_DIRECTIVE);
         this.isAbsoluteInRootPackage = isAbsoluteInRootPackage;
         this.isAllUnder = isAllUnder;
         this.aliasName = aliasName;
+        this.isValid = isValid;
     }
 
     @Override
@@ -56,5 +59,10 @@ public class PsiJetImportDirectiveStubImpl extends StubBase<JetImportDirective> 
     @Override
     public String getAliasName() {
         return StringRef.toString(aliasName);
+    }
+
+    @Override
+    public boolean isValid() {
+        return isValid;
     }
 }

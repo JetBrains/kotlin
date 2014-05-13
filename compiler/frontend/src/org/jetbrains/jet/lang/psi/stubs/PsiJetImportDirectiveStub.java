@@ -26,4 +26,5 @@ public interface PsiJetImportDirectiveStub extends StubElement<JetImportDirectiv
     boolean isAllUnder();
     @Nullable
     String getAliasName();
+    boolean isValid();
 }
