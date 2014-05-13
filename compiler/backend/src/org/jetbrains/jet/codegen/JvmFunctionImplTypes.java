@@ -80,15 +80,16 @@ public class JvmFunctionImplTypes {
     @NotNull
     private List<KFunctions> getKFunctionsImplList() {
         if (kFunctionsList == null) {
-            MutablePackageFragmentDescriptor reflect =
-                    new MutablePackageFragmentDescriptor(DescriptorUtils.getContainingModule(functionImpl), new FqName("kotlin.reflect"));
+            MutablePackageFragmentDescriptor packageFragment = new MutablePackageFragmentDescriptor(
+                    DescriptorUtils.getContainingModule(functionImpl), new FqName("kotlin.reflect.jvm.internal")
+            );
 
             ImmutableList.Builder<KFunctions> builder = ImmutableList.builder();
             for (int i = 0; i < KotlinBuiltIns.FUNCTION_TRAIT_COUNT; i++) {
                 builder.add(new KFunctions(
-                        createKFunctionImpl(reflect, "KFunctionImpl" + i, reflectionTypes.getKFunction(i)),
-                        createKFunctionImpl(reflect, "KMemberFunctionImpl" + i, reflectionTypes.getKMemberFunction(i)),
-                        createKFunctionImpl(reflect, "KExtensionFunctionImpl" + i, reflectionTypes.getKExtensionFunction(i))
+                        createKFunctionImpl(packageFragment, "KFunction" + i + "Impl", reflectionTypes.getKFunction(i)),
+                        createKFunctionImpl(packageFragment, "KMemberFunction" + i + "Impl", reflectionTypes.getKMemberFunction(i)),
+                        createKFunctionImpl(packageFragment, "KExtensionFunction" + i + "Impl", reflectionTypes.getKExtensionFunction(i))
                 ));
             }
             kFunctionsList = builder.build();

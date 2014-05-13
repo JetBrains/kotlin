@@ -61,7 +61,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     for (kind in FunctionKind.values()) {
         if (kind.isReflection()) {
             generate(File(REFLECTION_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
-            generate(File(RUNTIME_JVM_DIR, kind.getImplFileName()), { GenerateFunctionsImpl(it, kind) })
+            generate(File(RUNTIME_JVM_DIR, kind.getImplFileName()), { GenerateKFunctionsImpl(it, kind) })
         }
         else {
             generate(File(BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }

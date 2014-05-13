@@ -34,9 +34,9 @@ enum class FunctionKind(
     K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", true, "ExtensionFunction")
 
     fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
-    fun getImplFileName() = "reflect/" + classNamePrefix + "sImpl.kt"
+    fun getImplFileName() = "reflect/jvm/internal/${classNamePrefix}sImpl.kt"
     fun getClassName(i: Int) = classNamePrefix + i
-    fun getImplClassName(i: Int) = classNamePrefix + "Impl" + i
+    fun getImplClassName(i: Int) = classNamePrefix + i + "Impl"
     fun getSuperClassName(i: Int) = superClassNamePrefix?.plus(i)
 
     fun isReflection() = superClassNamePrefix != null
@@ -103,7 +103,9 @@ class GenerateFunctions(out: PrintWriter, kind: FunctionKind) : GenerateFunction
     }
 }
 
-class GenerateFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
+class GenerateKFunctionsImpl(out: PrintWriter, kind: FunctionKind) : GenerateFunctionsBase(out, kind) {
+    override fun getPackage() = "kotlin.reflect.jvm.internal"
+
     override fun generateBody() {
         out.println("import java.io.Serializable")
         out.println()
