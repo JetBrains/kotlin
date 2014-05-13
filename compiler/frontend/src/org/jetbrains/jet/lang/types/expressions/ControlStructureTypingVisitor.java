@@ -437,7 +437,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitReturnExpression(@NotNull JetReturnExpression expression, ExpressionTypingContext context) {
-        JetElement labelTargetElement = context.labelResolver.resolveLabel(expression, context);
+        JetElement labelTargetElement = LabelResolver.INSTANCE.resolveLabel(expression, context);
 
         JetExpression returnedExpression = expression.getReturnedExpression();
 
@@ -509,13 +509,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitBreakExpression(@NotNull JetBreakExpression expression, ExpressionTypingContext context) {
-        context.labelResolver.resolveLabel(expression, context);
+        LabelResolver.INSTANCE.resolveLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }
 
     @Override
     public JetTypeInfo visitContinueExpression(@NotNull JetContinueExpression expression, ExpressionTypingContext context) {
-        context.labelResolver.resolveLabel(expression, context);
+        LabelResolver.INSTANCE.resolveLabel(expression, context);
         return DataFlowUtils.checkType(KotlinBuiltIns.getInstance().getNothingType(), expression, context, context.dataFlowInfo);
     }
 

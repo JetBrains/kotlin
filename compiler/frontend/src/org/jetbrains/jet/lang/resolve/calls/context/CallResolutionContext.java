@@ -26,7 +26,6 @@ import org.jetbrains.jet.lang.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public abstract class CallResolutionContext<Context extends CallResolutionContext<Context>> extends ResolutionContext<Context> {
     public final Call call;
@@ -43,14 +42,13 @@ public abstract class CallResolutionContext<Context extends CallResolutionContex
             @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver,
             @SuppressWarnings("NullableProblems")
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallResolverExtension callResolverExtension,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, labelResolver, callResolverExtension,
+        super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache, callResolverExtension,
               isAnnotationContext, collectAllCandidates);
         this.call = call;
         this.checkArguments = checkArguments;

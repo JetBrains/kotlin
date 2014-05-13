@@ -36,11 +36,8 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.LABEL_TARGET;
 import static org.jetbrains.jet.lang.resolve.BindingContext.REFERENCE_TARGET;
 
 public class LabelResolver {
-
-    @NotNull
-    public static LabelResolver create() {
-        return new LabelResolver();
-    }
+    
+    public static LabelResolver INSTANCE = new LabelResolver();
 
     private LabelResolver() {}
 

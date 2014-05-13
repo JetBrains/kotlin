@@ -29,7 +29,6 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public final class CallCandidateResolutionContext<D extends CallableDescriptor> extends CallResolutionContext<CallCandidateResolutionContext<D>> {
     public final MutableResolvedCall<D> candidateCall;
@@ -47,14 +46,13 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallResolverExtension callResolverExtension,
             @NotNull ReceiverValue explicitExtensionReceiverForInvoke,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache, labelResolver,
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
@@ -69,7 +67,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, context.scope, call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
-                context.resolutionResultsCache, context.labelResolver, context.dataFlowInfoForArguments,
+                context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.callResolverExtension, explicitExtensionReceiverForInvoke, context.isAnnotationContext, context.collectAllCandidates);
     }
 
@@ -92,7 +90,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
-                context.labelResolver, context.dataFlowInfoForArguments, context.callResolverExtension, ReceiverValue.NO_RECEIVER,
+                context.dataFlowInfoForArguments, context.callResolverExtension, ReceiverValue.NO_RECEIVER,
                 context.isAnnotationContext, context.collectAllCandidates);
     }
 
@@ -104,12 +102,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver,
             boolean collectAllCandidates
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, labelResolver, dataFlowInfoForArguments, callResolverExtension, explicitExtensionReceiverForInvoke,
+                resolutionResultsCache, dataFlowInfoForArguments, callResolverExtension, explicitExtensionReceiverForInvoke,
                 isAnnotationContext, collectAllCandidates);
     }
 }

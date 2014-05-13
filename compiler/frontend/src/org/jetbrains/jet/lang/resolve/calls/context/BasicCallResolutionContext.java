@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.expressions.LabelResolver;
 
 public class BasicCallResolutionContext extends CallResolutionContext<BasicCallResolutionContext> {
     private BasicCallResolutionContext(
@@ -37,13 +36,12 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ContextDependency contextDependency,
             @NotNull CheckValueArgumentsMode checkArguments,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver,
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallResolverExtension callResolverExtension,
             boolean isAnnotationContext,
             boolean collectAllCandidates
     ) {
-        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache, labelResolver,
+        super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
     }
 
@@ -60,7 +58,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             boolean isAnnotationContext
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
-             new ResolutionResultsCacheImpl(), LabelResolver.create(), null,
+             new ResolutionResultsCacheImpl(), null,
              callResolverExtension, isAnnotationContext, false);
     }
 
@@ -70,7 +68,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments
     ) {
         return new BasicCallResolutionContext(context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
-             context.resolutionResultsCache, context.labelResolver, dataFlowInfoForArguments, context.callResolverExtension,
+             context.resolutionResultsCache, dataFlowInfoForArguments, context.callResolverExtension,
              context.isAnnotationContext, context.collectAllCandidates);
     }
 
@@ -89,17 +87,16 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull JetType expectedType,
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
-            @NotNull LabelResolver labelResolver,
             boolean collectAllCandidates
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
+                dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
     }
 
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                labelResolver, dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
+                dataFlowInfoForArguments, callResolverExtension, isAnnotationContext, collectAllCandidates);
     }
 }
