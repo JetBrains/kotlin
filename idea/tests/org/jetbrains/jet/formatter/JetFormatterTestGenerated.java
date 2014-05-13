@@ -214,6 +214,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/LoopParameterWithExplicitType.after.kt");
         }
         
+        @TestMetadata("Multideclaration.after.kt")
+        public void testMultideclaration() throws Exception {
+            doTest("idea/testData/formatter/Multideclaration.after.kt");
+        }
+        
         @TestMetadata("MultilineFunctionLiteral.after.kt")
         public void testMultilineFunctionLiteral() throws Exception {
             doTest("idea/testData/formatter/MultilineFunctionLiteral.after.kt");

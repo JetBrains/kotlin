@@ -335,7 +335,7 @@ public class JetBlock extends AbstractBlock {
                     .set(Indent.getNormalIndent()),
 
             strategy("Indent for parts")
-                    .in(PROPERTY, FUN)
+                    .in(PROPERTY, FUN, MULTI_VARIABLE_DECLARATION)
                     .notForType(BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
                     .set(Indent.getContinuationWithoutFirstIndent()),
 

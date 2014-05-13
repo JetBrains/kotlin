@@ -204,6 +204,16 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/InMultilineLambdaAfterArrow.after.kt");
         }
         
+        @TestMetadata("MultideclarationAfterEq.after.kt")
+        public void testMultideclarationAfterEq() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/MultideclarationAfterEq.after.kt");
+        }
+        
+        @TestMetadata("MultideclarationBeforeEq.after.kt")
+        public void testMultideclarationBeforeEq() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/MultideclarationBeforeEq.after.kt");
+        }
+        
         @TestMetadata("NotFirstParameter.after.kt")
         public void testNotFirstParameter() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/NotFirstParameter.after.kt");
