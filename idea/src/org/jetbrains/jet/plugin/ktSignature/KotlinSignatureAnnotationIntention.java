@@ -35,14 +35,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -133,9 +136,12 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
     }
 
     private static String getDefaultSignature(@NotNull PsiMethod method, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
+        PsiClass containingClass = method.getContainingClass();
+        if (containingClass == null) return "";
+
         if (method.getReturnType() == null) {
             // For constructor
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new JavaClassImpl(containingClass));
             assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
             classDescriptor.getConstructors();
 
@@ -162,7 +168,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
     @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
-        BindingTraceContext trace = new BindingTraceContext();
+        BindingContext bindingContext = ResolvePackage.getLazyResolveSession(project, TargetPlatform.JVM).getBindingContext();
         JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.instance$.get(project);
 
         PsiClass containingClass = psiMember.getContainingClass();
@@ -172,25 +178,30 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
         FqName classFqName = new FqName(qualifiedName);
 
         if (psiMember instanceof PsiMethod) {
-            return getDefaultSignature((PsiMethod) psiMember, classFqName, javaDescriptorResolver, trace.getBindingContext());
+            return getDefaultSignature((PsiMethod) psiMember, classFqName, javaDescriptorResolver, bindingContext);
         }
 
         if (psiMember instanceof PsiField) {
-            return getDefaultSignature((PsiField) psiMember, classFqName, javaDescriptorResolver, trace.getBindingContext());
+            return getDefaultSignature((PsiField) psiMember, classFqName, javaDescriptorResolver, bindingContext);
         }
 
         throw new IllegalStateException("PsiMethod or PsiField are expected");
     }
 
     @NotNull
-    private static JetScope getMemberScope(PsiModifierListOwner psiModifierListOwner, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
-        if (psiModifierListOwner.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
+    private static JetScope getMemberScope(PsiMember member, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
+        PsiClass containingClass = member.getContainingClass();
+        assert containingClass != null;
+
+        JavaClass javaClass = new JavaClassImpl(containingClass);
+
+        if (member.hasModifierProperty(PsiModifier.STATIC)) {
+            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(javaClass);
             assert packageFragment != null: "Couldn't resolve package fragment for " + classFqName;
             return packageFragment.getMemberScope();
         }
 
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(classFqName);
+        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(javaClass);
         assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
         return classDescriptor.getDefaultType().getMemberScope();
     }
