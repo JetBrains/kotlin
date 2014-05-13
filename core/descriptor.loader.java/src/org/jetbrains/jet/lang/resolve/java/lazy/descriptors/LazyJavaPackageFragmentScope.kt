@@ -54,8 +54,12 @@ public abstract class LazyJavaPackageFragmentScope(
             val cached = c.javaResolverCache.getClass(jClass)
             if (cached != null)
                 cached
-            else
-                LazyJavaClassDescriptor(c.withTypes(TypeParameterResolver.EMPTY), packageFragment, fqName, jClass)
+            else {
+                val classDescriptor = c.javaClassResolver.resolveClass(jClass)
+                assert(classDescriptor == null || classDescriptor.getContainingDeclaration() == packageFragment,
+                       "Wrong package fragment for $classDescriptor, expected $packageFragment")
+                classDescriptor
+            }
         }
     }
 
