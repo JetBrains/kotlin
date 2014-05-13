@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.types.expressions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -227,7 +226,7 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public PsiElement getCallElement() {
+            public JetElement getCallElement() {
                 return expression;
             }
 

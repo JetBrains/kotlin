@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.calls;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
@@ -258,7 +257,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         @NotNull
         @Override
-        public PsiElement getCallElement() {
+        public JetElement getCallElement() {
             return outerCall.getCallElement();
         }
 

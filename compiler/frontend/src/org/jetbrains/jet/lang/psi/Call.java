@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
@@ -55,7 +54,7 @@ public interface Call {
     JetTypeArgumentList getTypeArgumentList();
 
     @NotNull
-    PsiElement getCallElement();
+    JetElement getCallElement();
 
     enum CallType {
         DEFAULT, ARRAY_GET_METHOD, ARRAY_SET_METHOD, INVOKE

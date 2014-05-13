@@ -17,7 +17,6 @@
 package org.jetbrains.jet.lang.resolve.calls.util;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.*;
@@ -89,7 +88,7 @@ public class DelegatingCall implements Call {
 
     @NotNull
     @Override
-    public PsiElement getCallElement() {
+    public JetElement getCallElement() {
         return delegate.getCallElement();
     }
 
