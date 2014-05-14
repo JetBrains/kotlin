@@ -67,7 +67,7 @@ public class JetBlock extends AbstractBlock {
 
     public JetBlock(
             @NotNull ASTNode node,
-            NodeAlignmentStrategy alignmentStrategy,
+            @NotNull NodeAlignmentStrategy alignmentStrategy,
             Indent indent,
             Wrap wrap,
             CodeStyleSettings settings,
@@ -233,6 +233,10 @@ public class JetBlock extends AbstractBlock {
         else if (parentType == WHEN) {
             return getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH);
         }
+        else if (parentType == WHEN_ENTRY) {
+            // Propagate when alignment for ->
+            return myAlignmentStrategy;
+        }
         else if (BINARY_EXPRESSIONS.contains(parentType) && ALIGN_FOR_BINARY_OPERATIONS.contains(getOperationType(getNode()))) {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
@@ -264,7 +268,7 @@ public class JetBlock extends AbstractBlock {
             };
         }
 
-        return myAlignmentStrategy;
+        return NodeAlignmentStrategy.getNullStrategy();
     }
 
     private static NodeAlignmentStrategy getAlignmentForChildInParenthesis(

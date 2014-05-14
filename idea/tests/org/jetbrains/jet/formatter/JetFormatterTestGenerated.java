@@ -44,6 +44,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/ArrayAccess.after.kt");
         }
         
+        @TestMetadata("BinaryExpressionAlignmentSpread.after.kt")
+        public void testBinaryExpressionAlignmentSpread() throws Exception {
+            doTest("idea/testData/formatter/BinaryExpressionAlignmentSpread.after.kt");
+        }
+        
         @TestMetadata("BinaryExpressions.after.kt")
         public void testBinaryExpressions() throws Exception {
             doTest("idea/testData/formatter/BinaryExpressions.after.kt");
