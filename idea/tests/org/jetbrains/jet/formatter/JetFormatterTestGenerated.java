@@ -54,6 +54,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTest("idea/testData/formatter/BinaryExpressionsBoolean.after.kt");
         }
         
+        @TestMetadata("BinaryExpressionsWithoutAlignment.after.kt")
+        public void testBinaryExpressionsWithoutAlignment() throws Exception {
+            doTest("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.kt");
+        }
+        
         @TestMetadata("BlockFor.after.kt")
         public void testBlockFor() throws Exception {
             doTest("idea/testData/formatter/BlockFor.after.kt");
@@ -479,6 +484,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
             doTestInverted("idea/testData/formatter/BinaryExpressionsBoolean.after.inv.kt");
         }
         
+        @TestMetadata("BinaryExpressionsWithoutAlignment.after.inv.kt")
+        public void testBinaryExpressionsWithoutAlignment() throws Exception {
+            doTestInverted("idea/testData/formatter/BinaryExpressionsWithoutAlignment.after.inv.kt");
+        }
+        
         @TestMetadata("CatchFinallyOnNewLine.after.inv.kt")
         public void testCatchFinallyOnNewLine() throws Exception {
             doTestInverted("idea/testData/formatter/CatchFinallyOnNewLine.after.inv.kt");
@@ -507,6 +517,11 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
         @TestMetadata("ElseOnNewLine.after.inv.kt")
         public void testElseOnNewLine() throws Exception {
             doTestInverted("idea/testData/formatter/ElseOnNewLine.after.inv.kt");
+        }
+        
+        @TestMetadata("Elvis.after.inv.kt")
+        public void testElvis() throws Exception {
+            doTestInverted("idea/testData/formatter/Elvis.after.inv.kt");
         }
         
         @TestMetadata("EmptyBlocks.after.inv.kt")

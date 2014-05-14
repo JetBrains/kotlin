@@ -19,10 +19,12 @@ package org.jetbrains.jet.plugin.formatter;
 import com.intellij.formatting.Indent;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,6 +76,16 @@ public abstract class NodeIndentStrategy {
 
         public PositionStrategy set(Indent indent) {
             defaultIndent = indent;
+            return this;
+        }
+
+        public PositionStrategy in(@NotNull TokenSet parents) {
+            IElementType[] types = parents.getTypes();
+            if (types.length == 0) {
+                throw new IllegalArgumentException("Empty token set is unexpected");
+            }
+
+            fillTypes(in, types[0], Arrays.copyOfRange(types, 1, types.length));
             return this;
         }
 

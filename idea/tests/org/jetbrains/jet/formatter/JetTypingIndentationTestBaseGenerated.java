@@ -61,7 +61,19 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         }
         
         public void testAllFilesPresentInDirectSettings() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                         new File("idea/testData/indentationOnNewline"),
+                                                         Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+        }
+        
+        @TestMetadata("AssignmentAfterEq.after.kt")
+        public void testAssignmentAfterEq() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/AssignmentAfterEq.after.kt");
+        }
+        
+        @TestMetadata("BinaryWithTypeExpressions.after.kt")
+        public void testBinaryWithTypeExpressions() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/BinaryWithTypeExpressions.after.kt");
         }
         
         @TestMetadata("ConsecutiveCallsAfterDot.after.kt")
@@ -204,6 +216,11 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             doNewlineTest("idea/testData/indentationOnNewline/InMultilineLambdaAfterArrow.after.kt");
         }
         
+        @TestMetadata("IsExpressionAfterIs.after.kt")
+        public void testIsExpressionAfterIs() throws Exception {
+            doNewlineTest("idea/testData/indentationOnNewline/IsExpressionAfterIs.after.kt");
+        }
+        
         @TestMetadata("MultideclarationAfterEq.after.kt")
         public void testMultideclarationAfterEq() throws Exception {
             doNewlineTest("idea/testData/indentationOnNewline/MultideclarationAfterEq.after.kt");
@@ -282,6 +299,16 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/indentationOnNewline"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
         }
         
+        @TestMetadata("AssignmentAfterEq.after.inv.kt")
+        public void testAssignmentAfterEq() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/AssignmentAfterEq.after.inv.kt");
+        }
+        
+        @TestMetadata("BinaryWithTypeExpressions.after.inv.kt")
+        public void testBinaryWithTypeExpressions() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/BinaryWithTypeExpressions.after.inv.kt");
+        }
+        
         @TestMetadata("InBinaryExpressionInMiddle.after.inv.kt")
         public void testInBinaryExpressionInMiddle() throws Exception {
             doNewlineTestWithInvert("idea/testData/indentationOnNewline/InBinaryExpressionInMiddle.after.inv.kt");
@@ -335,6 +362,11 @@ public class JetTypingIndentationTestBaseGenerated extends AbstractJetTypingInde
         @TestMetadata("InExpressionsParenthesesBeforeOperand.after.inv.kt")
         public void testInExpressionsParenthesesBeforeOperand() throws Exception {
             doNewlineTestWithInvert("idea/testData/indentationOnNewline/InExpressionsParenthesesBeforeOperand.after.inv.kt");
+        }
+        
+        @TestMetadata("IsExpressionAfterIs.after.inv.kt")
+        public void testIsExpressionAfterIs() throws Exception {
+            doNewlineTestWithInvert("idea/testData/indentationOnNewline/IsExpressionAfterIs.after.inv.kt");
         }
         
         @TestMetadata("SettingAlignMultilineParametersInCalls.after.inv.kt")

@@ -53,7 +53,11 @@ public class JetBlock extends AbstractBlock {
 
     private List<Block> mySubBlocks;
 
+    private static final TokenSet BINARY_EXPRESSIONS = TokenSet.create(BINARY_EXPRESSION, BINARY_WITH_TYPE, IS_EXPRESSION);
     private static final TokenSet QUALIFIED_OPERATION = TokenSet.create(DOT, SAFE_ACCESS);
+    private static final TokenSet ALIGN_FOR_BINARY_OPERATIONS =
+            TokenSet.create(MUL, DIV, PERC, PLUS, MINUS, ELVIS, LT, GT, LTEQ, GTEQ, ANDAND, OROR);
+
     private static final TokenSet CODE_BLOCKS = TokenSet.create(
             BLOCK,
             CLASS_BODY,
@@ -229,7 +233,7 @@ public class JetBlock extends AbstractBlock {
         else if (parentType == WHEN) {
             return getAlignmentForCaseBranch(jetSettings.ALIGN_IN_COLUMNS_CASE_BRANCH);
         }
-        else if (parentType == BINARY_EXPRESSION) {
+        else if (BINARY_EXPRESSIONS.contains(parentType) && ALIGN_FOR_BINARY_OPERATIONS.contains(getOperationType(getNode()))) {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
         }
@@ -352,7 +356,7 @@ public class JetBlock extends AbstractBlock {
                     .set(Indent.getContinuationIndent(false)),
 
             strategy("Binary expressions")
-                    .in(BINARY_EXPRESSION)
+                    .in(BINARY_EXPRESSIONS)
                     .set(Indent.getContinuationWithoutFirstIndent(false)),
 
             strategy("Parenthesized expression")
@@ -433,5 +437,11 @@ public class JetBlock extends AbstractBlock {
                 return node != null && tokenSet.contains(node.getElementType());
             }
         });
+    }
+
+    @Nullable
+    private static IElementType getOperationType(ASTNode node) {
+        ASTNode operationNode = node.findChildByType(OPERATION_REFERENCE);
+        return operationNode != null ? operationNode.getFirstChildNode().getElementType() : null;
     }
 }
