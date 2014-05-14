@@ -20,7 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class JetReturnExpression extends JetLabelQualifiedExpression implements JetStatementExpression {
+public class JetReturnExpression extends JetExpressionWithLabel implements JetStatementExpression {
     public JetReturnExpression(@NotNull ASTNode node) {
         super(node);
     }

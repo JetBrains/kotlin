@@ -370,7 +370,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @NotNull // No class receivers
     private static LabelResolver.LabeledReceiverResolutionResult resolveToReceiver(
-            JetLabelQualifiedInstanceExpression expression,
+            JetInstanceExpressionWithLabel expression,
             ExpressionTypingContext context,
             boolean onlyClassReceivers
     ) {

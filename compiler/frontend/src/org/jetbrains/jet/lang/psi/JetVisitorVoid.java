@@ -189,8 +189,8 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitReturnExpression(expression, null);
     }
 
-    public void visitLabelQualifiedExpression(@NotNull JetLabelQualifiedExpression expression) {
-        super.visitLabelQualifiedExpression(expression, null);
+    public void visitExpressionWithLabel(@NotNull JetExpressionWithLabel expression) {
+        super.visitExpressionWithLabel(expression, null);
     }
 
     public void visitThrowExpression(@NotNull JetThrowExpression expression) {
@@ -661,8 +661,8 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitLabelQualifiedExpression(@NotNull JetLabelQualifiedExpression expression, Void data) {
-        visitLabelQualifiedExpression(expression);
+    public final Void visitExpressionWithLabel(@NotNull JetExpressionWithLabel expression, Void data) {
+        visitExpressionWithLabel(expression);
         return null;
     }
 

@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-public class JetThisExpression extends JetLabelQualifiedInstanceExpression {
+public class JetThisExpression extends JetInstanceExpressionWithLabel {
 
     public JetThisExpression(@NotNull ASTNode node) {
         super(node);

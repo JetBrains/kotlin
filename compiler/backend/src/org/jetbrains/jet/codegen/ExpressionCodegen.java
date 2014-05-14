@@ -1136,7 +1136,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
-    private StackValue generateBreakOrContinueExpression(@NotNull JetLabelQualifiedExpression expression, boolean isBreak) {
+    private StackValue generateBreakOrContinueExpression(@NotNull JetExpressionWithLabel expression, boolean isBreak) {
         assert expression instanceof JetContinueExpression || expression instanceof JetBreakExpression;
 
         if (!blockStackElements.isEmpty()) {

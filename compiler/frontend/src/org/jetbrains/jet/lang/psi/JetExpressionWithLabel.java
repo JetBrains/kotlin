@@ -21,9 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
 
-public class JetLabelQualifiedExpression extends JetExpressionImpl {
+public class JetExpressionWithLabel extends JetExpressionImpl {
 
-    public JetLabelQualifiedExpression(@NotNull ASTNode node) {
+    public JetExpressionWithLabel(@NotNull ASTNode node) {
         super(node);
     }
     

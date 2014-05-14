@@ -365,7 +365,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         return name.charAt(0) == '@' ? name.substring(1) + '$' : name;
     }
 
-    private static String getTargetLabel(JetLabelQualifiedExpression expression, TranslationContext context) {
+    private static String getTargetLabel(JetExpressionWithLabel expression, TranslationContext context) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
         if (labelElement == null) {
             return null;

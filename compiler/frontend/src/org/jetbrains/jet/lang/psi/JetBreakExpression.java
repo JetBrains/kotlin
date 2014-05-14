@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 
-public class JetBreakExpression extends JetLabelQualifiedExpression implements JetStatementExpression {
+public class JetBreakExpression extends JetExpressionWithLabel implements JetStatementExpression {
     public JetBreakExpression(@NotNull ASTNode node) {
         super(node);
     }

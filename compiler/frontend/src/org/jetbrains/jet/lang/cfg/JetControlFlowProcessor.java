@@ -229,7 +229,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitLabelQualifiedExpressionVoid(@NotNull JetLabelQualifiedExpression expression, CFPContext context) {
+        public void visitExpressionWithLabelVoid(@NotNull JetExpressionWithLabel expression, CFPContext context) {
             String labelName = expression.getLabelName();
             JetExpression labeledExpression = expression.getLabeledExpression();
             if (labelName != null && labeledExpression != null) {
@@ -665,7 +665,7 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private JetElement getCorrespondingLoop(JetLabelQualifiedExpression expression) {
+        private JetElement getCorrespondingLoop(JetExpressionWithLabel expression) {
             String labelName = expression.getLabelName();
             JetElement loop;
             if (labelName != null) {
@@ -689,7 +689,7 @@ public class JetControlFlowProcessor {
             return loop;
         }
 
-        private void checkJumpDoesNotCrossFunctionBoundary(@NotNull JetLabelQualifiedExpression jumpExpression, @NotNull JetElement jumpTarget) {
+        private void checkJumpDoesNotCrossFunctionBoundary(@NotNull JetExpressionWithLabel jumpExpression, @NotNull JetElement jumpTarget) {
             BindingContext bindingContext = trace.getBindingContext();
 
             FunctionDescriptor labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression);

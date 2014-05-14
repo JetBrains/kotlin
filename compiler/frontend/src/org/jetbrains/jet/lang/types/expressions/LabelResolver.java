@@ -117,7 +117,7 @@ public class LabelResolver {
 
     @Nullable
     public JetElement resolveControlLabel(
-            @NotNull JetLabelQualifiedExpression expression,
+            @NotNull JetExpressionWithLabel expression,
             @NotNull ResolutionContext context
     ) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
@@ -170,7 +170,7 @@ public class LabelResolver {
     
     @NotNull
     public LabeledReceiverResolutionResult resolveThisOrSuperLabel(
-            @NotNull JetLabelQualifiedInstanceExpression expression,
+            @NotNull JetInstanceExpressionWithLabel expression,
             @NotNull ResolutionContext context,
             @NotNull Name labelName
     ) {
