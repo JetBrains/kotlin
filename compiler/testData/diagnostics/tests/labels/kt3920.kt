@@ -1,0 +1,11 @@
+// !DIAGNOSTICS: -UNUSED_VARIABLE
+//KT-3920 Labeling information is lost when passing through some expressions
+
+fun test() {
+    run @f{ (): Int ->
+        val x = if (1 > 2) return@f 1 else 2
+        2
+    }
+}
+
+fun <T> run(f: () -> T): T = f()

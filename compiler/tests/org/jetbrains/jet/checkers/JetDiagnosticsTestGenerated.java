@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -4605,6 +4605,59 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
         
+        @TestMetadata("compiler/testData/diagnostics/tests/labels")
+        public static class Labels extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInLabels() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/labels"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("kt1703.kt")
+            public void testKt1703() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt1703.kt");
+            }
+            
+            @TestMetadata("kt361.kt")
+            public void testKt361() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt361.kt");
+            }
+            
+            @TestMetadata("kt3920.kt")
+            public void testKt3920() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt3920.kt");
+            }
+            
+            @TestMetadata("kt3988.kt")
+            public void testKt3988() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt3988.kt");
+            }
+            
+            @TestMetadata("kt4247.kt")
+            public void testKt4247() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt4247.kt");
+            }
+            
+            @TestMetadata("kt4586.kt")
+            public void testKt4586() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt4586.kt");
+            }
+            
+            @TestMetadata("kt4603.kt")
+            public void testKt4603() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt4603.kt");
+            }
+            
+            @TestMetadata("kt591.kt")
+            public void testKt591() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/kt591.kt");
+            }
+            
+            @TestMetadata("labelReferencesInsideObjectExpressions.kt")
+            public void testLabelReferencesInsideObjectExpressions() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/labelReferencesInsideObjectExpressions.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/diagnostics/tests/library")
         public static class Library extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInLibrary() throws Exception {
@@ -7029,6 +7082,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTest(Inner.innerSuite());
             suite.addTestSuite(J_k.class);
             suite.addTest(Jdk_annotations.innerSuite());
+            suite.addTestSuite(Labels.class);
             suite.addTestSuite(Library.class);
             suite.addTestSuite(Multimodule.class);
             suite.addTestSuite(NamedArguments.class);
