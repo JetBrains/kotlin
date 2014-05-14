@@ -54,7 +54,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         // TODO: support annotations
         members = new DeserializedPackageMemberScope(storageManager, this, Deserializers.UNSUPPORTED, MemberFilter.ALWAYS_TRUE,
-                                                     new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
+                                                     new BuiltInsDescriptorFinder(storageManager), new PackageData(nameResolver, loadPackage()));
     }
 
     @NotNull
