@@ -41,7 +41,6 @@ import org.jetbrains.jet.codegen.CompilationErrorHandler;
 import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
@@ -108,7 +107,7 @@ public class ReplInterpreter {
                 new ExceptionTracker(), // dummy
                 Predicates.<PsiFile>alwaysTrue()
         );
-        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module, MemberFilter.ALWAYS_TRUE);
+        injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters);
         module.addFragmentProvider(SOURCES, injector.getTopDownAnalyzer().getPackageFragmentProvider());
         module.addFragmentProvider(BUILT_INS, KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider());

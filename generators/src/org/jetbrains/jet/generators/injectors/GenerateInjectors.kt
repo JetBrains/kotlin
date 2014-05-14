@@ -33,7 +33,6 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
 import org.jetbrains.jet.di.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
@@ -98,8 +97,6 @@ private fun generatorForTopDownAnalyzerForJvm() =
             implementInterface(javaClass<InjectorForTopDownAnalyzer>())
             commonForTopDownAnalyzer()
 
-            parameter(javaClass<MemberFilter>())
-
             publicField(javaClass<JavaDescriptorResolver>())
             publicField(javaClass<DescriptorDeserializers>())
 
@@ -140,8 +137,6 @@ private fun generatorForJavaDescriptorResolver() =
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
-            field(javaClass<MemberFilter>(),
-                  init = GivenExpression(javaClass<MemberFilter>().getName() + ".ALWAYS_TRUE"))
         }
 
 private fun generatorForLazyResolveWithJava() =
@@ -162,8 +157,6 @@ private fun generatorForLazyResolveWithJava() =
 
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
-            field(javaClass<MemberFilter>(),
-                  init = GivenExpression(javaClass<MemberFilter>().getName() + ".ALWAYS_TRUE"))
             fields(
                     javaClass<JavaClassFinderImpl>(),
                     javaClass<TraceBasedExternalSignatureResolver>(),

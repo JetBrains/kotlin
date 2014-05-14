@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers;
 import org.jetbrains.jet.lang.resolve.java.JavaClassFinderImpl;
@@ -86,7 +85,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
     private final TopDownAnalyzer topDownAnalyzer;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final MemberFilter memberFilter;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final DescriptorDeserializers descriptorDeserializers;
     private final JavaClassFinderImpl javaClassFinder;
@@ -136,8 +134,7 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         @NotNull Project project,
         @NotNull GlobalContext globalContext,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptor moduleDescriptor,
-        @NotNull MemberFilter memberFilter
+        @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.project = project;
         this.globalContext = globalContext;
@@ -148,7 +145,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
-        this.memberFilter = memberFilter;
         this.javaClassFinder = new JavaClassFinderImpl();
         this.virtualFileFinder = org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder.SERVICE.getInstance(project);
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver();
@@ -327,7 +323,6 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
         deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
         deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
-        deserializedDescriptorResolver.setMemberFilter(memberFilter);
         deserializedDescriptorResolver.setStorageManager(storageManager);
 
         annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);

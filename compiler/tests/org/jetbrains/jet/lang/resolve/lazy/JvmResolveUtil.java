@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -76,6 +75,6 @@ public class JvmResolveUtil {
 
         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
                                                                     AnalyzerFacadeForJVM.createJavaModule("<module>"),
-                                                                    MemberFilter.ALWAYS_TRUE, null, null);
+                                                                    null, null);
     }
 }

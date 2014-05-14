@@ -168,8 +168,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 environment.getProject(),
                 parameters,
                 trace,
-                module,
-                MemberFilter.ALWAYS_TRUE);
+                module);
 
         module.addFragmentProvider(DependencyKind.BINARIES, injectorForAnalyzer.getJavaDescriptorResolver().getPackageFragmentProvider());
 

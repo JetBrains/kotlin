@@ -51,7 +51,6 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.CliSourcesMemberFilter;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -298,7 +297,6 @@ public class KotlinToJVMBytecodeCompiler {
                                 sharedTrace,
                                 Predicates.<PsiFile>alwaysTrue(),
                                 sharedModule,
-                                new CliSourcesMemberFilter(environment.getSourceFiles()),
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR)
                         );

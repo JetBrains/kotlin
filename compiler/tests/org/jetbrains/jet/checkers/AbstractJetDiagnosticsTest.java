@@ -26,7 +26,6 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
@@ -86,7 +85,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     moduleTrace,
                     Predicates.<PsiFile>alwaysTrue(),
                     module == null ? support.getModule() : module,
-                    MemberFilter.ALWAYS_TRUE,
                     null,
                     null
             );

@@ -46,8 +46,6 @@ import static org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader.Kin
 public final class DeserializedDescriptorResolver {
     private DescriptorDeserializers deserializers;
 
-    private MemberFilter memberFilter;
-
     private StorageManager storageManager;
 
     private JavaPackageFragmentProvider javaPackageFragmentProvider;
@@ -74,11 +72,6 @@ public final class DeserializedDescriptorResolver {
     @Inject
     public void setDeserializers(DescriptorDeserializers deserializers) {
         this.deserializers = deserializers;
-    }
-
-    @Inject
-    public void setMemberFilter(MemberFilter memberFilter) {
-        this.memberFilter = memberFilter;
     }
 
     @Inject
@@ -117,7 +110,8 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
             return new DeserializedPackageMemberScope(storageManager, descriptor, deserializers,
-                                                      memberFilter, javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
+                                                      MemberFilter.ALWAYS_TRUE,
+                                                      javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
         }
         return null;
     }

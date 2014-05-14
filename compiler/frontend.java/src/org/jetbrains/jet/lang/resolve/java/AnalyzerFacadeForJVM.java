@@ -26,7 +26,6 @@ import org.jetbrains.jet.analyzer.AnalyzerFacade;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.di.InjectorForLazyResolveWithJava;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
@@ -130,9 +129,8 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BindingTrace trace,
             Predicate<PsiFile> filesToAnalyzeCompletely,
             ModuleDescriptorImpl module,
-            MemberFilter memberFilter,
             List<String> moduleIds,
-            File incrementalCacheDir 
+            File incrementalCacheDir
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
@@ -143,8 +141,7 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                 false
         );
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module,
-                                                                                         memberFilter);
+        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(project, topDownAnalysisParameters, trace, module);
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 

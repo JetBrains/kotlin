@@ -249,8 +249,7 @@ private object KotlinResolveDataProvider {
                     project,
                     SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker()),
                     trace,
-                    resolveSession.getModuleDescriptor(),
-                    MemberFilter.ALWAYS_TRUE
+                    resolveSession.getModuleDescriptor()
             )
             injector.getLazyTopDownAnalyzer()!!.analyzeDeclarations(
                     resolveSession,
