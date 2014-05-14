@@ -96,6 +96,10 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
+        if (element.getContainingFile() instanceof JetCodeFragment) {
+            return false;
+        }
+
         JetTypeReference typeRefParent = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
         if (typeRefParent != null) {
             element = typeRefParent;
