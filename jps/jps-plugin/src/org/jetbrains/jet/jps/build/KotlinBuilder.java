@@ -37,6 +37,7 @@ import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.BuildTarget;
@@ -194,38 +195,47 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
         }
 
-        for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
-            if (IncrementalCompilation.ENABLED) {
-                // TODO this is a hack: we don't remove
-                if (outputItem.getOutputFile().getName().endsWith("Package.class")) {
-                    continue;
+        IncrementalCache cache = new IncrementalCache(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
+
+        try {
+            for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
+                BuildTarget<?> target = null;
+                Collection<File> sourceFiles = outputItem.getSourceFiles();
+                if (sourceFiles != null && !sourceFiles.isEmpty()) {
+                    target = sourceToTarget.get(sourceFiles.iterator().next());
                 }
+                else {
+                    messageCollector.report(EXCEPTION, "KotlinBuilder: outputItem.sourceFiles is null or empty, outputItem = " + outputItem, NO_LOCATION);
+                }
+
+                if (target == null) {
+                    target = representativeTarget;
+                }
+
+                File outputFile = outputItem.getOutputFile();
+
+                if (IncrementalCompilation.ENABLED) {
+                    cache.saveFileToCache(target.getId(), outputFile);
+                }
+
+                outputConsumer.registerOutputFile(target, outputFile, paths(sourceFiles));
             }
-            BuildTarget<?> target = null;
-            Collection<File> sourceFiles = outputItem.getSourceFiles();
-            if (sourceFiles != null && !sourceFiles.isEmpty()) {
-                target = sourceToTarget.get(sourceFiles.iterator().next());
+
+            if (IncrementalCompilation.ENABLED) {
+                // TODO should mark dependencies as dirty, as well
+                FSOperations.markDirty(context, chunk, new FileFilter() {
+                    @Override
+                    public boolean accept(@NotNull File file) {
+                        return !allCompiledFiles.contains(file);
+                    }
+                });
+                return ExitCode.ADDITIONAL_PASS_REQUIRED;
             }
             else {
-                messageCollector.report(EXCEPTION, "KotlinBuilder: outputItem.sourceFiles is null or empty, outputItem = " + outputItem, NO_LOCATION);
+                return ExitCode.OK;
             }
-
-            outputConsumer.registerOutputFile(target != null ? target : representativeTarget, outputItem.getOutputFile(),
-                                              paths(sourceFiles));
-        }
-
-        if (IncrementalCompilation.ENABLED) {
-            // TODO should mark dependencies as dirty, as well
-            FSOperations.markDirty(context, chunk, new FileFilter() {
-                @Override
-                public boolean accept(@NotNull File file) {
-                    return !allCompiledFiles.contains(file);
-                }
-            });
-            return ExitCode.ADDITIONAL_PASS_REQUIRED;
-        }
-        else {
-            return ExitCode.OK;
+        } finally {
+            cache.close();
         }
     }
 

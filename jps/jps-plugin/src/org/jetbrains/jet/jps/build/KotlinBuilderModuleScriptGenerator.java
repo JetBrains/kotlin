@@ -90,6 +90,7 @@ public class KotlinBuilderModuleScriptGenerator {
             builder.addModule(
                     target.getId(),
                     outputDir.getAbsolutePath(),
+                    getIncrementalCacheDir(context).getAbsolutePath(),
                     getKotlinModuleDependencies(context, target),
                     sourceFiles,
                     target.isTests(),
@@ -107,6 +108,10 @@ public class KotlinBuilderModuleScriptGenerator {
         writeScriptToFile(context, builder.asText(), scriptFile);
 
         return scriptFile;
+    }
+
+    public static File getIncrementalCacheDir(CompileContext context) {
+        return new File(context.getProjectDescriptor().dataManager.getDataPaths().getDataStorageRoot(), "kotlin");
     }
 
     @NotNull
