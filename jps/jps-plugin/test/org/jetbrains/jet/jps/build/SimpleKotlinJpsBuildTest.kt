@@ -71,4 +71,39 @@ public class SimpleKotlinJpsBuildTest : JpsBuildTestCase() {
 
         rebuildAll()
     }
+
+    public fun testLoadingKotlinFromDifferentModules() {
+        val aFile = createFile("m1/K.kt",
+                               """
+                                   package m1;
+
+                                   trait K {
+                                   }
+                               """)
+        createFile("m1/J.java",
+                               """
+                                   package m1;
+
+                                   public interface J {
+                                       K bar();
+                                   }
+                               """)
+        val a = addModule("m1", PathUtil.getParentPath(aFile))
+
+        val bFile = createFile("m2/m2.kt",
+                               """
+                                    import m1.J;
+                                    import m1.K;
+
+                                    trait M2: J {
+                                        override fun bar(): K
+                                    }
+                               """)
+        val b = addModule("b", PathUtil.getParentPath(bFile))
+        JpsJavaExtensionService.getInstance().getOrCreateDependencyExtension(
+                b.getDependenciesList().addModuleDependency(a)
+        ).setExported(false)
+
+        rebuildAll()
+    }
 }
