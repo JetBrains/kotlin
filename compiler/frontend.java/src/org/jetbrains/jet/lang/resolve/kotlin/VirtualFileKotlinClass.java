@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin;
 
+import com.intellij.ide.highlighter.JavaClassFileType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
@@ -80,6 +81,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
 
     @Nullable
     /* package */ static VirtualFileKotlinClass create(@NotNull VirtualFile file) {
+        assert file.getFileType() == JavaClassFileType.INSTANCE : "Trying to read binary data from a non-class file " + file;
         try {
             byte[] fileContents = file.contentsToByteArray();
             Pair<JvmClassName, KotlinClassHeader> nameAndHeader = readClassNameAndHeader(fileContents);

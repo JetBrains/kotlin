@@ -44,6 +44,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -79,6 +80,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val localClassFinder = object: KotlinClassFinder {
         override fun findKotlinClass(fqName: FqName) = findKotlinClass(fqName.toClassId())
+        override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.getFqName()!!)
 
         fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
             if (classId.getPackageFqName() != directoryPackageFqName) {

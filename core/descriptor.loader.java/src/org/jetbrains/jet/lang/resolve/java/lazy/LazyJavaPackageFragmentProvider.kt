@@ -27,9 +27,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.jet.storage.MemoizedFunctionToNotNull
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
-import org.jetbrains.kotlin.util.sure
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -124,7 +122,7 @@ public class LazyJavaPackageFragmentProvider(
             }
             val outerClass = javaClass.getOuterClass()
             if (outerClass == null) {
-                return topLevelClasses(javaClass)
+                return c.lookupBinaryClass(javaClass) ?: topLevelClasses(javaClass)
             }
             val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
             val nestedClass = outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor

@@ -18,10 +18,14 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 public interface KotlinClassFinder {
 
     @Nullable
     KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName);
+
+    @Nullable
+    KotlinJvmBinaryClass findKotlinClass(@NotNull JavaClass javaClass);
 }
