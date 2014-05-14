@@ -171,6 +171,7 @@ public class K2JvmTranslatingCompiler implements TranslatingCompiler {
         CharSequence script = KotlinModuleScriptBuilderFactory.INSTANCE.create().addModule(
                 moduleName,
                 moduleOutputDirectory.getAbsolutePath(),
+                null,
                 getDependencyProvider(chunk, tests, mainOutput),
                 sourceFiles,
                 tests,

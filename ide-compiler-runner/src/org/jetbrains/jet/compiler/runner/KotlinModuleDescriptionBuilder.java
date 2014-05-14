@@ -25,10 +25,12 @@ public interface KotlinModuleDescriptionBuilder {
     KotlinModuleDescriptionBuilder addModule(
             String moduleName,
             String outputDir,
+            String incrementalCacheDir,
             DependencyProvider dependencyProvider,
             List<File> sourceFiles,
             boolean tests,
-            Set<File> directoriesToFilterOut);
+            Set<File> directoriesToFilterOut
+    );
 
     CharSequence asText();
 

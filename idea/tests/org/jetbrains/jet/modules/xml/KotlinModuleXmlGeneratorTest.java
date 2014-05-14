@@ -31,6 +31,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
+                null,
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
@@ -48,6 +49,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         String actual = KotlinModuleXmlBuilderFactory.INSTANCE.create().addModule(
                 "name",
                 "output",
+                null,
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
@@ -66,6 +68,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         builder.addModule(
                 "name",
                 "output",
+                null,
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {
@@ -79,6 +82,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
         builder.addModule(
                 "name2",
                 "output2",
+                null,
                 new KotlinModuleDescriptionBuilder.DependencyProvider() {
                     @Override
                     public void processClassPath(@NotNull KotlinModuleDescriptionBuilder.DependencyProcessor processor) {

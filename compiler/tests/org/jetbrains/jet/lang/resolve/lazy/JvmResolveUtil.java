@@ -76,6 +76,6 @@ public class JvmResolveUtil {
 
         return AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(project, files, bindingTraceContext, filesToAnalyzeCompletely,
                                                                     AnalyzerFacadeForJVM.createJavaModule("<module>"),
-                                                                    MemberFilter.ALWAYS_TRUE);
+                                                                    MemberFilter.ALWAYS_TRUE, null, null);
     }
 }

@@ -58,6 +58,7 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
         public KotlinModuleDescriptionBuilder addModule(
                 String moduleName,
                 String outputDir,
+                String incrementalCacheDir,
                 DependencyProvider dependencyProvider,
                 List<File> sourceFiles,
                 boolean tests,
@@ -74,7 +75,9 @@ public class KotlinModuleXmlBuilderFactory implements KotlinModuleDescriptionBui
 
             p.println("<", MODULE, " ",
                       NAME, "=\"", escapeXml(moduleName), "\" ",
-                      OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">");
+                      OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\"",
+                      incrementalCacheDir != null ? " " + INCREMENTAL_CACHE + "=\"" + getEscapedPath(new File(incrementalCacheDir)) + "\" " : "",
+                      ">");
             p.pushIndent();
 
             for (File sourceFile : sourceFiles) {

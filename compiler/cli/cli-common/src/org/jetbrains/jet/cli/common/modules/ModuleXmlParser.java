@@ -40,6 +40,7 @@ public class ModuleXmlParser {
     public static final String MODULE = "module";
     public static final String NAME = "name";
     public static final String OUTPUT_DIR = "outputDir";
+    public static final String INCREMENTAL_CACHE = "incrementalCache";
     public static final String SOURCES = "sources";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
@@ -117,7 +118,11 @@ public class ModuleXmlParser {
                 throw createError(qName);
             }
 
-            setCurrentState(new InsideModule(getAttribute(attributes, NAME, qName), getAttribute(attributes, OUTPUT_DIR, qName)));
+            setCurrentState(new InsideModule(
+                    getAttribute(attributes, NAME, qName),
+                    getAttribute(attributes, OUTPUT_DIR, qName),
+                    attributes.getValue(INCREMENTAL_CACHE)
+            ));
         }
 
         @Override
@@ -131,10 +136,11 @@ public class ModuleXmlParser {
     private class InsideModule extends DefaultHandler {
 
         private final ModuleDescription.Impl moduleDescription;
-        private InsideModule(String name, String outputDir) {
+        private InsideModule(String name, String outputDir, String incrementalCacheDir) {
             this.moduleDescription = new ModuleDescription.Impl();
             this.moduleDescription.setName(name);
             this.moduleDescription.setOutputDir(outputDir);
+            this.moduleDescription.setIncrementalCacheDir(incrementalCacheDir);
             result.add(moduleDescription);
         }
 

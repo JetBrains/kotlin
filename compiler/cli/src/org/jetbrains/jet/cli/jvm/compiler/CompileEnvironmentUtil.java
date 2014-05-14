@@ -324,7 +324,7 @@ public class CompileEnvironmentUtil {
         return result;
     }
 
-    private static class DescriptionToModuleAdapter implements Module {
+    static class DescriptionToModuleAdapter implements Module {
         private final ModuleDescription description;
 
         public DescriptionToModuleAdapter(ModuleDescription description) {
@@ -359,6 +359,11 @@ public class CompileEnvironmentUtil {
         @Override
         public List<String> getAnnotationsRoots() {
             return description.getAnnotationsRoots();
+        }
+
+        @Nullable
+        public String getIncrementalCacheDir() {
+            return description.getIncrementalCacheDir();
         }
     }
 }

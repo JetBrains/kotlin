@@ -6,4 +6,14 @@
   <item name='com.intellij.openapi.util.Key com.intellij.openapi.util.Key&lt;T&gt; create(java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.openapi.util.Pair A getFirst()'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value" val="&quot;fun getFirst(): A&quot;"/>
+    </annotation>
+  </item>
+  <item name='com.intellij.openapi.util.Pair B getSecond()'>
+    <annotation name='kotlin.jvm.KotlinSignature'>
+      <val name="value" val="&quot;fun getSecond(): B&quot;"/>
+    </annotation>
+  </item>
 </root>

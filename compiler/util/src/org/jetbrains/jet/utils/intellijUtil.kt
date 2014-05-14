@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.utils.addToStdlib
+package org.jetbrains.jet.utils.intellij
 
-import java.util.HashMap
-import java.util.Collections
+import com.intellij.openapi.util.Pair
 
-fun <K, V> Map<K, V>.filterKeys(predicate: (K)->Boolean): Map<K, V> {
-    val result = HashMap<K, V>()
-    for ((k, v) in this) {
-        if (predicate(k)) {
-            result[k] = v
-        }
-    }
-    return result
-}
+public fun <A> Pair<A, *>.component1(): A = getFirst()
 
-fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
-
-fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
+public fun <B> Pair<*, B>.component2(): B = getSecond()

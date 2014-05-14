@@ -50,7 +50,7 @@ public class VirtualFileKotlinClass implements KotlinJvmBinaryClass {
     }
 
     @Nullable
-    private static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
+    public static Pair<JvmClassName, KotlinClassHeader> readClassNameAndHeader(@NotNull byte[] fileContents) {
         final ReadKotlinClassHeaderAnnotationVisitor readHeaderVisitor = new ReadKotlinClassHeaderAnnotationVisitor();
         final Ref<JvmClassName> classNameRef = Ref.create();
         new ClassReader(fileContents).accept(new ClassVisitor(ASM5) {

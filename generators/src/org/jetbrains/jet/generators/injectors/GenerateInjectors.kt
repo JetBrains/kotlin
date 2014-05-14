@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
+import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -100,6 +101,7 @@ private fun generatorForTopDownAnalyzerForJvm() =
             parameter(javaClass<MemberFilter>())
 
             publicField(javaClass<JavaDescriptorResolver>())
+            publicField(javaClass<DescriptorDeserializers>())
 
             fields(
                     javaClass<JavaClassFinderImpl>(),

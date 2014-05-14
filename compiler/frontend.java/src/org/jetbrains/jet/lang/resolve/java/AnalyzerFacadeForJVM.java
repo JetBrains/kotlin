@@ -32,14 +32,20 @@ import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
+import org.jetbrains.jet.lang.resolve.ImportPath;
+import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
@@ -124,7 +130,9 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
             BindingTrace trace,
             Predicate<PsiFile> filesToAnalyzeCompletely,
             ModuleDescriptorImpl module,
-            MemberFilter memberFilter
+            MemberFilter memberFilter,
+            List<String> moduleIds,
+            File incrementalCacheDir 
     ) {
         GlobalContext globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
@@ -139,6 +147,19 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
                                                                                          memberFilter);
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+
+            if (incrementalCacheDir != null && moduleIds != null) {
+                for (String moduleId : moduleIds) {
+                    module.addFragmentProvider(
+                            DependencyKind.SOURCES,
+                            new IncrementalPackageFragmentProvider(
+                                    files, module, globalContext.getStorageManager(), injector.getDescriptorDeserializers(),
+                                    new IncrementalCache(incrementalCacheDir), moduleId, injector.getJavaDescriptorResolver()
+                            )
+                    );
+                }
+            }
+
             injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, files);
             return AnalyzeExhaust.success(trace.getBindingContext(), module);
         }

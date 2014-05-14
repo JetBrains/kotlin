@@ -48,10 +48,9 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
-import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
-import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -113,7 +112,7 @@ public class PackageCodegen {
         // TODO rewrite it to something more robust when module system is implemented
         for (PackageFragmentDescriptor anotherFragment : packageFragment.getContainingDeclaration().getPackageFragmentProvider()
                 .getPackageFragments(packageFragment.getFqName())) {
-            if (anotherFragment.getMemberScope() instanceof LazyJavaPackageFragmentScope) {
+            if (anotherFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
                 return anotherFragment;
             }
         }

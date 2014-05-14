@@ -31,12 +31,17 @@ public class JavaProtoBufUtil {
     }
 
     @NotNull
-    public static ClassData readClassDataFrom(@NotNull String[] data) {
-        return ClassData.read(BitEncoding.decodeBytes(data), getExtensionRegistry());
+    public static ClassData readClassDataFrom(@NotNull String[] encodedData) {
+        return ClassData.read(BitEncoding.decodeBytes(encodedData), getExtensionRegistry());
     }
 
     @NotNull
-    public static PackageData readPackageDataFrom(@NotNull String[] data) {
-        return PackageData.read(BitEncoding.decodeBytes(data), getExtensionRegistry());
+    public static PackageData readPackageDataFrom(@NotNull String[] encodedData) {
+        return readPackageDataFrom(BitEncoding.decodeBytes(encodedData));
+    }
+
+    @NotNull
+    public static PackageData readPackageDataFrom(@NotNull byte[] data) {
+        return PackageData.read(data, getExtensionRegistry());
     }
 }
