@@ -16,9 +16,20 @@
 
 package org.jetbrains.jet.lang.psi;
 
+import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
 public interface JetExpression extends JetElement {
+    JetExpression[] EMPTY_ARRAY = new JetExpression[0];
+
+    ArrayFactory<JetExpression> ARRAY_FACTORY = new ArrayFactory<JetExpression>() {
+        @NotNull
+        @Override
+        public JetExpression[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new JetExpression[count];
+        }
+    };
+
     @Override
     <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data);
 }
