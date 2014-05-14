@@ -116,6 +116,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/stdlib.kt");
     }
     
+    @TestMetadata("syntacticError.kt")
+    public void testSyntacticError() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/syntacticError.kt");
+    }
+    
     @TestMetadata("vars.kt")
     public void testVars() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/vars.kt");

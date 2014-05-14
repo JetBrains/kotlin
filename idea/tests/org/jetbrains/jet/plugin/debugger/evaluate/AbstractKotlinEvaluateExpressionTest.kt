@@ -34,6 +34,7 @@ import org.jetbrains.eval4j.ObjectValue
 import com.sun.jdi.ObjectReference
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 import java.util.Collections
+import com.intellij.debugger.engine.evaluation.EvaluateException
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
     fun doTest(path: String) {
@@ -117,6 +118,9 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
             val value = evaluator.evaluate(createEvaluationContext(this))
             val actualResult = value.asValue().asString()
             Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
+        }
+        catch (e: EvaluateException) {
+            Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage())
         }
         finally {
             resume(this)

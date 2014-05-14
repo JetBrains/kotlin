@@ -172,6 +172,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             override fun compute(): ClassFileFactory? {
                 val file = createFileForDebugger(codeFragment, extractedFunction)
 
+                checkForSyntacticErrors(file)
+
                 val analyzeExhaust = file.getAnalysisResults()
                 val bindingContext = analyzeExhaust.getBindingContext()
                 try {
@@ -267,6 +269,15 @@ fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contex
     return newDebugExpression as JetExpression
 }
 
+fun checkForSyntacticErrors(file: JetFile) {
+    try {
+        AnalyzingUtils.checkForSyntacticErrors(file)
+    }
+    catch (e: IllegalArgumentException) {
+        throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
+    }
+}
+
 private fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
         breakpointFile: PsiFile,
@@ -274,6 +285,8 @@ private fun getFunctionForExtractedFragment(
 ): JetNamedFunction? {
     return ApplicationManager.getApplication()?.runReadAction(object: Computable<JetNamedFunction> {
         override fun compute(): JetNamedFunction? {
+            checkForSyntacticErrors(codeFragment)
+
             val originalFile = breakpointFile as JetFile
 
             val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
