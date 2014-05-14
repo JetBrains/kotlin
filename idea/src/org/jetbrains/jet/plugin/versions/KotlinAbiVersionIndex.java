@@ -26,11 +26,11 @@ import com.intellij.util.indexing.*;
 import com.intellij.util.io.ExternalIntegerKeyDescriptor;
 import com.intellij.util.io.KeyDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.jet.lang.resolve.java.AbiVersionUtil;
 
 import java.util.Map;
 import java.util.Set;
@@ -103,7 +103,7 @@ public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
                 }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
             }
             catch (Throwable e) {
-                LOG.warn("Indexing ABI version for file " + inputData.getFile(), e);
+                LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage());
             }
 
             if (annotationPresent.get() && result.isEmpty()) {
