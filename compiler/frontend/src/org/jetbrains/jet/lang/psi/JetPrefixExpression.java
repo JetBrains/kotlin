@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,12 +31,9 @@ public class JetPrefixExpression extends JetUnaryExpression {
         return visitor.visitPrefixExpression(this, data);
     }
 
+    @Override
     @Nullable @IfNotParsed
     public JetExpression getBaseExpression() {
-        PsiElement expression = getOperationReference().getNextSibling();
-        while (expression != null && !(expression instanceof JetExpression)) {
-            expression = expression.getNextSibling();
-        }
-        return (JetExpression) expression;
+        return PsiTreeUtil.getNextSiblingOfType(getOperationReference(), JetExpression.class);
     }
 }
