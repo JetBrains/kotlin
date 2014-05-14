@@ -307,6 +307,7 @@ public class JetTestUtils {
         }
     }
 
+    @NotNull
     public static File tmpDirForTest(TestCase test) throws IOException {
         File answer = FileUtil.createTempDirectory(test.getClass().getSimpleName(), test.getName());
         deleteOnShutdown(answer);
@@ -782,6 +783,7 @@ public class JetTestUtils {
         return jetFiles;
     }
 
+    @NotNull
     public static ModuleDescriptorImpl createEmptyModule() {
         return createEmptyModule("<empty-for-test>");
     }
