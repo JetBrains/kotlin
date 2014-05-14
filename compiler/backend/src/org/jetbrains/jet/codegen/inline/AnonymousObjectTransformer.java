@@ -199,7 +199,7 @@ public class AnonymousObjectTransformer {
         List<Type> descTypes = new ArrayList<Type>();
 
         Parameters constructorParams = constructorInlineBuilder.buildParameters();
-        final int [] capturedIndexes = new int [constructorParams.totalSize()];
+        int [] capturedIndexes = new int [constructorParams.totalSize()];
         int index = 0;
         int size = 0;
 
@@ -218,7 +218,7 @@ public class AnonymousObjectTransformer {
             }
         }
 
-        final List<Pair<String, Type>> capturedFieldsToGenerate = new ArrayList<Pair<String, Type>>();
+        List<Pair<String, Type>> capturedFieldsToGenerate = new ArrayList<Pair<String, Type>>();
         for (CapturedParamInfo capturedParamInfo : allCapturedBuilder.listCaptured()) {
             if (capturedParamInfo.getLambda() == null) { //not inlined
                 capturedFieldsToGenerate.add(new Pair<String, Type>(capturedParamInfo.getNewFieldName(), capturedParamInfo.getType()));
@@ -232,23 +232,16 @@ public class AnonymousObjectTransformer {
                                                                   "<init>", constructorDescriptor,
                                                                   null, ArrayUtil.EMPTY_STRING_ARRAY);
 
-        MethodVisitor capturedFieldInitializer = new InstructionAdapter(InlineCodegenUtil.API, constructorVisitor) {
-            private boolean superCallProcessed;
-            @Override
-            public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-                if (!superCallProcessed && "<init>".equals(name)) {
-                    superCallProcessed = true;
-                    List<FieldInfo> fields = AsmUtil.transformCapturedParams(capturedFieldsToGenerate, newLambdaType);
-                    int paramIndex = 0;
-                    for (FieldInfo fieldInfo : fields) {
-                        AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], this);
-                        paramIndex++;
-                    }
-                }
-            }
-        };
+        //initialize captured fields
+        List<FieldInfo> fields = AsmUtil.transformCapturedParams(capturedFieldsToGenerate, newLambdaType);
+        int paramIndex = 0;
+        InstructionAdapter capturedFieldInitializer = new InstructionAdapter(constructorVisitor);
+        for (FieldInfo fieldInfo : fields) {
+            AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer);
+            paramIndex++;
+        }
 
+        //then transform constructor
         Parameters constructorParameters = constructorInlineBuilder.buildParameters();
 
         RegeneratedLambdaFieldRemapper remapper =
