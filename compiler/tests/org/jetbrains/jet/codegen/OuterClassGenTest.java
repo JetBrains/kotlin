@@ -23,7 +23,6 @@ import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.jet.*;
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 
 import java.io.File;
 import java.io.InputStream;
@@ -33,73 +32,77 @@ import static org.jetbrains.jet.codegen.CodegenTestUtil.compileJava;
 
 public class OuterClassGenTest extends CodegenTestCase {
 
+    private static final String TEST_FOLDER = "outerClassInfo";
+
     public void testClass() throws Exception {
-        doTest("foo.Foo");
+        doTest("foo.Foo", "outerClassInfo");
     }
 
     public void testClassObject() throws Exception {
-        doTest("foo.Foo$object");
+        doTest("foo.Foo$object", "outerClassInfo");
     }
 
     public void testInnerClass() throws Exception {
-        doTest("foo.Foo$InnerClass");
+        doTest("foo.Foo$InnerClass", "outerClassInfo");
     }
 
     public void testInnerObject() throws Exception {
-        doTest("foo.Foo$InnerObject");
+        doTest("foo.Foo$InnerObject", "outerClassInfo");
     }
 
     public void testLocalClassInFunction() throws Exception {
-        doTest("foo.Foo$foo$LocalClass", "foo.Foo$1LocalClass");
+        doTest("foo.Foo$foo$LocalClass", "foo.Foo$1LocalClass", "outerClassInfo");
     }
 
     public void testLocalObjectInFunction() throws Exception {
-        doTest("foo.Foo$foo$LocalObject", "foo.Foo$1LocalObject");
+        doTest("foo.Foo$foo$LocalObject", "foo.Foo$1LocalObject", "outerClassInfo");
     }
 
     public void testObjectInPackageClass() throws Exception {
-        doTest("foo.PackageInnerObject");
+        doTest("foo.PackageInnerObject", "outerClassInfo");
     }
 
     public void testObjectLiteralInPackageClass() throws Exception {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", null, null);
-        doCustomTest("foo.FooPackage$packageObjectLiteral$1", expectedInfo);
+        doCustomTest("foo.FooPackage$packageObjectLiteral$1", expectedInfo, "outerClassInfo");
     }
 
     public void testLocalClassInTopLevelFunction() throws Exception {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", "packageMethod", "(Lfoo/Foo;)V");
-        doCustomTest("foo.FooPackage$packageMethod$PackageLocalClass", expectedInfo);
+        doCustomTest("foo.FooPackage$packageMethod$PackageLocalClass", expectedInfo, "outerClassInfo");
     }
 
     public void testLocalObjectInTopLevelFunction() throws Exception {
         OuterClassInfo expectedInfo = new OuterClassInfo("foo/FooPackage-outerClassInfo-", "packageMethod", "(Lfoo/Foo;)V");
-        doCustomTest("foo.FooPackage$packageMethod$PackageLocalObject", expectedInfo);
+        doCustomTest("foo.FooPackage$packageMethod$PackageLocalObject", expectedInfo, "outerClassInfo");
     }
 
-    private void doTest(@NotNull String className) throws Exception {
-        doTest(className, className);
+    private void doTest(@NotNull String className, String testDataFile) throws Exception {
+        doTest(className, className, testDataFile);
     }
 
-    private void doTest(@NotNull String kotlinName, @NotNull String javaName) throws Exception {
-        File javaClassesTempDirectory = compileJava("outerClassInfo/outerClassInfo.java");
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
+    }
 
-        myEnvironment = JetCoreEnvironment.createForTests(getTestRootDisposable(), JetTestUtils.compilerConfigurationForTests(
-                ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, JetTestUtils.getAnnotationsJar(), javaClassesTempDirectory));
+    private void doTest(@NotNull String kotlinClassName, @NotNull String javaClassName, String testDataFile) throws Exception {
+        File javaClassesTempDirectory = compileJava(TEST_FOLDER + "/" + testDataFile + ".java");
 
         UrlClassLoader javaClassLoader = new UrlClassLoader(new URL[] {javaClassesTempDirectory.toURI().toURL()}, getClass().getClassLoader());
 
-        String javaClassPath = javaName.replace('.', File.separatorChar) + ".class";
+        String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";
         InputStream javaClassStream = javaClassLoader.getResourceAsStream(javaClassPath);
         ClassReader javaReader =  new ClassReader(javaClassStream);
 
-        ClassReader kotlinReader = getKotlinClassReader(kotlinName);
+        ClassReader kotlinReader = getKotlinClassReader(kotlinClassName, testDataFile);
 
         checkInfo(kotlinReader, javaReader);
     }
 
-    private void doCustomTest(@NotNull String kotlinName, @NotNull OuterClassInfo expectedInfo) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        ClassReader kotlinReader = getKotlinClassReader(kotlinName);
+    private void doCustomTest(@NotNull String kotlinClassName, @NotNull OuterClassInfo expectedInfo, String testDataFile) {
+        ClassReader kotlinReader = getKotlinClassReader(kotlinClassName, testDataFile);
         OuterClassInfo kotlinInfo = getOuterClassInfo(kotlinReader);
         String message = "Error in enclosingMethodInfo info for: " + kotlinReader.getClassName() + " class";
         if ((kotlinInfo.owner == null) || !kotlinInfo.owner.startsWith(expectedInfo.owner)) {
@@ -109,8 +112,8 @@ public class OuterClassGenTest extends CodegenTestCase {
         assertEquals(message, expectedInfo.descriptor, kotlinInfo.descriptor);
     }
 
-    private ClassReader getKotlinClassReader(@NotNull String kotlinClassName) {
-        loadFile("outerClassInfo/outerClassInfo.kt");
+    private ClassReader getKotlinClassReader(@NotNull String kotlinClassName, String testDataFile) {
+        loadFile(TEST_FOLDER + "/ " + testDataFile + ".kt");
         OutputFileCollection outputFiles = generateClassesInFile();
         OutputFile outputFile = outputFiles.get(kotlinClassName.replace('.', '/') + ".class");
         assertNotNull(outputFile);
