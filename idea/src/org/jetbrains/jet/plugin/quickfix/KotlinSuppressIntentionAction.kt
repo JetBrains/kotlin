@@ -135,11 +135,10 @@ public class KotlinSuppressIntentionAction(
     private fun suppressAnnotationText(id: String) = "[suppress($id)]"
 
     private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
-        val suppressAnnotationClass = KotlinBuiltIns.getInstance().getSuppressAnnotationClass()
         val context = AnalyzerFacadeWithCache.getContextForElement(annotated)
         for (entry in annotated.getAnnotationEntries()) {
             val annotationDescriptor = context.get(BindingContext.ANNOTATION, entry)
-            if (annotationDescriptor != null && suppressAnnotationClass.getTypeConstructor() == annotationDescriptor.getType().getConstructor()) {
+            if (annotationDescriptor != null && KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) {
                 return entry
             }
         }

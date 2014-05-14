@@ -25,9 +25,6 @@ import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
-import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.Severity;
@@ -38,7 +35,10 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 public class DiagnosticsWithSuppression implements Diagnostics {
 
@@ -50,9 +50,6 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     // The cache is weak: we're OK with losing it
     private final Map<JetAnnotated, Suppressor> suppressors = new ConcurrentWeakValueHashMap<JetAnnotated, Suppressor>();
 
-    // Caching frequently used values:
-    private final ClassDescriptor suppressClass;
-    private final ValueParameterDescriptor suppressParameter;
     private final Condition<Diagnostic> filter = new Condition<Diagnostic>() {
         @Override
         public boolean value(Diagnostic diagnostic) {
@@ -64,11 +61,6 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     public DiagnosticsWithSuppression(@NotNull BindingContext context, @NotNull Collection<Diagnostic> diagnostics) {
         this.context = context;
         this.diagnostics = diagnostics;
-
-        this.suppressClass = KotlinBuiltIns.getInstance().getSuppressAnnotationClass();
-        ConstructorDescriptor primaryConstructor = suppressClass.getUnsubstitutedPrimaryConstructor();
-        assert primaryConstructor != null : "No primary constructor in " + suppressClass;
-        this.suppressParameter = primaryConstructor.getValueParameters().get(0);
     }
 
     @NotNull
@@ -183,21 +175,20 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (JetAnnotationEntry annotationEntry : annotated.getAnnotationEntries()) {
             AnnotationDescriptor annotationDescriptor = context.get(BindingContext.ANNOTATION, annotationEntry);
-            if (annotationDescriptor == null) {
-                continue;
+            if (annotationDescriptor == null) continue;
+
+            if (!KotlinBuiltIns.getInstance().isSuppressAnnotation(annotationDescriptor)) continue;
+
+            // We only add strings and skip other values to facilitate recovery in presence of erroneous code
+            for (CompileTimeConstant<?> arrayValue : annotationDescriptor.getAllValueArguments().values()) {
+                if ((arrayValue instanceof ArrayValue)) {
+                    for (CompileTimeConstant<?> value : ((ArrayValue) arrayValue).getValue()) {
+                        if (value instanceof StringValue) {
+                            builder.add(String.valueOf(((StringValue) value).getValue()).toLowerCase());
+                        }
+                    }
+                }
             }
-
-            if (!suppressClass.equals(annotationDescriptor.getType().getConstructor().getDeclarationDescriptor())) continue;
-
-            Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = annotationDescriptor.getAllValueArguments();
-            CompileTimeConstant<?> value = arguments.get(suppressParameter);
-            if (value instanceof ArrayValue) {
-                ArrayValue arrayValue = (ArrayValue) value;
-                List<CompileTimeConstant<?>> values = arrayValue.getValue();
-
-                addStrings(builder, values);
-            }
-
         }
         return builder.build();
     }
@@ -206,16 +197,6 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         if (strings.contains("warnings") && diagnostic.getSeverity() == Severity.WARNING) return true;
 
         return strings.contains(diagnostic.getFactory().getName().toLowerCase());
-    }
-
-    // We only add strings and skip other values to facilitate recovery in presence of erroneous code
-    private static void addStrings(ImmutableSet.Builder<String> builder, List<CompileTimeConstant<?>> values) {
-        for (CompileTimeConstant<?> value : values) {
-            if (value instanceof StringValue) {
-                StringValue stringValue = (StringValue) value;
-                builder.add(stringValue.getValue().toLowerCase());
-            }
-        }
     }
 
     private static abstract class Suppressor {

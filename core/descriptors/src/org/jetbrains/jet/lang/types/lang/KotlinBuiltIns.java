@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
@@ -103,6 +104,8 @@ public class KotlinBuiltIns {
     private final Map<JetType, JetType> primitiveJetTypeToJetArrayType;
     private final Map<JetType, JetType> jetArrayTypeToPrimitiveJetType;
 
+    private final FqNames fqNames = new FqNames();
+
     private KotlinBuiltIns() {
         builtInsModule = new ModuleDescriptorImpl(Name.special("<built-ins lazy module>"),
                                                   Collections.<ImportPath>emptyList(),
@@ -137,6 +140,15 @@ public class KotlinBuiltIns {
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
         primitiveJetTypeToJetArrayType.put(type, arrayType);
         jetArrayTypeToPrimitiveJetType.put(arrayType, type);
+    }
+
+    private static class FqNames {
+        public final FqNameUnsafe suppress = fqName("suppress");
+
+        @NotNull
+        private static FqNameUnsafe fqName(@NotNull String simpleName) {
+            return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)).toUnsafe();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -293,11 +305,6 @@ public class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getInlineClassAnnotation() {
         return getBuiltInClassByName("inline");
-    }
-
-    @NotNull
-    public ClassDescriptor getSuppressAnnotationClass() {
-        return getBuiltInClassByName("suppress");
     }
 
     @NotNull
@@ -829,6 +836,11 @@ public class KotlinBuiltIns {
 
     public boolean isTailRecursive(@NotNull DeclarationDescriptor declarationDescriptor) {
         return containsAnnotation(declarationDescriptor, getTailRecursiveAnnotationClass());
+    }
+
+    public boolean isSuppressAnnotation(@NotNull AnnotationDescriptor annotationDescriptor) {
+        ClassifierDescriptor classifier = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
+        return classifier != null && fqNames.suppress.equals(DescriptorUtils.getFqName(classifier));
     }
 
     static boolean containsAnnotation(DeclarationDescriptor descriptor, ClassDescriptor annotationClass) {
