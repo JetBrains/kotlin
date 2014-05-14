@@ -38,7 +38,9 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
 
     @Override
     public PsiJetParameterStub createStub(@NotNull JetParameter psi, StubElement parentStub) {
-        return new PsiJetParameterStubImpl(parentStub, psi.getFqName(), StringRef.fromString(psi.getName()),
+        FqName fqName = psi.getFqName();
+        StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
+        return new PsiJetParameterStubImpl(parentStub, fqNameRef, StringRef.fromString(psi.getName()),
                                            psi.isMutable(), psi.hasValOrVarNode(), psi.hasDefaultValue());
     }
 
@@ -68,8 +70,7 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
         boolean isMutable = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
         boolean hasDefaultValue = dataStream.readBoolean();
-        StringRef fqNameAsString = dataStream.readName();
-        FqName fqName = fqNameAsString != null ? new FqName(fqNameAsString.toString()) : null;
+        StringRef fqName = dataStream.readName();
 
          return new PsiJetParameterStubImpl(parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
     }
