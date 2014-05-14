@@ -143,6 +143,8 @@ public class KotlinBuiltIns {
     }
 
     private static class FqNames {
+        public final FqNameUnsafe any = fqName("Any");
+        public final FqNameUnsafe nothing = fqName("Nothing");
         public final FqNameUnsafe suppress = fqName("suppress");
 
         @NotNull
@@ -792,10 +794,9 @@ public class KotlinBuiltIns {
 
     // Recognized & special
 
-    public static boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
+    public boolean isSpecialClassWithNoSupertypes(@NotNull ClassDescriptor descriptor) {
         FqNameUnsafe fqName = DescriptorUtils.getFqName(descriptor);
-        return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("Any")).toUnsafe().equals(fqName) ||
-               BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("Nothing")).toUnsafe().equals(fqName);
+        return fqNames.any.equals(fqName) || fqNames.nothing.equals(fqName);
     }
 
     public boolean isNothing(@NotNull JetType type) {

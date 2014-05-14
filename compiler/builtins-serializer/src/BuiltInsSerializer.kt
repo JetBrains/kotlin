@@ -95,7 +95,7 @@ public class BuiltInsSerializer(val out: PrintStream?) {
 
         val serializer = DescriptorSerializer(object : SerializerExtension() {
             override fun hasSupertypes(descriptor: ClassDescriptor): Boolean =
-                    !KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor)
+                    !KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(descriptor)
         })
 
         val classNames = ArrayList<Name>()

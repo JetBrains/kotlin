@@ -473,7 +473,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 new Function0<Supertypes>() {
                     @Override
                     public Supertypes invoke() {
-                        if (KotlinBuiltIns.isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
+                        if (KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(LazyClassDescriptor.this)) {
                             return new Supertypes(Collections.<JetType>emptyList());
                         }
 

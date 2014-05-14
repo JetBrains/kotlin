@@ -235,7 +235,7 @@ public class DescriptorValidator {
 
             Collection<JetType> supertypes = descriptor.getTypeConstructor().getSupertypes();
             if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.TRAIT
-                && !KotlinBuiltIns.isSpecialClassWithNoSupertypes(descriptor)) {
+                && !KotlinBuiltIns.getInstance().isSpecialClassWithNoSupertypes(descriptor)) {
                 report(collector, descriptor, "No supertypes for non-trait");
             }
             validateTypes(descriptor, collector, supertypes);
