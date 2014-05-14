@@ -701,9 +701,10 @@ JetFile: SimpleExpressions.kt
       BREAK
         PsiElement(break)('break')
       PsiWhiteSpace('\n    ')
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE
-          PsiElement(LABEL_IDENTIFIER)('@la')
+      LABELED_EXPRESSION
+        LABEL_QUALIFIER
+          LABEL_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n    ')
         BREAK
           PsiElement(break)('break')
@@ -715,9 +716,10 @@ JetFile: SimpleExpressions.kt
       CONTINUE
         PsiElement(continue)('continue')
       PsiWhiteSpace('\n    ')
-      PREFIX_EXPRESSION
-        OPERATION_REFERENCE
-          PsiElement(LABEL_IDENTIFIER)('@la')
+      LABELED_EXPRESSION
+        LABEL_QUALIFIER
+          LABEL_REFERENCE
+            PsiElement(LABEL_IDENTIFIER)('@la')
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')

@@ -320,6 +320,17 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
+     * label prefixExpression
+     */
+    private void parseLabeledExpression() {
+        assert _at(LABEL_IDENTIFIER);
+        PsiBuilder.Marker expression = mark();
+        parseLabel();
+        parsePrefixExpression();
+        expression.done(LABELED_EXPRESSION);
+    }
+
+    /*
      * operation? prefixExpression
      */
     private void parsePrefixExpression() {
@@ -338,7 +349,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else {
             myBuilder.disableJoiningComplexTokens();
-            if (atSet(Precedence.PREFIX.getOperations())) {
+            if (at(LABEL_IDENTIFIER)) {
+                myBuilder.restoreJoiningComplexTokensState();
+                parseLabeledExpression();
+            }
+            else if (atSet(Precedence.PREFIX.getOperations())) {
                 PsiBuilder.Marker expression = mark();
 
                 parseOperationReference();
@@ -501,7 +516,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         while ((at(LBRACE) || at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE)) {
             if (!at(LBRACE)) {
                 assert _at(LABEL_IDENTIFIER);
-                parsePrefixExpression();
+                parseLabeledExpression();
             }
             else {
                 parseFunctionLiteral();
@@ -1399,11 +1414,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
         else if (at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE ) {
             PsiBuilder.Marker mark = mark();
 
-            parseOperationReference();
+            parseLabel();
 
             parseFunctionLiteral(true);
 
-            mark.done(PREFIX_EXPRESSION);
+            mark.done(LABELED_EXPRESSION);
         }
         else {
             parseExpression();
@@ -1554,7 +1569,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
 
-        parseLabel();
+        parseLabelOnTheSameLine();
 
         marker.done(type);
     }
@@ -1569,7 +1584,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // RETURN_KEYWORD
 
-        parseLabel();
+        parseLabelOnTheSameLine();
 
         if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
@@ -1577,18 +1592,26 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * labels
+     * label?
+     */
+    private void parseLabelOnTheSameLine() {
+        if (!eol() && at(LABEL_IDENTIFIER)) {
+            parseLabel();
+        }
+    }
+
+    /*
+     * label
      */
     private void parseLabel() {
-        if (!eol() && at(LABEL_IDENTIFIER)) {
-            PsiBuilder.Marker labelWrap = mark();
+        assert _at(LABEL_IDENTIFIER);
+        PsiBuilder.Marker labelWrap = mark();
 
-            PsiBuilder.Marker mark = mark();
-            advance(); // LABEL_IDENTIFIER
-            mark.done(LABEL_REFERENCE);
+        PsiBuilder.Marker mark = mark();
+        advance(); // LABEL_IDENTIFIER
+        mark.done(LABEL_REFERENCE);
 
-            labelWrap.done(LABEL_QUALIFIER);
-        }
+        labelWrap.done(LABEL_QUALIFIER);
     }
 
     /*
@@ -1683,7 +1706,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // THIS_KEYWORD
         thisReference.done(REFERENCE_EXPRESSION);
 
-        parseLabel();
+        parseLabelOnTheSameLine();
 
         mark.done(THIS_EXPRESSION);
     }
@@ -1717,7 +1740,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             myBuilder.restoreNewlinesState();
         }
-        parseLabel();
+        parseLabelOnTheSameLine();
 
         mark.done(SUPER_EXPRESSION);
     }
