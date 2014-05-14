@@ -2920,7 +2920,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (expression.getParent() instanceof JetPrefixExpression) {
             JetPrefixExpression parent = (JetPrefixExpression) expression.getParent();
             JetSimpleNameExpression operationSign = parent.getOperationReference();
-            if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+            if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
                 return operationSign;
             }
         }
@@ -2930,7 +2930,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Override
     public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
-        if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+        if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
             return genQualified(receiver, expression.getBaseExpression());
         }
 

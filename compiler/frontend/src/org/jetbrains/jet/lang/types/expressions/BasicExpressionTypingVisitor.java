@@ -617,7 +617,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
         IElementType operationType = operationSign.getReferencedNameElementType();
         // If it's a labeled expression
-        if (JetTokens.LABELS.contains(operationType)) {
+        if (operationType == JetTokens.LABEL_IDENTIFIER) {
             return visitLabeledExpression(expression, context, isStatement);
         }
 
@@ -746,7 +746,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetExpression baseExpression = expression.getBaseExpression();
         assert baseExpression != null;
         JetSimpleNameExpression operationSign = expression.getOperationReference();
-        assert JetTokens.LABELS.contains(operationSign.getReferencedNameElementType());
+        assert operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
 
         return facade.getTypeInfo(baseExpression, context, isStatement);
     }

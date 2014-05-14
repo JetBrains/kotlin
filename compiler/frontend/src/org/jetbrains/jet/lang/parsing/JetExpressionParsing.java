@@ -67,7 +67,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS,
             EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
-            LBRACKET, LABEL_IDENTIFIER, AT, ATAT,
+            LBRACKET, LABEL_IDENTIFIER,
             // Atomic
 
             COLONCOLON, // callable reference
@@ -138,7 +138,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER, AT, ATAT) { // attributes
+        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER) { // attributes
 
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {
@@ -498,10 +498,9 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
-
-        while (at(LBRACE) || atSet(LABELS) && lookahead(1) == LBRACE) {
+        while ((at(LBRACE) || at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE)) {
             if (!at(LBRACE)) {
-                assert _atSet(LABELS);
+                assert _at(LABEL_IDENTIFIER);
                 parsePrefixExpression();
             }
             else {
@@ -1397,7 +1396,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LBRACE)) {
             parseFunctionLiteral(true);
         }
-        else if (atSet(LABELS) && lookahead(1) == LBRACE ) {
+        else if (at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE ) {
             PsiBuilder.Marker mark = mark();
 
             parseOperationReference();
@@ -1581,11 +1580,11 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * labels
      */
     private void parseLabel() {
-        if (!eol() && atSet(LABELS)) {
+        if (!eol() && at(LABEL_IDENTIFIER)) {
             PsiBuilder.Marker labelWrap = mark();
 
             PsiBuilder.Marker mark = mark();
-            advance(); // LABELS
+            advance(); // LABEL_IDENTIFIER
             mark.done(LABEL_REFERENCE);
 
             labelWrap.done(LABEL_QUALIFIER);

@@ -485,6 +485,6 @@ public class ExpressionTypingUtils {
 
     public static boolean  isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
         IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-        return JetTokens.LABELS.contains(operationType) || operationType == JetTokens.EXCLEXCL;
+        return operationType == JetTokens.LABEL_IDENTIFIER || operationType == JetTokens.EXCLEXCL;
     }
 }

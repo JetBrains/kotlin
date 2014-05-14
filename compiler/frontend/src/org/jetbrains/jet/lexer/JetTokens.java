@@ -127,10 +127,6 @@ public interface JetTokens {
     JetKeywordToken NOT_IN      = JetKeywordToken.keyword("NOT_IN", "!in");
     JetKeywordToken NOT_IS      = JetKeywordToken.keyword("NOT_IS", "!is");
     JetSingleValueToken HASH        = new JetSingleValueToken("HASH", "#");
-    JetSingleValueToken AT          = new JetSingleValueToken("AT", "@");
-    JetSingleValueToken ATAT        = new JetSingleValueToken("ATAT", "@@");
-
-    TokenSet LABELS = TokenSet.create(AT, ATAT, LABEL_IDENTIFIER);
 
     JetSingleValueToken COMMA       = new JetSingleValueToken("COMMA", ",");
 
@@ -203,7 +199,7 @@ public interface JetTokens {
                                           COLON,
                                           RANGE, EQ, MULTEQ, DIVEQ, PERCEQ, PLUSEQ, MINUSEQ,
                                           NOT_IN, NOT_IS,
-                                          IDENTIFIER, LABEL_IDENTIFIER, ATAT, AT);
+                                          IDENTIFIER, LABEL_IDENTIFIER);
 
     TokenSet AUGMENTED_ASSIGNMENTS = TokenSet.create(PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);
     TokenSet ALL_ASSIGNMENTS = TokenSet.create(EQ, PLUSEQ, MINUSEQ, MULTEQ, PERCEQ, DIVEQ);

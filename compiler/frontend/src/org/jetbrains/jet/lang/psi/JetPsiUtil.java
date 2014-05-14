@@ -133,7 +133,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isLabeledExpression(JetPrefixExpression expression) {
-        return JetTokens.LABELS.contains(expression.getOperationReference().getReferencedNameElementType());
+        return expression.getOperationReference().getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
     }
 
     @NotNull

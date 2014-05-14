@@ -31,7 +31,7 @@ class LabelsHighlightingVisitor extends HighlightingVisitor {
     @Override
     public void visitPrefixExpression(@NotNull JetPrefixExpression expression) {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
-        if (JetTokens.LABELS.contains(operationSign.getReferencedNameElementType())) {
+        if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
             JetPsiChecker.highlightName(holder, operationSign, JetHighlightingColors.LABEL);
         }
     }

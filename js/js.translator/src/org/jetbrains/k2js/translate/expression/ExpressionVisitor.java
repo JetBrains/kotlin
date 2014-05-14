@@ -300,7 +300,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         JetSimpleNameExpression operationReference = expression.getOperationReference();
         IElementType operationToken = operationReference.getReferencedNameElementType();
         JsNode result;
-        if (JetTokens.LABELS.contains(operationToken)) {
+        if (operationToken == JetTokens.LABEL_IDENTIFIER) {
             JetExpression baseExpression = expression.getBaseExpression();
             assert baseExpression != null;
             result = new JsLabel(context.scope().declareName(getReferencedName(operationReference)),
