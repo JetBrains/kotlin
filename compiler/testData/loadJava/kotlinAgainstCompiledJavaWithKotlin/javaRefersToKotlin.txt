@@ -1,0 +1,14 @@
+package test
+
+public /*synthesized*/ fun J(/*0*/ function: (test.K?) -> kotlin.Unit): test.J
+
+public trait J : java.lang.Object {
+    public abstract fun foo(/*0*/ p0: test.K?): kotlin.Unit
+}
+
+internal trait K {
+}
+
+internal trait K1 : test.J {
+    public abstract override /*1*/ fun foo(/*0*/ k: test.K?): kotlin.Unit
+}

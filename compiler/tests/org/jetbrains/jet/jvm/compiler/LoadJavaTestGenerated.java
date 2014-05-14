@@ -3144,6 +3144,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritParameterName.kt");
         }
         
+        @TestMetadata("javaRefersToKotlin.kt")
+        public void testJavaRefersToKotlin() throws Exception {
+            doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaRefersToKotlin.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/loadJava/sourceJava")
