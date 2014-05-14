@@ -43,6 +43,11 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             doTest("idea/testData/checker/codeFragments/binaryExpression.kt");
         }
         
+        @TestMetadata("blockCodeFragment.kt")
+        public void testBlockCodeFragment() throws Exception {
+            doTest("idea/testData/checker/codeFragments/blockCodeFragment.kt");
+        }
+        
         @TestMetadata("callExpression.kt")
         public void testCallExpression() throws Exception {
             doTest("idea/testData/checker/codeFragments/callExpression.kt");

@@ -29,6 +29,8 @@ import org.jetbrains.jet.lang.psi.JetFile
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.InTextDirectivesUtils
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
+import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheckerTest() {
     override fun doTest(filePath: String) {
@@ -60,14 +62,22 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
     configureByFile(filePath)
 
     val elementAt = getFile()?.findElementAt(getCaretOffset())
-    val file = createExpressionCodeFragment(filePath, elementAt!!)
+    val file = createCodeFragment(filePath, elementAt!!)
 
     configureFromExistingVirtualFile(file.getVirtualFile())
 }
 
-private fun createExpressionCodeFragment(filePath: String, contextElement: PsiElement): JetExpressionCodeFragment {
-    val codeFragmentText = FileUtil.loadFile(File(filePath + ".fragment"), true).trim()
-    return JetPsiFactory.createExpressionCodeFragment(
+private fun createCodeFragment(filePath: String, contextElement: PsiElement): JetCodeFragment {
+    val fileForFragment = File(filePath + ".fragment")
+    val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
+    if (fileForFragment.readLines().size == 1) {
+        return JetPsiFactory.createExpressionCodeFragment(
+                contextElement.getProject(),
+                codeFragmentText,
+                KotlinCodeFragmentFactory.getContextElement(contextElement)
+        )
+    }
+    return JetPsiFactory.createBlockCodeFragment(
             contextElement.getProject(),
             codeFragmentText,
             KotlinCodeFragmentFactory.getContextElement(contextElement)

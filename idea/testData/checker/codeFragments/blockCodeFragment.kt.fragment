@@ -1,0 +1,2 @@
+val b = 1
+a + b + <error>c</error>

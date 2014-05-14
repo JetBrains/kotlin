@@ -36,6 +36,11 @@ public class CodeFragmentCompletionTestGenerated extends AbstractCodeFragmentCom
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/completion/basic/codeFragments"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
+    @TestMetadata("blockCodeFragment.kt")
+    public void testBlockCodeFragment() throws Exception {
+        doTest("idea/testData/completion/basic/codeFragments/blockCodeFragment.kt");
+    }
+    
     @TestMetadata("localVal.kt")
     public void testLocalVal() throws Exception {
         doTest("idea/testData/completion/basic/codeFragments/localVal.kt");
