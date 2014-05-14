@@ -76,6 +76,11 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$foo$C$1", innerC);
     }
 
+    public void testAnonymousObjectInline() {
+        InnerClassAttribute objectInInlineFun = new InnerClassAttribute("A$inlineFun$s$1", null, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+        extractAndCompareInnerClasses("A", objectInInlineFun);
+    }
+
     public void testEnumEntry() {
         InnerClassAttribute innerE2 = new InnerClassAttribute("E$E2", "E", "E2", ACC_STATIC | ACC_FINAL);
 
