@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.psi.JetConstantExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
-import com.sun.javaws.exceptions.InvalidArgumentException
 import org.jetbrains.jet.lexer.JetSingleValueToken
 import org.jetbrains.jet.lexer.JetKeywordToken
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
@@ -86,7 +85,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
                 token == JetTokens.LTEQ -> JetTokens.GT
                 token == JetTokens.GT -> JetTokens.LTEQ
                 token == JetTokens.GTEQ -> JetTokens.LT
-                else -> throw InvalidArgumentException(array("The token, \"${token.toString()}\", does not have a negated equivalent."))
+                else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
             }
         }
 
@@ -94,7 +93,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
             return when (token) {
                 is JetSingleValueToken -> token.getValue()
                 is JetKeywordToken -> token.getValue()
-                else -> throw InvalidArgumentException(array("The token, ${token.toString()}, does not have an applicable string value."))
+                else -> throw IllegalArgumentException("The token $token does not have an applicable string value.")
             }
         }
 
