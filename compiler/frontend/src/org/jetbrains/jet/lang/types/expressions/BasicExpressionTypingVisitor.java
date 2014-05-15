@@ -377,7 +377,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         String labelName = expression.getLabelName();
         if (labelName != null) {
             LabelResolver.LabeledReceiverResolutionResult resolutionResult =
-                    LabelResolver.INSTANCE.resolveThisOrSuperLabel(expression, context, Name.identifierForLabel(labelName));
+                    LabelResolver.INSTANCE.resolveThisOrSuperLabel(expression, context, Name.identifier(labelName));
             if (onlyClassReceivers && resolutionResult.success()) {
                 if (!isDeclaredInClass(resolutionResult.getReceiverParameterDescriptor())) {
                     return LabelResolver.LabeledReceiverResolutionResult.labelResolutionSuccess(NO_RECEIVER_PARAMETER);

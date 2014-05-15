@@ -85,9 +85,9 @@ sink:
 fun t3() {
   try {
     1
-    @{ () ->
+    @l{ () ->
         if (2 > 3) {
-          return@
+          return@l
         }
     }
   } finally {
@@ -97,70 +97,70 @@ fun t3() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ try { 1 @{ () -> if (2 > 3) { return@ } } } finally { 2 } })
-    mark(try { 1 @{ () -> if (2 > 3) { return@ } } } finally { 2 })
-    jmp?(L2 [onExceptionToFinallyBlock])                                   NEXT:[mark({ 2 }), mark({ 1 @{ () -> if (2 > 3) { return@ } } })]
-  3 mark({ 1 @{ () -> if (2 > 3) { return@ } } })
+  2 mark({ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 } })
+    mark(try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 })
+    jmp?(L2 [onExceptionToFinallyBlock])                                     NEXT:[mark({ 2 }), mark({ 1 @l{ () -> if (2 > 3) { return@l } } })]
+  3 mark({ 1 @l{ () -> if (2 > 3) { return@l } } })
     r(1)
-    mark(@{ () -> if (2 > 3) { return@ } })
-    mark({ () -> if (2 > 3) { return@ } })
-    jmp?(L3)                                                               NEXT:[r({ () -> if (2 > 3) { return@ } }), d({ () -> if (2 > 3) { return@ } })]
-    d({ () -> if (2 > 3) { return@ } })                                    NEXT:[<SINK>]
+    mark(@l{ () -> if (2 > 3) { return@l } })
+    mark({ () -> if (2 > 3) { return@l } })
+    jmp?(L3)                                                                 NEXT:[r({ () -> if (2 > 3) { return@l } }), d({ () -> if (2 > 3) { return@l } })]
+    d({ () -> if (2 > 3) { return@l } })                                     NEXT:[<SINK>]
 L3:
-    r({ () -> if (2 > 3) { return@ } })                                    PREV:[jmp?(L3)]
-  2 jmp(L8 [skipFinallyToErrorBlock])                                      NEXT:[mark({ 2 })]
+    r({ () -> if (2 > 3) { return@l } })                                     PREV:[jmp?(L3)]
+  2 jmp(L8 [skipFinallyToErrorBlock])                                        NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L9 [start finally]:
-  3 mark({ 2 })                                                            PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+  3 mark({ 2 })                                                              PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     r(2)
 L10 [finish finally]:
-  2 jmp(error)                                                             NEXT:[<ERROR>]
+  2 jmp(error)                                                               NEXT:[<ERROR>]
 L8 [skipFinallyToErrorBlock]:
-  3 mark({ 2 })                                                            PREV:[jmp(L8 [skipFinallyToErrorBlock])]
+  3 mark({ 2 })                                                              PREV:[jmp(L8 [skipFinallyToErrorBlock])]
     r(2)
 L1:
-  1 <END>                                                                  NEXT:[<SINK>]
+  1 <END>                                                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                                                PREV:[jmp(error)]
+    <ERROR>                                                                  PREV:[jmp(error)]
 sink:
-    <SINK>                                                                 PREV:[<ERROR>, <END>, d({ () -> if (2 > 3) { return@ } })]
+    <SINK>                                                                   PREV:[<ERROR>, <END>, d({ () -> if (2 > 3) { return@l } })]
 =====================
 == anonymous_0 ==
 { () ->
         if (2 > 3) {
-          return@
+          return@l
         }
     }
 ---------------------
 L4:
   4 <START>
-  5 mark(if (2 > 3) { return@ })
-    mark(if (2 > 3) { return@ })
+  5 mark(if (2 > 3) { return@l })
+    mark(if (2 > 3) { return@l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L6)                          NEXT:[read (Unit), mark({ return@ })]
-  6 mark({ return@ })
-    ret L5                          NEXT:[<END>]
-- 5 jmp(L7)                         NEXT:[<END>]                             PREV:[]
+    jf(L6)                           NEXT:[read (Unit), mark({ return@l })]
+  6 mark({ return@l })
+    ret L5                           NEXT:[<END>]
+- 5 jmp(L7)                          NEXT:[<END>]                              PREV:[]
 L6:
-    read (Unit)                     PREV:[jf(L6)]
+    read (Unit)                      PREV:[jf(L6)]
 L5:
 L7:
-  4 <END>                           NEXT:[<SINK>]                            PREV:[ret L5, read (Unit)]
+  4 <END>                            NEXT:[<SINK>]                             PREV:[ret L5, read (Unit)]
 error:
-    <ERROR>                         PREV:[]
+    <ERROR>                          PREV:[]
 sink:
-    <SINK>                          PREV:[<ERROR>, <END>]
+    <SINK>                           PREV:[<ERROR>, <END>]
 =====================
 == t4 ==
 fun t4() {
-  @{ () ->
+  @l{ () ->
     try {
       1
       if (2 > 3) {
-        return@
+        return@l
       }
     } finally {
       2
@@ -170,26 +170,26 @@ fun t4() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ @{ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } } })
-    mark(@{ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })
-    mark({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })
-    jmp?(L2)                                                               NEXT:[r({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } }), d({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })]
-    d({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })            NEXT:[<SINK>]
+  2 mark({ @l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } })
+    mark(@l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
+    mark({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })
+    jmp?(L2)                                                                 NEXT:[r({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }), d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
+    d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })             NEXT:[<SINK>]
 L2:
-    r({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })            PREV:[jmp?(L2)]
+    r({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })             PREV:[jmp?(L2)]
 L1:
-  1 <END>                                                                  NEXT:[<SINK>]
+  1 <END>                                                                    NEXT:[<SINK>]
 error:
-    <ERROR>                                                                PREV:[]
+    <ERROR>                                                                  PREV:[]
 sink:
-    <SINK>                                                                 PREV:[<ERROR>, <END>, d({ () -> try { 1 if (2 > 3) { return@ } } finally { 2 } })]
+    <SINK>                                                                   PREV:[<ERROR>, <END>, d({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } })]
 =====================
 == anonymous_1 ==
 { () ->
     try {
       1
       if (2 > 3) {
-        return@
+        return@l
       }
     } finally {
       2
@@ -198,49 +198,49 @@ sink:
 ---------------------
 L3:
   3 <START>
-  4 mark(try { 1 if (2 > 3) { return@ } } finally { 2 })
-    mark(try { 1 if (2 > 3) { return@ } } finally { 2 })
-    jmp?(L5 [onExceptionToFinallyBlock])                    NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { return@ } })]
-  5 mark({ 1 if (2 > 3) { return@ } })
+  4 mark(try { 1 if (2 > 3) { return@l } } finally { 2 })
+    mark(try { 1 if (2 > 3) { return@l } } finally { 2 })
+    jmp?(L5 [onExceptionToFinallyBlock])                     NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { return@l } })]
+  5 mark({ 1 if (2 > 3) { return@l } })
     r(1)
-    mark(if (2 > 3) { return@ })
+    mark(if (2 > 3) { return@l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L6)                                                  NEXT:[read (Unit), mark({ return@ })]
-  6 mark({ return@ })
+    jf(L6)                                                   NEXT:[read (Unit), mark({ return@l })]
+  6 mark({ return@l })
 L7 [start finally]:
   7 mark({ 2 })
     r(2)
 L8 [finish finally]:
-  6 ret L4                                                  NEXT:[<END>]
-- 5 jmp(L9)                                                 NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                      PREV:[]
+  6 ret L4                                                   NEXT:[<END>]
+- 5 jmp(L9)                                                  NEXT:[jmp(L10 [skipFinallyToErrorBlock])]                       PREV:[]
 L6:
-    read (Unit)                                             PREV:[jf(L6)]
+    read (Unit)                                              PREV:[jf(L6)]
 L9:
-  4 jmp(L10 [skipFinallyToErrorBlock])                      NEXT:[mark({ 2 })]
+  4 jmp(L10 [skipFinallyToErrorBlock])                       NEXT:[mark({ 2 })]
 L5 [onExceptionToFinallyBlock]:
-  7 mark({ 2 })                                             PREV:[jmp?(L5 [onExceptionToFinallyBlock])]
+  7 mark({ 2 })                                              PREV:[jmp?(L5 [onExceptionToFinallyBlock])]
     r(2)
-  4 jmp(error)                                              NEXT:[<ERROR>]
+  4 jmp(error)                                               NEXT:[<ERROR>]
 L10 [skipFinallyToErrorBlock]:
-  7 mark({ 2 })                                             PREV:[jmp(L10 [skipFinallyToErrorBlock])]
+  7 mark({ 2 })                                              PREV:[jmp(L10 [skipFinallyToErrorBlock])]
     r(2)
 L4:
-  3 <END>                                                   NEXT:[<SINK>]                                                  PREV:[ret L4, r(2)]
+  3 <END>                                                    NEXT:[<SINK>]                                                   PREV:[ret L4, r(2)]
 error:
-    <ERROR>                                                 PREV:[jmp(error)]
+    <ERROR>                                                  PREV:[jmp(error)]
 sink:
-    <SINK>                                                  PREV:[<ERROR>, <END>]
+    <SINK>                                                   PREV:[<ERROR>, <END>]
 =====================
 == t5 ==
 fun t5() {
-  @ while(true) {
+  @l while(true) {
     try {
       1
       if (2 > 3) {
-        break @
+        break @l
       }
     } finally {
       2
@@ -250,59 +250,59 @@ fun t5() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ @ while(true) { try { 1 if (2 > 3) { break @ } } finally { 2 } } })
-    mark(@ while(true) { try { 1 if (2 > 3) { break @ } } finally { 2 } })
-    mark(while(true) { try { 1 if (2 > 3) { break @ } } finally { 2 } })
+  2 mark({ @l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } } })
+    mark(@l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } })
+    mark(while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } })
 L2 [loop entry point]:
 L5 [condition entry point]:
-    r(true)                                                                       PREV:[mark(while(true) { try { 1 if (2 > 3) { break @ } } finally { 2 } }), jmp(L2 [loop entry point])]
+    r(true)                                                                         PREV:[mark(while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }), jmp(L2 [loop entry point])]
 L4 [body entry point]:
-  3 mark({ try { 1 if (2 > 3) { break @ } } finally { 2 } })
-    mark(try { 1 if (2 > 3) { break @ } } finally { 2 })
-    jmp?(L6 [onExceptionToFinallyBlock])                                          NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { break @ } })]
-  4 mark({ 1 if (2 > 3) { break @ } })
+  3 mark({ try { 1 if (2 > 3) { break @l } } finally { 2 } })
+    mark(try { 1 if (2 > 3) { break @l } } finally { 2 })
+    jmp?(L6 [onExceptionToFinallyBlock])                                            NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { break @l } })]
+  4 mark({ 1 if (2 > 3) { break @l } })
     r(1)
-    mark(if (2 > 3) { break @ })
+    mark(if (2 > 3) { break @l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L7)                                                                        NEXT:[read (Unit), mark({ break @ })]
-  5 mark({ break @ })
+    jf(L7)                                                                          NEXT:[read (Unit), mark({ break @l })]
+  5 mark({ break @l })
 L8 [start finally]:
   6 mark({ 2 })
     r(2)
 L9 [finish finally]:
-  5 jmp(L3 [loop exit point])                                                     NEXT:[read (Unit)]
-- 4 jmp(L10)                                                                      NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                            PREV:[]
+  5 jmp(L3 [loop exit point])                                                       NEXT:[read (Unit)]
+- 4 jmp(L10)                                                                        NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                              PREV:[]
 L7:
-    read (Unit)                                                                   PREV:[jf(L7)]
+    read (Unit)                                                                     PREV:[jf(L7)]
 L10:
-  3 jmp(L11 [skipFinallyToErrorBlock])                                            NEXT:[mark({ 2 })]
+  3 jmp(L11 [skipFinallyToErrorBlock])                                              NEXT:[mark({ 2 })]
 L6 [onExceptionToFinallyBlock]:
-  6 mark({ 2 })                                                                   PREV:[jmp?(L6 [onExceptionToFinallyBlock])]
+  6 mark({ 2 })                                                                     PREV:[jmp?(L6 [onExceptionToFinallyBlock])]
     r(2)
-  3 jmp(error)                                                                    NEXT:[<ERROR>]
+  3 jmp(error)                                                                      NEXT:[<ERROR>]
 L11 [skipFinallyToErrorBlock]:
-  6 mark({ 2 })                                                                   PREV:[jmp(L11 [skipFinallyToErrorBlock])]
+  6 mark({ 2 })                                                                     PREV:[jmp(L11 [skipFinallyToErrorBlock])]
     r(2)
-  2 jmp(L2 [loop entry point])                                                    NEXT:[r(true)]
+  2 jmp(L2 [loop entry point])                                                      NEXT:[r(true)]
 L3 [loop exit point]:
-    read (Unit)                                                                   PREV:[jmp(L3 [loop exit point])]
+    read (Unit)                                                                     PREV:[jmp(L3 [loop exit point])]
 L1:
-  1 <END>                                                                         NEXT:[<SINK>]
+  1 <END>                                                                           NEXT:[<SINK>]
 error:
-    <ERROR>                                                                       PREV:[jmp(error)]
+    <ERROR>                                                                         PREV:[jmp(error)]
 sink:
-    <SINK>                                                                        PREV:[<ERROR>, <END>]
+    <SINK>                                                                          PREV:[<ERROR>, <END>]
 =====================
 == t6 ==
 fun t6() {
   try {
-    @ while(true) {
+    @l while(true) {
         1
         if (2 > 3) {
-          break @
+          break @l
         }
       }
       5
@@ -313,25 +313,86 @@ fun t6() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ try { @ while(true) { 1 if (2 > 3) { break @ } } 5 } finally { 2 } })
-    mark(try { @ while(true) { 1 if (2 > 3) { break @ } } 5 } finally { 2 })
-    jmp?(L2 [onExceptionToFinallyBlock])                                            NEXT:[mark({ 2 }), mark({ @ while(true) { 1 if (2 > 3) { break @ } } 5 })]
-  3 mark({ @ while(true) { 1 if (2 > 3) { break @ } } 5 })
-    mark(@ while(true) { 1 if (2 > 3) { break @ } })
-    mark(while(true) { 1 if (2 > 3) { break @ } })
+  2 mark({ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } })
+    mark(try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 })
+    jmp?(L2 [onExceptionToFinallyBlock])                                              NEXT:[mark({ 2 }), mark({ @l while(true) { 1 if (2 > 3) { break @l } } 5 })]
+  3 mark({ @l while(true) { 1 if (2 > 3) { break @l } } 5 })
+    mark(@l while(true) { 1 if (2 > 3) { break @l } })
+    mark(while(true) { 1 if (2 > 3) { break @l } })
 L3 [loop entry point]:
 L6 [condition entry point]:
-    r(true)                                                                         PREV:[mark(while(true) { 1 if (2 > 3) { break @ } }), jmp(L3 [loop entry point])]
+    r(true)                                                                           PREV:[mark(while(true) { 1 if (2 > 3) { break @l } }), jmp(L3 [loop entry point])]
 L5 [body entry point]:
-  4 mark({ 1 if (2 > 3) { break @ } })
+  4 mark({ 1 if (2 > 3) { break @l } })
     r(1)
-    mark(if (2 > 3) { break @ })
+    mark(if (2 > 3) { break @l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L7)                                                                          NEXT:[read (Unit), mark({ break @ })]
-  5 mark({ break @ })
+    jf(L7)                                                                            NEXT:[read (Unit), mark({ break @l })]
+  5 mark({ break @l })
+    jmp(L4 [loop exit point])                                                         NEXT:[read (Unit)]
+- 4 jmp(L8)                                                                           NEXT:[jmp(L3 [loop entry point])]                                                        PREV:[]
+L7:
+    read (Unit)                                                                       PREV:[jf(L7)]
+L8:
+  3 jmp(L3 [loop entry point])                                                        NEXT:[r(true)]
+L4 [loop exit point]:
+    read (Unit)                                                                       PREV:[jmp(L4 [loop exit point])]
+    r(5)
+  2 jmp(L9 [skipFinallyToErrorBlock])                                                 NEXT:[mark({ 2 })]
+L2 [onExceptionToFinallyBlock]:
+L10 [start finally]:
+  3 mark({ 2 })                                                                       PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    r(2)
+L11 [finish finally]:
+  2 jmp(error)                                                                        NEXT:[<ERROR>]
+L9 [skipFinallyToErrorBlock]:
+  3 mark({ 2 })                                                                       PREV:[jmp(L9 [skipFinallyToErrorBlock])]
+    r(2)
+L1:
+  1 <END>                                                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                                                           PREV:[jmp(error)]
+sink:
+    <SINK>                                                                            PREV:[<ERROR>, <END>]
+=====================
+== t7 ==
+fun t7() {
+  try {
+    @l while(true) {
+        1
+        if (2 > 3) {
+          break @l
+        }
+      }
+  } finally {
+    2
+  }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 } })
+    mark(try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 })
+    jmp?(L2 [onExceptionToFinallyBlock])                                            NEXT:[mark({ 2 }), mark({ @l while(true) { 1 if (2 > 3) { break @l } } })]
+  3 mark({ @l while(true) { 1 if (2 > 3) { break @l } } })
+    mark(@l while(true) { 1 if (2 > 3) { break @l } })
+    mark(while(true) { 1 if (2 > 3) { break @l } })
+L3 [loop entry point]:
+L6 [condition entry point]:
+    r(true)                                                                         PREV:[mark(while(true) { 1 if (2 > 3) { break @l } }), jmp(L3 [loop entry point])]
+L5 [body entry point]:
+  4 mark({ 1 if (2 > 3) { break @l } })
+    r(1)
+    mark(if (2 > 3) { break @l })
+    mark(2 > 3)
+    r(2)
+    r(3)
+    call(>, compareTo)
+    jf(L7)                                                                          NEXT:[read (Unit), mark({ break @l })]
+  5 mark({ break @l })
     jmp(L4 [loop exit point])                                                       NEXT:[read (Unit)]
 - 4 jmp(L8)                                                                         NEXT:[jmp(L3 [loop entry point])]                                                      PREV:[]
 L7:
@@ -340,7 +401,6 @@ L8:
   3 jmp(L3 [loop entry point])                                                      NEXT:[r(true)]
 L4 [loop exit point]:
     read (Unit)                                                                     PREV:[jmp(L4 [loop exit point])]
-    r(5)
   2 jmp(L9 [skipFinallyToErrorBlock])                                               NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L10 [start finally]:
@@ -358,73 +418,13 @@ error:
 sink:
     <SINK>                                                                          PREV:[<ERROR>, <END>]
 =====================
-== t7 ==
-fun t7() {
-  try {
-    @ while(true) {
-        1
-        if (2 > 3) {
-          break @
-        }
-      }
-  } finally {
-    2
-  }
-}
----------------------
-L0:
-  1 <START>
-  2 mark({ try { @ while(true) { 1 if (2 > 3) { break @ } } } finally { 2 } })
-    mark(try { @ while(true) { 1 if (2 > 3) { break @ } } } finally { 2 })
-    jmp?(L2 [onExceptionToFinallyBlock])                                          NEXT:[mark({ 2 }), mark({ @ while(true) { 1 if (2 > 3) { break @ } } })]
-  3 mark({ @ while(true) { 1 if (2 > 3) { break @ } } })
-    mark(@ while(true) { 1 if (2 > 3) { break @ } })
-    mark(while(true) { 1 if (2 > 3) { break @ } })
-L3 [loop entry point]:
-L6 [condition entry point]:
-    r(true)                                                                       PREV:[mark(while(true) { 1 if (2 > 3) { break @ } }), jmp(L3 [loop entry point])]
-L5 [body entry point]:
-  4 mark({ 1 if (2 > 3) { break @ } })
-    r(1)
-    mark(if (2 > 3) { break @ })
-    mark(2 > 3)
-    r(2)
-    r(3)
-    call(>, compareTo)
-    jf(L7)                                                                        NEXT:[read (Unit), mark({ break @ })]
-  5 mark({ break @ })
-    jmp(L4 [loop exit point])                                                     NEXT:[read (Unit)]
-- 4 jmp(L8)                                                                       NEXT:[jmp(L3 [loop entry point])]                                                    PREV:[]
-L7:
-    read (Unit)                                                                   PREV:[jf(L7)]
-L8:
-  3 jmp(L3 [loop entry point])                                                    NEXT:[r(true)]
-L4 [loop exit point]:
-    read (Unit)                                                                   PREV:[jmp(L4 [loop exit point])]
-  2 jmp(L9 [skipFinallyToErrorBlock])                                             NEXT:[mark({ 2 })]
-L2 [onExceptionToFinallyBlock]:
-L10 [start finally]:
-  3 mark({ 2 })                                                                   PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(2)
-L11 [finish finally]:
-  2 jmp(error)                                                                    NEXT:[<ERROR>]
-L9 [skipFinallyToErrorBlock]:
-  3 mark({ 2 })                                                                   PREV:[jmp(L9 [skipFinallyToErrorBlock])]
-    r(2)
-L1:
-  1 <END>                                                                         NEXT:[<SINK>]
-error:
-    <ERROR>                                                                       PREV:[jmp(error)]
-sink:
-    <SINK>                                                                        PREV:[<ERROR>, <END>]
-=====================
 == t8 ==
 fun t8(a : Int) {
-  @ for (i in 1..a) {
+  @l for (i in 1..a) {
     try {
       1
       if (2 > 3) {
-        continue @
+        continue @l
       }
     } finally {
       2
@@ -436,65 +436,65 @@ L0:
   1 <START>
     v(a : Int)
     w(a)
-  2 mark({ @ for (i in 1..a) { try { 1 if (2 > 3) { continue @ } } finally { 2 } } })
-    mark(@ for (i in 1..a) { try { 1 if (2 > 3) { continue @ } } finally { 2 } })
-  3 mark(for (i in 1..a) { try { 1 if (2 > 3) { continue @ } } finally { 2 } })
+  2 mark({ @l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } } })
+    mark(@l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
+  3 mark(for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } })
     mark(1..a)
     r(1)
     r(a)
     call(.., rangeTo)
     v(i)
 L3:
-    jmp?(L2)                                                                             NEXT:[read (Unit), w(i)]
+    jmp?(L2)                                                                               NEXT:[read (Unit), w(i)]
 L4 [loop entry point]:
 L5 [body entry point]:
-    w(i)                                                                                 PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
-  4 mark({ try { 1 if (2 > 3) { continue @ } } finally { 2 } })
-    mark(try { 1 if (2 > 3) { continue @ } } finally { 2 })
-    jmp?(L6 [onExceptionToFinallyBlock])                                                 NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { continue @ } })]
-  5 mark({ 1 if (2 > 3) { continue @ } })
+    w(i)                                                                                   PREV:[jmp?(L2), jmp(L4 [loop entry point]), jmp?(L4 [loop entry point])]
+  4 mark({ try { 1 if (2 > 3) { continue @l } } finally { 2 } })
+    mark(try { 1 if (2 > 3) { continue @l } } finally { 2 })
+    jmp?(L6 [onExceptionToFinallyBlock])                                                   NEXT:[mark({ 2 }), mark({ 1 if (2 > 3) { continue @l } })]
+  5 mark({ 1 if (2 > 3) { continue @l } })
     r(1)
-    mark(if (2 > 3) { continue @ })
+    mark(if (2 > 3) { continue @l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L7)                                                                               NEXT:[read (Unit), mark({ continue @ })]
-  6 mark({ continue @ })
+    jf(L7)                                                                                 NEXT:[read (Unit), mark({ continue @l })]
+  6 mark({ continue @l })
 L8 [start finally]:
   7 mark({ 2 })
     r(2)
 L9 [finish finally]:
-  6 jmp(L4 [loop entry point])                                                           NEXT:[w(i)]
-- 5 jmp(L10)                                                                             NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                                   PREV:[]
+  6 jmp(L4 [loop entry point])                                                             NEXT:[w(i)]
+- 5 jmp(L10)                                                                               NEXT:[jmp(L11 [skipFinallyToErrorBlock])]                                                     PREV:[]
 L7:
-    read (Unit)                                                                          PREV:[jf(L7)]
+    read (Unit)                                                                            PREV:[jf(L7)]
 L10:
-  4 jmp(L11 [skipFinallyToErrorBlock])                                                   NEXT:[mark({ 2 })]
+  4 jmp(L11 [skipFinallyToErrorBlock])                                                     NEXT:[mark({ 2 })]
 L6 [onExceptionToFinallyBlock]:
-  7 mark({ 2 })                                                                          PREV:[jmp?(L6 [onExceptionToFinallyBlock])]
+  7 mark({ 2 })                                                                            PREV:[jmp?(L6 [onExceptionToFinallyBlock])]
     r(2)
-  4 jmp(error)                                                                           NEXT:[<ERROR>]
+  4 jmp(error)                                                                             NEXT:[<ERROR>]
 L11 [skipFinallyToErrorBlock]:
-  7 mark({ 2 })                                                                          PREV:[jmp(L11 [skipFinallyToErrorBlock])]
+  7 mark({ 2 })                                                                            PREV:[jmp(L11 [skipFinallyToErrorBlock])]
     r(2)
-  3 jmp?(L4 [loop entry point])                                                          NEXT:[w(i), read (Unit)]
+  3 jmp?(L4 [loop entry point])                                                            NEXT:[w(i), read (Unit)]
 L2:
-    read (Unit)                                                                          PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
+    read (Unit)                                                                            PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
 L1:
-  1 <END>                                                                                NEXT:[<SINK>]
+  1 <END>                                                                                  NEXT:[<SINK>]
 error:
-    <ERROR>                                                                              PREV:[jmp(error)]
+    <ERROR>                                                                                PREV:[jmp(error)]
 sink:
-    <SINK>                                                                               PREV:[<ERROR>, <END>]
+    <SINK>                                                                                 PREV:[<ERROR>, <END>]
 =====================
 == t9 ==
 fun t9(a : Int) {
   try {
-    @ for (i in 1..a) {
+    @l for (i in 1..a) {
         1
         if (2 > 3) {
-          continue @
+          continue @l
         }
       }
       5
@@ -507,12 +507,81 @@ L0:
   1 <START>
     v(a : Int)
     w(a)
-  2 mark({ try { @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } 5 } finally { 2 } })
-    mark(try { @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } 5 } finally { 2 })
-    jmp?(L2 [onExceptionToFinallyBlock])                                                   NEXT:[mark({ 2 }), mark({ @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } 5 })]
-  3 mark({ @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } 5 })
-    mark(@ for (i in 1..a) { 1 if (2 > 3) { continue @ } })
-  4 mark(for (i in 1..a) { 1 if (2 > 3) { continue @ } })
+  2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } })
+    mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 })
+    jmp?(L2 [onExceptionToFinallyBlock])                                                     NEXT:[mark({ 2 }), mark({ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 })]
+  3 mark({ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 })
+    mark(@l for (i in 1..a) { 1 if (2 > 3) { continue @l } })
+  4 mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
+    mark(1..a)
+    r(1)
+    r(a)
+    call(.., rangeTo)
+    v(i)
+L4:
+    jmp?(L3)                                                                                 NEXT:[read (Unit), w(i)]
+L5 [loop entry point]:
+L6 [body entry point]:
+    w(i)                                                                                     PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
+  5 mark({ 1 if (2 > 3) { continue @l } })
+    r(1)
+    mark(if (2 > 3) { continue @l })
+    mark(2 > 3)
+    r(2)
+    r(3)
+    call(>, compareTo)
+    jf(L7)                                                                                   NEXT:[read (Unit), mark({ continue @l })]
+  6 mark({ continue @l })
+    jmp(L5 [loop entry point])                                                               NEXT:[w(i)]
+- 5 jmp(L8)                                                                                  NEXT:[jmp?(L5 [loop entry point])]                                                              PREV:[]
+L7:
+    read (Unit)                                                                              PREV:[jf(L7)]
+L8:
+  4 jmp?(L5 [loop entry point])                                                              NEXT:[w(i), read (Unit)]
+L3:
+    read (Unit)                                                                              PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
+  3 r(5)
+  2 jmp(L9 [skipFinallyToErrorBlock])                                                        NEXT:[mark({ 2 })]
+L2 [onExceptionToFinallyBlock]:
+L10 [start finally]:
+  3 mark({ 2 })                                                                              PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
+    r(2)
+L11 [finish finally]:
+  2 jmp(error)                                                                               NEXT:[<ERROR>]
+L9 [skipFinallyToErrorBlock]:
+  3 mark({ 2 })                                                                              PREV:[jmp(L9 [skipFinallyToErrorBlock])]
+    r(2)
+L1:
+  1 <END>                                                                                    NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                  PREV:[jmp(error)]
+sink:
+    <SINK>                                                                                   PREV:[<ERROR>, <END>]
+=====================
+== t10 ==
+fun t10(a : Int) {
+  try {
+    @l for (i in 1..a) {
+        1
+        if (2 > 3) {
+          continue @l
+        }
+      }
+  } finally {
+    2
+  }
+}
+---------------------
+L0:
+  1 <START>
+    v(a : Int)
+    w(a)
+  2 mark({ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 } })
+    mark(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 })
+    jmp?(L2 [onExceptionToFinallyBlock])                                                   NEXT:[mark({ 2 }), mark({ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } })]
+  3 mark({ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } })
+    mark(@l for (i in 1..a) { 1 if (2 > 3) { continue @l } })
+  4 mark(for (i in 1..a) { 1 if (2 > 3) { continue @l } })
     mark(1..a)
     r(1)
     r(a)
@@ -523,15 +592,15 @@ L4:
 L5 [loop entry point]:
 L6 [body entry point]:
     w(i)                                                                                   PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
-  5 mark({ 1 if (2 > 3) { continue @ } })
+  5 mark({ 1 if (2 > 3) { continue @l } })
     r(1)
-    mark(if (2 > 3) { continue @ })
+    mark(if (2 > 3) { continue @l })
     mark(2 > 3)
     r(2)
     r(3)
     call(>, compareTo)
-    jf(L7)                                                                                 NEXT:[read (Unit), mark({ continue @ })]
-  6 mark({ continue @ })
+    jf(L7)                                                                                 NEXT:[read (Unit), mark({ continue @l })]
+  6 mark({ continue @l })
     jmp(L5 [loop entry point])                                                             NEXT:[w(i)]
 - 5 jmp(L8)                                                                                NEXT:[jmp?(L5 [loop entry point])]                                                            PREV:[]
 L7:
@@ -540,7 +609,6 @@ L8:
   4 jmp?(L5 [loop entry point])                                                            NEXT:[w(i), read (Unit)]
 L3:
     read (Unit)                                                                            PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
-  3 r(5)
   2 jmp(L9 [skipFinallyToErrorBlock])                                                      NEXT:[mark({ 2 })]
 L2 [onExceptionToFinallyBlock]:
 L10 [start finally]:
@@ -557,74 +625,6 @@ error:
     <ERROR>                                                                                PREV:[jmp(error)]
 sink:
     <SINK>                                                                                 PREV:[<ERROR>, <END>]
-=====================
-== t10 ==
-fun t10(a : Int) {
-  try {
-    @ for (i in 1..a) {
-        1
-        if (2 > 3) {
-          continue @
-        }
-      }
-  } finally {
-    2
-  }
-}
----------------------
-L0:
-  1 <START>
-    v(a : Int)
-    w(a)
-  2 mark({ try { @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } } finally { 2 } })
-    mark(try { @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } } finally { 2 })
-    jmp?(L2 [onExceptionToFinallyBlock])                                                 NEXT:[mark({ 2 }), mark({ @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } })]
-  3 mark({ @ for (i in 1..a) { 1 if (2 > 3) { continue @ } } })
-    mark(@ for (i in 1..a) { 1 if (2 > 3) { continue @ } })
-  4 mark(for (i in 1..a) { 1 if (2 > 3) { continue @ } })
-    mark(1..a)
-    r(1)
-    r(a)
-    call(.., rangeTo)
-    v(i)
-L4:
-    jmp?(L3)                                                                             NEXT:[read (Unit), w(i)]
-L5 [loop entry point]:
-L6 [body entry point]:
-    w(i)                                                                                 PREV:[jmp?(L3), jmp(L5 [loop entry point]), jmp?(L5 [loop entry point])]
-  5 mark({ 1 if (2 > 3) { continue @ } })
-    r(1)
-    mark(if (2 > 3) { continue @ })
-    mark(2 > 3)
-    r(2)
-    r(3)
-    call(>, compareTo)
-    jf(L7)                                                                               NEXT:[read (Unit), mark({ continue @ })]
-  6 mark({ continue @ })
-    jmp(L5 [loop entry point])                                                           NEXT:[w(i)]
-- 5 jmp(L8)                                                                              NEXT:[jmp?(L5 [loop entry point])]                                                          PREV:[]
-L7:
-    read (Unit)                                                                          PREV:[jf(L7)]
-L8:
-  4 jmp?(L5 [loop entry point])                                                          NEXT:[w(i), read (Unit)]
-L3:
-    read (Unit)                                                                          PREV:[jmp?(L3), jmp?(L5 [loop entry point])]
-  2 jmp(L9 [skipFinallyToErrorBlock])                                                    NEXT:[mark({ 2 })]
-L2 [onExceptionToFinallyBlock]:
-L10 [start finally]:
-  3 mark({ 2 })                                                                          PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
-    r(2)
-L11 [finish finally]:
-  2 jmp(error)                                                                           NEXT:[<ERROR>]
-L9 [skipFinallyToErrorBlock]:
-  3 mark({ 2 })                                                                          PREV:[jmp(L9 [skipFinallyToErrorBlock])]
-    r(2)
-L1:
-  1 <END>                                                                                NEXT:[<SINK>]
-error:
-    <ERROR>                                                                              PREV:[jmp(error)]
-sink:
-    <SINK>                                                                               PREV:[<ERROR>, <END>]
 =====================
 == t11 ==
 fun t11() {

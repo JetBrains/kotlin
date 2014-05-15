@@ -4656,6 +4656,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/labels/labelReferencesInsideObjectExpressions.kt");
             }
             
+            @TestMetadata("labelsMustBeNamed.kt")
+            public void testLabelsMustBeNamed() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/labels/labelsMustBeNamed.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/library")

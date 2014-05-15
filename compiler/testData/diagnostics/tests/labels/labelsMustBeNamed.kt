@@ -1,0 +1,36 @@
+fun foo(a: Any?): Int {
+    <!SYNTAX!>@<!>{ () : Unit ->
+        return<!SYNTAX!>@<!>
+    }
+
+    <!SYNTAX!>@<!> while(a == null) {
+        if (true) {
+            break<!SYNTAX!>@<!>
+        }
+        else {
+            continue<!SYNTAX!>@<!>
+        }
+    }
+
+    var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> = 1
+
+    (<!SYNTAX!>@<!> b) = <!UNUSED_VALUE!>2<!>
+
+    return<!SYNTAX!>@<!> 1
+}
+
+open class A {
+    fun foo() {}
+}
+
+class B : A() {
+    fun bar() {
+        this<!SYNTAX!>@<!>.foo()
+        super<!SYNTAX!>@<!>.foo()
+    }
+}
+
+fun bar(f: () -> Unit) = f
+fun test() {
+    bar <!SYNTAX!>@<!>{}
+}

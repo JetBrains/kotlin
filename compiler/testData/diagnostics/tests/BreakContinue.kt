@@ -65,9 +65,9 @@ class C {
     }
 
     fun containsBreakInsideLoopWithLabel(a: String?, array: Array<Int>) {
-        @ while(a == null) {
+        @l while(a == null) {
             for (el in array) {
-                break@
+                break@l
             }
         }
         a<!UNSAFE_CALL!>.<!>compareTo("2")
@@ -75,10 +75,10 @@ class C {
 
     fun unresolvedBreak(a: String?, array: Array<Int>) {
         while(a == null) {
-            @ for (el in array) {
+            @l for (el in array) {
                 break
             }
-            if (true) break else <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@<!><!>
+            if (true) break else <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@l<!><!>
         }
         a<!UNSAFE_CALL!>.<!>compareTo("2")
     }

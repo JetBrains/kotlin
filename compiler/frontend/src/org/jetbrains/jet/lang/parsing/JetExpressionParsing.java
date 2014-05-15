@@ -1605,6 +1605,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseLabel() {
         assert _at(LABEL_IDENTIFIER);
+
+        String labelText = myBuilder.getTokenText();
+        if ("@".equals(labelText)) {
+            errorAndAdvance("Label must be named");
+            return;
+        }
+
         PsiBuilder.Marker labelWrap = mark();
 
         PsiBuilder.Marker mark = mark();

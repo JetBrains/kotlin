@@ -4,8 +4,8 @@ package kt411
 
 fun f() {
     invoker(
-    @{
-        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@ 11<!> // expects Function, but should expect Int
+    @l{
+        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 11<!> // expects Function, but should expect Int
     }
     )
 }
@@ -13,15 +13,15 @@ fun invoker(<!UNUSED_PARAMETER!>gen<!> : () -> Int) : Int  = 0
 
 //more tests
 fun t1() {
-    val <!UNUSED_VARIABLE!>v<!> = @{ () : Int ->
-        return@ 111
+    val <!UNUSED_VARIABLE!>v<!> = @l{ () : Int ->
+        return@l 111
     }
 }
 
 fun t2() : String {
-    val <!UNUSED_VARIABLE!>g<!> : ()-> Int = @{
+    val <!UNUSED_VARIABLE!>g<!> : ()-> Int = @l{
         if (true) {
-            <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@ 1<!>
+            <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 1<!>
         }
         <!RETURN_NOT_ALLOWED!>return "s"<!>
     }
@@ -30,19 +30,19 @@ fun t2() : String {
 
 fun t3() : String {
     invoker(
-    @{
+    @l{
         if (true) {
             <!RETURN_NOT_ALLOWED!>return@t3 "1"<!>
         }
         else {
             <!RETURN_NOT_ALLOWED!>return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!><!>
         }
-        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@ 0<!>
+        <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 0<!>
     }
     )
     invoker(
-    @{ (): Int ->
-        return@ 1
+    @l{ (): Int ->
+        return@l 1
     }
     )
     invoker(
@@ -57,8 +57,8 @@ fun t4() : Int {
     val <!UNUSED_VARIABLE!>h<!> :  ()-> String = @l{
         <!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l "a"<!>
     }
-    val <!UNUSED_VARIABLE!>g<!> :  ()-> String = @{ () : String ->
-        return@ "a"
+    val <!UNUSED_VARIABLE!>g<!> :  ()-> String = @l{ () : String ->
+        return@l "a"
     }
 
     fun inner(): String {

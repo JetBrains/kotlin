@@ -60,7 +60,7 @@ fun canBe(i0: Int, j: Int) {
     (@label j) = <!UNUSED_VALUE!>34<!> //repeat for j
 
     val a = A()
-    (@ a.a) = 3894
+    (@l a.a) = 3894
 }
 
 fun canBe2(j: Int) {
@@ -108,7 +108,7 @@ class Test() {
         <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (@ a)++
+        (@l a)++
         (a : Int)++
         <!UNUSED_CHANGED_VALUE!>(a)++<!>
     }

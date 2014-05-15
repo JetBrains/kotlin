@@ -60,7 +60,10 @@ public class LabelResolver {
     @Nullable
     private Name getLabelNameIfAny(@NotNull PsiElement element) {
         if (element instanceof JetLabeledExpression) {
-            return Name.identifierForLabel(((JetLabeledExpression) element).getLabelName());
+            String labelName = ((JetLabeledExpression) element).getLabelName();
+            if (labelName != null) {
+                return Name.identifier(labelName);
+            }
         }
         if (element instanceof JetFunctionLiteralExpression) {
             return getCallerName((JetFunctionLiteralExpression) element);
@@ -121,7 +124,7 @@ public class LabelResolver {
         String name = expression.getLabelName();
         if (labelElement == null || name == null) return null;
 
-        Name labelName = Name.identifierForLabel(name);
+        Name labelName = Name.identifier(name);
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
 

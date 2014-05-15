@@ -5,7 +5,7 @@ fun test() {
 
 
 fun test1() {
-    val x = run(@{<!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@ 1<!>})
+    val x = run(@l{<!RETURN_NOT_ALLOWED_EXPLICIT_RETURN_TYPE_REQUIRED!>return@l 1<!>})
     x: Int
 }
 

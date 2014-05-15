@@ -697,8 +697,7 @@ public class JetControlFlowProcessor {
             JetSimpleNameExpression labelElement = expression.getTargetLabel();
             JetElement subroutine;
             String labelName = expression.getLabelName();
-            if (labelElement != null) {
-                assert labelName != null;
+            if (labelElement != null && labelName != null) {
                 PsiElement labeledElement = trace.get(BindingContext.LABEL_TARGET, labelElement);
                 if (labeledElement != null) {
                     assert labeledElement instanceof JetElement;
