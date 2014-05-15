@@ -27,5 +27,6 @@ public class JetBlockCodeFragment(
         context: PsiElement?
 ) : JetCodeFragment(project, name, text, JetNodeTypes.BLOCK_CODE_FRAGMENT, context) {
 
-    fun getBlock() = findChildByClass(javaClass<JetBlockExpression>()) ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")
+    override fun getSignificantElement() = findChildByClass(javaClass<JetBlockExpression>())
+                                                ?: throw IllegalStateException("Block expression should be parsed for BlockCodeFragment")
 }

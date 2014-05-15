@@ -218,14 +218,8 @@ public class ResolveElementCache {
             JetCodeFragment codeFragment,
             BindingTrace trace
     ) {
-        JetExpression codeFragmentExpression = null;
-        if (codeFragment instanceof JetExpressionCodeFragment) {
-            codeFragmentExpression = ((JetExpressionCodeFragment) codeFragment).getExpression();
-        }
-        else if (codeFragment instanceof JetBlockCodeFragment) {
-            codeFragmentExpression = ((JetBlockCodeFragment) codeFragment).getBlock();
-        }
-        if (codeFragmentExpression == null) return;
+        JetElement codeFragmentExpression = codeFragment.getSignificantElement();
+        if (!(codeFragmentExpression instanceof JetExpression)) return;
 
         PsiElement contextElement = codeFragment.getContext();
         if (!(contextElement instanceof JetExpression)) return;
@@ -245,7 +239,7 @@ public class ResolveElementCache {
 
             DataFlowInfo dataFlowInfoForContextElement = contextForElement.get(BindingContext.EXPRESSION_DATA_FLOW_INFO, contextExpression);
             AnalyzerPackage.computeTypeInContext(
-                    codeFragmentExpression,
+                    (JetExpression) codeFragmentExpression,
                     chainedScope,
                     trace,
                     dataFlowInfoForContextElement == null ? DataFlowInfo.EMPTY : dataFlowInfoForContextElement,

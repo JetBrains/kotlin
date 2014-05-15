@@ -254,11 +254,7 @@ fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contex
 
     parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
 
-    val debugExpression = when(codeFragment) {
-        is JetExpressionCodeFragment -> codeFragment.getExpression()
-        is JetBlockCodeFragment -> codeFragment.getBlock()
-        else -> null
-    }
+    val debugExpression = codeFragment.getSignificantElement()
     if (debugExpression == null) return null
 
     val newDebugExpression = parent.addBefore(debugExpression, contextElement)
