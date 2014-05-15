@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileKotlinClass
 import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import org.jetbrains.jet.utils.intellij.*
+import java.util.Arrays
 
 public class IncrementalCache(baseDir: File) {
     class object {
@@ -72,17 +73,26 @@ public class IncrementalCache(baseDir: File) {
         })
     }
 
-    public fun saveFileToCache(moduleId: String, file: File) {
+    public fun saveFileToCache(moduleId: String, file: File): Boolean {
         val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(file.readBytes())
-        if (classNameAndHeader == null) return
+        if (classNameAndHeader == null) return false
 
         val (className, header) = classNameAndHeader
         if (header.kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-            putPackageData(moduleId, className.getFqNameForClassNameWithoutDollars().parent(), BitEncoding.decodeBytes(header.annotationData!!))
+            val fqName = className.getFqNameForClassNameWithoutDollars().parent()
+            val data = BitEncoding.decodeBytes(header.annotationData!!)
+            val oldData = getPackageData(moduleId, fqName)
+            if (Arrays.equals(data, oldData)) {
+                return false
+            }
+            putPackageData(moduleId, fqName, data)
+            return true
         }
+        // TODO Check class signatures, too!
+        return false
     }
 
-    public fun putPackageData(moduleId: String, fqName: FqName, data: ByteArray) {
+    private fun putPackageData(moduleId: String, fqName: FqName, data: ByteArray) {
         packageFacadeData.put(PackageFacadeId(moduleId, fqName), data)
     }
 

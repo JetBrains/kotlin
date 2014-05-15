@@ -198,6 +198,8 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCache cache = new IncrementalCache(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
+            boolean significantChanges = false;
+
             for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
                 BuildTarget<?> target = null;
                 Collection<File> sourceFiles = outputItem.getSourceFiles();
@@ -215,7 +217,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 File outputFile = outputItem.getOutputFile();
 
                 if (IncrementalCompilation.ENABLED) {
-                    cache.saveFileToCache(target.getId(), outputFile);
+                    if (cache.saveFileToCache(target.getId(), outputFile)) {
+                        significantChanges = true;
+                    }
                 }
 
                 outputConsumer.registerOutputFile(target, outputFile, paths(sourceFiles));
@@ -223,18 +227,21 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
             if (IncrementalCompilation.ENABLED) {
                 // TODO should mark dependencies as dirty, as well
-                FSOperations.markDirty(context, chunk, new FileFilter() {
-                    @Override
-                    public boolean accept(@NotNull File file) {
-                        return !allCompiledFiles.contains(file);
-                    }
-                });
+                if (significantChanges) {
+                    FSOperations.markDirty(context, chunk, new FileFilter() {
+                        @Override
+                        public boolean accept(@NotNull File file) {
+                            return !allCompiledFiles.contains(file);
+                        }
+                    });
+                }
                 return ExitCode.ADDITIONAL_PASS_REQUIRED;
             }
             else {
                 return ExitCode.OK;
             }
-        } finally {
+        }
+        finally {
             cache.close();
         }
     }
