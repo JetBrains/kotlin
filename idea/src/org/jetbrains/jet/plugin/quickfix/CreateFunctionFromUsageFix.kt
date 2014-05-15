@@ -753,7 +753,7 @@ public class CreateFunctionFromUsageFix internal (
             returnTypeExpression!!
             val returnTypeRef = func.getReturnTypeRef()
             if (returnTypeRef != null) {
-                val returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText())
+                val returnType = returnTypeExpression.getTypeFromSelection(returnTypeRef.getText() ?: throw AssertionError("Expression for function return type shouldn't be empty: function = ${func.getText()}"))
                 if (returnType != null) {
                     // user selected a given type
                     replaceWithLongerName(returnTypeRef, returnType)
@@ -768,7 +768,7 @@ public class CreateFunctionFromUsageFix internal (
         for ((i, parameter) in valueParameters.stream().withIndices()) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {
-                val parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText())
+                val parameterType = parameterTypeExpressions[i].getTypeFromSelection(parameterTypeRef.getText() ?: throw AssertionError("Expression for function parameter type shouldn't be empty: function = ${func.getText()}"))
                 if (parameterType != null) {
                     replaceWithLongerName(parameterTypeRef, parameterType)
                     parameterIndicesToShorten.add(i)

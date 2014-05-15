@@ -78,7 +78,7 @@ class ExtractionData(
     }
 
     fun getCodeFragmentText(): String =
-            getCodeFragmentTextRange()?.let { originalFile.getText().substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
+            getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
 
     val originalStartOffset = originalElements.first?.let { e -> e.getTextRange()!!.getStartOffset() }
 

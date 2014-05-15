@@ -33,7 +33,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
         fun buildStatements(statements: List<JetElement>): String {
             return when {
                 statements.isEmpty() -> ""
-                statements.size() == 1 -> statements[0].getText()
+                statements.size() == 1 -> statements[0].getText() ?: throw AssertionError("Statements in ForExpression shouldn't be empty: expressionText = ${element.getText()}")
                 else -> statements.fold(StringBuilder(), { acc, h -> acc.append("${h.getText()}\n") }).toString()
             }
         }
@@ -50,7 +50,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
 
             return when (loopRange) {
                 is JetOperationExpression -> "(${loopRange.getText()})"
-                else -> loopRange.getText()
+                else -> loopRange.getText() ?: throw AssertionError("LoopRange in ForExpression shouldn't be empty: expressionText = ${element.getText()}")
             }
         }
 
@@ -59,7 +59,7 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
 
         val bodyText = buildReplacementBodyText(loopParameter, when (body) {
             is JetBlockExpression -> buildStatements(body.getStatements())
-            else -> body.getText()
+            else -> body.getText() ?: throw AssertionError("Body of ForExpression shouldn't be empty: expressionText = ${element.getText()}")
         })
 
         element.replace(JetPsiFactory.createExpression(element.getProject(), "${buildReceiverText(element)}.forEach { $bodyText }"))

@@ -17,9 +17,6 @@
   <item name='com.intellij.psi.PsiElementVisitor void visitElement(com.intellij.psi.PsiElement) 0'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
-  <item name='com.intellij.psi.PsiElement java.lang.String getText()'>
-    <annotation name='org.jetbrains.annotations.NotNull'/>
-  </item>
   <item name='com.intellij.psi.PsiReference com.intellij.psi.PsiElement getElement()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>

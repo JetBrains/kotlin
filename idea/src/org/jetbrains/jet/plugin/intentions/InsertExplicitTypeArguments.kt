@@ -34,6 +34,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
 
     override fun isApplicableTo(element: JetCallExpression, editor: Editor): Boolean {
         if (!element.getTypeArguments().isEmpty()) return false
+        if (element.getText() == null) return false
 
         val textRange = element.getCalleeExpression()?.getTextRange()
         if (textRange == null || !textRange.contains(editor.getCaretModel().getOffset())) return false
@@ -65,7 +66,7 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         val name = element.getCalleeExpression()?.getText()
         if (name == null) return
 
-        val valueAndFunctionArguments = element.getText().substring(name.size)
+        val valueAndFunctionArguments = element.getText()?.substring(name.size) ?: throw AssertionError("InsertExplicitTypeArguments intention shouldn't be applicable for empty call expression")
         val expr = JetPsiFactory.createExpression(element.getProject(), "$name$typeArgs${valueAndFunctionArguments}")
         element.replace(expr)
     }

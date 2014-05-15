@@ -412,7 +412,7 @@ private fun ExtractionData.inferParametersInfo(
                                     if (hasThisReceiver && extractThis)
                                         "this@${parameterType.getConstructor().getDeclarationDescriptor()!!.getName().asString()}"
                                     else
-                                        (thisExpr ?: ref).getText()
+                                        (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = ${getCodeFragmentText()}")
 
                             val parameter = Parameter(argumentText, parameterName, mirrorVarName, parameterType, extractThis)
 
@@ -623,7 +623,7 @@ fun ExtractionDescriptor.getFunctionText(
     return FunctionBuilder().let { builder ->
         builder.modifier(visibility)
 
-        builder.typeParams(typeParameters.map { it.originalDeclaration.getText() })
+        builder.typeParams(typeParameters.map { it.originalDeclaration.getText()!! })
 
         receiverParameter?.let { builder.receiver(descriptorRenderer.renderType(it.parameterType)) }
 
@@ -637,7 +637,7 @@ fun ExtractionDescriptor.getFunctionText(
             if (isDefault()) builder.noReturnType() else builder.returnType(descriptorRenderer.renderType(this))
         }
 
-        builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText() })
+        builder.typeConstraints(typeParameters.flatMap { it.originalConstraints }.map { it.getText()!! })
 
         if (withBody) {
             builder.blockBody(extractionData.getCodeFragmentText())
@@ -756,7 +756,7 @@ fun ExtractionDescriptor.generateFunction(
 
             is ExpressionEvaluation ->
                 body.getStatements().last?.let {
-                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText())).getReturnedExpression()!!
+                    val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
                     val counterpartMap = createNameCounterpartMap(it, newExpr)
                     nameByOffset.entrySet().forEach { it.setValue(counterpartMap[it.getValue()]!!) }
                 }

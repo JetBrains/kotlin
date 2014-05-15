@@ -165,7 +165,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         val parent = element.getParent()
         val array = element.getArrayExpression()!!.getText()
         val indices = element.getIndicesNode()
-        val indicesText = indices.getText().trim("[","]")
+        val indicesText = indices.getText()?.trim("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
 
         val transformation : String
         val replaced : JetElement

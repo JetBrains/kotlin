@@ -71,7 +71,7 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
         else {
             val openBraceElement = functionLiteral.getOpenBraceNode().getPsi()
             val nextSibling = openBraceElement?.getNextSibling()
-            val addNewline = nextSibling is PsiWhiteSpace && "\n" in nextSibling.getText()
+            val addNewline = nextSibling is PsiWhiteSpace && nextSibling.getText()?.contains("\n") ?: false
             val (whitespace, arrow) = JetPsiFactory.createWhitespaceAndArrow(element.getProject())
             functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
             functionLiteral.addAfter(newParameterList, openBraceElement)

@@ -223,7 +223,9 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                             .split(JetCodeFragment.IMPORT_SEPARATOR)
                                             .makeString("\n"))
 
-    fileText = fileText.replace("!FUNCTION!", extractedFunction.getText())
+    val extractedFunctionText = extractedFunction.getText()
+    assert(extractedFunctionText != null, "Text of extracted function shouldn't be null")
+    fileText = fileText.replace("!FUNCTION!", extractedFunction.getText()!!)
 
     val virtualFile = LightVirtualFile("debugFile.kt", JetLanguage.INSTANCE, fileText)
     virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET)
