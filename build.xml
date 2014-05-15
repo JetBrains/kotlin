@@ -567,7 +567,7 @@
 
         <new_kotlinc src="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src${path.separator}${basedir}/core/reflection/src"
                      output="${output}/classes/runtime"
-                     classpath="${basedir}/core/builtins/src${path.separator}${basedir}/core/runtime.jvm/src"/>
+                     classpath="${basedir}/core/runtime.jvm/src"/>
 
         <javac2 destdir="${output}/classes/runtime" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false" source="${java.target}" target="${java.target}">
             <src path="${basedir}/core/runtime.jvm/src"/>

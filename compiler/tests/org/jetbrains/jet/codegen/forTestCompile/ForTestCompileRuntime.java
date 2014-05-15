@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen.forTestCompile;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.common.ExitCode;
@@ -62,7 +61,7 @@ public class ForTestCompileRuntime {
         compileKotlinToJvm("built-ins", destDir, src, src);
 
         JetTestUtils.compileJavaFiles(
-                ContainerUtil.concat(javaFilesUnder(BUILT_INS_SRC_PATH), javaFilesUnder(RUNTIME_JVM_SRC_PATH)),
+                javaFilesUnder(RUNTIME_JVM_SRC_PATH),
                 Arrays.asList(
                         "-classpath", destDir.getPath(),
                         "-d", destDir.getPath()
