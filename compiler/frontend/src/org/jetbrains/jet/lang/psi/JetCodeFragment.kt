@@ -50,7 +50,7 @@ public abstract class JetCodeFragment(
     private var _superType: PsiType? = null
     private var _exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
-    public abstract fun getSignificantElement(): JetElement?
+    public abstract fun getContentElement(): JetElement?
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {
         _resolveScope = scope

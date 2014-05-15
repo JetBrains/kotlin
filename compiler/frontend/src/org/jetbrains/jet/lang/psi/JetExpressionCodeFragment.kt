@@ -30,5 +30,5 @@ public class JetExpressionCodeFragment(
         context: PsiElement?
 ) : JetCodeFragment(project, name, text, JetNodeTypes.EXPRESSION_CODE_FRAGMENT, context) {
 
-    override fun getSignificantElement() = findChildByClass(javaClass<JetExpression>())
+    override fun getContentElement() = findChildByClass(javaClass<JetExpression>())
 }

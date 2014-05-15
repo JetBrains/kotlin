@@ -30,7 +30,7 @@ public class JetTypeCodeFragment extends JetCodeFragment {
 
     @Nullable
     public JetType getType() {
-        JetElement typeReference = getSignificantElement();
+        JetElement typeReference = getContentElement();
         if (typeReference instanceof JetTypeReference) {
             //TODO return the actual type
             return KotlinBuiltIns.getInstance().getAnyType();
@@ -40,7 +40,7 @@ public class JetTypeCodeFragment extends JetCodeFragment {
 
     @Nullable
     @Override
-    public JetElement getSignificantElement() {
+    public JetElement getContentElement() {
         return findChildByClass(JetTypeReference.class);
     }
 }

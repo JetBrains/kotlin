@@ -218,7 +218,7 @@ public class ResolveElementCache {
             JetCodeFragment codeFragment,
             BindingTrace trace
     ) {
-        JetElement codeFragmentExpression = codeFragment.getSignificantElement();
+        JetElement codeFragmentExpression = codeFragment.getContentElement();
         if (!(codeFragmentExpression instanceof JetExpression)) return;
 
         PsiElement contextElement = codeFragment.getContext();

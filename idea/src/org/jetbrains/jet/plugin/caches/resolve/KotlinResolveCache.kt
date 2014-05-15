@@ -280,7 +280,7 @@ private object KotlinResolveDataProvider {
     }
 
     private fun analyzeExpressionCodeFragment(resolveSession: ResolveSessionForBodies, codeFragment: JetCodeFragment): BindingContext {
-        val codeFragmentExpression = codeFragment.getSignificantElement()
+        val codeFragmentExpression = codeFragment.getContentElement()
         if (!(codeFragmentExpression is JetExpression)) return BindingContext.EMPTY
 
         val contextElement = codeFragment.getContext()
