@@ -108,6 +108,14 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         doTest()
     }
 
+    fun testReturnTypeChanged() {
+        doTest()
+    }
+
+    fun testTopLevelFunctionSameSignature() {
+        doTest()
+    }
+
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
         public val log: String
