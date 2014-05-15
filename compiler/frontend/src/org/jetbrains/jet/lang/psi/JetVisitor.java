@@ -170,6 +170,10 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
+    public R visitLabeledExpression(@NotNull JetLabeledExpression expression, D data) {
+        return visitExpressionWithLabel(expression, data);
+    }
+
     public R visitPrefixExpression(@NotNull JetPrefixExpression expression, D data) {
         return visitUnaryExpression(expression, data);
     }

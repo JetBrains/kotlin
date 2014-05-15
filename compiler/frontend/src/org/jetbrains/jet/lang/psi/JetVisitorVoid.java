@@ -169,6 +169,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitReferenceExpression(expression, null);
     }
 
+    public void visitLabeledExpression(@NotNull JetLabeledExpression expression) {
+        super.visitLabeledExpression(expression, null);
+    }
+
     public void visitPrefixExpression(@NotNull JetPrefixExpression expression) {
         super.visitPrefixExpression(expression, null);
     }
@@ -627,6 +631,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     @Override
     public final Void visitReferenceExpression(@NotNull JetReferenceExpression expression, Void data) {
         visitReferenceExpression(expression);
+        return null;
+    }
+
+    @Override
+    public final Void visitLabeledExpression(@NotNull JetLabeledExpression expression, Void data) {
+        visitLabeledExpression(expression);
         return null;
     }
 

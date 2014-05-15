@@ -47,4 +47,9 @@ public class JetLabeledExpression extends JetExpressionWithLabel {
     public JetExpression getBaseExpression() {
         return findChildByClass(JetExpression.class);
     }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitLabeledExpression(this, data);
+    }
 }

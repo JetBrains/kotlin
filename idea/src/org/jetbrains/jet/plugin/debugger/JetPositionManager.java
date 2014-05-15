@@ -267,7 +267,7 @@ public class JetPositionManager implements PositionManager {
         PsiElement valueArgument = functionLiteralExpression;
         while (parent instanceof JetParenthesizedExpression ||
                parent instanceof JetBinaryExpressionWithTypeRHS ||
-               parent instanceof JetPrefixExpression && JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent)) {
+               parent instanceof JetLabeledExpression) {
             valueArgument = parent;
             parent = parent.getParent();
         }

@@ -34,15 +34,15 @@ public class JetExpressionWithLabel extends JetExpressionImpl {
         return (JetSimpleNameExpression) qualifier.findChildByType(JetNodeTypes.LABEL_REFERENCE);
     }
 
-    @Nullable @IfNotParsed
-    public JetExpression getLabeledExpression() {
-        return findChildByClass(JetExpression.class);
-    }
-
     @Nullable
     public String getLabelName() {
         JetSimpleNameExpression labelElement = getTargetLabel();
         assert labelElement == null || labelElement.getText().startsWith("@");
         return labelElement == null ? null : labelElement.getText().substring(1);
+    }
+
+    @Override
+    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
+        return visitor.visitExpressionWithLabel(this, data);
     }
 }

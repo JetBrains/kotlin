@@ -385,7 +385,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext context) {
-        return basic.visitUnaryExpression(expression, context, true);
+    public JetTypeInfo visitLabeledExpression(@NotNull JetLabeledExpression expression, ExpressionTypingContext context) {
+        return basic.visitLabeledExpression(expression, context, true);
     }
 }

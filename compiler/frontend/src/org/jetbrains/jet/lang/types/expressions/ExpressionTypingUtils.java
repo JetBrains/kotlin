@@ -483,8 +483,7 @@ public class ExpressionTypingUtils {
                 || operationType == JetTokens.ELVIS);
     }
 
-    public static boolean  isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
-        IElementType operationType = expression.getOperationReference().getReferencedNameElementType();
-        return operationType == JetTokens.LABEL_IDENTIFIER || operationType == JetTokens.EXCLEXCL;
+    public static boolean isUnaryExpressionDependentOnExpectedType(@NotNull JetUnaryExpression expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == JetTokens.EXCLEXCL;
     }
 }

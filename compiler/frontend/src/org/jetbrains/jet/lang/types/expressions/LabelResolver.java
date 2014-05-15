@@ -59,13 +59,10 @@ public class LabelResolver {
 
     @Nullable
     private Name getLabelNameIfAny(@NotNull PsiElement element) {
-        if (element instanceof JetPrefixExpression) {
-            JetPrefixExpression prefixExpression = (JetPrefixExpression) element;
-            if (JetPsiUtil.isLabeledExpression(prefixExpression)) {
-                return Name.identifierForLabel(JetPsiUtil.getLabelName(prefixExpression));
-            }
+        if (element instanceof JetLabeledExpression) {
+            return Name.identifierForLabel(((JetLabeledExpression) element).getLabelName());
         }
-        else if (element instanceof JetFunctionLiteralExpression) {
+        if (element instanceof JetFunctionLiteralExpression) {
             return getCallerName((JetFunctionLiteralExpression) element);
         }
         return null;

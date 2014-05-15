@@ -2917,23 +2917,21 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Nullable
     private static JetSimpleNameExpression targetLabel(JetExpression expression) {
-        if (expression.getParent() instanceof JetPrefixExpression) {
-            JetPrefixExpression parent = (JetPrefixExpression) expression.getParent();
-            JetSimpleNameExpression operationSign = parent.getOperationReference();
-            if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
-                return operationSign;
-            }
+        if (expression.getParent() instanceof JetLabeledExpression) {
+            return ((JetLabeledExpression) expression.getParent()).getTargetLabel();
         }
         return null;
     }
 
     @Override
-    public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
-        if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
-            return genQualified(receiver, expression.getBaseExpression());
-        }
+    public StackValue visitLabeledExpression(
+            @NotNull JetLabeledExpression expression, StackValue receiver
+    ) {
+        return genQualified(receiver, expression.getBaseExpression());
+    }
 
+    @Override
+    public StackValue visitPrefixExpression(@NotNull JetPrefixExpression expression, StackValue receiver) {
         DeclarationDescriptor op = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         assert op instanceof FunctionDescriptor : String.valueOf(op);
         Callable callable = resolveToCallable((FunctionDescriptor) op, false);

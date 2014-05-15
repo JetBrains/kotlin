@@ -19,21 +19,11 @@ package org.jetbrains.jet.plugin.highlighter;
 import com.intellij.lang.annotation.AnnotationHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetExpressionWithLabel;
-import org.jetbrains.jet.lang.psi.JetPrefixExpression;
 import org.jetbrains.jet.lang.psi.JetSimpleNameExpression;
-import org.jetbrains.jet.lexer.JetTokens;
 
 class LabelsHighlightingVisitor extends HighlightingVisitor {
     LabelsHighlightingVisitor(AnnotationHolder holder) {
         super(holder);
-    }
-
-    @Override
-    public void visitPrefixExpression(@NotNull JetPrefixExpression expression) {
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
-        if (operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
-            JetPsiChecker.highlightName(holder, operationSign, JetHighlightingColors.LABEL);
-        }
     }
 
     @Override

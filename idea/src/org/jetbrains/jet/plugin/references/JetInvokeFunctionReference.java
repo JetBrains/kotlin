@@ -86,8 +86,8 @@ class JetInvokeFunctionReference extends JetSimpleReference<JetCallExpression> i
 
         List<JetExpression> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
         for (JetExpression functionLiteralArgument : functionLiteralArguments) {
-            while (functionLiteralArgument instanceof JetPrefixExpression) {
-                functionLiteralArgument = ((JetPrefixExpression) functionLiteralArgument).getBaseExpression();
+            while (functionLiteralArgument instanceof JetLabeledExpression) {
+                functionLiteralArgument = ((JetLabeledExpression) functionLiteralArgument).getBaseExpression();
             }
 
             if (functionLiteralArgument instanceof JetFunctionLiteralExpression) {

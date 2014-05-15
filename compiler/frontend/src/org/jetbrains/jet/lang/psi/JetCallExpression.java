@@ -76,13 +76,11 @@ public class JetCallExpression extends JetReferenceExpression implements JetCall
             if (psi instanceof JetFunctionLiteralExpression) {
                 result.add((JetFunctionLiteralExpression) psi);
             }
-            else if (psi instanceof JetPrefixExpression) {
-                JetPrefixExpression prefixExpression = (JetPrefixExpression) psi;
-                if (prefixExpression.getOperationReference().getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER) {
-                    JetExpression labeledExpression = prefixExpression.getBaseExpression();
-                    if (labeledExpression instanceof JetFunctionLiteralExpression) {
-                        result.add(prefixExpression);
-                    }
+            else if (psi instanceof JetLabeledExpression) {
+                JetLabeledExpression labeledExpression = (JetLabeledExpression) psi;
+                JetExpression baseExpression = labeledExpression.getBaseExpression();
+                if (baseExpression instanceof JetFunctionLiteralExpression) {
+                    result.add(labeledExpression);
                 }
             }
             node = node.getTreeNext();

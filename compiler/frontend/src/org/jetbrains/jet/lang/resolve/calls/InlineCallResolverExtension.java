@@ -105,16 +105,15 @@ public class InlineCallResolverExtension implements CallResolverExtension {
             if (parent instanceof JetValueArgument ||
                 parent instanceof JetBinaryExpression ||
                 parent instanceof JetUnaryExpression ||
+                parent instanceof JetLabeledExpression ||
                 parent instanceof JetDotQualifiedExpression ||
                 parent instanceof JetCallExpression ||
                 parent instanceof JetArrayAccessExpression ||
                 parent instanceof JetMultiDeclaration) {
 
-                if (parent instanceof JetPrefixExpression) {
-                    if (JetPsiUtil.isLabeledExpression((JetPrefixExpression) parent)) {
-                        parent = parent.getParent();
-                        continue;
-                    }
+                if (parent instanceof JetLabeledExpression) {
+                    parent = parent.getParent();
+                    continue;
                 }
                 else if (parent instanceof JetBinaryExpression) {
                     JetToken token = JetPsiUtil.getOperationToken((JetOperationExpression) parent);

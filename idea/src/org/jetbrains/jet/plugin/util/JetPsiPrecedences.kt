@@ -46,6 +46,7 @@ public object JetPsiPrecedences {
     public fun getPrecedence(expression: JetExpression): Int {
         return when (expression) {
             is JetAnnotatedExpression,
+            is JetLabeledExpression,
             is JetPrefixExpression -> PRECEDENCE_OF_PREFIX_EXPRESSION
             is JetPostfixExpression -> PRECEDENCE_OF_POSTFIX_EXPRESSION
             is JetOperationExpression -> {

@@ -601,11 +601,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext context) {
-        return visitUnaryExpression(expression, context, false);
-    }
-
-    public JetTypeInfo visitUnaryExpression(JetUnaryExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+    public JetTypeInfo visitUnaryExpression(@NotNull JetUnaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
         ExpressionTypingContext context = isUnaryExpressionDependentOnExpectedType(expression)
                 ? contextWithExpectedType
                 : contextWithExpectedType.replaceContextDependency(INDEPENDENT).replaceExpectedType(NO_EXPECTED_TYPE);
@@ -616,10 +612,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression operationSign = expression.getOperationReference();
 
         IElementType operationType = operationSign.getReferencedNameElementType();
-        // If it's a labeled expression
-        if (operationType == JetTokens.LABEL_IDENTIFIER) {
-            return visitLabeledExpression(expression, context, isStatement);
-        }
 
         // Special case for expr!!
         if (operationType == JetTokens.EXCLEXCL) {
@@ -741,12 +733,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(TypeUtils.makeNotNullable(baseType), dataFlowInfo);
     }
 
-    private JetTypeInfo visitLabeledExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context,
-            boolean isStatement) {
+    @Override
+    public JetTypeInfo visitLabeledExpression(
+            @NotNull JetLabeledExpression expression, ExpressionTypingContext context
+    ) {
+        return visitLabeledExpression(expression, context, false);
+    }
+
+    @NotNull
+    public JetTypeInfo visitLabeledExpression(
+            @NotNull JetLabeledExpression expression,
+            @NotNull ExpressionTypingContext context,
+            boolean isStatement
+    ) {
         JetExpression baseExpression = expression.getBaseExpression();
-        assert baseExpression != null;
-        JetSimpleNameExpression operationSign = expression.getOperationReference();
-        assert operationSign.getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
+        if (baseExpression == null) return JetTypeInfo.create(null, context.dataFlowInfo);
 
         return facade.getTypeInfo(baseExpression, context, isStatement);
     }

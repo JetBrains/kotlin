@@ -492,8 +492,8 @@ public class CandidateResolver {
             }
 
             @Override
-            public JetExpression visitPrefixExpression(@NotNull JetPrefixExpression expression, Void data) {
-                return visitInnerExpression(JetPsiUtil.getBaseExpressionIfLabeledExpression(expression));
+            public JetExpression visitLabeledExpression(@NotNull JetLabeledExpression expression, Void data) {
+                return visitInnerExpression(expression.getBaseExpression());
             }
 
             @Override
