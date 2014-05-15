@@ -24,9 +24,9 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 
 public interface CallGenerator {
 
-    public class DefaultCallGenerator implements CallGenerator {
+    class DefaultCallGenerator implements CallGenerator {
 
-        private ExpressionCodegen codegen;
+        private final ExpressionCodegen codegen;
 
         public DefaultCallGenerator(ExpressionCodegen codegen) {
             this.codegen = codegen;
@@ -72,7 +72,7 @@ public interface CallGenerator {
         ) {
             stackValue.put(stackValue.type, codegen.v);
         }
-    };
+    }
 
     void genCall(CallableMethod callableMethod, ResolvedCall<?> resolvedCall, int mask, ExpressionCodegen codegen);
 
