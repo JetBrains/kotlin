@@ -93,7 +93,10 @@ public class InlineAnalyzerExtension implements FunctionAnalyzerExtension.Analyz
         for (ValueParameterDescriptor parameter : functionDescriptor.getValueParameters()) {
             if (parameter.hasDefaultValue()) {
                 JetParameter jetParameter = jetParameters.get(index);
-                trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
+                //report not supported default only on inlinable lambda and on parameter with inherited dafault (there is some problems to inline it)
+                if (checkInlinableParameter(parameter, jetParameter, functionDescriptor, null) || !parameter.declaresDefaultValue()) {
+                    trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(jetParameter, jetParameter, functionDescriptor));
+                }
             }
             index++;
         }

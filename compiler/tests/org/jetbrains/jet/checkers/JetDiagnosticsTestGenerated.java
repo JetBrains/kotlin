@@ -3973,6 +3973,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/inline/constructor.kt");
             }
             
+            @TestMetadata("default.kt")
+            public void testDefault() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/default.kt");
+            }
+            
             @TestMetadata("extensionOnFunction.kt")
             public void testExtensionOnFunction() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/extensionOnFunction.kt");
