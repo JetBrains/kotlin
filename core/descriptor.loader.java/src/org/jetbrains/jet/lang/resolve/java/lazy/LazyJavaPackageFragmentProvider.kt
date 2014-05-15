@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaClassDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
 
 public class LazyJavaPackageFragmentProvider(
         outerContext: GlobalJavaResolverContext,
@@ -66,7 +67,7 @@ public class LazyJavaPackageFragmentProvider(
         }
     }
 
-    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues @lambda {
+    internal val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues @lambda {
         (jClass: JavaClass): LazyJavaClassDescriptor? ->
         val fqName = jClass.getFqName()
         if (fqName == null) return@lambda null
@@ -120,13 +121,18 @@ public class LazyJavaPackageFragmentProvider(
                     return c.javaResolverCache.getClassResolvedFromSource(fqName)
                 }
             }
+            val resolvedClassifier = getContainingScope(javaClass)?.getClassifier(javaClass.getName())
+            return resolvedClassifier as? ClassDescriptor ?: c.javaResolverCache.getClass(javaClass)
+        }
+
+        private fun getContainingScope(javaClass: JavaClass): JetScope? {
             val outerClass = javaClass.getOuterClass()
-            if (outerClass == null) {
-                return c.lookupBinaryClass(javaClass) ?: topLevelClasses(javaClass)
+            if (outerClass != null) {
+                return resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
             }
-            val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
-            val nestedClass = outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
-            return nestedClass ?: c.javaResolverCache.getClass(javaClass)
+            else {
+                return getPackageFragment(javaClass.getFqName()!!.parent())?.getMemberScope()
+            }
         }
 
         override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
