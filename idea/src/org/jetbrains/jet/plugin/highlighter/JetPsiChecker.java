@@ -104,26 +104,14 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
 
         JetFile file = (JetFile) element.getContainingFile();
 
-        BindingContext bindingContext;
-        if (file instanceof JetCodeFragment) {
-            if (element instanceof JetElement) {
-                ResolveSessionForBodies resolveSession = ResolvePackage.getLazyResolveSession((JetElement) element);
-                bindingContext = resolveSession.resolveToElement((JetElement) element);
-            }
-            else {
-                return;
-            }
-        }
-        else {
-            AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
-            if (analyzeExhaust.isError()) {
-                HighlighterPackage.updateHighlightingResult(file, true);
+        AnalyzeExhaust analyzeExhaust = ResolvePackage.getAnalysisResults(file);
+        if (analyzeExhaust.isError()) {
+            HighlighterPackage.updateHighlightingResult(file, true);
 
-                throw new ProcessCanceledException(analyzeExhaust.getError());
-            }
-
-            bindingContext = analyzeExhaust.getBindingContext();
+            throw new ProcessCanceledException(analyzeExhaust.getError());
         }
+
+        BindingContext bindingContext = analyzeExhaust.getBindingContext();
 
         for (HighlightingVisitor visitor : getAfterAnalysisVisitor(holder, bindingContext)) {
             element.accept(visitor);
