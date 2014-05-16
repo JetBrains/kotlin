@@ -310,11 +310,11 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         ResolvedCall<?> referencedFunction = bindingContext.get(RESOLVED_CALL, expression.getCallableReference());
         if (referencedFunction == null) return;
-        JetType supertype =
-                functionImplTypes.getSupertypeForCallableReference((FunctionDescriptor) referencedFunction.getResultingDescriptor());
+        Collection<JetType> supertypes =
+                functionImplTypes.getSupertypesForCallableReference((FunctionDescriptor) referencedFunction.getResultingDescriptor());
 
         String name = inventAnonymousClassName(expression);
-        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, Collections.singleton(supertype));
+        ClassDescriptor classDescriptor = recordClassForFunction(functionDescriptor, supertypes);
         recordClosure(expression, classDescriptor, name);
 
         pushClassDescriptor(classDescriptor);
