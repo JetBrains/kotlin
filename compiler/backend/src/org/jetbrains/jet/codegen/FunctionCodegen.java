@@ -562,14 +562,21 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         if (!isStatic && !isConstructor) {
             descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
         }
+
+        Method defaultMethod = new Method(isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor);
         MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
-                                       isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX,
-                                       descriptor, null,
+                                       defaultMethod.getName(),
+                                       defaultMethod.getDescriptor(), null,
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generateDefaultImpl(owner, signature, functionDescriptor, isStatic, mv, loadStrategy);
-
+            if (this.owner instanceof PackageFacadeContext) {
+                mv.visitCode();
+                generateStaticDelegateMethodBody(mv, defaultMethod, (PackageFacadeContext) this.owner);
+                endVisit(mv, "default method delegation", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
+            } else {
+                generateDefaultImpl(owner, signature, functionDescriptor, isStatic, mv, loadStrategy);
+            }
         }
     }
 
