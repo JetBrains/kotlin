@@ -16,38 +16,18 @@
 
 package org.jetbrains.jet.resolve.constraintSystem
 
-import com.google.common.collect.ImmutableMap
-import com.google.common.collect.Maps
-import com.intellij.psi.PsiElement
-import org.jetbrains.jet.ConfigurationKind
-import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
-import org.jetbrains.jet.analyzer.AnalyzeExhaust
-import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.di.InjectorForTests
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
-import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import org.jetbrains.jet.lang.diagnostics.rendering.Renderers
 import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.lang.resolve.*
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintPosition
-import org.jetbrains.jet.lang.resolve.calls.inference.ConstraintSystemImpl
-import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.types.Variance
-import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import java.io.File
-import java.io.IOException
-import java.util.Collections
 import com.intellij.openapi.project.Project
 import java.util.regex.Pattern
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstructor
 import org.jetbrains.jet.lang.types.JetTypeImpl
-import kotlin.test.assertNotNull
+import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 
 public class MyDeclarations(
         private val context: BindingContext,
@@ -87,7 +67,7 @@ public class MyDeclarations(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            return JetTypeImpl(IntegerValueTypeConstructor(number.toLong()), JetScope.EMPTY)
+            return JetTypeImpl(Annotations.EMPTY, IntegerValueTypeConstructor(number.toLong()), false, listOf(), JetScope.EMPTY)
         }
         return typeResolver.resolveType(
             scopeToResolveTypeParameters, JetPsiFactory.createType(project, name),

@@ -39,15 +39,11 @@ import org.jetbrains.jet.lang.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.jet.lang.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.jet.lang.resolve.calls.util.CallMaker;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lexer.JetTokens;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.resolve.BindingContext.CALL;
 import static org.jetbrains.jet.lang.resolve.BindingContext.RESOLVED_CALL;
@@ -96,11 +92,10 @@ public class ControlStructureTypingUtils {
                 function, Annotations.EMPTY, false, Variance.INVARIANT,
                 Name.identifierNoValidate("<TYPE-PARAMETER-FOR-" + constructionName + "-RESOLVE>"), 0);
 
-        JetType type = new JetTypeImpl(typeParameter.getTypeConstructor(), JetScope.EMPTY);
-        JetType nullableType = new JetTypeImpl(
-                Annotations.EMPTY, typeParameter.getTypeConstructor(), true, Collections.<TypeProjection>emptyList(), JetScope.EMPTY);
+        JetType type = typeParameter.getDefaultType();
+        JetType nullableType = TypeUtils.makeNullable(type);
 
-        List<ValueParameterDescriptor> valueParameters = Lists.newArrayList();
+        List<ValueParameterDescriptor> valueParameters = new ArrayList<ValueParameterDescriptor>(argumentNames.size());
         for (int i = 0; i < argumentNames.size(); i++) {
             JetType argumentType = isArgumentNullable.get(i) ? nullableType : type;
             ValueParameterDescriptorImpl valueParameter = new ValueParameterDescriptorImpl(

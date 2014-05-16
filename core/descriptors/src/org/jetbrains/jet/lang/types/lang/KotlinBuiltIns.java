@@ -130,11 +130,9 @@ public class KotlinBuiltIns {
         nonPhysicalClasses = computeNonPhysicalClasses();
     }
 
-    private void makePrimitive(PrimitiveType primitiveType) {
-        ClassDescriptor theClass = getBuiltInClassByName(primitiveType.getTypeName().asString());
-        JetType type = new JetTypeImpl(theClass);
-        ClassDescriptor arrayClass = getBuiltInClassByName(primitiveType.getArrayTypeName().asString());
-        JetType arrayType = new JetTypeImpl(arrayClass);
+    private void makePrimitive(@NotNull PrimitiveType primitiveType) {
+        JetType type = getBuiltInTypeByClassName(primitiveType.getTypeName().asString());
+        JetType arrayType = getBuiltInTypeByClassName(primitiveType.getArrayTypeName().asString());
 
         primitiveTypeToNullableJetType.put(primitiveType, TypeUtils.makeNullable(type));
         primitiveTypeToArrayJetType.put(primitiveType, arrayType);
@@ -491,31 +489,28 @@ public class KotlinBuiltIns {
 
     @NotNull
     private JetType getBuiltInTypeByClassName(@NotNull String classSimpleName) {
-        // TODO
-        return new JetTypeImpl(getBuiltInClassByName(classSimpleName));
+        return getBuiltInClassByName(classSimpleName).getDefaultType();
     }
 
     // Special
 
     @NotNull
     public JetType getNothingType() {
-        return getBuiltInTypeByClassName("Nothing");
+        return getNothing().getDefaultType();
     }
 
     @NotNull
     public JetType getNullableNothingType() {
-        // TODO
         return TypeUtils.makeNullable(getNothingType());
     }
 
     @NotNull
     public JetType getAnyType() {
-        return getBuiltInTypeByClassName("Any");
+        return getAny().getDefaultType();
     }
 
     @NotNull
     public JetType getNullableAnyType() {
-        // TODO
         return TypeUtils.makeNullable(getAnyType());
     }
 
@@ -523,8 +518,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getPrimitiveJetType(@NotNull PrimitiveType type) {
-        // TODO
-        return new JetTypeImpl(getPrimitiveClassDescriptor(type));
+        return getPrimitiveClassDescriptor(type).getDefaultType();
     }
 
     @NotNull
@@ -576,12 +570,12 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getUnitType() {
-        return getBuiltInTypeByClassName("Unit");
+        return getUnit().getDefaultType();
     }
 
     @NotNull
     public JetType getStringType() {
-        return getBuiltInTypeByClassName("String");
+        return getString().getDefaultType();
     }
 
     @NotNull
@@ -644,7 +638,7 @@ public class KotlinBuiltIns {
 
     @NotNull
     public JetType getAnnotationType() {
-        return getBuiltInTypeByClassName("Annotation");
+        return getAnnotation().getDefaultType();
     }
 
     @NotNull

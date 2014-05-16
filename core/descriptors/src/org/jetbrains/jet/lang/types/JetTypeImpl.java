@@ -17,11 +17,9 @@
 package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
-import java.util.Collections;
 import java.util.List;
 
 public final class JetTypeImpl extends AbstractJetType {
@@ -32,7 +30,13 @@ public final class JetTypeImpl extends AbstractJetType {
     private final JetScope memberScope;
     private final Annotations annotations;
 
-    public JetTypeImpl(Annotations annotations, TypeConstructor constructor, boolean nullable, @NotNull List<? extends TypeProjection> arguments, JetScope memberScope) {
+    public JetTypeImpl(
+            @NotNull Annotations annotations,
+            @NotNull TypeConstructor constructor,
+            boolean nullable,
+            @NotNull List<? extends TypeProjection> arguments,
+            @NotNull JetScope memberScope
+    ) {
         this.annotations = annotations;
 
         if (memberScope instanceof ErrorUtils.ErrorScope) {
@@ -43,18 +47,6 @@ public final class JetTypeImpl extends AbstractJetType {
         this.nullable = nullable;
         this.arguments = arguments;
         this.memberScope = memberScope;
-    }
-
-    public JetTypeImpl(TypeConstructor constructor, JetScope memberScope) {
-        this(Annotations.EMPTY, constructor, false, Collections.<TypeProjection>emptyList(), memberScope);
-    }
-
-    public JetTypeImpl(@NotNull ClassDescriptor classDescriptor) {
-        this(Annotations.EMPTY,
-                classDescriptor.getTypeConstructor(),
-                false,
-                Collections.<TypeProjection>emptyList(),
-                classDescriptor.getMemberScope(Collections.<TypeProjection>emptyList()));
     }
 
     @NotNull

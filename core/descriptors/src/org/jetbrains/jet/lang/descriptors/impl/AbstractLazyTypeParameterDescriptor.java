@@ -23,7 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -201,14 +200,16 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
 
     @NotNull
     private JetType createDefaultType(@NotNull StorageManager storageManager) {
-        return new JetTypeImpl(getTypeConstructor(), new LazyScopeAdapter(storageManager.createLazyValue(
-                new Function0<JetScope>() {
-                    @Override
-                    public JetScope invoke() {
-                        return getUpperBoundsAsType().getMemberScope();
-                    }
-                }
-        )));
+        return new JetTypeImpl(Annotations.EMPTY, getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
+                               new LazyScopeAdapter(storageManager.createLazyValue(
+                                       new Function0<JetScope>() {
+                                           @Override
+                                           public JetScope invoke() {
+                                               return getUpperBoundsAsType().getMemberScope();
+                                           }
+                                       }
+                               ))
+        );
     }
 
     @Override
