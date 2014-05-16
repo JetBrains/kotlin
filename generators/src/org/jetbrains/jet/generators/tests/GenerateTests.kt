@@ -384,6 +384,7 @@ fun main(args: Array<String>) {
             model("intentions/branched/when/merge", testMethod = "doTestMergeWhen")
             model("intentions/branched/when/introduceSubject", testMethod = "doTestIntroduceWhenSubject")
             model("intentions/branched/when/eliminateSubject", testMethod = "doTestEliminateWhenSubject")
+            model("intentions/convertToConcatenatedStringIntention", testMethod = "doTestConvertToConcatenatedStringIntention")
             model("intentions/declarations/split", testMethod = "doTestSplitProperty")
             model("intentions/declarations/join", testMethod = "doTestJoinProperty")
             model("intentions/declarations/convertMemberToExtension", testMethod = "doTestConvertMemberToExtension")
