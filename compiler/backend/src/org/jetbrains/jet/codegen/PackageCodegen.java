@@ -20,9 +20,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,8 +84,7 @@ public class PackageCodegen {
             @Override
             public ClassBuilder invoke() {
                 Collection<JetFile> files = PackageCodegen.this.files;
-                JetFile sourceFile = files.size() == 1 && previouslyCompiledCallables.isEmpty()
-                                     ? files.iterator().next() : null;
+                JetFile sourceFile = getRepresentativePackageFile(files);
 
                 String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
                 ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(Type.getObjectType(className), files);
@@ -101,6 +102,28 @@ public class PackageCodegen {
                 return v;
             }
         });
+    }
+
+    // Returns null if file has callables in several files
+    @Nullable
+    private JetFile getRepresentativePackageFile(@NotNull Collection<JetFile> packageFiles) {
+        if (!previouslyCompiledCallables.isEmpty()) {
+            return null;
+        }
+
+        List<JetFile> packageFilesWithCallables = ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
+            @Override
+            public boolean value(JetFile packageFile) {
+                for (JetDeclaration declaration : packageFile.getDeclarations()) {
+                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
+        return packageFilesWithCallables.size() == 1 ? packageFilesWithCallables.get(0) : null;
     }
 
     @Nullable
