@@ -97,7 +97,7 @@ public class DebugInfoUtil {
                             return;
                         }
                     }
-                    if (elementType == JetNodeTypes.LABEL_REFERENCE ||
+                    if (elementType == JetNodeTypes.LABEL ||
                             nameExpression.getReferencedNameElementType() == JetTokens.THIS_KEYWORD) {
                         return;
                     }

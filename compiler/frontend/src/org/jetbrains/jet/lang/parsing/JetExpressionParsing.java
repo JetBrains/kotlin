@@ -1616,7 +1616,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         PsiBuilder.Marker mark = mark();
         advance(); // LABEL_IDENTIFIER
-        mark.done(LABEL_REFERENCE);
+        mark.done(LABEL);
 
         labelWrap.done(LABEL_QUALIFIER);
     }

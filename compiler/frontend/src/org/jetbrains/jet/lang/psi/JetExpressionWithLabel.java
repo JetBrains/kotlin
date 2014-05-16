@@ -31,7 +31,7 @@ public class JetExpressionWithLabel extends JetExpressionImpl {
     public JetSimpleNameExpression getTargetLabel() {
         JetContainerNode qualifier = (JetContainerNode) findChildByType(JetNodeTypes.LABEL_QUALIFIER);
         if (qualifier == null) return null;
-        return (JetSimpleNameExpression) qualifier.findChildByType(JetNodeTypes.LABEL_REFERENCE);
+        return (JetSimpleNameExpression) qualifier.findChildByType(JetNodeTypes.LABEL);
     }
 
     @Nullable
