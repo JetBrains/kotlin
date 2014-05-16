@@ -63,6 +63,7 @@ import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 import org.jetbrains.jet.lang.psi.JetBlockCodeFragment
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
+import com.intellij.openapi.diagnostic.Logger
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -81,53 +82,65 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
     }
 }
 
+val logger = Logger.getInstance(javaClass<KotlinEvaluator>())
+
 class KotlinEvaluator(val codeFragment: JetCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
-        val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
-        if (extractedFunction == null) {
-            exception("This code fragment cannot be extracted to function")
-        }
+        try {
+            val extractedFunction = getFunctionForExtractedFragment(codeFragment, sourcePosition.getFile(), sourcePosition.getLine())
+            if (extractedFunction == null) {
+                exception("This code fragment cannot be extracted to function")
+            }
 
-        val classFileFactory = createClassFileFactory(extractedFunction)
+            val classFileFactory = createClassFileFactory(extractedFunction)
 
-        // KT-4509
-        val outputFiles = (classFileFactory : OutputFileCollection).asList().filter { it.relativePath != "$packageInternalName.class" }
-        if (outputFiles.size() != 1) exception("More than one class file found. Note that lambdas, classes and objects are unsupported yet.\n${outputFiles.makeString("\n")}")
+            // KT-4509
+            val outputFiles = (classFileFactory : OutputFileCollection).asList().filter { it.relativePath != "$packageInternalName.class" }
+            if (outputFiles.size() != 1) exception("More than one class file found. Note that lambdas, classes and objects are unsupported yet.\n${outputFiles.makeString("\n")}")
 
-        val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+            val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
-        var resultValue: Value? = null
-        ClassReader(outputFiles.first().asByteArray()).accept(object : ClassVisitor(ASM5) {
-            override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                if (name == extractedFunction.getName()) {
-                    return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
-                        override fun visitEnd() {
-                            val value = interpreterLoop(
-                                    this,
-                                    makeInitialFrame(this, context.getArgumentsByNames(extractedFunction.getParameterNamesForDebugger())),
-                                    JDIEval(virtualMachine,
-                                            context.getClassLoader()!!,
-                                            context.getSuspendContext().getThread()?.getThreadReference()!!)
-                            )
+            var resultValue: Value? = null
+            ClassReader(outputFiles.first().asByteArray()).accept(object : ClassVisitor(ASM5) {
+                override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+                    if (name == extractedFunction.getName()) {
+                        return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
+                            override fun visitEnd() {
+                                val value = interpreterLoop(
+                                        this,
+                                        makeInitialFrame(this, context.getArgumentsByNames(extractedFunction.getParameterNamesForDebugger())),
+                                        JDIEval(virtualMachine,
+                                                context.getClassLoader()!!,
+                                                context.getSuspendContext().getThread()?.getThreadReference()!!)
+                                )
 
-                            resultValue = when (value) {
-                                is ValueReturned -> value.result
-                                is ExceptionThrown -> exception(value.exception.toString())
-                                is AbnormalTermination -> exception(value.message)
-                                else -> throw IllegalStateException("Unknown result value produced by eval4j")
+                                resultValue = when (value) {
+                                    is ValueReturned -> value.result
+                                    is ExceptionThrown -> exception(value.exception.toString())
+                                    is AbnormalTermination -> exception(value.message)
+                                    else -> throw IllegalStateException("Unknown result value produced by eval4j")
+                                }
                             }
                         }
                     }
+                    return super.visitMethod(access, name, desc, signature, exceptions)
                 }
-                return super.visitMethod(access, name, desc, signature, exceptions)
-            }
-        }, 0)
+            }, 0)
 
-        if (resultValue == null) exception("Cannot evaluate expression")
+            if (resultValue == null) exception("Cannot evaluate expression")
 
-        return resultValue!!.asJdiValue(virtualMachine, resultValue!!.asmType)
+            return resultValue!!.asJdiValue(virtualMachine, resultValue!!.asmType)
+        }
+        catch(e: EvaluateException) {
+            throw e
+        }
+        catch (e: Exception) {
+            logger.error(e)
+            val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
+            exception("An exception occurs during Evaluate Expression Action $cause")
+        }
     }
 
     override fun getModifier(): Modifier? {
