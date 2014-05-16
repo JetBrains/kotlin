@@ -33,29 +33,29 @@ import java.util.Arrays
 
 public class IncrementalCache(baseDir: File) {
     class object {
-        val PACKAGE_MAP: String = "package.tab"
+        val PROTO_MAP: String = "proto.tab"
     }
 
-    private val packageFacadeData: PersistentMap<PackageFacadeId, ByteArray>
+    private val protoData: PersistentMap<ClassOrPackageId, ByteArray>
 
     {
-        packageFacadeData = PersistentHashMap<PackageFacadeId, ByteArray>(File(baseDir, PACKAGE_MAP), object : KeyDescriptor<PackageFacadeId> {
-            override fun save(out: DataOutput, value: PackageFacadeId?) {
+        protoData = PersistentHashMap<ClassOrPackageId, ByteArray>(File(baseDir, PROTO_MAP), object : KeyDescriptor<ClassOrPackageId> {
+            override fun save(out: DataOutput, value: ClassOrPackageId?) {
                 IOUtil.writeString(value!!.moduleId, out)
                 IOUtil.writeString(value.fqName.asString(), out)
             }
 
-            override fun read(`in`: DataInput): PackageFacadeId {
+            override fun read(`in`: DataInput): ClassOrPackageId {
                 val module = IOUtil.readString(`in`)!!
                 val fqName = FqName(IOUtil.readString(`in`)!!)
-                return PackageFacadeId(module, fqName)
+                return ClassOrPackageId(module, fqName)
             }
 
-            override fun getHashCode(value: PackageFacadeId?): Int {
+            override fun getHashCode(value: ClassOrPackageId?): Int {
                 return value?.hashCode() ?: -1
             }
 
-            override fun isEqual(val1: PackageFacadeId?, val2: PackageFacadeId?): Boolean {
+            override fun isEqual(val1: ClassOrPackageId?, val2: ClassOrPackageId?): Boolean {
                 return val1 == val2
             }
         }, object : DataExternalizer<ByteArray> {
@@ -78,32 +78,41 @@ public class IncrementalCache(baseDir: File) {
         if (classNameAndHeader == null) return false
 
         val (className, header) = classNameAndHeader
-        if (header.kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
-            val fqName = className.getFqNameForClassNameWithoutDollars().parent()
-            val data = BitEncoding.decodeBytes(header.annotationData!!)
-            val oldData = getPackageData(moduleId, fqName)
-            if (Arrays.equals(data, oldData)) {
-                return false
+        val classFqName = className.getFqNameForClassNameWithoutDollars()
+        val annotationDataEncoded = header.annotationData
+        if (annotationDataEncoded != null) {
+            val data = BitEncoding.decodeBytes(annotationDataEncoded)
+            when (header.kind) {
+                KotlinClassHeader.Kind.PACKAGE_FACADE -> {
+                    return putData(moduleId, classFqName.parent(), data)
+                }
+                KotlinClassHeader.Kind.CLASS -> {
+                    return putData(moduleId, classFqName, data)
+                }
             }
-            putPackageData(moduleId, fqName, data)
-            return true
         }
-        // TODO Check class signatures, too!
+
         return false
     }
 
-    private fun putPackageData(moduleId: String, fqName: FqName, data: ByteArray) {
-        packageFacadeData.put(PackageFacadeId(moduleId, fqName), data)
+    private fun putData(moduleId: String, fqName: FqName, data: ByteArray): Boolean {
+        val id = ClassOrPackageId(moduleId, fqName)
+        val oldData = protoData[id]
+        if (Arrays.equals(data, oldData)) {
+            return false
+        }
+        protoData.put(id, data)
+        return true
     }
 
     public fun getPackageData(moduleId: String, fqName: FqName): ByteArray? {
-        return packageFacadeData[PackageFacadeId(moduleId, fqName)]
+        return protoData[ClassOrPackageId(moduleId, fqName)]
     }
 
     public fun close() {
-        packageFacadeData.close()
+        protoData.close()
     }
 
-    private data class PackageFacadeId(val moduleId: String, val fqName: FqName) {
+    private data class ClassOrPackageId(val moduleId: String, val fqName: FqName) {
     }
 }

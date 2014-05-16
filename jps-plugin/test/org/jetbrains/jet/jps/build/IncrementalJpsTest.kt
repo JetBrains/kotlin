@@ -116,6 +116,10 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         doTest()
     }
 
+    fun testClassSignatureChanged() {
+        doTest()
+    }
+
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
         public val log: String
@@ -127,7 +131,7 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
 
             fun String.replaceHashWithStar(): String {
                 val lastHyphen = this.lastIndexOf('-')
-                if (lastHyphen != -1 && substring(lastHyphen + 1).matches("[0-9a-f]{8}\\.class")) {
+                if (lastHyphen != -1 && substring(lastHyphen + 1).matches("[0-9a-f]{1,8}\\.class")) {
                     return substring(0, lastHyphen) + "-*.class"
                 }
                 return this
