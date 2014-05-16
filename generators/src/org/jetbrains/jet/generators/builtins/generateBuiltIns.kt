@@ -59,13 +59,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     assertExists(RUNTIME_JVM_DIR)
 
     for (kind in FunctionKind.values()) {
-        if (kind.isReflection()) {
-            generate(File(REFLECTION_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
-            generate(File(RUNTIME_JVM_DIR, kind.getImplFileName()), { GenerateKFunctionsImpl(it, kind) })
-        }
-        else {
-            generate(File(BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
-        }
+        generate(File(if (kind.isReflection()) REFLECTION_DIR else BUILT_INS_SRC_DIR, kind.getFileName())) { GenerateFunctions(it, kind) }
     }
 
     generate(File(BUILT_INS_NATIVE_DIR, "Arrays.kt")) { GenerateArrays(it) }
