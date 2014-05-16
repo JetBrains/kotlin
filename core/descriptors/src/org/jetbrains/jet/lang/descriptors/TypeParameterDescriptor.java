@@ -40,9 +40,6 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     Set<JetType> getLowerBounds();
 
     @NotNull
-    JetType getLowerBoundsAsType();
-
-    @NotNull
     @Override
     TypeConstructor getTypeConstructor();
 

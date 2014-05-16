@@ -16,141 +16,36 @@
 
 package org.jetbrains.jet.lang.descriptors.impl;
 
-import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.resolve.scopes.LazyScopeAdapter;
-import org.jetbrains.jet.lang.types.*;
-import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
-import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
-import org.jetbrains.jet.storage.NotNullLazyValue;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.TypeConstructor;
+import org.jetbrains.jet.lang.types.Variance;
 import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
-public abstract class AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor {
-
-    private final Variance variance;
-    private final boolean reified;
-    private final int index;
-    private final DeclarationDescriptor containingDeclaration;
-    private final Name name;
-
-    private final NotNullLazyValue<TypeConstructor> typeConstructor;
-    private final NotNullLazyValue<JetType> defaultType;
-    private final NotNullLazyValue<Set<JetType>> upperBounds;
-    private final NotNullLazyValue<JetType> upperBoundsAsType;
-
+public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypeParameterDescriptor {
     public AbstractLazyTypeParameterDescriptor(
-            @NotNull final StorageManager storageManager,
+            @NotNull StorageManager storageManager,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Variance variance,
             boolean isReified,
             int index
     ) {
-        this.variance = variance;
-        this.containingDeclaration = containingDeclaration;
-        this.index = index;
-        this.name = name;
-        this.reified = isReified;
-
-        this.typeConstructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
-            @Override
-            public TypeConstructor invoke() {
-                return createTypeConstructor();
-            }
-        });
-        this.defaultType = storageManager.createLazyValue(new Function0<JetType>() {
-            @Override
-            public JetType invoke() {
-                return createDefaultType(storageManager);
-            }
-        });
-        this.upperBounds = storageManager.createLazyValue(new Function0<Set<JetType>>() {
-            @Override
-            public Set<JetType> invoke() {
-                return resolveUpperBounds();
-            }
-        });
-        this.upperBoundsAsType = storageManager.createLazyValue(new Function0<JetType>() {
-            @Override
-            public JetType invoke() {
-                return computeUpperBoundsAsType();
-            }
-        });
-    }
-
-    @Override
-    public boolean isReified() {
-        return reified;
+        super(storageManager, containingDeclaration, Annotations.EMPTY /* TODO */, name, variance, isReified, index);
     }
 
     @NotNull
     @Override
-    public Variance getVariance() {
-        return variance;
-    }
-
-    @NotNull
-    @Override
-    public Set<JetType> getUpperBounds() {
-        return upperBounds.invoke();
-    }
-
-    @NotNull
-    @ReadOnly
-    protected abstract Set<JetType> resolveUpperBounds();
-
-    @NotNull
-    @Override
-    public JetType getUpperBoundsAsType() {
-        return upperBoundsAsType.invoke();
-    }
-
-    @NotNull
-    private JetType computeUpperBoundsAsType() {
-        Set<JetType> upperBounds = getUpperBounds();
-        assert upperBounds.size() > 0 : "Upper bound list is empty in " + getName();
-        JetType upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.INSTANCE, upperBounds);
-        if (upperBoundsAsType == null) {
-            upperBoundsAsType = KotlinBuiltIns.getInstance().getNothingType();
-        }
-        return upperBoundsAsType;
-    }
-
-
-    @NotNull
-    @Override
-    public Set<JetType> getLowerBounds() {
-        return Collections.singleton(getLowerBoundsAsType());
-    }
-
-    @NotNull
-    @Override
-    public JetType getLowerBoundsAsType() {
-        return KotlinBuiltIns.getInstance().getNothingType();
-    }
-
-    @NotNull
-    @Override
-    public TypeConstructor getTypeConstructor() {
-        return typeConstructor.invoke();
-    }
-
-    @NotNull
-    private TypeConstructor createTypeConstructor() {
+    protected TypeConstructor createTypeConstructor() {
         return new TypeConstructor() {
             @NotNull
             @Override
@@ -190,86 +85,5 @@ public abstract class AbstractLazyTypeParameterDescriptor implements TypeParamet
                 return getName().toString();
             }
         };
-    }
-
-    @NotNull
-    @Override
-    public JetType getDefaultType() {
-        return defaultType.invoke();
-    }
-
-    @NotNull
-    private JetType createDefaultType(@NotNull StorageManager storageManager) {
-        return new JetTypeImpl(Annotations.EMPTY, getTypeConstructor(), false, Collections.<TypeProjection>emptyList(),
-                               new LazyScopeAdapter(storageManager.createLazyValue(
-                                       new Function0<JetScope>() {
-                                           @Override
-                                           public JetScope invoke() {
-                                               return getUpperBoundsAsType().getMemberScope();
-                                           }
-                                       }
-                               ))
-        );
-    }
-
-    @Override
-    public JetType getClassObjectType() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getOriginal() {
-        return this;
-    }
-
-    @NotNull
-    @Override
-    public DeclarationDescriptor getContainingDeclaration() {
-        return containingDeclaration;
-    }
-
-    @NotNull
-    @Override
-    @Deprecated
-    public TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        throw new UnsupportedOperationException("Don't call substitute() on type parameters");
-    }
-
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitTypeParameterDescriptor(this, data);
-    }
-
-    @Override
-    public void acceptVoid(DeclarationDescriptorVisitor<Void, Void> visitor) {
-        visitor.visitTypeParameterDescriptor(this, null);
-    }
-
-    @Override
-    public int getIndex() {
-        return index;
-    }
-
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return Annotations.EMPTY; // TODO
-    }
-
-    @NotNull
-    @Override
-    public Name getName() {
-        return name;
-    }
-
-    @Override
-    public String toString() {
-        try {
-            return DescriptorRenderer.DEBUG_TEXT.render(this);
-        }
-        catch (Exception e) {
-            return this.getClass().getName() + "@" + System.identityHashCode(this);
-        }
     }
 }

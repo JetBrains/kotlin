@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -34,7 +33,7 @@ import org.jetbrains.jet.lexer.JetTokens;
 
 import java.util.Set;
 
-public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements TypeParameterDescriptor, LazyEntity {
+public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescriptor implements LazyEntity {
     private final ResolveSession resolveSession;
 
     private final JetTypeParameter jetTypeParameter;
@@ -125,7 +124,6 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         getDefaultType();
         getIndex();
         ForceResolveUtil.forceResolveAllContents(getLowerBounds());
-        getLowerBoundsAsType();
         getOriginal();
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
         ForceResolveUtil.forceResolveAllContents(getUpperBounds());
