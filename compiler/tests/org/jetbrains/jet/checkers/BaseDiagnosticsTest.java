@@ -29,6 +29,8 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.ConfigurationKind;
@@ -45,9 +47,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -107,16 +107,53 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
         String expectedText = JetTestUtils.doLoadFile(file);
 
+        class ModuleAndDependencies {
+            final TestModule module;
+            final List<String> dependencies;
+
+            ModuleAndDependencies(TestModule module, List<String> dependencies) {
+                this.module = module;
+                this.dependencies = dependencies;
+            }
+        }
+        final Map<String, ModuleAndDependencies> modules = new HashMap<String, ModuleAndDependencies>();
+
         List<TestFile> testFiles =
-                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestFile>() {
+                JetTestUtils.createTestFiles(file.getName(), expectedText, new JetTestUtils.TestFileFactory<TestModule, TestFile>() {
+
                     @Override
-                    public TestFile create(String fileName, String text, Map<String, String> directives) {
+                    public TestFile createFile(@Nullable TestModule module, String fileName, String text, Map<String, String> directives) {
                         if (fileName.endsWith(".java")) {
                             writeJavaFile(fileName, text, javaFilesDir);
                         }
-                        return new TestFile(fileName, text, directives);
+
+                        return new TestFile(module, fileName, text, directives);
+                    }
+
+                    @Override
+                    public TestModule createModule(String name, List<String> dependencies) {
+                        TestModule module = new TestModule(name);
+                        ModuleAndDependencies oldValue = modules.put(name, new ModuleAndDependencies(module, dependencies));
+                        assert oldValue == null : "Module " + name + " declared more than once";
+
+                        return module;
                     }
                 });
+
+        for (final ModuleAndDependencies moduleAndDependencies : modules.values()) {
+            List<TestModule> dependencies = KotlinPackage.map(
+                    moduleAndDependencies.dependencies,
+                    new Function1<String, TestModule>() {
+                        @Override
+                        public TestModule invoke(String name) {
+                            ModuleAndDependencies dependency = modules.get(name);
+                            assert dependency != null : "Dependency not found: " + name + " for module " + moduleAndDependencies.module.getName();
+                            return dependency.module;
+                        }
+                    }
+            );
+            moduleAndDependencies.module.getDependencies().addAll(dependencies);
+        }
 
         analyzeAndCheck(file, testFiles);
     }
@@ -126,7 +163,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             List<TestFile> files
     );
 
-    protected static List<JetFile> getJetFiles(List<TestFile> testFiles) {
+    protected static List<JetFile> getJetFiles(List<? extends TestFile> testFiles) {
         List<JetFile> jetFiles = Lists.newArrayList();
         for (TestFile testFile : testFiles) {
             if (testFile.getJetFile() != null) {
@@ -202,19 +239,41 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 });
     }
 
+    protected static class TestModule {
+        private final String name;
+        private final List<TestModule> dependencies = new ArrayList<TestModule>();
+
+        public TestModule(@NotNull String name) {
+            this.name = name;
+        }
+
+        @NotNull
+        public String getName() {
+            return name;
+        }
+
+        @NotNull
+        public List<TestModule> getDependencies() {
+            return dependencies;
+        }
+    }
+
     protected class TestFile {
         private final List<CheckerTestUtil.DiagnosedRange> diagnosedRanges = Lists.newArrayList();
         private final String expectedText;
+        private final TestModule module;
         private final String clearText;
         private final JetFile jetFile;
         private final Condition<Diagnostic> whatDiagnosticsToConsider;
         private final boolean declareCheckType;
 
         public TestFile(
+                @Nullable TestModule module,
                 String fileName,
                 String textWithMarkers,
                 Map<String, String> directives
         ) {
+            this.module = module;
             this.whatDiagnosticsToConsider = parseDiagnosticFilterDirective(directives);
             this.declareCheckType = directives.containsKey(CHECK_TYPE_DIRECTIVE);
             if (fileName.endsWith(".java")) {
@@ -234,6 +293,10 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             }
         }
 
+        @Nullable
+        public TestModule getModule() {
+            return module;
+        }
 
         @Nullable
         public JetFile getJetFile() {

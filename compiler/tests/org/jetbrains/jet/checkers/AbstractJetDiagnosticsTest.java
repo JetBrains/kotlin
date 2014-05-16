@@ -21,25 +21,27 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
+import org.jetbrains.jet.context.ContextPackage;
+import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
+import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.jet.lang.descriptors.DependencyKind;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 
@@ -47,27 +49,91 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     @Override
     protected void analyzeAndCheck(File testDataFile, List<TestFile> testFiles) {
-        List<JetFile> jetFiles = getJetFiles(testFiles);
+        Map<TestModule, List<TestFile>> groupedByModule = KotlinPackage.groupByTo(
+                testFiles,
+                new LinkedHashMap<TestModule, List<TestFile>>(),
+                new Function1<TestFile, TestModule>() {
+                    @Override
+                    public TestModule invoke(TestFile file) {
+                        return file.getModule();
+                    }
+                }
+        );
 
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(getProject());
+        BindingTrace trace = support.getTrace();
 
-        BindingContext bindingContext = AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                getProject(), jetFiles, support.getTrace(),
-                Predicates.<PsiFile>alwaysTrue(), support.getModule(),
-                MemberFilter.ALWAYS_TRUE).getBindingContext();
+        List<JetFile> allJetFiles = new ArrayList<JetFile>();
+        Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule);
+
+        for (Map.Entry<TestModule, List<TestFile>> entry : groupedByModule.entrySet()) {
+            TestModule testModule = entry.getKey();
+            List<? extends TestFile> testFilesInModule = entry.getValue();
+
+            List<JetFile> jetFiles = getJetFiles(testFilesInModule);
+            allJetFiles.addAll(jetFiles);
+
+            ModuleDescriptorImpl module = modules.get(testModule);
+            analyzeModule(trace, module == null ? support.getModule() : module, jetFiles);
+        }
 
         boolean ok = true;
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(bindingContext, actualText);
+            ok &= testFile.getActualText(trace.getBindingContext(), actualText);
         }
 
         JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
 
-        checkAllResolvedCallsAreCompleted(jetFiles, bindingContext);
+        checkAllResolvedCallsAreCompleted(allJetFiles, trace.getBindingContext());
+    }
+
+    private Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
+        Map<TestModule, ModuleDescriptorImpl> modules = new HashMap<TestModule, ModuleDescriptorImpl>();
+
+        for (TestModule testModule : groupedByModule.keySet()) {
+            if (testModule == null) continue;
+            ModuleDescriptorImpl module = AnalyzerFacadeForJVM.createJavaModule("<" + testModule.getName() + ">");
+            modules.put(testModule, module);
+        }
+
+        for (TestModule testModule : groupedByModule.keySet()) {
+            if (testModule == null) continue;
+
+            ModuleDescriptorImpl module = modules.get(testModule);
+            for (TestModule dependency : testModule.getDependencies()) {
+                // Adding other modules as BINARIES here, because in teh reduced dependency ordering model they are equal to binaries
+                module.addFragmentProvider(DependencyKind.BINARIES, modules.get(dependency).getPackageFragmentProvider());
+            }
+        }
+        return modules;
+    }
+
+    private void analyzeModule(BindingTrace trace, ModuleDescriptorImpl module, List<JetFile> jetFiles) {
+        GlobalContext globalContext = ContextPackage.GlobalContext();
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
+                globalContext.getStorageManager(),
+                globalContext.getExceptionTracker(),
+                Predicates.<PsiFile>alwaysTrue(),
+                false,
+                false
+        );
+
+        // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
+        // albeit with same class names
+        InjectorForTopDownAnalyzerForJvm
+                injector = new InjectorForTopDownAnalyzerForJvm(getProject(), topDownAnalysisParameters, trace, module,
+                                                                MemberFilter.ALWAYS_TRUE);
+        try {
+            module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
+            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, jetFiles);
+        }
+        finally {
+            injector.destroy();
+        }
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
