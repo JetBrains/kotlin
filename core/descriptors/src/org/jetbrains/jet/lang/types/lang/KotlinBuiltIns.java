@@ -826,6 +826,10 @@ public class KotlinBuiltIns {
         return !(type instanceof PackageType) && type.equals(getUnitType());
     }
 
+    public boolean isString(@Nullable JetType type) {
+        return !(type instanceof PackageType) && getStringType().equals(type);
+    }
+
     public boolean isData(@NotNull ClassDescriptor classDescriptor) {
         return containsAnnotation(classDescriptor, getDataClassAnnotation());
     }
