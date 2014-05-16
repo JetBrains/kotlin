@@ -144,7 +144,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
         Condition<Diagnostic> condition = Conditions.alwaysTrue();
         Matcher matcher = DIAGNOSTICS_PATTERN.matcher(directives);
         if (!matcher.find()) {
-            Assert.fail("Wrong syntax in the '// DIAGNOSTICS: ...' directive:\n" +
+            Assert.fail("Wrong syntax in the '// !DIAGNOSTICS: ...' directive:\n" +
                         "found: '" + directives + "'\n" +
                         "Must be '([+-!]DIAGNOSTIC_FACTORY_NAME|ERROR|WARNING|INFO)+'\n" +
                         "where '+' means 'include'\n" +
