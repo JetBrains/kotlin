@@ -46,8 +46,9 @@ public class Visibilities {
                     return true;
                 }
                 if (fromParent instanceof PackageFragmentDescriptor) {
-                    return parent instanceof PackageFragmentDescriptor && ((PackageFragmentDescriptor) parent).getFqName()
-                            .isAncestorOf(((PackageFragmentDescriptor) fromParent).getFqName());
+                    return parent instanceof PackageFragmentDescriptor
+                           && ((PackageFragmentDescriptor) parent).getFqName().isAncestorOf(((PackageFragmentDescriptor) fromParent).getFqName())
+                           && DescriptorUtils.areInSameModule(fromParent, parent);
                 }
                 fromParent = fromParent.getContainingDeclaration();
             }

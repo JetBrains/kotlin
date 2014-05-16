@@ -4872,6 +4872,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/multimodule/internal.kt");
             }
             
+            @TestMetadata("packagePrivate.kt")
+            public void testPackagePrivate() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/multimodule/packagePrivate.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")
