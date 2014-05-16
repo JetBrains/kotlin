@@ -37,7 +37,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.ErrorUtils;
+import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -177,7 +177,7 @@ public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer
     @NotNull
     private static ClassDescriptor resolveClass(@NotNull JvmClassName className, DependencyClassByQualifiedNameResolver classResolver) {
         ClassDescriptor annotationClass = classResolver.resolveClass(className.getFqNameForClassNameWithoutDollars());
-        return annotationClass != null ? annotationClass : ErrorUtils.getErrorClass();
+        return annotationClass != null ? annotationClass : new ErrorClassDescriptor(className.getInternalName());
     }
 
     @NotNull

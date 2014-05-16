@@ -43,7 +43,7 @@ public class ErrorClassDescriptor extends ClassDescriptorImpl {
                                     Visibilities.INTERNAL, false);
         errorConstructor.setReturnType(createErrorType("<ERROR RETURN TYPE>"));
 
-        initialize(createErrorScope("ERROR_CLASS"), Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);
+        initialize(createErrorScope(getName().asString()), Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);
     }
 
     @NotNull

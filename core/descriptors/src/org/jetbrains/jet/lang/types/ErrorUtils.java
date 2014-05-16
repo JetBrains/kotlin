@@ -83,7 +83,7 @@ public class ErrorUtils {
 
         @Override
         public ClassifierDescriptor getClassifier(@NotNull Name name) {
-            return ERROR_CLASS;
+            return new ErrorClassDescriptor(name.asString());
         }
 
         @NotNull
@@ -269,7 +269,7 @@ public class ErrorUtils {
 
     @NotNull
     private static SimpleFunctionDescriptor createErrorFunction(@NotNull ErrorScope ownerScope) {
-        ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ownerScope);
+        ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ERROR_CLASS, ownerScope);
         function.initialize(
                 null,
                 ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER,
@@ -302,11 +302,6 @@ public class ErrorUtils {
         return new TypeConstructorImpl(ERROR_CLASS, Annotations.EMPTY, false, debugName,
                                 Collections.<TypeParameterDescriptorImpl>emptyList(),
                                 Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
-    }
-
-    @NotNull
-    public static ClassDescriptor getErrorClass() {
-        return ERROR_CLASS;
     }
 
     public static boolean containsErrorType(@Nullable JetType type) {

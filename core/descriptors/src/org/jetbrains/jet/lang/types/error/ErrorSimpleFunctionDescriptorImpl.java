@@ -27,11 +27,11 @@ import org.jetbrains.jet.lang.types.ErrorUtils;
 
 public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorImpl {
     // used for diagnostic only
-    @NotNull
+    @SuppressWarnings({"UnusedDeclaration", "FieldCanBeLocal"})
     private final ErrorUtils.ErrorScope ownerScope;
 
-    public ErrorSimpleFunctionDescriptorImpl(ErrorUtils.ErrorScope ownerScope) {
-        super(ErrorUtils.getErrorClass(), null, Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
+    public ErrorSimpleFunctionDescriptorImpl(@NotNull ClassDescriptor containingDeclaration, @NotNull ErrorUtils.ErrorScope ownerScope) {
+        super(containingDeclaration, null, Annotations.EMPTY, Name.special("<ERROR FUNCTION>"), Kind.DECLARATION);
         this.ownerScope = ownerScope;
     }
 
