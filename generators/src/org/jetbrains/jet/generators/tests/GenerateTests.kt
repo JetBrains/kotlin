@@ -393,6 +393,7 @@ fun main(args: Array<String>) {
             model("intentions/replaceWithInfixFunctionCall", testMethod = "doTestReplaceWithInfixFunctionCall")
             model("intentions/removeCurlyBracesFromTemplate", testMethod = "doTestRemoveCurlyFromTemplate")
             model("intentions/convertToStringTemplateIntention", testMethod = "doTestConvertToStringTemplate")
+            model("intentions/convertToConcatenatedStringIntention", testMethod = "doTestConvertToConcatenatedStringIntention")
             model("intentions/insertCurlyBracestsToTemplate", testMethod = "doTestInsertCurlyToTemplate")
             model("intentions/moveLambdaInsideParentheses", testMethod = "doTestMoveLambdaInsideParentheses")
             model("intentions/moveLambdaOutsideParentheses", testMethod = "doTestMoveLambdaOutsideParentheses")
