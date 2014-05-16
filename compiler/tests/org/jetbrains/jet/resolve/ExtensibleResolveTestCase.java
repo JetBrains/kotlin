@@ -52,7 +52,7 @@ public abstract class ExtensibleResolveTestCase extends JetLiteFixture {
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
         String text = JetTestUtils.doLoadFile(file);
-        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
+        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
             @Override
             public JetFile create(String fileName, String text, Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);

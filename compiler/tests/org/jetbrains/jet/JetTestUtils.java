@@ -97,7 +97,17 @@ public class JetTestUtils {
     private static final Pattern KT_FILES = Pattern.compile(".*?.kt");
     private static final List<File> filesToDelete = new ArrayList<File>();
 
-    public static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    /**
+     * Syntax:
+     *
+     * // MODULE: name(dependency1, dependency2, ...)
+     *
+     * // FILE: name
+     *
+     * Several files may follow one module
+     */
+    public static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile("(?://\\s*MODULE:\\s*(\\w+)(\\(\\w+(?:, \\w+)*\\))?\\s*)?" +
+                                                                         "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
     public static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*!(\\w+)(:\\s*(.*)$)?", Pattern.MULTILINE);
 
     public static final BindingTrace DUMMY_TRACE = new BindingTrace() {
@@ -474,26 +484,47 @@ public class JetTestUtils {
         }
     }
 
-    public interface TestFileFactory<F> {
-        F create(String fileName, String text, Map<String, String> directives);
+    public interface TestFileFactory<M, F> {
+        F createFile(@Nullable M module, String fileName, String text, Map<String, String> directives);
+        M createModule(String name, List<String> dependencies);
     }
 
-    public static <F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<F> factory) {
+    public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<Void,F> {
+        @Override
+        public final F createFile(@Nullable Void module, String fileName, String text, Map<String, String> directives) {
+            return create(fileName, text, directives);
+        }
+
+        public abstract F create(String fileName, String text, Map<String, String> directives);
+
+        @Override
+        public Void createModule(String name, List<String> dependencies) {
+            return null;
+        }
+    }
+
+    public static <M, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M, F> factory) {
         Map<String, String> directives = parseDirectives(expectedText);
 
         List<F> testFiles = Lists.newArrayList();
-        Matcher matcher = FILE_PATTERN.matcher(expectedText);
+        Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
         if (!matcher.find()) {
             // One file
-            testFiles.add(factory.create(testFileName, expectedText, directives));
+            testFiles.add(factory.createFile(null, testFileName, expectedText, directives));
         }
         else {
             int processedChars = 0;
+            M module = null;
             // Many files
             while (true) {
-                String fileName = matcher.group(1);
-                int start = matcher.start();
-                assert start == processedChars : "Characters skipped from " + processedChars + " to " + matcher.start();
+                String moduleName = matcher.group(1);
+                String moduleDependencies = matcher.group(2);
+                if (moduleName != null) {
+                    module = factory.createModule(moduleName, parseDependencies(moduleDependencies));
+                }
+
+                String fileName = matcher.group(3);
+                int start = processedChars;
 
                 boolean nextFileExists = matcher.find();
                 int end;
@@ -506,7 +537,7 @@ public class JetTestUtils {
                 String fileText = expectedText.substring(start, end);
                 processedChars = end;
 
-                testFiles.add(factory.create(fileName, fileText, directives));
+                testFiles.add(factory.createFile(module, fileName, fileText, directives));
 
                 if (!nextFileExists) break;
             }
@@ -516,6 +547,17 @@ public class JetTestUtils {
                                                              (expectedText.length() - 1);
         }
         return testFiles;
+    }
+
+    private static List<String> parseDependencies(@Nullable String dependencies) {
+        if (dependencies == null) return Collections.emptyList();
+
+        Matcher matcher = Pattern.compile("\\w+").matcher(dependencies);
+        List<String> result = new ArrayList<String>();
+        while (matcher.find()) {
+            result.add(matcher.group());
+        }
+        return result;
     }
 
     @NotNull
@@ -546,7 +588,7 @@ public class JetTestUtils {
             throw new RuntimeException(e);
         }
 
-        List<String> files = createTestFiles("", content, new TestFileFactory<String>() {
+        List<String> files = createTestFiles("", content, new TestFileFactoryNoModules<String>() {
             @Override
             public String create(String fileName, String text, Map<String, String> directives) {
                 int firstLineEnd = text.indexOf('\n');

@@ -65,7 +65,7 @@ public abstract class AbstractLazyResolveTest extends JetLiteFixture {
     protected void doTest(@NonNls String testFile) throws Exception {
         String text = FileUtil.loadFile(new File(testFile), true);
 
-        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactory<JetFile>() {
+        List<JetFile> files = JetTestUtils.createTestFiles("file.kt", text, new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
             @Override
             public JetFile create(String fileName, String text, Map<String, String> directives) {
                 return expectedResolveData.createFileFromMarkedUpText(fileName, text);

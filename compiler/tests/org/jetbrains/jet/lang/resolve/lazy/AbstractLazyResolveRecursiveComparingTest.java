@@ -60,7 +60,7 @@ public abstract class AbstractLazyResolveRecursiveComparingTest extends KotlinTe
     private void doTest(String testFileName, boolean checkPrimaryConstructors, boolean checkPropertyAccessors, boolean allowErrorTypes) throws IOException {
         List<JetFile> files = JetTestUtils
                 .createTestFiles(testFileName, FileUtil.loadFile(new File(testFileName), true),
-                                 new JetTestUtils.TestFileFactory<JetFile>() {
+                                 new JetTestUtils.TestFileFactoryNoModules<JetFile>() {
                                      @Override
                                      public JetFile create(String fileName, String text, Map<String, String> directives) {
                                          return JetPsiFactory.createFile(getProject(), fileName, text);
