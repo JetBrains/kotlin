@@ -26,16 +26,16 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.jet.context.ContextPackage;
-import org.jetbrains.jet.context.GlobalContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
-import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.*;
+import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingTrace;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -74,7 +74,17 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             allJetFiles.addAll(jetFiles);
 
             ModuleDescriptorImpl module = modules.get(testModule);
-            analyzeModule(trace, module == null ? support.getModule() : module, jetFiles);
+
+            // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
+            // albeit with same class names
+            AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                    getProject(),
+                    jetFiles,
+                    trace,
+                    Predicates.<PsiFile>alwaysTrue(),
+                    module == null ? support.getModule() : module,
+                    MemberFilter.ALWAYS_TRUE
+            );
         }
 
         boolean ok = true;
@@ -110,30 +120,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             }
         }
         return modules;
-    }
-
-    private void analyzeModule(BindingTrace trace, ModuleDescriptorImpl module, List<JetFile> jetFiles) {
-        GlobalContext globalContext = ContextPackage.GlobalContext();
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                globalContext.getStorageManager(),
-                globalContext.getExceptionTracker(),
-                Predicates.<PsiFile>alwaysTrue(),
-                false,
-                false
-        );
-
-        // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
-        // albeit with same class names
-        InjectorForTopDownAnalyzerForJvm
-                injector = new InjectorForTopDownAnalyzerForJvm(getProject(), topDownAnalysisParameters, trace, module,
-                                                                MemberFilter.ALWAYS_TRUE);
-        try {
-            module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-            injector.getTopDownAnalyzer().analyzeFiles(topDownAnalysisParameters, jetFiles);
-        }
-        finally {
-            injector.destroy();
-        }
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {
