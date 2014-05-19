@@ -474,9 +474,7 @@ public class JetFormatterTestGenerated extends AbstractJetFormatterTest {
     @InnerTestClasses({})
     public static class FormatterInverted extends AbstractJetFormatterTest {
         public void testAllFilesPresentInFormatterInverted() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                         new File("idea/testData/formatter"),
-                                                         Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/formatter"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), true);
         }
         
         @TestMetadata("BinaryExpressions.after.inv.kt")
