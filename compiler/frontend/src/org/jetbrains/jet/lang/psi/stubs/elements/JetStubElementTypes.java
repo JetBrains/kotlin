@@ -86,7 +86,6 @@ public interface JetStubElementTypes {
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
-
     JetPlaceHolderStubElementType<JetTypeArgumentList> TYPE_ARGUMENT_LIST =
                 new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
 
@@ -98,13 +97,13 @@ public interface JetStubElementTypes {
 
     JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier> DELEGATOR_BY =
             new JetPlaceHolderStubElementType<JetDelegatorByExpressionSpecifier>("DELEGATOR_BY", JetDelegatorByExpressionSpecifier.class);
+
     JetPlaceHolderStubElementType<JetDelegatorToSuperCall> DELEGATOR_SUPER_CALL =
             new JetPlaceHolderStubElementType<JetDelegatorToSuperCall>("DELEGATOR_SUPER_CALL", JetDelegatorToSuperCall.class);
     JetPlaceHolderStubElementType<JetDelegatorToSuperClass> DELEGATOR_SUPER_CLASS =
             new JetPlaceHolderStubElementType<JetDelegatorToSuperClass>("DELEGATOR_SUPER_CLASS", JetDelegatorToSuperClass.class);
     JetPlaceHolderStubElementType<JetDelegatorToThisCall> THIS_CALL =
             new JetPlaceHolderStubElementType<JetDelegatorToThisCall>("THIS_CALL", JetDelegatorToThisCall.class);
-
     JetPlaceHolderStubElementType<JetConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
 
@@ -114,4 +113,6 @@ public interface JetStubElementTypes {
     TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS, THIS_CALL);
 
     TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE);
+
+    TokenSet INSIDE_DIRECTIVE_EXPRESSIONS = TokenSet.create(REFERENCE_EXPRESSION, DOT_QUALIFIED_EXPRESSION);
 }

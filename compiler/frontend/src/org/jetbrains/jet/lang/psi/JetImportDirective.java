@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,9 +29,6 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetImportDirective extends JetElementImplStub<PsiJetImportDirectiveStub> {
-
-    public static final TokenSet IMPORT_DIRECTIVE_EXPRESSIONS =
-            TokenSet.create(JetStubElementTypes.REFERENCE_EXPRESSION, JetStubElementTypes.DOT_QUALIFIED_EXPRESSION);
 
     public JetImportDirective(@NotNull ASTNode node) {
         super(node);
@@ -57,7 +53,7 @@ public class JetImportDirective extends JetElementImplStub<PsiJetImportDirective
 
     @Nullable @IfNotParsed
     public JetExpression getImportedReference() {
-        JetExpression[] references = getStubOrPsiChildren(IMPORT_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
+        JetExpression[] references = getStubOrPsiChildren(JetStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
         if (references.length > 0) {
             return references[0];
         }

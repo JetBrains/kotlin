@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.ArrayFactory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +45,7 @@ public class JetPackageDirective extends JetModifierListOwnerStub<PsiJetPlaceHol
     // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression
     @Nullable
     public JetExpression getPackageNameExpression() {
-        return JetStubbedPsiUtil.getStubOrPsiChild(this, JetImportDirective.IMPORT_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
+        return JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
     }
 
     @NotNull

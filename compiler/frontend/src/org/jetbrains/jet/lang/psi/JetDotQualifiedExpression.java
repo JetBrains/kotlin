@@ -24,7 +24,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetToken;
 
-import static org.jetbrains.jet.lang.psi.JetImportDirective.IMPORT_DIRECTIVE_EXPRESSIONS;
+import static org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes.INSIDE_DIRECTIVE_EXPRESSIONS;
 
 public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlaceHolderStub<JetDotQualifiedExpression>>
         implements JetQualifiedExpression {
@@ -80,7 +80,7 @@ public class JetDotQualifiedExpression extends JetExpressionImplStub<PsiJetPlace
             return null;
         }
         else {
-            JetExpression[] expressions = stub.getChildrenByType(IMPORT_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
+            JetExpression[] expressions = stub.getChildrenByType(INSIDE_DIRECTIVE_EXPRESSIONS, JetExpression.ARRAY_FACTORY);
             if (expressions.length < 1 || expressions.length > 2) {
                 LOG.error("Invalid stub structure. DOT_QUALIFIED_EXPRESSION must have one or two children. Was: " + expressions.length +
                           "\nFile text:\n" + getContainingFile().getText());
