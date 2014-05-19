@@ -124,7 +124,11 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         if (stub != null) {
             return stub.getPackageFqName();
         }
+        return getPackageFqNameByTree();
+    }
 
+    @NotNull
+    public FqName getPackageFqNameByTree() {
         JetPackageDirective packageDirective = getPackageDirective();
         if (packageDirective == null) {
             return FqName.ROOT;
@@ -158,7 +162,10 @@ public class JetFile extends PsiFileBase implements JetDeclarationContainer, Jet
         if (stub != null) {
             return stub.isScript();
         }
+        return isScriptByTree();
+    }
 
+    public boolean isScriptByTree() {
         return getScript() != null;
     }
 
