@@ -63,7 +63,7 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
         val analysisResult = ExtractionData(file, elements, nextSibling).performAnalysis()
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
-            throw ConflictsInTestsException(analysisResult.messages)
+            throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
         }
 
         fun proceedWithExtraction() {
@@ -84,7 +84,7 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
             project.executeWriteCommand(EXTRACT_FUNCTION) { descriptor.generateFunction() }
         }
 
-        val message = analysisResult.messages.makeString("\n")
+        val message = analysisResult.messages.map { it.renderMessage() }.makeString("\n")
         when (analysisResult.status) {
             Status.CRITICAL_ERROR -> {
                 showErrorHint(project, editor, message)

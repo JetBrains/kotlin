@@ -1,0 +1,5 @@
+prop += 1
+prop2 +=2
+prop + prop2
+
+// RESULT: Cannot perform an action because this code fragment changes more than one variable: prop, prop2

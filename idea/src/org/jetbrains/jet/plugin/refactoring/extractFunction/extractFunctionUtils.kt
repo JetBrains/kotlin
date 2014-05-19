@@ -100,6 +100,7 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Statu
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()
@@ -146,15 +147,14 @@ private fun List<Instruction>.analyzeControlFlow(
         bindingContext: BindingContext,
         parameters: Set<Parameter>,
         inferredType: JetType?
-): Pair<ControlFlow, String?> {
+): Pair<ControlFlow, ErrorMessage?> {
     val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
 
     if (outParameters.size > 1) {
-        val outValuesStr = outParameters.map { it.argumentText }.sort().makeString(separator = "\n")
-
+        val outValuesStr = outParameters.map { it.argumentText }.sort()
         return Pair(
                 DefaultControlFlow,
-                "${JetRefactoringBundle.message("selected.code.fragment.has.multiple.output.values")!!}\n$outValuesStr"
+                ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
         )
     }
 
@@ -190,7 +190,7 @@ private fun List<Instruction>.analyzeControlFlow(
 
     if (outParameters.isNotEmpty()) {
         if (hasMeaningfulType || valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) {
-            return Pair(DefaultControlFlow, JetRefactoringBundle.message("selected.code.fragment.has.output.values.and.exit.points")!!)
+            return Pair(DefaultControlFlow, ErrorMessage.OUTPUT_AND_EXIT_POINT)
         }
 
         return Pair(ParameterUpdate(outParameters.first()), null)
@@ -198,7 +198,7 @@ private fun List<Instruction>.analyzeControlFlow(
 
     val multipleExitsError = Pair(
             DefaultControlFlow,
-            JetRefactoringBundle.message("selected.code.fragment.has.multiple.exit.points")!!
+            ErrorMessage.MULTIPLE_EXIT_POINTS
     )
 
     if (hasMeaningfulType) {
@@ -310,7 +310,7 @@ private fun ExtractionData.inferParametersInfo(
         replacementMap: MutableMap<Int, Replacement>,
         parameters: MutableSet<Parameter>,
         typeParameters: MutableSet<TypeParameter>
-): String? {
+): ErrorMessage? {
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
             originalElements.first,
@@ -328,7 +328,7 @@ private fun ExtractionData.inferParametersInfo(
         val selector = (ref.getParent() as? JetCallExpression) ?: ref
         val superExpr = (selector.getParent() as? JetQualifiedExpression)?.getReceiverExpression() as? JetSuperExpression
         if (superExpr != null) {
-            return JetRefactoringBundle.message("cannot.extract.super.call")!!
+            return ErrorMessage.SUPER_CALL
         }
 
         val receiverArgument = resolvedCall?.getReceiverArgument()
@@ -347,7 +347,7 @@ private fun ExtractionData.inferParametersInfo(
 
         if (classObjectClassDescriptor != null) {
             if (!classObjectClassDescriptor.canBeReferencedViaImport()) {
-                return JetRefactoringBundle.message("cannot.extract.non.local.declaration.ref")!!
+                return ErrorMessage.NON_LOCAL_DECLARATION
             }
 
             replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
@@ -435,9 +435,9 @@ private fun ExtractionData.inferParametersInfo(
     if (nonDenotableTypes.isNotEmpty()) {
         val typeStr = nonDenotableTypes.map {
             DescriptorRenderer.HTML.renderType(it)
-        }.sort().makeString(separator = "\n")
+        }.sort()
 
-        return "${JetRefactoringBundle.message("parameter.types.are.not.denotable")!!}\n$typeStr"
+        return ErrorMessage.DENOTABLE_TYPES.addAdditionalInfo(typeStr)
     }
 
     parameters.addAll(extractedDescriptorToParameter.values())
@@ -449,7 +449,7 @@ private fun ExtractionData.checkLocalDeclarationsWithNonLocalUsages(
         allInstructions: List<Instruction>,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext
-): String? {
+): ErrorMessage? {
     // todo: non-locally used declaration can be turned into the output value
 
     val declarations = ArrayList<JetNamedDeclaration>()
@@ -465,14 +465,14 @@ private fun ExtractionData.checkLocalDeclarationsWithNonLocalUsages(
     }
 
     if (declarations.isNotEmpty()) {
-        val localVarStr = declarations.map { it.getName()!! }.sort().makeString(separator = "\n")
-        return "${JetRefactoringBundle.message("variables.are.used.outside.of.selected.code.fragment")!!}\n$localVarStr"
+        val localVarStr = declarations.map { it.getName()!! }.sort()
+        return ErrorMessage.VARIABLES_ARE_USED_OUTSIDE.addAdditionalInfo(localVarStr)
     }
 
     return null
 }
 
-private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: ControlFlow): String? {
+private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: ControlFlow): ErrorMessage? {
     val declarationsOutOfScope = HashSet<JetNamedDeclaration>()
     if (controlFlow is JumpBasedControlFlow) {
         controlFlow.elementToInsertAfterCall.accept(
@@ -488,8 +488,8 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: Contro
     }
 
     if (declarationsOutOfScope.isNotEmpty()) {
-        val declStr = declarationsOutOfScope.map { it.getName()!! }.sort().makeString(separator = "\n")
-        return "${JetRefactoringBundle.message("declarations.will.move.out.of.scope")!!}\n$declStr"
+        val declStr = declarationsOutOfScope.map { it.getName()!! }.sort()
+        return ErrorMessage.DECLARATIONS_OUT_OF_SCOPE.addAdditionalInfo(declStr)
     }
 
     return null
@@ -497,14 +497,14 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(controlFlow: Contro
 
 fun ExtractionData.performAnalysis(): AnalysisResult {
     if (originalElements.empty) {
-        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(JetRefactoringBundle.message("cannot.refactor.no.expresson")!!))
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
     }
 
     val commonParent = PsiTreeUtil.findCommonParent(originalElements)!!
 
     val enclosingDeclaration = commonParent.getParentByType(javaClass<JetDeclarationWithBody>())
     if (enclosingDeclaration == null) {
-        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(JetRefactoringBundle.message("cannot.refactor.no.container")!!))
+        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_CONTAINER))
     }
 
     val resolveSession = originalFile.getLazyResolveSession()
@@ -527,7 +527,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
     }
 
-    val messages = ArrayList<String>()
+    val messages = ArrayList<ErrorMessage>()
 
     val (controlFlow, controlFlowMessage) = localInstructions.analyzeControlFlow(bindingContext, parameters, inferredResultType)
     controlFlowMessage?.let { messages.add(it) }

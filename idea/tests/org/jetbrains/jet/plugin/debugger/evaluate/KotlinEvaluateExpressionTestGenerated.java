@@ -71,6 +71,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/enums.kt");
     }
     
+    @TestMetadata("errors.kt")
+    public void testErrors() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/errors.kt");
+    }
+    
     @TestMetadata("extractLocalVariables.kt")
     public void testExtractLocalVariables() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/extractLocalVariables.kt");
@@ -114,11 +119,6 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
     @TestMetadata("stdlib.kt")
     public void testStdlib() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/stdlib.kt");
-    }
-    
-    @TestMetadata("syntacticError.kt")
-    public void testSyntacticError() throws Exception {
-        doTest("idea/testData/debugger/tinyApp/src/evaluate/syntacticError.kt");
     }
     
     @TestMetadata("vars.kt")

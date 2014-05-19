@@ -33,6 +33,8 @@ import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.psi.JetTypeConstraint
 import kotlin.properties.Delegates
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
+import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
+import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 
 data class Parameter(
         val argumentText: String,
@@ -137,12 +139,51 @@ data class ExtractionDescriptor(
 class AnalysisResult (
         val descriptor: ExtractionDescriptor?,
         val status: Status,
-        val messages: List<String>
+        val messages: List<ErrorMessage>
 ) {
     enum class Status {
         SUCCESS
         NON_CRITICAL_ERROR
         CRITICAL_ERROR
+    }
+
+    enum class ErrorMessage {
+        NO_EXPRESSION
+        NO_CONTAINER
+        SUPER_CALL
+        NON_LOCAL_DECLARATION
+        DENOTABLE_TYPES
+        MULTIPLE_OUTPUT
+        OUTPUT_AND_EXIT_POINT
+        MULTIPLE_EXIT_POINTS
+        VARIABLES_ARE_USED_OUTSIDE
+        DECLARATIONS_OUT_OF_SCOPE
+
+        var additionalInfo: List<String>? = null
+
+        fun addAdditionalInfo(info: List<String>): ErrorMessage {
+            additionalInfo = info
+            return this
+        }
+
+        fun renderMessage(): String {
+            val message = JetRefactoringBundle.message(when(this) {
+                NO_EXPRESSION -> "cannot.refactor.no.expresson"
+                NO_CONTAINER -> "cannot.refactor.no.container"
+                SUPER_CALL -> "cannot.extract.super.call"
+                NON_LOCAL_DECLARATION -> "cannot.extract.non.local.declaration.ref"
+                DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
+                MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
+                OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
+                MULTIPLE_EXIT_POINTS -> "selected.code.fragment.has.multiple.exit.points"
+                VARIABLES_ARE_USED_OUTSIDE -> "variables.are.used.outside.of.selected.code.fragment"
+                DECLARATIONS_OUT_OF_SCOPE -> "declarations.will.move.out.of.scope"
+            })!!
+            if (additionalInfo != null) {
+                return "$message\n${additionalInfo?.makeString("\n")}"
+            }
+            return message
+        }
     }
 }
 

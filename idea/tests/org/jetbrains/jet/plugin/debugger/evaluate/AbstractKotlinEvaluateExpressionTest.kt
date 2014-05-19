@@ -45,7 +45,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
         assert(expressions.size == expectedExpressionResults.size, "Sizes of test directives are different")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
-        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findStringWithPrefixes(it, "// RESULT: ") ?: throw AssertionError("Couldn't find expected result for block: $it") }
+        val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
 
         createDebugProcess(path)
 
