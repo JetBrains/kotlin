@@ -28,6 +28,8 @@ public interface JetStubElementTypes {
     JetObjectElementType OBJECT_DECLARATION = new JetObjectElementType("OBJECT_DECLARATION");
     JetPlaceHolderStubElementType<JetClassObject> CLASS_OBJECT =
             new JetPlaceHolderStubElementType<JetClassObject>("CLASS_OBJECT", JetClassObject.class);
+    JetPlaceHolderStubElementType<JetClassInitializer> ANONYMOUS_INITIALIZER =
+            new JetPlaceHolderStubElementType<JetClassInitializer>("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
 
     JetParameterElementType VALUE_PARAMETER = new JetParameterElementType("VALUE_PARAMETER");
     JetPlaceHolderStubElementType<JetParameterList> VALUE_PARAMETER_LIST =

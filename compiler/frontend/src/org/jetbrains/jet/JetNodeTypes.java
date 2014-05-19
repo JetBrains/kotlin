@@ -37,7 +37,7 @@ public interface JetNodeTypes {
 
     IElementType CLASS_OBJECT          = JetStubElementTypes.CLASS_OBJECT;
     IElementType ENUM_ENTRY            = JetStubElementTypes.ENUM_ENTRY;
-    JetNodeType ANONYMOUS_INITIALIZER = new JetNodeType("ANONYMOUS_INITIALIZER", JetClassInitializer.class);
+    IElementType ANONYMOUS_INITIALIZER = JetStubElementTypes.ANONYMOUS_INITIALIZER;
 
     IElementType TYPE_PARAMETER_LIST                 = JetStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                      = JetStubElementTypes.TYPE_PARAMETER;
