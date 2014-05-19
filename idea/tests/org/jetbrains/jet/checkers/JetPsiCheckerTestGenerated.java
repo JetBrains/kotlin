@@ -306,6 +306,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest("idea/testData/checker/regression/CoercionToUnit.kt");
         }
         
+        @TestMetadata("createInnerInstance.kt")
+        public void testCreateInnerInstance() throws Exception {
+            doTest("idea/testData/checker/regression/createInnerInstance.kt");
+        }
+        
         @TestMetadata("DoubleDefine.kt")
         public void testDoubleDefine() throws Exception {
             doTest("idea/testData/checker/regression/DoubleDefine.kt");

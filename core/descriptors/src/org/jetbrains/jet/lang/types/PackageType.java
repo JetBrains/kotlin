@@ -84,4 +84,9 @@ public class PackageType implements JetType {
         throwException();
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "[Package-type " + name + "]";
+    }
 }
