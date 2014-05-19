@@ -1,0 +1,3 @@
+import java.util.HashMap
+
+val x = HashMap<java.util.Date, String>(1)

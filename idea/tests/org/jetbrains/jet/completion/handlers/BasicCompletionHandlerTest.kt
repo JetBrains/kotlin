@@ -28,6 +28,8 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testClassCompletionInMiddle() = doTest(1, "TimeZone", " (java.util)", '\t')
 
+    fun testClassCompletionInImport() = doTest(1, "TimeZone", " (java.util)", '\t')
+
     fun testDoNotInsertImportForAlreadyImported() = doTest()
 
     fun testDoNotInsertDefaultJsImports() = doTest()
