@@ -103,7 +103,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
     protected void doTest(String filePath) throws IOException {
         File file = new File(filePath);
-        final File javaFilesDir = new File(FileUtil.getTempDirectory(), "java-files");
+        final File javaFilesDir = createJavaFilesDir();
 
         String expectedText = JetTestUtils.doLoadFile(file);
 
