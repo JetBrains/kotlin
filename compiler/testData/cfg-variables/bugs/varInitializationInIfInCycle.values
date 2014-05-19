@@ -1,0 +1,31 @@
+== foo ==
+fun foo(numbers: Collection<Int>) {
+    for (i in numbers) {
+        val b: Boolean
+        if (1 < 2) {
+            b = false
+        }
+        else {
+            b = true
+        }
+        use(b)
+        continue
+    }
+}
+---------------------
+numbers   <v1>   NEW()
+1         <v3>   NEW()
+<         <v5>   NEW(<v3>, <v4>)
+2         <v4>   NEW()
+1 < 2     <v5>   COPY
+false     <v6>   NEW()
+true      <v7>   NEW()
+use       <v9>   NEW(<v8>)
+b         <v8>   NEW()
+use(b)    <v9>   COPY
+=====================
+== use ==
+fun use(vararg a: Any?) = a
+---------------------
+a   <v1>   NEW()
+=====================

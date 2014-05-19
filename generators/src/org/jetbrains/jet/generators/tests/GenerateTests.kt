@@ -112,6 +112,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletion
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
 import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
+import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 
 fun main(args: Array<String>) {
@@ -244,6 +245,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractDataFlowTest>()) {
+            model("cfg-variables")
+        }
+
+        testClass(javaClass<AbstractPseudoValueTest>()) {
+            model("cfg")
             model("cfg-variables")
         }
 

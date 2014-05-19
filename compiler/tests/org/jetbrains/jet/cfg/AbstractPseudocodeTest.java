@@ -119,8 +119,12 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             checkPseudocode((PseudocodeImpl) pseudocode);
         }
 
-        File expectedInstructionsFile = JetTestUtils.replaceExtension(file, "instructions");
+        File expectedInstructionsFile = JetTestUtils.replaceExtension(file, getDataFileExtension());
         JetTestUtils.assertEqualsToFile(expectedInstructionsFile, instructionDump.toString());
+    }
+
+    protected String getDataFileExtension() {
+        return "instructions";
     }
 
     protected void checkPseudocode(PseudocodeImpl pseudocode) {

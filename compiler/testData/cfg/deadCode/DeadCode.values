@@ -1,0 +1,12 @@
+== test ==
+fun test() {
+    throw Exception()
+    test()
+}
+---------------------
+Exception                      <v0>   NEW()
+Exception()                    <v0>   COPY 
+test                           <v1>   NEW()
+test()                         <v1>   COPY 
+{ throw Exception() test() }   <v1>   COPY 
+=====================

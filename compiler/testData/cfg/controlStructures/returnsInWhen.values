@@ -1,0 +1,10 @@
+== illegalWhenBlock ==
+fun illegalWhenBlock(a: Any): Any {
+    when(a) {
+        is Int -> return a
+    }
+}
+---------------------
+a   <v1>   NEW()
+a   <v3>   NEW()
+=====================

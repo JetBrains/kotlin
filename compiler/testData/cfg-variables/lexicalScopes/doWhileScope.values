@@ -1,0 +1,18 @@
+== foo ==
+fun foo() {
+    "before"
+    do {
+        var a = 2
+    } while (a > 0)
+    "after"
+}
+---------------------
+"before"                                              <v0>   NEW()          
+2                                                     <v1>   NEW()          
+a                                                     <v2>   NEW()          
+>                                                     <v4>   NEW(<v2>, <v3>)
+0                                                     <v3>   NEW()          
+a > 0                                                 <v4>   COPY           
+"after"                                               <v5>   NEW()          
+{ "before" do { var a = 2 } while (a > 0) "after" }   <v5>   COPY           
+=====================

@@ -1,0 +1,10 @@
+== blockAndAndMismatch ==
+fun blockAndAndMismatch() : Boolean {
+  false || (return false)
+}
+---------------------
+false                         <v0>   NEW()    
+false                         <v1>   NEW()    
+false || (return false)       <v2>   NEW(<v0>)
+{ false || (return false) }   <v2>   COPY     
+=====================

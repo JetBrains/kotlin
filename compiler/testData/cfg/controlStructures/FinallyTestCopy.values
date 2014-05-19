@@ -1,0 +1,131 @@
+== doSmth ==
+fun doSmth() {}
+---------------------
+=====================
+== doSmth1 ==
+fun doSmth1() {}
+---------------------
+=====================
+== doSmth2 ==
+fun doSmth2() {}
+---------------------
+=====================
+== cond ==
+fun cond() {}
+---------------------
+=====================
+== testCopy1 ==
+fun testCopy1() : Int {
+    try {
+        doSmth()
+    }
+    catch (e: NullPointerException) {
+        doSmth1()
+    }
+    catch (e: Exception) {
+        doSmth2()
+    }
+    finally {
+        return 1
+    }
+}
+---------------------
+doSmth                                                                                                                       <v0>   NEW()                
+doSmth()                                                                                                                     <v0>   COPY                 
+{ doSmth() }                                                                                                                 <v0>   COPY                 
+doSmth1                                                                                                                      <v2>   NEW()
+doSmth1()                                                                                                                    <v2>   COPY                 
+{ doSmth1() }                                                                                                                <v2>   COPY                 
+doSmth2                                                                                                                      <v4>   NEW()
+doSmth2()                                                                                                                    <v4>   COPY                 
+{ doSmth2() }                                                                                                                <v4>   COPY                 
+1                                                                                                                            <v5>   NEW()                
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 }       <v6>   NEW(<v0>, <v2>, <v4>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 } }   <v6>   COPY                 
+=====================
+== testCopy2 ==
+fun testCopy2() {
+    while (cond()) {
+        try {
+            doSmth()
+        }
+        catch (e: NullPointerException) {
+            doSmth1()
+        }
+        catch (e: Exception) {
+            doSmth2()
+        }
+        finally {
+            if (cond()) return
+            else continue
+        }
+    }
+}
+---------------------
+cond                                                                                                                                                 <v0>   NEW()                
+cond()                                                                                                                                               <v0>   COPY                 
+doSmth                                                                                                                                               <v1>   NEW()                
+doSmth()                                                                                                                                             <v1>   COPY                 
+{ doSmth() }                                                                                                                                         <v1>   COPY                 
+doSmth1                                                                                                                                              <v3>   NEW()
+doSmth1()                                                                                                                                            <v3>   COPY                 
+{ doSmth1() }                                                                                                                                        <v3>   COPY                 
+doSmth2                                                                                                                                              <v5>   NEW()
+doSmth2()                                                                                                                                            <v5>   COPY                 
+{ doSmth2() }                                                                                                                                        <v5>   COPY                 
+cond                                                                                                                                                 <v6>   NEW()                
+cond()                                                                                                                                               <v6>   COPY                 
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }       <v7>   NEW(<v1>, <v3>, <v5>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } }   <v7>   COPY                 
+=====================
+== testCopy3 ==
+fun testCopy3() {
+    try {
+        doSmth()
+    }
+    catch (e: NullPointerException) {
+        doSmth1()
+    }
+    catch (e: Exception) {
+        doSmth2()
+    }
+    finally {
+        while (cond());
+    }
+}
+---------------------
+doSmth                                                                                                                              <v0>   NEW()                
+doSmth()                                                                                                                            <v0>   COPY                 
+{ doSmth() }                                                                                                                        <v0>   COPY                 
+doSmth1                                                                                                                             <v2>   NEW()
+doSmth1()                                                                                                                           <v2>   COPY                 
+{ doSmth1() }                                                                                                                       <v2>   COPY                 
+doSmth2                                                                                                                             <v4>   NEW()
+doSmth2()                                                                                                                           <v4>   COPY                 
+{ doSmth2() }                                                                                                                       <v4>   COPY                 
+cond                                                                                                                                <v5>   NEW()                
+cond()                                                                                                                              <v5>   COPY                 
+try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }       <v6>   NEW(<v0>, <v2>, <v4>)
+{ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); } }   <v6>   COPY                 
+=====================
+== doTestCopy4 ==
+fun doTestCopy4(list: List<String>?) : Int {
+    try {
+        doSmth()
+    }
+    finally {
+        if(list != null) {
+        }
+    }
+}
+---------------------
+doSmth                                                  <v1>   NEW()
+doSmth()                                                <v1>   COPY           
+{ doSmth() }                                            <v1>   COPY           
+list                                                    <v2>   NEW()          
+!=                                                      <v4>   NEW(<v2>, <v3>)
+null                                                    <v3>   NEW()          
+list != null                                            <v4>   COPY           
+try { doSmth() } finally { if(list != null) { } }       <v1>   COPY           
+{ try { doSmth() } finally { if(list != null) { } } }   <v1>   COPY           
+=====================

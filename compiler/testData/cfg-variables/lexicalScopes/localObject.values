@@ -1,0 +1,26 @@
+== foo ==
+fun foo() {
+    "before"
+    object A {
+        {
+            val a = 1
+        }
+        fun foo() {
+            val b = 2
+        }
+    }
+    "after"
+}
+---------------------
+"before"                                                                  <v0>   NEW()
+1                                                                         <v1>   NEW()
+"after"                                                                   <v2>   NEW()
+{ "before" object A { { val a = 1 } fun foo() { val b = 2 } } "after" }   <v2>   COPY 
+=====================
+== foo ==
+fun foo() {
+            val b = 2
+        }
+---------------------
+2   <v0>   NEW()
+=====================

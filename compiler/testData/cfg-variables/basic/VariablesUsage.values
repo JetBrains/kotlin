@@ -1,0 +1,31 @@
+== foo ==
+fun foo() {
+    var a = 1
+    use(a)
+    a = 2
+    use(a)
+}
+---------------------
+1                                   <v0>   NEW()    
+use                                 <v2>   NEW(<v1>)
+a                                   <v1>   NEW()    
+use(a)                              <v2>   COPY     
+2                                   <v3>   NEW()    
+use                                 <v5>   NEW(<v4>)
+a                                   <v4>   NEW()    
+use(a)                              <v5>   COPY     
+{ var a = 1 use(a) a = 2 use(a) }   <v5>   COPY     
+=====================
+== bar ==
+fun bar() {
+    val b: Int
+    b = 3
+}
+---------------------
+3   <v0>   NEW()
+=====================
+== use ==
+fun use(a: Int) = a
+---------------------
+a   <v1>   NEW()
+=====================

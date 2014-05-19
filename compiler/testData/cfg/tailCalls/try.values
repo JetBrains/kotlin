@@ -1,0 +1,12 @@
+== foo ==
+tailRecursive fun foo() {
+    try {
+        return foo()
+    }
+    catch (e: Throwable) {
+    }
+}
+---------------------
+foo     <v0>   NEW()
+foo()   <v0>   COPY
+=====================

@@ -1,0 +1,17 @@
+== Bar ==
+abstract class Bar {
+    abstract var bar : String
+    fun foo() = "foo" + this.$bar
+}
+---------------------
+=====================
+== foo ==
+fun foo() = "foo" + this.$bar
+---------------------
+"foo"               <v0>   NEW()          
++                   <v3>   NEW(<v0>, <v2>)
+this                <v1>   NEW()          
+$bar                <v2>   NEW(<v1>)      
+this.$bar           <v2>   COPY           
+"foo" + this.$bar   <v3>   COPY           
+=====================

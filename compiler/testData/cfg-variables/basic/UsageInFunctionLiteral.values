@@ -1,0 +1,32 @@
+== foo ==
+fun foo() {
+    val a = 1
+    val f = { (x: Int) ->
+        val y = x + a
+        use(a)
+    }
+}
+---------------------
+1                                      <v0>   NEW()
+{ (x: Int) -> val y = x + a use(a) }   <v1>   NEW()
+=====================
+== anonymous_0 ==
+{ (x: Int) ->
+        val y = x + a
+        use(a)
+    }
+---------------------
+x                      <v1>   NEW()
++                      <v3>   NEW(<v1>, <v2>)
+a                      <v2>   NEW()          
+x + a                  <v3>   COPY           
+use                    <v5>   NEW(<v4>)      
+a                      <v4>   NEW()          
+use(a)                 <v5>   COPY           
+val y = x + a use(a)   <v5>   COPY           
+=====================
+== use ==
+fun use(vararg a: Any?) = a
+---------------------
+a   <v1>   NEW()
+=====================

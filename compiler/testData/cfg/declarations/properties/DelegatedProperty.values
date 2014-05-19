@@ -1,0 +1,22 @@
+== Delegate ==
+class Delegate {
+    fun get(_this: Any, p: PropertyMetadata): Int = 0
+}
+---------------------
+=====================
+== get ==
+fun get(_this: Any, p: PropertyMetadata): Int = 0
+---------------------
+0   <v2>   NEW()
+=====================
+== a ==
+val a = Delegate()
+---------------------
+Delegate     <v0>   NEW()
+Delegate()   <v0>   COPY 
+=====================
+== b ==
+val b by a
+---------------------
+a   <v0>   NEW()
+=====================

@@ -1,0 +1,62 @@
+== TestFunctionLiteral ==
+class TestFunctionLiteral {
+    val sum: (Int)->Int = { (x: Int) ->
+        sum(x - 1) + x
+    }
+}
+---------------------
+{ (x: Int) -> sum(x - 1) + x }   <v0>   NEW()
+=====================
+== anonymous_0 ==
+{ (x: Int) ->
+        sum(x - 1) + x
+    }
+---------------------
+sum              <v5>   NEW(<v1>, <v4>)
+x                <v2>   NEW()          
+-                <v4>   NEW(<v2>, <v3>)
+1                <v3>   NEW()          
+x - 1            <v4>   COPY           
+sum(x - 1)       <v5>   COPY           
++                <v7>   NEW(<v5>, <v6>)
+x                <v6>   NEW()          
+sum(x - 1) + x   <v7>   COPY           
+sum(x - 1) + x   <v7>   COPY           
+=====================
+== A ==
+open class A(val a: A)
+---------------------
+=====================
+== TestObjectLiteral ==
+class TestObjectLiteral {
+    val obj: A = object: A(obj) {
+        {
+            val x = obj
+        }
+        fun foo() {
+            val y = obj
+        }
+    }
+}
+---------------------
+obj                                                            <v0>   NEW()
+obj                                                            <v1>   NEW()
+object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v2>   NEW()
+=====================
+== foo ==
+fun foo() {
+            val y = obj
+        }
+---------------------
+obj   <v0>   NEW()
+=====================
+== TestOther ==
+class TestOther {
+    val x: Int = x + 1
+}
+---------------------
+x       <v0>   NEW()          
++       <v2>   NEW(<v0>, <v1>)
+1       <v1>   NEW()          
+x + 1   <v2>   COPY           
+=====================

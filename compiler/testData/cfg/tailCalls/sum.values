@@ -1,0 +1,25 @@
+== sum ==
+tailRecursive fun sum(x: Long, sum: Long): Long {
+    if (x == 0.toLong()) return sum
+    return sum(x - 1, sum + x)
+}
+---------------------
+x                     <v2>    NEW()
+==                    <v5>    NEW(<v2>, <v4>)  
+0                     <v3>    NEW()            
+toLong                <v4>    NEW(<v3>)        
+toLong()              <v4>    COPY             
+0.toLong()            <v4>    COPY             
+x == 0.toLong()       <v5>    COPY             
+sum                   <v6>    NEW()            
+sum                   <v13>   NEW(<v9>, <v12>) 
+x                     <v7>    NEW()            
+-                     <v9>    NEW(<v7>, <v8>)  
+1                     <v8>    NEW()            
+x - 1                 <v9>    COPY             
+sum                   <v10>   NEW()            
++                     <v12>   NEW(<v10>, <v11>)
+x                     <v11>   NEW()            
+sum + x               <v12>   COPY             
+sum(x - 1, sum + x)   <v13>   COPY             
+=====================

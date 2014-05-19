@@ -1,0 +1,20 @@
+== foo ==
+fun foo() {
+    class B {
+        val a: Int
+            get() {
+                val b: Int
+                return b
+            }
+    }
+}
+---------------------
+=====================
+== get_a ==
+get() {
+                val b: Int
+                return b
+            }
+---------------------
+b   <v0>   NEW()
+=====================

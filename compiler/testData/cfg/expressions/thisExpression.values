@@ -1,0 +1,9 @@
+== foo ==
+fun Function0<Unit>.foo() {
+    this()
+}
+---------------------
+this         <v0>   NEW()
+this()       <v0>   COPY 
+{ this() }   <v0>   COPY 
+=====================

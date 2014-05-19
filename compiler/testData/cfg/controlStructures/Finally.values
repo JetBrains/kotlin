@@ -1,0 +1,388 @@
+== t1 ==
+fun t1() {
+  try {
+    1
+  } finally {
+    2
+  }
+}
+---------------------
+1                             <v0>   NEW()
+{ 1 }                         <v0>   COPY 
+2                             <v1>   NEW()
+{ 2 }                         <v1>   COPY 
+try { 1 } finally { 2 }       <v0>   COPY 
+{ try { 1 } finally { 2 } }   <v0>   COPY 
+=====================
+== t2 ==
+fun t2() {
+  try {
+    1
+    if (2 > 3) {
+      return
+    }
+  } finally {
+    2
+  }
+}
+---------------------
+1       <v0>   NEW()          
+2       <v1>   NEW()          
+>       <v3>   NEW(<v1>, <v2>)
+3       <v2>   NEW()          
+2 > 3   <v3>   COPY           
+2       <v4>   NEW()          
+{ 2 }   <v4>   COPY           
+=====================
+== t3 ==
+fun t3() {
+  try {
+    1
+    @l{ () ->
+        if (2 > 3) {
+          return@l
+        }
+    }
+  } finally {
+    2
+  }
+}
+---------------------
+1                                                                 <v0>   NEW()
+{ () -> if (2 > 3) { return@l } }                                 <v1>   NEW()
+@l{ () -> if (2 > 3) { return@l } }                               <v1>   COPY 
+{ 1 @l{ () -> if (2 > 3) { return@l } } }                         <v1>   COPY 
+2                                                                 <v2>   NEW()
+{ 2 }                                                             <v2>   COPY 
+try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>   COPY 
+{ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 } }   <v1>   COPY 
+=====================
+== anonymous_0 ==
+{ () ->
+        if (2 > 3) {
+          return@l
+        }
+    }
+---------------------
+2       <v0>   NEW()          
+>       <v2>   NEW(<v0>, <v1>)
+3       <v1>   NEW()          
+2 > 3   <v2>   COPY           
+=====================
+== t4 ==
+fun t4() {
+  @l{ () ->
+    try {
+      1
+      if (2 > 3) {
+        return@l
+      }
+    } finally {
+      2
+    }
+  }
+}
+---------------------
+{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }         <v0>   NEW()
+@l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }       <v0>   COPY 
+{ @l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } }   <v0>   COPY 
+=====================
+== anonymous_1 ==
+{ () ->
+    try {
+      1
+      if (2 > 3) {
+        return@l
+      }
+    } finally {
+      2
+    }
+  }
+---------------------
+1       <v0>   NEW()          
+2       <v1>   NEW()          
+>       <v3>   NEW(<v1>, <v2>)
+3       <v2>   NEW()          
+2 > 3   <v3>   COPY           
+2       <v4>   NEW()          
+{ 2 }   <v4>   COPY           
+=====================
+== t5 ==
+fun t5() {
+  @l while(true) {
+    try {
+      1
+      if (2 > 3) {
+        break @l
+      }
+    } finally {
+      2
+    }
+  }
+}
+---------------------
+true    <v0>   NEW()          
+1       <v1>   NEW()          
+2       <v2>   NEW()          
+>       <v4>   NEW(<v2>, <v3>)
+3       <v3>   NEW()          
+2 > 3   <v4>   COPY           
+2       <v5>   NEW()          
+{ 2 }   <v5>   COPY           
+=====================
+== t6 ==
+fun t6() {
+  try {
+    @l while(true) {
+        1
+        if (2 > 3) {
+          break @l
+        }
+      }
+      5
+  } finally {
+    2
+  }
+}
+---------------------
+true                                                                       <v0>   NEW()          
+1                                                                          <v1>   NEW()          
+2                                                                          <v2>   NEW()          
+>                                                                          <v4>   NEW(<v2>, <v3>)
+3                                                                          <v3>   NEW()          
+2 > 3                                                                      <v4>   COPY           
+5                                                                          <v5>   NEW()          
+{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v5>   COPY           
+2                                                                          <v6>   NEW()          
+{ 2 }                                                                      <v6>   COPY           
+try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v5>   COPY           
+{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v5>   COPY           
+=====================
+== t7 ==
+fun t7() {
+  try {
+    @l while(true) {
+        1
+        if (2 > 3) {
+          break @l
+        }
+      }
+  } finally {
+    2
+  }
+}
+---------------------
+true    <v0>   NEW()          
+1       <v1>   NEW()          
+2       <v2>   NEW()          
+>       <v4>   NEW(<v2>, <v3>)
+3       <v3>   NEW()          
+2 > 3   <v4>   COPY           
+2       <v5>   NEW()          
+{ 2 }   <v5>   COPY           
+=====================
+== t8 ==
+fun t8(a : Int) {
+  @l for (i in 1..a) {
+    try {
+      1
+      if (2 > 3) {
+        continue @l
+      }
+    } finally {
+      2
+    }
+  }
+}
+---------------------
+1       <v1>   NEW()
+..      <v3>   NEW(<v1>, <v2>)
+a       <v2>   NEW()
+1..a    <v3>   COPY
+1       <v5>   NEW()
+2       <v6>   NEW()
+>       <v8>   NEW(<v6>, <v7>)
+3       <v7>   NEW()
+2 > 3   <v8>   COPY
+2       <v9>   NEW()
+{ 2 }   <v9>   COPY
+=====================
+== t9 ==
+fun t9(a : Int) {
+  try {
+    @l for (i in 1..a) {
+        1
+        if (2 > 3) {
+          continue @l
+        }
+      }
+      5
+  } finally {
+    2
+  }
+}
+---------------------
+1                                                                                 <v1>    NEW()
+..                                                                                <v3>    NEW(<v1>, <v2>)
+a                                                                                 <v2>    NEW()          
+1..a                                                                              <v3>    COPY
+1                                                                                 <v5>    NEW()          
+2                                                                                 <v6>    NEW()          
+>                                                                                 <v8>    NEW(<v6>, <v7>)
+3                                                                                 <v7>    NEW()          
+2 > 3                                                                             <v8>    COPY           
+5                                                                                 <v9>    NEW()          
+{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v9>    COPY           
+2                                                                                 <v10>   NEW()          
+{ 2 }                                                                             <v10>   COPY           
+try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v9>    COPY           
+{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v9>    COPY           
+=====================
+== t10 ==
+fun t10(a : Int) {
+  try {
+    @l for (i in 1..a) {
+        1
+        if (2 > 3) {
+          continue @l
+        }
+      }
+  } finally {
+    2
+  }
+}
+---------------------
+1       <v1>   NEW()
+..      <v3>   NEW(<v1>, <v2>)
+a       <v2>   NEW()
+1..a    <v3>   COPY
+1       <v5>   NEW()
+2       <v6>   NEW()
+>       <v8>   NEW(<v6>, <v7>)
+3       <v7>   NEW()
+2 > 3   <v8>   COPY
+2       <v9>   NEW()
+{ 2 }   <v9>   COPY
+=====================
+== t11 ==
+fun t11() {
+  try {
+    return 1
+  }
+  finally {
+    return 2
+  }
+}
+---------------------
+1   <v0>   NEW()
+2   <v1>   NEW()
+=====================
+== t12 ==
+fun t12() : Int {
+    try {
+        return 1
+    }
+    finally {
+        doSmth(3)
+    }
+}
+---------------------
+1               <v0>   NEW()    
+doSmth          <v2>   NEW(<v1>)
+3               <v1>   NEW()    
+doSmth(3)       <v2>   COPY     
+{ doSmth(3) }   <v2>   COPY     
+=====================
+== t13 ==
+fun t13() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        doSmth(2)
+    }
+    finally {
+        doSmth(3)
+    }
+}
+---------------------
+1                                                                                                   <v0>   NEW()    
+doSmth                                                                                              <v5>   NEW(<v4>)
+2                                                                                                   <v4>   NEW()    
+doSmth(2)                                                                                           <v5>   COPY     
+{ doSmth(2) }                                                                                       <v5>   COPY     
+doSmth                                                                                              <v2>   NEW(<v1>)
+3                                                                                                   <v1>   NEW()    
+doSmth(3)                                                                                           <v2>   COPY     
+{ doSmth(3) }                                                                                       <v2>   COPY     
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v5>   COPY     
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v5>   COPY     
+=====================
+== t14 ==
+fun t14() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        doSmth(2)
+    }
+}
+---------------------
+1                                                                             <v0>   NEW()    
+doSmth                                                                        <v3>   NEW(<v2>)
+2                                                                             <v2>   NEW()    
+doSmth(2)                                                                     <v3>   COPY     
+{ doSmth(2) }                                                                 <v3>   COPY     
+try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v3>   COPY     
+{ try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v3>   COPY     
+=====================
+== t15 ==
+fun t15() : Int {
+    try {
+        return 1
+    }
+    catch (e: UnsupportedOperationException) {
+        return 2
+    }
+    finally {
+        doSmth(3)
+    }
+}
+---------------------
+1               <v0>   NEW()
+2               <v4>   NEW()
+doSmth          <v2>   NEW(<v1>)
+3               <v1>   NEW()
+doSmth(3)       <v2>   COPY
+{ doSmth(3) }   <v2>   COPY
+=====================
+== t16 ==
+fun t16() : Int {
+    try {
+        doSmth(1)
+    }
+    catch (e: UnsupportedOperationException) {
+        return 2
+    }
+    finally {
+        doSmth(3)
+    }
+}
+---------------------
+doSmth                                                                                              <v1>   NEW(<v0>)
+1                                                                                                   <v0>   NEW()    
+doSmth(1)                                                                                           <v1>   COPY     
+{ doSmth(1) }                                                                                       <v1>   COPY     
+2                                                                                                   <v3>   NEW()
+doSmth                                                                                              <v5>   NEW(<v4>)
+3                                                                                                   <v4>   NEW()    
+doSmth(3)                                                                                           <v5>   COPY     
+{ doSmth(3) }                                                                                       <v5>   COPY     
+try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v1>   COPY     
+{ try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v1>   COPY     
+=====================
+== doSmth ==
+fun doSmth(i: Int) {
+}
+---------------------
+=====================

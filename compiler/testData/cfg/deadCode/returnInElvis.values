@@ -1,0 +1,9 @@
+== foo ==
+fun foo() {
+    return ?: null
+}
+---------------------
+null                 <v0>   NEW()
+return ?: null       <v0>   COPY 
+{ return ?: null }   <v0>   COPY 
+=====================

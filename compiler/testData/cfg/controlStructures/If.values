@@ -1,0 +1,55 @@
+== t1 ==
+fun t1(b: Boolean) {
+    var u: String
+    if (b) {
+        u = "s"
+    }
+    doSmth(u)
+
+    var r: String
+    if (b) {
+        r = "s"
+    }
+    else {
+        r = "t"
+    }
+    doSmth(r)
+}
+---------------------
+b                                                                                                            <v1>   NEW()
+"s"                                                                                                          <v2>   NEW()    
+doSmth                                                                                                       <v4>   NEW(<v3>)
+u                                                                                                            <v3>   NEW()    
+doSmth(u)                                                                                                    <v4>   COPY     
+b                                                                                                            <v5>   NEW()    
+"s"                                                                                                          <v6>   NEW()    
+"t"                                                                                                          <v7>   NEW()    
+doSmth                                                                                                       <v9>   NEW(<v8>)
+r                                                                                                            <v8>   NEW()    
+doSmth(r)                                                                                                    <v9>   COPY     
+{ var u: String if (b) { u = "s" } doSmth(u) var r: String if (b) { r = "s" } else { r = "t" } doSmth(r) }   <v9>   COPY     
+=====================
+== t2 ==
+fun t2(b: Boolean) {
+    val i = 3
+    if (b) {
+        return;
+    }
+    doSmth(i)
+    if (i is Int) {
+        return;
+    }
+}
+---------------------
+3           <v1>   NEW()
+b           <v2>   NEW()
+doSmth      <v4>   NEW(<v3>)
+i           <v3>   NEW()
+doSmth(i)   <v4>   COPY
+i           <v5>   NEW()
+i is Int    <v6>   NEW(<v5>)
+=====================
+== doSmth ==
+fun doSmth(s: String) {}
+---------------------
+=====================

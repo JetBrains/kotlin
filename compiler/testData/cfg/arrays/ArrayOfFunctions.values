@@ -1,0 +1,12 @@
+== test ==
+fun test(array: Array<(Int)->Unit>) {
+    array[11](3)
+}
+---------------------
+array              <v1>   NEW()
+11                 <v2>   NEW()
+array[11]          <v5>   NEW(<v3>, <v4>)
+3                  <v4>   NEW()
+array[11](3)       <v5>   COPY
+{ array[11](3) }   <v5>   COPY
+=====================

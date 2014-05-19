@@ -1,0 +1,20 @@
+== t1 ==
+fun t1() {
+    for (i in 1..2) {
+        doSmth(i)
+    }
+}
+---------------------
+1               <v0>   NEW()          
+..              <v2>   NEW(<v0>, <v1>)
+2               <v1>   NEW()          
+1..2            <v2>   COPY
+doSmth          <v5>   NEW(<v4>)      
+i               <v4>   NEW()          
+doSmth(i)       <v5>   COPY           
+{ doSmth(i) }   <v5>   COPY           
+=====================
+== doSmth ==
+fun doSmth(i: Int) {}
+---------------------
+=====================

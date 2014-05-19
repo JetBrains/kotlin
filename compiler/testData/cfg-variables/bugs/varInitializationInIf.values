@@ -1,0 +1,23 @@
+== foo ==
+fun foo() {
+    val b: Boolean
+    if (1 < 2) {
+        b = false
+    }
+    else {
+        b = true
+    }
+    use(b)
+}
+---------------------
+1                                                                      <v0>   NEW()          
+<                                                                      <v2>   NEW(<v0>, <v1>)
+2                                                                      <v1>   NEW()          
+1 < 2                                                                  <v2>   COPY           
+false                                                                  <v3>   NEW()          
+true                                                                   <v4>   NEW()          
+use                                                                    <v6>   NEW(<v5>)      
+b                                                                      <v5>   NEW()          
+use(b)                                                                 <v6>   COPY           
+{ val b: Boolean if (1 < 2) { b = false } else { b = true } use(b) }   <v6>   COPY           
+=====================

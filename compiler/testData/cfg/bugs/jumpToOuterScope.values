@@ -1,0 +1,19 @@
+== foo ==
+fun foo(c: Collection<Int>) {
+    for (e in c) {
+        {
+            break
+        }
+    }
+}
+---------------------
+c               <v1>   NEW()
+{ break }       <v3>   NEW()
+{ { break } }   <v3>   COPY
+=====================
+== anonymous_0 ==
+{
+            break
+        }
+---------------------
+=====================

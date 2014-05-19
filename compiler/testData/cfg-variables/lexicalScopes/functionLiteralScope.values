@@ -1,0 +1,26 @@
+== foo ==
+fun foo() {
+    "before"
+    val b = 1
+    val f = { (x: Int) ->
+        val a = x + b
+    }
+    "after"
+}
+---------------------
+"before"                                                               <v0>   NEW()
+1                                                                      <v1>   NEW()
+{ (x: Int) -> val a = x + b }                                          <v2>   NEW()
+"after"                                                                <v3>   NEW()
+{ "before" val b = 1 val f = { (x: Int) -> val a = x + b } "after" }   <v3>   COPY 
+=====================
+== anonymous_0 ==
+{ (x: Int) ->
+        val a = x + b
+    }
+---------------------
+x       <v1>   NEW()
++       <v3>   NEW(<v1>, <v2>)
+b       <v2>   NEW()
+x + b   <v3>   COPY
+=====================
