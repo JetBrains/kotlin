@@ -346,9 +346,7 @@ private fun ExtractionData.inferParametersInfo(
                 if (hasClassObjectReceiver) thisDescriptor!!.getContainingDeclaration() as? ClassDescriptor else null
 
         if (classObjectClassDescriptor != null) {
-            if (!classObjectClassDescriptor.canBeReferencedViaImport()) {
-                return ErrorMessage.NON_LOCAL_DECLARATION
-            }
+            assert (classObjectClassDescriptor.canBeReferencedViaImport(), "Class object should be allowed only for importable classes: className = ${classObjectClassDescriptor.getName().asString()}")
 
             replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
         }

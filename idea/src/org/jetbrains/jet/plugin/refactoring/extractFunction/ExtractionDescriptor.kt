@@ -151,7 +151,6 @@ class AnalysisResult (
         NO_EXPRESSION
         NO_CONTAINER
         SUPER_CALL
-        NON_LOCAL_DECLARATION
         DENOTABLE_TYPES
         MULTIPLE_OUTPUT
         OUTPUT_AND_EXIT_POINT
@@ -171,7 +170,6 @@ class AnalysisResult (
                 NO_EXPRESSION -> "cannot.refactor.no.expresson"
                 NO_CONTAINER -> "cannot.refactor.no.container"
                 SUPER_CALL -> "cannot.extract.super.call"
-                NON_LOCAL_DECLARATION -> "cannot.extract.non.local.declaration.ref"
                 DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
                 MULTIPLE_OUTPUT -> "selected.code.fragment.has.multiple.output.values"
                 OUTPUT_AND_EXIT_POINT -> "selected.code.fragment.has.output.values.and.exit.points"
