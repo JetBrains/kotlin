@@ -36,8 +36,15 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
 
     public static boolean equals(@NotNull TypeConstructor me, Object other) {
         if (!(other instanceof TypeConstructor)) return false;
+
         ClassifierDescriptor myDescriptor = me.getDeclarationDescriptor();
         ClassifierDescriptor otherDescriptor = ((TypeConstructor) other).getDeclarationDescriptor();
+
+        // All error types have the same descriptor
+        if (myDescriptor != null && ErrorUtils.isError(myDescriptor)
+            || otherDescriptor != null && ErrorUtils.isError(otherDescriptor)) {
+            return me == other;
+        }
 
         if (myDescriptor == otherDescriptor) return true;
 
@@ -51,8 +58,9 @@ public abstract class AbstractClassTypeConstructor implements TypeConstructor {
     }
 
     public static int hashCode(@NotNull TypeConstructor me) {
-        if (me.getDeclarationDescriptor() instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) me.getDeclarationDescriptor();
+        ClassifierDescriptor descriptor = me.getDeclarationDescriptor();
+        if (descriptor instanceof ClassDescriptor && !ErrorUtils.isError(descriptor)) {
+            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             return DescriptorUtils.getFqName(classDescriptor).hashCode();
         }
         return System.identityHashCode(me);
