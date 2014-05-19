@@ -727,7 +727,8 @@ public class KotlinBuiltIns {
     }
 
     public boolean isFunctionType(@NotNull JetType type) {
-        if (!(type instanceof PackageType) && setContainsClassOf(functionClassesSet, type)) return true;
+        if (type instanceof PackageType) return false;
+        if (setContainsClassOf(functionClassesSet, type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isFunctionType(superType)) return true;
@@ -742,7 +743,8 @@ public class KotlinBuiltIns {
     }
 
     public boolean isExtensionFunctionType(@NotNull JetType type) {
-        if (!(type instanceof PackageType) && setContainsClassOf(extensionFunctionClassesSet, type)) return true;
+        if (type instanceof PackageType) return false;
+        if (setContainsClassOf(extensionFunctionClassesSet, type)) return true;
 
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isExtensionFunctionType(superType)) return true;
