@@ -26,7 +26,11 @@ import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementType;
 import org.jetbrains.jet.plugin.JetLanguage;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class JetElementImplStub<T extends StubElement> extends StubBasedPsiElementBase<T>
         implements JetElement, StubBasedPsiElement<T> {
@@ -81,5 +85,12 @@ public class JetElementImplStub<T extends StubElement> extends StubBasedPsiEleme
     @Override
     public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
         return visitor.visitJetElement(this, data);
+    }
+
+    @NotNull
+    protected <PsiT extends JetElementImplStub<?>, StubT extends StubElement> List<PsiT> getStubOrPsiChildrenAsList(
+            @NotNull JetStubElementType<StubT, PsiT> elementType
+    ) {
+        return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));
     }
 }

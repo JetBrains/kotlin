@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.util.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -28,14 +27,6 @@ import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lexer.JetTokens;
 
 public class JetParameter extends JetNamedDeclarationStub<PsiJetParameterStub> {
-    public static final JetParameter[] EMPTY_ARRAY = new JetParameter[0];
-
-    public static final ArrayFactory<JetParameter> ARRAY_FACTORY = new ArrayFactory<JetParameter>() {
-        @Override
-        public JetParameter[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new JetParameter[count];
-        }
-    };
 
     public JetParameter(@NotNull ASTNode node) {
         super(node);

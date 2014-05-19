@@ -22,12 +22,14 @@ import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayFactory;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.plugin.JetLanguage;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 public abstract class JetStubElementType<StubT extends StubElement, PsiT extends JetElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
@@ -36,8 +38,12 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     private final Constructor<PsiT> byNodeConstructor;
     @NotNull
     private final Constructor<PsiT> byStubConstructor;
+    @NotNull
+    private final PsiT[] emptyArray;
+    @NotNull
+    private final ArrayFactory<PsiT> arrayFactory;
 
-    public JetStubElementType(@NotNull @NonNls String debugName, @NotNull Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
+    public JetStubElementType(@NotNull @NonNls String debugName, @NotNull final Class<PsiT> psiClass, @NotNull Class<?> stubClass) {
         super(debugName, JetLanguage.INSTANCE);
         try {
             byNodeConstructor = psiClass.getConstructor(ASTNode.class);
@@ -46,6 +52,19 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
         catch (NoSuchMethodException e) {
             throw new RuntimeException("Stub element type declaration for " + psiClass.getSimpleName() + " is missing required constructors",e);
         }
+        //noinspection unchecked
+        emptyArray = (PsiT[]) Array.newInstance(psiClass, 0);
+        arrayFactory = new ArrayFactory<PsiT>() {
+            @NotNull
+            @Override
+            public PsiT[] create(int count) {
+                if (count == 0) {
+                    return emptyArray;
+                }
+                //noinspection unchecked
+                return (PsiT[]) Array.newInstance(psiClass, count);
+            }
+        };
     }
 
     @NotNull
@@ -106,5 +125,10 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @Override
     public void indexStub(@NotNull StubT stub, @NotNull IndexSink sink) {
         // do not force inheritors to implement this method
+    }
+
+    @NotNull
+    public ArrayFactory<PsiT> getArrayFactory() {
+        return arrayFactory;
     }
 }

@@ -21,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class JetParameterList extends JetElementImplStub<PsiJetPlaceHolderStub<JetParameterList>> {
@@ -40,6 +39,6 @@ public class JetParameterList extends JetElementImplStub<PsiJetPlaceHolderStub<J
 
     @NotNull
     public List<JetParameter> getParameters() {
-        return Arrays.asList(getStubOrPsiChildren(JetStubElementTypes.VALUE_PARAMETER, JetParameter.ARRAY_FACTORY));
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.VALUE_PARAMETER);
     }
 }
