@@ -112,6 +112,7 @@ import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentCompletion
 import org.jetbrains.jet.plugin.debugger.evaluate.AbstractCodeFragmentHighlightingTest
 import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
+import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -569,6 +570,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractSmartSelectionTest>()) {
             model("smartSelection", testMethod = "doTestSmartSelection", pattern = """^([^\.]+)\.kt$""")
+        }
+
+        testClass(javaClass<AbstractKotlinFileStructureTest>()) {
+            model("structureView/fileStructure")
         }
 
         testClass(javaClass<AbstractExpressionSelectionTest>()) {

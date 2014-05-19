@@ -10,6 +10,9 @@
   <item name='com.intellij.testFramework.PlatformTestCase com.intellij.openapi.module.Module createModule(java.lang.String)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.testFramework.PlatformTestUtil java.lang.String print(javax.swing.JTree, boolean)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.testFramework.UsefulTestCase java.lang.String getTestName(boolean)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
