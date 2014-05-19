@@ -60,7 +60,17 @@ public object ShortenReferences {
             process(listOf(file), { element ->
                 if (rangeMarker.isValid()) {
                     val range = TextRange(rangeMarker.getStartOffset(), rangeMarker.getEndOffset())
-                    val elementRange = element.getTextRange()!!
+
+                    var elementRange = element.getTextRange()!!
+
+                    // for qualified call expression take only the part without parenthesis
+                    val calleeExpression = ((element as? JetDotQualifiedExpression)
+                        ?.getSelectorExpression() as? JetCallExpression)
+                            ?.getCalleeExpression()
+                    if (calleeExpression != null) {
+                        elementRange = TextRange(elementRange.getStartOffset(), calleeExpression.getTextRange()!!.getEndOffset())
+                    }
+
                     when {
                         range.contains(elementRange) -> FilterResult.PROCESS
                         range.intersects(elementRange) -> FilterResult.GO_INSIDE
