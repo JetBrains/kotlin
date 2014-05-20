@@ -40,7 +40,6 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     private final Stack<LexicalScope> lexicalScopes = new Stack<LexicalScope>();
     private final Map<JetElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<JetElement, BreakableBlockInfo>();
     private int labelCount = 0;
-    private int allowDeadLabelCount = 0;
 
     private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
 
