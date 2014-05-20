@@ -4,4 +4,4 @@ fun b() {
 
 }
 
-var b = ""
+var b = b()
