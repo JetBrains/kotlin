@@ -38,6 +38,9 @@ public class AsmTypeConstants {
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadataImpl");
 
+    public static final Type K_CLASS_IMPL_TYPE = Type.getObjectType("kotlin/reflect/jvm/internal/KClassImpl");
+    public static final Type K_PACKAGE_IMPL_TYPE = Type.getObjectType("kotlin/reflect/jvm/internal/KPackageImpl");
+
     public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
 
     public static Type getType(@NotNull Class<?> javaClass) {

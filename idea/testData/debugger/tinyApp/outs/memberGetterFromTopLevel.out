@@ -1,7 +1,7 @@
-LineBreakpoint created at memberGetterFromTopLevel.kt:13
+LineBreakpoint created at memberGetterFromTopLevel.kt:15
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!RT_JAR! memberGetterFromTopLevel.MemberGetterFromTopLevelPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-memberGetterFromTopLevel.kt:12
+memberGetterFromTopLevel.kt:14
 memberGetterFromTopLevel.kt:5
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 

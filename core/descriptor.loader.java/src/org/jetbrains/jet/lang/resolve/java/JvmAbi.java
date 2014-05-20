@@ -45,6 +45,8 @@ public final class JvmAbi {
     public static final String CLASS_OBJECT_FIELD = "object$";
 
     public static final FqName K_OBJECT = new FqName("kotlin.jvm.internal.KObject");
+    public static final String KOTLIN_CLASS_FIELD_NAME = "$kotlinClass";
+    public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
 
     public static boolean isClassObjectFqName(@NotNull FqName fqName) {
         return fqName.lastSegmentIs(Name.identifier(CLASS_OBJECT_CLASS_NAME));

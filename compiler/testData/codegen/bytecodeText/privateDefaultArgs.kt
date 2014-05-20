@@ -13,4 +13,4 @@ fun box(): String {
 }
 
 // 0 INVOKEVIRTUAL
-// 3 INVOKESPECIAL
+// 2 INVOKESPECIAL B\.foo

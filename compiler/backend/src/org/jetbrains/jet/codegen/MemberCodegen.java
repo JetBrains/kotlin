@@ -50,12 +50,12 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.TraitImpl;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.TraitImpl;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> extends ParentCodegenAware {
@@ -314,6 +314,27 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             }
         }
         return false;
+    }
+
+    public static void generateReflectionObjectField(
+            @NotNull GenerationState state,
+            @NotNull Type thisAsmType,
+            @NotNull ClassBuilder classBuilder,
+            @NotNull Type kImplType,
+            @NotNull String fieldName,
+            @NotNull InstructionAdapter v
+    ) {
+        // TODO: generic signature
+        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, fieldName, kImplType.getDescriptor(),
+                              null, null);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+
+        v.anew(kImplType);
+        v.dup();
+        v.aconst(thisAsmType);
+        v.invokespecial(kImplType.getInternalName(), "<init>", "(Ljava/lang/Class;)V", false);
+        v.putstatic(thisAsmType.getInternalName(), fieldName, kImplType.getDescriptor());
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {

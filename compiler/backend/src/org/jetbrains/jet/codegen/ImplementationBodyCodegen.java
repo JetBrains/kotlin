@@ -72,8 +72,7 @@ import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
-import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.DelegationToTraitImpl;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
@@ -429,7 +428,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateSyntheticParts() {
-        generateDelegatedPropertyMetadataArray();
+        generateStaticSyntheticFields();
 
         generateFieldForSingleton();
 
@@ -463,10 +462,20 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateToArray();
 
-        genClosureFields(context.closure, v, state.getTypeMapper());
+        genClosureFields(context.closure, v, typeMapper);
     }
 
-    private void generateDelegatedPropertyMetadataArray() {
+    private void generateStaticSyntheticFields() {
+        if (isAnnotationClass(descriptor)) {
+            // There's a bug in JDK 6 and 7 that prevents us from generating a static field in an annotation class:
+            // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6857918
+            // TODO: make reflection work on annotation classes somehow
+            return;
+        }
+
+        generateReflectionObjectField(state, classAsmType, v, K_CLASS_IMPL_TYPE, JvmAbi.KOTLIN_CLASS_FIELD_NAME,
+                                      createOrGetClInitCodegen().v);
+
         generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
     }
 

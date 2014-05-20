@@ -56,27 +56,32 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.K_PACKAGE_IMPL_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackageCodegen {
-    private final GenerationState state;
     private final ClassBuilderOnDemand v;
+    private final GenerationState state;
     private final Collection<JetFile> files;
+    private final Type packageClassType;
     private final PackageFragmentDescriptor packageFragment;
     private final PackageFragmentDescriptor compiledPackageFragment;
     private final List<DeserializedCallableMemberDescriptor> previouslyCompiledCallables;
 
-    public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull final FqName fqName) {
+    public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull FqName fqName) {
         this.state = state;
         this.files = files;
         this.packageFragment = getOnlyPackageFragment(fqName);
+        this.packageClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
         this.compiledPackageFragment = getCompiledPackageFragment(fqName);
         this.previouslyCompiledCallables = filterDeserializedCallables(compiledPackageFragment);
 
@@ -88,14 +93,13 @@ public class PackageCodegen {
                 Collection<JetFile> files = PackageCodegen.this.files;
                 JetFile sourceFile = getRepresentativePackageFile(files);
 
-                String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
-                ClassBuilder v = PackageCodegen.this.state.getFactory()
-                        .newVisitor(
-                                PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
-                                Type.getObjectType(className), PackagePartClassUtils.getPackageFilesWithCallables(files));
+                ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(
+                        PackageFacade(packageFragment == null ? compiledPackageFragment : packageFragment),
+                        packageClassType, PackagePartClassUtils.getPackageFilesWithCallables(files)
+                );
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
-                              className,
+                              packageClassType.getInternalName(),
                               null,
                               "java/lang/Object",
                               ArrayUtil.EMPTY_STRING_ARRAY
@@ -216,16 +220,33 @@ public class PackageCodegen {
             }
         }
 
-        generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
+        if (!generateCallableMemberTasks.isEmpty()) {
+            generatePackageFacadeClass(generateCallableMemberTasks, bindings);
+        }
+    }
 
-        if (generateCallableMemberTasks.isEmpty()) return;
+    private void generatePackageFacadeClass(
+            @NotNull Map<CallableMemberDescriptor, Runnable> tasks,
+            @NotNull List<JvmSerializationBindings> bindings
+    ) {
+        generateKotlinPackageReflectionField();
 
-        for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(generateCallableMemberTasks.keySet())) {
-            generateCallableMemberTasks.get(member).run();
+        generateDelegationsToPreviouslyCompiled(tasks);
+
+        for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(tasks.keySet())) {
+            tasks.get(member).run();
         }
 
         bindings.add(v.getSerializationBindings());
         writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
+    }
+
+    private void generateKotlinPackageReflectionField() {
+        MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
+        MemberCodegen.generateReflectionObjectField(state, packageClassType, v, K_PACKAGE_IMPL_TYPE, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME,
+                                                    new InstructionAdapter(mv));
+        mv.visitInsn(RETURN);
+        FunctionCodegen.endVisit(mv, "static initializer", null);
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
