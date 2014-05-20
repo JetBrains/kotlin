@@ -192,6 +192,15 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             assert substitutedVersion != null : entry.getKey();
             valueArguments.put(substitutedVersion, entry.getValue());
         }
+
+        Map<ValueArgument, ArgumentMatch> originalArgumentToParameterMap = Maps.newLinkedHashMap(argumentToParameterMap);
+        argumentToParameterMap.clear();
+        for (Map.Entry<ValueArgument, ArgumentMatch> entry : originalArgumentToParameterMap.entrySet()) {
+            ArgumentMatch argumentMatch = entry.getValue();
+            ValueParameterDescriptor substitutedVersion = parameterMap.get(argumentMatch.getValueParameter().getOriginal());
+            assert substitutedVersion != null : argumentMatch.getValueParameter();
+            argumentToParameterMap.put(entry.getKey(), new ArgumentMatch(substitutedVersion, argumentMatch.getHasTypeMismatch()));
+        }
     }
 
     @Override
