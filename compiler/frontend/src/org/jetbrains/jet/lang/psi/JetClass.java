@@ -138,29 +138,14 @@ public class JetClass extends JetTypeParameterListOwnerStub<PsiJetClassStub> imp
     }
 
     public boolean isEnum() {
-        PsiJetClassStub stub = getStub();
-        if (stub != null) {
-            return stub.isEnumClass();
-        }
-
         return hasModifier(JetTokens.ENUM_KEYWORD);
     }
 
     public boolean isAnnotation() {
-        PsiJetClassStub stub = getStub();
-        if (stub != null) {
-            return stub.isAnnotation();
-        }
-
         return hasModifier(JetTokens.ANNOTATION_KEYWORD);
     }
 
     public boolean isInner() {
-        PsiJetClassStub stub = getStub();
-        if (stub != null) {
-            return stub.isInner();
-        }
-
         return hasModifier(JetTokens.INNER_KEYWORD);
     }
 

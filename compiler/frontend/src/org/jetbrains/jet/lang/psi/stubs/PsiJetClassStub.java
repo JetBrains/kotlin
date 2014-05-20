@@ -21,11 +21,5 @@ import org.jetbrains.jet.lang.psi.JetClass;
 public interface PsiJetClassStub extends PsiJetClassOrObjectStub<JetClass> {
     boolean isTrait();
 
-    boolean isAnnotation();
-
-    boolean isEnumClass();
-    
-    boolean isInner();
-
     boolean isEnumEntry();
 }

@@ -22,7 +22,6 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetClassElementType;
@@ -36,10 +35,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     private final StringRef name;
     private final StringRef[] superNames;
     private final boolean isTrait;
-    private final boolean isEnumClass;
     private final boolean isEnumEntry;
-    private final boolean isAnnotation;
-    private final boolean isInner;
     private final boolean isLocal;
     private final boolean isTopLevel;
 
@@ -50,10 +46,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
             StringRef name,
             StringRef[] superNames,
             boolean isTrait,
-            boolean isEnumClass,
             boolean isEnumEntry,
-            boolean isAnnotation,
-            boolean isInner,
             boolean isLocal,
             boolean isTopLevel
     ) {
@@ -62,10 +55,7 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         this.name = name;
         this.superNames = superNames;
         this.isTrait = isTrait;
-        this.isEnumClass = isEnumClass;
         this.isEnumEntry = isEnumEntry;
-        this.isAnnotation = isAnnotation;
-        this.isInner = isInner;
         this.isLocal = isLocal;
         this.isTopLevel = isTopLevel;
     }
@@ -85,25 +75,10 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     }
 
     @Override
-    public boolean isAnnotation() {
-        return isAnnotation;
-    }
-
-    @Override
-    public boolean isEnumClass() {
-        return isEnumClass;
-    }
-
-    @Override
     public boolean isEnumEntry() {
         return isEnumEntry;
     }
     
-    @Override
-    public boolean isInner() {
-        return isInner;
-    }
-
     @Override
     public boolean isLocal() {
         return isLocal;
@@ -134,24 +109,12 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
         StringBuilder builder = new StringBuilder();
         builder.append("PsiJetClassStubImpl[");
 
-        if (isEnumClass()) {
-            builder.append("enumClass ");
-        }
-
         if (isEnumEntry()) {
             builder.append("enumEntry ");
         }
 
         if (isTrait()) {
             builder.append("trait ");
-        }
-
-        if (isAnnotation()) {
-            builder.append("isAnnotation ");
-        }
-
-        if (isInner()) {
-            builder.append("inner ");
         }
 
         if (isLocal()) {

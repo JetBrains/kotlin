@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetEnumEntry;
-import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetClassStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetClassStubImpl;
@@ -66,8 +65,8 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new PsiJetClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
-                StringRef.fromString(psi.getName()), Utils.instance$.wrapStrings(superNames), psi.isTrait(), psi.isEnum(), isEnumEntry,
-                psi.isAnnotation(), psi.isInner(), psi.isLocal(), psi.isTopLevel());
+                StringRef.fromString(psi.getName()), Utils.instance$.wrapStrings(superNames), psi.isTrait(), isEnumEntry,
+                psi.isLocal(), psi.isTopLevel());
     }
 
     @Override
@@ -76,10 +75,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName == null ? null : fqName.asString());
         dataStream.writeBoolean(stub.isTrait());
-        dataStream.writeBoolean(stub.isEnumClass());
         dataStream.writeBoolean(stub.isEnumEntry());
-        dataStream.writeBoolean(stub.isAnnotation());
-        dataStream.writeBoolean(stub.isInner());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isTopLevel());
 
@@ -96,10 +92,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         StringRef name = dataStream.readName();
         StringRef qualifiedName = dataStream.readName();
         boolean isTrait = dataStream.readBoolean();
-        boolean isEnumClass = dataStream.readBoolean();
         boolean isEnumEntry = dataStream.readBoolean();
-        boolean isAnnotation = dataStream.readBoolean();
-        boolean isInner = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
 
@@ -110,7 +103,7 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
         }
 
         return new PsiJetClassStubImpl(getStubType(isEnumEntry), parentStub, qualifiedName, name, superNames,
-                                       isTrait, isEnumClass, isEnumEntry, isAnnotation, isInner, isLocal, isTopLevel);
+                                       isTrait, isEnumEntry, isLocal, isTopLevel);
     }
 
     @Override
