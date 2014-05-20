@@ -1,5 +1,12 @@
 PsiJetFileStubImpl[package=]
-  FUN:PsiJetFunctionStubImpl[top fqName=some name=some]
-    VALUE_PARAMETER_LIST
-      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=t typeText=Int defaultValue=null]
-      VALUE_PARAMETER:PsiJetParameterStubImpl[val name=other typeText=String defaultValue="hello"]
+  PACKAGE_DIRECTIVE:
+  FUN:[fqName=some, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=some]
+    VALUE_PARAMETER_LIST:
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrValNode=false, isMutable=false, name=t]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=Int]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=true, hasValOrValNode=false, isMutable=false, name=other]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=String]

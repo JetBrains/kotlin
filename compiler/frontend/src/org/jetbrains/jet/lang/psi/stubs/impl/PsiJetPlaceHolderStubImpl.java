@@ -17,13 +17,14 @@
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
 import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetElementImplStub;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPlaceHolderStub;
 
-public class PsiJetPlaceHolderStubImpl<T extends JetElement> extends StubBase<T> implements PsiJetPlaceHolderStub<T> {
+public class PsiJetPlaceHolderStubImpl<T extends JetElementImplStub<? extends StubElement<?>>> extends JetStubBaseImpl<T>
+        implements PsiJetPlaceHolderStub<T> {
     public PsiJetPlaceHolderStubImpl(StubElement parent, IStubElementType elementType) {
+        //noinspection unchecked
         super(parent, elementType);
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +24,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> implements PsiJetTypeParameterStub {
+public class PsiJetTypeParameterStubImpl extends JetStubBaseImpl<JetTypeParameter> implements PsiJetTypeParameterStub {
     private final StringRef name;
     private final boolean isInVariance;
     private final boolean isOutVariance;
@@ -51,25 +50,6 @@ public class PsiJetTypeParameterStubImpl extends StubBase<JetTypeParameter> impl
     @Override
     public String getName() {
         return StringRef.toString(name);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetTypeParameterStubImpl[");
-
-        if (isInVariance()) {
-            builder.append("in ");
-        }
-
-        if (isOutVariance()) {
-            builder.append("out ");
-        }
-
-        builder.append("name=").append(getName());
-        builder.append("]");
-
-        return builder.toString();
     }
 
     @Nullable

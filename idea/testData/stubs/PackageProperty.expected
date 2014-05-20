@@ -1,2 +1,6 @@
 PsiJetFileStubImpl[package=test.testing]
-  PROPERTY:PsiJetPropertyStubImpl[val top fqName=test.testing.some name=some typeText=null bodyText=12]
+  PACKAGE_DIRECTIVE:
+    DOT_QUALIFIED_EXPRESSION:
+      REFERENCE_EXPRESSION:[referencedName=test]
+      REFERENCE_EXPRESSION:[referencedName=testing]
+  PROPERTY:[fqName=test.testing.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=false, isTopLevel=true, isVar=false, name=some]

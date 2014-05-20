@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetNameReferenceExpression;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetNameReferenceExpressionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetNameReferenceExpressionStubImpl extends StubBase<JetNameReferenceExpression> implements PsiJetNameReferenceExpressionStub {
+public class PsiJetNameReferenceExpressionStubImpl extends JetStubBaseImpl<JetNameReferenceExpression> implements PsiJetNameReferenceExpressionStub {
     @NotNull
     private final StringRef referencedName;
 

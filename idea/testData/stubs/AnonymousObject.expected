@@ -1,5 +1,6 @@
 PsiJetFileStubImpl[package=]
-  CLASS:PsiJetClassStubImpl[name=A fqn=A superNames=[]]
-  CLASS:PsiJetClassStubImpl[trait name=T fqn=T superNames=[]]
-  PROPERTY:PsiJetPropertyStubImpl[val top fqName=obj name=obj typeText=null bodyText=object : A(), T]
-    OBJECT_DECLARATION:PsiJetObjectStubImpl[local name=null fqName=null superNames=[AT]]
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=A, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=A, superNames=[]]
+  CLASS:[fqName=T, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=true, name=T, superNames=[]]
+  PROPERTY:[fqName=obj, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=false, isTopLevel=true, isVar=false, name=obj]
+    OBJECT_DECLARATION:[fqName=null, isClassObject=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[A, T]]

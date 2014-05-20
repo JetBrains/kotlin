@@ -16,15 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetUserType;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetUserTypeStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
-import org.jetbrains.jet.lang.resolve.name.Name;
 
-public class PsiJetUserTypeStubImpl extends StubBase<JetUserType> implements PsiJetUserTypeStub {
+public class PsiJetUserTypeStubImpl extends JetStubBaseImpl<JetUserType> implements PsiJetUserTypeStub {
     private final boolean isAbsoluteInRootPackage;
 
     public PsiJetUserTypeStubImpl(StubElement parent, boolean isAbsoluteInRootPackage) {

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +24,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements PsiJetPropertyStub {
+public class PsiJetPropertyStubImpl extends JetStubBaseImpl<JetProperty> implements PsiJetPropertyStub {
     private final StringRef name;
     private final boolean isVar;
     private final boolean isTopLevel;
@@ -112,25 +111,5 @@ public class PsiJetPropertyStubImpl extends StubBase<JetProperty> implements Psi
     @Override
     public String getName() {
         return StringRef.toString(name);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("PsiJetPropertyStubImpl[");
-
-        builder.append(isVar() ? "var " : "val ");
-
-        if (isTopLevel()) {
-            assert fqName != null;
-            builder.append("top ").append("fqName=").append(fqName.toString()).append(" ");
-        }
-
-        builder.append("name=").append(getName());
-
-        builder.append("]");
-
-        return builder.toString();
     }
 }

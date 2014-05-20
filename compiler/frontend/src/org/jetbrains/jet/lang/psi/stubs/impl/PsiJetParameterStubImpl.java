@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +24,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetParameterStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements PsiJetParameterStub {
+public class PsiJetParameterStubImpl extends JetStubBaseImpl<JetParameter> implements PsiJetParameterStub {
     private final StringRef name;
     private final boolean isMutable;
     private final StringRef fqName;
@@ -65,23 +64,6 @@ public class PsiJetParameterStubImpl extends StubBase<JetParameter> implements P
     @Override
     public boolean hasDefaultValue() {
         return hasDefaultValue;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetParameterStubImpl[");
-
-        builder.append(isMutable() ? "var " : "val ");
-
-        builder.append("name=").append(getName());
-        if (fqName != null) {
-            builder.append(" fqName=").append(fqName.toString()).append(" ");
-        }
-
-        builder.append("]");
-
-        return builder.toString();
     }
 
     @Nullable

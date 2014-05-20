@@ -1,2 +1,3 @@
 PsiJetFileStubImpl[package=]
-  PROPERTY:PsiJetPropertyStubImpl[val top fqName=a name=a typeText=null bodyText=null]
+  PACKAGE_DIRECTIVE:
+  PROPERTY:[fqName=a, hasDelegate=true, hasDelegateExpression=true, hasInitializer=false, hasReceiverTypeRef=false, hasReturnTypeRef=false, isTopLevel=true, isVar=false, name=a]

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
@@ -27,7 +26,7 @@ import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 import static org.jetbrains.jet.lexer.JetTokens.MODIFIER_KEYWORDS_ARRAY;
 
-public class PsiJetModifierListStubImpl extends StubBase<JetModifierList> implements PsiJetModifierListStub {
+public class PsiJetModifierListStubImpl extends JetStubBaseImpl<JetModifierList> implements PsiJetModifierListStub {
 
     static {
         assert MODIFIER_KEYWORDS_ARRAY.length <= 32 : "Current implementation depends on the ability to represent modifier list as bit mask";
@@ -68,9 +67,14 @@ public class PsiJetModifierListStubImpl extends StubBase<JetModifierList> implem
         StringBuilder sb = new StringBuilder();
         sb.append(super.toString());
         sb.append("[");
+        boolean first = true;
         for (JetModifierKeywordToken modifierKeyword : MODIFIER_KEYWORDS_ARRAY) {
             if (hasModifier(modifierKeyword)) {
-                sb.append(modifierKeyword.getValue()).append(" ");
+                if (!first) {
+                    sb.append(" ");
+                }
+                sb.append(modifierKeyword.getValue());
+                first = false;
             }
         }
         sb.append("]");

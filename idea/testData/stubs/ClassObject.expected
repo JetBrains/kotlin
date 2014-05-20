@@ -1,7 +1,9 @@
 PsiJetFileStubImpl[package=]
-  CLASS:PsiJetClassStubImpl[name=C fqn=C superNames=[]]
-    CLASS_BODY
-      OBJECT_DECLARATION:PsiJetObjectStubImpl[class-object name=null fqName=null superNames=[]]
-        CLASS_BODY
-          FUN:PsiJetFunctionStubImpl[name=foo]
-            VALUE_PARAMETER_LIST
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=C, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=C, superNames=[]]
+    CLASS_BODY:
+      CLASS_OBJECT:
+        OBJECT_DECLARATION:[fqName=null, isClassObject=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS_BODY:
+            FUN:[fqName=C.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=foo]
+              VALUE_PARAMETER_LIST:

@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetTypeConstraint;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeConstraintStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetTypeConstraintImpl extends StubBase<JetTypeConstraint> implements PsiJetTypeConstraintStub {
+public class PsiJetTypeConstraintImpl extends JetStubBaseImpl<JetTypeConstraint> implements PsiJetTypeConstraintStub {
     private final boolean isClassObjectConstraint;
 
     public PsiJetTypeConstraintImpl(StubElement parent, boolean isClassObjectConstraint) {

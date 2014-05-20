@@ -27,7 +27,7 @@ import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPlaceHolderStubImpl;
 
 import java.io.IOException;
 
-public class JetPlaceHolderStubElementType<T extends JetElementImplStub<?>> extends JetStubElementType<PsiJetPlaceHolderStub<T>, T> {
+public class JetPlaceHolderStubElementType<T extends JetElementImplStub<? extends StubElement<?>>> extends JetStubElementType<PsiJetPlaceHolderStub<T>, T> {
 
     public JetPlaceHolderStubElementType(@NotNull @NonNls String debugName, @NotNull Class<T> psiClass) {
         super(debugName, psiClass, PsiJetPlaceHolderStub.class);

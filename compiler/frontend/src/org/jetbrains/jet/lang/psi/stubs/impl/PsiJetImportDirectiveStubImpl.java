@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.Nullable;
@@ -24,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetImportDirective;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetImportDirectiveStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetImportDirectiveStubImpl extends StubBase<JetImportDirective> implements PsiJetImportDirectiveStub {
+public class PsiJetImportDirectiveStubImpl extends JetStubBaseImpl<JetImportDirective> implements PsiJetImportDirectiveStub {
     private final boolean isAbsoluteInRootPackage;
     private final boolean isAllUnder;
     @Nullable

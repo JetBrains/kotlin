@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implements PsiJetFunctionStub {
+public class PsiJetFunctionStubImpl extends JetStubBaseImpl<JetNamedFunction> implements PsiJetFunctionStub {
 
     private final StringRef nameRef;
     private final boolean isTopLevel;
@@ -89,31 +88,6 @@ public class PsiJetFunctionStubImpl extends StubBase<JetNamedFunction> implement
     @Override
     public boolean hasTypeParameterListBeforeFunctionName() {
         return hasTypeParameterListBeforeFunctionName;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetFunctionStubImpl[");
-
-        if (isTopLevel()) {
-            assert fqName != null;
-            builder.append("top ").append("fqName=").append(fqName.toString()).append(" ");
-        }
-
-        if (isExtension()) {
-            builder.append("ext ");
-        }
-
-        if (!hasBlockBody) {
-            builder.append("no block body ");
-        }
-
-        builder.append("name=").append(getName());
-
-        builder.append("]");
-
-        return builder.toString();
     }
 
     @Nullable

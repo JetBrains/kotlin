@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +23,7 @@ import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetAnnotationEntryStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetAnnotationEntryStubImpl extends StubBase<JetAnnotationEntry> implements PsiJetAnnotationEntryStub {
+public class PsiJetAnnotationEntryStubImpl extends JetStubBaseImpl<JetAnnotationEntry> implements PsiJetAnnotationEntryStub {
     private final StringRef shortName;
     private final boolean hasValueArguments;
 
@@ -43,14 +42,5 @@ public class PsiJetAnnotationEntryStubImpl extends StubBase<JetAnnotationEntry> 
     @Override
     public boolean hasValueArguments() {
         return hasValueArguments;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetAnnotationEntryStubImpl[");
-        builder.append("shortName=").append(getShortName());
-        builder.append("]");
-        return builder.toString();
     }
 }

@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClass;
@@ -30,7 +27,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetClassStub {
+public class PsiJetClassStubImpl extends JetStubBaseImpl<JetClass> implements PsiJetClassStub {
     private final StringRef qualifiedName;
     private final StringRef name;
     private final StringRef[] superNames;
@@ -102,31 +99,5 @@ public class PsiJetClassStubImpl extends StubBase<JetClass> implements PsiJetCla
     @Override
     public boolean isTopLevel() {
         return isTopLevel;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PsiJetClassStubImpl[");
-
-        if (isEnumEntry()) {
-            builder.append("enumEntry ");
-        }
-
-        if (isTrait()) {
-            builder.append("trait ");
-        }
-
-        if (isLocal()) {
-            builder.append("local ");
-        }
-
-        builder.append("name=").append(getName());
-        builder.append(" fqn=").append(getFqName());
-        builder.append(" superNames=").append("[").append(StringUtil.join(ArrayUtil.toStringArray(getSuperNames()))).append("]");
-
-        builder.append("]");
-
-        return builder.toString();
     }
 }

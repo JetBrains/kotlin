@@ -16,14 +16,13 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetProjectionKind;
 import org.jetbrains.jet.lang.psi.JetTypeProjection;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetTypeProjectionStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetTypeProjectionStubImpl extends StubBase<JetTypeProjection> implements PsiJetTypeProjectionStub {
+public class PsiJetTypeProjectionStubImpl extends JetStubBaseImpl<JetTypeProjection> implements PsiJetTypeProjectionStub {
 
     private final int projectionKindOrdinal;
 

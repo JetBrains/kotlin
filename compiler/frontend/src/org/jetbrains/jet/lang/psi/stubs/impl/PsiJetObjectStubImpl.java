@@ -16,10 +16,7 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +28,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> implements PsiJetObjectStub {
+public class PsiJetObjectStubImpl extends JetStubBaseImpl<JetObjectDeclaration> implements PsiJetObjectStub {
     private final StringRef name;
     private final FqName fqName;
     private final StringRef[] superNames;
@@ -99,31 +96,5 @@ public class PsiJetObjectStubImpl extends StubBase<JetObjectDeclaration> impleme
     @Override
     public boolean isLocal() {
         return isLocal;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append("PsiJetObjectStubImpl[");
-
-        if (isClassObject) {
-            builder.append("class-object ");
-        }
-
-        if (isTopLevel) {
-            builder.append("top ");
-        }
-
-        if (isLocal()) {
-            builder.append("local ");
-        }
-
-        builder.append("name=").append(getName());
-        builder.append(" fqName=").append(fqName != null ? fqName.toString() : "null");
-        builder.append(" superNames=").append("[").append(StringUtil.join(ArrayUtil.toStringArray(getSuperNames()))).append("]");
-        builder.append("]");
-
-        return builder.toString();
     }
 }

@@ -1,3 +1,4 @@
 PsiJetFileStubImpl[package=]
-  FUN:PsiJetFunctionStubImpl[top fqName=foo name=foo]
-    VALUE_PARAMETER_LIST
+  PACKAGE_DIRECTIVE:
+  FUN:[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=foo]
+    VALUE_PARAMETER_LIST:

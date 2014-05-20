@@ -16,13 +16,12 @@
 
 package org.jetbrains.jet.lang.psi.stubs.impl;
 
-import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyAccessorStub;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetStubElementTypes;
 
-public class PsiJetPropertyAccessorStubImpl extends StubBase<JetPropertyAccessor> implements PsiJetPropertyAccessorStub {
+public class PsiJetPropertyAccessorStubImpl extends JetStubBaseImpl<JetPropertyAccessor> implements PsiJetPropertyAccessorStub {
     private final boolean isGetter;
     private final boolean hasBody;
     private final boolean hasBlockBody;

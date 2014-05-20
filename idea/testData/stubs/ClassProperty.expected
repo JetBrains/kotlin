@@ -1,4 +1,9 @@
 PsiJetFileStubImpl[package=]
-  CLASS:PsiJetClassStubImpl[name=More fqn=More superNames=[]]
-    CLASS_BODY
-      PROPERTY:PsiJetPropertyStubImpl[val name=test typeText=Int bodyText=11]
+  PACKAGE_DIRECTIVE:
+  CLASS:[fqName=More, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=More, superNames=[]]
+    CLASS_BODY:
+      PROPERTY:[fqName=More.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReceiverTypeRef=false, hasReturnTypeRef=true, isTopLevel=false, isVar=false, name=test]
+        MODIFIER_LIST:[private]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            REFERENCE_EXPRESSION:[referencedName=Int]
