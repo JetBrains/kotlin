@@ -18,14 +18,10 @@ package org.jetbrains.jet.lang.resolve.calls.util
 
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import org.jetbrains.jet.lang.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentUnmapped
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument
-import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatchStatus
-import java.util.ArrayList
 import org.jetbrains.jet.lang.psi.Call
 import org.jetbrains.jet.lang.psi.ValueArgument
 
@@ -50,15 +46,6 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.hasTypeMismatchErrorOnParame
         val argumentMapping = getArgumentMapping(argument)
         argumentMapping is ArgumentMatch && argumentMapping.status == ArgumentMatchStatus.TYPE_MISMATCH
     }
-}
-
-fun <D : CallableDescriptor> ResolvedCall<D>.isDirty(): Boolean {
-    return getValueArguments().values()
-            .flatMap { it.getArguments() }
-            .any { argument ->
-                val argumentMapping = getArgumentMapping(argument)
-                argumentMapping is ArgumentMatch && argumentMapping.status == ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
-            }
 }
 
 fun Call.getAllValueArguments(): List<ValueArgument> {

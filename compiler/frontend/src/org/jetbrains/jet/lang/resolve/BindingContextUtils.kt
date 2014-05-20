@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -54,6 +55,16 @@ fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
         else -> expr
     }
     return bindingContext[CALL, reference]
+}
+
+fun Call.hasUnresolvedArguments(bindingContext: BindingContext): Boolean {
+    val arguments = getValueArguments().map { it?.getArgumentExpression() }
+    return arguments.any {
+        argument ->
+        val expressionType = bindingContext[BindingContext.EXPRESSION_TYPE, argument]
+        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument)
+            && (expressionType == null || expressionType.isError())
+    }
 }
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(bindingContext: BindingContext): FunctionDescriptor? {

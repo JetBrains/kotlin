@@ -3791,6 +3791,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/typeParameterOnLhsOfDot.kt");
             }
             
+            @TestMetadata("unresolvedArguments.kt")
+            public void testUnresolvedArguments() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/incompleteCode/unresolvedArguments.kt");
+            }
+            
             @TestMetadata("variableDeclarationInSelector.kt")
             public void testVariableDeclarationInSelector() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/incompleteCode/variableDeclarationInSelector.kt");

@@ -566,7 +566,7 @@ public class CallResolver {
         }
 
         OverloadResolutionResultsImpl<F> results = ResolutionResultsHandler.INSTANCE.computeResultAndReportErrors(
-                task.trace, task.tracing, task.getResolvedCalls());
+                task, task.getResolvedCalls());
         if (!results.isSingleResult() && !results.isIncomplete()) {
             argumentTypeResolver.checkTypesWithNoCallee(task.toBasic());
         }
