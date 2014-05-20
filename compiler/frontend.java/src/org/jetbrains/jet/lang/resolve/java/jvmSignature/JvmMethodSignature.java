@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.signature;
+package org.jetbrains.jet.lang.resolve.java.jvmSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ public class JvmMethodSignature {
     private final String genericsSignature;
     private final List<JvmMethodParameterSignature> valueParameters;
 
-    JvmMethodSignature(
+    public JvmMethodSignature(
             @NotNull Method asmMethod,
             @Nullable String genericsSignature,
             @NotNull List<JvmMethodParameterSignature> valueParameters

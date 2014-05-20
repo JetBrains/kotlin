@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.signature;
+package org.jetbrains.jet.lang.resolve.java.jvmSignature;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -23,7 +23,7 @@ public final class JvmMethodParameterSignature {
     private final Type asmType;
     private final JvmMethodParameterKind kind;
 
-    JvmMethodParameterSignature(@NotNull Type asmType, @NotNull JvmMethodParameterKind kind) {
+    public JvmMethodParameterSignature(@NotNull Type asmType, @NotNull JvmMethodParameterKind kind) {
         this.asmType = asmType;
         this.kind = kind;
     }

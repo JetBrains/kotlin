@@ -34,7 +34,7 @@ import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.inline.InlineCodegen;
 import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.jet.codegen.signature.JvmMethodSignature;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;

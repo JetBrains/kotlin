@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen.signature;
+package org.jetbrains.jet.lang.resolve.java.jvmSignature;
 
 import org.jetbrains.annotations.Nullable;
 
