@@ -44,7 +44,7 @@ public interface JetStubElementTypes {
 
     JetAnnotationEntryElementType ANNOTATION_ENTRY = new JetAnnotationEntryElementType("ANNOTATION_ENTRY");
     JetPlaceHolderStubElementType<JetAnnotation> ANNOTATION =
-                new JetPlaceHolderStubElementType<JetAnnotation>("ANNOTATION", JetAnnotation.class);
+            new JetPlaceHolderStubElementType<JetAnnotation>("ANNOTATION", JetAnnotation.class);
 
     JetPlaceHolderStubElementType<JetClassBody> CLASS_BODY =
             new JetPlaceHolderStubElementType<JetClassBody>("CLASS_BODY", JetClassBody.class);
@@ -69,25 +69,25 @@ public interface JetStubElementTypes {
     JetTypeConstraintElementType TYPE_CONSTRAINT = new JetTypeConstraintElementType("TYPE_CONSTRAINT");
 
     JetPlaceHolderStubElementType<JetNullableType> NULLABLE_TYPE =
-              new JetPlaceHolderStubElementType<JetNullableType>("NULLABLE_TYPE", JetNullableType.class);
+            new JetPlaceHolderStubElementType<JetNullableType>("NULLABLE_TYPE", JetNullableType.class);
 
     JetPlaceHolderStubElementType<JetTypeReference> TYPE_REFERENCE =
-                new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);;
+            new JetPlaceHolderStubElementType<JetTypeReference>("TYPE_REFERENCE", JetTypeReference.class);
 
     JetUserTypeElementType USER_TYPE = new JetUserTypeElementType("USER_TYPE");
 
     JetPlaceHolderStubElementType<JetFunctionType> FUNCTION_TYPE =
-                new JetPlaceHolderStubElementType<JetFunctionType>("FUNCTION_TYPE", JetFunctionType.class);
-    
+            new JetPlaceHolderStubElementType<JetFunctionType>("FUNCTION_TYPE", JetFunctionType.class);
+
     JetTypeProjectionElementType TYPE_PROJECTION = new JetTypeProjectionElementType("TYPE_PROJECTION");
-    
+
     JetPlaceHolderStubElementType<JetFunctionTypeReceiver> FUNCTION_TYPE_RECEIVER =
             new JetPlaceHolderStubElementType<JetFunctionTypeReceiver>("FUNCTION_TYPE_RECEIVER", JetFunctionTypeReceiver.class);
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
     JetPlaceHolderStubElementType<JetTypeArgumentList> TYPE_ARGUMENT_LIST =
-                new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
+            new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
 
     JetPlaceHolderStubElementType<JetDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
             new JetPlaceHolderStubElementType<JetDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", JetDelegationSpecifierList.class);
@@ -108,7 +108,7 @@ public interface JetStubElementTypes {
             new JetPlaceHolderStubElementType<JetConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", JetConstructorCalleeExpression.class);
 
     TokenSet DECLARATION_TYPES =
-              TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
+            TokenSet.create(CLASS, OBJECT_DECLARATION, CLASS_OBJECT, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, ENUM_ENTRY);
 
     TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS, THIS_CALL);
 
