@@ -3149,6 +3149,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaRefersToKotlin.kt");
         }
         
+        @TestMetadata("propagationAgainstDeserializedSuperclass.kt")
+        public void testPropagationAgainstDeserializedSuperclass() throws Exception {
+            doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/propagationAgainstDeserializedSuperclass.kt");
+        }
+        
     }
     
     @TestMetadata("compiler/testData/loadJava/sourceJava")

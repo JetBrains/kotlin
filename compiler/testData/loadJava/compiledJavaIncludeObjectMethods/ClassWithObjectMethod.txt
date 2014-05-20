@@ -9,7 +9,7 @@ public final class ClassWithObjectMethod : java.lang.Object {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final override /*1*/ /*fake_override*/ fun notify(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun notifyAll(): kotlin.Unit
-    public open override /*1*/ fun toString(): kotlin.String?
+    public open override /*1*/ fun toString(): kotlin.String
     public final override /*1*/ /*fake_override*/ fun wait(): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long): kotlin.Unit
     public final override /*1*/ /*fake_override*/ fun wait(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit

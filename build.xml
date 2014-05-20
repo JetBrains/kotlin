@@ -321,6 +321,7 @@
                 <exclude name="kotlin/internal/**"/>
               </fileset>
               <fileset dir="${basedir}/compiler/frontend.java/src" includes="META-INF/services/**"/>
+              <fileset dir="${basedir}/compiler/backend/src" includes="META-INF/services/**"/>
 
               <zipgroupfileset dir="${basedir}/lib" includes="*.jar"/>
               <zipgroupfileset dir="${basedir}/ideaSDK/core" includes="*.jar" excludes="util.jar"/>

@@ -2,7 +2,7 @@ class C(x: Int, val y : Int) {
   fun initChild(x0: Int) : java.lang.Object {
     var x = x0
     return object : java.lang.Object() {
-      override fun toString(): String? {
+      override fun toString(): String {
           x = x + y
           return "child" + x
       }
