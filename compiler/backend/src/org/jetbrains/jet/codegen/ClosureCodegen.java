@@ -175,7 +175,9 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
                                    typeMapper.mapSignature(funDescriptor),
                                    funDescriptor,
                                    context.getContextKind(),
-                                   DefaultParameterValueLoader.DEFAULT);
+                                   DefaultParameterValueLoader.DEFAULT,
+                                   null);
+
 
         cv.done();
     }

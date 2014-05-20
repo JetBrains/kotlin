@@ -128,14 +128,13 @@ public class CallableMethod implements Callable {
         return generateCalleeType;
     }
 
-    private void invokeDefault(InstructionAdapter v, int mask) {
+    private void invokeDefault(InstructionAdapter v) {
         if (defaultImplOwner == null || defaultImplParam == null) {
             throw new IllegalStateException();
         }
 
         Method method = getAsmMethod();
 
-        v.iconst(mask);
         String desc = method.getDescriptor().replace(")", "I)");
         if ("<init>".equals(method.getName())) {
             v.visitMethodInsn(INVOKESPECIAL, defaultImplOwner.getInternalName(), "<init>", desc);
@@ -151,10 +150,9 @@ public class CallableMethod implements Callable {
     public void invokeDefaultWithNotNullAssertion(
             @NotNull InstructionAdapter v,
             @NotNull GenerationState state,
-            @NotNull ResolvedCall resolvedCall,
-            int mask
+            @NotNull ResolvedCall resolvedCall
     ) {
-        invokeDefault(v, mask);
+        invokeDefault(v);
         AsmUtil.genNotNullAssertionForMethod(v, state, resolvedCall);
     }
 

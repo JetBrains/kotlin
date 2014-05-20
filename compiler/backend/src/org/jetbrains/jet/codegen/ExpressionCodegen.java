@@ -2078,8 +2078,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
         }
 
-        assert callGenerator == defaultCallGenerator || !hasDefaultArguments(resolvedCall) && !tailRecursionCodegen.isTailRecursion(resolvedCall) :
-                "Method with defaults or tail recursive couldn't be inlined " + descriptor;
+        assert callGenerator == defaultCallGenerator || !tailRecursionCodegen.isTailRecursion(resolvedCall) :
+                "Tail recursive method couldn't be inlined " + descriptor;
 
         int mask = pushMethodArgumentsWithCallReceiver(receiver, resolvedCall, callableMethod, false, callGenerator);
 
@@ -2088,10 +2088,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return;
         }
 
-        callGenerator.genCall(callableMethod, resolvedCall, mask, this);
+        boolean callDefault = mask != 0;
+        if (callDefault) {
+            callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
+        }
+
+        callGenerator.genCall(callableMethod, resolvedCall, callDefault, this);
     }
 
-    protected CallGenerator getOrCreateCallGenerator(CallableDescriptor descriptor, JetElement callElement) {
+    @NotNull
+    protected CallGenerator getOrCreateCallGenerator(@NotNull CallableDescriptor descriptor, @Nullable JetElement callElement) {
         boolean isInline = state.isInlineEnabled() &&
                            descriptor instanceof SimpleFunctionDescriptor &&
                            ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
@@ -2326,22 +2332,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             }
         }
         return mask;
-    }
-
-    private static boolean hasDefaultArguments(@NotNull ResolvedCall<?> resolvedCall) {
-        List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
-        CallableDescriptor fd = resolvedCall.getResultingDescriptor();
-        if (valueArguments == null) {
-            throw new IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor());
-        }
-
-        for (ValueParameterDescriptor valueParameter : fd.getValueParameters()) {
-            ResolvedValueArgument resolvedValueArgument = valueArguments.get(valueParameter.getIndex());
-            if (resolvedValueArgument instanceof DefaultValueArgument) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void genVarargs(ValueParameterDescriptor valueParameterDescriptor, VarargValueArgument valueArgument) {

@@ -871,7 +871,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                             Type propertyType = typeMapper.mapType(property);
                             codegen.intermediateValueForProperty(property, false, null).put(propertyType, codegen.v);
                         }
-                    }
+                    },
+                    null
             );
         }
     }
@@ -1135,7 +1136,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         );
 
         functionCodegen.generateDefaultIfNeeded(constructorContext, constructorSignature, constructorDescriptor,
-                                                OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT);
+                                                OwnerKind.IMPLEMENTATION, DefaultParameterValueLoader.DEFAULT, null);
 
         CallableMethod callableMethod = typeMapper.mapToCallableMethod(constructorDescriptor);
         FunctionCodegen.generateConstructorWithoutParametersIfNeeded(state, callableMethod, constructorDescriptor, v);

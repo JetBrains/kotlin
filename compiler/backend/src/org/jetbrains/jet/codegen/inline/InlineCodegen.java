@@ -56,6 +56,7 @@ import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.codegen.AsmUtil.isStatic;
 
 public class InlineCodegen implements CallGenerator {
     private final GenerationState state;
@@ -105,15 +106,19 @@ public class InlineCodegen implements CallGenerator {
                        JvmCodegenUtil.isCallInsideSameModuleAsDeclared(functionDescriptor, codegen.getContext());
     }
 
+    @Override
+    public void genCallWithoutNullAssertion(
+            @NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen
+    ) {
+        genCall(callableMethod, null, false, codegen);
+    }
 
     @Override
-    public void genCall(CallableMethod callableMethod, ResolvedCall<?> resolvedCall, int mask, ExpressionCodegen codegen) {
-        assert mask == 0 : "Default method invocation couldn't be inlined " + resolvedCall;
-
+    public void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         MethodNode node = null;
 
         try {
-            node = createMethodNode(callableMethod);
+            node = createMethodNode(callDefault);
             endCall(inlineCall(node));
         }
         catch (CompilationException e) {
@@ -139,17 +144,21 @@ public class InlineCodegen implements CallGenerator {
     }
 
     @NotNull
-    private MethodNode createMethodNode(CallableMethod callableMethod)
-            throws ClassNotFoundException, IOException {
+    private MethodNode createMethodNode(boolean callDefault) throws ClassNotFoundException, IOException {
+        JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
+
+        Method asmMethod;
+        if (callDefault) {
+            asmMethod = typeMapper.mapDefaultMethod(functionDescriptor, context.getContextKind(), context);
+        }
+        else {
+            asmMethod = jvmSignature.getAsmMethod();
+        }
+
         MethodNode node;
         if (functionDescriptor instanceof DeserializedSimpleFunctionDescriptor) {
             VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable((DeserializedSimpleFunctionDescriptor) functionDescriptor, state);
-            String methodDesc = callableMethod.getAsmMethod().getDescriptor();
-            DeclarationDescriptor parentDescriptor = functionDescriptor.getContainingDeclaration();
-            if (DescriptorUtils.isTrait(parentDescriptor)) {
-                methodDesc = "(" + typeMapper.mapType((ClassDescriptor) parentDescriptor).getDescriptor() + methodDesc.substring(1);
-            }
-            node = InlineCodegenUtil.getMethodNode(file.getInputStream(), functionDescriptor.getName().asString(), methodDesc);
+            node = InlineCodegenUtil.getMethodNode(file.getInputStream(), asmMethod.getName(), asmMethod.getDescriptor());
 
             if (node == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
@@ -162,25 +171,33 @@ public class InlineCodegen implements CallGenerator {
                 throw new RuntimeException("Couldn't find declaration for function " + descriptorName(functionDescriptor));
             }
 
-            JvmMethodSignature jvmSignature = typeMapper.mapSignature(functionDescriptor, context.getContextKind());
-            Method asmMethod = jvmSignature.getAsmMethod();
             node = new MethodNode(InlineCodegenUtil.API,
-                                           getMethodAsmFlags(functionDescriptor, context.getContextKind()),
+                                           getMethodAsmFlags(functionDescriptor, context.getContextKind()) | (callDefault ? Opcodes.ACC_STATIC : 0),
                                            asmMethod.getName(),
                                            asmMethod.getDescriptor(),
                                            jvmSignature.getGenericsSignature(),
                                            null);
 
             //for maxLocals calculation
-            MethodVisitor adapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
-            FunctionCodegen.generateMethodBody(adapter, functionDescriptor, context.getParentContext().intoFunction(functionDescriptor),
-                                               jvmSignature,
-                                               new FunctionGenerationStrategy.FunctionDefault(state,
-                                                                                              functionDescriptor,
-                                                                                              (JetDeclarationWithBody) element),
-                                               codegen.getParentCodegen());
-            adapter.visitMaxs(-1, -1);
-            adapter.visitEnd();
+            MethodVisitor maxCalcAdapter = InlineCodegenUtil.wrapWithMaxLocalCalc(node);
+            MethodContext methodContext = context.getParentContext().intoFunction(functionDescriptor);
+            MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
+            if (callDefault) {
+                boolean isStatic = isStatic(codegen.getContext().getContextKind());
+                FunctionCodegen.generateDefaultImplBody(
+                        methodContext, jvmSignature, functionDescriptor, isStatic, maxCalcAdapter, DefaultParameterValueLoader.DEFAULT,
+                        (JetNamedFunction) element, parentCodegen, state
+                );
+            }
+            else {
+                FunctionCodegen.generateMethodBody(
+                        maxCalcAdapter, functionDescriptor, methodContext, jvmSignature,
+                        new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, (JetDeclarationWithBody) element),
+                        parentCodegen
+                );
+            }
+            maxCalcAdapter.visitMaxs(-1, -1);
+            maxCalcAdapter.visitEnd();
         }
         return node;
     }
@@ -240,11 +257,11 @@ public class InlineCodegen implements CallGenerator {
 
 
     @Override
-    public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
+    public void afterParameterPut(@NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor) {
         putCapturedInLocal(type, stackValue, valueParameterDescriptor, -1);
     }
 
-    public void putCapturedInLocal(
+    private void putCapturedInLocal(
             @NotNull Type type, @Nullable StackValue stackValue, @Nullable ValueParameterDescriptor valueParameterDescriptor, int capturedParamIndex
     ) {
         if (!asFunctionInline && Type.VOID_TYPE != type) {
@@ -449,11 +466,16 @@ public class InlineCodegen implements CallGenerator {
             rememberClosure((JetFunctionLiteralExpression) argumentExpression, parameterType);
         } else {
             StackValue value = codegen.gen(argumentExpression);
-            if (shouldPutValue(parameterType, value, valueParameterDescriptor)) {
-                value.put(parameterType, codegen.v);
-            }
-            afterParameterPut(parameterType, value, valueParameterDescriptor);
+            putValueIfNeeded(valueParameterDescriptor, parameterType, value);
         }
+    }
+
+    @Override
+    public void putValueIfNeeded(@Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value) {
+        if (shouldPutValue(parameterType, value, valueParameterDescriptor)) {
+            value.put(parameterType, codegen.v);
+        }
+        afterParameterPut(parameterType, value, valueParameterDescriptor);
     }
 
     @Override

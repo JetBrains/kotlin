@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetExpression;
@@ -34,20 +35,28 @@ public interface CallGenerator {
 
         @Override
         public void genCall(
-                CallableMethod callableMethod,
-                ResolvedCall<?> resolvedCall, int mask,
-                ExpressionCodegen codegen
+                @NotNull CallableMethod callableMethod,
+                ResolvedCall<?> resolvedCall,
+                boolean callDefault,
+                @NotNull ExpressionCodegen codegen
         ) {
-            if (mask == 0) {
+            if (!callDefault) {
                 callableMethod.invokeWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
             }
             else {
-                callableMethod.invokeDefaultWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall, mask);
+                callableMethod.invokeDefaultWithNotNullAssertion(codegen.v, codegen.getState(), resolvedCall);
             }
         }
 
         @Override
-        public void afterParameterPut(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor) {
+        public void genCallWithoutNullAssertion(
+                @NotNull CallableMethod method, @NotNull ExpressionCodegen codegen
+        ) {
+            method.invokeWithoutAssertions(codegen.v);
+        }
+
+        @Override
+        public void afterParameterPut(@NotNull Type type, StackValue stackValue, @NotNull ValueParameterDescriptor valueParameterDescriptor) {
 
         }
 
@@ -72,17 +81,28 @@ public interface CallGenerator {
         ) {
             stackValue.put(stackValue.type, codegen.v);
         }
+
+        @Override
+        public void putValueIfNeeded(
+                @Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value
+        ) {
+            value.put(value.type, codegen.v);
+        }
     }
 
-    void genCall(CallableMethod callableMethod, ResolvedCall<?> resolvedCall, int mask, ExpressionCodegen codegen);
+    void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
 
-    void afterParameterPut(Type type, StackValue stackValue, ValueParameterDescriptor valueParameterDescriptor);
+    void genCallWithoutNullAssertion(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
+
+    void afterParameterPut(@NotNull Type type, StackValue stackValue, @NotNull ValueParameterDescriptor valueParameterDescriptor);
 
     void genValueAndPut(
             @NotNull ValueParameterDescriptor valueParameterDescriptor,
             @NotNull JetExpression argumentExpression,
             @NotNull Type parameterType
     );
+
+    void putValueIfNeeded(@Nullable ValueParameterDescriptor valueParameterDescriptor, @NotNull Type parameterType, @NotNull StackValue value);
 
     void putCapturedValueOnStack(
             @NotNull StackValue stackValue,

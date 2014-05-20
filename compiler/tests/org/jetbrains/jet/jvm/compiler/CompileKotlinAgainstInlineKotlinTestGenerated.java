@@ -91,6 +91,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/closureChain");
     }
     
+    @TestMetadata("defaultMethod")
+    public void testDefaultMethod() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/defaultMethod");
+    }
+    
     @TestMetadata("extension")
     public void testExtension() throws Exception {
         doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/extension");
@@ -124,6 +129,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @TestMetadata("inlineChain")
     public void testInlineChain() throws Exception {
         doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineChain");
+    }
+    
+    @TestMetadata("inlineInDefaultParameter")
+    public void testInlineInDefaultParameter() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineInDefaultParameter");
     }
     
     @TestMetadata("lambdaClassClash")
@@ -219,6 +229,11 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     @TestMetadata("simpleCapturingInPackage")
     public void testSimpleCapturingInPackage() throws Exception {
         doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInPackage");
+    }
+    
+    @TestMetadata("simpleDefaultMethod")
+    public void testSimpleDefaultMethod() throws Exception {
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleDefaultMethod");
     }
     
     @TestMetadata("simpleDouble")

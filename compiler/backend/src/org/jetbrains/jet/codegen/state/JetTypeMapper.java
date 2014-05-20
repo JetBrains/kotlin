@@ -45,12 +45,12 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.AsmUtil.boxType;
-import static org.jetbrains.jet.codegen.AsmUtil.getTraitImplThisParameterType;
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.isVarCapturedInClosure;
@@ -580,6 +580,19 @@ public class JetTypeMapper {
         }
 
         return sw.makeJvmMethodSignature(mapFunctionName(f));
+    }
+
+    @NotNull
+    public Method mapDefaultMethod(@NotNull FunctionDescriptor functionDescriptor, @NotNull OwnerKind kind, @NotNull CodegenContext<?> context) {
+        Method jvmSignature = mapSignature(functionDescriptor, kind).getAsmMethod();
+        Type ownerType = mapOwner(functionDescriptor, isCallInsideSameModuleAsDeclared(functionDescriptor, context));
+        String descriptor = jvmSignature.getDescriptor().replace(")", "I)");
+        boolean isConstructor = "<init>".equals(jvmSignature.getName());
+        if (!isStatic(kind) && !isConstructor) {
+            descriptor = descriptor.replace("(", "(" + ownerType.getDescriptor());
+        }
+
+        return new Method(isConstructor ? "<init>" : jvmSignature.getName() + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, descriptor);
     }
 
     /**
