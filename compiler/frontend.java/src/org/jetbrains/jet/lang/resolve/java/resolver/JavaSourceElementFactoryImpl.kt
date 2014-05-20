@@ -22,12 +22,13 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaElementImpl
 import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElementFactory
 import org.jetbrains.jet.lang.descriptors.SourceElement
+import org.jetbrains.jet.lang.resolve.java.sources.JavaSourceElement
 
-private class JavaSourceElementImpl(val element: JavaElement) : PsiSourceElement {
+private class JavaSourceElementImpl(override val javaElement: JavaElement) : PsiSourceElement, JavaSourceElement {
     override val psi: PsiElement?
-        get() = (element as JavaElementImpl<*>).getPsi()
+        get() = (javaElement as JavaElementImpl<*>).getPsi()
 }
 
 public class JavaSourceElementFactoryImpl : JavaSourceElementFactory {
-    override fun source(javaElement: JavaElement): SourceElement = JavaSourceElementImpl(javaElement)
+    override fun source(javaElement: JavaElement): JavaSourceElement = JavaSourceElementImpl(javaElement)
 }

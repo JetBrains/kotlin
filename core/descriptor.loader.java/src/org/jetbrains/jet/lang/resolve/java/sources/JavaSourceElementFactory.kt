@@ -19,6 +19,10 @@ package org.jetbrains.jet.lang.resolve.java.sources
 import org.jetbrains.jet.lang.resolve.java.structure.JavaElement
 import org.jetbrains.jet.lang.descriptors.SourceElement
 
-trait JavaSourceElementFactory {
-    fun source(javaElement: JavaElement): SourceElement
+public trait JavaSourceElementFactory {
+    public fun source(javaElement: JavaElement): JavaSourceElement
+}
+
+public trait JavaSourceElement: SourceElement {
+    public val javaElement: JavaElement
 }
