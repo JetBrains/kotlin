@@ -1,18 +1,18 @@
 /*
-* Copyright 2010-2014 JetBrains s.r.o.
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2010-2014 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 package org.jetbrains.jet.plugin.references
 
@@ -50,7 +50,7 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
 : PsiPolyVariantReferenceBase<T>(element), JetReference {
 
     val expression: T
-        get() = getElement()!!
+        get() = getElement()
 
     override fun multiResolve(incompleteCode: Boolean): Array<ResolveResult> {
         return PsiElementResolveResult.createResults(resolveToPsiElements())
@@ -133,21 +133,21 @@ abstract class AbstractJetReference<T : JetElement>(element: T)
         if (reference !is JetReferenceExpression) {
             return null
         }
-        val labelTarget = context.get(BindingContext.LABEL_TARGET, reference)
+        val labelTarget = context[BindingContext.LABEL_TARGET, reference]
         if (labelTarget != null) {
             return listOf(labelTarget)
         }
-        return context.get(BindingContext.AMBIGUOUS_LABEL_TARGET, reference)
+        return context[BindingContext.AMBIGUOUS_LABEL_TARGET, reference]
     }
 }
 
 public abstract class JetSimpleReference<T : JetReferenceExpression>(expression: T) : AbstractJetReference<T>(expression) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val targetDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression)
+        val targetDescriptor = context[BindingContext.REFERENCE_TARGET, expression]
         if (targetDescriptor != null) {
             return listOf(targetDescriptor)
         }
-        return context.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression).orEmpty()
+        return context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression].orEmpty()
     }
 
     override fun isReferenceTo(element: PsiElement?): Boolean {
