@@ -33,19 +33,16 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.resolve.java.JavaPackage;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetBundle;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.DescriptorRendererBuilder;
 
@@ -135,79 +132,39 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
         addAnnotationFix.invoke(project, editor, file);
     }
 
-    private static String getDefaultSignature(@NotNull PsiMethod method, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
-        PsiClass containingClass = method.getContainingClass();
-        if (containingClass == null) return "";
+    private static String renderMember(PsiMember member) {
+        PsiClass containingClass = member.getContainingClass();
+        assert containingClass != null;
+        String qualifiedName = containingClass.getQualifiedName();
+        assert qualifiedName != null;
 
-        if (method.getReturnType() == null) {
-            // For constructor
-            ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(new JavaClassImpl(containingClass));
-            assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
-            classDescriptor.getConstructors();
-
-            ConstructorDescriptor constructorDescriptor = context.get(BindingContext.CONSTRUCTOR, method);
-            assert constructorDescriptor != null: "Couldn't find constructor descriptor for " + method.getName() + " in " + classFqName;
-            return getDefaultConstructorAnnotation(constructorDescriptor, classFqName);
-        }
-
-        getMemberScope(method, classFqName, javaDescriptorResolver).getFunctions(Name.identifier(method.getName()));
-
-        SimpleFunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, method);
-        assert functionDescriptor != null: "Couldn't find function descriptor for " + method.getName() + " in " + classFqName;
-        return RENDERER.render(functionDescriptor);
-    }
-
-    @NotNull
-    private static String getDefaultSignature(@NotNull PsiField field, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver, BindingContext context) {
-        getMemberScope(field, classFqName, javaDescriptorResolver).getProperties(Name.identifier(field.getName()));
-
-        VariableDescriptor variableDescriptor = context.get(BindingContext.VARIABLE, field);
-        assert variableDescriptor != null: "Couldn't find variable descriptor for field " + field.getName() + " in " + classFqName;
-        return RENDERER.render(variableDescriptor);
+        return member.getName() + " in " + qualifiedName;
     }
 
     @NotNull
     private static String getDefaultSignature(@NotNull Project project, @NotNull PsiMember psiMember) {
-        BindingContext bindingContext = ResolvePackage.getLazyResolveSession(project, TargetPlatform.JVM).getBindingContext();
         JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.get(project);
 
-        PsiClass containingClass = psiMember.getContainingClass();
-        assert containingClass != null;
-        String qualifiedName = containingClass.getQualifiedName();
-        assert qualifiedName != null;
-        FqName classFqName = new FqName(qualifiedName);
-
         if (psiMember instanceof PsiMethod) {
-            return getDefaultSignature((PsiMethod) psiMember, classFqName, javaDescriptorResolver, bindingContext);
+            PsiMethod psiMethod = (PsiMethod) psiMember;
+            FunctionDescriptor functionDescriptor = JavaPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
+            assert functionDescriptor != null: "Couldn't find function descriptor for " + renderMember(psiMember);
+            return functionDescriptor instanceof ConstructorDescriptor
+                    ? getDefaultConstructorAnnotation((ConstructorDescriptor) functionDescriptor)
+                    : RENDERER.render(functionDescriptor);
         }
 
         if (psiMember instanceof PsiField) {
-            return getDefaultSignature((PsiField) psiMember, classFqName, javaDescriptorResolver, bindingContext);
+            VariableDescriptor variableDescriptor = JavaPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) psiMember));
+            assert variableDescriptor != null: "Couldn't find variable descriptor for field " + renderMember(psiMember);
+            return RENDERER.render(variableDescriptor);
         }
 
         throw new IllegalStateException("PsiMethod or PsiField are expected");
     }
 
-    @NotNull
-    private static JetScope getMemberScope(PsiMember member, FqName classFqName, JavaDescriptorResolver javaDescriptorResolver) {
-        PsiClass containingClass = member.getContainingClass();
-        assert containingClass != null;
-
-        JavaClass javaClass = new JavaClassImpl(containingClass);
-
-        if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(javaClass);
-            assert packageFragment != null: "Couldn't resolve package fragment for " + classFqName;
-            return packageFragment.getMemberScope();
-        }
-
-        ClassDescriptor classDescriptor = javaDescriptorResolver.resolveClass(javaClass);
-        assert classDescriptor != null: "Couldn't resolve class descriptor for " + classFqName;
-        return classDescriptor.getDefaultType().getMemberScope();
-    }
-
-    private static String getDefaultConstructorAnnotation(ConstructorDescriptor constructorDescriptor, FqName classFqName) {
-        return String.format("fun %s%s", classFqName.shortName(), RENDERER.renderFunctionParameters(constructorDescriptor));
+    private static String getDefaultConstructorAnnotation(ConstructorDescriptor constructorDescriptor) {
+        return String.format("fun %s%s", constructorDescriptor.getContainingDeclaration().getName(), RENDERER.renderFunctionParameters(constructorDescriptor));
     }
 
     @Nullable
