@@ -45,15 +45,6 @@ public class JetParameterElementType extends JetStubElementType<PsiJetParameterS
     }
 
     @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        if (!super.shouldCreateStub(node)) {
-            return false;
-        }
-        PsiElement psi = node.getPsi();
-        return psi instanceof JetParameter && !((JetParameter) psi).isLoopParameter();
-    }
-
-    @Override
     public void serialize(@NotNull PsiJetParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());

@@ -25,6 +25,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetFunctionStub;
@@ -38,16 +39,6 @@ public class JetFunctionElementType extends JetStubElementType<PsiJetFunctionStu
 
     public JetFunctionElementType(@NotNull @NonNls String debugName) {
         super(debugName, JetNamedFunction.class, PsiJetFunctionStub.class);
-    }
-
-    @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        if (super.shouldCreateStub(node)) {
-            PsiElement psi = node.getPsi();
-            return psi instanceof JetNamedFunction;
-        }
-
-        return false;
     }
 
     @Override

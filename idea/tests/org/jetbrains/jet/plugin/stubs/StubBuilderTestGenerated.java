@@ -116,6 +116,16 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
         doTest("idea/testData/stubs/ManyAnnotationsOnFunction.kt");
     }
     
+    @TestMetadata("MembersInLocalClass.kt")
+    public void testMembersInLocalClass() throws Exception {
+        doTest("idea/testData/stubs/MembersInLocalClass.kt");
+    }
+    
+    @TestMetadata("MembersInLocalObject.kt")
+    public void testMembersInLocalObject() throws Exception {
+        doTest("idea/testData/stubs/MembersInLocalObject.kt");
+    }
+    
     @TestMetadata("NamedObject.kt")
     public void testNamedObject() throws Exception {
         doTest("idea/testData/stubs/NamedObject.kt");
@@ -134,6 +144,16 @@ public class StubBuilderTestGenerated extends AbstractStubBuilderTest {
     @TestMetadata("NotStorePropertyFromInitializer.kt")
     public void testNotStorePropertyFromInitializer() throws Exception {
         doTest("idea/testData/stubs/NotStorePropertyFromInitializer.kt");
+    }
+    
+    @TestMetadata("ObjectInInitializer.kt")
+    public void testObjectInInitializer() throws Exception {
+        doTest("idea/testData/stubs/ObjectInInitializer.kt");
+    }
+    
+    @TestMetadata("ObjectInPropertyDelegate.kt")
+    public void testObjectInPropertyDelegate() throws Exception {
+        doTest("idea/testData/stubs/ObjectInPropertyDelegate.kt");
     }
     
     @TestMetadata("PackageProperty.kt")

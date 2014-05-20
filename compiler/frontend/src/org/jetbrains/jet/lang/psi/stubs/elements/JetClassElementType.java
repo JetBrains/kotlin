@@ -54,11 +54,6 @@ public class JetClassElementType extends JetStubElementType<PsiJetClassStub, Jet
     }
 
     @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        return true;
-    }
-
-    @Override
     public PsiJetClassStub createStub(@NotNull JetClass psi, StubElement parentStub) {
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);
         boolean isEnumEntry = psi instanceof JetEnumEntry;

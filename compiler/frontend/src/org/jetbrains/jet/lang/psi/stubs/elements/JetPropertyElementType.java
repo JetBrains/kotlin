@@ -25,6 +25,7 @@ import com.intellij.psi.stubs.StubOutputStream;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.jet.lang.psi.stubs.PsiJetPropertyStub;
 import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPropertyStubImpl;
@@ -36,16 +37,6 @@ import java.io.IOException;
 public class JetPropertyElementType extends JetStubElementType<PsiJetPropertyStub, JetProperty> {
     public JetPropertyElementType(@NotNull @NonNls String debugName) {
         super(debugName, JetProperty.class, PsiJetPropertyStub.class);
-    }
-
-    @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        if (super.shouldCreateStub(node)) {
-            PsiElement psi = node.getPsi();
-            return psi instanceof JetProperty;
-        }
-
-        return false;
     }
 
     @Override

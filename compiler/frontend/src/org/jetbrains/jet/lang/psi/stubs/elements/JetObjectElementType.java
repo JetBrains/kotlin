@@ -43,11 +43,6 @@ public class JetObjectElementType extends JetStubElementType<PsiJetObjectStub, J
     }
 
     @Override
-    public boolean shouldCreateStub(ASTNode node) {
-        return true;
-    }
-
-    @Override
     public PsiJetObjectStub createStub(@NotNull JetObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = ResolveSessionUtils.safeFqNameForLazyResolve(psi);

@@ -37,8 +37,7 @@ public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTes
         JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
         String stubTree = DebugUtil.stubTreeToString(lighterTree)
-                .replace(NO_NAME_FOR_LAZY_RESOLVE.asString(), "<no name>")
-                .replace(":" + PsiJetPlaceHolderStubImpl.class.getSimpleName(), "");
+                .replace(NO_NAME_FOR_LAZY_RESOLVE.asString(), "<no name>");
         String expectedFile = sourcePath.replace(".kt", ".expected");
         JetTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
     }

@@ -21,8 +21,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.ArrayFactory;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.ReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
 public abstract class JetStubElementType<StubT extends StubElement, PsiT extends JetElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
+
+    @SuppressWarnings("unchecked")
+    private static final Class<? extends PsiElement>[] ALWAYS_CREATE_STUB_FOR = new Class[] { JetClass.class, JetObjectDeclaration.class };
 
     @NotNull
     private final Constructor<PsiT> byNodeConstructor;
@@ -87,39 +93,64 @@ public abstract class JetStubElementType<StubT extends StubElement, PsiT extends
     @Override
     public boolean shouldCreateStub(ASTNode node) {
         PsiElement psi = node.getPsi();
+        if (ArrayUtil.contains(psi.getClass(), ALWAYS_CREATE_STUB_FOR)) {
+            return true;
+        }
+        if (psi instanceof JetDeclaration) {
+            return shouldCreateStubForDeclaration((JetDeclaration) psi);
+        }
+        return createStubDependingOnParent(node);
+    }
 
+    private static boolean createStubDependingOnParent(ASTNode node) {
+        ASTNode parent = node.getTreeParent();
+        IElementType parentType = parent.getElementType();
+        if (parentType instanceof IStubElementType) {
+            return ((IStubElementType) parentType).shouldCreateStub(parent);
+        }
+        if (parentType instanceof IStubFileElementType) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean shouldCreateStubForDeclaration(@NotNull JetDeclaration declaration) {
         // Do not create stubs inside function literals
-        if (PsiTreeUtil.getParentOfType(psi, JetFunctionLiteral.class) != null) {
+        //noinspection unchecked
+        if (PsiTreeUtil.getParentOfType(declaration, JetFunctionLiteral.class, false, ALWAYS_CREATE_STUB_FOR) != null) {
             return false;
         }
 
         // Don't create stubs if declaration is inside function or property accessor with block
-        JetBlockExpression blockExpression = PsiTreeUtil.getParentOfType(psi, JetBlockExpression.class);
+        //noinspection unchecked
+        JetBlockExpression blockExpression =
+                PsiTreeUtil.getParentOfType(declaration, JetBlockExpression.class, false, ALWAYS_CREATE_STUB_FOR);
         if (blockExpression != null) {
             return false;
         }
 
         // Don't create stubs if declaration is inside other declaration with expression initializer
+
+        Class<? extends PsiElement>[] stopAt = ArrayUtil.append(ALWAYS_CREATE_STUB_FOR, JetBlockExpression.class);
         @SuppressWarnings("unchecked") JetWithExpressionInitializer withInitializer =
-                PsiTreeUtil.getParentOfType(psi, JetWithExpressionInitializer.class, true, JetBlockExpression.class);
+                PsiTreeUtil.getParentOfType(declaration, JetWithExpressionInitializer.class, true, stopAt);
         if (withInitializer != null) {
             JetExpression initializer = withInitializer.getInitializer();
-            if (PsiTreeUtil.isAncestor(initializer, psi, true)) {
+            if (PsiTreeUtil.isAncestor(initializer, declaration, true)) {
                 return false;
             }
         }
 
         // Don't create stubs if declaration is inside property delegate
-        @SuppressWarnings("unchecked") JetPropertyDelegate delegate =
-                PsiTreeUtil.getParentOfType(psi, JetPropertyDelegate.class, true, JetBlockExpression.class);
+        @SuppressWarnings("unchecked") JetPropertyDelegate delegate = PsiTreeUtil.getParentOfType(declaration, JetPropertyDelegate.class, true, stopAt);
         if (delegate != null) {
             JetExpression delegateExpression = delegate.getExpression();
-            if (PsiTreeUtil.isAncestor(delegateExpression, psi, true)) {
+            if (PsiTreeUtil.isAncestor(delegateExpression, declaration, true)) {
                 return false;
             }
         }
 
-        return super.shouldCreateStub(node);
+        return true;
     }
 
     @Override

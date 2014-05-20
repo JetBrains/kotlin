@@ -5,3 +5,13 @@ PsiJetFileStubImpl[package=]
   FUN:[fqName=foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=foo]
     VALUE_PARAMETER_LIST:
     CLASS:[fqName=null, isEnumEntry=false, isLocal=true, isTopLevel=false, isTrait=false, name=Test, superNames=[A, T]]
+      DELEGATION_SPECIFIER_LIST:
+        DELEGATOR_SUPER_CALL:
+          CONSTRUCTOR_CALLEE:
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=A]
+        DELEGATOR_SUPER_CLASS:
+          TYPE_REFERENCE:
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=T]
