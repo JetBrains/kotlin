@@ -28,7 +28,8 @@ val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassL
 class JDIEval(
         private val vm: jdi.VirtualMachine,
         private val classLoader: jdi.ClassLoaderReference,
-        private val thread: jdi.ThreadReference
+        private val thread: jdi.ThreadReference,
+        private val invokePolicy: Int
 ) : Eval {
 
     private val primitiveTypes = mapOf(
@@ -192,7 +193,7 @@ class JDIEval(
         if (_class !is jdi.ClassType) throwEvalException(NoSuchMethodError("Static method is a non-class type: $method"))
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
-        val result = mayThrow { _class.invokeMethod(thread, method, args, 0) }
+        val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
         return result.asValue()
     }
 
@@ -218,7 +219,7 @@ class JDIEval(
                 val ctor = findMethod(methodDesc)
                 val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
                 val args = mapArguments(arguments, ctor.safeArgumentTypes())
-                val result = mayThrow { _class.newInstance(thread, ctor, args, 0) }
+                val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
                 instance.value = result
                 return result.asValue()
             }
@@ -231,7 +232,7 @@ class JDIEval(
         val obj = instance.jdiObj.checkNull()
         val method = findMethod(methodDesc, instance.jdiObj!!.referenceType() ?: methodDesc.ownerType.asReferenceType())
         val args = mapArguments(arguments, method.safeArgumentTypes())
-        val result = mayThrow { obj.invokeMethod(thread, method, args, 0) }
+        val result = mayThrow { obj.invokeMethod(thread, method, args, invokePolicy) }
         return result.asValue()
     }
 

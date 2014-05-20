@@ -102,7 +102,7 @@ fun suite(): TestSuite {
 
             override fun runTest() {
                 val eval = JDIEval(
-                        vm, classLoader!!, thread!!
+                        vm, classLoader!!, thread!!, 0
                 )
                 val value = interpreterLoop(
                         methodNode,
