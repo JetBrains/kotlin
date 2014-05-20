@@ -202,6 +202,13 @@ class ArraysTest {
         assertEquals(listOf(100L, 200L, 30L), array(50L, 100L, 200L, 30L).slice(1..3))
         assertEquals(listOf(true, false, true), array(true, false, true, true).slice(iter))
     }
+
+    test fun toSortedList() {
+        assertEquals(listOf<Nothing>(), array<Nothing>().toSortedList())
+        assertEquals(listOf(1), array(1).toSortedList())
+        assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
+    }
+
     /*
 
     TODO FIXME ASAP: These currently fail on JS due to missing upto() method on numbers

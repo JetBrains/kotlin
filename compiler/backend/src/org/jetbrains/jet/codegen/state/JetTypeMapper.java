@@ -262,10 +262,6 @@ public class JetTypeMapper {
                 signatureVisitor.writeArrayEnd();
             }
 
-            if (memberType.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
-                return AsmTypeConstants.getType(Object[].class);
-            }
-
             return Type.getType("[" + boxType(mapType(memberType, kind)).getDescriptor());
         }
 
