@@ -67,6 +67,9 @@ import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
+import com.sun.jdi.request.EventRequest
+import com.sun.jdi.ObjectReference
+import com.intellij.debugger.engine.SuspendContext
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -116,7 +119,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                         makeInitialFrame(this, context.getArgumentsByNames(extractedFunction.getParameterNamesForDebugger())),
                                         JDIEval(virtualMachine,
                                                 context.getClassLoader()!!,
-                                                context.getSuspendContext().getThread()?.getThreadReference()!!)
+                                                context.getSuspendContext().getThread()?.getThreadReference()!!, context.getSuspendContext().getInvokePolicy())
                                 )
 
                                 resultValue = when (value) {
@@ -150,6 +153,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
     override fun getModifier(): Modifier? {
         return null
+    }
+
+    private fun SuspendContext.getInvokePolicy(): Int {
+        return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
     }
 
     private fun JetNamedFunction.getParameterNamesForDebugger(): List<String> {
