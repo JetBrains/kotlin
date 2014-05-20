@@ -204,7 +204,7 @@ class ArraysTest {
     }
 
     test fun toSortedList() {
-        assertEquals(listOf<Nothing>(), array<Nothing>().toSortedList())
+        assertEquals(listOf<Long>(), array<Long>().toSortedList())
         assertEquals(listOf(1), array(1).toSortedList())
         assertEquals(listOf("aab", "aba", "ac"), array("ac", "aab", "aba").toSortedList())
     }
