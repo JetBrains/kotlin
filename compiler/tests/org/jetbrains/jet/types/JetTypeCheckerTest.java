@@ -37,7 +37,6 @@ import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TypeResolver;
 import org.jetbrains.jet.lang.resolve.calls.autocasts.DataFlowInfo;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.scopes.*;
@@ -597,8 +596,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports");
         InjectorForJavaDescriptorResolver injector =
                 InjectorForJavaDescriptorResolverUtil.create(getProject(), new BindingTraceContext(), true);
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
-        ModuleDescriptor module = javaDescriptorResolver.getModule();
+        ModuleDescriptor module = injector.getModule();
         for (ImportPath defaultImport : module.getDefaultImports()) {
             writableScope.importScope(module.getPackage(defaultImport.fqnPart()).getMemberScope());
         }

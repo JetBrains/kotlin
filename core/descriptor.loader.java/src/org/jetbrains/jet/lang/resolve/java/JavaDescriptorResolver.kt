@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,47 +14,26 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.java;
+package org.jetbrains.jet.lang.resolve.java
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.name.Name
 
-public class JavaDescriptorResolver {
-    public static final Name JAVA_ROOT = Name.special("<java_root>");
-
-    private final ModuleDescriptor module;
-
-    private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
-
-    public JavaDescriptorResolver(@NotNull LazyJavaPackageFragmentProvider provider, @NotNull ModuleDescriptor module) {
-        lazyJavaPackageFragmentProvider = provider;
-        this.module = module;
+public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJavaPackageFragmentProvider, private val module: ModuleDescriptor) {
+    public fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
+        return packageFragmentProvider.getClass(javaClass)
     }
 
-    @NotNull
-    public ModuleDescriptor getModule() {
-        return module;
+    public fun getPackageFragment(javaClass: JavaClass): PackageFragmentDescriptor? {
+        return packageFragmentProvider.getPackageFragment(javaClass)
     }
 
-    @NotNull
-    public PackageFragmentProvider getPackageFragmentProvider() {
-        return lazyJavaPackageFragmentProvider;
-    }
-
-    @Nullable
-    public ClassDescriptor resolveClass(@NotNull JavaClass javaClass) {
-        return lazyJavaPackageFragmentProvider.getClass(javaClass);
-    }
-
-    @Nullable
-    public PackageFragmentDescriptor getPackageFragment(@NotNull JavaClass javaClass) {
-        return lazyJavaPackageFragmentProvider.getPackageFragment(javaClass);
+    class object {
+        public val JAVA_ROOT: Name = Name.special("<java_root>")
     }
 }
