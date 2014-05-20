@@ -223,17 +223,18 @@ public final class AnalyzerWithCompilerReport {
     }
 
     public void analyzeAndReport(@NotNull Function0<AnalyzeExhaust> analyzer, @NotNull Collection<JetFile> files) {
-        reportSyntaxErrors(files);
         analyzeExhaust = analyzer.invoke();
+        reportAbiVersionErrors();
+        reportSyntaxErrors(files);
+        //noinspection ConstantConditions
         reportDiagnostics(analyzeExhaust.getBindingContext(), messageCollectorWrapper);
         reportIncompleteHierarchies();
         reportAlternativeSignatureErrors();
-        reportAbiVersionErrors();
     }
 
 
     private static class MyDiagnostic<E extends PsiElement> extends SimpleDiagnostic<E> {
-        private String message;
+        private final String message;
 
         public MyDiagnostic(@NotNull E psiElement, @NotNull DiagnosticFactory0<E> factory, String message) {
             super(psiElement, factory, Severity.ERROR);
