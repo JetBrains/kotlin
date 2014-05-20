@@ -20,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.Call;
+import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.Collections;
 import java.util.Map;
@@ -28,21 +30,20 @@ public class RootInliningContext extends InliningContext {
 
     public final CodegenContext startContext;
 
-    @NotNull
     private final String classNameToInline;
 
-    public final Call call;
+    public final JetElement callElement;
 
     public RootInliningContext(
             @NotNull Map<Integer, LambdaInfo> map,
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
             @NotNull CodegenContext startContext,
-            @NotNull Call call,
+            @NotNull JetElement callElement,
             @NotNull String classNameToInline
     ) {
         super(null, map, state, nameGenerator, Collections.<String, String>emptyMap(), false, false);
-        this.call = call;
+        this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;
     }
@@ -52,6 +53,7 @@ public class RootInliningContext extends InliningContext {
         return true;
     }
 
+    @Override
     @NotNull
     public String getClassNameToInline() {
         return classNameToInline;

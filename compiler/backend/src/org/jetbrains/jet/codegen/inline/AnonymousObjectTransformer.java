@@ -275,7 +275,7 @@ public class AnonymousObjectTransformer {
 
     @NotNull
     private ClassBuilder createClassBuilder() {
-        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.getRoot().call.getCallElement().getContainingFile()),
+        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.getRoot().callElement.getContainingFile()),
                      new TypeRemapper(inliningContext.typeMapping));
     }
 

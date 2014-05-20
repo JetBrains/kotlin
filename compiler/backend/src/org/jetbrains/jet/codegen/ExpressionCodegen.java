@@ -2070,14 +2070,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull StackValue receiver
     ) {
         CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
-        boolean isInline = state.isInlineEnabled() &&
-                           call != null &&
-                           descriptor instanceof SimpleFunctionDescriptor &&
-                           ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+        JetElement callElement = call != null ? call.getCallElement() : null;
 
-        CallGenerator callGenerator = !isInline ? defaultCallGenerator :
-                          new InlineCodegen(this, state, (SimpleFunctionDescriptor) DescriptorUtils.unwrapFakeOverride(
-                                  (CallableMemberDescriptor) descriptor.getOriginal()), call);
+        CallGenerator callGenerator = getOrCreateCallGenerator(descriptor, callElement);
 
         if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
             resolvedCall = ((VariableAsFunctionResolvedCall) resolvedCall).getFunctionCall();
@@ -2094,6 +2089,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         callGenerator.genCall(callableMethod, resolvedCall, mask, this);
+    }
+
+    protected CallGenerator getOrCreateCallGenerator(CallableDescriptor descriptor, JetElement callElement) {
+        boolean isInline = state.isInlineEnabled() &&
+                           descriptor instanceof SimpleFunctionDescriptor &&
+                           ((SimpleFunctionDescriptor) descriptor).getInlineStrategy().isInline();
+
+        return !isInline || callElement == null ? defaultCallGenerator :
+                          new InlineCodegen(this, state, (SimpleFunctionDescriptor) DescriptorUtils.unwrapFakeOverride(
+                                  (CallableMemberDescriptor) descriptor.getOriginal()), callElement);
     }
 
     public void generateFromResolvedCall(@NotNull ReceiverValue descriptor, @NotNull Type type) {

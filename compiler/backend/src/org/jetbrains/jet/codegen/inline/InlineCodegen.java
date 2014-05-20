@@ -64,7 +64,7 @@ public class InlineCodegen implements CallGenerator {
 
     private final SimpleFunctionDescriptor functionDescriptor;
     private final JvmMethodSignature jvmSignature;
-    private final Call call;
+    private final JetElement callElement;
     private final MethodContext context;
     private final ExpressionCodegen codegen;
     private final FrameMap originalFunctionFrame;
@@ -81,14 +81,14 @@ public class InlineCodegen implements CallGenerator {
             @NotNull ExpressionCodegen codegen,
             @NotNull GenerationState state,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
-            @NotNull Call call
+            @NotNull JetElement callElement
     ) {
         assert functionDescriptor.getInlineStrategy().isInline() : "InlineCodegen could inline only inline function but " + functionDescriptor;
 
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.codegen = codegen;
-        this.call = call;
+        this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
         bindingContext = codegen.getBindingContext();
         initialFrameSize = codegen.getFrameMap().getCurrentSize();
@@ -126,7 +126,7 @@ public class InlineCodegen implements CallGenerator {
                                        functionDescriptor.getName() +
                                        "' into \n" + (element != null ? element.getText() : "null psi element " + this.codegen.getContext().getContextDescriptor()) +
                                        (generateNodeText ? ("\ncause: " + getNodeText(node)) : ""),
-                                       e, call.getCallElement());
+                                       e, callElement);
         }
 
 
@@ -201,10 +201,10 @@ public class InlineCodegen implements CallGenerator {
                                                        codegen.getInlineNameGenerator()
                                                                .subGenerator(functionDescriptor.getName().asString()),
                                                        codegen.getContext(),
-                                                       call,
+                                                       callElement,
                                                        codegen.getParentCodegen().getClassName());
 
-        MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + call.getCallElement().getText()); //with captured
+        MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule, "Method inlining " + callElement.getText()); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
