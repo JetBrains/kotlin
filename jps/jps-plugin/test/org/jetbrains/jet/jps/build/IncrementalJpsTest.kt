@@ -16,13 +16,11 @@
 
 package org.jetbrains.jet.jps.build
 
-import org.jetbrains.ether.IncrementalTestCase
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import kotlin.properties.Delegates
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
-import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -117,6 +115,14 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
     }
 
     fun testClassSignatureChanged() {
+        doTest()
+    }
+
+    fun testConstantValue() {
+        doTest()
+    }
+
+    fun testConstantUnchanged() {
         doTest()
     }
 
