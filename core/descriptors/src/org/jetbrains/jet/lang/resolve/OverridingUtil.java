@@ -367,7 +367,7 @@ public class OverridingUtil {
 
     public static void resolveUnknownVisibilityForMember(
             @NotNull CallableMemberDescriptor memberDescriptor,
-            @NotNull Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
+            @Nullable Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
     ) {
         for (CallableMemberDescriptor descriptor : memberDescriptor.getOverriddenDescriptors()) {
             if (descriptor.getVisibility() == Visibilities.INHERITED) {
@@ -379,11 +379,13 @@ public class OverridingUtil {
             return;
         }
 
-        Visibility visibilityToInherit = computeVisibilityToInherit(memberDescriptor, cannotInferVisibility);
+        Visibility maxVisibility = computeVisibilityToInherit(memberDescriptor, cannotInferVisibility);
+        Visibility visibilityToInherit = maxVisibility == null ? Visibilities.PUBLIC : maxVisibility;
         if (memberDescriptor instanceof PropertyDescriptorImpl) {
             ((PropertyDescriptorImpl) memberDescriptor).setVisibility(visibilityToInherit);
             for (PropertyAccessorDescriptor accessor : ((PropertyDescriptor) memberDescriptor).getAccessors()) {
-                resolveUnknownVisibilityForMember(accessor, cannotInferVisibility);
+                // If we couldn't infer visibility for property, the diagnostic is already reported, no need to report it again on accessors
+                resolveUnknownVisibilityForMember(accessor, maxVisibility == null ? null : cannotInferVisibility);
             }
         }
         else if (memberDescriptor instanceof FunctionDescriptorImpl) {
@@ -395,15 +397,17 @@ public class OverridingUtil {
         }
     }
 
-    @NotNull
+    @Nullable
     private static Visibility computeVisibilityToInherit(
             @NotNull CallableMemberDescriptor memberDescriptor,
-            @NotNull Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
+            @Nullable Function1<CallableMemberDescriptor, Unit> cannotInferVisibility
     ) {
         Visibility maxVisibility = findMaxVisibility(memberDescriptor.getOverriddenDescriptors());
         if (maxVisibility == null) {
-            cannotInferVisibility.invoke(memberDescriptor);
-            return Visibilities.PUBLIC;
+            if (cannotInferVisibility != null) {
+                cannotInferVisibility.invoke(memberDescriptor);
+            }
+            return null;
         }
         if (memberDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
             return maxVisibility;

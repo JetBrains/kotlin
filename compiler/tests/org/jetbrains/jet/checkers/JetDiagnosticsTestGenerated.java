@@ -5242,6 +5242,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/override/AllProtectedFromSupertypes.kt");
             }
             
+            @TestMetadata("CannotInferVisibilityForProperty.kt")
+            public void testCannotInferVisibilityForProperty() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForProperty.kt");
+            }
+            
+            @TestMetadata("CannotInferVisibilityForPropertySetter.kt")
+            public void testCannotInferVisibilityForPropertySetter() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/override/CannotInferVisibilityForPropertySetter.kt");
+            }
+            
             @TestMetadata("ComplexValRedeclaration.kt")
             public void testComplexValRedeclaration() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/override/ComplexValRedeclaration.kt");

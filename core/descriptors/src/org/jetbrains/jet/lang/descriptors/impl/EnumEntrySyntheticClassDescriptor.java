@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.descriptors.impl;
 
 import kotlin.Function0;
 import kotlin.Function1;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -225,13 +224,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                         @Override
                         @SuppressWarnings("unchecked")
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
-                                @Override
-                                public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                                    // Do nothing
-                                    return Unit.VALUE;
-                                }
-                            });
+                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
                             result.add((D) fakeOverride);
                         }
 

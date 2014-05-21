@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -178,9 +177,16 @@ public class OverrideResolver {
         return new Function1<CallableMemberDescriptor, Unit>() {
             @Override
             public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                DeclarationDescriptor reportOn = descriptor.getKind() == FAKE_OVERRIDE || descriptor.getKind() == DELEGATION
-                                                 ? DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class)
-                                                 : descriptor;
+                DeclarationDescriptor reportOn;
+                if (descriptor.getKind() == FAKE_OVERRIDE || descriptor.getKind() == DELEGATION) {
+                    reportOn = DescriptorUtils.getParentOfType(descriptor, ClassDescriptor.class);
+                }
+                else if (descriptor instanceof PropertyAccessorDescriptor && ((PropertyAccessorDescriptor) descriptor).isDefault()) {
+                    reportOn = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
+                }
+                else {
+                    reportOn = descriptor;
+                }
                 //noinspection ConstantConditions
                 PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), reportOn);
                 if (element instanceof JetDeclaration) {

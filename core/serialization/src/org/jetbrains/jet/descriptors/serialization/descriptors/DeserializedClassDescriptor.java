@@ -19,7 +19,6 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
-import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
@@ -282,12 +281,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         OverridingUtil.DescriptorSink sink = new OverridingUtil.DescriptorSink() {
             @Override
             public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
-                    @Override
-                    public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                        throw new IllegalStateException("Cannot infer visibility for " + descriptor + " in " + classObject);
-                    }
-                });
+                OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
                 classObject.getBuilder().addFunctionDescriptor((SimpleFunctionDescriptor) fakeOverride);
             }
 
@@ -435,14 +429,8 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                     new OverridingUtil.DescriptorSink() {
                         @Override
                         public void addToScope(@NotNull CallableMemberDescriptor fakeOverride) {
-                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, new Function1<CallableMemberDescriptor, Unit>() {
-                                @Override
-                                public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
-                                    // Do nothing
-                                    // TODO: do something
-                                    return Unit.VALUE;
-                                }
-                            });
+                            // TODO: report "cannot infer visibility"
+                            OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null);
                             //noinspection unchecked
                             result.add((D) fakeOverride);
                         }
