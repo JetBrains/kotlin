@@ -233,7 +233,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
     public void createTypeConstructor() {
         assert typeConstructor == null : typeConstructor;
-        this.typeConstructor = new TypeConstructorImpl(
+        this.typeConstructor = TypeConstructorImpl.createForClass(
                 this,
                 Annotations.EMPTY, // TODO : pass annotations from the class?
                 !getModality().isOverridable(),

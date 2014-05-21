@@ -52,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
+import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -188,7 +189,7 @@ class LazyJavaClassDescriptor(
 
     override fun toString() = "lazy java class $fqName"
 
-    private inner class LazyJavaClassTypeConstructor : TypeConstructor {
+    private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {
 
         private val _parameters = c.storageManager.createLazyValue {
             jClass.getTypeParameters().map({

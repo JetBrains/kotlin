@@ -78,7 +78,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
         this.kind = kind;
 
         this.typeConstructor =
-                new TypeConstructorImpl(this, getAnnotations(), true, "enum entry", Collections.<TypeParameterDescriptor>emptyList(),
+                TypeConstructorImpl.createForClass(this, getAnnotations(), true, "enum entry", Collections.<TypeParameterDescriptor>emptyList(),
                                         Collections.singleton(supertype));
 
         this.scope = new EnumEntryScope(storageManager);

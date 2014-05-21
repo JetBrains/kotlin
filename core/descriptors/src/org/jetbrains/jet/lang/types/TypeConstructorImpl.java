@@ -18,6 +18,7 @@ package org.jetbrains.jet.lang.types;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotatedImpl;
@@ -28,16 +29,61 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructor {
+public abstract class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructor {
+
+    @NotNull
+    public static TypeConstructorImpl createForClass(
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull Annotations annotations,
+            boolean isFinal,
+            @NotNull String debugName,
+            @NotNull List<? extends TypeParameterDescriptor> parameters,
+            @NotNull Collection<JetType> supertypes
+    ) {
+        return new TypeConstructorImpl(classDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
+            @Override
+            public int hashCode() {
+                return AbstractClassTypeConstructor.hashCode(this);
+            }
+
+            @Override
+            @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+            public boolean equals(Object obj) {
+                return AbstractClassTypeConstructor.equals(this, obj);
+            }
+        };
+    }
+
+    @NotNull
+    public static TypeConstructorImpl createForTypeParameter(
+            @NotNull TypeParameterDescriptor typeParameterDescriptor,
+            @NotNull Annotations annotations,
+            boolean isFinal,
+            @NotNull String debugName,
+            @NotNull List<? extends TypeParameterDescriptor> parameters,
+            @NotNull Collection<JetType> supertypes
+    ) {
+        return new TypeConstructorImpl(typeParameterDescriptor, annotations, isFinal, debugName, parameters, supertypes) {
+            @Override
+            public int hashCode() {
+                return System.identityHashCode(this);
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                return this == obj;
+            }
+        };
+    }
+
     private final List<TypeParameterDescriptor> parameters;
     private final Collection<JetType> supertypes;
     private final String debugName;
     private final boolean isFinal;
 
-    @Nullable
     private final ClassifierDescriptor classifierDescriptor;
 
-    public TypeConstructorImpl(
+    private TypeConstructorImpl(
             @Nullable ClassifierDescriptor classifierDescriptor,
             @NotNull Annotations annotations,
             boolean isFinal,
@@ -84,4 +130,10 @@ public class TypeConstructorImpl extends AnnotatedImpl implements TypeConstructo
     public ClassifierDescriptor getDeclarationDescriptor() {
         return classifierDescriptor;
     }
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(Object obj);
 }

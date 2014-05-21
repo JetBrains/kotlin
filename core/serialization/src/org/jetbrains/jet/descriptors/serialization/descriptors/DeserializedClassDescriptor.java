@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverridingUtil;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
+import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor;
 import org.jetbrains.jet.lang.types.ErrorUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -329,7 +330,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         return "deserialized class " + getName().toString();
     }
 
-    private class DeserializedClassTypeConstructor implements TypeConstructor {
+    private class DeserializedClassTypeConstructor extends AbstractClassTypeConstructor {
         private final Collection<JetType> supertypes = computeSuperTypes();
         private final List<TypeParameterDescriptor> parameters;
 

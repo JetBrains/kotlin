@@ -181,10 +181,11 @@ public class TypeCheckingProcedure {
 
         List<TypeProjection> subArguments = subtype.getArguments();
         List<TypeProjection> superArguments = supertype.getArguments();
+        if (subArguments.size() != superArguments.size()) return false;
+
         List<TypeParameterDescriptor> parameters = constructor.getParameters();
         for (int i = 0; i < parameters.size(); i++) {
             TypeParameterDescriptor parameter = parameters.get(i);
-
 
             TypeProjection subArgument = subArguments.get(i);
             JetType subIn = getInType(parameter, subArgument);

@@ -4687,6 +4687,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/multimodule")
+        @InnerTestClasses({Multimodule.DuplicateClass.class})
         public static class Multimodule extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInMultimodule() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/multimodule"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4702,6 +4703,80 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/multimodule/packagePrivate.kt");
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/multimodule/duplicateClass")
+            public static class DuplicateClass extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInDuplicateClass() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/multimodule/duplicateClass"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("differentGenericArguments.kt")
+                public void testDifferentGenericArguments() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/differentGenericArguments.kt");
+                }
+                
+                @TestMetadata("differentGenericArgumentsReversed.kt")
+                public void testDifferentGenericArgumentsReversed() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/differentGenericArgumentsReversed.kt");
+                }
+                
+                @TestMetadata("duplicateClass.kt")
+                public void testDuplicateClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/duplicateClass.kt");
+                }
+                
+                @TestMetadata("duplicateNestedClasses.kt")
+                public void testDuplicateNestedClasses() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/duplicateNestedClasses.kt");
+                }
+                
+                @TestMetadata("duplicateSuperClass.kt")
+                public void testDuplicateSuperClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/duplicateSuperClass.kt");
+                }
+                
+                @TestMetadata("genericArgumentNumberMismatch.kt")
+                public void testGenericArgumentNumberMismatch() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/genericArgumentNumberMismatch.kt");
+                }
+                
+                @TestMetadata("genericSuperClass.kt")
+                public void testGenericSuperClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/genericSuperClass.kt");
+                }
+                
+                @TestMetadata("inTheSameModuleWithUsage.kt")
+                public void testInTheSameModuleWithUsage() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/inTheSameModuleWithUsage.kt");
+                }
+                
+                @TestMetadata("inTheSameModuleWithUsageNoTypeAnnotation.kt")
+                public void testInTheSameModuleWithUsageNoTypeAnnotation() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/inTheSameModuleWithUsageNoTypeAnnotation.kt");
+                }
+                
+                @TestMetadata("members.kt")
+                public void testMembers() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/members.kt");
+                }
+                
+                @TestMetadata("sameClassNameDifferentPackages.kt")
+                public void testSameClassNameDifferentPackages() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/sameClassNameDifferentPackages.kt");
+                }
+                
+                @TestMetadata("sameGenericArguments.kt")
+                public void testSameGenericArguments() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateClass/sameGenericArguments.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("Multimodule");
+                suite.addTestSuite(Multimodule.class);
+                suite.addTestSuite(DuplicateClass.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/namedArguments")
@@ -7094,7 +7169,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTest(Jdk_annotations.innerSuite());
             suite.addTestSuite(Labels.class);
             suite.addTestSuite(Library.class);
-            suite.addTestSuite(Multimodule.class);
+            suite.addTest(Multimodule.innerSuite());
             suite.addTestSuite(NamedArguments.class);
             suite.addTestSuite(NullabilityAndAutoCasts.class);
             suite.addTestSuite(NullableTypes.class);

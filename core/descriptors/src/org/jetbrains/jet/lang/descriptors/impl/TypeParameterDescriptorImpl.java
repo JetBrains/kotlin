@@ -77,7 +77,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
     @Override
     protected TypeConstructor createTypeConstructor() {
         // TODO: Should we actually pass the annotations on to the type constructor?
-        return new TypeConstructorImpl(
+        return TypeConstructorImpl.createForTypeParameter(
                 this,
                 getAnnotations(),
                 false,

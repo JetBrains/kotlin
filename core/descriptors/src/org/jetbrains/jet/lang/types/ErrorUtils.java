@@ -346,7 +346,7 @@ public class ErrorUtils {
 
     @NotNull
     private static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
-        return new TypeConstructorImpl(ERROR_CLASS, Annotations.EMPTY, false, debugName,
+        return TypeConstructorImpl.createForClass(ERROR_CLASS, Annotations.EMPTY, false, debugName,
                                 Collections.<TypeParameterDescriptorImpl>emptyList(),
                                 Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()));
     }

@@ -45,6 +45,7 @@ import org.jetbrains.jet.lang.resolve.lazy.data.SyntheticClassObjectInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.*;
+import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
 import org.jetbrains.jet.lang.types.TypeUtils;
@@ -468,7 +469,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
     }
 
-    private class LazyClassTypeConstructor implements LazyEntity, TypeConstructor {
+    private class LazyClassTypeConstructor extends AbstractClassTypeConstructor implements LazyEntity {
         private final NotNullLazyValue<Supertypes> supertypes = resolveSession.getStorageManager().createLazyValueWithPostCompute(
                 new Function0<Supertypes>() {
                     @Override

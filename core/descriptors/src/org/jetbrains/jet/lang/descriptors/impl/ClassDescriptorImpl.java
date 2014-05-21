@@ -19,7 +19,6 @@ package org.jetbrains.jet.lang.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -49,7 +48,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name);
         this.modality = modality;
 
-        this.typeConstructor = new TypeConstructorImpl(this, Annotations.EMPTY, false, getName().asString(),
+        this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.EMPTY, false, getName().asString(),
                                                        Collections.<TypeParameterDescriptor>emptyList(), supertypes);
     }
 

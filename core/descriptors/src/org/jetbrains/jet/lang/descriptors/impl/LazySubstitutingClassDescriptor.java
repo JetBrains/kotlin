@@ -72,7 +72,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                 supertypes.add(substitutor.substitute(supertype, Variance.INVARIANT));
             }
 
-            typeConstructor = new TypeConstructorImpl(
+            typeConstructor = TypeConstructorImpl.createForClass(
                     this,
                     originalTypeConstructor.getAnnotations(),
                     originalTypeConstructor.isFinal(),
