@@ -285,6 +285,10 @@ public class PositioningStrategies {
                 }
             }
 
+            if (element instanceof JetObjectDeclaration) {
+                return ImmutableList.of(((JetObjectDeclaration) element).getObjectKeyword().getTextRange());
+            }
+
             if (element instanceof JetPropertyAccessor) {
                 return ImmutableList.of(((JetPropertyAccessor) element).getNamePlaceholder().getTextRange());
             }
