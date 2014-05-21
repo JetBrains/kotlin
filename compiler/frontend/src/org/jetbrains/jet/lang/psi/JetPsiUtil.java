@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeTypes;
@@ -387,22 +388,18 @@ public class JetPsiUtil {
     }
 
     @Nullable
+    @Contract("null, _ -> null")
     public static PsiElement getTopmostParentOfTypes(@Nullable PsiElement element, @NotNull Class<? extends PsiElement>... parentTypes) {
-        if (element == null) {
-            return null;
+        PsiElement answer = PsiTreeUtil.getParentOfType(element, parentTypes);
+
+        do {
+            PsiElement next = PsiTreeUtil.getParentOfType(answer, parentTypes);
+            if (next == null) break;
+            answer = next;
         }
+        while (true);
 
-        PsiElement result = null;
-        PsiElement parent = element.getParent();
-        while (parent != null) {
-            if (PsiTreeUtil.instanceOf(parent, parentTypes)) {
-                result = parent;
-            }
-
-            parent = parent.getParent();
-        }
-
-        return result;
+        return answer;
     }
 
     public static boolean isNullConstant(@NotNull JetExpression expression) {
