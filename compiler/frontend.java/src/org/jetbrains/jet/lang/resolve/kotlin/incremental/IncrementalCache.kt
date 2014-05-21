@@ -30,16 +30,39 @@ import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 import org.jetbrains.jet.descriptors.serialization.BitEncoding
 import org.jetbrains.jet.utils.intellij.*
 import java.util.Arrays
+import com.intellij.util.io.IntInlineKeyDescriptor
+import org.jetbrains.org.objectweb.asm.*
+import com.intellij.util.io.EnumeratorStringDescriptor
+import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
+import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import java.util.TreeMap
 
 public class IncrementalCache(baseDir: File) {
     class object {
-        val PROTO_MAP: String = "proto.tab"
+        val PROTO_MAP = "proto.tab"
+        val CONSTANTS_MAP = "constants.tab"
+
+        private fun getConstantsHash(bytes: ByteArray): Int {
+            val result = TreeMap<String, Any>() // keys order should defined to check hash of a map
+
+            ClassReader(bytes).accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+                    if (value != null) {
+                        result[name] = value
+                    }
+                    return null
+                }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+            return result.hashCode()
+        }
     }
 
     private val protoData: PersistentMap<ClassOrPackageId, ByteArray>
+    private val constantsData = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), IntInlineKeyDescriptor())
 
-    {
-        protoData = PersistentHashMap<ClassOrPackageId, ByteArray>(File(baseDir, PROTO_MAP), object : KeyDescriptor<ClassOrPackageId> {
+    ;{
+        protoData = PersistentHashMap(File(baseDir, PROTO_MAP), object : KeyDescriptor<ClassOrPackageId> {
             override fun save(out: DataOutput, value: ClassOrPackageId?) {
                 IOUtil.writeString(value!!.moduleId, out)
                 IOUtil.writeString(value.fqName.asString(), out)
@@ -74,7 +97,8 @@ public class IncrementalCache(baseDir: File) {
     }
 
     public fun saveFileToCache(moduleId: String, file: File): Boolean {
-        val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(file.readBytes())
+        val fileBytes = file.readBytes()
+        val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
         if (classNameAndHeader == null) return false
 
         val (className, header) = classNameAndHeader
@@ -91,6 +115,9 @@ public class IncrementalCache(baseDir: File) {
                 }
             }
         }
+        if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
+            return putConstantsData(className, getConstantsHash(fileBytes))
+        }
 
         return false
     }
@@ -105,12 +132,24 @@ public class IncrementalCache(baseDir: File) {
         return true
     }
 
+    private fun putConstantsData(packagePartClass: JvmClassName, constantsHash: Int): Boolean {
+        val key = packagePartClass.getInternalName()
+
+        val oldHash = constantsData[key]
+        if (oldHash == constantsHash) {
+            return false
+        }
+        constantsData.put(key, constantsHash)
+        return true
+    }
+
     public fun getPackageData(moduleId: String, fqName: FqName): ByteArray? {
         return protoData[ClassOrPackageId(moduleId, fqName)]
     }
 
     public fun close() {
         protoData.close()
+        constantsData.close()
     }
 
     private data class ClassOrPackageId(val moduleId: String, val fqName: FqName) {
