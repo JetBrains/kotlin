@@ -74,7 +74,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             try {
                 val flavor = ReferenceData.getDataFlavor()
                 if (flavor != null) {
-                    referenceData = content.getTransferData(flavor) as ReferenceTransferableData
+                    referenceData = content.getTransferData(flavor) as? ReferenceTransferableData
                 }
             }
             catch (ignored: UnsupportedFlavorException) {
