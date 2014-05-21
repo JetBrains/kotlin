@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
-import org.jetbrains.jet.lang.psi.JetPsiUtil
 import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetParenthesizedExpression
@@ -27,6 +26,7 @@ import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.PsiTreeUtil
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<JetBinaryExpression>(
         "simplify.boolean.with.constants", javaClass()) {
@@ -34,7 +34,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingIntention<J
     private var topParent : JetBinaryExpression? = null
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        topParent = JetPsiUtil.getTopmostParentOfTypes(element, element.javaClass) as JetBinaryExpression? ?: element
+        topParent = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
         return areThereExpressionsToBeSimplified(topParent)
     }
 
