@@ -421,8 +421,7 @@ public class QualifiedExpressionResolver {
 
     private void checkVisibility(@NotNull DeclarationDescriptorWithVisibility descriptor, @NotNull BindingTrace trace,
             @NotNull JetSimpleNameExpression referenceExpression, @NotNull JetScope scopeToCheckVisibility) {
-        if (!CodeFragmentUtilPackage.skipVisibilityCheck(referenceExpression.getContainingJetFile()) &&
-                !Visibilities.isVisible(descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
+        if (!Visibilities.isVisible(descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
             trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
         }
     }

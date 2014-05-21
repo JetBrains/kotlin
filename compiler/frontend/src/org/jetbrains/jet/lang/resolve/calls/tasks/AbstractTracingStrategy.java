@@ -175,9 +175,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
 
     @Override
     public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {
-        if (!CodeFragmentUtilPackage.skipVisibilityCheck(call.getCallElement().getContainingJetFile())) {
-            trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
-        }
+        trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor.getContainingDeclaration()));
     }
 
     @Override

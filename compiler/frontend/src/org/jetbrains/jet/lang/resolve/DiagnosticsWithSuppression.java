@@ -20,16 +20,21 @@ import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.psi.JetAnnotated;
 import org.jetbrains.jet.lang.psi.JetAnnotationEntry;
 import org.jetbrains.jet.lang.psi.JetStubbedPsiUtil;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -95,10 +100,23 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private boolean isSuppressed(@NotNull Diagnostic diagnostic) {
         PsiElement element = diagnostic.getPsiElement();
 
+        if (isSuppressedForDebugger(diagnostic, element)) return true;
+
         JetAnnotated annotated = JetStubbedPsiUtil.getPsiOrStubParent(element, JetAnnotated.class, false);
         if (annotated == null) return false;
 
         return isSuppressedByAnnotated(diagnostic, annotated, 0);
+    }
+
+    private static boolean isSuppressedForDebugger(@NotNull Diagnostic diagnostic, @NotNull PsiElement element) {
+        PsiFile containingFile = element.getContainingFile();
+        if (containingFile instanceof JetFile && CodeFragmentUtilPackage.skipVisibilityCheck((JetFile) containingFile)) {
+            DiagnosticFactory diagnosticFactory = diagnostic.getFactory();
+            return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
+                   diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
+                   diagnosticFactory == Errors.INVISIBLE_SETTER;
+        }
+        return false;
     }
 
     /*

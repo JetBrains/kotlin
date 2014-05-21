@@ -140,8 +140,6 @@ public class CallExpressionResolver {
     ) {
         if (!(classifier instanceof ClassDescriptor)) return;
 
-        if (CodeFragmentUtilPackage.skipVisibilityCheck(expression.getContainingJetFile())) return;
-
         ClassDescriptor classObject = ((ClassDescriptor) classifier).getClassObjectDescriptor();
         assert classObject != null : "This check should be done only for classes with class objects: " + classifier;
         DeclarationDescriptor from = context.containingDeclaration;
