@@ -8,8 +8,9 @@ class MyClass {
     val prop = 1
 
     fun test() {
-        //Breakpoint!
         val a = 1
+        //Breakpoint!
+        val b = 1
     }
 }
 
@@ -18,3 +19,6 @@ class MyClass {
 
 // EXPRESSION: this.prop
 // RESULT: 1: I
+
+// EXPRESSION: prop + a
+// RESULT: 2: I

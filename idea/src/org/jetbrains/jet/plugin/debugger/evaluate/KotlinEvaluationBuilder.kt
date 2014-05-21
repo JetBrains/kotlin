@@ -161,11 +161,11 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
     private fun JetNamedFunction.getParameterNamesForDebugger(): List<String> {
         val result = arrayListOf<String>()
-        for (param in getValueParameters()) {
-            result.add(param.getName()!!)
-        }
         if (getReceiverTypeRef() != null) {
             result.add("this")
+        }
+        for (param in getValueParameters()) {
+            result.add(param.getName()!!)
         }
         return result
     }
