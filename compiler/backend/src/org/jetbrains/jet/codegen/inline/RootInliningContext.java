@@ -19,9 +19,7 @@ package org.jetbrains.jet.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.psi.Call;
 import org.jetbrains.jet.lang.psi.JetElement;
-import org.jetbrains.jet.lang.psi.JetExpression;
 
 import java.util.Collections;
 import java.util.Map;
@@ -46,11 +44,6 @@ public class RootInliningContext extends InliningContext {
         this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;
-    }
-
-    @Override
-    public boolean isRoot() {
-        return true;
     }
 
     @Override

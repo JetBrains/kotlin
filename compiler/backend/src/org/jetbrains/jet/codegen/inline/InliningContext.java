@@ -100,7 +100,7 @@ public class InliningContext {
     }
 
     public boolean isRoot() {
-        return false;
+        return parent == null;
     }
 
     @NotNull

@@ -107,7 +107,7 @@ public class InlineCodegen implements CallGenerator {
     }
 
     @Override
-    public void genCallWithoutNullAssertion(
+    public void genCallWithoutAssertions(
             @NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen
     ) {
         genCall(callableMethod, null, false, codegen);

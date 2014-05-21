@@ -45,7 +45,6 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
-import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -580,13 +579,13 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull MethodContext methodContext,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
-            boolean aStatic,
+            boolean isStatic,
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy,
             @Nullable JetNamedFunction function
     ) {
         mv.visitCode();
-        generateDefaultImplBody(methodContext, signature, functionDescriptor, aStatic, mv, loadStrategy, function, getParentCodegen(), state);
+        generateDefaultImplBody(methodContext, signature, functionDescriptor, isStatic, mv, loadStrategy, function, getParentCodegen(), state);
         endVisit(mv, "default method", callableDescriptorToDeclaration(state.getBindingContext(), functionDescriptor));
     }
 
@@ -594,7 +593,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             @NotNull MethodContext methodContext,
             @NotNull JvmMethodSignature signature,
             @NotNull FunctionDescriptor functionDescriptor,
-            boolean aStatic,
+            boolean isStatic,
             @NotNull MethodVisitor mv,
             @NotNull DefaultParameterValueLoader loadStrategy,
             @Nullable JetNamedFunction function,
@@ -603,7 +602,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
     ) {
         FrameMap frameMap = new FrameMap();
 
-        if (!aStatic) {
+        if (!isStatic) {
             frameMap.enterTemp(OBJECT_TYPE);
         }
 
@@ -630,7 +629,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
         CallGenerator generator = codegen.getOrCreateCallGenerator(functionDescriptor, function);
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, aStatic, signature);
+        loadExplicitArgumentsOnStack(iv, OBJECT_TYPE, isStatic, signature);
         generator.putHiddenParams();
 
         for (int index = 0; index < paramDescrs.size(); index++) {
@@ -663,7 +662,7 @@ public class FunctionCodegen extends ParentCodegenAwareImpl {
             method = state.getTypeMapper().mapToCallableMethod(functionDescriptor, false, methodContext);
         }
 
-        generator.genCallWithoutNullAssertion(method, codegen);
+        generator.genCallWithoutAssertions(method, codegen);
 
         iv.areturn(signature.getReturnType());
     }

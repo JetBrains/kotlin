@@ -49,7 +49,7 @@ public interface CallGenerator {
         }
 
         @Override
-        public void genCallWithoutNullAssertion(
+        public void genCallWithoutAssertions(
                 @NotNull CallableMethod method, @NotNull ExpressionCodegen codegen
         ) {
             method.invokeWithoutAssertions(codegen.v);
@@ -92,7 +92,7 @@ public interface CallGenerator {
 
     void genCall(@NotNull CallableMethod callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen);
 
-    void genCallWithoutNullAssertion(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
+    void genCallWithoutAssertions(@NotNull CallableMethod callableMethod, @NotNull ExpressionCodegen codegen);
 
     void afterParameterPut(@NotNull Type type, StackValue stackValue, @NotNull ValueParameterDescriptor valueParameterDescriptor);
 
