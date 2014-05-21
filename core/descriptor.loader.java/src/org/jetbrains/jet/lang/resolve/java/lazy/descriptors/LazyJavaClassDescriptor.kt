@@ -234,6 +234,6 @@ class LazyJavaClassDescriptor(
 
         override fun getDeclarationDescriptor() = this@LazyJavaClassDescriptor
 
-        override fun toString(): String? = getName().asString()
+        override fun toString(): String = getName().asString()
     }
 }
