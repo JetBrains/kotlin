@@ -739,7 +739,7 @@ fun ExtractionDescriptor.generateFunction(
                 body.getStatements().last?.let {
                     val newExpr = it.replaced(JetPsiFactory.createReturn(project, it.getText() ?: throw AssertionError("Return expression shouldn't be empty: code fragment = ${body.getText()}"))).getReturnedExpression()!!
                     val counterpartMap = createNameCounterpartMap(it, newExpr)
-                    nameByOffset.entrySet().forEach { it.setValue(counterpartMap[it.getValue()]!!) }
+                    nameByOffset.entrySet().forEach { e -> counterpartMap[e.getValue()]?.let { e.setValue(it) } }
                 }
         }
     }
