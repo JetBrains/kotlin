@@ -217,7 +217,7 @@ public interface Errors {
     DiagnosticFactory2<JetAnnotationEntry, CallableMemberDescriptor, DeclarationDescriptor> DATA_CLASS_OVERRIDE_CONFLICT =
             DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<JetDeclaration> CANNOT_INFER_VISIBILITY = DiagnosticFactory0.create(ERROR, DECLARATION);
+    DiagnosticFactory1<JetDeclaration, CallableMemberDescriptor> CANNOT_INFER_VISIBILITY = DiagnosticFactory1.create(ERROR, DECLARATION);
 
     DiagnosticFactory2<JetNamedDeclaration, CallableMemberDescriptor, DeclarationDescriptor> OVERRIDING_FINAL_MEMBER =
             DiagnosticFactory2.create(ERROR, OVERRIDE_MODIFIER);

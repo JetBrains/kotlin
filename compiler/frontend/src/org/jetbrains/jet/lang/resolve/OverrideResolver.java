@@ -190,7 +190,7 @@ public class OverrideResolver {
                 //noinspection ConstantConditions
                 PsiElement element = BindingContextUtils.descriptorToDeclaration(trace.getBindingContext(), reportOn);
                 if (element instanceof JetDeclaration) {
-                    trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element));
+                    trace.report(CANNOT_INFER_VISIBILITY.on((JetDeclaration) element, descriptor));
                 }
                 return Unit.VALUE;
             }
