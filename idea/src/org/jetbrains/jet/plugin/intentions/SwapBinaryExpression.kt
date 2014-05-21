@@ -20,60 +20,37 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetBinaryExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.plugin.intentions.SwapBinaryExpression.Position.*
 import org.jetbrains.jet.plugin.util.JetPsiPrecedences
+import org.jetbrains.jet.lexer.JetTokens.*
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 
 public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpression>(
         "swap.binary.expression", javaClass()
 ) {
-    enum class Position {
-        FIRST_LEFT
-        FIRST_RIGHT
-        NEXT_LEFT
-        NEXT_RIGHT
-    }
+    class object {
+        val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
-    fun getInnermostOperand(element: JetBinaryExpression, position: Position): JetExpression? {
-        val left = element.getLeft()
-        val right = element.getRight()
-        if (left == null || right == null) {
-            return null
-        }
-
-        val parentPrecedence = JetPsiPrecedences.getPrecedence(element)
-        val leftPrecedence = JetPsiPrecedences.getPrecedence(left)
-        val rightPrecedence = JetPsiPrecedences.getPrecedence(right)
-        return when (position) {
-            FIRST_LEFT -> if (leftPrecedence < parentPrecedence) left
-                else if (left is JetBinaryExpression) getInnermostOperand(left, NEXT_RIGHT)
-                else left as JetExpression
-            FIRST_RIGHT -> if (rightPrecedence < parentPrecedence) right
-                else if (right is JetBinaryExpression) getInnermostOperand(right, NEXT_LEFT)
-                else right as JetExpression
-            NEXT_LEFT -> if (leftPrecedence < parentPrecedence || left !is JetBinaryExpression) left
-                else getInnermostOperand(left, NEXT_LEFT)
-            NEXT_RIGHT -> if (rightPrecedence < parentPrecedence || right !is JetBinaryExpression) right
-                else getInnermostOperand(right, NEXT_RIGHT)
-        }
+        val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.map { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet().filterNotNull() +
+                                        setOf("xor", "or", "and", "equals", "identityEquals")
     }
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (getInnermostOperand(element, FIRST_LEFT) == null || getInnermostOperand(element, FIRST_RIGHT) == null) {
+        if (leftSubject(element) == null || rightSubject(element) == null) {
             return false
         }
 
-        val operatorTextLiteral = element.getOperationReference().getText()
-        val approvedOperators = setOf("+", "plus", "*", "times", "||", "or", "and",
-                                      "&&", "==", "!=", "xor", ">", "<", ">=", "<=", "equals")
-
-        if (approvedOperators.contains(operatorTextLiteral)) {
-            setText("Flip '$operatorTextLiteral'")
+        val operationToken = element.getOperationToken()
+        val operationTokenText = element.getOperationReference().getText()
+        if (operationToken in SUPPORTED_OPERATIONS
+                || operationToken == IDENTIFIER && operationTokenText in SUPPORTED_OPERATION_NAMES) {
+            setText("Flip '$operationTokenText'")
             return true
         }
         return false
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+        // Have to use text here to preserve names like "plus"
         val operator = element.getOperationReference().getText()!!
         val convertedOperator = when (operator) {
             ">" -> "<"
@@ -82,12 +59,30 @@ public class SwapBinaryExpression : JetSelfTargetingIntention<JetBinaryExpressio
             ">=" -> "<="
             else -> operator
         }
-        val left = getInnermostOperand(element, FIRST_LEFT)!!
-        val right = getInnermostOperand(element, FIRST_RIGHT)!!
+        val left = leftSubject(element)!!
+        val right = rightSubject(element)!!
         val newRight = JetPsiFactory.createExpression(element.getProject(), left.getText())
         val newLeft = JetPsiFactory.createExpression(element.getProject(), right.getText())
         left.replace(newLeft)
         right.replace(newRight)
         element.replace(JetPsiFactory.createBinaryExpression(element.getProject(), element.getLeft(), convertedOperator, element.getRight()))
+    }
+
+    private fun leftSubject(element: JetBinaryExpression): JetExpression? {
+        return firstDescendantOfTighterPrecedence(element.getLeft(), JetPsiPrecedences.getPrecedence(element), JetBinaryExpression::getRight)
+    }
+
+    private fun rightSubject(element: JetBinaryExpression): JetExpression? {
+        return firstDescendantOfTighterPrecedence(element.getRight(), JetPsiPrecedences.getPrecedence(element), JetBinaryExpression::getLeft)
+    }
+
+    private fun firstDescendantOfTighterPrecedence(expression: JetExpression?, precedence: Int, getChild: JetBinaryExpression.() -> JetExpression?): JetExpression? {
+        if (expression is JetBinaryExpression) {
+            val expressionPrecedence = JetPsiPrecedences.getPrecedence(expression)
+            if (!JetPsiPrecedences.isTighter(expressionPrecedence, precedence)) {
+                return firstDescendantOfTighterPrecedence(expression.getChild(), precedence, getChild)
+            }
+        }
+        return expression
     }
 }

@@ -3255,6 +3255,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/intentions/swapBinaryExpression"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("assignment.kt")
+        public void testAssignment() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/assignment.kt");
+        }
+        
         @TestMetadata("compareTo.kt")
         public void testCompareTo() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/compareTo.kt");
@@ -3295,11 +3300,6 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/divideLiteral.kt");
         }
         
-        @TestMetadata("doubleEquals.kt")
-        public void testDoubleEquals() throws Exception {
-            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/doubleEquals.kt");
-        }
-        
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/equals.kt");
@@ -3318,6 +3318,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("greaterThanEquals.kt")
         public void testGreaterThanEquals() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/greaterThanEquals.kt");
+        }
+        
+        @TestMetadata("identityEquals.kt")
+        public void testIdentityEquals() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/identityEquals.kt");
+        }
+        
+        @TestMetadata("identityEqualsLiteral.kt")
+        public void testIdentityEqualsLiteral() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/identityEqualsLiteral.kt");
         }
         
         @TestMetadata("in.kt")
@@ -3410,14 +3420,14 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/nonBinaryExpr.kt");
         }
         
-        @TestMetadata("notDoubleEquals.kt")
-        public void testNotDoubleEquals() throws Exception {
-            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/notDoubleEquals.kt");
-        }
-        
         @TestMetadata("notEquals.kt")
         public void testNotEquals() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/notEquals.kt");
+        }
+        
+        @TestMetadata("notIdentityEquals.kt")
+        public void testNotIdentityEquals() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/notIdentityEquals.kt");
         }
         
         @TestMetadata("notIn.kt")
@@ -3453,6 +3463,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("plusLiteral.kt")
         public void testPlusLiteral() throws Exception {
             doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/plusLiteral.kt");
+        }
+        
+        @TestMetadata("plusMinus.kt")
+        public void testPlusMinus() throws Exception {
+            doTestSwapBinaryExpression("idea/testData/intentions/swapBinaryExpression/plusMinus.kt");
         }
         
         @TestMetadata("rangeTo.kt")

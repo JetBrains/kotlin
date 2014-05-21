@@ -61,4 +61,8 @@ public object JetPsiPrecedences {
             else -> PRECEDENCE_OF_ATOMIC_EXPRESSION
         }
     }
+
+    public fun isTighter(subject: Int, tighterThan: Int): Boolean {
+        return subject < tighterThan
+    }
 }
