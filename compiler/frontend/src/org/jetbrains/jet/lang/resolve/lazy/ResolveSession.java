@@ -435,7 +435,8 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
         }, null);
         if (result == null) {
-            throw new IllegalStateException("No descriptor resolved for " + declaration + " " + declaration.getText());
+            throw new IllegalStateException("No descriptor resolved for " + declaration + ":\n" +
+                                            JetPsiUtil.getElementTextWithContext(declaration));
         }
         return result;
     }
