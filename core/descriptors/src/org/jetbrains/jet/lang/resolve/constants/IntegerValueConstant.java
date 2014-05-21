@@ -18,7 +18,7 @@ package org.jetbrains.jet.lang.resolve.constants;
 
 public abstract class IntegerValueConstant<T> extends CompileTimeConstant<T> {
 
-    protected IntegerValueConstant(T value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVaraiableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant);
+    protected IntegerValueConstant(T value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
+        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
     }
 }
