@@ -25,7 +25,7 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.lang.types.JetTypeImpl
-import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor
+import org.jetbrains.jet.lang.types.ErrorUtils
 
 private val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
@@ -37,7 +37,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     fun find(className: String): ClassDescriptor {
         val name = Name.identifier(className)
         return kotlinReflectScope?.getClassifier(name) as? ClassDescriptor
-                ?: ErrorClassDescriptor(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
+                ?: ErrorUtils.createErrorClass(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
@@ -54,7 +54,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
         val classDescriptor = correspondingKFunctionClass(receiverType, extensionFunction, parameterTypes.size)
 
-        return if (classDescriptor is ErrorClassDescriptor)
+        return if (ErrorUtils.isError(classDescriptor))
                    classDescriptor.getDefaultType()
                else
                    JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))

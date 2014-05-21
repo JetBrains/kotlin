@@ -22,12 +22,13 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.jet.lang.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
-import org.jetbrains.jet.lang.types.error.ErrorClassDescriptor;
 import org.jetbrains.jet.lang.types.error.ErrorSimpleFunctionDescriptorImpl;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.Printer;
@@ -82,7 +83,7 @@ public class ErrorUtils {
 
         @Override
         public ClassifierDescriptor getClassifier(@NotNull Name name) {
-            return new ErrorClassDescriptor(name.asString());
+            return createErrorClass(name.asString());
         }
 
         @NotNull
@@ -227,6 +228,53 @@ public class ErrorUtils {
     }
 
     private static final ErrorClassDescriptor ERROR_CLASS = new ErrorClassDescriptor(null);
+
+    private static class ErrorClassDescriptor extends ClassDescriptorImpl {
+        public ErrorClassDescriptor(@Nullable String name) {
+            super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
+                  Modality.OPEN, Collections.<JetType>emptyList());
+
+            ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.EMPTY, true);
+            errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+                                        Visibilities.INTERNAL, false);
+            JetScope memberScope = createErrorScope(getName().asString());
+            errorConstructor.setReturnType(
+                    new ErrorTypeImpl(
+                            TypeConstructorImpl.createForClass(
+                                    this, Annotations.EMPTY, false,
+                                    getName().asString(),
+                                    Collections.<TypeParameterDescriptorImpl>emptyList(),
+                                    Collections.singleton(KotlinBuiltIns.getInstance().getAnyType())
+                            ),
+                            memberScope
+                    )
+            );
+
+            initialize(memberScope, Collections.<ConstructorDescriptor>singleton(errorConstructor), errorConstructor);
+        }
+
+        @NotNull
+        @Override
+        public ClassDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return getName().asString();
+        }
+
+        @NotNull
+        @Override
+        public JetScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+            return createErrorScope("Error scope for class " + getName() + " with arguments: " + typeArguments);
+        }
+    }
+
+    @NotNull
+    public static ClassDescriptor createErrorClass(@NotNull String debugMessage) {
+        return new ErrorClassDescriptor(debugMessage);
+    }
 
     @NotNull
     public static JetScope createErrorScope(@NotNull String debugMessage) {
