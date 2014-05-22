@@ -21,7 +21,10 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
-import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetNamedFunction;
+import org.jetbrains.jet.lang.psi.JetProperty;
 import org.jetbrains.org.objectweb.asm.Type;
 
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
@@ -58,7 +61,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
     protected void generateBody() {
         for (JetDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty((JetTypeParameterListOwner) declaration, v);
+                genFunctionOrProperty(declaration, v);
             }
         }
 

@@ -32,7 +32,6 @@ import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.FieldOwnerContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.BitEncoding;
@@ -52,6 +51,7 @@ import org.jetbrains.jet.lang.resolve.MemberComparator;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
 import org.jetbrains.jet.lang.resolve.kotlin.BaseDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -263,13 +263,13 @@ public class PackageCodegen {
 
     @Nullable
     private ClassBuilder generate(@NotNull JetFile file, @NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
-        boolean generateSrcClass = false;
+        boolean generatePackagePart = false;
         Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
         PackageContext packagePartContext = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
 
         for (JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                generateSrcClass = true;
+                generatePackagePart = true;
             }
             else if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
@@ -283,7 +283,7 @@ public class PackageCodegen {
             }
         }
 
-        if (!generateSrcClass) return null;
+        if (!generatePackagePart) return null;
 
         ClassBuilder builder = state.getFactory().forPackagePart(packagePartType, file);
 
@@ -303,7 +303,7 @@ public class PackageCodegen {
                         new Runnable() {
                             @Override
                             public void run() {
-                                memberCodegen.genFunctionOrProperty((JetTypeParameterListOwner) declaration, v.getClassBuilder());
+                                memberCodegen.genFunctionOrProperty(declaration, v.getClassBuilder());
                             }
                         }
                 );
@@ -313,7 +313,6 @@ public class PackageCodegen {
         return builder;
     }
 
-    //TODO: FIX: Default method generated at facade without delegation
     private MemberCodegen<?> getMemberCodegen(@NotNull FieldOwnerContext packageFacade) {
         return new MemberCodegen<JetFile>(state, null, packageFacade, null, null) {
             @Override

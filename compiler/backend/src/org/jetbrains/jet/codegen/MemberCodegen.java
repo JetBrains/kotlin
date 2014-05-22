@@ -106,10 +106,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         v.done();
     }
 
-    public void genFunctionOrProperty(
-            @NotNull JetTypeParameterListOwner functionOrProperty,
-            @NotNull ClassBuilder classBuilder
-    ) {
+    public void genFunctionOrProperty(@NotNull JetDeclaration functionOrProperty, @NotNull ClassBuilder classBuilder) {
         FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state, this);
         if (functionOrProperty instanceof JetNamedFunction) {
             try {

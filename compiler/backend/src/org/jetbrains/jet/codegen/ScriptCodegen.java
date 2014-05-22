@@ -21,15 +21,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -208,7 +207,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
     private void genMembers(@NotNull ClassBuilder classBuilder) {
         for (JetDeclaration declaration : scriptDeclaration.getDeclarations()) {
-            genFunctionOrProperty((JetTypeParameterListOwner) declaration, classBuilder);
+            genFunctionOrProperty(declaration, classBuilder);
         }
     }
 }
