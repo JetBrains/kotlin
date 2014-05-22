@@ -343,7 +343,9 @@ private fun ExtractionData.inferParametersInfo(
         else {
             val extractThis = hasThisReceiver || thisExpr != null
             val extractLocalVar =
-                    (originalDeclaration is JetProperty && originalDeclaration.isLocal()) || originalDeclaration is JetParameter
+                    originalDeclaration is JetMultiDeclarationEntry ||
+                            (originalDeclaration is JetProperty && originalDeclaration.isLocal()) ||
+                            originalDeclaration is JetParameter
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 

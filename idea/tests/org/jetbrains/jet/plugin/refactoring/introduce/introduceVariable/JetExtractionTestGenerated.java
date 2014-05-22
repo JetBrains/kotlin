@@ -724,6 +724,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/innerClassObject.kt");
                 }
                 
+                @TestMetadata("multiDeclaration.kt")
+                public void testMultiDeclaration() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/multiDeclaration.kt");
+                }
+                
                 @TestMetadata("multipleOccurrences.kt")
                 public void testMultipleOccurrences() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/multipleOccurrences.kt");
