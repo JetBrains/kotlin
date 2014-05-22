@@ -30,17 +30,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.jet.asJava.KotlinLightClassTest.ClassProperty.*;
+import static org.jetbrains.jet.asJava.KotlinLightClassStructureTest.ClassProperty.*;
 
 @SuppressWarnings("JUnitTestClassNamingConvention")
-public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
+public abstract class KotlinLightClassStructureTest extends KotlinAsJavaTestBase {
 
-    public static class Declared extends KotlinLightClassTest {
+    public static class Declared extends KotlinLightClassStructureTest {
 
         @Override
         protected List<File> getKotlinSourceRoots() {
             return Collections.singletonList(
-                    new File("compiler/testData/asJava/lightClasses/Declared.kt")
+                    new File("compiler/testData/asJava/lightClassStructure/Declared.kt")
             );
         }
 
@@ -95,12 +95,12 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
     }
 
-    public static class DeclaredWithGenerics extends KotlinLightClassTest {
+    public static class DeclaredWithGenerics extends KotlinLightClassStructureTest {
 
         @Override
         protected List<File> getKotlinSourceRoots() {
             return Collections.singletonList(
-                    new File("compiler/testData/asJava/lightClasses/DeclaredWithGenerics.kt")
+                    new File("compiler/testData/asJava/lightClassStructure/DeclaredWithGenerics.kt")
             );
         }
 
@@ -123,12 +123,12 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
     }
 
-    public static class Package extends KotlinLightClassTest {
+    public static class Package extends KotlinLightClassStructureTest {
 
         @Override
         protected List<File> getKotlinSourceRoots() {
             return Collections.singletonList(
-                    new File("compiler/testData/asJava/lightClasses/Package.kt")
+                    new File("compiler/testData/asJava/lightClassStructure/Package.kt")
             );
         }
 
@@ -137,10 +137,10 @@ public abstract class KotlinLightClassTest extends KotlinAsJavaTestBase {
         }
     }
 
-    public static class CodeWithErrors extends KotlinLightClassTest {
+    public static class CodeWithErrors extends KotlinLightClassStructureTest {
         @Override
         protected List<File> getKotlinSourceRoots() {
-            return Collections.singletonList(new File("compiler/testData/asJava/lightClasses/CodeWithErrors.kt"));
+            return Collections.singletonList(new File("compiler/testData/asJava/lightClassStructure/CodeWithErrors.kt"));
         }
 
         public void testClassWithErrors() {
