@@ -248,7 +248,8 @@ public class ReplInterpreter {
 
         BindingContext bindingContext = AnalyzeExhaust.success(trace.getBindingContext(), module).getBindingContext();
         GenerationState generationState = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
-                                                              module, bindingContext, Collections.singletonList(psiFile));
+                                                              module, bindingContext, Collections.singletonList(psiFile)
+        );
 
         compileScript(psiFile.getScript(), scriptClassType, earlierScripts, generationState,
                       CompilationErrorHandler.THROW_EXCEPTION);

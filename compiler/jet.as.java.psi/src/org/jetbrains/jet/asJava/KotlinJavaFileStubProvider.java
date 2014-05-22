@@ -51,6 +51,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -278,7 +279,9 @@ public class KotlinJavaFileStubProvider<T extends WithFileStub> implements Cache
                     /*generateClassFilter=*/stubGenerationStrategy.getGenerateClassFilter(),
                     /*to generate inline flag on methods*/true,
                     null,
-                    null);
+                    null,
+                    new BindingTraceContext() // TODO
+            );
             state.beforeCompile();
 
             bindingContext = state.getBindingContext();

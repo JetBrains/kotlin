@@ -71,6 +71,7 @@ import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {

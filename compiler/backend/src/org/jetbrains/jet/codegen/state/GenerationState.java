@@ -25,6 +25,7 @@ import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
@@ -118,7 +119,7 @@ public class GenerationState {
             @NotNull List<JetFile> files
     ) {
         this(project, builderFactory, Progress.DEAF, module, bindingContext, files, true, false, GenerateClassFilter.GENERATE_ALL,
-             InlineCodegenUtil.DEFAULT_INLINE_FLAG, null, null);
+             InlineCodegenUtil.DEFAULT_INLINE_FLAG, null, null, DiagnosticHolder.DO_NOTHING);
     }
 
     public GenerationState(
@@ -133,7 +134,8 @@ public class GenerationState {
             GenerateClassFilter generateClassFilter,
             boolean inlineEnabled,
             @Nullable Collection<FqName> packagesWithRemovedFiles,
-            @Nullable String moduleId
+            @Nullable String moduleId,
+            @NotNull DiagnosticHolder diagnostics
     ) {
         this.project = project;
         this.progress = progress;

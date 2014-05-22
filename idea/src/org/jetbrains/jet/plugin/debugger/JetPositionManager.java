@@ -202,7 +202,8 @@ public class JetPositionManager implements PositionManager {
 
                     GenerationState state = new GenerationState(file.getProject(), ClassBuilderFactories.THROW_EXCEPTION,
                                                                 analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(),
-                                                                new ArrayList<JetFile>(packageFiles));
+                                                                new ArrayList<JetFile>(packageFiles)
+                    );
                     state.beforeCompile();
                     return new Result<JetTypeMapper>(state.getTypeMapper(), PsiModificationTracker.MODIFICATION_COUNT);
                 }
