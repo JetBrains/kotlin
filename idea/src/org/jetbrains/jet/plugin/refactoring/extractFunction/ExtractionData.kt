@@ -40,6 +40,11 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.jet.lang.descriptors.ClassKind
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
@@ -120,21 +125,26 @@ class ExtractionData(
         val startOffset = body.getBlockContentOffset()
 
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
-        for ((ref, context) in JetFileReferencesResolver.resolve(body)) {
+        val refToContextMap = JetFileReferencesResolver.resolve(body)
+        for ((ref, context) in refToContextMap) {
             if (ref !is JetSimpleNameExpression) continue
 
-            val parent = ref.getParent()
-            if (parent is JetQualifiedExpression
-                    && parent.getSelectorExpression() == ref
-                    && parent.getReceiverExpression() !is JetSuperExpression) continue
-
             val offset = ref.getTextRange()!!.getStartOffset() - startOffset
-            refOffsetToDeclaration[offset]?.let { originalResolveResult ->
-                val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
-                if (!compareDescriptors(originalResolveResult.descriptor, descriptor)
-                        && !originalResolveResult.declaration.isInsideOf(originalElements)) {
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult))
-                }
+            val originalResolveResult = refOffsetToDeclaration[offset]
+            if (originalResolveResult == null) continue
+
+            val parent = ref.getParent()
+            if (parent is JetQualifiedExpression && parent.getSelectorExpression() == ref) {
+                val receiverDescriptor =
+                        (originalResolveResult.resolvedCall?.getThisObject() as? ThisReceiver)?.getDeclarationDescriptor()
+                if ((receiverDescriptor as? ClassDescriptor)?.getKind() != ClassKind.CLASS_OBJECT
+                        && parent.getReceiverExpression() !is JetSuperExpression) continue
+            }
+
+            val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
+            if (!compareDescriptors(originalResolveResult.descriptor, descriptor)
+                    && !originalResolveResult.declaration.isInsideOf(originalElements)) {
+                referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult))
             }
         }
 
