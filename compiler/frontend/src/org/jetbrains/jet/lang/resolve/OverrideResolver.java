@@ -482,16 +482,13 @@ public class OverrideResolver {
         are overridden by some other function and corresponding directly overridden descriptor is not relevant.
         */
 
-        Map<CallableMemberDescriptor, Set<CallableMemberDescriptor>> relevantOverriddenByParent = Maps.newLinkedHashMap(overriddenByParent);
-
-        for (Map.Entry<CallableMemberDescriptor, Set<CallableMemberDescriptor>> entry : overriddenByParent.entrySet()) {
-            CallableMemberDescriptor directlyOverridden = entry.getKey();
-            Set<CallableMemberDescriptor> declarationSet = entry.getValue();
-            if (!isRelevant(declarationSet, relevantOverriddenByParent.values(), allFilteredOverriddenDeclarations)) {
-                relevantOverriddenByParent.remove(directlyOverridden);
+        for (Iterator<Map.Entry<CallableMemberDescriptor, Set<CallableMemberDescriptor>>> iterator =
+                     overriddenByParent.entrySet().iterator(); iterator.hasNext(); ) {
+            if (!isRelevant(iterator.next().getValue(), overriddenByParent.values(), allFilteredOverriddenDeclarations)) {
+                iterator.remove();
             }
         }
-        return relevantOverriddenByParent.keySet();
+        return overriddenByParent.keySet();
     }
 
     private static boolean isRelevant(
