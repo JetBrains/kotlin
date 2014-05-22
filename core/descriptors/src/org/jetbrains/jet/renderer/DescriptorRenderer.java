@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,13 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
     DescriptorRenderer STARTS_FROM_NAME = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
             .setModifiers()
+            .setStartFromName(true).build();
+
+    DescriptorRenderer STARTS_FROM_NAME_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setUnitReturnType(false)
+            .setModifiers()
+            .setShortNames(true)
             .setStartFromName(true).build();
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();
