@@ -19,6 +19,7 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
@@ -28,6 +29,7 @@ public interface ClassBuilder {
     @NotNull
     FieldVisitor newField(
             @Nullable PsiElement origin,
+            @Nullable DeclarationDescriptor descriptor,
             int access,
             @NotNull String name,
             @NotNull String desc,

@@ -229,7 +229,7 @@ public class PropertyCodegen {
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
-        return builder.newField(element, modifiers, name, type.getDescriptor(),
+        return builder.newField(element, propertyDescriptor, modifiers, name, type.getDescriptor(),
                                 typeMapper.mapFieldSignature(jetType), defaultValue);
     }
 

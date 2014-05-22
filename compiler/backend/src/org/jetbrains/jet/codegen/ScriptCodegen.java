@@ -23,6 +23,7 @@ import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.ScriptContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -118,7 +119,9 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
     ) {
         Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
 
-        classBuilder.newField(null, ACC_PUBLIC | ACC_FINAL, ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME,
+        PropertyDescriptor scriptResultProperty = scriptDescriptor.getScriptResultProperty();
+        classBuilder.newField(null, scriptResultProperty,
+                              ACC_PUBLIC | ACC_FINAL, scriptResultProperty.getName().asString(),
                               blockType.getDescriptor(), null, null);
 
         JvmMethodSignature jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, context.getEarlierScripts());
@@ -195,13 +198,13 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
             Type earlierClassName = asmTypeForScriptDescriptor(bindingContext, earlierScript);
             int access = ACC_PRIVATE | ACC_FINAL;
-            classBuilder.newField(null, access, context.getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
+            classBuilder.newField(null, null, access, context.getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
 
         for (ValueParameterDescriptor parameter : script.getScriptCodeDescriptor().getValueParameters()) {
             Type parameterType = typeMapper.mapType(parameter);
             int access = ACC_PUBLIC | ACC_FINAL;
-            classBuilder.newField(null, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
+            classBuilder.newField(null, parameter, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }
     }
 

@@ -373,7 +373,7 @@ public class AsmUtil {
         //noinspection PointlessBitwiseExpression
         int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         for (Pair<String, Type> field : allFields) {
-            builder.newField(null, access, field.first, field.second.getDescriptor(), null, null);
+            builder.newField(null, null, access, field.first, field.second.getDescriptor(), null, null);
         }
     }
 

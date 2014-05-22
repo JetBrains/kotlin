@@ -1017,7 +1017,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         StackValue.Field field = StackValue.singleton(fieldTypeDescriptor, typeMapper);
 
-        v.newField(original, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
+        v.newField(original, null, ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
         if (!AsmUtil.isClassObjectWithBackingFieldsInOuter(fieldTypeDescriptor)) {
             genInitSingleton(fieldTypeDescriptor, field);
@@ -1030,7 +1030,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (PropertyAndDefaultValue info : classObjectPropertiesToCopy) {
             PropertyDescriptor property = info.descriptor;
 
-            FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
+            FieldVisitor fv = v.newField(null, property, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
                                          typeMapper.mapType(property).getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
                                          info.defaultValue);
 
@@ -1279,7 +1279,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             Type fieldType = typeMapper.mapType(superClassDescriptor);
             String fieldDesc = fieldType.getDescriptor();
 
-            v.newField(specifier, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
+            v.newField(specifier, null, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
 
             field = StackValue.field(fieldType, classAsmType, delegateField, false);
             field.store(fieldType, iv);
@@ -1504,7 +1504,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             String name = declaration.getName();
             assert name != null : "Enum entry has no name: " + declaration.getText();
             String desc = "L" + classAsmType.getInternalName() + ";";
-            v.newField(declaration, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
+            ClassDescriptor entryDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
+            v.newField(declaration, entryDescriptor, ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL, name, desc, null, null);
             myEnumConstants.add((JetEnumEntry) declaration);
         }
 
@@ -1520,7 +1521,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         InstructionAdapter iv = codegen.v;
 
         Type arrayAsmType = typeMapper.mapType(KotlinBuiltIns.getInstance().getArrayType(descriptor.getDefaultType()));
-        v.newField(myClass, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, VALUES, arrayAsmType.getDescriptor(), null, null);
+        v.newField(myClass, null, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, VALUES, arrayAsmType.getDescriptor(), null, null);
 
         iv.iconst(myEnumConstants.size());
         iv.newarray(classAsmType);

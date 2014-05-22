@@ -79,6 +79,7 @@ public class SamWrapperCodegen {
         Type functionAsmType = typeMapper.mapType(functionType);
 
         cv.newField(null,
+                    erasedInterfaceFunction,
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
                     FUNCTION_FIELD_NAME,
                     functionAsmType.getDescriptor(),
