@@ -154,7 +154,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/main.kt", "foo.FooPackage");
         checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/boo.kt", "boo.BooPackage");
-        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/Bar.kt", "foo.Bar", "foo.FooPackage");
+        checkClassesDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/Bar.kt", "foo.Bar");
 
         checkPackageDeletedFromOutputWhen(Operation.DELETE, "kotlinProject", "src/main.kt", "foo.FooPackage");
         assertFilesNotExistInOutput(module, "foo/FooPackage.class");
