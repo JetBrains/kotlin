@@ -24,6 +24,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.backend.common.CodegenUtil;
 import org.jetbrains.jet.backend.common.DataClassMethodGenerator;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
@@ -492,7 +493,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                      ACC_PUBLIC | ACC_ABSTRACT :
                      ACC_PUBLIC;
         if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
-            MethodVisitor mv = v.getVisitor().visitMethod(access, "toArray", "()[Ljava/lang/Object;", null, null);
+            MethodVisitor mv = v.newMethod(null, null, access, "toArray", "()[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -507,7 +508,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (!isGenericToArrayPresent()) {
-            MethodVisitor mv = v.getVisitor().visitMethod(access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+            MethodVisitor mv = v.newMethod(null, null, access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -535,7 +536,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int access = descriptor.getKind() == ClassKind.TRAIT ?
                          ACC_PUBLIC | ACC_ABSTRACT :
                          ACC_PUBLIC;
-            MethodVisitor mv = v.getVisitor().visitMethod(access, name, desc, null, null);
+            MethodVisitor mv = v.newMethod(null, null, access, name, desc, null, null);
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 mv.visitCode();
                 genThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
@@ -614,7 +615,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateEqualsMethod(@NotNull List<PropertyDescriptor> properties) {
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+            FunctionDescriptor equalsFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
+                    descriptor, Name.identifier(CodegenUtil.EQUALS_METHOD_NAME),
+                    KotlinBuiltIns.getInstance().getBoolean(),
+                    KotlinBuiltIns.getInstance().getAny()
+            );
+            MethodVisitor mv = v.newMethod(null, equalsFunction, ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -669,7 +675,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateHashCodeMethod(@NotNull List<PropertyDescriptor> properties) {
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "hashCode", "()I", null, null);
+            FunctionDescriptor hashCodeFunction = CodegenUtil.getDeclaredFunctionByRawSignature(
+                    descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME),
+                    KotlinBuiltIns.getInstance().getInt()
+            );
+            MethodVisitor mv = v.newMethod(null, hashCodeFunction, ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -716,7 +726,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         @Override
         public void generateToStringMethod(@NotNull List<PropertyDescriptor> properties) {
-            MethodVisitor mv = v.getVisitor().visitMethod(ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+            FunctionDescriptor toString = CodegenUtil.getDeclaredFunctionByRawSignature(
+                    descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME),
+                    KotlinBuiltIns.getInstance().getString()
+            );
+            MethodVisitor mv = v.newMethod(null, toString, ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
