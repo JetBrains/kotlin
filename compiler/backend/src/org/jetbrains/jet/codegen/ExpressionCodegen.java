@@ -80,23 +80,21 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
     private static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
 
-    private int myLastLineNumber = -1;
+    private final GenerationState state;
+    final JetTypeMapper typeMapper;
+    private final BindingContext bindingContext;
 
     public final InstructionAdapter v;
-    final MethodVisitor methodVisitor;
     final FrameMap myFrameMap;
-    final JetTypeMapper typeMapper;
-
-    private final GenerationState state;
+    private final MethodContext context;
     private final Type returnType;
 
-    private final BindingContext bindingContext;
-    private final MethodContext context;
-    private final CodegenStatementVisitor statementVisitor;
+    private final CodegenStatementVisitor statementVisitor = new CodegenStatementVisitor(this);
+    private final MemberCodegen<?> parentCodegen;
+    private final TailRecursionCodegen tailRecursionCodegen;
+    public final CallGenerator defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
-
-    private final MemberCodegen<?> parentCodegen;
 
     /*
      * When we create a temporary variable to hold some value not to compute it many times
@@ -104,24 +102,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
      */
     final Map<JetElement, StackValue> tempVariables = Maps.newHashMap();
 
-    private final TailRecursionCodegen tailRecursionCodegen;
+    private int myLastLineNumber = -1;
 
-    public final CallGenerator defaultCallGenerator;
-
-    public CalculatedClosure generateObjectLiteral(GenerationState state, JetObjectLiteralExpression literal) {
-        JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
-
-        Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, literal.getContainingFile());
-
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
-        assert classDescriptor != null;
-
-        ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
-
-        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
-
-        return bindingContext.get(CLOSURE, classDescriptor);
+    public ExpressionCodegen(
+            @NotNull MethodVisitor mv,
+            @NotNull FrameMap frameMap,
+            @NotNull Type returnType,
+            @NotNull MethodContext context,
+            @NotNull GenerationState state,
+            @NotNull MemberCodegen<?> parentCodegen
+    ) {
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
+        this.v = new InstructionAdapter(mv);
+        this.myFrameMap = frameMap;
+        this.context = context;
+        this.returnType = returnType;
+        this.parentCodegen = parentCodegen;
+        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
     }
 
     static class BlockStackElement {
@@ -153,30 +152,37 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    public ExpressionCodegen(
-            @NotNull MethodVisitor v,
-            @NotNull FrameMap myMap,
-            @NotNull Type returnType,
-            @NotNull MethodContext context,
-            @NotNull GenerationState state,
-            @NotNull MemberCodegen<?> parentCodegen
-    ) {
-        this.myFrameMap = myMap;
-        this.parentCodegen = parentCodegen;
-        this.typeMapper = state.getTypeMapper();
-        this.returnType = returnType;
-        this.state = state;
-        this.methodVisitor = v;
-        this.v = new InstructionAdapter(methodVisitor);
-        this.bindingContext = state.getBindingContext();
-        this.context = context;
-        this.statementVisitor = new CodegenStatementVisitor(this);
-        this.tailRecursionCodegen = new TailRecursionCodegen(context, this, this.v, state);
-        this.defaultCallGenerator = new CallGenerator.DefaultCallGenerator(this);
-    }
-
+    @NotNull
     public GenerationState getState() {
         return state;
+    }
+
+    @NotNull
+    public BindingContext getBindingContext() {
+        return bindingContext;
+    }
+
+    @NotNull
+    public MemberCodegen<?> getParentCodegen() {
+        return parentCodegen;
+    }
+
+    @NotNull
+    public CalculatedClosure generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
+        JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
+
+        Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, literal.getContainingFile());
+
+        ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
+        assert classDescriptor != null;
+
+        ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
+
+        new ImplementationBodyCodegen(objectDeclaration, objectContext, classBuilder, state, getParentCodegen()).generate();
+
+        //noinspection ConstantConditions
+        return bindingContext.get(CLOSURE, classDescriptor);
     }
 
     @NotNull
@@ -193,15 +199,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         return inner;
-    }
-
-    public BindingContext getBindingContext() {
-        return bindingContext;
-    }
-
-    @NotNull
-    public MemberCodegen<?> getParentCodegen() {
-        return parentCodegen;
     }
 
     public StackValue genQualified(StackValue receiver, JetElement selector) {
@@ -1318,7 +1315,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitObjectLiteralExpression(@NotNull JetObjectLiteralExpression expression, StackValue receiver) {
-        CalculatedClosure closure = this.generateObjectLiteral(state, expression);
+        CalculatedClosure closure = generateObjectLiteral(expression);
 
         ConstructorDescriptor constructorDescriptor = bindingContext.get(CONSTRUCTOR, expression.getObjectDeclaration());
         assert constructorDescriptor != null;
