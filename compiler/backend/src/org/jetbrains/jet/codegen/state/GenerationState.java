@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
@@ -26,6 +27,7 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
@@ -36,6 +38,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class GenerationState {
@@ -152,7 +155,7 @@ public class GenerationState {
         this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
 
         this.intrinsics = new IntrinsicMethods();
-        this.classFileFactory = new ClassFileFactory(this, builderFactory);
+        this.classFileFactory = new ClassFileFactory(this, new BuilderfactoryForDuplicateSignatureDiagnostics(builderFactory, diagnostics));
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
@@ -272,5 +275,39 @@ public class GenerationState {
     @Nullable
     public String getModuleId() {
         return moduleId;
+    }
+
+    private static class BuilderfactoryForDuplicateSignatureDiagnostics extends SignatureCollectingClassBuilderFactory {
+
+        private final DiagnosticHolder diagnostics;
+
+        public BuilderfactoryForDuplicateSignatureDiagnostics(@NotNull ClassBuilderFactory builderFactory, DiagnosticHolder diagnostics) {
+            super(builderFactory);
+            this.diagnostics = diagnostics;
+        }
+
+        @Override
+        protected void handleClashingSignatures(
+                @Nullable String classInternalName,
+                @NotNull JvmDeclarationOrigin classOrigin,
+                @NotNull RawSignature signature,
+                @NotNull Collection<? extends JvmDeclarationOrigin> origins
+        ) {
+            Collection<PsiElement> elements = new LinkedHashSet<PsiElement>();
+
+            for (JvmDeclarationOrigin origin : origins) {
+                PsiElement element = origin.getElement();
+                if (element == null) {
+                    element = classOrigin.getElement();
+                }
+                if (element != null) {
+                    elements.add(element);
+                }
+            }
+
+            for (PsiElement element : elements) {
+                diagnostics.report(Errors.CONFLICTING_PLATFORM_DECLARATIONS.on(element, signature.getName() + signature.getDesc()));
+            }
+        }
     }
 }
