@@ -34,7 +34,6 @@ import org.jetbrains.jet.codegen.context.*;
 import org.jetbrains.jet.codegen.inline.InlineCodegen;
 import org.jetbrains.jet.codegen.inline.NameGenerator;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethod;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -51,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.*;
 import org.jetbrains.jet.lang.types.JetType;
@@ -77,7 +77,7 @@ import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSynth
 import static org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup, ParentCodegenAware {
+public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implements LocalLookup {
     private static final Set<DeclarationDescriptor> INTEGRAL_RANGES = KotlinBuiltIns.getInstance().getIntegralRanges();
 
     private int myLastLineNumber = -1;
@@ -96,7 +96,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private final Stack<BlockStackElement> blockStackElements = new Stack<BlockStackElement>();
 
-    @Nullable
     private final MemberCodegen<?> parentCodegen;
 
     /*
@@ -160,7 +159,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull Type returnType,
             @NotNull MethodContext context,
             @NotNull GenerationState state,
-            @Nullable MemberCodegen<?> parentCodegen
+            @NotNull MemberCodegen<?> parentCodegen
     ) {
         this.myFrameMap = myMap;
         this.parentCodegen = parentCodegen;
@@ -200,8 +199,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         return bindingContext;
     }
 
-    @Nullable
-    @Override
+    @NotNull
     public MemberCodegen<?> getParentCodegen() {
         return parentCodegen;
     }

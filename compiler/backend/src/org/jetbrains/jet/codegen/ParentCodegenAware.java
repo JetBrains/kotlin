@@ -16,9 +16,27 @@
 
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.codegen.state.JetTypeMapper;
+import org.jetbrains.jet.lang.resolve.BindingContext;
 
-public interface ParentCodegenAware {
+public class ParentCodegenAware {
+    protected final GenerationState state;
+    protected final JetTypeMapper typeMapper;
+    protected final BindingContext bindingContext;
+    private final MemberCodegen<?> parentCodegen;
+
+    public ParentCodegenAware(@NotNull GenerationState state, @Nullable MemberCodegen<?> parentCodegen) {
+        this.state = state;
+        this.typeMapper = state.getTypeMapper();
+        this.bindingContext = state.getBindingContext();
+        this.parentCodegen = parentCodegen;
+    }
+
     @Nullable
-    MemberCodegen<?> getParentCodegen();
+    public MemberCodegen<?> getParentCodegen() {
+        return parentCodegen;
+    }
 }

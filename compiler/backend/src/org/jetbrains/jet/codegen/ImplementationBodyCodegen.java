@@ -779,7 +779,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         @NotNull MethodVisitor mv,
                         @NotNull JvmMethodSignature signature,
                         @NotNull MethodContext context,
-                        @Nullable MemberCodegen<?> parentCodegen
+                        @NotNull MemberCodegen<?> parentCodegen
                 ) {
                     Type componentType = signature.getReturnType();
                     InstructionAdapter iv = new InstructionAdapter(mv);
@@ -805,7 +805,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         @NotNull MethodVisitor mv,
                         @NotNull JvmMethodSignature signature,
                         @NotNull MethodContext context,
-                        @Nullable MemberCodegen<?> parentCodegen
+                        @NotNull MemberCodegen<?> parentCodegen
                 ) {
                     InstructionAdapter iv = new InstructionAdapter(mv);
 

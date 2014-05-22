@@ -163,7 +163,7 @@ public class PackageCodegen {
                                                                    @NotNull MethodVisitor mv,
                                                                    @NotNull JvmMethodSignature signature,
                                                                    @NotNull MethodContext context,
-                                                                   @Nullable MemberCodegen<?> parentCodegen
+                                                                   @NotNull MemberCodegen<?> parentCodegen
                                                            ) {
                                                                throw new IllegalStateException("shouldn't be called");
                                                            }

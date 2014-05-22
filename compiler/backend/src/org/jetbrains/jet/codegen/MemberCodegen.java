@@ -55,7 +55,7 @@ import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> extends ParentCodegenAwareImpl {
+public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclarationContainer*/> extends ParentCodegenAware {
     protected final T element;
     protected final FieldOwnerContext context;
     protected final ClassBuilder v;

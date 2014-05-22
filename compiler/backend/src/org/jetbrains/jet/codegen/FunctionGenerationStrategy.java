@@ -17,13 +17,12 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.MethodContext;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
 public abstract class FunctionGenerationStrategy {
@@ -34,7 +33,7 @@ public abstract class FunctionGenerationStrategy {
             @NotNull MethodVisitor mv,
             @NotNull JvmMethodSignature signature,
             @NotNull MethodContext context,
-            @Nullable MemberCodegen<?> parentCodegen
+            @NotNull MemberCodegen<?> parentCodegen
     );
 
     @NotNull
@@ -82,7 +81,7 @@ public abstract class FunctionGenerationStrategy {
                 @NotNull MethodVisitor mv,
                 @NotNull JvmMethodSignature signature,
                 @NotNull MethodContext context,
-                @Nullable MemberCodegen<?> parentCodegen
+                @NotNull MemberCodegen<?> parentCodegen
         ) {
             ExpressionCodegen codegen = new ExpressionCodegen(mv, getFrameMap(state.getTypeMapper(), context),
                                                               signature.getReturnType(), context, state, parentCodegen);

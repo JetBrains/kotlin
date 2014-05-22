@@ -31,9 +31,6 @@ import org.jetbrains.jet.codegen.bridges.BridgesPackage;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageFacadeContext;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -45,6 +42,9 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -74,7 +74,7 @@ import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
-public class FunctionCodegen extends ParentCodegenAwareImpl {
+public class FunctionCodegen extends ParentCodegenAware {
     private final CodegenContext owner;
 
     private final ClassBuilder v;
