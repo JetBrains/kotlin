@@ -39,4 +39,7 @@ public interface ScriptDescriptor extends Annotated, DeclarationDescriptor, Decl
 
     @NotNull
     JetScope getScopeForBodyResolution();
+
+    @NotNull
+    PropertyDescriptor getScriptResultProperty();
 }

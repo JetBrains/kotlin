@@ -51,6 +51,7 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
 
     private final WritableScopeImpl classScope;
     private WritableScope scopeForBodyResolution;
+    private PropertyDescriptor scriptResultProperty;
 
     public ScriptDescriptorImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -81,7 +82,8 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
         assert valueParameters != null : "setValueParameters() must be called before this method";
         scriptCodeDescriptor.initialize(implicitReceiver, valueParameters, returnType);
 
-        classScope.addPropertyDescriptor(createScriptResultProperty(this));
+        scriptResultProperty = createScriptResultProperty(this);
+        classScope.addPropertyDescriptor(scriptResultProperty);
 
         for (PropertyDescriptorImpl property : properties) {
             classScope.addPropertyDescriptor(property);
@@ -110,6 +112,12 @@ public class ScriptDescriptorImpl extends DeclarationDescriptorNonRootImpl imple
                 ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER);
         propertyDescriptor.initialize(null, null);
         return propertyDescriptor;
+    }
+
+    @NotNull
+    @Override
+    public PropertyDescriptor getScriptResultProperty() {
+        return scriptResultProperty;
     }
 
     @Override

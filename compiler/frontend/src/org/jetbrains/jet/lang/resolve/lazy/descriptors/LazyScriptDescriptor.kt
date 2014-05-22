@@ -39,6 +39,7 @@ import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
+import org.jetbrains.jet.lang.descriptors.PropertyDescriptor
 
 public class LazyScriptDescriptor(
         val resolveSession: ResolveSession,
@@ -64,7 +65,9 @@ public class LazyScriptDescriptor(
 
     override fun getPriority() = _priority
 
-    override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript)
+    override fun getClassDescriptor() = resolveSession.getClassDescriptorForScript(jetScript) as LazyScriptClassDescriptor
+
+    override fun getScriptResultProperty(): PropertyDescriptor = getClassDescriptor().getScopeForMemberLookup().getScriptResultProperty()
 
     private val _scriptCodeDescriptor = resolveSession.getStorageManager().createLazyValue {
         val result = ScriptCodeDescriptor(this)

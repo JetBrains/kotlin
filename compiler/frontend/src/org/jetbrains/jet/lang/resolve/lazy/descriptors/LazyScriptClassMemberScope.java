@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.lang.resolve.lazy.descriptors;
 
+import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
@@ -27,19 +28,33 @@ import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.storage.NotNullLazyValue;
 
 import java.util.Collection;
 import java.util.Set;
 
 // SCRIPT: Members of a script class
 public class LazyScriptClassMemberScope extends LazyClassMemberScope {
+
+    private final NotNullLazyValue<PropertyDescriptor> scriptResultProperty;
+
     protected LazyScriptClassMemberScope(
-            @NotNull ResolveSession resolveSession,
-            @NotNull ClassMemberDeclarationProvider declarationProvider,
+            @NotNull ResolveSession _resolveSession,
+            @NotNull ClassMemberDeclarationProvider _declarationProvider,
             @NotNull LazyClassDescriptor thisClass,
             @NotNull BindingTrace trace
     ) {
-        super(resolveSession, declarationProvider, thisClass, trace);
+        super(_resolveSession, _declarationProvider, thisClass, trace);
+        this.scriptResultProperty = _resolveSession.getStorageManager().createLazyValue(
+                new Function0<PropertyDescriptor>() {
+                    @Override
+                    public PropertyDescriptor invoke() {
+                        JetScriptInfo scriptInfo = (JetScriptInfo) declarationProvider.getOwnerInfo();
+
+                        return ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.getScript()));
+                    }
+                }
+        );
     }
 
     @NotNull
@@ -70,11 +85,14 @@ public class LazyScriptClassMemberScope extends LazyClassMemberScope {
     protected void getNonDeclaredProperties(@NotNull Name name, @NotNull Set<VariableDescriptor> result) {
         super.getNonDeclaredProperties(name, result);
 
-        JetScriptInfo scriptInfo = (JetScriptInfo) declarationProvider.getOwnerInfo();
-
         if (name.asString().equals(ScriptDescriptor.LAST_EXPRESSION_VALUE_FIELD_NAME)) {
-            result.add(ScriptDescriptorImpl.createScriptResultProperty(resolveSession.getScriptDescriptor(scriptInfo.getScript())));
+            result.add(scriptResultProperty.invoke());
         }
+    }
+
+    @NotNull
+    public PropertyDescriptor getScriptResultProperty() {
+        return scriptResultProperty.invoke();
     }
 
     @Override

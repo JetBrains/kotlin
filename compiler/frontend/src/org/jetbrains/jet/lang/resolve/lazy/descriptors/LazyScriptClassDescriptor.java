@@ -38,7 +38,7 @@ public class LazyScriptClassDescriptor extends LazyClassDescriptor {
 
     @NotNull
     @Override
-    protected LazyClassMemberScope createMemberScope(
+    protected LazyScriptClassMemberScope createMemberScope(
             @NotNull ResolveSession resolveSession, @NotNull ClassMemberDeclarationProvider declarationProvider
     ) {
         return new LazyScriptClassMemberScope(
@@ -47,6 +47,12 @@ public class LazyScriptClassDescriptor extends LazyClassDescriptor {
                 this,
                 TemporaryBindingTrace.create(resolveSession.getTrace(), "A trace for script class, needed to avoid rewrites on members")
         );
+    }
+
+    @NotNull
+    @Override
+    public LazyScriptClassMemberScope getScopeForMemberLookup() {
+        return (LazyScriptClassMemberScope) super.getScopeForMemberLookup();
     }
 
     @NotNull
