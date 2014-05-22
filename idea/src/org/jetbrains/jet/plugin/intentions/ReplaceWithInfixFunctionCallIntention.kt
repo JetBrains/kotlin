@@ -22,12 +22,12 @@ import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.JetBundle
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.types.PackageType
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
+import com.intellij.codeInsight.hint.HintManager
 
 public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
     override fun isApplicableTo(element: JetCallExpression): Boolean {
@@ -78,7 +78,8 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
     }
 
     open fun intentionFailed(editor: Editor, messageID: String) {
-        JBPopupFactory.getInstance()!!.createMessage("Intention failed: ${JetBundle.message("replace.with.infix.function.call.intention.error.$messageID")}").showInBestPositionFor(editor)
+        val message = "Intention failed: ${JetBundle.message("replace.with.infix.function.call.intention.error.$messageID")}"
+        HintManager.getInstance().showErrorHint(editor, message)
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {

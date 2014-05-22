@@ -21,7 +21,6 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.JetDotQualifiedExpression
 import org.jetbrains.jet.plugin.intentions.JetSelfTargetingIntention
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
@@ -33,6 +32,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.VarargValueArgument
 import org.jetbrains.jet.plugin.util.Maybe
 import org.jetbrains.jet.plugin.util.MaybeError
 import org.jetbrains.jet.plugin.util.MaybeValue
+import com.intellij.codeInsight.hint.HintManager
 
 // Internal because you shouldn't construct this manually. You can end up with an inconsistant CallDescription.
 public class CallDescription internal (
@@ -121,9 +121,8 @@ public abstract class AttributeCallReplacementIntention(name: String) : JetSelfT
     }
 
     protected open fun intentionFailed(editor: Editor, messageId: String, vararg values: Any?) {
-        JBPopupFactory.getInstance()!!
-                .createMessage("Intention Failed: ${JetBundle.message("replace.call.error.${messageId}", *values)}")
-                .showInBestPositionFor(editor)
+        val message = "Intention failed: ${JetBundle.message("replace.call.error.${messageId}", *values)}"
+        HintManager.getInstance().showErrorHint(editor, message)
     }
 
     protected fun handleErrors<V: Any>(editor: Editor, maybeValue: Maybe<V, String>): V? {
