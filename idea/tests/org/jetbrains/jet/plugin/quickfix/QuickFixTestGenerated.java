@@ -1092,6 +1092,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest("idea/testData/quickfix/override/beforeOverridingFinalMethod.kt");
         }
         
+        @TestMetadata("beforeOverridingFinalMethodInLocal.kt")
+        public void testOverridingFinalMethodInLocal() throws Exception {
+            doTest("idea/testData/quickfix/override/beforeOverridingFinalMethodInLocal.kt");
+        }
+        
         @TestMetadata("beforeOverridingFinalProperty.kt")
         public void testOverridingFinalProperty() throws Exception {
             doTest("idea/testData/quickfix/override/beforeOverridingFinalProperty.kt");
@@ -1132,6 +1137,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("beforeAddFunctionAbstractClass.kt")
             public void testAddFunctionAbstractClass() throws Exception {
                 doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddFunctionAbstractClass.kt");
+            }
+            
+            @TestMetadata("beforeAddFunctionInLocalDeclaration.kt")
+            public void testAddFunctionInLocalDeclaration() throws Exception {
+                doTest("idea/testData/quickfix/override/nothingToOverride/beforeAddFunctionInLocalDeclaration.kt");
             }
             
             @TestMetadata("beforeAddFunctionNoBody.kt")

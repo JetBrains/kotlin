@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
@@ -78,7 +79,14 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
     @NotNull
     @Override
     public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
-        return resolveSession.resolveToDescriptor(declaration);
+        if (!JetPsiUtil.isLocal(declaration)) {
+            return resolveSession.resolveToDescriptor(declaration);
+        }
+
+        BindingContext context = resolveElementCache.resolveToElement(declaration);
+        return BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, declaration,
+                                              "Descriptor wasn't found for declaration " + declaration.toString() + "\n" +
+                                              JetPsiUtil.getElementTextWithContext(declaration));
     }
 
     @Override
