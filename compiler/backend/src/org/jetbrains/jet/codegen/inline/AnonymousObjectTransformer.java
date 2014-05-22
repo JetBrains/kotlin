@@ -232,7 +232,7 @@ public class AnonymousObjectTransformer {
 
         String constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, descTypes.toArray(new Type[descTypes.size()]));
 
-        MethodVisitor constructorVisitor = classBuilder.newMethod(null,
+        MethodVisitor constructorVisitor = classBuilder.newMethod(null, null,
                                                                   AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
                                                                   "<init>", constructorDescriptor,
                                                                   null, ArrayUtil.EMPTY_STRING_ARRAY);
@@ -304,6 +304,7 @@ public class AnonymousObjectTransformer {
     @NotNull
     private static MethodVisitor newMethod(@NotNull ClassBuilder builder, @NotNull MethodNode original) {
         return builder.newMethod(
+                null,
                 null,
                 original.access,
                 original.name,

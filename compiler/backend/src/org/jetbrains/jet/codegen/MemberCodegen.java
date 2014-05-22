@@ -199,7 +199,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         assert state.getClassBuilderMode() == ClassBuilderMode.FULL
                 : "<clinit> should not be generated for light classes. Descriptor: " + descriptor;
         if (clInit == null) {
-            MethodVisitor mv = v.newMethod(null, ACC_STATIC, "<clinit>", "()V", null, null);
+            MethodVisitor mv = v.newMethod(null, descriptor, ACC_STATIC, "<clinit>", "()V", null, null);
             mv.visitCode();
             SimpleFunctionDescriptorImpl clInit =
                     SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY, Name.special("<clinit>"), SYNTHESIZED);

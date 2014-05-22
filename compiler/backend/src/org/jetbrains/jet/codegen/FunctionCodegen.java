@@ -127,6 +127,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         Method asmMethod = jvmSignature.getAsmMethod();
 
         MethodVisitor mv = v.newMethod(origin,
+                                       functionDescriptor,
                                        getMethodAsmFlags(functionDescriptor, methodContextKind),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
@@ -449,7 +450,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         if (!bridgesToGenerate.isEmpty()) {
             PsiElement origin = descriptor.getKind() == DECLARATION ? callableDescriptorToDeclaration(bindingContext, descriptor) : null;
             for (Bridge<Method> bridge : bridgesToGenerate) {
-                generateBridge(origin, bridge.getFrom(), bridge.getTo());
+                generateBridge(origin, descriptor, bridge.getFrom(), bridge.getTo());
             }
         }
     }
@@ -506,7 +507,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             return;
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
-        MethodVisitor mv = classBuilder.newMethod(null, flags, "<init>", "()V", null,
+        MethodVisitor mv = classBuilder.newMethod(null, constructorDescriptor, flags, "<init>", "()V", null,
                                                   getThrownExceptions(constructorDescriptor, state.getTypeMapper()));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
@@ -558,7 +559,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
 
-        MethodVisitor mv = v.newMethod(null, flags | (isConstructor ? 0 : ACC_STATIC),
+        MethodVisitor mv = v.newMethod(null, functionDescriptor, flags | (isConstructor ? 0 : ACC_STATIC),
                                        defaultMethod.getName(),
                                        defaultMethod.getDescriptor(), null,
                                        getThrownExceptions(functionDescriptor, typeMapper));
@@ -720,10 +721,15 @@ public class FunctionCodegen extends ParentCodegenAware {
         return true;
     }
 
-    private void generateBridge(@Nullable PsiElement origin, @NotNull Method bridge, @NotNull Method delegateTo) {
+    private void generateBridge(
+            @Nullable PsiElement origin,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull Method bridge,
+            @NotNull Method delegateTo
+    ) {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
-        MethodVisitor mv = v.newMethod(null, flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(null, descriptor, flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -766,7 +772,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         int flags = ACC_PUBLIC;
 
-        MethodVisitor mv = v.newMethod(null, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
+        MethodVisitor mv = v.newMethod(null, functionDescriptor, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
                                        getThrownExceptions(functionDescriptor, typeMapper));
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 

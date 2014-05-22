@@ -40,6 +40,7 @@ public interface ClassBuilder {
     @NotNull
     MethodVisitor newMethod(
             @Nullable PsiElement origin,
+            @Nullable DeclarationDescriptor descriptor,
             int access,
             @NotNull String name,
             @NotNull String desc,

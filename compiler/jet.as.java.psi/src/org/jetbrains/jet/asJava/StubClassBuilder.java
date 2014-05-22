@@ -99,13 +99,14 @@ public class StubClassBuilder extends AbstractClassBuilder {
     @Override
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
+            @Nullable DeclarationDescriptor descriptor,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
+        MethodVisitor internalVisitor = super.newMethod(origin, descriptor, access, name, desc, signature, exceptions);
 
         if (internalVisitor != EMPTY_METHOD_VISITOR) {
             // If stub for method generated

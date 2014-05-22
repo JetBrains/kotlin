@@ -61,13 +61,16 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @NotNull
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
+            @Nullable DeclarationDescriptor descriptor,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        return new RemappingMethodAdapter(access, desc, builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), signature, exceptions), remapper);
+        return new RemappingMethodAdapter(access, desc,
+                                          builder.newMethod(origin, descriptor, access, name, remapper.mapMethodDesc(desc), signature, exceptions),
+                                          remapper);
     }
 
     @Override

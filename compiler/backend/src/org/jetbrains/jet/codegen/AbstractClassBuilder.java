@@ -66,6 +66,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     @NotNull
     public MethodVisitor newMethod(
             @Nullable PsiElement origin,
+            @Nullable DeclarationDescriptor descriptor,
             int access,
             @NotNull String name,
             @NotNull String desc,
