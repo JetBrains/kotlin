@@ -87,7 +87,8 @@ public class PackageCodegen {
                 JetFile sourceFile = getRepresentativePackageFile(files);
 
                 String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
-                ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(Type.getObjectType(className), files);
+                ClassBuilder v = PackageCodegen.this.state.getFactory()
+                        .newVisitor(Type.getObjectType(className), getPackageFilesWithCallables(files));
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
                               className,
@@ -111,18 +112,7 @@ public class PackageCodegen {
             return null;
         }
 
-        List<JetFile> packageFilesWithCallables = ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
-            @Override
-            public boolean value(JetFile packageFile) {
-                for (JetDeclaration declaration : packageFile.getDeclarations()) {
-                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
+        List<JetFile> packageFilesWithCallables = getPackageFilesWithCallables(packageFiles);
         return packageFilesWithCallables.size() == 1 ? packageFilesWithCallables.get(0) : null;
     }
 
@@ -357,6 +347,21 @@ public class PackageCodegen {
         Type packagePartType = PackagePartClassUtils.getPackagePartType(file);
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
+    }
+
+    @NotNull
+    public static List<JetFile> getPackageFilesWithCallables(@NotNull Collection<JetFile> packageFiles) {
+        return ContainerUtil.filter(packageFiles, new Condition<JetFile>() {
+            @Override
+            public boolean value(JetFile packageFile) {
+                for (JetDeclaration declaration : packageFile.getDeclarations()) {
+                    if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     public void done() {

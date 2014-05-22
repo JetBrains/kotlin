@@ -38,6 +38,8 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
 import java.util.Collections
 import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.psi.JetProperty
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
@@ -70,7 +72,9 @@ public class IncrementalPackageFragmentProvider(
         }
 
         for (source in sourceFiles) {
-            createPackageFragment(source.getPackageFqName())
+            if (source.getDeclarations().any { it is JetProperty || it is JetNamedFunction }) {
+                createPackageFragment(source.getPackageFqName())
+            }
         }
     }
 
