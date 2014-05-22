@@ -2067,6 +2067,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/nullAssertedReceiver.kt");
         }
         
+        @TestMetadata("packageFunctionCall.kt")
+        public void testPackageFunctionCall() throws Exception {
+            doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/packageFunctionCall.kt");
+        }
+        
         @TestMetadata("propertyAccess.kt")
         public void testPropertyAccess() throws Exception {
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/propertyAccess.kt");
@@ -2085,6 +2090,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("simpleMethodCall.kt")
         public void testSimpleMethodCall() throws Exception {
             doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/simpleMethodCall.kt");
+        }
+        
+        @TestMetadata("singlePackageFunctionCall.kt")
+        public void testSinglePackageFunctionCall() throws Exception {
+            doTestReplaceWithInfixFunctionCall("idea/testData/intentions/replaceWithInfixFunctionCall/singlePackageFunctionCall.kt");
         }
         
         @TestMetadata("zeroArguments.kt")
