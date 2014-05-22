@@ -25,7 +25,6 @@ import org.jetbrains.jet.plugin.JetBundle
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import org.jetbrains.jet.lang.psi.JetValueArgument
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
-import org.jetbrains.jet.analyzer.computeTypeInfoInContext
 import org.jetbrains.jet.lang.types.PackageType
 import org.jetbrains.jet.lang.psi.JetPsiUnparsingUtils
 import org.jetbrains.jet.lang.psi.JetPsiFactory
@@ -91,20 +90,16 @@ public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntent
         val valueArguments = element.getValueArgumentList()?.getArguments() ?: listOf<JetValueArgument>()
         val functionLiteralArguments = element.getFunctionLiteralArguments()
         val bindingContext = AnalyzerFacadeWithCache.getContextForElement(parent)
-        val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
-
+        val receiverType = bindingContext[BindingContext.EXPRESSION_TYPE, receiver]
         when {
-            scope == null -> {
+            receiverType == null -> {
                 intentionFailed(editor, "resolution.failed")
                 return
             }
-            else ->
-                    when (receiver.computeTypeInfoInContext(scope).getType()) {
-                        is PackageType -> {
-                            intentionFailed(editor, "package.call")
-                            return
-                        }
-                    }
+            receiverType is PackageType -> {
+                intentionFailed(editor, "package.call")
+                return
+            }
         }
 
         rightHandTextStringBuilder.append(
