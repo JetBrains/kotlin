@@ -16,7 +16,9 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 
@@ -33,8 +35,9 @@ public class ClassBuilderFactories {
             return ClassBuilderMode.FULL;
         }
 
+        @NotNull
         @Override
-        public ClassBuilder newClassBuilder() {
+        public ClassBuilder newClassBuilder(PsiElement forElement, DeclarationDescriptor forDescriptor) {
             throw new IllegalStateException();
         }
 
@@ -57,8 +60,9 @@ public class ClassBuilderFactories {
             return ClassBuilderMode.FULL;
         }
 
+        @NotNull
         @Override
-        public ClassBuilder newClassBuilder() {
+        public ClassBuilder newClassBuilder(PsiElement forElement, DeclarationDescriptor forDescriptor) {
             return new TraceBuilder(new BinaryClassWriter());
         }
 
@@ -86,8 +90,9 @@ public class ClassBuilderFactories {
             return ClassBuilderMode.FULL;
         }
 
+        @NotNull
         @Override
-        public ClassBuilder newClassBuilder() {
+        public ClassBuilder newClassBuilder(PsiElement forElement, DeclarationDescriptor forDescriptor) {
             return new AbstractClassBuilder.Concrete(new BinaryClassWriter());
         }
 

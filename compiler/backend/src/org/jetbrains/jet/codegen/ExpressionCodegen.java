@@ -171,11 +171,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     public CalculatedClosure generateObjectLiteral(@NotNull JetObjectLiteralExpression literal) {
         JetObjectDeclaration objectDeclaration = literal.getObjectDeclaration();
 
-        Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, literal.getContainingFile());
-
         ClassDescriptor classDescriptor = bindingContext.get(CLASS, objectDeclaration);
         assert classDescriptor != null;
+
+        Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
+        ClassBuilder classBuilder = state.getFactory().newVisitor(objectDeclaration, classDescriptor, asmType, literal.getContainingFile());
+
 
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
 
@@ -263,7 +264,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null;
 
         Type asmType = asmTypeForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(asmType, declaration.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(declaration, descriptor, asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();

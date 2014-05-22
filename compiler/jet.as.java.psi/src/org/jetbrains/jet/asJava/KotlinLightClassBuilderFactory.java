@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.asJava;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 /*package*/ class KotlinLightClassBuilderFactory implements ClassBuilderFactory {
     private final Stack<StubElement> stubStack;
@@ -36,8 +38,9 @@ import org.jetbrains.jet.codegen.ClassBuilderMode;
         return ClassBuilderMode.LIGHT_CLASSES;
     }
 
+    @NotNull
     @Override
-    public ClassBuilder newClassBuilder() {
+    public ClassBuilder newClassBuilder(PsiElement forElement, DeclarationDescriptor forDescriptor) {
         return new StubClassBuilder(stubStack);
     }
 

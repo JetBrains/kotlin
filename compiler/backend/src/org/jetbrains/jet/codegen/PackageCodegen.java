@@ -89,7 +89,9 @@ public class PackageCodegen {
 
                 String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
                 ClassBuilder v = PackageCodegen.this.state.getFactory()
-                        .newVisitor(Type.getObjectType(className), PackagePartClassUtils.getPackageFilesWithCallables(files));
+                        .newVisitor(
+                                null, packageFragment,
+                                Type.getObjectType(className), PackagePartClassUtils.getPackageFilesWithCallables(files));
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
                               className,
@@ -279,7 +281,7 @@ public class PackageCodegen {
 
         if (!generatePackagePart) return null;
 
-        ClassBuilder builder = state.getFactory().newVisitor(packagePartType, file);
+        ClassBuilder builder = state.getFactory().newVisitor(file, packageFragment, packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 

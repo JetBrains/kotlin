@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.codegen.state.GenerationState;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -48,16 +50,24 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public ClassBuilder newVisitor(@NotNull Type asmType, @NotNull PsiFile sourceFile) {
-        return newVisitor(asmType, Collections.singletonList(sourceFile));
+    public ClassBuilder newVisitor(
+            @Nullable PsiElement forElement,
+            @Nullable DeclarationDescriptor forDescriptor,
+            @NotNull Type asmType,
+            @NotNull PsiFile sourceFile) {
+        return newVisitor(forElement == null ? sourceFile : forElement, forDescriptor, asmType, Collections.singletonList(sourceFile));
     }
 
     @NotNull
-    public ClassBuilder newVisitor(@NotNull Type asmType, @NotNull Collection<? extends PsiFile> sourceFiles) {
+    public ClassBuilder newVisitor(
+            @Nullable PsiElement forElement,
+            @Nullable DeclarationDescriptor forDescriptor,
+            @NotNull Type asmType,
+            @NotNull Collection<? extends PsiFile> sourceFiles) {
         String outputFilePath = asmType.getInternalName() + ".class";
         List<File> ioSourceFiles = toIoFilesIgnoringNonPhysical(sourceFiles);
         state.getProgress().reportOutput(ioSourceFiles, new File(outputFilePath));
-        ClassBuilder answer = builderFactory.newClassBuilder();
+        ClassBuilder answer = builderFactory.newClassBuilder(forElement, forDescriptor);
         generators.put(outputFilePath, new ClassBuilderAndSourceFileList(answer, ioSourceFiles));
         return answer;
     }
