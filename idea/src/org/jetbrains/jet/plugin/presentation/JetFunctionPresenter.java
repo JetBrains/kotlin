@@ -21,6 +21,7 @@ import com.google.common.collect.Collections2;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProvider;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetNamedFunction;
 import org.jetbrains.jet.lang.psi.JetParameter;
 import org.jetbrains.jet.lang.psi.JetTypeReference;
@@ -30,7 +31,7 @@ import java.util.Collection;
 
 public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFunction> {
     @Override
-    public ItemPresentation getPresentation(final JetNamedFunction function) {
+    public ItemPresentation getPresentation(@NotNull final JetNamedFunction function) {
         return new JetDefaultNamedDeclarationPresentation(function) {
             @Override
             public String getPresentableText() {
