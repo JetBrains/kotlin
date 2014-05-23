@@ -56,9 +56,12 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
 
     DescriptorRenderer STARTS_FROM_NAME_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
             .setWithDefinedIn(false)
-            .setUnitReturnType(false)
             .setModifiers()
             .setShortNames(true)
+            .setWithoutTypeParameters(true)
+            .setWithoutFunctionParameterNames(true)
+            .setReceiverAfterName(true)
+            .setRenderClassObjectName(true)
             .setStartFromName(true).build();
 
     DescriptorRenderer FQ_NAMES_IN_TYPES = new DescriptorRendererBuilder().build();

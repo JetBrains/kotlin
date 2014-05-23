@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,9 @@ public class DescriptorRendererBuilder {
     private boolean uninferredTypeParameterAsName = false;
     private boolean includePropertyConstant = false;
     private boolean includeSynthesizedParameterNames = true;
+    private boolean withoutFunctionParameterNames = false;
+    private boolean withoutTypeParameters = false;
+
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
     @NotNull
@@ -47,6 +50,8 @@ public class DescriptorRendererBuilder {
     private DescriptorRenderer.TextFormat textFormat = DescriptorRenderer.TextFormat.PLAIN;
     @NotNull
     private Collection<FqName> excludedAnnotationClasses = Collections.emptyList();
+    private boolean receiverAfterName = false;
+    private boolean renderClassObjectName = false;
 
     public DescriptorRendererBuilder() {
     }
@@ -162,13 +167,34 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setWithoutTypeParameters(boolean withoutTypeParameters) {
+        this.withoutTypeParameters = withoutTypeParameters;
+        return this;
+    }
+
+    public DescriptorRendererBuilder setWithoutFunctionParameterNames(boolean withoutFunctionParameterNames) {
+        this.withoutFunctionParameterNames = withoutFunctionParameterNames;
+        return this;
+    }
+
+    public DescriptorRendererBuilder setReceiverAfterName(boolean receiverAfterName) {
+        this.receiverAfterName = receiverAfterName;
+        return this;
+    }
+
+    public DescriptorRendererBuilder setRenderClassObjectName(boolean renderClassObjectName) {
+        this.renderClassObjectName = renderClassObjectName;
+        return this;
+    }
+
     @NotNull
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(
                 shortNames, withDefinedIn, modifiers, startFromName, debugMode, classWithPrimaryConstructor, verbose, unitReturnType,
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
-                includeSynthesizedParameterNames);
+                includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
+                renderClassObjectName);
     }
 
 }

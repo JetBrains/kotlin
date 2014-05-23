@@ -33,9 +33,7 @@ import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest;
 @TestMetadata("idea/testData/structureView/fileStructure")
 public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructureTest {
     public void testAllFilesPresentInFileStructure() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                     new File("idea/testData/structureView/fileStructure"), Pattern.compile("^(.+)\\.kt$"),
-                                                     true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/structureView/fileStructure"), Pattern.compile("^(.+)\\.kt$"), true);
     }
     
     @TestMetadata("EmptyFile.kt")
@@ -46,6 +44,11 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
     @TestMetadata("InheritedMembers.kt")
     public void testInheritedMembers() throws Exception {
         doTest("idea/testData/structureView/fileStructure/InheritedMembers.kt");
+    }
+    
+    @TestMetadata("Render.kt")
+    public void testRender() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/Render.kt");
     }
     
     @TestMetadata("SeveralClasses.kt")

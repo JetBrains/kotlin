@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean prettyFunctionTypes;
     private final boolean uninferredTypeParameterAsName;
     private final boolean includeSynthesizedParameterNames;
+    private final boolean withoutFunctionParameterNames;
+    private final boolean withoutTypeParameters;
+    private final boolean renderClassObjectName;
 
+    private final boolean receiverAfterName;
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
     @NotNull
@@ -87,7 +91,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull TextFormat textFormat,
             @NotNull Collection<FqName> excludedAnnotationClasses,
             boolean includePropertyConstant,
-            boolean includeSynthesizedParameterNames
+            boolean includeSynthesizedParameterNames,
+            boolean withoutFunctionParameterNames,
+            boolean withoutTypeParameters,
+            boolean receiverAfterName,
+            boolean renderClassObjectName
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -107,6 +115,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.prettyFunctionTypes = prettyFunctionTypes;
         this.uninferredTypeParameterAsName = uninferredTypeParameterAsName;
         this.includeSynthesizedParameterNames = includeSynthesizedParameterNames;
+        this.withoutFunctionParameterNames = withoutFunctionParameterNames;
+        this.withoutTypeParameters = withoutTypeParameters;
+        this.receiverAfterName = receiverAfterName;
+        this.renderClassObjectName = renderClassObjectName;
     }
 
     /* FORMATTING */
@@ -185,6 +197,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
         builder.append(renderName(descriptor.getName()));
+    }
+
+    private void renderClassObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
+        if (renderClassObjectName) {
+            builder.append("<class object>");
+        }
+        if (verbose) {
+            builder.append(renderName(descriptor.getName()));
+        }
     }
 
     @NotNull
@@ -553,6 +574,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             @NotNull StringBuilder builder,
             boolean withSpace
     ) {
+        if (withoutTypeParameters) return;
+
         if (!typeParameters.isEmpty()) {
             builder.append(lt());
             for (Iterator<TypeParameterDescriptor> iterator = typeParameters.iterator(); iterator.hasNext(); ) {
@@ -580,22 +603,37 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
             builder.append(renderKeyword("fun")).append(" ");
             renderTypeParameters(function.getTypeParameters(), builder, true);
-
-            ReceiverParameterDescriptor receiver = function.getReceiverParameter();
-            if (receiver != null) {
-                builder.append(escape(renderType(receiver.getType()))).append(".");
-            }
+            renderReceiver(function, builder);
         }
 
         renderName(function, builder);
 
         renderValueParameters(function, builder);
 
+        renderReceiverAfterName(function, builder);
+
         JetType returnType = function.getReturnType();
-        if (unitReturnType || !KotlinBuiltIns.getInstance().isUnit(returnType)) {
+        if (unitReturnType || (returnType == null || !KotlinBuiltIns.getInstance().isUnit(returnType))) {
             builder.append(": ").append(returnType == null ? "[NULL]" : escape(renderType(returnType)));
         }
+
         renderWhereSuffix(function.getTypeParameters(), builder);
+    }
+
+    private void renderReceiverAfterName(CallableDescriptor callableDescriptor, StringBuilder builder) {
+        if (!receiverAfterName) return;
+
+        ReceiverParameterDescriptor receiver = callableDescriptor.getReceiverParameter();
+        if (receiver != null) {
+            builder.append(" on ").append(escape(renderType(receiver.getType())));
+        }
+    }
+
+    private void renderReceiver(CallableDescriptor callableDescriptor, StringBuilder builder) {
+        ReceiverParameterDescriptor receiver = callableDescriptor.getReceiverParameter();
+        if (receiver != null) {
+            builder.append(escape(renderType(receiver.getType()))).append(".");
+        }
     }
 
     private void renderConstructor(@NotNull ConstructorDescriptor constructor, @NotNull StringBuilder builder) {
@@ -614,6 +652,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderWhereSuffix(@NotNull List<TypeParameterDescriptor> typeParameters, @NotNull StringBuilder builder) {
+        if (withoutTypeParameters) return;
+
         List<String> upperBoundStrings = Lists.newArrayList();
 
         for (TypeParameterDescriptor typeParameter : typeParameters) {
@@ -643,7 +683,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     }
 
     private void renderValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
-        boolean includeNames = includeSynthesizedParameterNames || !function.hasSynthesizedParameterNames();
+        boolean includeNames = !withoutFunctionParameterNames &&
+                               (includeSynthesizedParameterNames || !function.hasSynthesizedParameterNames());
         handler.appendBeforeValueParameters(function, builder);
         for (ValueParameterDescriptor parameter : function.getValueParameters()) {
             handler.appendBeforeValueParameter(parameter, builder);
@@ -711,18 +752,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             renderModalityForCallable(property, builder);
             renderOverride(property, builder);
             renderMemberKind(property, builder);
-
             renderValVarPrefix(property, builder);
+            renderTypeParameters(property.getTypeParameters(), builder, true);
+            renderReceiver(property, builder);
         }
 
-        renderTypeParameters(property.getTypeParameters(), builder, true);
-
-        ReceiverParameterDescriptor receiver = property.getReceiverParameter();
-        if (receiver != null) {
-            builder.append(escape(renderType(receiver.getType()))).append(".");
-        }
         renderName(property, builder);
         builder.append(": ").append(escape(renderType(property.getType())));
+
+        renderReceiverAfterName(property, builder);
 
         renderInitializer(property, builder);
 
@@ -748,12 +786,15 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 renderModality(klass.getModality(), builder);
             }
             renderInner(klass.isInner(), builder);
-            builder.append(renderKeyword(getClassKindPrefix(klass)));
+            renderClassKindPrefix(klass, builder);
+            builder.append(" ");
         }
 
-        if (klass.getKind() != ClassKind.CLASS_OBJECT || verbose) {
-            builder.append(" ");
+        if (klass.getKind() != ClassKind.CLASS_OBJECT) {
             renderName(klass, builder);
+        }
+        else {
+            renderClassObjectName(klass, builder);
         }
 
         List<TypeParameterDescriptor> typeParameters = klass.getTypeConstructor().getParameters();
@@ -784,6 +825,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         }
 
         renderWhereSuffix(typeParameters, builder);
+    }
+
+    private void renderClassKindPrefix(ClassDescriptor klass, StringBuilder builder) {
+        builder.append(renderKeyword(getClassKindPrefix(klass)));
     }
 
     @NotNull

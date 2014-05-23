@@ -1,6 +1,6 @@
 -Simple.kt
- -Test (<root>)
-  str:kotlin.String
-  some:kotlin.Int
-  foo():kotlin.Int
-  other():kotlin.Unit
+ -Test
+  str: String
+  some: Int
+  foo(): Int
+  other(): Unit

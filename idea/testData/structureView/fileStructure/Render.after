@@ -1,0 +1,40 @@
+-Render.kt
+ test1(): Unit
+ test2(String?): Unit
+ test3(T, U): Unit
+ test4(T): Unit
+ test5(): String
+ test6(): Comparable<String>
+ extension1() on String: Unit
+ extension2() on Comparable<T>: Unit
+ a: Int
+ a: String on Comparable<T>
+ b: Any
+ A1
+ -A2
+  a: Int
+  b: [ERROR : Annotation is absent]
+ -A3
+  a: Int
+  b: String
+ -A4
+  t: T?
+ -A5
+  Inner1
+  Inner2
+ -A6
+  -<class object>
+   test(): Unit
+ -A7
+  a: Int
+  <class initializer>
+ -Enum1 : Enum<Enum1>
+  FIRST : Enum1
+  SECOND : Enum1
+ Trait
+ Trait1 : Trait
+ TestWithWhere
+ testWithWhere(): Unit
+ -WithDefaultArgs
+  a: Int
+ withDefaulArgs(Int = ..., String = ...): Unit

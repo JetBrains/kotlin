@@ -46,17 +46,14 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
     private final NavigatablePsiElement element;
 
     private String elementText;
+    private Icon icon;
 
-    public JetStructureViewElement(NavigatablePsiElement element) {
+    public JetStructureViewElement(@NotNull NavigatablePsiElement element) {
         this.element = element;
     }
 
     public JetStructureViewElement(@NotNull JetFile fileElement) {
         element = fileElement;
-    }
-
-    private static DeclarationDescriptor getDescriptor(JetDeclaration declaration) {
-        return declaration.isValid() ? ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration) : null;
     }
 
     @NotNull
@@ -102,6 +99,55 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         }), TreeElement.class);
     }
 
+    @Nullable
+    @Override
+    public TextAttributesKey getTextAttributesKey() {
+        if (element instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) element)) {
+            return CodeInsightColors.DEPRECATED_ATTRIBUTES;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public String getPresentableText() {
+        if (elementText == null) {
+            elementText = getElementText(element, getDescriptor());
+        }
+
+        return elementText;
+    }
+
+    @Nullable
+    @Override
+    public String getLocationString() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon(boolean unused) {
+        if (icon == null) {
+            icon = getElementIcon(element, getDescriptor());
+        }
+
+        return icon;
+    }
+
+    @Nullable
+    private DeclarationDescriptor getDescriptor() {
+        if (!(element.isValid() && element instanceof JetDeclaration)) {
+            return null;
+        }
+
+        JetDeclaration declaration = (JetDeclaration) element;
+        if (declaration instanceof JetClassInitializer) {
+            return null;
+        }
+
+        return ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
+    }
+
     private List<JetDeclaration> getChildrenDeclarations() {
         if (element instanceof JetFile) {
             JetFile jetFile = (JetFile) element;
@@ -129,74 +175,29 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         return Collections.emptyList();
     }
 
-    @Nullable
-    @Override
-    public TextAttributesKey getTextAttributesKey() {
-        if (element instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) element)) {
-            return CodeInsightColors.DEPRECATED_ATTRIBUTES;
+    private static Icon getElementIcon(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
+        if (descriptor != null) {
+            return JetDescriptorIconProvider.getIcon(descriptor, navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY);
         }
+
+        return PsiIconUtil.getProvidersIcon(navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY);
+    }
+
+    @Nullable
+    private static String getElementText(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
+        if (descriptor != null) {
+            return DescriptorRenderer.STARTS_FROM_NAME_WITH_SHORT_TYPES.render(descriptor);
+        }
+
+        String text = navigatablePsiElement.getName();
+        if (!StringUtil.isEmpty(text)) {
+            return text;
+        }
+
+        if (navigatablePsiElement instanceof JetClassInitializer) {
+            return "<class initializer>";
+        }
+
         return null;
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText() {
-        if (elementText == null) {
-            elementText = getElementText();
-        }
-
-        return elementText;
-    }
-
-    @Nullable
-    @Override
-    public String getLocationString() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon(boolean unused) {
-        if (!element.isValid()) return null;
-
-        if (element instanceof JetDeclaration) {
-            DeclarationDescriptor descriptor = getDescriptor((JetDeclaration) element);
-            if (descriptor != null) {
-                JetDescriptorIconProvider.getIcon(descriptor, element, Iconable.ICON_FLAG_VISIBILITY);
-            }
-        }
-
-        return PsiIconUtil.getProvidersIcon(element, Iconable.ICON_FLAG_VISIBILITY);
-    }
-
-    private String getElementText() {
-        String text = "";
-
-        // Try to find text in correspondent descriptor
-        if (element instanceof JetDeclaration) {
-            JetDeclaration declaration = (JetDeclaration) element;
-
-            DeclarationDescriptor descriptor = getDescriptor(declaration);
-            if (descriptor != null) {
-                //text = getDescriptorTreeText(descriptor);
-                text = DescriptorRenderer.STARTS_FROM_NAME_WITH_SHORT_TYPES.render(descriptor);
-            }
-        }
-
-        if (StringUtil.isEmpty(text)) {
-            text = element.getName();
-        }
-
-        if (StringUtil.isEmpty(text)) {
-            if (element instanceof JetClassInitializer) {
-                return "<class initializer>";
-            }
-
-            if (element instanceof JetClassObject) {
-                return "<class object>";
-            }
-        }
-
-        return text;
     }
 }
