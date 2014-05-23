@@ -179,6 +179,16 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/shortenRefs/type"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
         }
         
+        @TestMetadata("ClassNameInsideArguments.kt")
+        public void testClassNameInsideArguments() throws Exception {
+            doTest("idea/testData/shortenRefs/type/ClassNameInsideArguments.kt");
+        }
+        
+        @TestMetadata("ClassNameInsideLambda.kt")
+        public void testClassNameInsideLambda() throws Exception {
+            doTest("idea/testData/shortenRefs/type/ClassNameInsideLambda.kt");
+        }
+        
         @TestMetadata("ClassSameNameAsPackage.kt")
         public void testClassSameNameAsPackage() throws Exception {
             doTest("idea/testData/shortenRefs/type/ClassSameNameAsPackage.kt");

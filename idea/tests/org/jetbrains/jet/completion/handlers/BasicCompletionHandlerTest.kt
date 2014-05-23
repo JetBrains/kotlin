@@ -30,6 +30,8 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testClassCompletionInImport() = doTest(1, "TimeZone", " (java.util)", '\t')
 
+    fun testClassCompletionInLambda() = doTest(1, "String", " (kotlin)", '\n')
+
     fun testDoNotInsertImportForAlreadyImported() = doTest()
 
     fun testDoNotInsertDefaultJsImports() = doTest()
