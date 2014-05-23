@@ -67,6 +67,10 @@ public abstract class AbstractCodeTransformationTest extends LightCodeInsightTes
         doTestIntention(path, new ConvertToStringTemplateIntention());
     }
 
+    public void doTestConvertToConcatenatedStringIntention(@NotNull String path) throws Exception {
+        doTestIntention(path, new ConvertToConcatenatedStringIntention());
+    }
+
     public void doTestFoldIfToAssignment(@NotNull String path) throws Exception {
         doTestIntention(path, new FoldIfToAssignmentIntention());
     }

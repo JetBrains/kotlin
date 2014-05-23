@@ -1,0 +1,9 @@
+fun main(args: Array<String>){
+    val a = when (1) {
+        1 -> 42
+        else -> 3
+    }.toString() + "asdfas" + when (1) {
+        1 -> 42
+        else -> 3
+    }
+}
