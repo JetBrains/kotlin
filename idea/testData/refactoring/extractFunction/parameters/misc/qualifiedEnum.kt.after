@@ -1,0 +1,18 @@
+// SIBLING:
+class MyClass {
+    fun test() {
+        unit()
+    }
+
+    enum class P {
+        A
+
+        val a = 1
+        fun foo() = 1
+    }
+}
+
+fun unit() {
+    MyClass.P.A.foo()
+    MyClass.P.A.a
+}

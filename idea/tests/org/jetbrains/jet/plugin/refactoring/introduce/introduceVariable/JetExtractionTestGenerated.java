@@ -744,6 +744,21 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedClassObject.kt");
                 }
                 
+                @TestMetadata("qualifiedEnum.kt")
+                public void testQualifiedEnum() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedEnum.kt");
+                }
+                
+                @TestMetadata("qualifiedObject.kt")
+                public void testQualifiedObject() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedObject.kt");
+                }
+                
+                @TestMetadata("qualifiedPackage.kt")
+                public void testQualifiedPackage() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedPackage.kt");
+                }
+                
                 @TestMetadata("usagesInCallArgs.kt")
                 public void testUsagesInCallArgs() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/usagesInCallArgs.kt");

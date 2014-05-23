@@ -331,14 +331,21 @@ private fun ExtractionData.inferParametersInfo(
         val hasThisReceiver = thisDescriptor != null
         val thisExpr = ref.getParent() as? JetThisExpression
 
-        val hasClassObjectReceiver = (thisDescriptor as? ClassDescriptor)?.getKind() == ClassKind.CLASS_OBJECT
-        val classObjectClassDescriptor =
-                if (hasClassObjectReceiver) thisDescriptor!!.getContainingDeclaration() as? ClassDescriptor else null
+        val typeDescriptor = ((thisDescriptor ?: originalDescriptor) as? ClassDescriptor)?.let {
+            when(it.getKind()) {
+                ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it
+                ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
+                else -> null
+            }
+        }
 
-        if (classObjectClassDescriptor != null) {
-            assert (classObjectClassDescriptor.canBeReferencedViaImport(), "Class object should be allowed only for importable classes: className = ${classObjectClassDescriptor.getName().asString()}")
-
-            replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
+        if (typeDescriptor != null) {
+            if (typeDescriptor.canBeReferencedViaImport()) {
+                replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
+            }
+            else {
+                nonDenotableTypes.add(typeDescriptor.getDefaultType())
+            }
         }
         else {
             val extractThis = hasThisReceiver || thisExpr != null
