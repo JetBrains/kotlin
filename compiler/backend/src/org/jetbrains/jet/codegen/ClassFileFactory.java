@@ -35,9 +35,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.io.File;
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
-
 public class ClassFileFactory implements OutputFileCollection {
     private final GenerationState state;
     private final ClassBuilderFactory builderFactory;
@@ -57,7 +54,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    private ClassBuilder newVisitor(@NotNull Type asmType, @NotNull Collection<? extends PsiFile> sourceFiles) {
+    public ClassBuilder newVisitor(@NotNull Type asmType, @NotNull Collection<? extends PsiFile> sourceFiles) {
         String outputFilePath = asmType.getInternalName() + ".class";
         state.getProgress().reportOutput(toIoFilesIgnoringNonPhysical(sourceFiles), new File(outputFilePath));
         ClassBuilder answer = builderFactory.newClassBuilder();
@@ -106,18 +103,11 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    public PackageCodegen forPackage(@NotNull final FqName fqName, @NotNull final Collection<JetFile> files) {
+    public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<JetFile> files) {
         assert !isDone : "Already done!";
         PackageCodegen codegen = package2codegen.get(fqName);
         if (codegen == null) {
-            ClassBuilderOnDemand onDemand = new ClassBuilderOnDemand() {
-                @NotNull
-                @Override
-                protected ClassBuilder createClassBuilder() {
-                    return newVisitor(asmTypeByFqNameWithoutInnerClasses(getPackageClassFqName(fqName)), files);
-                }
-            };
-            codegen = new PackageCodegen(onDemand, fqName, state, files);
+            codegen = new PackageCodegen(state, files, fqName);
             package2codegen.put(fqName, codegen);
         }
 

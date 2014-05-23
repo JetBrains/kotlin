@@ -22,10 +22,10 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.context.CodegenContext;
@@ -74,28 +74,27 @@ public class PackageCodegen {
     private final Collection<JetFile> files;
     private final PackageFragmentDescriptor packageFragment;
     private final PackageFragmentDescriptor compiledPackageFragment;
+    private final List<DeserializedCallableMemberDescriptor> previouslyCompiledCallables;
 
-    public PackageCodegen(
-            @NotNull ClassBuilderOnDemand v,
-            @NotNull final FqName fqName,
-            @NotNull GenerationState state,
-            @NotNull Collection<JetFile> packageFiles
-    ) {
+    public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull final FqName fqName) {
         this.state = state;
-        this.v = v;
-        this.files = packageFiles;
+        this.files = files;
         this.packageFragment = getOnlyPackageFragment();
-        this.compiledPackageFragment = getCompiledPackageFragment();
+        this.compiledPackageFragment = getCompiledPackageFragment(packageFragment);
+        this.previouslyCompiledCallables = filterDeserializedCallables(compiledPackageFragment);
 
-        final PsiFile sourceFile = packageFiles.size() == 1 && getPreviouslyCompiledCallables().isEmpty()
-                                   ? packageFiles.iterator().next().getContainingFile() : null;
-
-        v.addOptionalDeclaration(new ClassBuilderOnDemand.ClassBuilderCallback() {
+        this.v = new ClassBuilderOnDemand(new Function0<ClassBuilder>() {
             @Override
-            public void doSomething(@NotNull ClassBuilder v) {
+            public ClassBuilder invoke() {
+                Collection<JetFile> files = PackageCodegen.this.files;
+                JetFile sourceFile = files.size() == 1 && previouslyCompiledCallables.isEmpty()
+                                     ? files.iterator().next() : null;
+
+                String className = JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName();
+                ClassBuilder v = PackageCodegen.this.state.getFactory().newVisitor(Type.getObjectType(className), files);
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
-                              JvmClassName.byFqNameWithoutInnerClasses(getPackageClassFqName(fqName)).getInternalName(),
+                              className,
                               null,
                               "java/lang/Object",
                               ArrayUtil.EMPTY_STRING_ARRAY
@@ -104,12 +103,13 @@ public class PackageCodegen {
                 if (sourceFile != null) {
                     v.visitSource(sourceFile.getName(), null);
                 }
+                return v;
             }
         });
     }
 
     @Nullable
-    private PackageFragmentDescriptor getCompiledPackageFragment() {
+    private static PackageFragmentDescriptor getCompiledPackageFragment(@NotNull PackageFragmentDescriptor packageFragment) {
         if (!IncrementalCompilation.ENABLED) {
             return null;
         }
@@ -125,20 +125,21 @@ public class PackageCodegen {
     }
 
     @NotNull
-    private List<DeserializedCallableMemberDescriptor> getPreviouslyCompiledCallables() {
+    private static List<DeserializedCallableMemberDescriptor> filterDeserializedCallables(@Nullable PackageFragmentDescriptor packageFragment) {
+        if (packageFragment == null) {
+            return Collections.emptyList();
+        }
         List<DeserializedCallableMemberDescriptor> callables = Lists.newArrayList();
-        if (compiledPackageFragment != null) {
-            for (DeclarationDescriptor member : compiledPackageFragment.getMemberScope().getAllDescriptors()) {
-                if (member instanceof DeserializedCallableMemberDescriptor) {
-                    callables.add((DeserializedCallableMemberDescriptor) member);
-                }
+        for (DeclarationDescriptor member : packageFragment.getMemberScope().getAllDescriptors()) {
+            if (member instanceof DeserializedCallableMemberDescriptor) {
+                callables.add((DeserializedCallableMemberDescriptor) member);
             }
         }
         return callables;
     }
 
-    private void generateDelegationsToPreviouslyCompiled(Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
-        for (final DeserializedCallableMemberDescriptor member : getPreviouslyCompiledCallables()) {
+    private void generateDelegationsToPreviouslyCompiled(@NotNull Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks) {
+        for (final DeserializedCallableMemberDescriptor member : previouslyCompiledCallables) {
             generateCallableMemberTasks.put(member, new Runnable() {
                 @Override
                 public void run() {
