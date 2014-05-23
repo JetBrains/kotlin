@@ -34,12 +34,8 @@ public class ClassBuilderOnDemand {
     }
 
     public void done() {
-        if (isActivated()) {
+        if (classBuilder.isComputed()) {
             classBuilder.invoke().done();
         }
-    }
-
-    public boolean isActivated() {
-        return classBuilder.isComputed();
     }
 }

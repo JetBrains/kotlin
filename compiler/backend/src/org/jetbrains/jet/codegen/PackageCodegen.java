@@ -186,10 +186,6 @@ public class PackageCodegen {
 
     public void generate(@NotNull CompilationErrorHandler errorHandler) {
         List<JvmSerializationBindings> bindings = new ArrayList<JvmSerializationBindings>(files.size() + 1);
-        boolean shouldGeneratePackageClass = shouldGeneratePackageClass(files);
-        if (shouldGeneratePackageClass) {
-            bindings.add(v.getClassBuilder().getSerializationBindings());
-        }
 
         Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks = new HashMap<CallableMemberDescriptor, Runnable>();
 
@@ -214,21 +210,16 @@ public class PackageCodegen {
             }
         }
 
-        if (shouldGeneratePackageClass) {
-            // Shouldn't generate delegations to previously compiled if we compile only "classes" part of a package.
-            generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
-        }
+        if (generateCallableMemberTasks.isEmpty()) return;
+
+        generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(generateCallableMemberTasks.keySet())) {
             generateCallableMemberTasks.get(member).run();
         }
 
-        if (shouldGeneratePackageClass) {
-            writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
-        }
-
-        assert v.isActivated() == shouldGeneratePackageClass :
-                "Different algorithms for generating package class and for heuristics for: " + packageFragment;
+        bindings.add(v.getClassBuilder().getSerializationBindings());
+        writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
@@ -355,22 +346,6 @@ public class PackageCodegen {
         Type packagePartType = getPackagePartType(getPackageClassFqName(packageFragment.getFqName()), file.getVirtualFile());
         CodegenContext context = CodegenContext.STATIC.intoPackagePart(packageFragment, packagePartType);
         MemberCodegen.genClassOrObject(context, classOrObject, state, null);
-    }
-
-    /**
-     * @param packageFiles all files should have same package name
-     * @return
-     */
-    public static boolean shouldGeneratePackageClass(@NotNull Collection<JetFile> packageFiles) {
-        for (JetFile file : packageFiles) {
-            for (JetDeclaration declaration : file.getDeclarations()) {
-                if (declaration instanceof JetProperty || declaration instanceof JetNamedFunction) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     public void done() {
