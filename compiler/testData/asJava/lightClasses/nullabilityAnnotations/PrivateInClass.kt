@@ -1,3 +1,5 @@
+// PrivateInClass
+
 class PrivateInClass private (s: String?) {
     private val nn: String = ""
     private val n: String? = ""

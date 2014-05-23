@@ -1,3 +1,5 @@
+// PrivateInTrait
+
 trait PrivateInTrait {
     private val nn: String
     private val n: String?

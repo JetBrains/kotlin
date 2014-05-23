@@ -114,6 +114,7 @@ import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
 import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
+import org.jetbrains.jet.asJava.AbstractKotlinLightClassTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -262,6 +263,10 @@ fun main(args: Array<String>) {
             model("evaluate/constant", testMethod = "doConstantTest")
             model("evaluate/isPure", testMethod = "doIsPureTest")
             model("evaluate/usesVariableAsConstant", testMethod = "doUsesVariableAsConstantTest")
+        }
+
+        testClass(javaClass<AbstractKotlinLightClassTest>()) {
+            model("asJava/lightClasses")
         }
     }
 

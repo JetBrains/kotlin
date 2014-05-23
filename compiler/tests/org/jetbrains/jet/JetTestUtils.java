@@ -425,7 +425,7 @@ public class JetTestUtils {
 
     public static void resolveAllKotlinFiles(JetCoreEnvironment environment) throws IOException {
         List<String> paths = environment.getConfiguration().get(CommonConfigurationKeys.SOURCE_ROOTS_KEY);
-        assert paths != null;
+        if (paths == null) return;
         List<JetFile> jetFiles = Lists.newArrayList();
         for (String path : paths) {
             jetFiles.add(loadJetFile(environment.getProject(), new File(path)));

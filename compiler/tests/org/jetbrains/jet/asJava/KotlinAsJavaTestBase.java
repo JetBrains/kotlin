@@ -17,7 +17,6 @@
 package org.jetbrains.jet.asJava;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
@@ -51,10 +50,7 @@ public abstract class KotlinAsJavaTestBase extends KotlinTestWithEnvironment {
     protected void setUp() throws Exception {
         super.setUp();
 
-        // We need to resolve all the files in order too fill in the trace that sits inside LightClassGenerationSupport
-        JetTestUtils.resolveAllKotlinFiles(getEnvironment());
-
-        finder = JavaElementFinder.getInstance(getProject());
+        finder = AbstractKotlinLightClassTest.createFinder(getEnvironment());
     }
 
     @Override
