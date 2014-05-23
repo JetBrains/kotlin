@@ -343,7 +343,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     @Override
     @NotNull
-    public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
+    public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
         DeclarationDescriptor result = declaration.accept(new JetVisitor<DeclarationDescriptor, Void>() {
             @Override
             public DeclarationDescriptor visitClass(@NotNull JetClass klass, Void data) {

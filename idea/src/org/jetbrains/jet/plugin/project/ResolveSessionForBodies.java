@@ -78,7 +78,7 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer, Modification
 
     @NotNull
     @Override
-    public DeclarationDescriptor resolveToDescriptor(JetDeclaration declaration) {
+    public DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration) {
         if (!JetPsiUtil.isLocal(declaration)) {
             return resolveSession.resolveToDescriptor(declaration);
         }
