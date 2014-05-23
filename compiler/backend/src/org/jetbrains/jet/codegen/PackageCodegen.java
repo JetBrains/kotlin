@@ -285,7 +285,7 @@ public class PackageCodegen {
 
         if (!generatePackagePart) return null;
 
-        ClassBuilder builder = state.getFactory().forPackagePart(packagePartType, file);
+        ClassBuilder builder = state.getFactory().newVisitor(packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 

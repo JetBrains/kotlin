@@ -29,7 +29,10 @@ import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.tree.*;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.MethodNode;
+import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 
 import java.io.IOException;
 import java.util.*;
@@ -294,8 +297,8 @@ public class AnonymousObjectTransformer {
 
     @NotNull
     private ClassBuilder createClassBuilder() {
-        return new RemappingClassBuilder(state.getFactory().forLambdaInlining(newLambdaType, inliningContext.getRoot().callElement.getContainingFile()),
-                     new TypeRemapper(inliningContext.typeMapping));
+        ClassBuilder classBuilder = state.getFactory().newVisitor(newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
+        return new RemappingClassBuilder(classBuilder, new TypeRemapper(inliningContext.typeMapping));
     }
 
     @NotNull
