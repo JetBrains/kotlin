@@ -21,18 +21,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.storage.LockBasedStorageManager;
 import org.jetbrains.jet.storage.NotNullLazyValue;
 
-public class ClassBuilderOnDemand {
+public class ClassBuilderOnDemand extends DelegatingClassBuilder {
     private final NotNullLazyValue<ClassBuilder> classBuilder;
 
     public ClassBuilderOnDemand(@NotNull Function0<ClassBuilder> createClassBuilder) {
         this.classBuilder = LockBasedStorageManager.NO_LOCKS.createLazyValue(createClassBuilder);
     }
 
+    @Override
     @NotNull
-    public ClassBuilder getClassBuilder() {
+    protected ClassBuilder getDelegate() {
         return classBuilder.invoke();
     }
 
+    @Override
     public void done() {
         if (classBuilder.isComputed()) {
             classBuilder.invoke().done();

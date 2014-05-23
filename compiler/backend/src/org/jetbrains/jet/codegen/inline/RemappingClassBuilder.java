@@ -19,22 +19,27 @@ package org.jetbrains.jet.codegen.inline;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.codegen.ClassBuilder;
+import org.jetbrains.jet.codegen.DelegatingClassBuilder;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.commons.*;
-import org.jetbrains.jet.codegen.ClassBuilder;
-import org.jetbrains.jet.codegen.JvmSerializationBindings;
 
-public class RemappingClassBuilder implements ClassBuilder {
-
+public class RemappingClassBuilder extends DelegatingClassBuilder {
     private final ClassBuilder builder;
     private final Remapper remapper;
 
     public RemappingClassBuilder(@NotNull ClassBuilder builder, @NotNull Remapper remapper) {
         this.builder = builder;
         this.remapper = remapper;
+    }
+
+    @Override
+    @NotNull
+    protected ClassBuilder getDelegate() {
+        return builder;
     }
 
     @Override
@@ -65,58 +70,13 @@ public class RemappingClassBuilder implements ClassBuilder {
 
     @Override
     @NotNull
-    public JvmSerializationBindings getSerializationBindings() {
-        return builder.getSerializationBindings();
-    }
-
-    @Override
-    @NotNull
     public AnnotationVisitor newAnnotation(@NotNull String desc, boolean visible) {
         return new RemappingAnnotationAdapter(builder.newAnnotation(remapper.mapDesc(desc), visible), remapper);
-    }
-
-    @Override
-    public void done() {
-        builder.done();
     }
 
     @Override
     @NotNull
     public ClassVisitor getVisitor() {
         return new RemappingClassAdapter(builder.getVisitor(), remapper);
-    }
-
-    @Override
-    public void defineClass(
-            @Nullable PsiElement origin,
-            int version,
-            int access,
-            @NotNull String name,
-            @Nullable String signature,
-            @NotNull String superName,
-            @NotNull String[] interfaces
-    ) {
-        builder.defineClass(origin, version, access, name, signature, superName, interfaces);
-    }
-
-    @Override
-    public void visitSource(@NotNull String name, @Nullable String debug) {
-        builder.visitSource(name, debug);
-    }
-
-    @Override
-    public void visitOuterClass(@NotNull String owner, @Nullable String name, @Nullable String desc) {
-        builder.visitOuterClass(owner, name, desc);
-    }
-
-    @Override
-    public void visitInnerClass(@NotNull String name, @Nullable String outerName, @Nullable String innerName, int access) {
-        builder.visitInnerClass(name, outerName, innerName, access);
-    }
-
-    @Override
-    @NotNull
-    public String getThisName() {
-        return builder.getThisName();
     }
 }

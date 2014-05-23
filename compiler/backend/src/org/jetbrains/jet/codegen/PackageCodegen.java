@@ -147,12 +147,7 @@ public class PackageCodegen {
                             Type.getObjectType(getPackagePartInternalName(member)),
                             compiledPackageFragment);
 
-                    FunctionCodegen functionCodegen = new FunctionCodegen(
-                            context,
-                            v.getClassBuilder(),
-                            state,
-                            getMemberCodegen(context)
-                    );
+                    FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, getMemberCodegen(context));
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
@@ -172,8 +167,7 @@ public class PackageCodegen {
                         );
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
-                        PropertyCodegen propertyCodegen = new PropertyCodegen(
-                                context, v.getClassBuilder(), functionCodegen, getMemberCodegen(context));
+                        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, getMemberCodegen(context));
                         propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
                     }
                     else {
@@ -218,7 +212,7 @@ public class PackageCodegen {
             generateCallableMemberTasks.get(member).run();
         }
 
-        bindings.add(v.getClassBuilder().getSerializationBindings());
+        bindings.add(v.getSerializationBindings());
         writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
     }
 
@@ -242,8 +236,7 @@ public class PackageCodegen {
 
         PackageData data = new PackageData(createNameResolver(serializer.getNameTable()), packageProto);
 
-        AnnotationVisitor av =
-                v.getClassBuilder().newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
+        AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_PACKAGE), true);
         av.visit(JvmAnnotationNames.ABI_VERSION_FIELD_NAME, JvmAbi.VERSION);
         AnnotationVisitor array = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(data.toBytes())) {
@@ -295,7 +288,7 @@ public class PackageCodegen {
                         new Runnable() {
                             @Override
                             public void run() {
-                                memberCodegen.genFunctionOrProperty(declaration, v.getClassBuilder());
+                                memberCodegen.genFunctionOrProperty(declaration, v);
                             }
                         }
                 );
