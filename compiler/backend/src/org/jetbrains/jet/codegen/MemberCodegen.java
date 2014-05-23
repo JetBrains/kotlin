@@ -59,8 +59,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
     protected final T element;
     protected final FieldOwnerContext context;
     protected final ClassBuilder v;
-    protected ExpressionCodegen clInit;
+    protected final FunctionCodegen functionCodegen;
+    protected final PropertyCodegen propertyCodegen;
 
+    protected ExpressionCodegen clInit;
     private NameGenerator inlineNameGenerator;
 
     public MemberCodegen(
@@ -68,12 +70,14 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             @Nullable MemberCodegen<?> parentCodegen,
             @NotNull FieldOwnerContext context,
             T element,
-            ClassBuilder builder
+            @NotNull ClassBuilder builder
     ) {
         super(state, parentCodegen);
         this.element = element;
         this.context = context;
         this.v = builder;
+        this.functionCodegen = new FunctionCodegen(context, v, state, this);
+        this.propertyCodegen = new PropertyCodegen(context, v, functionCodegen, this);
     }
 
     public void generate() {
@@ -106,8 +110,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         v.done();
     }
 
-    public void genFunctionOrProperty(@NotNull JetDeclaration functionOrProperty, @NotNull ClassBuilder classBuilder) {
-        FunctionCodegen functionCodegen = new FunctionCodegen(context, classBuilder, state, this);
+    public void genFunctionOrProperty(@NotNull JetDeclaration functionOrProperty) {
         if (functionOrProperty instanceof JetNamedFunction) {
             try {
                 functionCodegen.gen((JetNamedFunction) functionOrProperty);
@@ -124,7 +127,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         else if (functionOrProperty instanceof JetProperty) {
             try {
-                new PropertyCodegen(context, classBuilder, functionCodegen, this).gen((JetProperty) functionOrProperty);
+                propertyCodegen.gen((JetProperty) functionOrProperty);
             }
             catch (ProcessCanceledException e) {
                 throw e;

@@ -81,9 +81,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JetType superClassType;
     private final Type classAsmType;
 
-    private final FunctionCodegen functionCodegen;
-    private final PropertyCodegen propertyCodegen;
-
     private List<PropertyAndDefaultValue> classObjectPropertiesToCopy;
 
     public ImplementationBodyCodegen(
@@ -95,8 +92,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
-        this.functionCodegen = new FunctionCodegen(context, v, state, this);
-        this.propertyCodegen = new PropertyCodegen(context, v, this.functionCodegen, this);
     }
 
     @Override

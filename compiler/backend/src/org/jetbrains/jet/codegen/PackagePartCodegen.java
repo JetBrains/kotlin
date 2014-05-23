@@ -61,7 +61,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
     protected void generateBody() {
         for (JetDeclaration declaration : element.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
-                genFunctionOrProperty(declaration, v);
+                genFunctionOrProperty(declaration);
             }
         }
 

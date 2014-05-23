@@ -99,7 +99,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
 
     @Override
     protected void generateBody() {
-        genMembers(v);
+        genMembers();
         genFieldsForParameters(scriptDescriptor, v);
         genConstructor(scriptDescriptor, context.getContextDescriptor(), v,
                        context.intoFunction(scriptDescriptor.getScriptCodeDescriptor()));
@@ -205,9 +205,9 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         }
     }
 
-    private void genMembers(@NotNull ClassBuilder classBuilder) {
+    private void genMembers() {
         for (JetDeclaration declaration : scriptDeclaration.getDeclarations()) {
-            genFunctionOrProperty(declaration, classBuilder);
+            genFunctionOrProperty(declaration);
         }
     }
 }

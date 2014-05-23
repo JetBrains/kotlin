@@ -145,30 +145,30 @@ public class PackageCodegen {
                 public void run() {
                     FieldOwnerContext context = CodegenContext.STATIC.intoPackageFacade(
                             Type.getObjectType(getPackagePartInternalName(member)),
-                            compiledPackageFragment);
+                            compiledPackageFragment
+                    );
 
-                    FunctionCodegen functionCodegen = new FunctionCodegen(context, v, state, getMemberCodegen(context));
+                    MemberCodegen<?> memberCodegen = createCodegenForPartOfPackageFacade(context);
 
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
                         JvmMethodSignature signature = state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE);
-                        functionCodegen.generateMethod(null, signature, function,
-                                                       new FunctionGenerationStrategy() {
-                                                           @Override
-                                                           public void generateBody(
-                                                                   @NotNull MethodVisitor mv,
-                                                                   @NotNull JvmMethodSignature signature,
-                                                                   @NotNull MethodContext context,
-                                                                   @NotNull MemberCodegen<?> parentCodegen
-                                                           ) {
-                                                               throw new IllegalStateException("shouldn't be called");
-                                                           }
-                                                       }
+                        memberCodegen.functionCodegen.generateMethod(null, signature, function,
+                                                                     new FunctionGenerationStrategy() {
+                                                                         @Override
+                                                                         public void generateBody(
+                                                                                 @NotNull MethodVisitor mv,
+                                                                                 @NotNull JvmMethodSignature signature,
+                                                                                 @NotNull MethodContext context,
+                                                                                 @NotNull MemberCodegen<?> parentCodegen
+                                                                         ) {
+                                                                             throw new IllegalStateException("shouldn't be called");
+                                                                         }
+                                                                     }
                         );
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
-                        PropertyCodegen propertyCodegen = new PropertyCodegen(context, v, functionCodegen, getMemberCodegen(context));
-                        propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
+                        memberCodegen.propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
                     }
                     else {
                         throw new IllegalStateException("Unexpected member: " + member);
@@ -276,7 +276,7 @@ public class PackageCodegen {
 
         FieldOwnerContext packageFacade = CodegenContext.STATIC.intoPackageFacade(packagePartType, packageFragment);
 
-        final MemberCodegen<?> memberCodegen = getMemberCodegen(packageFacade);
+        final MemberCodegen<?> memberCodegen = createCodegenForPartOfPackageFacade(packageFacade);
 
         for (final JetDeclaration declaration : file.getDeclarations()) {
             if (declaration instanceof JetNamedFunction || declaration instanceof JetProperty) {
@@ -288,7 +288,7 @@ public class PackageCodegen {
                         new Runnable() {
                             @Override
                             public void run() {
-                                memberCodegen.genFunctionOrProperty(declaration, v);
+                                memberCodegen.genFunctionOrProperty(declaration);
                             }
                         }
                 );
@@ -298,8 +298,8 @@ public class PackageCodegen {
         return builder;
     }
 
-    private MemberCodegen<?> getMemberCodegen(@NotNull FieldOwnerContext packageFacade) {
-        return new MemberCodegen<JetFile>(state, null, packageFacade, null, null) {
+    private MemberCodegen<?> createCodegenForPartOfPackageFacade(@NotNull FieldOwnerContext packageFacade) {
+        return new MemberCodegen<JetFile>(state, null, packageFacade, null, v) {
             @Override
             protected void generateDeclaration() {
                 throw new UnsupportedOperationException();
