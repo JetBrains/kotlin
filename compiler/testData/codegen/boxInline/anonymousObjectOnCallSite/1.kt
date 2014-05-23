@@ -2,9 +2,13 @@ import test.*
 
 fun box() : String {
     val o = "O"
-    return doWork {
+    val p = "GOOD"
+    val result = doWork {
         val k = "K"
         val s = object : A<String>() {
+
+            val param = p;
+
             override fun getO(): String {
                 return o;
             }
@@ -14,7 +18,11 @@ fun box() : String {
             }
         }
 
-        s.getO() + s.getK()
+        s.getO() + s.getK() + s.param
     }
+
+    if (result != "OKGOOD") return "fail $result"
+
+    return "OK"
 }
 

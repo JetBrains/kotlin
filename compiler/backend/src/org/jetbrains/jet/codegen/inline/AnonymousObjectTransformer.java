@@ -146,7 +146,8 @@ public class AnonymousObjectTransformer {
 
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
         ParametersBuilder constructorParamBuilder = ParametersBuilder.newBuilder();
-        extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder, invocation);
+        List<CapturedParamInfo> additionalFakeParams =
+                extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder, invocation);
 
         InlineResult result = InlineResult.create();
         for (MethodNode next : methodsToTransform) {
@@ -156,7 +157,7 @@ public class AnonymousObjectTransformer {
         }
 
         InlineResult constructorResult =
-                generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, invocation, parentRemapper);
+                generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, invocation, parentRemapper, additionalFakeParams);
 
         result.addAllClassesToRemove(constructorResult);
 
@@ -194,7 +195,8 @@ public class AnonymousObjectTransformer {
             @NotNull ParametersBuilder allCapturedBuilder,
             @NotNull ParametersBuilder constructorInlineBuilder,
             @NotNull ConstructorInvocation invocation,
-            @NotNull FieldRemapper parentRemapper
+            @NotNull FieldRemapper parentRemapper,
+            @NotNull List<CapturedParamInfo> constructorAdditionalFakeParams
     ) {
         List<Type> descTypes = new ArrayList<Type>();
 
@@ -242,6 +244,23 @@ public class AnonymousObjectTransformer {
         }
 
         //then transform constructor
+        //HACK: in inlinining into constructor we access original captured fields with field access not local var
+        //but this fields added to general params (this assumes local var access) not captured one,
+        //so we need to add them to captured params
+        for (CapturedParamInfo info : constructorAdditionalFakeParams) {
+            CapturedParamInfo fake = constructorInlineBuilder.addCapturedParamCopy(info);
+
+            if (fake.getLambda() != null) {
+                //set remap value to skip this fake (captured with lambda already skipped)
+                StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
+                                                          StackValue.field(fake.getType(),
+                                                                           oldObjectType,
+                                                                           fake.getNewFieldName(), false)
+                );
+                fake.setRemapValue(composed);
+            }
+        }
+
         Parameters constructorParameters = constructorInlineBuilder.buildParameters();
 
         RegeneratedLambdaFieldRemapper remapper =
@@ -291,7 +310,7 @@ public class AnonymousObjectTransformer {
         );
     }
 
-    private void extractParametersMappingAndPatchConstructor(
+    private List<CapturedParamInfo> extractParametersMappingAndPatchConstructor(
             @NotNull MethodNode constructor,
             @NotNull ParametersBuilder capturedParamBuilder,
             @NotNull ParametersBuilder constructorParamBuilder,
@@ -306,7 +325,7 @@ public class AnonymousObjectTransformer {
         };
 
         List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
-        List<CapturedParamInfo> capturedToInline = new ArrayList<CapturedParamInfo>();
+        List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<CapturedParamInfo>();
         Map<Integer, LambdaInfo> indexToLambda = invocation.getLambdasToInline();
         Set<Integer> capturedParams = new HashSet<Integer>();
 
@@ -330,8 +349,8 @@ public class AnonymousObjectTransformer {
                             if (lambdaInfo != null) {
                                 info.setLambda(lambdaInfo);
                                 capturedLambdas.add(lambdaInfo);
-                                capturedToInline.add(info);
                             }
+                            constructorAdditionalFakeParams.add(info);
                             capturedParams.add(varIndex);
 
                             constructor.instructions.remove(previous.getPrevious());
@@ -381,14 +400,12 @@ public class AnonymousObjectTransformer {
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);
         }
 
-        //HACK: in inlinining into constructor we access inlined lambda with field access not local var but this lambda added no general params not captured one,
-        //so we need to add them to captured params
-        for (CapturedParamInfo info : capturedToInline) {
-            constructorParamBuilder.addCapturedParamCopy(info);
-        }
+
 
         invocation.setAllRecapturedParameters(allRecapturedParameters);
         invocation.setCapturedLambdasToInline(capturedLambdasToInline);
+
+        return constructorAdditionalFakeParams;
     }
 
     @NotNull
