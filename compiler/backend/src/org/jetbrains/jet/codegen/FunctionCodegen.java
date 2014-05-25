@@ -68,7 +68,6 @@ import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.callableDescriptorToDeclaration;
-import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
@@ -764,48 +763,50 @@ public class FunctionCodegen extends ParentCodegenAware {
 
     public void genDelegate(
             FunctionDescriptor functionDescriptor,
-            ClassDescriptor toClass,
-            StackValue field,
-            JvmMethodSignature jvmDelegateMethodSignature,
-            JvmMethodSignature jvmOverriddenMethodSignature
+            final ClassDescriptor toClass,
+            final StackValue field,
+            final JvmMethodSignature jvmDelegateMethodSignature,
+            final JvmMethodSignature jvmOverriddenMethodSignature
     ) {
-        Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
-        Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
+        generateMethod(OtherOrigin(functionDescriptor),
+                       jvmDelegateMethodSignature,
+                       functionDescriptor,
+                       new FunctionGenerationStrategy() {
+                           @Override
+                           public void generateBody(
+                                   @NotNull MethodVisitor mv,
+                                   @NotNull JvmMethodSignature signature,
+                                   @NotNull MethodContext context,
+                                   @NotNull MemberCodegen<?> parentCodegen
+                           ) {
+                               Method overriddenMethod = jvmOverriddenMethodSignature.getAsmMethod();
+                               Method delegateMethod = jvmDelegateMethodSignature.getAsmMethod();
 
-        int flags = ACC_PUBLIC;
+                               Type[] argTypes = delegateMethod.getArgumentTypes();
+                               Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
 
-        MethodVisitor mv = v.newMethod(OtherOrigin(functionDescriptor), flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
-                                       getThrownExceptions(functionDescriptor, typeMapper));
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
+                               InstructionAdapter iv = new InstructionAdapter(mv);
+                               iv.load(0, OBJECT_TYPE);
+                               field.put(field.type, iv);
+                               for (int i = 0, reg = 1; i < argTypes.length; i++) {
+                                   StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
+                                   //noinspection AssignmentToForLoopParameter
+                                   reg += argTypes[i].getSize();
+                               }
 
-        mv.visitCode();
+                               String internalName = typeMapper.mapType(toClass).getInternalName();
+                               if (toClass.getKind() == ClassKind.TRAIT) {
+                                   iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+                               }
+                               else {
+                                   iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
+                               }
 
-        Type[] argTypes = delegateMethod.getArgumentTypes();
-        Type[] originalArgTypes = overriddenMethod.getArgumentTypes();
+                               StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
 
-        InstructionAdapter iv = new InstructionAdapter(mv);
-        iv.load(0, OBJECT_TYPE);
-        field.put(field.type, iv);
-        for (int i = 0, reg = 1; i < argTypes.length; i++) {
-            StackValue.local(reg, argTypes[i]).put(originalArgTypes[i], iv);
-            //noinspection AssignmentToForLoopParameter
-            reg += argTypes[i].getSize();
-        }
-
-        String internalName = typeMapper.mapType(toClass).getInternalName();
-        if (toClass.getKind() == ClassKind.TRAIT) {
-            iv.invokeinterface(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-        }
-        else {
-            iv.invokevirtual(internalName, overriddenMethod.getName(), overriddenMethod.getDescriptor());
-        }
-
-        StackValue.onStack(overriddenMethod.getReturnType()).put(delegateMethod.getReturnType(), iv);
-
-        iv.areturn(delegateMethod.getReturnType());
-        endVisit(mv, "Delegate method " + functionDescriptor + " to " + jvmOverriddenMethodSignature,
-                 descriptorToDeclaration(bindingContext, functionDescriptor.getContainingDeclaration()));
-
-        generateBridges(functionDescriptor);
+                               iv.areturn(delegateMethod.getReturnType());
+                           }
+                       }
+        );
     }
 }

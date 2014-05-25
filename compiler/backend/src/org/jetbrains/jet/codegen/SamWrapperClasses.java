@@ -37,12 +37,12 @@ public class SamWrapperClasses {
     }
 
     @NotNull
-    public Type getSamWrapperClass(@NotNull final SamType samType, @NotNull final JetFile file) {
+    public Type getSamWrapperClass(@NotNull final SamType samType, @NotNull final JetFile file, @NotNull final MemberCodegen<?> parentCodegen) {
         return ContainerUtil.getOrCreate(samInterfaceToWrapperClass, Pair.create(samType, file),
                                          new Factory<Type>() {
                                              @Override
                                              public Type create() {
-                                                 return new SamWrapperCodegen(state, samType).genWrapper(file);
+                                                 return new SamWrapperCodegen(state, samType, parentCodegen).genWrapper(file);
                                              }
                                          });
     }

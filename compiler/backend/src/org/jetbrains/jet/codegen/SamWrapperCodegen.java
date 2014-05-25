@@ -24,8 +24,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
-import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
+import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -34,11 +34,12 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.JetType;
 
-import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
-import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
-import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import java.util.Collections;
+
+import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class SamWrapperCodegen {
@@ -47,21 +48,37 @@ public class SamWrapperCodegen {
     private final GenerationState state;
     private final JetTypeMapper typeMapper;
     private final SamType samType;
+    private final MemberCodegen<?> parentCodegen;
 
-    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull SamType samType) {
+    public SamWrapperCodegen(@NotNull GenerationState state, @NotNull SamType samType, @NotNull MemberCodegen<?> parentCodegen) {
         this.state = state;
         this.typeMapper = state.getTypeMapper();
         this.samType = samType;
+        this.parentCodegen = parentCodegen;
     }
 
     public Type genWrapper(@NotNull JetFile file) {
         // Name for generated class, in form of whatever$1
-        Type asmType = Type.getObjectType(getWrapperName(file));
+        FqName fqName = getWrapperName(file);
+        Type asmType = asmTypeByFqNameWithoutInnerClasses(fqName);
 
         // e.g. (T, T) -> Int
         JetType functionType = samType.getKotlinFunctionType();
+
+        ClassDescriptor classDescriptor = new ClassDescriptorImpl(
+                samType.getJavaClassDescriptor().getContainingDeclaration(),
+                fqName.shortName(),
+                Modality.FINAL,
+                Collections.singleton(samType.getType())
+        );
         // e.g. compare(T, T)
-        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
+        SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal().copy(
+                classDescriptor,
+                Modality.FINAL,
+                Visibilities.PUBLIC,
+                CallableMemberDescriptor.Kind.SYNTHESIZED,
+                /*copyOverrides=*/ false
+        );
 
         ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
@@ -124,7 +141,8 @@ public class SamWrapperCodegen {
             JetType functionJetType
     ) {
         // using static context to avoid creating ClassDescriptor and everything else
-        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC, cv, state, null);
+        FunctionCodegen codegen = new FunctionCodegen(CodegenContext.STATIC.intoClass(
+                (ClassDescriptor) erasedInterfaceFunction.getContainingDeclaration(), OwnerKind.IMPLEMENTATION, state), cv, state, parentCodegen);
 
         FunctionDescriptor invokeFunction = functionJetType.getMemberScope()
                 .getFunctions(Name.identifier("invoke")).iterator().next().getOriginal();
@@ -133,14 +151,14 @@ public class SamWrapperCodegen {
     }
 
     @NotNull
-    private String getWrapperName(@NotNull JetFile containingFile) {
+    private FqName getWrapperName(@NotNull JetFile containingFile) {
         FqName packageClassFqName = PackageClassUtils.getPackageClassFqName(containingFile.getPackageFqName());
-        String packageInternalName = AsmUtil.internalNameByFqNameWithoutInnerClasses(packageClassFqName);
         JavaClassDescriptor descriptor = samType.getJavaClassDescriptor();
-        return packageInternalName + "$sam$" + descriptor.getName().asString() + "$" +
-               Integer.toHexString(
-                       PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
-                       DescriptorUtils.getFqNameSafe(descriptor).hashCode()
-               );
+        String shortName = packageClassFqName.shortName().asString() + "$sam$" + descriptor.getName().asString() + "$" +
+                   Integer.toHexString(
+                           PackagePartClassUtils.getPathHashCode(containingFile.getVirtualFile()) * 31 +
+                           DescriptorUtils.getFqNameSafe(descriptor).hashCode()
+                   );
+        return packageClassFqName.parent().child(Name.identifier(shortName));
     }
 }

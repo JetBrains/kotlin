@@ -42,6 +42,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.*;
 
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 public abstract class AnnotationCodegen {
@@ -93,7 +94,13 @@ public abstract class AnnotationCodegen {
             return;
         }
 
-        PsiElement psiElement = descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
+        PsiElement psiElement;
+        if (annotated instanceof CallableMemberDescriptor && ((CallableMemberDescriptor) annotated).getKind() == DELEGATION) {
+            psiElement = null;
+        }
+        else {
+            psiElement = descriptorToDeclaration(bindingContext, (DeclarationDescriptor) annotated);
+        }
 
         JetModifierList modifierList = null;
         if (annotated instanceof ConstructorDescriptor && psiElement instanceof JetClass) {
