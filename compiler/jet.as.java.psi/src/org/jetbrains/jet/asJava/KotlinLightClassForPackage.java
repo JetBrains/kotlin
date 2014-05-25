@@ -19,6 +19,8 @@ package org.jetbrains.jet.asJava;
 import com.google.common.collect.Sets;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.light.LightEmptyImplementsList;
@@ -26,7 +28,10 @@ import com.intellij.psi.impl.light.LightModifierList;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.CachedValue;
+import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
+import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +48,88 @@ import java.util.Collections;
 import java.util.List;
 
 public class KotlinLightClassForPackage extends KotlinWrappingLightClass implements JetJavaMirrorMarker {
+
+    public static class FileStubCache {
+
+        public static FileStubCache getInstance(@NotNull Project project) {
+            return ServiceManager.getService(project, FileStubCache.class);
+        }
+
+        private static final class Key {
+            private final FqName fqName;
+            private final GlobalSearchScope searchScope;
+
+            private Key(
+                    @NotNull FqName fqName,
+                    @NotNull GlobalSearchScope searchScope
+            ) {
+                this.fqName = fqName;
+                this.searchScope = searchScope;
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+
+                Key key = (Key) o;
+
+                if (!fqName.equals(key.fqName)) return false;
+                if (!searchScope.equals(key.searchScope)) return false;
+
+                return true;
+            }
+
+            @Override
+            public int hashCode() {
+                int result = fqName.hashCode();
+                result = 31 * result + searchScope.hashCode();
+                return result;
+            }
+        }
+
+        private final class CacheData {
+
+            private final SLRUCache<Key, CachedValue<KotlinPackageLightClassData>> cache = new SLRUCache<Key, CachedValue<KotlinPackageLightClassData>>(20, 30) {
+                @NotNull
+                @Override
+                public CachedValue<KotlinPackageLightClassData> createValue(Key key) {
+                    KotlinJavaFileStubProvider<KotlinPackageLightClassData> stubProvider =
+                            KotlinJavaFileStubProvider.createForPackageClass(project, key.fqName, key.searchScope);
+                    return CachedValuesManager.getManager(project).createCachedValue(stubProvider, /*trackValue = */false);
+                }
+            };
+        }
+
+        private final Project project;
+        private final CachedValue<CacheData> cachedValue;
+
+        public FileStubCache(@NotNull Project project) {
+            this.project = project;
+            this.cachedValue = CachedValuesManager.getManager(project).createCachedValue(
+                    new CachedValueProvider<CacheData>() {
+                        @Nullable
+                        @Override
+                        public Result<CacheData> compute() {
+                            return Result.create(new CacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT);
+                        }
+                    },
+                    /*trackValue = */ false
+            );
+        }
+
+        @NotNull
+        public CachedValue<KotlinPackageLightClassData> get(
+                @NotNull FqName qualifiedName,
+                @NotNull GlobalSearchScope searchScope
+        ) {
+            synchronized (cachedValue) {
+                return cachedValue.getValue().cache.get(new Key(qualifiedName, searchScope));
+            }
+        }
+
+    }
+
     private final FqName packageFqName;
     private final FqName packageClassFqName; // derived from packageFqName
     private final GlobalSearchScope searchScope;
@@ -67,9 +154,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
         assert !files.isEmpty() : "No files for package " + packageFqName;
         this.files = Sets.newHashSet(files); // needed for hashCode
         this.hashCode = computeHashCode();
-        KotlinJavaFileStubProvider<KotlinPackageLightClassData> stubProvider =
-                KotlinJavaFileStubProvider.createForPackageClass(getProject(), packageFqName, searchScope);
-        this.lightClassDataCache = CachedValuesManager.getManager(getProject()).createCachedValue(stubProvider, /*trackValue = */false);
+        this.lightClassDataCache = FileStubCache.getInstance(getProject()).get(packageFqName, searchScope);
     }
 
     @Nullable

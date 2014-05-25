@@ -43,6 +43,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.CompilerModeProvider;
 import org.jetbrains.jet.OperationModeProvider;
 import org.jetbrains.jet.asJava.JavaElementFinder;
+import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
 import org.jetbrains.jet.asJava.LightClassGenerationSupport;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation;
@@ -183,6 +184,7 @@ public class JetCoreEnvironment {
         CliLightClassGenerationSupport cliLightClassGenerationSupport = new CliLightClassGenerationSupport();
         project.registerService(LightClassGenerationSupport.class, cliLightClassGenerationSupport);
         project.registerService(CliLightClassGenerationSupport.class, cliLightClassGenerationSupport);
+        project.registerService(KotlinLightClassForPackage.FileStubCache.class, new KotlinLightClassForPackage.FileStubCache(project));
 
         Extensions.getArea(project)
                 .getExtensionPoint(PsiElementFinder.EP_NAME)
