@@ -27,6 +27,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function1;
@@ -37,10 +38,13 @@ import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetLiteFixture;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.TestJdkKind;
+import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.diagnostics.*;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.junit.Assert;
 
@@ -310,9 +314,18 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 return true;
             }
 
+            Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
+            Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
+            for (JetDeclaration declaration : declarations) {
+                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration);
+                if (diagnostics == null) continue;
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
+            }
+
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
-                    CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile),
+                    KotlinPackage.plus(CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(bindingContext, jetFile),
+                                       jvmSignatureDiagnostics),
                     whatDiagnosticsToConsider
             );
             CheckerTestUtil.diagnosticsDiff(diagnosedRanges, diagnostics, new CheckerTestUtil.DiagnosticDiffCallbacks() {

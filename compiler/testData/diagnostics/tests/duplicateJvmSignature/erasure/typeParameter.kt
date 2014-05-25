@@ -1,0 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER
+
+<!CONFLICTING_PLATFORM_DECLARATIONS!>fun <T> foo(x: T): T {null!!}<!>
+<!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(x: Any): Any {null!!}<!>

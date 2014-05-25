@@ -18,14 +18,11 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.asJava.KotlinLightClassForExplicitDeclaration;
-import org.jetbrains.jet.asJava.KotlinLightClassForPackage;
-import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
+import org.jetbrains.jet.asJava.AsJavaPackage;
+import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
@@ -35,38 +32,13 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
 
     @Override
     public void annotate(@NotNull PsiElement element, @NotNull AnnotationHolder holder) {
-        Diagnostics diagnostics;
+        if (!(element instanceof JetFile) && !(element instanceof JetDeclaration)) return;
+        PsiFile file = element.getContainingFile();
+        if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;
+
+        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element);
         
-        PsiElement parent = element.getParent();
-        if (parent instanceof JetFile) {
-            if (TargetPlatformDetector.getPlatform((JetFile) parent) != TargetPlatform.JVM) return;
-            diagnostics = getDiagnosticsForPackage((JetFile) parent);
-        }
-        else if (parent instanceof JetClassBody) {
-            PsiElement parentsParent = parent.getParent();
-            if (!(parentsParent instanceof JetClassOrObject)) return;
-
-            if (TargetPlatformDetector.getPlatform(((JetClassBody) parent).getContainingJetFile()) != TargetPlatform.JVM) return;
-
-            diagnostics = getDiagnosticsForNonLocalClass((JetClassOrObject) parentsParent);
-        }
-        else {
-            return;
-        }
+        if (diagnostics == null) return;
         JetPsiChecker.annotateElement(element, holder, diagnostics);
-    }
-
-    @NotNull
-    private static Diagnostics getDiagnosticsForPackage(JetFile file) {
-        Project project = file.getProject();
-        return KotlinLightClassForPackage.FileStubCache.getInstance(project).get(
-                file.getPackageFqName(),
-                GlobalSearchScope.allScope(project)
-        ).getValue().getExtraDiagnostics();
-    }
-
-    @NotNull
-    private static Diagnostics getDiagnosticsForNonLocalClass(JetClassOrObject jetClassOrObject) {
-        return KotlinLightClassForExplicitDeclaration.getLightClassData(jetClassOrObject).getExtraDiagnostics();
     }
 }

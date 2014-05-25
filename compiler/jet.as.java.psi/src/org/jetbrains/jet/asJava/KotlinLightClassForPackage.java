@@ -51,6 +51,7 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
 
     public static class FileStubCache {
 
+        @NotNull
         public static FileStubCache getInstance(@NotNull Project project) {
             return ServiceManager.getService(project, FileStubCache.class);
         }

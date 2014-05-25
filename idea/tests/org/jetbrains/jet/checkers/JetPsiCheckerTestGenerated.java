@@ -422,7 +422,7 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
     }
     
     @TestMetadata("idea/testData/checker/duplicateJvmSignature")
-    @InnerTestClasses({DuplicateJvmSignature.FunctionAndProperty.class})
+    @InnerTestClasses({DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.TraitImpl.class})
     public static class DuplicateJvmSignature extends AbstractJetPsiCheckerTest {
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -471,10 +471,24 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             
         }
         
+        @TestMetadata("idea/testData/checker/duplicateJvmSignature/traitImpl")
+        public static class TraitImpl extends AbstractJetPsiCheckerTest {
+            public void testAllFilesPresentInTraitImpl() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/checker/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("twoTraits.kt")
+            public void testTwoTraits() throws Exception {
+                doTest("idea/testData/checker/duplicateJvmSignature/traitImpl/twoTraits.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("DuplicateJvmSignature");
             suite.addTestSuite(DuplicateJvmSignature.class);
             suite.addTestSuite(FunctionAndProperty.class);
+            suite.addTestSuite(TraitImpl.class);
             return suite;
         }
     }

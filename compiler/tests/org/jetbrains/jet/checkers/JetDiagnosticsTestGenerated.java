@@ -33,7 +33,7 @@ import org.jetbrains.jet.checkers.AbstractJetDiagnosticsTest;
 @InnerTestClasses({JetDiagnosticsTestGenerated.Tests.class, JetDiagnosticsTestGenerated.Script.class, JetDiagnosticsTestGenerated.TailRecursion.class})
 public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
     @TestMetadata("compiler/testData/diagnostics/tests")
-    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
+    @InnerTestClasses({Tests.Annotations.class, Tests.BackingField.class, Tests.Cast.class, Tests.CheckArguments.class, Tests.ClassObjects.class, Tests.ControlFlowAnalysis.class, Tests.ControlStructures.class, Tests.CyclicHierarchy.class, Tests.DataClasses.class, Tests.DataFlow.class, Tests.DataFlowInfoTraversal.class, Tests.DeclarationChecks.class, Tests.DelegatedProperty.class, Tests.Deparenthesize.class, Tests.DuplicateJvmSignature.class, Tests.Enum.class, Tests.Evaluate.class, Tests.Extensions.class, Tests.FunctionLiterals.class, Tests.Generics.class, Tests.Imports.class, Tests.IncompleteCode.class, Tests.Inference.class, Tests.Infos.class, Tests.Inline.class, Tests.Inner.class, Tests.J_k.class, Tests.Jdk_annotations.class, Tests.Labels.class, Tests.Library.class, Tests.Multimodule.class, Tests.NamedArguments.class, Tests.NullabilityAndAutoCasts.class, Tests.NullableTypes.class, Tests.Numbers.class, Tests.Objects.class, Tests.OperatorsOverloading.class, Tests.Overload.class, Tests.Override.class, Tests.Recovery.class, Tests.Redeclarations.class, Tests.Regressions.class, Tests.Resolve.class, Tests.Scopes.class, Tests.SenselessComparison.class, Tests.Shadowing.class, Tests.SmartCasts.class, Tests.Substitutions.class, Tests.Subtyping.class, Tests.Suppress.class, Tests.ThisAndSuper.class, Tests.Typedefs.class, Tests.Unit.class, Tests.Varargs.class, Tests.When.class})
     public static class Tests extends AbstractJetDiagnosticsTest {
         @TestMetadata("Abstract.kt")
         public void testAbstract() throws Exception {
@@ -2543,6 +2543,245 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/deparenthesize/checkDeparenthesizedType.kt");
             }
             
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature")
+        @InnerTestClasses({DuplicateJvmSignature.AccidentalOverrides.class, DuplicateJvmSignature.Erasure.class, DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.SpecialNames.class, DuplicateJvmSignature.TraitImpl.class})
+        public static class DuplicateJvmSignature extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides")
+            public static class AccidentalOverrides extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInAccidentalOverrides() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("classFunctionOverriddenByProperty.kt")
+                public void testClassFunctionOverriddenByProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByProperty.kt");
+                }
+                
+                @TestMetadata("classPropertyOverriddenByFunction.kt")
+                public void testClassPropertyOverriddenByFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classPropertyOverriddenByFunction.kt");
+                }
+                
+                @TestMetadata("traitFunctionOverriddenByProperty.kt")
+                public void testTraitFunctionOverriddenByProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
+                }
+                
+                @TestMetadata("traitPropertyOverriddenByFunction.kt")
+                public void testTraitPropertyOverriddenByFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure")
+            public static class Erasure extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInErasure() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("collections.kt")
+                public void testCollections() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/collections.kt");
+                }
+                
+                @TestMetadata("delegateToTwoTraits.kt")
+                public void testDelegateToTwoTraits() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/delegateToTwoTraits.kt");
+                }
+                
+                @TestMetadata("delegationAndOwnMethod.kt")
+                public void testDelegationAndOwnMethod() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/delegationAndOwnMethod.kt");
+                }
+                
+                @TestMetadata("genericType.kt")
+                public void testGenericType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/genericType.kt");
+                }
+                
+                @TestMetadata("inheritFromTwoTraits.kt")
+                public void testInheritFromTwoTraits() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/inheritFromTwoTraits.kt");
+                }
+                
+                @TestMetadata("kotlinAndJavaCollections.kt")
+                public void testKotlinAndJavaCollections() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/kotlinAndJavaCollections.kt");
+                }
+                
+                @TestMetadata("nullableType.kt")
+                public void testNullableType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/nullableType.kt");
+                }
+                
+                @TestMetadata("typeMappedToJava.kt")
+                public void testTypeMappedToJava() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeMappedToJava.kt");
+                }
+                
+                @TestMetadata("typeParameter.kt")
+                public void testTypeParameter() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeParameter.kt");
+                }
+                
+                @TestMetadata("typeParameterWithBound.kt")
+                public void testTypeParameterWithBound() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeParameterWithBound.kt");
+                }
+                
+                @TestMetadata("typeParameterWithTwoBounds.kt")
+                public void testTypeParameterWithTwoBounds() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeParameterWithTwoBounds.kt");
+                }
+                
+                @TestMetadata("typeParameterWithTwoBoundsInWhere.kt")
+                public void testTypeParameterWithTwoBoundsInWhere() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeParameterWithTwoBoundsInWhere.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty")
+            public static class FunctionAndProperty extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInFunctionAndProperty() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("class.kt")
+                public void testClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/class.kt");
+                }
+                
+                @TestMetadata("classObject.kt")
+                public void testClassObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/classObject.kt");
+                }
+                
+                @TestMetadata("extensionFunctionAndNormalFunction.kt")
+                public void testExtensionFunctionAndNormalFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/extensionFunctionAndNormalFunction.kt");
+                }
+                
+                @TestMetadata("extensionPropertyAndFunction.kt")
+                public void testExtensionPropertyAndFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/extensionPropertyAndFunction.kt");
+                }
+                
+                @TestMetadata("functionAndSetter.kt")
+                public void testFunctionAndSetter() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/functionAndSetter.kt");
+                }
+                
+                @TestMetadata("functionAndVar.kt")
+                public void testFunctionAndVar() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/functionAndVar.kt");
+                }
+                
+                @TestMetadata("localClass.kt")
+                public void testLocalClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/localClass.kt");
+                }
+                
+                @TestMetadata("nestedClass.kt")
+                public void testNestedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/nestedClass.kt");
+                }
+                
+                @TestMetadata("object.kt")
+                public void testObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/object.kt");
+                }
+                
+                @TestMetadata("objectExpression.kt")
+                public void testObjectExpression() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/objectExpression.kt");
+                }
+                
+                @TestMetadata("topLevel.kt")
+                public void testTopLevel() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/topLevel.kt");
+                }
+                
+                @TestMetadata("topLevelDifferentFiles.kt")
+                public void testTopLevelDifferentFiles() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/topLevelDifferentFiles.kt");
+                }
+                
+                @TestMetadata("topLevelGetter.kt")
+                public void testTopLevelGetter() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/topLevelGetter.kt");
+                }
+                
+                @TestMetadata("trait.kt")
+                public void testTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/trait.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames")
+            public static class SpecialNames extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInSpecialNames() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("componentInheritedFromTrait.kt")
+                public void testComponentInheritedFromTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/componentInheritedFromTrait.kt");
+                }
+                
+                @TestMetadata("defaults.kt")
+                public void testDefaults() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/defaults.kt");
+                }
+                
+                @TestMetadata("delegationBy.kt")
+                public void testDelegationBy() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/delegationBy.kt");
+                }
+                
+                @TestMetadata("innerClassField.kt")
+                public void testInnerClassField() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/innerClassField.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl")
+            public static class TraitImpl extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInTraitImpl() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("oneTrait.kt")
+                public void testOneTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl/oneTrait.kt");
+                }
+                
+                @TestMetadata("twoTraits.kt")
+                public void testTwoTraits() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl/twoTraits.kt");
+                }
+                
+            }
+            
+            public static Test innerSuite() {
+                TestSuite suite = new TestSuite("DuplicateJvmSignature");
+                suite.addTestSuite(DuplicateJvmSignature.class);
+                suite.addTestSuite(AccidentalOverrides.class);
+                suite.addTestSuite(Erasure.class);
+                suite.addTestSuite(FunctionAndProperty.class);
+                suite.addTestSuite(SpecialNames.class);
+                suite.addTestSuite(TraitImpl.class);
+                return suite;
+            }
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/enum")
@@ -7382,6 +7621,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             suite.addTest(DeclarationChecks.innerSuite());
             suite.addTest(DelegatedProperty.innerSuite());
             suite.addTestSuite(Deparenthesize.class);
+            suite.addTest(DuplicateJvmSignature.innerSuite());
             suite.addTest(Enum.innerSuite());
             suite.addTestSuite(Evaluate.class);
             suite.addTestSuite(Extensions.class);
