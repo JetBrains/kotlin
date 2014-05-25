@@ -328,6 +328,7 @@ public class KotlinToJVMBytecodeCompiler {
                 ? null
                 : IncrementalPackage.getPackagesWithRemovedFiles(
                         incrementalCacheProvider.getIncrementalCache(incrementalCacheDir), moduleId, environment.getSourceFiles());
+        BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
@@ -341,9 +342,11 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
                 packagesWithRemovedFiles,
                 moduleId,
-                new BindingTraceContext() // TODO
+                diagnosticHolder
         );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
+        AnalyzerWithCompilerReport.reportDiagnostics(diagnosticHolder.getBindingContext(),
+                                                     environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
         return generationState;
     }
 }

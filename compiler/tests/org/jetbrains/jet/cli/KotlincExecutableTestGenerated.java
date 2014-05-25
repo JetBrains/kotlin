@@ -79,6 +79,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/script.args");
         }
         
+        @TestMetadata("signatureClash.args")
+        public void testSignatureClash() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/signatureClash.args");
+        }
+        
         @TestMetadata("simple.args")
         public void testSimple() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/simple.args");
