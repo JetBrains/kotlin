@@ -279,6 +279,7 @@ fun main(args: Array<String>) {
             model("checker", recursive = false)
             model("checker/regression")
             model("checker/rendering")
+            model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
         }
 

@@ -251,7 +251,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     }
 
     @NotNull
-    private static OutermostKotlinClassLightClassData getLightClassData(JetClassOrObject classOrObject) {
+    public static OutermostKotlinClassLightClassData getLightClassData(JetClassOrObject classOrObject) {
         JetClassOrObject outermostClassOrObject = getOutermostClassOrObject(classOrObject);
         return CachedValuesManager.getManager(classOrObject.getProject()).getCachedValue(
                 outermostClassOrObject,

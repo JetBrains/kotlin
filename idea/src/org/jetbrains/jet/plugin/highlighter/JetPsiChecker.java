@@ -41,13 +41,12 @@ import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.diagnostics.Severity;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetCodeFragment;
-import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetReferenceExpression;
 import org.jetbrains.jet.lang.resolve.BindingContext;
+import org.jetbrains.jet.lang.resolve.Diagnostics;
 import org.jetbrains.jet.plugin.JetPluginUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.plugin.quickfix.JetIntentionActionsFactory;
 import org.jetbrains.jet.plugin.quickfix.QuickFixes;
 
@@ -117,16 +116,20 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
             element.accept(visitor);
         }
 
-        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false) || file instanceof JetCodeFragment) {
-            ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
-            for (Diagnostic diagnostic : bindingContext.getDiagnostics().forElement(element)) {
-                elementAnnotator.registerDiagnosticAnnotations(diagnostic);
-            }
-        }
+        annotateElement(element, holder, bindingContext.getDiagnostics());
 
         if (element instanceof JetFile) {
             //noinspection StaticMethodReferencedViaSubclass
             HighlighterPackage.updateHighlightingResult(file, false);
+        }
+    }
+
+    public static void annotateElement(PsiElement element, AnnotationHolder holder, Diagnostics diagnostics) {
+        if (JetPluginUtil.isInSource(element, /* includeLibrarySources = */ false) || element.getContainingFile() instanceof JetCodeFragment) {
+            ElementAnnotator elementAnnotator = new ElementAnnotator(element, holder);
+            for (Diagnostic diagnostic : diagnostics.forElement(element)) {
+                elementAnnotator.registerDiagnosticAnnotations(diagnostic);
+            }
         }
     }
 
@@ -283,4 +286,5 @@ public class JetPsiChecker implements Annotator, HighlightRangeExtension {
             return message;
         }
     }
+
 }

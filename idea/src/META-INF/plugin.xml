@@ -277,6 +277,7 @@
     <highlightRangeExtension implementation="org.jetbrains.jet.plugin.highlighter.JetPsiChecker"/>
 
     <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DebugInfoAnnotator"/>
+    <annotator language="jet" implementationClass="org.jetbrains.jet.plugin.highlighter.DuplicateJvmSignatureAnnotator"/>
     <problemHighlightFilter implementation="org.jetbrains.jet.plugin.highlighter.KotlinProblemHighlightFilter"/>
 
     <extendWordSelectionHandler implementation="org.jetbrains.jet.plugin.editor.wordSelection.JetStatementGroupSelectioner"/>
