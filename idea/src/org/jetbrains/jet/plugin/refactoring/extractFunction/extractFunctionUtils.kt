@@ -232,7 +232,8 @@ fun ExtractionData.createTemporaryFunction(functionText: String): JetNamedFuncti
 private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
         createTemporaryFunction("fun() {\n${getCodeFragmentText()}\n}\n").getBodyExpression() as JetBlockExpression
 
-private fun JetType.collectReferencedTypes(): List<JetType> {
+private fun JetType.collectReferencedTypes(processTypeArguments: Boolean): List<JetType> {
+    if (!processTypeArguments) return Collections.singletonList(this)
     return DFS.dfsFromNode(
             this,
             object: Neighbors<JetType> {
@@ -268,9 +269,10 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
 private fun JetType.processTypeIfExtractable(
         bindingContext: BindingContext,
         typeParameters: MutableSet<TypeParameter>,
-        nonDenotableTypes: MutableSet<JetType>
+        nonDenotableTypes: MutableSet<JetType>,
+        processTypeArguments: Boolean = true
 ): Boolean {
-    return collectReferencedTypes().fold(true) { (extractable, typeToCheck) ->
+    return collectReferencedTypes(processTypeArguments).fold(true) { (extractable, typeToCheck) ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
         val typeParameter = parameterTypeDescriptor?.let {
             BindingContextUtils.descriptorToDeclaration(bindingContext, it)
@@ -331,21 +333,28 @@ private fun ExtractionData.inferParametersInfo(
         val hasThisReceiver = thisDescriptor != null
         val thisExpr = ref.getParent() as? JetThisExpression
 
-        val typeDescriptor = ((thisDescriptor ?: originalDescriptor) as? ClassDescriptor)?.let {
-            when(it.getKind()) {
-                ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it
-                ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
+        val referencedClassDescriptor: ClassDescriptor? = (thisDescriptor ?: originalDescriptor).let {
+            when (it) {
+                is ClassDescriptor ->
+                    when(it.getKind()) {
+                        ClassKind.OBJECT, ClassKind.ENUM_CLASS -> it as ClassDescriptor
+                        ClassKind.CLASS_OBJECT, ClassKind.ENUM_ENTRY -> it.getContainingDeclaration() as? ClassDescriptor
+                        else -> if (ref.getParentByType(javaClass<JetTypeReference>()) != null) it as ClassDescriptor else null
+                    }
+
+                is ConstructorDescriptor -> it.getContainingDeclaration()
+
                 else -> null
             }
         }
 
-        if (typeDescriptor != null) {
-            if (typeDescriptor.canBeReferencedViaImport()) {
-                replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(originalDescriptor))
-            }
-            else {
-                nonDenotableTypes.add(typeDescriptor.getDefaultType())
-            }
+        if (referencedClassDescriptor != null) {
+            if (!referencedClassDescriptor.getDefaultType().processTypeIfExtractable(
+                    bindingContext, typeParameters, nonDenotableTypes, false
+            )) continue
+
+            val replacingDescriptor = (originalDescriptor as? ConstructorDescriptor)?.getContainingDeclaration() ?: originalDescriptor
+            replacementMap[refInfo.offsetInBody] = FqNameReplacement(DescriptorUtils.getFqNameSafe(replacingDescriptor))
         }
         else {
             val extractThis = hasThisReceiver || thisExpr != null
@@ -682,12 +691,16 @@ fun ExtractionDescriptor.generateFunction(
         val body = function.getBodyExpression() as JetBlockExpression
 
         val exprReplacementMap = HashMap<JetElement, (JetElement) -> JetElement>()
-        val originalOffsetByExpr = HashMap<JetElement, Int>()
+        val originalOffsetByExpr = LinkedHashMap<JetElement, Int>()
 
         val bodyOffset = body.getBlockContentOffset()
         val file = body.getContainingFile()!!
 
-        for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration) {
+        /*
+         * Sort by descending position so that internals of value/type arguments in calls and qualified types are replaced
+         * before calls/types themselves
+         */
+        for ((offsetInBody, resolveResult) in extractionData.refOffsetToDeclaration.entrySet().sortDescendingBy { it.key }) {
             val expr = file.findElementAt(bodyOffset + offsetInBody)?.getParentByType(javaClass<JetSimpleNameExpression>())
             assert(expr != null, "Couldn't find expression at $offsetInBody in '${body.getText()}'")
 

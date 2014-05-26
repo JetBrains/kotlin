@@ -1,0 +1,13 @@
+// SIBLING:
+class MyClass {
+    fun test() {
+        unit()
+    }
+
+    public class P
+}
+
+fun unit() {
+    val t: MyClass.P = MyClass.P()
+    t
+}

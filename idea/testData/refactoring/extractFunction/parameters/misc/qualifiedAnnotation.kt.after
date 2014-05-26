@@ -1,0 +1,13 @@
+// SIBLING:
+class MyClass {
+    fun test() {
+        unit()
+    }
+
+    public annotation class P
+}
+
+fun unit() {
+    [MyClass.P] val t: Int = 1
+    t
+}

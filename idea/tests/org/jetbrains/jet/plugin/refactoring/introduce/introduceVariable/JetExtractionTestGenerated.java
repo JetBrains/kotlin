@@ -233,6 +233,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");
             }
             
+            @TestMetadata("localObjectRef.kt")
+            public void testLocalObjectRef() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localObjectRef.kt");
+            }
+            
             @TestMetadata("malformedExpression.kt")
             public void testMalformedExpression() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/malformedExpression.kt");
@@ -739,6 +744,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/multipleOccurrences.kt");
                 }
                 
+                @TestMetadata("qualifiedAnnotation.kt")
+                public void testQualifiedAnnotation() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedAnnotation.kt");
+                }
+                
                 @TestMetadata("qualifiedClassObject.kt")
                 public void testQualifiedClassObject() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedClassObject.kt");
@@ -757,6 +767,26 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("qualifiedPackage.kt")
                 public void testQualifiedPackage() throws Exception {
                     doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedPackage.kt");
+                }
+                
+                @TestMetadata("qualifiedTypeArg.kt")
+                public void testQualifiedTypeArg() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeArg.kt");
+                }
+                
+                @TestMetadata("qualifiedTypeInValueArg.kt")
+                public void testQualifiedTypeInValueArg() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeInValueArg.kt");
+                }
+                
+                @TestMetadata("qualifiedTypeRef.kt")
+                public void testQualifiedTypeRef() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/qualifiedTypeRef.kt");
+                }
+                
+                @TestMetadata("typeRef.kt")
+                public void testTypeRef() throws Exception {
+                    doExtractFunctionTest("idea/testData/refactoring/extractFunction/parameters/misc/typeRef.kt");
                 }
                 
                 @TestMetadata("usagesInCallArgs.kt")
