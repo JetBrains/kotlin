@@ -210,7 +210,7 @@ public class CodeInsightUtils {
     public static PsiElement getTopmostElementAtOffset(@NotNull PsiElement element, int offset) {
         do {
             PsiElement parent = element.getParent();
-            if (parent == null || (parent.getTextOffset() < offset)) {
+            if (parent == null || (parent.getTextOffset() < offset) || parent instanceof JetBlockExpression) {
                 break;
             }
             element = parent;

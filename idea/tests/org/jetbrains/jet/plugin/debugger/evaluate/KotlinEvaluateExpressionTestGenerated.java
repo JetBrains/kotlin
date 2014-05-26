@@ -96,6 +96,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/imports.kt");
     }
     
+    @TestMetadata("insertInBlock.kt")
+    public void testInsertInBlock() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/insertInBlock.kt");
+    }
+    
     @TestMetadata("multilineExpressionAtBreakpoint.kt")
     public void testMultilineExpressionAtBreakpoint() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/multilineExpressionAtBreakpoint.kt");
