@@ -1,0 +1,7 @@
+-InheritedMembersWithSubstitutedTypes.kt
+ -Third : Second<String>
+  a: U
+  equals(Any?): Boolean
+  foo(T): Unit
+  hashCode(): Int
+  toString(): String

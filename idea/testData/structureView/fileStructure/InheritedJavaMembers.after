@@ -1,0 +1,15 @@
+-InheritedJavaMembers.kt
+ -InheritedJavaMembers : Callable<String>
+  call(): String?
+  clone(): Any
+  equals(Any?): Boolean
+  finalize(): Unit
+  getClass(): Class<out Any?>
+  hashCode(): Int
+  notify(): Unit
+  notifyAll(): Unit
+  test(): Unit
+  toString(): String
+  wait(): Unit
+  wait(Long): Unit
+  wait(Long, Int): Unit

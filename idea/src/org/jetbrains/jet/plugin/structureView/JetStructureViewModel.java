@@ -17,17 +17,30 @@
 package org.jetbrains.jet.plugin.structureView;
 
 import com.intellij.ide.structureView.StructureViewModelBase;
+import com.intellij.ide.util.treeView.smartTree.NodeProvider;
 import com.intellij.ide.util.treeView.smartTree.Sorter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
 import org.jetbrains.jet.lang.psi.JetFile;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 public class JetStructureViewModel extends StructureViewModelBase {
+    private static final Collection<NodeProvider> NODE_PROVIDERS = Arrays.<NodeProvider>asList(
+            new KotlinInheritedMembersNodeProvider());
+
     private static final Sorter[] sorters = new Sorter[] {Sorter.ALPHA_SORTER};
 
     public JetStructureViewModel(@NotNull JetFile jetFile) {
         super(jetFile, new JetStructureViewElement(jetFile));
         withSuitableClasses(JetDeclaration.class);
+    }
+
+    @NotNull
+    @Override
+    public Collection<NodeProvider> getNodeProviders() {
+        return NODE_PROVIDERS;
     }
 
     @NotNull

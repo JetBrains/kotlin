@@ -573,7 +573,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinFileStructureTest>()) {
-            model("structureView/fileStructure")
+            model("structureView/fileStructure", pattern = """^([^\.]+)\.kt$""")
         }
 
         testClass(javaClass<AbstractExpressionSelectionTest>()) {

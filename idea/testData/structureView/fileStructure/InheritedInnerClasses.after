@@ -1,6 +1,6 @@
--InheritedMembers.kt
- -Test
+-InheritedInnerClasses.kt
+ -B : A
   equals(Any?): Boolean
+  foo(): Unit
   hashCode(): Int
-  test(): Unit
   toString(): String

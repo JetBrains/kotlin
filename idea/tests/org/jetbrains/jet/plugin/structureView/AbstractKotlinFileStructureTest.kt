@@ -27,12 +27,14 @@ import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import org.jetbrains.jet.JetTestUtils
+import org.jetbrains.jet.InTextDirectivesUtils
+import org.jetbrains.jet.test.util.configureWithExtraFile
 
 public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"
 
     public fun doTest(path: String) {
-        myFixture.configureByFile(path)
+        myFixture.configureWithExtraFile(path)
 
         val textEditor = TextEditorProvider.getInstance()!!.getTextEditor(myFixture.getEditor())
         val popup = ViewStructureAction.createPopup(myFixture.getProject(), textEditor)
@@ -43,8 +45,17 @@ public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtu
         popup.getTreeBuilder().getUi()!!.getUpdater()!!.setPassThroughMode(true)
         popup.update()
 
+        popup.setup()
+
         val popupText = PlatformTestUtil.print(popup.getTree(), false)
         JetTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
+    }
+
+    protected fun FileStructurePopup.setup() {
+        val fileText = FileUtil.loadFile(File(getTestDataPath(), fileName()!!), true)
+
+        val withInherited = InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_INHERITED")
+        setTreeActionState(javaClass<KotlinInheritedMembersNodeProvider>(), withInherited)
     }
 
     public fun FileStructurePopup.update() {

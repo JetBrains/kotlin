@@ -1,3 +1,7 @@
-class Test {
+class Test: Runable {
+    fun test() {
 
+    }
 }
+
+// WITH_INHERITED

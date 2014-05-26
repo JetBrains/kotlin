@@ -33,7 +33,9 @@ import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest;
 @TestMetadata("idea/testData/structureView/fileStructure")
 public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructureTest {
     public void testAllFilesPresentInFileStructure() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/structureView/fileStructure"), Pattern.compile("^(.+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
+                                                     new File("idea/testData/structureView/fileStructure"),
+                                                     Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
     @TestMetadata("EmptyFile.kt")
@@ -41,9 +43,29 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         doTest("idea/testData/structureView/fileStructure/EmptyFile.kt");
     }
     
+    @TestMetadata("InheritedInnerClasses.kt")
+    public void testInheritedInnerClasses() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedInnerClasses.kt");
+    }
+    
+    @TestMetadata("InheritedJavaMembers.kt")
+    public void testInheritedJavaMembers() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedJavaMembers.kt");
+    }
+    
+    @TestMetadata("InheritedLocalKotlin.kt")
+    public void testInheritedLocalKotlin() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedLocalKotlin.kt");
+    }
+    
     @TestMetadata("InheritedMembers.kt")
     public void testInheritedMembers() throws Exception {
         doTest("idea/testData/structureView/fileStructure/InheritedMembers.kt");
+    }
+    
+    @TestMetadata("InheritedMembersWithSubstitutedTypes.kt")
+    public void testInheritedMembersWithSubstitutedTypes() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedMembersWithSubstitutedTypes.kt");
     }
     
     @TestMetadata("Render.kt")

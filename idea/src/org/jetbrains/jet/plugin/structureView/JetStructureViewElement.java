@@ -47,13 +47,27 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
 
     private String elementText;
     private Icon icon;
+    private final boolean isInherited;
 
-    public JetStructureViewElement(@NotNull NavigatablePsiElement element) {
+    public JetStructureViewElement(@NotNull NavigatablePsiElement element, @NotNull DeclarationDescriptor descriptor, boolean isInherited) {
         this.element = element;
+        this.isInherited = isInherited;
+
+        if (!(element instanceof JetElement)) {
+            // Avoid storing descriptor in fields
+            elementText = getElementText(element, descriptor);
+            icon = getElementIcon(element, descriptor);
+        }
+    }
+
+    public JetStructureViewElement(@NotNull NavigatablePsiElement element, boolean isInherited) {
+        this.element = element;
+        this.isInherited = isInherited;
     }
 
     public JetStructureViewElement(@NotNull JetFile fileElement) {
         element = fileElement;
+        isInherited = false;
     }
 
     @NotNull
@@ -94,7 +108,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         return ArrayUtil.toObjectArray(ContainerUtil.map(childrenDeclarations, new Function<JetDeclaration, TreeElement>() {
             @Override
             public TreeElement fun(JetDeclaration declaration) {
-                return new JetStructureViewElement(declaration);
+                return new JetStructureViewElement(declaration, false);
             }
         }), TreeElement.class);
     }
@@ -102,9 +116,15 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
     @Nullable
     @Override
     public TextAttributesKey getTextAttributesKey() {
+        if (isInherited()) {
+            return CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES;
+        }
+
+
         if (element instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) element)) {
             return CodeInsightColors.DEPRECATED_ATTRIBUTES;
         }
+
         return null;
     }
 
@@ -132,6 +152,10 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         }
 
         return icon;
+    }
+
+    public boolean isInherited() {
+        return isInherited;
     }
 
     @Nullable
@@ -175,6 +199,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         return Collections.emptyList();
     }
 
+    @Nullable
     private static Icon getElementIcon(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
         if (descriptor != null) {
             return JetDescriptorIconProvider.getIcon(descriptor, navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY);

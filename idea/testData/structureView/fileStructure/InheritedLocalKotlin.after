@@ -1,0 +1,8 @@
+-InheritedLocalKotlin.kt
+ -A : TA
+  equals(Any?): Boolean
+  hashCode(): Int
+  some(): Unit
+  toString(): String
+ -B : TA
+  some(): Unit
