@@ -375,10 +375,11 @@
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
 
-    <toolWindow id="Kotlin"
-                factoryClass="org.jetbrains.jet.plugin.internal.KotlinInternalToolWindowFactory"
+    <toolWindow id="Kotlin Bytecode"
+                factoryClass="org.jetbrains.jet.plugin.internal.KotlinBytecodeToolWindow$Factory"
                 anchor="right"
                 icon="/org/jetbrains/jet/plugin/icons/kotlin13.png"
+                canCloseContents="true"
         />
 
     <applicationService serviceInterface="org.jetbrains.jet.plugin.editor.JetEditorOptions"
