@@ -77,12 +77,14 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             return EvaluatorBuilderImpl.getInstance()!!.build(codeFragment, position)
         }
 
-        val elementAt = position.getElementAt()
-        if (elementAt != null) {
-            val packageName = (elementAt.getContainingFile() as JetFile).getPackageDirective()?.getFqName()?.asString()
-            if (packageName != null) {
-                codeFragment.addImportsFromString("import $packageName.*")
-            }
+        val file = position.getFile()
+        if (file !is JetFile) {
+            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
+        }
+
+        val packageName = file.getPackageDirective()?.getFqName()?.asString()
+        if (packageName != null) {
+            codeFragment.addImportsFromString("import $packageName.*")
         }
         return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
     }
