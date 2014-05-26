@@ -267,10 +267,15 @@ public class CodegenBinding {
         return sortedAnswer;
     }
 
-    public static boolean isLocalNamedFun(DeclarationDescriptor fd) {
+    public static boolean isLocalNamedFun(@Nullable DeclarationDescriptor fd) {
+        return isLocalFunOrLambda(fd) && !fd.getName().isSpecial();
+    }
+
+    /*named or not*/
+    public static boolean isLocalFunOrLambda(@Nullable DeclarationDescriptor fd) {
         if (fd instanceof FunctionDescriptor) {
             FunctionDescriptor descriptor = (FunctionDescriptor) fd;
-            return descriptor.getVisibility() == Visibilities.LOCAL && !descriptor.getName().isSpecial();
+            return descriptor.getVisibility() == Visibilities.LOCAL;
         }
         return false;
     }

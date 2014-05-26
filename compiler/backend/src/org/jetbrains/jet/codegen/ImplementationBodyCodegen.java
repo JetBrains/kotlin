@@ -251,31 +251,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                           !(parentDescriptor instanceof PackageFragmentDescriptor || parentDescriptor instanceof ClassDescriptor);
         // Do not emit enclosing method in "light-classes mode" since currently we generate local light classes as if they're top level
         if (isLocalOrAnonymousClass && state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES) {
-            String outerClassName = getOuterClassName(descriptor, typeMapper);
-            FunctionDescriptor function = AsmUtil.isDeclarationInsideInlineFunction(descriptor)
-                                          ? null
-                                          : DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
-
-            if (function != null) {
-                Method method = typeMapper.mapSignature(function).getAsmMethod();
-                v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
-            }
-            else {
-                v.visitOuterClass(outerClassName, null, null);
-            }
+            writeOuterClassAndEnclosingMethod(descriptor, descriptor, typeMapper, v);
         }
-    }
-
-    @NotNull
-    private static String getOuterClassName(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        ClassDescriptor container = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
-        if (container != null) {
-            return typeMapper.mapClass(container).getInternalName();
-        }
-
-        JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), classDescriptor);
-        assert containingFile != null : "Containing file should be present for " + classDescriptor;
-        return PackageCodegen.getPackagePartInternalName(containingFile);
     }
 
     private void writeInnerClasses() {

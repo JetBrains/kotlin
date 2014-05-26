@@ -23,9 +23,12 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.*;
@@ -39,6 +42,7 @@ import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -707,4 +711,43 @@ public class AsmUtil {
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return Type.getObjectType(JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName());
     }
+
+    public static void writeOuterClassAndEnclosingMethod(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull DeclarationDescriptor originalDescriptor,
+            @NotNull JetTypeMapper typeMapper,
+            @NotNull ClassBuilder v
+    ) {
+        String outerClassName = getOuterClassName(descriptor, originalDescriptor, typeMapper);
+        FunctionDescriptor function = DescriptorUtils.getParentOfType(descriptor, FunctionDescriptor.class);
+
+        if (function != null) {
+            Method method = typeMapper.mapSignature(function).getAsmMethod();
+            v.visitOuterClass(outerClassName, method.getName(), method.getDescriptor());
+        }
+        else {
+            v.visitOuterClass(outerClassName, null, null);
+        }
+    }
+
+    @NotNull
+    private static String getOuterClassName(@NotNull ClassDescriptor classDescriptor, @NotNull DeclarationDescriptor originalDescriptor, @NotNull JetTypeMapper typeMapper) {
+        DeclarationDescriptor container = classDescriptor.getContainingDeclaration();
+        while (container != null) {
+            if (container instanceof ClassDescriptor) {
+                return typeMapper.mapClass((ClassDescriptor)container).getInternalName();
+            } else if (CodegenBinding.isLocalFunOrLambda(container)) {
+                ClassDescriptor descriptor =
+                        CodegenBinding.anonymousClassForFunction(typeMapper.getBindingContext(), (FunctionDescriptor) container);
+                return typeMapper.mapClass(descriptor).getInternalName();
+            }
+
+            container = container.getContainingDeclaration();
+        }
+
+        JetFile containingFile = BindingContextUtils.getContainingFile(typeMapper.getBindingContext(), originalDescriptor);
+        assert containingFile != null : "Containing file should be present for " + classDescriptor;
+        return PackageCodegen.getPackagePartInternalName(containingFile);
+    }
+
 }

@@ -179,6 +179,7 @@ public class ClosureCodegen extends ParentCodegenAwareImpl {
                                    null);
 
 
+        AsmUtil.writeOuterClassAndEnclosingMethod(anonymousClassForFunction(bindingContext, funDescriptor), funDescriptor, typeMapper, cv);
         cv.done();
     }
 
