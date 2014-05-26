@@ -145,7 +145,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             throw e
         }
         catch (e: Exception) {
-            logger.error(e)
+            logger.error("Couldn't evaluate expression:\nfileText = ${sourcePosition.getFile().getText()}\nline = ${sourcePosition.getLine()}\ncodeFragment = ${codeFragment.getText()}", e)
             val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
         }
