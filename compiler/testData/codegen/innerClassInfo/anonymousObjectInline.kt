@@ -1,4 +1,4 @@
-dclass A {
+class A {
     fun foo() {
         inlineFun { "test" }
     }
