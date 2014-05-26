@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import junit.framework.Assert;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.jet.test.util.UtilPackage;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
 import java.io.File;
@@ -65,14 +66,7 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
 
     protected void doTest(String path) {
         assert path.endsWith(".kt") : path;
-        String extraFile = path.replace(".kt", ".Data.kt");
-        if (new File(extraFile).exists()) {
-            myFixture.configureByFiles(path, extraFile);
-        }
-        else {
-            myFixture.configureByFile(path);
-        }
-
+        UtilPackage.configureWithExtraFile(myFixture, path, ".Data");
         performChecks();
     }
 

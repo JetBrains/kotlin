@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
+import org.jetbrains.jet.test.util.UtilPackage;
 
 import java.io.File;
 import java.util.Collection;
@@ -41,7 +42,7 @@ import java.util.List;
 
 public abstract class AbstractJetQuickDocProviderTest extends LightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        myFixture.configureByFiles(ArrayUtil.toStringArray(getTestFiles(path)));
+        UtilPackage.configureWithExtraFile(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);
@@ -84,30 +85,5 @@ public abstract class AbstractJetQuickDocProviderTest extends LightCodeInsightFi
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
         return ProjectDescriptorWithStdlibSources.INSTANCE;
-    }
-
-    @Nullable
-    private static Collection<String> getTestFiles(@NotNull String path) {
-        File testFile = new File(path);
-        String testFileName = FileUtil.getNameWithoutExtension(testFile);
-
-        List<String> filePaths = Lists.newArrayList();
-
-        filePaths.add(path);
-
-        filePaths.add(checkDataFileWithSuffix(testFile, testFileName, "_Data.kt"));
-        filePaths.add(checkDataFileWithSuffix(testFile, testFileName, "_Data.java"));
-
-        return Collections2.filter(filePaths, Predicates.notNull());
-    }
-
-    private static String checkDataFileWithSuffix(File testFile, String testFileName, String dataFileSuffix) {
-        String ktDataFileName = testFileName + dataFileSuffix;
-        File ktDataFile = new File(testFile.getParent(), ktDataFileName);
-        if (ktDataFile.exists()) {
-            return FileUtil.normalize(ktDataFile.getPath());
-        }
-
-        return null;
     }
 }

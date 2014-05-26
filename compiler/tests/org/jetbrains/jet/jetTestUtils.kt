@@ -16,4 +16,22 @@
 
 package org.jetbrains.jet.test.util
 
-fun String.removeTrailingWhitespacesFromEachLine() = split('\n') map { it.trimTrailing() } makeString ("\n")
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
+import com.intellij.openapi.util.io.FileUtil
+import java.io.File
+
+public fun String.removeTrailingWhitespacesFromEachLine(): String = split('\n') map { it.trimTrailing() } makeString ("\n")
+
+public fun CodeInsightTestFixture.configureWithExtraFile(path: String, extraNamePart: String = ".Data") {
+    val noExtensionPath = FileUtil.getNameWithoutExtension(path)
+    val extraPath = array("kt", "java").stream()
+            .map { ext -> "$noExtensionPath$extraNamePart.$ext" }
+            .firstOrNull { extraPath -> File(extraPath).exists() }
+
+    if (extraPath != null) {
+        configureByFiles(path, extraPath)
+    }
+    else {
+        configureByFile(path)
+    }
+}
