@@ -28,8 +28,7 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 public interface ClassBuilder {
     @NotNull
     FieldVisitor newField(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,

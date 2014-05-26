@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
+import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
@@ -373,7 +374,7 @@ public class AsmUtil {
         //noinspection PointlessBitwiseExpression
         int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         for (Pair<String, Type> field : allFields) {
-            builder.newField(null, null, access, field.first, field.second.getDescriptor(), null, null);
+            builder.newField(NO_ORIGIN, access, field.first, field.second.getDescriptor(), null, null);
         }
     }
 

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.DelegatingClassBuilder;
+import org.jetbrains.jet.codegen.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -46,15 +47,14 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public FieldVisitor newField(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable Object value
     ) {
-        return new RemappingFieldAdapter(builder.newField(origin, descriptor, access, name, remapper.mapDesc(desc), signature, value), remapper);
+        return new RemappingFieldAdapter(builder.newField(origin, access, name, remapper.mapDesc(desc), signature, value), remapper);
     }
 
     @Override

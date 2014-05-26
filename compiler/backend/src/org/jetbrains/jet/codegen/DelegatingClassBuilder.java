@@ -32,15 +32,14 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @NotNull
     @Override
     public FieldVisitor newField(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable Object value
     ) {
-        return getDelegate().newField(origin, descriptor, access, name, desc, signature, value);
+        return getDelegate().newField(origin, access, name, desc, signature, value);
     }
 
     @NotNull

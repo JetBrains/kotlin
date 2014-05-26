@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -78,8 +79,7 @@ public class SamWrapperCodegen {
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);
 
-        cv.newField(null,
-                    erasedInterfaceFunction,
+        cv.newField(OtherOrigin(erasedInterfaceFunction),
                     ACC_SYNTHETIC | ACC_PRIVATE | ACC_FINAL,
                     FUNCTION_FIELD_NAME,
                     functionAsmType.getDescriptor(),

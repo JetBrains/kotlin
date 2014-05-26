@@ -50,6 +50,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;
@@ -326,7 +327,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         if (delegatedProperties.isEmpty()) return;
 
-        v.newField(null, null, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.PROPERTY_METADATA_ARRAY_NAME,
+        v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.PROPERTY_METADATA_ARRAY_NAME,
                    "[" + PROPERTY_METADATA_TYPE, null, null);
 
         InstructionAdapter iv = createOrGetClInitCodegen().v;

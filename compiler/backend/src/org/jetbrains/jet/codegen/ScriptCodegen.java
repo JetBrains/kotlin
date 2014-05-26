@@ -37,6 +37,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -120,7 +122,7 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         Type blockType = typeMapper.mapType(scriptDescriptor.getScriptCodeDescriptor().getReturnType());
 
         PropertyDescriptor scriptResultProperty = scriptDescriptor.getScriptResultProperty();
-        classBuilder.newField(null, scriptResultProperty,
+        classBuilder.newField(OtherOrigin(scriptResultProperty),
                               ACC_PUBLIC | ACC_FINAL, scriptResultProperty.getName().asString(),
                               blockType.getDescriptor(), null, null);
 
@@ -199,13 +201,13 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         for (ScriptDescriptor earlierScript : context.getEarlierScripts()) {
             Type earlierClassName = asmTypeForScriptDescriptor(bindingContext, earlierScript);
             int access = ACC_PRIVATE | ACC_FINAL;
-            classBuilder.newField(null, null, access, context.getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
+            classBuilder.newField(NO_ORIGIN, access, context.getScriptFieldName(earlierScript), earlierClassName.getDescriptor(), null, null);
         }
 
         for (ValueParameterDescriptor parameter : script.getScriptCodeDescriptor().getValueParameters()) {
             Type parameterType = typeMapper.mapType(parameter);
             int access = ACC_PUBLIC | ACC_FINAL;
-            classBuilder.newField(null, parameter, access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
+            classBuilder.newField(OtherOrigin(parameter), access, parameter.getName().getIdentifier(), parameterType.getDescriptor(), null, null);
         }
     }
 

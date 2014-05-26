@@ -22,15 +22,7 @@ import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import com.intellij.util.containers.MultiMap
 
-public enum class MemberKind { FIELD; METHOD }
 public data class RawSignature(val name: String, val desc: String, val field: MemberKind)
-
-public class JvmDeclarationOrigin(
-        val element: PsiElement?,
-        val descriptor: DeclarationDescriptor?
-)
-
-public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(null, null)
 
 public abstract class SignatureCollectingClassBuilderFactory(
         private val delegate: ClassBuilderFactory
@@ -45,7 +37,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
     )
 
     override fun newClassBuilder(forElement: PsiElement?, forDescriptor: DeclarationDescriptor?): SignatureCollectingClassBuilder {
-        return SignatureCollectingClassBuilder(JvmDeclarationOrigin(forElement, forDescriptor), delegate.newClassBuilder(forElement, forDescriptor))
+        return SignatureCollectingClassBuilder(JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, forElement, forDescriptor), delegate.newClassBuilder(forElement, forDescriptor))
     }
 
     public override fun asBytes(builder: ClassBuilder?): ByteArray? {
@@ -68,13 +60,13 @@ public abstract class SignatureCollectingClassBuilderFactory(
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
 
-        override fun newField(origin: PsiElement?, descriptor: DeclarationDescriptor?, access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
-            signatures.putValue(RawSignature(name, desc, MemberKind.FIELD), JvmDeclarationOrigin(origin, descriptor))
-            return super.newField(origin, descriptor, access, name, desc, signature, value)
+        override fun newField(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor {
+            signatures.putValue(RawSignature(name, desc, MemberKind.FIELD), origin)
+            return super.newField(origin, access, name, desc, signature, value)
         }
 
         override fun newMethod(origin: PsiElement?, descriptor: DeclarationDescriptor?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-            signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), JvmDeclarationOrigin(origin, descriptor))
+            signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, origin, descriptor))
             return super.newMethod(origin, descriptor, access, name, desc, signature, exceptions)
         }
 

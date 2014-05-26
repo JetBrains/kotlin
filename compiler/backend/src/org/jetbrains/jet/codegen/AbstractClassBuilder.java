@@ -47,8 +47,7 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
     @Override
     @NotNull
     public FieldVisitor newField(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,

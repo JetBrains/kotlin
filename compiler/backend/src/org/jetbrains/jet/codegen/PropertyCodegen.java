@@ -44,6 +44,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
@@ -229,7 +230,7 @@ public class PropertyCodegen {
 
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
-        return builder.newField(element, propertyDescriptor, modifiers, name, type.getDescriptor(),
+        return builder.newField(OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
                                 typeMapper.mapFieldSignature(jetType), defaultValue);
     }
 
