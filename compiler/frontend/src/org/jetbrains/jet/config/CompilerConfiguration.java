@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+@SuppressWarnings("unchecked")
 public class CompilerConfiguration {
     private final Map<Key, Object> map = new HashMap<Key, Object>();
     private boolean readOnly = false;
