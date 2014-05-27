@@ -16,17 +16,14 @@
 
 package org.jetbrains.jet.codegen;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 
 public interface ClassBuilderFactory {
     @NotNull
     ClassBuilderMode getClassBuilderMode();
 
     @NotNull
-    ClassBuilder newClassBuilder(@Nullable PsiElement forElement, @Nullable DeclarationDescriptor forDescriptor);
+    ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin);
 
     String asText(ClassBuilder builder);
 

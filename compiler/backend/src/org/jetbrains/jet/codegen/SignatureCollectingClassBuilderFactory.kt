@@ -36,8 +36,8 @@ public abstract class SignatureCollectingClassBuilderFactory(
             origins: Collection<JvmDeclarationOrigin>
     )
 
-    override fun newClassBuilder(forElement: PsiElement?, forDescriptor: DeclarationDescriptor?): SignatureCollectingClassBuilder {
-        return SignatureCollectingClassBuilder(JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, forElement, forDescriptor), delegate.newClassBuilder(forElement, forDescriptor))
+    override fun newClassBuilder(origin: JvmDeclarationOrigin): SignatureCollectingClassBuilder {
+        return SignatureCollectingClassBuilder(origin, delegate.newClassBuilder(origin))
     }
 
     public override fun asBytes(builder: ClassBuilder?): ByteArray? {

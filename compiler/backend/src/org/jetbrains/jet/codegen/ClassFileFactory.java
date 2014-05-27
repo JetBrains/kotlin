@@ -63,7 +63,7 @@ public class ClassFileFactory implements OutputFileCollection {
         String outputFilePath = asmType.getInternalName() + ".class";
         List<File> ioSourceFiles = toIoFilesIgnoringNonPhysical(sourceFiles);
         state.getProgress().reportOutput(ioSourceFiles, new File(outputFilePath));
-        ClassBuilder answer = builderFactory.newClassBuilder(origin.getElement(), origin.getDescriptor());
+        ClassBuilder answer = builderFactory.newClassBuilder(origin);
         generators.put(outputFilePath, new ClassBuilderAndSourceFileList(answer, ioSourceFiles));
         return answer;
     }
