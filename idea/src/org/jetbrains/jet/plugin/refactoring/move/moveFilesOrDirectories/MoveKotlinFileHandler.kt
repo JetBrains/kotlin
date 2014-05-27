@@ -181,7 +181,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         val packageNameInfo = file.getAndRemoveCopyableUserData(PACKAGE_NAME_INFO_KEY)
         if (packageNameInfo == null) return
 
-        file.updateInternalReferencesOnPackageNameChange(packageNameInfo)
+        file.updateInternalReferencesOnPackageNameChange(packageNameInfo, updateImportedReferences = false)
 
         val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
         packageRef?.bindToFqName(packageNameInfo.newPackageName)

@@ -27,23 +27,32 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.references.JetSimpleNameReference.ShorteningMode
-import com.intellij.psi.PsiClass
-import org.jetbrains.jet.asJava.KotlinLightClass
 import org.jetbrains.jet.plugin.JetFileType
-import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
 import org.jetbrains.jet.lang.psi.psiUtil.isAncestor
+import java.util.Collections
+import org.jetbrains.jet.lang.resolve.name.isImported
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
 public fun JetElement.updateInternalReferencesOnPackageNameChange(
-        packageNameInfo: PackageNameInfo, shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
+        packageNameInfo: PackageNameInfo,
+        updateImportedReferences: Boolean,
+        shorteningMode: ShorteningMode = ShorteningMode.DELAYED_SHORTENING
 ) {
     val file = getContainingFile() as? JetFile
     if (file == null) return
+
+    val importPaths =
+            if (updateImportedReferences) {
+                file.getImportDirectives().map { it.getImportPath() }.filterNotNull()
+            }
+            else Collections.emptyList()
+
+    fun isImportedName(fqName: FqName): Boolean =
+            updateImportedReferences && importPaths.any { fqName.isImported(it, false) }
 
     val referenceToContext = JetFileReferencesResolver.resolve(file = file, elements = listOf(this), visitReceivers = false)
 
@@ -58,16 +67,19 @@ public fun JetElement.updateInternalReferencesOnPackageNameChange(
         val declaration = DescriptorToDeclarationUtil.getDeclaration(file, descriptor, bindingContext)
         if (declaration == null || isAncestor(declaration, true)) continue
 
+        val fqName = DescriptorUtils.getFqName(descriptor)
+        if (!fqName.isSafe()) continue
+
+        val fqNameSafe = fqName.toSafe()
         val packageName = DescriptorUtils.getParentOfType(
                 descriptor, javaClass<PackageFragmentDescriptor>(), false
         )?.let { DescriptorUtils.getFqName(it).toSafe() }
-        when (packageName) {
-            packageNameInfo.oldPackageName,
-            packageNameInfo.newPackageName -> {
-                val fqName = DescriptorUtils.getFqName(descriptor)
-                if (fqName.isSafe()) {
-                    (refExpr.getReference() as? JetSimpleNameReference)?.bindToFqName(fqName.toSafe(), shorteningMode)
-                }
+
+        when {
+            packageName == packageNameInfo.oldPackageName,
+            packageName == packageNameInfo.newPackageName,
+            isImportedName(fqNameSafe) -> {
+                (refExpr.getReference() as? JetSimpleNameReference)?.bindToFqName(fqNameSafe, shorteningMode)
             }
         }
     }

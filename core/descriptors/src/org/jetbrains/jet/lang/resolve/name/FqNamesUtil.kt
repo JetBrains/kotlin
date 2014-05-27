@@ -68,9 +68,9 @@ public fun FqName.plusOneSegment(fullFQN: FqName): FqName? {
     return child(fullFQN.tail(this).pathSegments().first!!)
 }
 
-public fun FqName.isImported(importPath: ImportPath): Boolean {
+public fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
     return when {
-        importPath.hasAlias() -> false
+        skipAliasedImports && importPath.hasAlias() -> false
         importPath.isAllUnder() && !isRoot() -> importPath.fqnPart() == this.parent()
         else -> importPath.fqnPart() == this
     }

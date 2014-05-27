@@ -243,7 +243,11 @@ public class MoveKotlinTopLevelDeclarationsProcessor(project: Project, val optio
             val newPackageFqName = (targetFile as JetFile).getPackageFqName()
 
             val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), newPackageFqName)
-            declaration.updateInternalReferencesOnPackageNameChange(packageNameInfo, ShorteningMode.NO_SHORTENING)
+            declaration.updateInternalReferencesOnPackageNameChange(
+                    packageNameInfo,
+                    updateImportedReferences = true,
+                    shorteningMode = ShorteningMode.NO_SHORTENING
+            )
 
             val newElement = targetFile.add(declaration) as JetNamedDeclaration
             declaration.delete()
