@@ -16,13 +16,11 @@
 
 package org.jetbrains.jet.codegen.inline;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.DelegatingClassBuilder;
 import org.jetbrains.jet.codegen.JvmDeclarationOrigin;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
@@ -60,8 +58,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     @Override
     @NotNull
     public MethodVisitor newMethod(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
@@ -69,7 +66,7 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String[] exceptions
     ) {
         return new RemappingMethodAdapter(access, desc,
-                                          builder.newMethod(origin, descriptor, access, name, remapper.mapMethodDesc(desc), signature, exceptions),
+                                          builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), signature, exceptions),
                                           remapper);
     }
 

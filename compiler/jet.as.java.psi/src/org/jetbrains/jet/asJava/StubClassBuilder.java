@@ -25,7 +25,6 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.JvmDeclarationOrigin;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -99,19 +98,18 @@ public class StubClassBuilder extends AbstractClassBuilder {
     @NotNull
     @Override
     public MethodVisitor newMethod(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        MethodVisitor internalVisitor = super.newMethod(origin, descriptor, access, name, desc, signature, exceptions);
+        MethodVisitor internalVisitor = super.newMethod(origin, access, name, desc, signature, exceptions);
 
         if (internalVisitor != EMPTY_METHOD_VISITOR) {
             // If stub for method generated
-            markLastChild(origin);
+            markLastChild(origin.getElement());
         }
 
         return internalVisitor;

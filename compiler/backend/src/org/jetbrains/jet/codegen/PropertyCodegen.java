@@ -130,7 +130,7 @@ public class PropertyCodegen {
         Type type = typeMapper.mapType(descriptor);
         String name = p.getName();
         assert name != null : "Annotation parameter has no name: " + p.getText();
-        MethodVisitor visitor = v.newMethod(p, descriptor, ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
+        MethodVisitor visitor = v.newMethod(OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name, "()" + type.getDescriptor(), null, null);
         JetExpression defaultValue = p.getDefaultValue();
         if (defaultValue != null) {
             CompileTimeConstant<?> constant = ExpressionCodegen.getCompileTimeConstant(defaultValue, bindingContext);
@@ -171,7 +171,7 @@ public class PropertyCodegen {
 
         if (!isTrait(context.getContextDescriptor()) || kind == OwnerKind.TRAIT_IMPL) {
             int flags = ACC_DEPRECATED | ACC_FINAL | ACC_PRIVATE | ACC_STATIC | ACC_SYNTHETIC;
-            MethodVisitor mv = v.newMethod(null, descriptor, flags, name, desc, null, null);
+            MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, name, desc, null, null);
             AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(descriptor);
             mv.visitCode();
             mv.visitInsn(Opcodes.RETURN);

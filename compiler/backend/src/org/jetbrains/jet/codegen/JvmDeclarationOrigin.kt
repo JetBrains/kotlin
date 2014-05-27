@@ -35,8 +35,11 @@ public class JvmDeclarationOrigin(
     }
 }
 
-public fun OtherOrigin(element: PsiElement, descriptor: DeclarationDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, element, descriptor)
+public fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?): JvmDeclarationOrigin =
+        if (element == null && descriptor == null)
+            JvmDeclarationOrigin.NO_ORIGIN
+        else JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, element, descriptor)
 
-public fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, element, null)
+public fun OtherOrigin(element: PsiElement?): JvmDeclarationOrigin = OtherOrigin(element, null)
 
-public fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, descriptor)
+public fun OtherOrigin(descriptor: DeclarationDescriptor?): JvmDeclarationOrigin = OtherOrigin(null, descriptor)

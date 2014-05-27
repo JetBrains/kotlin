@@ -50,6 +50,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
@@ -200,7 +201,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         assert state.getClassBuilderMode() == ClassBuilderMode.FULL
                 : "<clinit> should not be generated for light classes. Descriptor: " + descriptor;
         if (clInit == null) {
-            MethodVisitor mv = v.newMethod(null, descriptor, ACC_STATIC, "<clinit>", "()V", null, null);
+            MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), ACC_STATIC, "<clinit>", "()V", null, null);
             mv.visitCode();
             SimpleFunctionDescriptorImpl clInit =
                     SimpleFunctionDescriptorImpl.create(descriptor, Annotations.EMPTY, Name.special("<clinit>"), SYNTHESIZED);

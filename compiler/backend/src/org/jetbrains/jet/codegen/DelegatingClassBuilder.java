@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
@@ -45,15 +44,14 @@ public abstract class DelegatingClassBuilder implements ClassBuilder {
     @NotNull
     @Override
     public MethodVisitor newMethod(
-            @Nullable PsiElement origin,
-            @Nullable DeclarationDescriptor descriptor,
+            @NotNull JvmDeclarationOrigin origin,
             int access,
             @NotNull String name,
             @NotNull String desc,
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        return getDelegate().newMethod(origin, descriptor, access, name, desc, signature, exceptions);
+        return getDelegate().newMethod(origin, access, name, desc, signature, exceptions);
     }
 
     @NotNull

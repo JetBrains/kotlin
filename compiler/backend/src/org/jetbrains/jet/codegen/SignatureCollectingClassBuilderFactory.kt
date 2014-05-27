@@ -65,9 +65,9 @@ public abstract class SignatureCollectingClassBuilderFactory(
             return super.newField(origin, access, name, desc, signature, value)
         }
 
-        override fun newMethod(origin: PsiElement?, descriptor: DeclarationDescriptor?, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
-            signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, origin, descriptor))
-            return super.newMethod(origin, descriptor, access, name, desc, signature, exceptions)
+        override fun newMethod(origin: JvmDeclarationOrigin, access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor {
+            signatures.putValue(RawSignature(name, desc, MemberKind.METHOD), origin)
+            return super.newMethod(origin, access, name, desc, signature, exceptions)
         }
 
         override fun done() {

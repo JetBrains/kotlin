@@ -95,7 +95,7 @@ public class SamWrapperCodegen {
     }
 
     private void generateConstructor(Type ownerType, Type functionType, ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(null, samType.getJavaClassDescriptor(),
+        MethodVisitor mv = cv.newMethod(OtherOrigin(samType.getJavaClassDescriptor()),
                                         NO_FLAG_PACKAGE_PRIVATE, "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, functionType), null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {

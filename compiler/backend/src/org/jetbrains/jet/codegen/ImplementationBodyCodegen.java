@@ -68,6 +68,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
+import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
@@ -493,7 +494,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                      ACC_PUBLIC | ACC_ABSTRACT :
                      ACC_PUBLIC;
         if (JvmCodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
-            MethodVisitor mv = v.newMethod(null, null, access, "toArray", "()[Ljava/lang/Object;", null, null);
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, access, "toArray", "()[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -508,7 +509,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         if (!isGenericToArrayPresent()) {
-            MethodVisitor mv = v.newMethod(null, null, access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
 
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
@@ -536,7 +537,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int access = descriptor.getKind() == ClassKind.TRAIT ?
                          ACC_PUBLIC | ACC_ABSTRACT :
                          ACC_PUBLIC;
-            MethodVisitor mv = v.newMethod(null, null, access, name, desc, null, null);
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, access, name, desc, null, null);
             if (descriptor.getKind() != ClassKind.TRAIT) {
                 mv.visitCode();
                 genThrow(mv, "java/lang/UnsupportedOperationException", "Mutating immutable collection");
@@ -620,7 +621,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     KotlinBuiltIns.getInstance().getBoolean(),
                     KotlinBuiltIns.getInstance().getAny()
             );
-            MethodVisitor mv = v.newMethod(null, equalsFunction, ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
+            MethodVisitor mv = v.newMethod(OtherOrigin(equalsFunction), ACC_PUBLIC, "equals", "(Ljava/lang/Object;)Z", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -679,7 +680,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.HASH_CODE_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getInt()
             );
-            MethodVisitor mv = v.newMethod(null, hashCodeFunction, ACC_PUBLIC, "hashCode", "()I", null, null);
+            MethodVisitor mv = v.newMethod(OtherOrigin(hashCodeFunction), ACC_PUBLIC, "hashCode", "()I", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -730,7 +731,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     descriptor, Name.identifier(CodegenUtil.TO_STRING_METHOD_NAME),
                     KotlinBuiltIns.getInstance().getString()
             );
-            MethodVisitor mv = v.newMethod(null, toString, ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
+            MethodVisitor mv = v.newMethod(OtherOrigin(toString), ACC_PUBLIC, "toString", "()Ljava/lang/String;", null, null);
             InstructionAdapter iv = new InstructionAdapter(mv);
 
             mv.visitCode();
@@ -887,7 +888,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 return DescriptorUtils.isEnumValuesMethod(descriptor);
             }
         });
-        MethodVisitor mv = v.newMethod(myClass, valuesFunction, ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valuesFunction), ACC_PUBLIC | ACC_STATIC, "values", "()" + type.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -905,7 +906,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 return DescriptorUtils.isEnumValueOfMethod(descriptor);
             }
         });
-        MethodVisitor mv = v.newMethod(myClass, valueOfFunction,
+        MethodVisitor mv = v.newMethod(OtherOrigin(myClass, valueOfFunction),
                                        ACC_PUBLIC | ACC_STATIC, "valueOf", "(Ljava/lang/String;)" + classAsmType.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 

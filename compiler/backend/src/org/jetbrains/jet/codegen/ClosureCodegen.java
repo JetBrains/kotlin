@@ -201,7 +201,7 @@ public class ClosureCodegen extends ParentCodegenAware {
 
 
     private void generateConstInstance(@NotNull ClassBuilder cv) {
-        MethodVisitor mv = cv.newMethod(fun, funDescriptor, ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
+        MethodVisitor mv = cv.newMethod(OtherOrigin(fun, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         cv.newField(OtherOrigin(fun, funDescriptor), ACC_STATIC | ACC_FINAL, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
@@ -221,7 +221,7 @@ public class ClosureCodegen extends ParentCodegenAware {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                cv.newMethod(fun, funDescriptor, ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
+                cv.newMethod(OtherOrigin(fun, funDescriptor), ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
@@ -258,7 +258,7 @@ public class ClosureCodegen extends ParentCodegenAware {
         Type[] argTypes = fieldListToTypeArray(args);
 
         Method constructor = new Method("<init>", Type.VOID_TYPE, argTypes);
-        MethodVisitor mv = cv.newMethod(fun, funDescriptor, visibilityFlag, "<init>", constructor.getDescriptor(), null,
+        MethodVisitor mv = cv.newMethod(OtherOrigin(fun, funDescriptor), visibilityFlag, "<init>", constructor.getDescriptor(), null,
                                         ArrayUtil.EMPTY_STRING_ARRAY);
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();

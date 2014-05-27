@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
@@ -126,8 +127,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         OwnerKind methodContextKind = methodContext.getContextKind();
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        MethodVisitor mv = v.newMethod(origin,
-                                       functionDescriptor,
+        MethodVisitor mv = v.newMethod(OtherOrigin(origin, functionDescriptor),
                                        getMethodAsmFlags(functionDescriptor, methodContextKind),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
@@ -507,7 +507,7 @@ public class FunctionCodegen extends ParentCodegenAware {
             return;
         }
         int flags = getVisibilityAccessFlag(constructorDescriptor);
-        MethodVisitor mv = classBuilder.newMethod(null, constructorDescriptor, flags, "<init>", "()V", null,
+        MethodVisitor mv = classBuilder.newMethod(OtherOrigin(constructorDescriptor), flags, "<init>", "()V", null,
                                                   getThrownExceptions(constructorDescriptor, state.getTypeMapper()));
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
@@ -559,7 +559,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         Method defaultMethod = typeMapper.mapDefaultMethod(functionDescriptor, kind, owner);
 
-        MethodVisitor mv = v.newMethod(null, functionDescriptor, flags | (isConstructor ? 0 : ACC_STATIC),
+        MethodVisitor mv = v.newMethod(OtherOrigin(functionDescriptor), flags | (isConstructor ? 0 : ACC_STATIC),
                                        defaultMethod.getName(),
                                        defaultMethod.getDescriptor(), null,
                                        getThrownExceptions(functionDescriptor, typeMapper));
@@ -729,7 +729,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     ) {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
-        MethodVisitor mv = v.newMethod(null, descriptor, flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
+        MethodVisitor mv = v.newMethod(OtherOrigin(descriptor), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -772,7 +772,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         int flags = ACC_PUBLIC;
 
-        MethodVisitor mv = v.newMethod(null, functionDescriptor, flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
+        MethodVisitor mv = v.newMethod(OtherOrigin(functionDescriptor), flags, delegateMethod.getName(), delegateMethod.getDescriptor(), null,
                                        getThrownExceptions(functionDescriptor, typeMapper));
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
