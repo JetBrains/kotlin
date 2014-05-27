@@ -1,0 +1,22 @@
+JetFile: BackslashInString.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        PsiErrorElement:Unexpected token in a string template
+          PsiElement(BAD_CHARACTER)('\')
+        PsiErrorElement:Expecting '"'
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

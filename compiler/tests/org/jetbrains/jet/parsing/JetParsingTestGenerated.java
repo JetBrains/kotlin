@@ -84,6 +84,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest("compiler/testData/psi/BabySteps_ERR.kt");
         }
         
+        @TestMetadata("BackslashInString.kt")
+        public void testBackslashInString() throws Exception {
+            doParsingTest("compiler/testData/psi/BackslashInString.kt");
+        }
+        
         @TestMetadata("BlockCommentAtBeginningOfFile1.kt")
         public void testBlockCommentAtBeginningOfFile1() throws Exception {
             doParsingTest("compiler/testData/psi/BlockCommentAtBeginningOfFile1.kt");
