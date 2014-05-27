@@ -22,6 +22,9 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
+import org.jetbrains.jet.codegen.JvmDeclarationOriginKind.*
 
 public enum class MemberKind { FIELD; METHOD }
 
@@ -30,6 +33,7 @@ public enum class JvmDeclarationOriginKind {
     PACKAGE_FACADE
     PACKAGE_PART
     TRAIT_IMPL
+    DELEGATION_TO_TRAIT_IMPL
 }
 
 public class JvmDeclarationOrigin(
@@ -38,21 +42,22 @@ public class JvmDeclarationOrigin(
         val descriptor: DeclarationDescriptor?
 ) {
     class object {
-        public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, null)
+        public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
     }
 }
 
 public fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?): JvmDeclarationOrigin =
         if (element == null && descriptor == null)
             JvmDeclarationOrigin.NO_ORIGIN
-        else JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, element, descriptor)
+        else JvmDeclarationOrigin(OTHER, element, descriptor)
 
 public fun OtherOrigin(element: PsiElement?): JvmDeclarationOrigin = OtherOrigin(element, null)
 
 public fun OtherOrigin(descriptor: DeclarationDescriptor?): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
 
-public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_FACADE, null, descriptor)
-public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, file, descriptor)
+public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
+public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
-public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.TRAIT_IMPL, element, descriptor)
+public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(TRAIT_IMPL, element, descriptor)
+public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION_TO_TRAIT_IMPL, element, descriptor)
 
