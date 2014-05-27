@@ -327,5 +327,9 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 ","          { return JetTokens.COMMA     ; }
 "#"          { return JetTokens.HASH      ; }
 
-. { return TokenType.BAD_CHARACTER; }
+// error fallback
+.            { return TokenType.BAD_CHARACTER; }
+// error fallback for exclusive states
+<STRING, RAW_STRING, SHORT_TEMPLATE_ENTRY, BLOCK_COMMENT, DOC_COMMENT> .
+             { return TokenType.BAD_CHARACTER; }
 
