@@ -296,7 +296,7 @@ public class AnonymousObjectTransformer {
 
     @NotNull
     private ClassBuilder createClassBuilder() {
-        ClassBuilder classBuilder = state.getFactory().newVisitor(null, null, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(NO_ORIGIN, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
         return new RemappingClassBuilder(classBuilder, new TypeRemapper(inliningContext.typeMapping));
     }
 

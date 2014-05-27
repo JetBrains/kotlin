@@ -63,7 +63,7 @@ public class SamWrapperCodegen {
         // e.g. compare(T, T)
         SimpleFunctionDescriptor erasedInterfaceFunction = samType.getAbstractMethod().getOriginal();
 
-        ClassBuilder cv = state.getFactory().newVisitor(null, erasedInterfaceFunction, asmType, file);
+        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(erasedInterfaceFunction), asmType, file);
         cv.defineClass(file,
                        V1_6,
                        ACC_FINAL,

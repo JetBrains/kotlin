@@ -120,7 +120,7 @@ public class ClosureCodegen extends ParentCodegenAware {
     }
 
     public void gen() {
-        ClassBuilder cv = state.getFactory().newVisitor(fun, funDescriptor, asmType, fun.getContainingFile());
+        ClassBuilder cv = state.getFactory().newVisitor(OtherOrigin(fun, funDescriptor), asmType, fun.getContainingFile());
 
         FunctionDescriptor erasedInterfaceFunction;
         if (samType == null) {

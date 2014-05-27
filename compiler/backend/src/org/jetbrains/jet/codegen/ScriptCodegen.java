@@ -60,7 +60,8 @@ public class ScriptCodegen extends MemberCodegen<JetScript> {
         Type className = state.getBindingContext().get(ASM_TYPE, classDescriptorForScript);
         assert className != null;
 
-        ClassBuilder builder = state.getFactory().newVisitor(declaration, classDescriptorForScript, className, declaration.getContainingFile());
+        ClassBuilder builder = state.getFactory().newVisitor(OtherOrigin(declaration, classDescriptorForScript),
+                                                             className, declaration.getContainingFile());
         List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
         ScriptContext scriptContext = parentContext.intoScript(
                 scriptDescriptor,

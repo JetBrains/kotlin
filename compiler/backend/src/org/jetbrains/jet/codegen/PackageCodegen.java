@@ -60,6 +60,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -90,7 +91,7 @@ public class PackageCodegen {
                 String className = AsmUtil.internalNameByFqNameWithoutInnerClasses(getPackageClassFqName(fqName));
                 ClassBuilder v = PackageCodegen.this.state.getFactory()
                         .newVisitor(
-                                null, packageFragment,
+                                OtherOrigin(packageFragment),
                                 Type.getObjectType(className), PackagePartClassUtils.getPackageFilesWithCallables(files));
                 v.defineClass(sourceFile, V1_6,
                               ACC_PUBLIC | ACC_FINAL,
@@ -281,7 +282,7 @@ public class PackageCodegen {
 
         if (!generatePackagePart) return null;
 
-        ClassBuilder builder = state.getFactory().newVisitor(file, packageFragment, packagePartType, file);
+        ClassBuilder builder = state.getFactory().newVisitor(OtherOrigin(file, packageFragment), packagePartType, file);
 
         new PackagePartCodegen(builder, file, packagePartType, packagePartContext, state).generate();
 

@@ -67,6 +67,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
+import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
@@ -175,7 +176,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert classDescriptor != null;
 
         Type asmType = asmTypeForAnonymousClass(bindingContext, objectDeclaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(objectDeclaration, classDescriptor, asmType, literal.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(
+                OtherOrigin(objectDeclaration, classDescriptor),
+                asmType,
+                literal.getContainingFile()
+        );
 
 
         ClassContext objectContext = context.intoAnonymousClass(classDescriptor, this);
@@ -264,7 +269,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null;
 
         Type asmType = asmTypeForAnonymousClass(bindingContext, declaration);
-        ClassBuilder classBuilder = state.getFactory().newVisitor(declaration, descriptor, asmType, declaration.getContainingFile());
+        ClassBuilder classBuilder = state.getFactory().newVisitor(OtherOrigin(declaration, descriptor), asmType, declaration.getContainingFile());
 
         ClassContext objectContext = context.intoAnonymousClass(descriptor, this);
         new ImplementationBodyCodegen(declaration, objectContext, classBuilder, state, getParentCodegen()).generate();
