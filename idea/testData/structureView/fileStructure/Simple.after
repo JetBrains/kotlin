@@ -1,6 +1,6 @@
 -Simple.kt
  -Test
-  str: String
-  some: Int
   foo(): Int
   other(): Unit
+  some: Int
+  str: String

@@ -1,15 +1,4 @@
 -Render.kt
- test1(): Unit
- test2(String?): Unit
- test3(T, U): Unit
- test4(T): Unit
- test5(): String
- test6(): Comparable<String>
- extension1() on String: Unit
- extension2() on Comparable<T>: Unit
- a: Int
- a: String on Comparable<T>
- b: Any
  A1
  -A2
   a: Int
@@ -26,15 +15,26 @@
   -<class object>
    test(): Unit
  -A7
-  a: Int
   <class initializer>
+  a: Int
+ a: Int
+ a: String on Comparable<T>
+ b: Any
  -Enum1 : Enum<Enum1>
   FIRST : Enum1
   SECOND : Enum1
- Trait
- Trait1 : Trait
+ extension1() on String: Unit
+ extension2() on Comparable<T>: Unit
+ test1(): Unit
+ test2(String?): Unit
+ test3(T, U): Unit
+ test4(T): Unit
+ test5(): String
+ test6(): Comparable<String>
  TestWithWhere
  testWithWhere(): Unit
+ Trait
+ Trait1 : Trait
+ withDefaulArgs(Int = ..., String = ...): Unit
  -WithDefaultArgs
   a: Int
- withDefaulArgs(Int = ..., String = ...): Unit
