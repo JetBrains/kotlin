@@ -18,11 +18,15 @@ package org.jetbrains.jet.codegen
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
+import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
+import org.jetbrains.jet.lang.psi.JetFile
 
 public enum class MemberKind { FIELD; METHOD }
 
 public enum class JvmDeclarationOriginKind {
     OTHER
+    PACKAGE_FACADE
+    PACKAGE_PART
 }
 
 public class JvmDeclarationOrigin(
@@ -43,3 +47,7 @@ public fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?)
 public fun OtherOrigin(element: PsiElement?): JvmDeclarationOrigin = OtherOrigin(element, null)
 
 public fun OtherOrigin(descriptor: DeclarationDescriptor?): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
+
+public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_FACADE, null, descriptor)
+public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, file, descriptor)
+
