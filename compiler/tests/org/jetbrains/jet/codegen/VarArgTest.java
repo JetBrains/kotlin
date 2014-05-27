@@ -95,7 +95,7 @@ public class VarArgTest extends CodegenTestCase {
     public void testArrayAsVararg2() throws InvocationTargetException, IllegalAccessException {
         loadText("private fun asList(vararg elems: String) = elems; fun test(ts1: Array<String>, ts2: String) = asList(*ts1, ts2); ");
         Method main = generateFunction("test");
-        Object invoke = main.invoke(null, new Object[] {new String[] {"mama"}, "papa" });
+        Object invoke = main.invoke(null, new String[] {"mama"}, "papa");
         assertInstanceOf(invoke, String[].class);
         assertEquals(2, Array.getLength(invoke));
         assertEquals("mama", Array.get(invoke, 0));

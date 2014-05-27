@@ -80,14 +80,14 @@ public class CodegenTestUtil {
         assertTrue(caught);
     }
 
-    @Nullable
+    @NotNull
     public static Method findDeclaredMethodByName(@NotNull Class<?> aClass, @NotNull String name) {
         for (Method method : aClass.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
                 return method;
             }
         }
-        return null;
+        throw new AssertionError("Method " + name + " is not found in class " + aClass);
     }
 
     public static void assertIsCurrentTime(long returnValue) {

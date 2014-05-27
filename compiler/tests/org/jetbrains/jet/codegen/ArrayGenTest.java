@@ -27,26 +27,13 @@ public class ArrayGenTest extends CodegenTestCase {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
     }
 
-    public void testKt326() {
-        // Disabled: java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
-        /*
-        blackBoxFile("regressions/kt326.kt");
-        */
-    }
-
     public void testCreateMultiInt() throws Exception {
         loadText("fun foo() = Array<Array<Int>> (5, { Array<Int>(it, {239}) })");
         Method foo = generateFunction();
-        try {
-            Integer[][] invoke = (Integer[][]) foo.invoke(null);
-            assertEquals(invoke[2].length, 2);
-            assertEquals(invoke[4].length, 4);
-            assertEquals(invoke[4][2].intValue(), 239);
-        }
-        catch (Throwable e) {
-            System.out.println(generateToText());
-            throw ((e instanceof RuntimeException)) ? (RuntimeException) e : new RuntimeException(e);
-        }
+        Integer[][] invoke = (Integer[][]) foo.invoke(null);
+        assertEquals(invoke[2].length, 2);
+        assertEquals(invoke[4].length, 4);
+        assertEquals(invoke[4][2].intValue(), 239);
     }
 
     public void testCreateMultiIntNullable() throws Exception {
@@ -62,17 +49,6 @@ public class ArrayGenTest extends CodegenTestCase {
         Method foo = generateFunction();
         Object invoke = foo.invoke(null);
         assertTrue(invoke instanceof Object[]);
-    }
-
-    public void testCreateMultiGenerics() throws Exception {
-        // Disabled: java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to [Ljava.lang.Integer;
-        /*
-        loadText("class L<T>() { val a = Array<T?>(5) { null } } fun foo() = L<Int>().a");
-        System.out.println(generateToText());
-        Method foo = generateFunction();
-        Object invoke = foo.invoke(null);
-        assertTrue(invoke.getClass() == Object[].class);
-        */
     }
 
     public void testIntGenerics() throws Exception {

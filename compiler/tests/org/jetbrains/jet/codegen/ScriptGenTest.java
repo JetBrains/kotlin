@@ -18,7 +18,6 @@ package org.jetbrains.jet.codegen;
 
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
@@ -26,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.UtilsPackage;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -106,7 +106,7 @@ public class ScriptGenTest extends CodegenTestCase {
 
     public void testTopLevelFunction() throws Exception {
         blackBoxScript("script/topLevelFunction.kts");
-        Method method = scriptInstance.getClass().getMethod("factorial", new Class<?>[]{ int.class });
+        Method method = scriptInstance.getClass().getMethod("factorial", int.class);
         Object r = method.invoke(scriptInstance, 4);
         assertEquals(24, r);
     }
@@ -154,7 +154,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testLanguage() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fib.lang.kt");
-        Class aClass = generateClass("Fib");
+        Class<?> aClass = generateClass("Fib");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getDeclaredField("result");
@@ -170,7 +170,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testLanguageWithPackage() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/fibwp.lang.kt");
-        Class aClass = generateClass("test.Fibwp");
+        Class<?> aClass = generateClass("test.Fibwp");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Field result = aClass.getDeclaredField("result");
@@ -186,7 +186,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testDependentScripts() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFiles("script/fibwp.lang.kt", "script/fibwprunner.kts");
-        Class aClass = generateClass("Fibwprunner");
+        Class<?> aClass = generateClass("Fibwprunner");
         try {
             Constructor constructor = aClass.getConstructor();
             Field result = aClass.getDeclaredField("result");
@@ -209,7 +209,7 @@ public class ScriptGenTest extends CodegenTestCase {
     public void testScriptWhereMethodHasClosure() {
         JetScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
         loadFile("script/methodWithClosure.lang.kt");
-        Class aClass = generateClass("MethodWithClosure");
+        Class<?> aClass = generateClass("MethodWithClosure");
         try {
             Constructor constructor = aClass.getConstructor(int.class);
             Object script = constructor.newInstance(239);

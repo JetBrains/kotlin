@@ -15,14 +15,14 @@
  */
 package org.jetbrains.jet.codegen;
 
+import org.jetbrains.jet.ConfigurationKind;
+import org.jetbrains.jet.OutputFile;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
-import org.jetbrains.jet.ConfigurationKind;
-import org.jetbrains.jet.OutputFile;
 
 public class SourceInfoGenTest extends CodegenTestCase {
-
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);

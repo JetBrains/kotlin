@@ -276,12 +276,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
 
     @NotNull
     protected Method generateFunction(@NotNull String name) {
-        Class<?> aClass = generatePackageClass();
-        Method method = findDeclaredMethodByName(aClass, name);
-        if (method == null) {
-            throw new IllegalArgumentException("Couldn't find method " + name + " in class " + aClass);
-        }
-        return method;
+        return findDeclaredMethodByName(generatePackageClass(), name);
     }
 
     @NotNull

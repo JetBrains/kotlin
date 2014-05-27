@@ -45,7 +45,7 @@ public class PackageGenTest extends CodegenTestCase {
     public void testReturnOne() throws Exception {
         loadText("fun f() : Int { return 42; }");
         Method main = generateFunction();
-        Object returnValue = main.invoke(null, new Object[0]);
+        Object returnValue = main.invoke(null);
         assertEquals(new Integer(42), returnValue);
     }
 

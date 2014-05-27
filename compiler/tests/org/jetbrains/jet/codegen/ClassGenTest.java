@@ -39,7 +39,7 @@ public class ClassGenTest extends CodegenTestCase {
     public void testPSVMClass() {
         loadFile("classes/simpleClass.kt");
 
-        Class aClass = generateClass("SimpleClass");
+        Class<?> aClass = generateClass("SimpleClass");
         Method[] methods = aClass.getDeclaredMethods();
         // public int SimpleClass.foo()
         assertEquals(1, methods.length);
@@ -47,32 +47,36 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testArrayListInheritance() throws Exception {
         loadFile("classes/inheritingFromArrayList.kt");
-        Class aClass = generateClass("Foo");
+        Class<?> aClass = generateClass("Foo");
         assertInstanceOf(aClass.newInstance(), List.class);
     }
 
     public void testDelegationToVal() throws Exception {
         loadFile("classes/delegationToVal.kt");
         GeneratedClassLoader loader = generateAndCreateClassLoader();
-        Class aClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
+        Class<?> aClass = loader.loadClass(PackageClassUtils.getPackageClassName(FqName.ROOT));
         assertEquals("OK", aClass.getMethod("box").invoke(null));
 
-        Class test = loader.loadClass("Test");
+        Class<?> test = loader.loadClass("Test");
         try {
             test.getDeclaredField("$delegate_0");
             fail("$delegate_0 field generated for class Test but should not");
         }
-        catch (NoSuchFieldException e) {}
+        catch (NoSuchFieldException e) {
+            // ok
+        }
 
-        Class test2 = loader.loadClass("Test2");
+        Class<?> test2 = loader.loadClass("Test2");
         try {
             test2.getDeclaredField("$delegate_0");
             fail("$delegate_0 field generated for class Test2 but should not");
         }
-        catch (NoSuchFieldException e) {}
+        catch (NoSuchFieldException e) {
+            // ok
+        }
 
-        Class test3 = loader.loadClass("Test3");
-        Class iActing = loader.loadClass("IActing");
+        Class<?> test3 = loader.loadClass("Test3");
+        Class<?> iActing = loader.loadClass("IActing");
         Object obj = test3.newInstance();
         assertTrue(iActing.isInstance(obj));
         Method iActingMethod = iActing.getMethod("act");
@@ -89,14 +93,14 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testAbstractMethod() throws Exception {
         loadText("abstract class Foo { abstract fun x(): String; fun y(): Int = 0 }");
-        Class aClass = generateClass("Foo");
+        Class<?> aClass = generateClass("Foo");
         assertNotNull(aClass.getMethod("x"));
-        assertNotNull(findDeclaredMethodByName(aClass, "y"));
+        findDeclaredMethodByName(aClass, "y");
     }
 
     public void testAbstractClass() throws Exception {
         loadText("abstract class SimpleClass() { }");
-        Class aClass = generateClass("SimpleClass");
+        Class<?> aClass = generateClass("SimpleClass");
         assertTrue((aClass.getModifiers() & Modifier.ABSTRACT) != 0);
     }
 
@@ -109,7 +113,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testEnumClass() throws Exception {
         loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
-        Class direction = generateClass("Direction");
+        Class<?> direction = generateClass("Direction");
         Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
         assertInstanceOf(north.get(null), direction);
@@ -117,7 +121,7 @@ public class ClassGenTest extends CodegenTestCase {
 
     public void testEnumConstantConstructors() throws Exception {
         loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000); GREEN: Color(0x00FF00); }");
-        Class colorClass = generateClass("Color");
+        Class<?> colorClass = generateClass("Color");
         Field redField = colorClass.getField("RED");
         Object redValue = redField.get(null);
         Method rgbMethod = colorClass.getMethod("getRgb");

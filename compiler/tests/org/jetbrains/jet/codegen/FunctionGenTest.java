@@ -38,11 +38,11 @@ public class FunctionGenTest extends CodegenTestCase {
 
     public void testNoRefToOuter() throws InvocationTargetException, IllegalAccessException, NoSuchMethodException, InstantiationException {
         loadText("class A() { fun f() : ()->String { val s = \"OK\"; return { -> s } } }");
-        Class foo = generateClass("A");
+        Class<?> foo = generateClass("A");
         Object obj = foo.newInstance();
         Method f = foo.getMethod("f");
         Object closure = f.invoke(obj);
-        Class<? extends Object> aClass = closure.getClass();
+        Class<?> aClass = closure.getClass();
         Field[] fields = aClass.getDeclaredFields();
         assertEquals(1, fields.length);
         assertEquals("$s", fields[0].getName());

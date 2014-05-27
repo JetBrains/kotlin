@@ -23,13 +23,13 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.OutputFile;
 import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.test.TestCaseWithTmpdir;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,7 +68,6 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
         String text = FileUtil.loadFile(ktFile, true);
 
         JetFile psiFile = JetTestUtils.createFile(ktFile.getName(), text, jetCoreEnvironment.getProject());
-        assert psiFile != null;
 
         OutputFileCollection outputFiles = GenerationUtils.compileFileGetClassFileFactoryForTest(psiFile);
 
@@ -176,7 +175,7 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
     }
 
     @NotNull
-    private List<LocalVariable> readLocalVariable(ClassReader cr, final String methodName) throws Exception {
+    private static List<LocalVariable> readLocalVariable(ClassReader cr, final String methodName) throws Exception {
         class Visitor extends ClassVisitor {
             List<LocalVariable> readVariables = new ArrayList<LocalVariable>();
 
@@ -185,14 +184,17 @@ public abstract class AbstractCheckLocalVariablesTableTest extends TestCaseWithT
             }
 
             @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(
+                    int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions
+            ) {
                 if (methodName.equals(name + desc)) {
                     return new MethodVisitor(Opcodes.ASM5) {
                         @Override
-                        public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+                        public void visitLocalVariable(
+                                @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
+                        ) {
                             readVariables.add(new LocalVariable(name, desc, index));
                         }
-
                     };
                 }
                 else {

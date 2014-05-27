@@ -54,7 +54,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         }
         catch (Throwable e) {
             System.out.println(text);
-            UtilsPackage.rethrow(e);
+            throw UtilsPackage.rethrow(e);
         }
     }
 
