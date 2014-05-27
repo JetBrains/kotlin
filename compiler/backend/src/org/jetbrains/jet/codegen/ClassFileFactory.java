@@ -17,7 +17,6 @@
 package org.jetbrains.jet.codegen;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.Function;
@@ -56,9 +55,10 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public ClassBuilder newVisitor(@NotNull Type asmType, @NotNull Collection<? extends PsiFile> sourceFiles) {
         String outputFilePath = asmType.getInternalName() + ".class";
-        state.getProgress().reportOutput(toIoFilesIgnoringNonPhysical(sourceFiles), new File(outputFilePath));
+        List<File> ioSourceFiles = toIoFilesIgnoringNonPhysical(sourceFiles);
+        state.getProgress().reportOutput(ioSourceFiles, new File(outputFilePath));
         ClassBuilder answer = builderFactory.newClassBuilder();
-        generators.put(outputFilePath, new ClassBuilderAndSourceFileList(answer, sourceFiles));
+        generators.put(outputFilePath, new ClassBuilderAndSourceFileList(answer, ioSourceFiles));
         return answer;
     }
 
@@ -115,7 +115,7 @@ public class ClassFileFactory implements OutputFileCollection {
     }
 
     @NotNull
-    private static Collection<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
+    private static List<File> toIoFilesIgnoringNonPhysical(@NotNull Collection<? extends PsiFile> psiFiles) {
         List<File> result = Lists.newArrayList();
         for (PsiFile psiFile : psiFiles) {
             VirtualFile virtualFile = psiFile.getVirtualFile();
@@ -149,18 +149,7 @@ public class ClassFileFactory implements OutputFileCollection {
                 throw new IllegalStateException("No record for binary file " + relativeClassFilePath);
             }
 
-            return ContainerUtil.mapNotNull(
-                    pair.sourceFiles,
-                    new Function<PsiFile, File>() {
-                        @Override
-                        public File fun(PsiFile file) {
-                            VirtualFile virtualFile = file.getVirtualFile();
-                            if (virtualFile == null) return null;
-
-                            return VfsUtilCore.virtualToIoFile(virtualFile);
-                        }
-                    }
-            );
+            return pair.sourceFiles;
         }
 
         @NotNull
@@ -184,9 +173,9 @@ public class ClassFileFactory implements OutputFileCollection {
 
     private static final class ClassBuilderAndSourceFileList {
         private final ClassBuilder classBuilder;
-        private final Collection<? extends PsiFile> sourceFiles;
+        private final List<File> sourceFiles;
 
-        private ClassBuilderAndSourceFileList(ClassBuilder classBuilder, Collection<? extends PsiFile> sourceFiles) {
+        private ClassBuilderAndSourceFileList(ClassBuilder classBuilder, List<File> sourceFiles) {
             this.classBuilder = classBuilder;
             this.sourceFiles = sourceFiles;
         }
