@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,13 +51,13 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
     protected void updateImpl(PresentationData data) {
         JetDeclaration declaration = getValue();
         if (declaration != null) {
-            String text = declaration.getName();
+            String text = declaration instanceof JetClassInitializer ? CLASS_INITIALIZER : declaration.getName();
             if (text == null) return;
+
             JetCodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings()
                     .getCustomSettings(JetCodeStyleSettings.class);
-            if (declaration instanceof JetClassInitializer) {
-                text = CLASS_INITIALIZER;
-            } else if (declaration instanceof JetProperty) {
+
+            if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
                 JetTypeReference ref = property.getTypeRef();
                 if (ref != null) {
@@ -66,7 +66,8 @@ public class JetDeclarationTreeNode extends AbstractPsiBasedNode<JetDeclaration>
                     if (settings.SPACE_AFTER_TYPE_COLON) text += " ";
                     text += ref.getText();
                 }
-            } else if (declaration instanceof JetFunction) {
+            }
+            else if (declaration instanceof JetFunction) {
                 JetFunction function = (JetFunction) declaration;
                 JetTypeReference receiverTypeRef = function.getReceiverTypeRef();
                 if (receiverTypeRef != null) {
