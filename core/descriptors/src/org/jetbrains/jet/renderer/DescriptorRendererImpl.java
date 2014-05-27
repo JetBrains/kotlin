@@ -42,7 +42,8 @@ import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import java.util.*;
 
 import static org.jetbrains.jet.lang.types.ErrorUtils.UninferredParameterType;
-import static org.jetbrains.jet.lang.types.TypeUtils.*;
+import static org.jetbrains.jet.lang.types.TypeUtils.CANT_INFER_LAMBDA_PARAM_TYPE;
+import static org.jetbrains.jet.lang.types.TypeUtils.DONT_CARE;
 
 public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean shortNames;
@@ -61,8 +62,9 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
     private final boolean withoutFunctionParameterNames;
     private final boolean withoutTypeParameters;
     private final boolean renderClassObjectName;
-
+    private final boolean withoutSuperTypes;
     private final boolean receiverAfterName;
+
     @NotNull
     private final OverrideRenderingPolicy overrideRenderingPolicy;
     @NotNull
@@ -95,7 +97,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             boolean withoutFunctionParameterNames,
             boolean withoutTypeParameters,
             boolean receiverAfterName,
-            boolean renderClassObjectName
+            boolean renderClassObjectName,
+            boolean withoutSuperTypes
     ) {
         this.shortNames = shortNames;
         this.withDefinedIn = withDefinedIn;
@@ -119,6 +122,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         this.withoutTypeParameters = withoutTypeParameters;
         this.receiverAfterName = receiverAfterName;
         this.renderClassObjectName = renderClassObjectName;
+        this.withoutSuperTypes = withoutSuperTypes;
     }
 
     /* FORMATTING */
@@ -807,10 +811,18 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             }
         }
 
+        renderSuperTypes(klass, builder);
+        renderWhereSuffix(typeParameters, builder);
+    }
+
+    private void renderSuperTypes(@NotNull ClassDescriptor klass, @NotNull StringBuilder builder) {
+        if (withoutSuperTypes) return;
+
         if (!klass.equals(KotlinBuiltIns.getInstance().getNothing())) {
             Collection<JetType> supertypes = klass.getTypeConstructor().getSupertypes();
-            if (supertypes.isEmpty() || supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(
-                    supertypes.iterator().next())) {
+
+            if (supertypes.isEmpty() ||
+                supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertypes.iterator().next())) {
             }
             else {
                 builder.append(" : ");
@@ -823,8 +835,6 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 }
             }
         }
-
-        renderWhereSuffix(typeParameters, builder);
     }
 
     private void renderClassKindPrefix(ClassDescriptor klass, StringBuilder builder) {

@@ -21,13 +21,13 @@ import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import com.intellij.util.ui.tree.TreeUtil
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
 import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.InTextDirectivesUtils
+import com.intellij.openapi.ui.Queryable.PrintInfo
 import org.jetbrains.jet.test.util.configureWithExtraFile
 
 public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtureTestCase() {
@@ -47,7 +47,8 @@ public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtu
 
         popup.setup()
 
-        val popupText = PlatformTestUtil.print(popup.getTree(), false)
+        val printInfo = PrintInfo(array("text"), array("location"))
+        val popupText = StructureViewUtil.print(popup.getTree(), false, printInfo, null)
         JetTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
     }
 

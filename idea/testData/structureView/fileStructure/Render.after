@@ -20,9 +20,9 @@
  a: Int
  a: String on Comparable<T>
  b: Any
- -Enum1 : Enum<Enum1>
-  FIRST : Enum1
-  SECOND : Enum1
+ -Enum1
+  FIRST
+  SECOND
  extension1() on String: Unit
  extension2() on Comparable<T>: Unit
  test1(): Unit
@@ -34,7 +34,7 @@
  TestWithWhere
  testWithWhere(): Unit
  Trait
- Trait1 : Trait
+ Trait1
  withDefaulArgs(Int = ..., String = ...): Unit
  -WithDefaultArgs
   a: Int

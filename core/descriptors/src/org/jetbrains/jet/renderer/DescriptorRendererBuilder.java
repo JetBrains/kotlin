@@ -41,6 +41,7 @@ public class DescriptorRendererBuilder {
     private boolean includeSynthesizedParameterNames = true;
     private boolean withoutFunctionParameterNames = false;
     private boolean withoutTypeParameters = false;
+    private boolean withoutSuperTypes = false;
 
     @NotNull
     private DescriptorRenderer.OverrideRenderingPolicy overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN;
@@ -187,6 +188,11 @@ public class DescriptorRendererBuilder {
         return this;
     }
 
+    public DescriptorRendererBuilder setWithoutSuperTypes(boolean withoutSuperTypes) {
+        this.withoutSuperTypes = withoutSuperTypes;
+        return this;
+    }
+
     @NotNull
     public DescriptorRenderer build() {
         return new DescriptorRendererImpl(
@@ -194,7 +200,7 @@ public class DescriptorRendererBuilder {
                 normalizedVisibilities, showInternalKeyword, prettyFunctionTypes, uninferredTypeParameterAsName,
                 overrideRenderingPolicy, valueParametersHandler, textFormat, excludedAnnotationClasses, includePropertyConstant,
                 includeSynthesizedParameterNames, withoutFunctionParameterNames, withoutTypeParameters, receiverAfterName,
-                renderClassObjectName);
+                renderClassObjectName, withoutSuperTypes);
     }
 
 }

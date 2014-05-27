@@ -33,9 +33,12 @@ import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest;
 @TestMetadata("idea/testData/structureView/fileStructure")
 public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructureTest {
     public void testAllFilesPresentInFileStructure() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage",
-                                                     new File("idea/testData/structureView/fileStructure"),
-                                                     Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+    }
+    
+    @TestMetadata("DoNotShowParentsInLocationJava.kt")
+    public void testDoNotShowParentsInLocationJava() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/DoNotShowParentsInLocationJava.kt");
     }
     
     @TestMetadata("EmptyFile.kt")
