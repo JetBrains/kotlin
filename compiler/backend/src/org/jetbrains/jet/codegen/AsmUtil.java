@@ -785,4 +785,12 @@ public class AsmUtil {
         return PackagePartClassUtils.getPackagePartInternalName(containingFile);
     }
 
+    public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {
+        if (isPrimitive(type)) {
+            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
+        }
+        else {
+            v.aconst(type);
+        }
+    }
 }

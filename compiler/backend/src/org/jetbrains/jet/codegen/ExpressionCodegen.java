@@ -2426,6 +2426,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (variableDescriptor != null) {
             VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
 
+            ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
+
             String reflectionFieldOwner;
             Type propertyType;
             Type ownerType;
@@ -2436,7 +2438,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 reflectionFieldOwner =
                         PackageClassUtils.getPackageClassInternalName(((PackageFragmentDescriptor) containingDeclaration).getFqName());
 
-                propertyType = descriptor.isVar() ? K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE : K_TOP_LEVEL_PROPERTY_IMPL_TYPE;
+                if (receiverParameter != null) {
+                    propertyType = descriptor.isVar() ? K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE : K_EXTENSION_PROPERTY_IMPL_TYPE;
+                }
+                else {
+                    propertyType = descriptor.isVar() ? K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE : K_TOP_LEVEL_PROPERTY_IMPL_TYPE;
+                }
+
                 ownerType = K_PACKAGE_IMPL_TYPE;
                 reflectionFieldName = JvmAbi.KOTLIN_PACKAGE_FIELD_NAME;
             }
@@ -2455,8 +2463,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.visitLdcInsn(descriptor.getName().asString());
             v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
 
-            v.invokespecial(propertyType.getInternalName(), "<init>",
-                            Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType), false);
+            String constructorDesc;
+            if (receiverParameter != null) {
+                putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
+                constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType, getType(Class.class));
+            }
+            else {
+                constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType);
+            }
+
+            v.invokespecial(propertyType.getInternalName(), "<init>", constructorDesc, false);
             return StackValue.onStack(propertyType);
         }
 

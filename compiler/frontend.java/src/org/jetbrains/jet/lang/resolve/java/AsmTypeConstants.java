@@ -44,6 +44,8 @@ public class AsmTypeConstants {
     public static final Type K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelPropertyImpl");
     public static final Type K_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMemberPropertyImpl");
     public static final Type K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMutableMemberPropertyImpl");
+    public static final Type K_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KExtensionPropertyImpl");
+    public static final Type K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableExtensionPropertyImpl");
 
     public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
 

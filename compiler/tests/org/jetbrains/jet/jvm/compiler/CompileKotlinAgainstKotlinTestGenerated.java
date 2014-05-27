@@ -106,6 +106,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         doTest("compiler/testData/compileKotlinAgainstKotlin/PlatformNames.A.kt");
     }
     
+    @TestMetadata("PropertyReference.A.kt")
+    public void testPropertyReference() throws Exception {
+        doTest("compiler/testData/compileKotlinAgainstKotlin/PropertyReference.A.kt");
+    }
+    
     @TestMetadata("Simple.A.kt")
     public void testSimple() throws Exception {
         doTest("compiler/testData/compileKotlinAgainstKotlin/Simple.A.kt");
