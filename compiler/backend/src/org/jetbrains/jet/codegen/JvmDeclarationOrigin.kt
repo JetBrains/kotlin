@@ -20,6 +20,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor
 import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.lang.psi.JetClassOrObject
 
 public enum class MemberKind { FIELD; METHOD }
 
@@ -27,6 +29,7 @@ public enum class JvmDeclarationOriginKind {
     OTHER
     PACKAGE_FACADE
     PACKAGE_PART
+    TRAIT_IMPL
 }
 
 public class JvmDeclarationOrigin(
@@ -50,4 +53,6 @@ public fun OtherOrigin(descriptor: DeclarationDescriptor?): JvmDeclarationOrigin
 
 public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: JetFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, file, descriptor)
+
+public fun TraitImpl(element: JetClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(JvmDeclarationOriginKind.TRAIT_IMPL, element, descriptor)
 

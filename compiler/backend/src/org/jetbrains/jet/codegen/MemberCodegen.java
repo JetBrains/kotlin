@@ -51,6 +51,7 @@ import java.util.List;
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.codegen.CodegenPackage.TraitImpl;
 import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
@@ -170,7 +171,7 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
         if (aClass instanceof JetClass && ((JetClass) aClass).isTrait()) {
             Type traitImplType = state.getTypeMapper().mapTraitImpl(descriptor);
-            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(OtherOrigin(aClass, descriptor), traitImplType, aClass.getContainingFile());
+            ClassBuilder traitImplBuilder = state.getFactory().newVisitor(TraitImpl(aClass, descriptor), traitImplType, aClass.getContainingFile());
             ClassContext traitImplContext = parentContext.intoClass(descriptor, OwnerKind.TRAIT_IMPL, state);
             new TraitImplBodyCodegen(aClass, traitImplContext, traitImplBuilder, state, parentCodegen).generate();
         }
