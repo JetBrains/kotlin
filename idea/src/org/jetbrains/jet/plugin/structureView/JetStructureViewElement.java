@@ -18,41 +18,29 @@ package org.jetbrains.jet.plugin.structureView;
 
 import com.intellij.ide.structureView.StructureViewTreeElement;
 import com.intellij.ide.util.treeView.smartTree.TreeElement;
-import com.intellij.navigation.ColoredItemPresentation;
 import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.LocationPresentation;
-import com.intellij.openapi.editor.colors.CodeInsightColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.ui.Queryable;
-import com.intellij.openapi.util.Iconable;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.NavigatablePsiElement;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
-import com.intellij.util.PsiIconUtil;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.*;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
-import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-public class JetStructureViewElement implements StructureViewTreeElement, ColoredItemPresentation, LocationPresentation, Queryable {
+public class JetStructureViewElement implements StructureViewTreeElement, Queryable {
     private final NavigatablePsiElement element;
     private final boolean isInherited;
 
-    private String elementText;
-    private String locationString;
-    private Icon icon;
+    private KotlinStructureElementPresentation presentation;
 
     public JetStructureViewElement(@NotNull NavigatablePsiElement element, @NotNull DeclarationDescriptor descriptor, boolean isInherited) {
         this.element = element;
@@ -60,9 +48,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
 
         if (!(element instanceof JetElement)) {
             // Avoid storing descriptor in fields
-            elementText = getElementText(element, descriptor);
-            locationString = isInherited ? getElementLocationString(descriptor) : null;
-            icon = getElementIcon(element, descriptor);
+            presentation = new KotlinStructureElementPresentation(isInherited(), element, descriptor);
         }
     }
 
@@ -104,7 +90,11 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
     @NotNull
     @Override
     public ItemPresentation getPresentation() {
-        return this;
+        if (presentation == null) {
+            presentation = new KotlinStructureElementPresentation(isInherited(), element, getDescriptor());
+        }
+
+        return presentation;
     }
 
     @NotNull
@@ -119,66 +109,11 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         }), TreeElement.class);
     }
 
-    @Nullable
-    @Override
-    public TextAttributesKey getTextAttributesKey() {
-        if (isInherited()) {
-            return CodeInsightColors.NOT_USED_ELEMENT_ATTRIBUTES;
-        }
-
-
-        if (element instanceof JetModifierListOwner && JetPsiUtil.isDeprecated((JetModifierListOwner) element)) {
-            return CodeInsightColors.DEPRECATED_ATTRIBUTES;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public String getPresentableText() {
-        if (elementText == null) {
-            elementText = getElementText(element, getDescriptor());
-        }
-
-        return elementText;
-    }
-
-    @Nullable
-    @Override
-    public String getLocationString() {
-        if (locationString == null) {
-            locationString = isInherited() ? getElementLocationString(getDescriptor()) : null;
-        }
-
-        return locationString;
-    }
-
-    @Nullable
-    @Override
-    public Icon getIcon(boolean unused) {
-        if (icon == null) {
-            icon = getElementIcon(element, getDescriptor());
-        }
-
-        return icon;
-    }
-
-    @Override
-    public String getLocationPrefix() {
-        return isInherited() ? " " : LocationPresentation.DEFAULT_LOCATION_PREFIX;
-    }
-
-    @Override
-    public String getLocationSuffix() {
-        return isInherited() ? "" : LocationPresentation.DEFAULT_LOCATION_SUFFIX;
-    }
-
     @TestOnly
     @Override
     public void putInfo(@NotNull Map<String, String> info) {
-        info.put("text", getPresentableText());
-        info.put("location", getLocationString());
+        info.put("text", getPresentation().getPresentableText());
+        info.put("location", getPresentation().getLocationString());
     }
 
     public boolean isInherited() {
@@ -199,6 +134,7 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         return ResolvePackage.getLazyResolveSession(declaration).resolveToDescriptor(declaration);
     }
 
+    @NotNull
     private List<JetDeclaration> getChildrenDeclarations() {
         if (element instanceof JetFile) {
             JetFile jetFile = (JetFile) element;
@@ -224,52 +160,5 @@ public class JetStructureViewElement implements StructureViewTreeElement, Colore
         }
 
         return Collections.emptyList();
-    }
-
-    @Nullable
-    private static Icon getElementIcon(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
-        if (descriptor != null) {
-            return JetDescriptorIconProvider.getIcon(descriptor, navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY);
-        }
-
-        return PsiIconUtil.getProvidersIcon(navigatablePsiElement, Iconable.ICON_FLAG_VISIBILITY);
-    }
-
-    @Nullable
-    private static String getElementText(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
-        if (descriptor != null) {
-            return DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(descriptor);
-        }
-
-        String text = navigatablePsiElement.getName();
-        if (!StringUtil.isEmpty(text)) {
-            return text;
-        }
-
-        if (navigatablePsiElement instanceof JetClassInitializer) {
-            return "<class initializer>";
-        }
-
-        return null;
-    }
-
-    private static String getElementLocationString(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            Set<CallableMemberDescriptor> baseCallableDescriptors = OverrideResolver.getDeepestSuperDeclarations((CallableMemberDescriptor) descriptor);
-            CallableMemberDescriptor first = ContainerUtil.getFirstItem(baseCallableDescriptors);
-            if (first != null) {
-                DeclarationDescriptor typeDescriptor = first.getContainingDeclaration();
-
-                String typeName = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeDescriptor);
-                return withRightArrow(typeName);
-            }
-        }
-
-        return null;
-    }
-
-    private static String withRightArrow(String str) {
-        char rightArrow = '\u2192';
-        return UIUtil.getLabelFont().canDisplay(rightArrow) ? rightArrow + str :  "->" + str;
     }
 }
