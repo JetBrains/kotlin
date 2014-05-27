@@ -162,7 +162,7 @@ public class ClosureCodegen extends ParentCodegenAware {
         generateBridge(cv, typeMapper.mapSignature(erasedInterfaceFunction).getAsmMethod(), jvmMethodSignature.getAsmMethod());
 
         FunctionCodegen fc = new FunctionCodegen(context, cv, state, getParentCodegen());
-        fc.generateMethod(fun, jvmMethodSignature, funDescriptor, strategy);
+        fc.generateMethod(OtherOrigin(fun, funDescriptor), jvmMethodSignature, funDescriptor, strategy);
 
         this.constructor = generateConstructor(cv, superClassAsmType);
 

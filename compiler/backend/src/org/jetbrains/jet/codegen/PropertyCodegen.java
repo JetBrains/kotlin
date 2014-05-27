@@ -303,7 +303,7 @@ public class PropertyCodegen {
         }
 
         JvmMethodSignature signature = typeMapper.mapSignature(accessorDescriptor, kind);
-        functionCodegen.generateMethod(accessor != null ? accessor : p, signature, accessorDescriptor, strategy);
+        functionCodegen.generateMethod(OtherOrigin(accessor != null ? accessor : p, accessorDescriptor), signature, accessorDescriptor, strategy);
     }
 
     private static int indexOfDelegatedProperty(@NotNull JetProperty property) {

@@ -60,8 +60,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.codegen.CodegenPackage.PackageFacade;
-import static org.jetbrains.jet.codegen.CodegenPackage.PackagePart;
+import static org.jetbrains.jet.codegen.CodegenPackage.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -166,7 +165,7 @@ public class PackageCodegen {
                     if (member instanceof DeserializedSimpleFunctionDescriptor) {
                         DeserializedSimpleFunctionDescriptor function = (DeserializedSimpleFunctionDescriptor) member;
                         JvmMethodSignature signature = state.getTypeMapper().mapSignature(function, OwnerKind.PACKAGE);
-                        memberCodegen.functionCodegen.generateMethod(null, signature, function,
+                        memberCodegen.functionCodegen.generateMethod(OtherOrigin(function), signature, function,
                                                                      new FunctionGenerationStrategy() {
                                                                          @Override
                                                                          public void generateBody(

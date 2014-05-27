@@ -100,7 +100,8 @@ public class FunctionCodegen extends ParentCodegenAware {
         JvmMethodSignature method = typeMapper.mapSignature(functionDescriptor, kind);
 
         if (kind != OwnerKind.TRAIT_IMPL || function.hasBody()) {
-            generateMethod(function, method, functionDescriptor,
+            generateMethod(OtherOrigin(function, functionDescriptor),
+                           method, functionDescriptor,
                            new FunctionGenerationStrategy.FunctionDefault(state, functionDescriptor, function));
         }
 
@@ -109,7 +110,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     public void generateMethod(
-            @Nullable PsiElement origin,
+            @NotNull JvmDeclarationOrigin origin,
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull FunctionGenerationStrategy strategy
@@ -118,7 +119,7 @@ public class FunctionCodegen extends ParentCodegenAware {
     }
 
     public void generateMethod(
-            @Nullable PsiElement origin,
+            @NotNull JvmDeclarationOrigin origin,
             @NotNull JvmMethodSignature jvmSignature,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull MethodContext methodContext,
@@ -127,7 +128,7 @@ public class FunctionCodegen extends ParentCodegenAware {
         OwnerKind methodContextKind = methodContext.getContextKind();
         Method asmMethod = jvmSignature.getAsmMethod();
 
-        MethodVisitor mv = v.newMethod(OtherOrigin(origin, functionDescriptor),
+        MethodVisitor mv = v.newMethod(origin,
                                        getMethodAsmFlags(functionDescriptor, methodContextKind),
                                        asmMethod.getName(),
                                        asmMethod.getDescriptor(),
@@ -163,7 +164,7 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         generateMethodBody(mv, functionDescriptor, methodContext, jvmSignature, strategy, getParentCodegen());
 
-        endVisit(mv, null, origin);
+        endVisit(mv, null, origin.getElement());
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
 
