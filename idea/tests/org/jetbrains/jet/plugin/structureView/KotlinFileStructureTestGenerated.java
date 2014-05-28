@@ -86,6 +86,16 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         doTest("idea/testData/structureView/fileStructure/InheritedMembersWithSubstitutedTypes.kt");
     }
     
+    @TestMetadata("InheritedSAMConversion.kt")
+    public void testInheritedSAMConversion() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedSAMConversion.kt");
+    }
+    
+    @TestMetadata("InheritedSynthesizedFromDataClass.kt")
+    public void testInheritedSynthesizedFromDataClass() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedSynthesizedFromDataClass.kt");
+    }
+    
     @TestMetadata("Render.kt")
     public void testRender() throws Exception {
         doTest("idea/testData/structureView/fileStructure/Render.kt");

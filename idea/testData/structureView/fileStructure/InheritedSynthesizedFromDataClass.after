@@ -1,0 +1,8 @@
+-InheritedSynthesizedFromDataClass.kt
+ -Derived
+  a: Int location=→TestData
+  equals(Any?): Boolean location=→Any
+  field: Int
+  hashCode(): Int location=→Any
+  some(): Unit location=→TestData
+  toString(): String location=→Any

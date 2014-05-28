@@ -151,7 +151,8 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
             return withRightArrow(ONLY_NAMES_WITH_SHORT_TYPES.render(firstOverriding.getContainingDeclaration()));
         }
 
-        throw new IllegalStateException("At least one element should be returned");
+        // Location can be missing when base in synthesized
+        return null;
     }
 
     private static String withRightArrow(String str) {
