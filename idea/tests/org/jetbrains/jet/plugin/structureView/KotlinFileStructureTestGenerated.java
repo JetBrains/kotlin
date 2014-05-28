@@ -56,6 +56,11 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         doTest("idea/testData/structureView/fileStructure/EmptyFile.kt");
     }
     
+    @TestMetadata("InheritedDelegationMethods.kt")
+    public void testInheritedDelegationMethods() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedDelegationMethods.kt");
+    }
+    
     @TestMetadata("InheritedInnerClasses.kt")
     public void testInheritedInnerClasses() throws Exception {
         doTest("idea/testData/structureView/fileStructure/InheritedInnerClasses.kt");

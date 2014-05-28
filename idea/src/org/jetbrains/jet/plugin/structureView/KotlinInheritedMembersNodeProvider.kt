@@ -20,6 +20,7 @@ import com.intellij.ide.util.treeView.smartTree.TreeElement
 import com.intellij.ide.util.InheritedMembersNodeProvider
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
+import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import java.util.ArrayList
@@ -47,11 +48,15 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         val defaultType = descriptor.getDefaultType()
         for (memberDescriptor in defaultType.getMemberScope().getAllDescriptors()) {
             if (memberDescriptor !is CallableMemberDescriptor) continue
-            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE) continue
 
-            val superTypeMember = DescriptorToDeclarationUtil.getDeclaration(project, memberDescriptor, context)
-            if (superTypeMember is NavigatablePsiElement) {
-                children.add(JetStructureViewElement(superTypeMember, memberDescriptor, true))
+            when (memberDescriptor.getKind()) {
+                CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                CallableMemberDescriptor.Kind.DELEGATION -> {
+                    val superTypeMember = DescriptorToDeclarationUtil.getDeclaration(project, memberDescriptor, context)
+                    if (superTypeMember is NavigatablePsiElement) {
+                        children.add(JetStructureViewElement(superTypeMember, memberDescriptor, true))
+                    }
+                }
             }
         }
 
