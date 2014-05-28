@@ -4,5 +4,6 @@ trait A {
 
 class B : A {
 
-    override val String.prop: Int = 0
+    override val String.prop: Int
+        get() = 0
 }

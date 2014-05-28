@@ -110,7 +110,11 @@ public final class OverrideImplementTest extends AbstractOverrideImplementTest {
         doOverrideFileTest();
     }
 
-    public void testOverrideExplicitProperty() {
+    public void testOverrideExtensionProperty() {
+        doOverrideFileTest();
+    }
+
+    public void testOverrideMutableExtensionProperty() {
         doOverrideFileTest();
     }
 

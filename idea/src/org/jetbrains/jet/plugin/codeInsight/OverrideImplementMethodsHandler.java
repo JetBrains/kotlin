@@ -32,7 +32,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.JetType;
@@ -132,12 +131,10 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
         for (DescriptorClassMember selectedElement : selectedElements) {
             DeclarationDescriptor descriptor = selectedElement.getDescriptor();
             if (descriptor instanceof SimpleFunctionDescriptor) {
-                overridingMembers.add(overrideFunction(file.getProject(),
-                                                       (SimpleFunctionDescriptor) descriptor));
+                overridingMembers.add(overrideFunction(file.getProject(), (SimpleFunctionDescriptor) descriptor));
             }
             else if (descriptor instanceof PropertyDescriptor) {
-                overridingMembers.add(
-                        overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
+                overridingMembers.add(overrideProperty(file.getProject(), (PropertyDescriptor) descriptor));
             }
         }
         return overridingMembers;
@@ -153,15 +150,20 @@ public abstract class OverrideImplementMethodsHandler implements LanguageCodeIns
                 /* copyOverrides = */ true);
         newDescriptor.addOverriddenDescriptor(descriptor);
 
-        StringBuilder bodyBuilder = new StringBuilder();
-        String initializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
-        if (initializer != null) {
-            bodyBuilder.append(" = ").append(initializer);
+        StringBuilder body = new StringBuilder();
+        String defaultInitializer = CodeInsightUtils.defaultInitializer(descriptor.getType());
+        String initializer = defaultInitializer != null ? " = " + defaultInitializer : " = ?";
+        if (descriptor.getReceiverParameter() != null) {
+            body.append("\nget()");
+            body.append(initializer);
+            if (descriptor.isVar()) {
+                body.append("\nset(value) {}");
+            }
         }
         else {
-            bodyBuilder.append(" = ?");
+            body.append(initializer);
         }
-        return JetPsiFactory.createProperty(project, OVERRIDE_RENDERER.render(newDescriptor) + bodyBuilder.toString());
+        return JetPsiFactory.createProperty(project, OVERRIDE_RENDERER.render(newDescriptor) + body);
     }
 
     @NotNull

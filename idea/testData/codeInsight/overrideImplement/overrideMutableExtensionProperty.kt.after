@@ -1,0 +1,11 @@
+trait A {
+    var Int.foo : Double
+}
+
+class B : A {
+
+    override var Int.foo: Double
+        get() = 0.0
+        set(value) {
+        }
+}
