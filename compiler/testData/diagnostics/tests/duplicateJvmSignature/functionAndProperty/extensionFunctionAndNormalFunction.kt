@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(x: Any) {}<!>
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun Any.foo() {}<!>
+    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(x: Any)<!> {}
+    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun Any.foo()<!> {}
 }

@@ -190,6 +190,25 @@ public class PositioningStrategies {
         }
     };
 
+    public static final PositioningStrategy<PsiElement> DECLARATION_OR_DEFAULT = new PositioningStrategy<PsiElement>() {
+        @NotNull
+        @Override
+        public List<TextRange> mark(@NotNull PsiElement element) {
+            if (element instanceof JetDeclaration) {
+                return DECLARATION.mark((JetDeclaration) element);
+            }
+            return DEFAULT.mark(element);
+        }
+
+        @Override
+        public boolean isValid(@NotNull PsiElement element) {
+            if (element instanceof JetDeclaration) {
+                return DECLARATION.isValid((JetDeclaration) element);
+            }
+            return DEFAULT.isValid(element);
+        }
+    };
+
     public static final PositioningStrategy<JetModifierListOwner> ABSTRACT_MODIFIER = modifierSetPosition(JetTokens.ABSTRACT_KEYWORD);
 
     public static final PositioningStrategy<JetModifierListOwner> OVERRIDE_MODIFIER = modifierSetPosition(JetTokens.OVERRIDE_KEYWORD);

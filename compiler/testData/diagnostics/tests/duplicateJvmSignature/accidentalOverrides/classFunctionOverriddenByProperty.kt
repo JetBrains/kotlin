@@ -4,5 +4,5 @@ open class B {
 
 class C : B() {
     val x: Int
-        <!CONFLICTING_PLATFORM_DECLARATIONS!>get() = 1<!>
+        <!CONFLICTING_PLATFORM_DECLARATIONS!>get()<!> = 1
 }

@@ -203,7 +203,7 @@ public interface Errors {
     DiagnosticFactory0<JetNamedDeclaration> PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS = DiagnosticFactory2.create(ERROR, DECLARATION);
-    DiagnosticFactory1<PsiElement, String> CONFLICTING_PLATFORM_DECLARATIONS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> CONFLICTING_PLATFORM_DECLARATIONS = DiagnosticFactory1.create(ERROR, DECLARATION_OR_DEFAULT);
 
     DiagnosticFactory0<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
             JetTokens.OPEN_KEYWORD));

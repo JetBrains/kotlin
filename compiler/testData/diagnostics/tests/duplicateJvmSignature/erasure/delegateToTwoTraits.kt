@@ -8,5 +8,5 @@ trait Bar<T> {
     fun foo(l: List<T>)
 }
 
-<!CONFLICTING_PLATFORM_DECLARATIONS!>class Baz(f: Foo<String>, b: Bar<Int>): Foo<String> by f, Bar<Int> by b {
-}<!>
+<!CONFLICTING_PLATFORM_DECLARATIONS!>class Baz(f: Foo<String>, b: Bar<Int>)<!>: Foo<String> by f, Bar<Int> by b {
+}

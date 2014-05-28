@@ -1,6 +1,6 @@
 class C {
     class object {
-        <error>val x = 1</error>
-        <error>fun getX() = 1</error>
+        <error>val x</error> = 1
+        <error>fun getX()</error> = 1
     }
 }

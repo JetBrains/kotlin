@@ -7,5 +7,5 @@ trait T2 {
         get() = 1
 }
 
-<error>class C : T1, T2</error> {
+class <error>C</error> : T1, T2 {
 }

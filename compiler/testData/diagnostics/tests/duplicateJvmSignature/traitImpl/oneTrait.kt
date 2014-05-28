@@ -3,5 +3,5 @@ trait T {
 }
 
 class C : T {
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>val x = 1<!>
+    <!CONFLICTING_PLATFORM_DECLARATIONS!>val x<!> = 1
 }
