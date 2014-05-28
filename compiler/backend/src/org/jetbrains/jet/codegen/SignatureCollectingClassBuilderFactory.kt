@@ -17,24 +17,20 @@
 package org.jetbrains.jet.codegen
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import com.intellij.util.containers.MultiMap
-
-public data class RawSignature(val name: String, val desc: String, val field: MemberKind)
+import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.jet.lang.resolve.java.diagnostics.MemberKind
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.jet.lang.resolve.java.diagnostics.RawSignature
 
 public abstract class SignatureCollectingClassBuilderFactory(
         private val delegate: ClassBuilderFactory
 
 ) : ClassBuilderFactory by delegate {
 
-    protected abstract fun handleClashingSignatures(
-            classInternalName: String?,
-            classOrigin: JvmDeclarationOrigin,
-            signature: RawSignature,
-            origins: Collection<JvmDeclarationOrigin>
-    )
+    protected abstract fun handleClashingSignatures(data: ConflictingJvmDeclarationsData)
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): SignatureCollectingClassBuilder {
         return SignatureCollectingClassBuilder(origin, delegate.newClassBuilder(origin))
@@ -73,12 +69,12 @@ public abstract class SignatureCollectingClassBuilderFactory(
         override fun done() {
             for ((signature, elementsAndDescriptors) in signatures.entrySet()!!) {
                 if (elementsAndDescriptors.size == 1) continue // no clash
-                handleClashingSignatures(
+                handleClashingSignatures(ConflictingJvmDeclarationsData(
                         classInternalName,
                         classCreatedFor,
                         signature,
                         elementsAndDescriptors
-                )
+                ))
             }
             super.done()
         }

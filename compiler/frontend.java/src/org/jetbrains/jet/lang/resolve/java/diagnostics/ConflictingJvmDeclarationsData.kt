@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen;
+package org.jetbrains.jet.lang.resolve.java.diagnostics
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin
 
-public interface ClassBuilderFactory {
-    @NotNull
-    ClassBuilderMode getClassBuilderMode();
-
-    @NotNull
-    ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin);
-
-    String asText(ClassBuilder builder);
-
-    byte[] asBytes(ClassBuilder builder);
-}
+public class ConflictingJvmDeclarationsData(
+        public val classInternalName: String?,
+        public val classOrigin: JvmDeclarationOrigin,
+        public val signature: RawSignature,
+        public val signatureOrigins: Collection<JvmDeclarationOrigin>
+)

@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;

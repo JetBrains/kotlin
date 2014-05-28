@@ -37,8 +37,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
-import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;

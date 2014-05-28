@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.ClassBuilder;
 import org.jetbrains.jet.codegen.ClassBuilderFactory;
 import org.jetbrains.jet.codegen.ClassBuilderMode;
-import org.jetbrains.jet.codegen.JvmDeclarationOrigin;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 
 /*package*/ class KotlinLightClassBuilderFactory implements ClassBuilderFactory {
     private final Stack<StubElement> stubStack;

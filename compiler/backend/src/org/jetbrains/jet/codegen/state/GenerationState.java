@@ -33,7 +33,9 @@ import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -288,17 +290,14 @@ public class GenerationState {
 
         @Override
         protected void handleClashingSignatures(
-                @Nullable String classInternalName,
-                @NotNull JvmDeclarationOrigin classOrigin,
-                @NotNull RawSignature signature,
-                @NotNull Collection<? extends JvmDeclarationOrigin> origins
+                @NotNull ConflictingJvmDeclarationsData data
         ) {
             Collection<PsiElement> elements = new LinkedHashSet<PsiElement>();
 
-            for (JvmDeclarationOrigin origin : origins) {
+            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 PsiElement element = origin.getElement();
                 if (element == null) {
-                    element = classOrigin.getElement();
+                    element = data.getClassOrigin().getElement();
                 }
                 if (element != null) {
                     elements.add(element);
@@ -306,7 +305,7 @@ public class GenerationState {
             }
 
             for (PsiElement element : elements) {
-                diagnostics.report(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS.on(element, signature.getName() + signature.getDesc()));
+                diagnostics.report(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS.on(element, data));
             }
         }
     }

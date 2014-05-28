@@ -51,7 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
-import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.*;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.JAVA_STRING_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;

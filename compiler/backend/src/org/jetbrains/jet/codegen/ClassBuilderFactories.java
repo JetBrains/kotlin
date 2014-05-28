@@ -17,6 +17,7 @@
 package org.jetbrains.jet.codegen;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassWriter;
 import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 

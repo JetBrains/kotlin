@@ -60,9 +60,9 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
-import static org.jetbrains.jet.codegen.CodegenPackage.*;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackageCodegen {

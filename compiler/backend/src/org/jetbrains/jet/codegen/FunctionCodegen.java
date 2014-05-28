@@ -42,6 +42,7 @@ import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.JavaClassValue;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
@@ -63,7 +64,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.isLocalNamedFun;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
@@ -73,6 +73,7 @@ import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.OLD_JET_VALUE_PARAMETER_ANNOTATION;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen extends ParentCodegenAware {

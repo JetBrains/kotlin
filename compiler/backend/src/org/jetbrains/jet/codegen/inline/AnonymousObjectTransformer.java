@@ -34,7 +34,7 @@ import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 
 public class AnonymousObjectTransformer {
 

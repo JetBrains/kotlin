@@ -24,7 +24,7 @@ import static org.jetbrains.jet.lang.diagnostics.PositioningStrategies.DECLARATI
 import static org.jetbrains.jet.lang.diagnostics.Severity.ERROR;
 
 public interface ErrorsJvm {
-    DiagnosticFactory1<PsiElement, String> CONFLICTING_JVM_DECLARATIONS = DiagnosticFactory1.create(ERROR, DECLARATION_OR_DEFAULT);
+    DiagnosticFactory1<PsiElement, ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS = DiagnosticFactory1.create(ERROR, DECLARATION_OR_DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

@@ -36,7 +36,7 @@ import org.jetbrains.jet.lang.types.JetType;
 
 import static org.jetbrains.jet.codegen.AsmUtil.NO_FLAG_PACKAGE_PRIVATE;
 import static org.jetbrains.jet.codegen.AsmUtil.writeKotlinSyntheticClassAnnotation;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.OBJECT_TYPE;
 import static org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;

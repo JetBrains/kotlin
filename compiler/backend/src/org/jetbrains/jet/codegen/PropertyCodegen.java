@@ -44,7 +44,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.getParentBodyCodegen;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.isInterface;
 import static org.jetbrains.jet.codegen.JvmSerializationBindings.*;

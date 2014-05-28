@@ -19,16 +19,23 @@ package org.jetbrains.jet.lang.resolve.java.diagnostics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
-
-import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.STRING;
+import org.jetbrains.jet.renderer.Renderer;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
-    public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
+        @NotNull
+        @Override
+        public String render(@NotNull ConflictingJvmDeclarationsData element) {
+            return element.getSignature().getName() + element.getSignature().getDesc();
+        }
+    };
 
+    public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     static {
-        MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: ''{0}''", STRING);
+        MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: ''{0}''", CONFLICTING_JVM_DECLARATIONS_DATA);
     }
+
 
     @NotNull
     @Override

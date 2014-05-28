@@ -24,7 +24,7 @@ import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.codegen.JvmDeclarationOrigin;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
 import org.jetbrains.org.objectweb.asm.FieldVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;

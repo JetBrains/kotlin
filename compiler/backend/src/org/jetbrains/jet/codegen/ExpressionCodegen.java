@@ -67,7 +67,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;

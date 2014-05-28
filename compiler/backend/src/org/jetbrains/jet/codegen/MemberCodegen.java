@@ -50,9 +50,9 @@ import java.util.List;
 
 import static org.jetbrains.jet.codegen.AsmUtil.boxType;
 import static org.jetbrains.jet.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.jet.codegen.CodegenPackage.OtherOrigin;
-import static org.jetbrains.jet.codegen.CodegenPackage.TraitImpl;
-import static org.jetbrains.jet.codegen.JvmDeclarationOrigin.NO_ORIGIN;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.TraitImpl;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.jet.lang.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.*;

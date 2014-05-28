@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.codegen
+package org.jetbrains.jet.lang.resolve.java.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
@@ -24,9 +24,11 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
-import org.jetbrains.jet.codegen.JvmDeclarationOriginKind.*
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
 
 public enum class MemberKind { FIELD; METHOD }
+
+public data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
 
 public enum class JvmDeclarationOriginKind {
     OTHER
