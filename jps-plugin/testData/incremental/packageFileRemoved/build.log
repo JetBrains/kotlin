@@ -1,0 +1,25 @@
+Cleaning output files:
+out/production/module/test/TestPackage-b-*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+End of files
+Cleaning output files:
+out/production/module/other/OtherPackage-other-*.class
+out/production/module/other/OtherPackage.class
+out/production/module/test/TestPackage-a-*.class
+out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/a.kt
+src/other.kt
+End of files
+
+
+Cleaning output files:
+out/production/module/other/OtherPackage-other-*.class
+out/production/module/other/OtherPackage.class
+End of files
+Compiling files:
+src/other.kt
+End of files

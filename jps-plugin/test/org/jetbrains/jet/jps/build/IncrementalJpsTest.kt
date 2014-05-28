@@ -164,6 +164,26 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         doTest()
     }
 
+    fun testPackageFileAdded() {
+        doTest()
+    }
+
+    fun testPackageFileRemoved() {
+        doTest()
+    }
+
+    fun testPackageFilesChangedInTurn() {
+        doTest()
+    }
+
+    fun testPackageFileChangedThenOtherRemoved() {
+        doTest()
+    }
+
+    fun testPackageFileChangedPackage() {
+        doTest()
+    }
+
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
         public val log: String
