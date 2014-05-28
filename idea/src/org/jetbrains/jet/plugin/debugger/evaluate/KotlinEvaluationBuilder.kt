@@ -43,17 +43,9 @@ import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.psi.JetPsiFactory
 import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.jet.plugin.refactoring.createTempCopy
-import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionData
-import org.jetbrains.jet.plugin.refactoring.extractFunction.performAnalysis
-import org.jetbrains.jet.plugin.refactoring.extractFunction.validate
-import org.jetbrains.jet.plugin.refactoring.extractFunction.generateFunction
 import org.jetbrains.jet.lang.psi.JetNamedFunction
-import com.intellij.psi.PsiFile
 import org.jetbrains.jet.codegen.ClassFileFactory
-import org.jetbrains.jet.plugin.codeInsight.CodeInsightUtils
 import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
@@ -63,15 +55,11 @@ import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.codegen.CompilationErrorHandler
-import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult
-import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 import org.jetbrains.jet.lang.diagnostics.Severity
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
-import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -271,38 +259,6 @@ private fun createFileForDebugger(codeFragment: JetCodeFragment,
     return jetFile
 }
 
-fun addImportsToFile(newImportList: JetImportList?, tmpFile: JetFile) {
-    if (newImportList != null) {
-        val tmpFileImportList = tmpFile.getImportList()
-        val packageDirective = tmpFile.getPackageDirective()
-        if (tmpFileImportList == null) {
-            tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
-            tmpFile.addAfter(newImportList, tmpFile.getPackageDirective())
-        }
-        else {
-            tmpFileImportList.replace(newImportList)
-        }
-        tmpFile.addAfter(JetPsiFactory.createNewLine(tmpFile.getProject()), packageDirective)
-    }
-}
-
-fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
-    val parent = contextElement.getParent()
-    if (parent == null) return null
-
-    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
-
-    val debugExpression = codeFragment.getContentElement()
-    if (debugExpression == null) return null
-
-    val newDebugExpression = parent.addBefore(debugExpression, contextElement)
-    if (newDebugExpression == null) return null
-
-    parent.addBefore(JetPsiFactory.createNewLine(contextElement.getProject()), contextElement)
-
-    return newDebugExpression as JetExpression
-}
-
 fun checkForSyntacticErrors(file: JetFile) {
     try {
         AnalyzingUtils.checkForSyntacticErrors(file)
@@ -310,71 +266,5 @@ fun checkForSyntacticErrors(file: JetFile) {
     catch (e: IllegalArgumentException) {
         throw EvaluateExceptionUtil.createEvaluateException(e.getMessage())
     }
-}
-
-private fun getFunctionForExtractedFragment(
-        codeFragment: JetCodeFragment,
-        breakpointFile: PsiFile,
-        breakpointLine: Int
-): JetNamedFunction? {
-
-    fun getErrorMessageForExtractFunctionResult(analysisResult: AnalysisResult): String {
-        return analysisResult.messages.map {
-            errorMessage ->
-            val message = when(errorMessage) {
-                ErrorMessage.NO_EXPRESSION -> "Cannot perform an action without an expression"
-                ErrorMessage.NO_CONTAINER -> "Cannot perform an action at this breakpoint ${breakpointFile.getName()}:${breakpointLine}"
-                ErrorMessage.SUPER_CALL -> "Cannot perform an action for expression with super call"
-                ErrorMessage.DENOTABLE_TYPES -> "Cannot perform an action because following types are unavailable from debugger scope"
-                ErrorMessage.MULTIPLE_OUTPUT -> "Cannot perform an action because this code fragment changes more than one variable"
-                ErrorMessage.DECLARATIONS_OUT_OF_SCOPE,
-                ErrorMessage.OUTPUT_AND_EXIT_POINT,
-                ErrorMessage.MULTIPLE_EXIT_POINTS,
-                ErrorMessage.VARIABLES_ARE_USED_OUTSIDE -> "Cannot perform an action for this expression"
-            }
-            if (errorMessage.additionalInfo == null) message else "$message: ${errorMessage.additionalInfo?.makeString(", ")}"
-        }.makeString(", ")
-    }
-
-    return ApplicationManager.getApplication()?.runReadAction(object: Computable<JetNamedFunction> {
-        override fun compute(): JetNamedFunction? {
-            checkForSyntacticErrors(codeFragment)
-
-            val originalFile = breakpointFile as JetFile
-
-            val lineStart = CodeInsightUtils.getStartLineOffset(originalFile, breakpointLine)
-            if (lineStart == null) return null
-
-            val tmpFile = originalFile.createTempCopy { it }
-            tmpFile.skipVisibilityCheck = true
-
-            val elementAtOffset = tmpFile.findElementAt(lineStart)
-            if (elementAtOffset == null) return null
-
-            val contextElement: PsiElement = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
-
-            addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
-
-            val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
-            if (newDebugExpression == null) return null
-
-            val targetSibling = tmpFile.getDeclarations().firstOrNull()
-            if (targetSibling == null) return null
-
-            val analysisResult = ExtractionData(
-                    tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false)
-            ).performAnalysis()
-            if (analysisResult.status != Status.SUCCESS) {
-                throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
-            }
-
-            val validationResult = analysisResult.descriptor!!.validate()
-            if (!validationResult.conflicts.isEmpty()) {
-                throw EvaluateExceptionUtil.createEvaluateException("Following declarations are unavailable in debug scope: ${validationResult.conflicts.keySet()?.map { it.getText() }?.makeString(",")}")
-            }
-
-            return validationResult.descriptor.generateFunction(true)
-        }
-    })
 }
 
