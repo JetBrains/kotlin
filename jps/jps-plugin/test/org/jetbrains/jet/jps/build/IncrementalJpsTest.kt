@@ -27,6 +27,8 @@ import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.config.IncrementalCompilation
+import java.util.ArrayList
+import kotlin.test.fail
 
 public class IncrementalJpsTest : JpsBuildTestCase() {
     private val testDataDir: File
@@ -62,26 +64,62 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
+    private fun getModificationsToPerform(): List<List<Modification>> {
+
+        fun getModificationsForIteration(newSuffix: String, deleteSuffix: String): List<Modification> {
+            val modifications = ArrayList<Modification>()
+            for (file in testDataDir.listFiles()!!) {
+                if (file.getName().endsWith(newSuffix)) {
+                    modifications.add(ModifyContent(file.getName().trimTrailing(newSuffix), file))
+                }
+                if (file.getName().endsWith(deleteSuffix)) {
+                    modifications.add(DeleteFile(file.getName().trimTrailing(deleteSuffix)))
+                }
+            }
+            return modifications
+        }
+
+        val haveFilesWithoutNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)$") }?.isNotEmpty() ?: false
+        val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)\\.\\d+$") }?.isNotEmpty() ?: false
+
+        if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
+            fail("Bad test data format: no files ending with \".new\" or \".delete\" found")
+        }
+        if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
+            fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
+        }
+
+        if (haveFilesWithoutNumbers) {
+            return listOf(getModificationsForIteration(".new", ".delete"))
+        }
+        else {
+            return (1..10)
+                    .map { getModificationsForIteration(".new.$it", ".delete.$it") }
+                    .filter { it.isNotEmpty() }
+        }
+    }
+
     private fun doTest() {
         if (!IncrementalCompilation.ENABLED) {
             return
         }
 
-        addModule("module", array<String>(getAbsolutePath("src")), null, null, addJdk("my jdk"))
+        addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
 
         buildGetLog()
 
-        FileUtil.processFilesRecursively(testDataDir, {
-            if (it!!.getName().endsWith(".new")) {
-                it.copyTo(File(workDir, "src/" + it.getName().trimTrailing(".new")))
-            }
+        val modifications = getModificationsToPerform()
+        val logs = ArrayList<String>()
 
-            true
-        })
+        for (step in modifications) {
+            step.forEach { it.perform(workDir) }
 
-        val log = buildGetLog()
-        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), log)
+            val log = buildGetLog()
+            logs.add(log)
+        }
+
+        UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.makeString("\n\n"))
 
         val outDir = File(getAbsolutePath("out"))
         val outAfterMake = File(getAbsolutePath("out-after-make"))
@@ -144,6 +182,27 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
             }
 
             logBuf.append(message!!.trimLeading(rootPath + "/").replaceHashWithStar()).append('\n')
+        }
+    }
+
+    private abstract class Modification(val name: String) {
+        abstract fun perform(workDir: File)
+
+        override fun toString(): String = "${javaClass.getSimpleName()} $name"
+    }
+
+    private class ModifyContent(name: String, val dataFile: File) : Modification(name) {
+        override fun perform(workDir: File) {
+            dataFile.copyTo(File(workDir, "src/$name"))
+        }
+    }
+
+    private class DeleteFile(name: String) : Modification(name) {
+        override fun perform(workDir: File) {
+            val fileToDelete = File(workDir, "src/$name")
+            if (!fileToDelete.delete()) {
+                throw AssertionError("Couldn't delete $fileToDelete")
+            }
         }
     }
 }
