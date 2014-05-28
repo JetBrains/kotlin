@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.refactoring.changeSignature;
 
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -32,6 +31,7 @@ import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetPsiFactory;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -44,7 +44,7 @@ import java.util.List;
 
 import static org.jetbrains.jet.plugin.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
 
-public class JetChangeSignatureTest extends CodeInsightTestCase {
+public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testBadSelection() throws Exception {
         configureByFile(getTestName(false) + "Before.kt");
         Editor editor = getEditor();

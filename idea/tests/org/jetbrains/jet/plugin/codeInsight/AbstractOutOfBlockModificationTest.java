@@ -18,14 +18,19 @@ package org.jetbrains.jet.plugin.codeInsight;
 
 import com.intellij.psi.*;
 import com.intellij.psi.impl.JavaCodeBlockModificationListener;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public abstract class AbstractOutOfBlockModificationTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractOutOfBlockModificationTest extends JetLightCodeInsightFixtureTestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock");
+    }
+
+    @Override
+    protected String getTestDataPath() {
+        return PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/outOfBlock";
     }
 
     protected void doTest(String path) {

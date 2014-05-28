@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
@@ -30,6 +31,7 @@ import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.JetTestCaseBuilder;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.utils.UtilsPackage;
@@ -44,13 +46,16 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
     }
 
     @Override
     protected void tearDown() throws Exception {
+        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
-
+        
         super.tearDown();
 
         // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),

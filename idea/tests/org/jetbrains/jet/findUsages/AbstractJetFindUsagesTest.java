@@ -31,7 +31,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.UsageGroup;
 import com.intellij.usages.UsageInfo2UsageAdapter;
@@ -48,6 +47,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.InTextDirectivesUtils;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.findUsages.KotlinClassFindUsagesOptions;
@@ -61,7 +61,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class AbstractJetFindUsagesTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtureTestCase {
 
     public static final UsageViewPresentation USAGE_VIEW_PRESENTATION = new UsageViewPresentation();
 

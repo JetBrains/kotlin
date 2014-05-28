@@ -31,10 +31,10 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.MapDataContext;
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.KotlinHierarchyViewTestBase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCalleeMethodsTreeStructure;
 import org.jetbrains.jet.plugin.hierarchy.calls.KotlinCallerMethodsTreeStructure;
@@ -50,7 +50,7 @@ Test Hierarchy view
 Format: test build hierarchy for element at caret, file with caret should be the first in the sorted list of files.
 Test accept more than one file, file extension should be .java or .kt
  */
-public abstract class AbstractHierarchyTest extends HierarchyViewTestBase {
+public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase {
 
     private String folderName;
 

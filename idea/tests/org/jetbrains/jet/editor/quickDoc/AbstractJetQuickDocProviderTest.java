@@ -23,9 +23,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.jet.test.util.UtilPackage;
 import org.junit.Assert;
@@ -33,7 +33,7 @@ import org.junit.Assert;
 import java.io.File;
 import java.util.List;
 
-public abstract class AbstractJetQuickDocProviderTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractJetQuickDocProviderTest extends JetLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
         UtilPackage.configureWithExtraFile(myFixture, path, "_Data");
 

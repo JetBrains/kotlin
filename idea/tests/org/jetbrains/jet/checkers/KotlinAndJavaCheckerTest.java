@@ -16,16 +16,17 @@
 
 package org.jetbrains.jet.checkers;
 
-import com.intellij.codeInsight.daemon.DaemonAnalyzerTestCase;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.nullable.NullableStuffInspection;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
 import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import org.jetbrains.jet.JetTestCaseBuilder;
+import org.jetbrains.jet.plugin.KotlinDaemonAnalyzerTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
-public class KotlinAndJavaCheckerTest extends DaemonAnalyzerTestCase {
+public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
     @Override
     protected LocalInspectionTool[] configureLocalInspectionTools() {
         return new LocalInspectionTool[] {

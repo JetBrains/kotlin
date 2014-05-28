@@ -18,7 +18,6 @@ package org.jetbrains.jet.plugin.refactoring.introduce.introduceVariable
 
 import com.intellij.ide.DataManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.jet.JetTestCaseBuilder
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractKotlinFunctionHandler
@@ -32,8 +31,12 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.jet.lang.psi.JetPackageDirective
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
+import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 
-public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestCase() {
+public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTestCase() {
+    override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
+
     val fixture: JavaCodeInsightTestFixture get() = myFixture
 
     protected fun doIntroduceVariableTest(path: String) {

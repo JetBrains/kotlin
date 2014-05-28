@@ -20,15 +20,15 @@ import com.intellij.codeInsight.CodeInsightSettings;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.completion.util.UtilPackage;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.io.File;
 
-public abstract class JetFixtureCompletionBaseTestCase extends LightCodeInsightFixtureTestCase {
+public abstract class JetFixtureCompletionBaseTestCase extends JetLightCodeInsightFixtureTestCase {
     private boolean autoCompleteSetting;
 
     @Override

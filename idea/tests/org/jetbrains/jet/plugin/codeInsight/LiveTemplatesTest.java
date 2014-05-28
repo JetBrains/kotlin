@@ -28,11 +28,11 @@ import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 
@@ -40,12 +40,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class LiveTemplatesTest extends LightCodeInsightFixtureTestCase {
+public class LiveTemplatesTest extends JetLightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() +
-                                  File.separator);
+        myFixture.setTestDataPath(new File(PluginTestCaseBase.getTestDataPathBase(), "/templates").getPath() + File.separator);
         ((TemplateManagerImpl) TemplateManager.getInstance(getProject())).setTemplateTesting(true);
     }
 

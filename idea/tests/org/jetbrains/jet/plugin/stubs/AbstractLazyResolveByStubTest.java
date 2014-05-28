@@ -17,7 +17,6 @@
 package org.jetbrains.jet.plugin.stubs;
 
 import com.google.common.base.Predicate;
-import com.intellij.codeInsight.CodeInsightTestCase;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
@@ -33,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.jet.plugin.KotlinCodeInsightTestCase;
 import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService;
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies;
 import org.jetbrains.jet.test.util.RecursiveDescriptorComparator;
@@ -43,8 +43,7 @@ import java.io.File;
 import static com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel;
 import static org.jetbrains.jet.test.util.DescriptorValidator.ValidationVisitor.FORBID_ERROR_TYPES;
 
-public abstract class AbstractLazyResolveByStubTest extends CodeInsightTestCase {
-
+public abstract class AbstractLazyResolveByStubTest extends KotlinCodeInsightTestCase {
     protected void doTestCheckingPrimaryConstructorsAndAccessors(String testFileName) throws Exception {
         doTest(testFileName, true, true);
     }

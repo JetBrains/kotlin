@@ -16,13 +16,13 @@
 
 package org.jetbrains.jet.plugin;
 
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public class WordSelectionTest extends LightCodeInsightFixtureTestCase {
+public class WordSelectionTest extends JetLightCodeInsightFixtureTestCase {
     public void testStatements() {
         doTest(11);
     }
@@ -55,6 +55,12 @@ public class WordSelectionTest extends LightCodeInsightFixtureTestCase {
         }
 
         CodeInsightTestUtil.doWordSelectionTest(myFixture, testName + ".kt", afterFiles);
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JAVA_LATEST;
     }
 
     @Override

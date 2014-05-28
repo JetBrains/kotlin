@@ -19,13 +19,12 @@ package org.jetbrains.jet.plugin.refactoring.inline;
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 
 import java.io.File;
@@ -35,7 +34,7 @@ import java.util.List;
 import static com.intellij.codeInsight.TargetElementUtilBase.ELEMENT_NAME_ACCEPTED;
 import static com.intellij.codeInsight.TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED;
 
-public abstract class AbstractInlineTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractInlineTest extends JetLightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String path) throws IOException {
         File afterFile = new File(path + ".after");
 
