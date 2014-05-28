@@ -10,12 +10,12 @@ internal trait B {
     internal abstract fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
 }
 
-internal final class ZAB : test.A, test.B {
+internal abstract class ZAB : test.A, test.B {
     public constructor ZAB()
     public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
 }
 
-internal final class ZBA : test.B, test.A {
+internal abstract class ZBA : test.B, test.A {
     public constructor ZBA()
     public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
 }

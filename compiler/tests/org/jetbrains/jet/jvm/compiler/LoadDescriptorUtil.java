@@ -26,7 +26,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.ConfigurationKind;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.OutputFileCollection;
 import org.jetbrains.jet.TestJdkKind;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
@@ -68,12 +67,13 @@ public final class LoadDescriptorUtil {
             @NotNull File outDir,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
-    ) throws IOException {
+    ) {
         JetFilesAndExhaust fileAndExhaust = JetFilesAndExhaust.createJetFilesAndAnalyze(kotlinFiles, disposable, configurationKind);
-        GenerationState state = GenerationUtils.compileFilesGetGenerationState(fileAndExhaust.getJetFiles().get(0).getProject(), fileAndExhaust.getExhaust(), fileAndExhaust.getJetFiles());
-        OutputFileCollection outputFiles = state.getFactory();
-        OutputUtilsPackage.writeAllTo(outputFiles, outDir);
-        return fileAndExhaust.getExhaust();
+        AnalyzeExhaust exhaust = fileAndExhaust.getExhaust();
+        List<JetFile> files = fileAndExhaust.getJetFiles();
+        GenerationState state = GenerationUtils.compileFilesGetGenerationState(files.get(0).getProject(), exhaust, files);
+        OutputUtilsPackage.writeAllTo(state.getFactory(), outDir);
+        return exhaust;
     }
 
     @NotNull
@@ -124,23 +124,20 @@ public final class LoadDescriptorUtil {
             @NotNull File ktFile,
             @NotNull Disposable disposable,
             @NotNull ConfigurationKind configurationKind
-    ) throws Exception {
+    ) {
         JetFilesAndExhaust fileAndExhaust = JetFilesAndExhaust.createJetFilesAndAnalyze(Collections.singletonList(ktFile), disposable, configurationKind);
-        PackageViewDescriptor packageView =
-                fileAndExhaust.getExhaust().getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
+        PackageViewDescriptor packageView = fileAndExhaust.getExhaust().getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null: TEST_PACKAGE_FQNAME + " package not found in " + ktFile.getName();
         return packageView;
     }
 
     private static class JetFilesAndExhaust {
-
         @NotNull
         public static JetFilesAndExhaust createJetFilesAndAnalyze(
                 @NotNull List<File> kotlinFiles,
                 @NotNull Disposable disposable,
                 @NotNull ConfigurationKind configurationKind
-        )
-                throws IOException {
+        ) {
             final JetCoreEnvironment jetCoreEnvironment = createEnvironmentWithMockJdkAndIdeaAnnotations(disposable, configurationKind);
             List<JetFile> jetFiles = ContainerUtil.map(kotlinFiles, new Function<File, JetFile>() {
                 @Override
@@ -154,18 +151,16 @@ public final class LoadDescriptorUtil {
                     }
                 }
             });
-            AnalyzeExhaust exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(
+            AnalyzeExhaust exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                     jetCoreEnvironment.getProject(), jetFiles, Predicates.<PsiFile>alwaysTrue());
             return new JetFilesAndExhaust(jetFiles, exhaust);
         }
 
-        @NotNull
         private final List<JetFile> jetFiles;
-        @NotNull
         private final AnalyzeExhaust exhaust;
 
-        private JetFilesAndExhaust(@NotNull List<JetFile> files, @NotNull AnalyzeExhaust exhaust) {
-            jetFiles = files;
+        private JetFilesAndExhaust(@NotNull List<JetFile> jetFiles, @NotNull AnalyzeExhaust exhaust) {
+            this.jetFiles = jetFiles;
             this.exhaust = exhaust;
         }
 

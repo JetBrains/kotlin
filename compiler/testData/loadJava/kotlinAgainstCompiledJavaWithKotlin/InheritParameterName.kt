@@ -4,5 +4,5 @@ trait B {
     fun foo(kotlinName: Int)
 }
 
-class ZAB : A, B
-class ZBA : B, A
+abstract class ZAB : A, B
+abstract class ZBA : B, A

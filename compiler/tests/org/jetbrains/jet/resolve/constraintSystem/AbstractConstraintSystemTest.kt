@@ -33,7 +33,6 @@ import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.M
 import org.jetbrains.jet.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
@@ -74,8 +73,8 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private fun analyzeDeclarations(): MyDeclarations {
         val fileName = "declarations/declarations.kt"
 
-        val psiFile = createPsiFile(null, fileName, loadFile(fileName))
-        val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile)
+        val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
+        val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile)
         val bindingContext = analyzeExhaust.getBindingContext()
         return MyDeclarations(bindingContext, getProject(), typeResolver)
     }

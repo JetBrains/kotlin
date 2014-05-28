@@ -193,7 +193,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         );
         JetFile jetFile = JetTestUtils.createFile(kotlinSrc.getPath(), FileUtil.loadFile(kotlinSrc, true), environment.getProject());
 
-        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(
+        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegrationAndCheckForErrors(
                 environment.getProject(), Collections.singleton(jetFile), Predicates.<PsiFile>alwaysTrue()
         );
         PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);

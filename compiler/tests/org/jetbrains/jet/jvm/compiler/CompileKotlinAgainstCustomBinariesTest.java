@@ -82,7 +82,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
     private PackageViewDescriptor analyzeFileToPackageView(@NotNull File... extraClassPath) throws IOException {
         Project project = createEnvironment(Arrays.asList(extraClassPath)).getProject();
 
-        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(
+        AnalyzeExhaust exhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(
                 JetTestUtils.loadJetFile(project, getTestDataFileWithExtension("kt"))
         );
 

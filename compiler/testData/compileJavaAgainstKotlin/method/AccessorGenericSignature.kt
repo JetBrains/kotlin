@@ -6,7 +6,8 @@ public class BadClass {
     fun foo() {
         val x: () -> Int = {
             bar(ArrayList<Int>())
-            baz<Double, ArrayList<ArrayList>>(ArrayList())
+            baz<Double, ArrayList<Double>>(ArrayList())
+            0
         }
     }
 
