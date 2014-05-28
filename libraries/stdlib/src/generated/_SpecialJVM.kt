@@ -341,8 +341,8 @@ public fun <T, R : T> Iterable<T>.filterIsInstance(klass: Class<R>): List<R> {
 /**
  * Returns a stream containing all elements that are instances of specified class
  */
-public fun <T, R : T> Stream<T>.filterIsInstance(klass: Class<R>): Stream<T> {
-    return FilteringStream(this, true, { klass.isInstance(it) })
+public fun <T, R : T> Stream<T>.filterIsInstance(klass: Class<R>): Stream<R> {
+    return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
 }
 
 /**

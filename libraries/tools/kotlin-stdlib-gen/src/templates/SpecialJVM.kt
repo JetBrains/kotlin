@@ -99,10 +99,10 @@ fun specialJVM(): List<GenericFunction> {
         exclude(ArraysOfPrimitives, Strings)
 
         doc(Streams) { "Returns a stream containing all elements that are instances of specified class" }
-        returns(Streams) { "Stream<T>" }
+        returns(Streams) { "Stream<R>" }
         body(Streams) {
             """
-            return FilteringStream(this, true, { klass.isInstance(it) })
+            return FilteringStream(this, true, { klass.isInstance(it) }) as Stream<R>
             """
         }
     }
