@@ -21,7 +21,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 
 // Based on com.intellij.psi.impl.light.LightParameter
-public class LightParameter extends LightVariableBuilder<LightVariableBuilder> implements PsiParameter {
+public class LightParameter extends LightVariableBuilder implements PsiParameter {
     public static final LightParameter[] EMPTY_ARRAY = new LightParameter[0];
 
     private final String myName;

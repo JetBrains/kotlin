@@ -17,7 +17,6 @@
 package org.jetbrains.jet.asJava.light;
 
 import com.intellij.lang.Language;
-import com.intellij.lang.java.JavaLanguage;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.ElementPresentationUtil;
@@ -28,26 +27,14 @@ import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
 // Based on com.intellij.psi.impl.light.LightVariableBuilder
-public class LightVariableBuilder<T extends LightVariableBuilder> extends LightElement implements PsiVariable, NavigationItem {
+public class LightVariableBuilder extends LightElement implements PsiVariable, NavigationItem {
     private final String myName;
     private final PsiType myType;
-    private volatile LightModifierList myModifierList;
-    private volatile Icon myBaseIcon = PlatformIcons.VARIABLE_ICON;
-    private String myOriginInfo;
-
-    public LightVariableBuilder(@NotNull String name, @NotNull String type, @NotNull PsiElement navigationElement) {
-        this(name, JavaPsiFacade.getElementFactory(navigationElement.getProject()).createTypeFromText(type, navigationElement), navigationElement);
-    }
-
-    public LightVariableBuilder(@NotNull String name, @NotNull PsiType type, @NotNull PsiElement navigationElement) {
-        this(navigationElement.getManager(), name, type, JavaLanguage.INSTANCE);
-        setNavigationElement(navigationElement);
-    }
+    private final LightModifierList myModifierList;
 
     public LightVariableBuilder(PsiManager manager, @NotNull String name, @NotNull PsiType type, Language language) {
         super(manager, language);
@@ -71,11 +58,6 @@ public class LightVariableBuilder<T extends LightVariableBuilder> extends LightE
     @NotNull
     public PsiModifierList getModifierList() {
         return myModifierList;
-    }
-
-    public T setModifiers(String... modifiers) {
-        myModifierList = new LightModifierList(getManager(), getLanguage(), modifiers);
-        return (T)this;
     }
 
     @Override
@@ -129,23 +111,8 @@ public class LightVariableBuilder<T extends LightVariableBuilder> extends LightE
     }
 
     @Override
-    public Icon getElementIcon(final int flags) {
-        final RowIcon baseIcon = ElementPresentationUtil.createLayeredIcon(myBaseIcon, this, false);
+    public Icon getElementIcon(int flags) {
+        RowIcon baseIcon = ElementPresentationUtil.createLayeredIcon(PlatformIcons.VARIABLE_ICON, this, false);
         return ElementPresentationUtil.addVisibilityIcon(this, flags, baseIcon);
-    }
-
-    public T setBaseIcon(Icon baseIcon) {
-        myBaseIcon = baseIcon;
-        return (T)this;
-    }
-
-    //@Nullable
-    //@Override
-    //public String getOriginInfo() {
-    //    return myOriginInfo;
-    //}
-
-    public void setOriginInfo(@Nullable String originInfo) {
-        myOriginInfo = originInfo;
     }
 }
