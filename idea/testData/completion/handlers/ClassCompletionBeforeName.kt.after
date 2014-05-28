@@ -1,0 +1,2 @@
+fun StringBuilder<caret>foo() {
+}

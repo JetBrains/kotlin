@@ -32,6 +32,8 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testClassCompletionInLambda() = doTest(1, "String", " (kotlin)", '\n')
 
+    fun testClassCompletionBeforeName() = doTest(1, "StringBuilder", " (java.lang)", '\n')
+
     fun testDoNotInsertImportForAlreadyImported() = doTest()
 
     fun testDoNotInsertDefaultJsImports() = doTest()

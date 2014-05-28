@@ -20,6 +20,7 @@ import com.intellij.codeInsight.completion.InsertHandler;
 import com.intellij.codeInsight.completion.InsertionContext;
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.psi.PsiDocumentManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
@@ -43,10 +44,23 @@ public class JetClassInsertHandler implements InsertHandler<LookupElement> {
                     Document document = context.getDocument();
                     if (!isAfterDot(document, startOffset)) {
                         String text = DescriptorUtils.getFqName(descriptor).asString();
-                        document.replaceString(startOffset, context.getTailOffset(), text);
+                        // insert dot after because otherwise parser can sometimes produce no suitable reference here
+                        document.replaceString(startOffset, context.getTailOffset(), text + ".");
 
-                        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+                        PsiDocumentManager psiDocumentManager = PsiDocumentManager.getInstance(context.getProject());
+                        psiDocumentManager.commitAllDocuments();
+                        RangeMarker rangeMarker = document.createRangeMarker(startOffset, startOffset + text.length());
+
                         ShortenReferences.instance$.process((JetFile) context.getFile(), startOffset, startOffset + text.length());
+                        psiDocumentManager.commitAllDocuments();
+                        psiDocumentManager.doPostponedOperationsAndUnblockDocument(document);
+
+                        if (rangeMarker.isValid()) {
+                            int endOffset = rangeMarker.getEndOffset();
+                            if (endOffset < document.getTextLength() && document.getCharsSequence().charAt(endOffset) == '.') {
+                                document.deleteString(endOffset, endOffset + 1);
+                            }
+                        }
                     }
                 }
             }

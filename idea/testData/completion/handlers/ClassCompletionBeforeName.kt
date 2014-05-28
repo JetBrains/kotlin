@@ -1,0 +1,2 @@
+fun Str<caret>foo() {
+}
