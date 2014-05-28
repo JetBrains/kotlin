@@ -81,6 +81,11 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         doTest("idea/testData/structureView/fileStructure/InheritedMembers.kt");
     }
     
+    @TestMetadata("InheritedMembersOfEnum.kt")
+    public void testInheritedMembersOfEnum() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/InheritedMembersOfEnum.kt");
+    }
+    
     @TestMetadata("InheritedMembersWithSubstitutedTypes.kt")
     public void testInheritedMembersWithSubstitutedTypes() throws Exception {
         doTest("idea/testData/structureView/fileStructure/InheritedMembersWithSubstitutedTypes.kt");
