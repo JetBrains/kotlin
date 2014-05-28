@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.plugin.debugger
 
-import com.intellij.debugger.SourcePosition
-import com.intellij.psi.PsiElement
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
@@ -36,7 +34,7 @@ abstract class AbstractSmartStepIntoTest : LightCodeInsightFixtureTestCase() {
         fixture.configureByFile(path)
 
         val offset = fixture.getCaretOffset()
-        val line = fixture.getDocument(fixture.getFile())!!.getLineNumber(offset)
+        val line = fixture.getDocument(fixture.getFile()!!)!!.getLineNumber(offset)
 
         val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
 

@@ -95,6 +95,7 @@ public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsigh
         return getTestName(false).startsWith("AllFilesPresentIn");
     }
 
+    @NotNull
     protected String fileName() {
         return getTestName(false) + ".kt";
     }

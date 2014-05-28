@@ -306,6 +306,7 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         lightClass.getDelegate();
     }
 
+    @NotNull
     @Override
     protected String fileName() {
         return getTestName(true) + ".kt";

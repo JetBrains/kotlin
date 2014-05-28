@@ -65,16 +65,18 @@ import org.jetbrains.jet.lang.psi.psiUtil.getReceiverExpression
 import org.jetbrains.jet.utils.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
-public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData?> {
+public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<ReferenceTransferableData>() {
 
-    override fun extractTransferableData(content: Transferable): ReferenceTransferableData? {
-        //NOTE: copied code
-        var referenceData: ReferenceTransferableData? = null
+    override fun extractTransferableData(content: Transferable): List<ReferenceTransferableData> {
         if (CodeInsightSettings.getInstance()!!.ADD_IMPORTS_ON_PASTE != CodeInsightSettings.NO) {
             try {
                 val flavor = ReferenceData.getDataFlavor()
                 if (flavor != null) {
-                    referenceData = content.getTransferData(flavor) as? ReferenceTransferableData
+                    val referenceData = content.getTransferData(flavor) as? ReferenceTransferableData
+                    if (referenceData != null) {
+                        // copy to prevent changing of original by convertLineSeparators
+                        return listOf(referenceData.clone())
+                    }
                 }
             }
             catch (ignored: UnsupportedFlavorException) {
@@ -83,12 +85,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             }
         }
 
-        if (referenceData != null) {
-            // copy to prevent changing of original by convertLineSeparators
-            return referenceData!!.clone()
-        }
-
-        return null
+        return listOf()
     }
 
     override fun collectTransferableData(
@@ -96,9 +93,9 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             editor: Editor,
             startOffsets: IntArray,
             endOffsets: IntArray
-    ): ReferenceTransferableData? {
+    ): List<ReferenceTransferableData> {
         if (file !is JetFile) {
-            return null
+            return listOf()
         }
 
         val collectedData = try {
@@ -111,14 +108,14 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         }
         catch (e: Throwable) {
             LOG.error("Exception in processing references for copy paste in file ${file.getName()}}", e)
-            return null
+            return listOf()
         }
 
         if (collectedData.isEmpty()) {
-            return null
+            return listOf()
         }
 
-        return ReferenceTransferableData(collectedData.copyToArray())
+        return listOf(ReferenceTransferableData(collectedData.copyToArray()))
     }
 
     private fun collectReferenceDataFromElement(
@@ -185,7 +182,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
             bounds: RangeMarker,
             caretOffset: Int,
             indented: Ref<Boolean>,
-            value: ReferenceTransferableData?
+            values: List<ReferenceTransferableData>
     ) {
         if (DumbService.getInstance(project)!!.isDumb()) {
             return
@@ -197,7 +194,10 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Refere
         }
 
         PsiDocumentManager.getInstance(project).commitAllDocuments()
-        val referenceData = value!!.getData()!!
+
+        assert(values.size() == 1)
+
+        val referenceData = values.first().getData()!!
         val referencesPossibleToRestore = findReferencesToRestore(file, bounds, referenceData)
 
         val selectedReferencesToRestore = showRestoreReferencesDialog(project, referencesPossibleToRestore)
