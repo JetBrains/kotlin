@@ -70,8 +70,11 @@ public open class KotlinCompile(): AbstractCompile() {
         return null
     }
 
-
+    [TaskAction]
     override fun compile() {
+
+        getLogger().debug("Starting Kotlin compilation task")
+
         val args = K2JVMCompilerArguments()
 
         val javaSrcRoots = HashSet<File>()
@@ -122,6 +125,7 @@ public open class KotlinCompile(): AbstractCompile() {
         }
 
         val messageCollector = GradleMessageCollector(logger)
+        getLogger().debug("Calling compiler")
         val exitCode = compiler.exec(messageCollector, args)
 
         when (exitCode) {
@@ -130,6 +134,7 @@ public open class KotlinCompile(): AbstractCompile() {
             else -> {}
         }
 
+        getLogger().debug("Copying resulting files to classes")
         // Copy kotlin classes to all classes directory
         val outputDirFile = File(args.outputDir!!)
         if (outputDirFile.exists()) {

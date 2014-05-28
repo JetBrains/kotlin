@@ -4,4 +4,7 @@
             <val name="value" val="&quot;fun getSource() : FileTree&quot;"/>
         </annotation>
     </item>
+    <item name='org.gradle.api.tasks.TaskContainer T create(java.lang.String, java.lang.Class&lt;T&gt;)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
 </root>

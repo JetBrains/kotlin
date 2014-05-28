@@ -40,10 +40,11 @@ import java.util.HashSet
 import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
+import javax.inject.Inject
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
-open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
+open class KotlinPlugin [Inject] (val scriptHandler: ScriptHandler): Plugin<Project> {
 
     public override fun apply(project: Project) {
         val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
@@ -54,8 +55,7 @@ open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
         configureKDoc(project, javaPluginConvention)
 
-        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-
+        val version = project.getProperties()["kotlin.gradle.plugin.version"] as String
         project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-jdk-annotations:$version"))
     }
 
@@ -80,7 +80,7 @@ open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
                     }))
 
                     val kotlinTaskName = sourceSet.getCompileTaskName("kotlin")
-                    val kotlinTask: KotlinCompile = project.getTasks().add(kotlinTaskName, javaClass<KotlinCompile>())!!
+                    val kotlinTask: KotlinCompile = project.getTasks().create(kotlinTaskName, javaClass<KotlinCompile>())
 
                     javaBasePlugin.configureForSourceSet(sourceSet, kotlinTask)
                     // store kotlin classes in separate directory. They will serve as class-path to java compiler
@@ -106,14 +106,14 @@ open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
         val mainSourceSet = javaPluginConvention.getSourceSets()?.findByName(SourceSet.MAIN_SOURCE_SET_NAME) as HasConvention?
 
         if (mainSourceSet != null) {
-            val kdoc = project.getTasks()?.add(KDOC_TASK_NAME, javaClass<KDoc>())!!
+            val kdoc = project.getTasks().create(KDOC_TASK_NAME, javaClass<KDoc>())!!
 
             kdoc.setDescription("Generates KDoc API documentation for the main source code.")
             kdoc.setGroup(JavaBasePlugin.DOCUMENTATION_GROUP)
             kdoc.setSource(mainSourceSet.getConvention().getExtensionsAsDynamicObject().getProperty("kotlin"))
         }
 
-        project.getTasks()?.withType(javaClass<KDoc>(), object : Action<KDoc> {
+        project.getTasks().withType(javaClass<KDoc>(), object : Action<KDoc> {
             override fun execute(task: KDoc?) {
                 task!!.destinationDir = File(javaPluginConvention.getDocsDir(), "kdoc")
             }
@@ -124,7 +124,7 @@ open class KotlinPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
 }
 
 
-open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project> {
+open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plugin<Project> {
 
     val log = Logging.getLogger(getClass())
 
@@ -133,7 +133,7 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
         val project = p0 as ProjectInternal
         val ext = project.getExtensions().getByName("android") as BaseExtension
 
-        ext.getSourceSets()?.all(object : Action<AndroidSourceSet> {
+        ext.getSourceSets().all(object : Action<AndroidSourceSet> {
             override fun execute(sourceSet: AndroidSourceSet?) {
                 if (sourceSet is ExtensionAware) {
                     val sourceSetName = sourceSet.getName()
@@ -169,8 +169,8 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
             }
 
         })
-        val version = project.getProperties()!!.get("kotlin.gradle.plugin.version") as String
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler).resolveDependencies("org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
+        val version = project.getProperties()["kotlin.gradle.plugin.version"] as String
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler!!).resolveDependencies("org.jetbrains.kotlin:kotlin-android-sdk-annotations:$version"));
     }
 
     private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
@@ -187,9 +187,9 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
                 val buildType: BuildType = if (variant is LibraryVariant) {
-                    variant.getBuildType()!!
+                    variant.getBuildType()
                 } else {
-                    (variant as ApkVariant).getBuildType()!!
+                    (variant as ApkVariant).getBuildType()
                 }
 
                 val buildTypeSourceSetName = buildType.getName()
@@ -200,7 +200,7 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
                 val variantName = variant.getName()
 
                 val kotlinTaskName = "compile${variantName}Kotlin"
-                val kotlinTask: KotlinCompile = project.getTasks()!!.add(kotlinTaskName, javaClass<KotlinCompile>())!!
+                val kotlinTask: KotlinCompile = project.getTasks().create(kotlinTaskName, javaClass<KotlinCompile>())
                 kotlinTask.kotlinOptions = kotlinOptions
 
 
@@ -228,10 +228,10 @@ open class KotlinAndroidPlugin(val scriptHandler: ScriptHandler): Plugin<Project
                     javaSourceList.add(buildTypeSourceSet.getJava().getSrcDirs())
                     kotlinTask.source(getExtention<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
                 }
-                javaSourceList.add(callable<File?>{ variant.getProcessResources().getSourceOutputDir() })
-                javaSourceList.add(callable<File?>{ variant.getGenerateBuildConfig()?.getSourceOutputDir() })
-                javaSourceList.add(callable<File?>{ variant.getAidlCompile().getSourceOutputDir() })
-                javaSourceList.add(callable<File?>{ variant.getRenderscriptCompile().getSourceOutputDir() })
+                javaSourceList.add(Callable<File?>{ variant.getProcessResources().getSourceOutputDir() })
+                javaSourceList.add(Callable<File?>{ variant.getGenerateBuildConfig()?.getSourceOutputDir() })
+                javaSourceList.add(Callable<File?>{ variant.getAidlCompile().getSourceOutputDir() })
+                javaSourceList.add(Callable<File?>{ variant.getRenderscriptCompile().getSourceOutputDir() })
 
                 if (variant is ApkVariant) {
                     for (flavour in variant.getProductFlavors().iterator()) {

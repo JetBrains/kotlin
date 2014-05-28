@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
-version = '1.4'
+version = '1.6'
 group = 'org.jetbrains.kotlin'
 
 
@@ -25,5 +25,5 @@ artifacts {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.4'
+    gradleVersion = '1.6'
 }
