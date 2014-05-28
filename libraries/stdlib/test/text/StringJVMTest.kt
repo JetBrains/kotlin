@@ -240,8 +240,9 @@ class StringJVMTest {
 
     test fun dropWhile() {
         val data = "ab1cd2"
-        val result = data.dropWhile { it.isJavaLetter() }
-        assertEquals("1cd2", result)
+        assertEquals("1cd2", data.dropWhile { it.isJavaLetter() })
+        assertEquals("", data.dropWhile { true })
+        assertEquals("ab1cd2", data.dropWhile { false })
     }
 
     test fun drop() {
@@ -255,8 +256,9 @@ class StringJVMTest {
 
     test fun takeWhile() {
         val data = "ab1cd2"
-        val result = data.takeWhile { it.isJavaLetter() }
-        assertEquals("ab", result)
+        assertEquals("ab", data.takeWhile { it.isJavaLetter() })
+        assertEquals("", data.takeWhile { false })
+        assertEquals("ab1cd2", data.takeWhile { true })
     }
 
     test fun take() {

@@ -354,7 +354,7 @@ public fun <T> Stream<T>.dropWhile(predicate: (T) -> Boolean): Stream<T> {
  * Returns a list containing all elements except first elements that satisfy the given *predicate*
  */
 public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
-    for (index in 0..length)
+    for (index in 0..length - 1)
         if (!predicate(get(index))) {
             return substring(index)
         }
@@ -1240,10 +1240,10 @@ public fun <T> Stream<T>.takeWhile(predicate: (T) -> Boolean): Stream<T> {
  * Returns a list containing first elements satisfying the given *predicate*
  */
 public inline fun String.takeWhile(predicate: (Char) -> Boolean): String {
-    for (index in 0..length)
+    for (index in 0..length - 1)
         if (!predicate(get(index))) {
             return substring(0, index)
         }
-    return ""
+    return this
 }
 

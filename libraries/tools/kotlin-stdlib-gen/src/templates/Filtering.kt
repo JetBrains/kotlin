@@ -113,7 +113,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings) { "String" }
         body(Strings) {
             """
-            for (index in 0..length)
+            for (index in 0..length - 1)
                 if (!predicate(get(index))) {
                     return substring(index)
                 }
@@ -161,11 +161,11 @@ fun filtering(): List<GenericFunction> {
         returns(Strings) { "String" }
         body(Strings) {
             """
-            for (index in 0..length)
+            for (index in 0..length - 1)
                 if (!predicate(get(index))) {
                     return substring(0, index)
                 }
-            return ""
+            return this
             """
         }
 
