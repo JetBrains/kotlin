@@ -16,6 +16,9 @@
 
 package org.jetbrains.jet.lang.diagnostics.rendering;
 
+import com.google.common.collect.ImmutableList;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
@@ -31,16 +34,40 @@ import org.jetbrains.jet.renderer.Renderer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
+import java.util.ServiceLoader;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.jet.renderer.DescriptorRenderer.*;
 
 public class DefaultErrorMessages {
-    public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAP);
+
+    public interface Extension {
+        @NotNull
+        DiagnosticFactoryToRendererMap getMap();
+    }
+
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    public static final List<DiagnosticFactoryToRendererMap> MAPS = ImmutableList.<DiagnosticFactoryToRendererMap>builder()
+                    .addAll(
+                            KotlinPackage.map(
+                                ServiceLoader.load(Extension.class, DefaultErrorMessages.class.getClassLoader()),
+                                new Function1<Extension, DiagnosticFactoryToRendererMap>() {
+                                    @Override
+                                    public DiagnosticFactoryToRendererMap invoke(Extension extension) {
+                                        return extension.getMap();
+                                    }
+                                }
+                            )
+                    )
+                    .add(MAP)
+                    .build();
+
+    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(MAPS);
 
     static {
+
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
 
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in ''{2}''", NAME, TO_STRING, NAME);
@@ -392,7 +419,6 @@ public class DefaultErrorMessages {
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
-        MAP.put(CONFLICTING_PLATFORM_DECLARATIONS, "Platform declaration clash: ''{0}''", STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. The function 'invoke()' is not found", ELEMENT_TEXT, new Renderer<JetType>() {
             @NotNull

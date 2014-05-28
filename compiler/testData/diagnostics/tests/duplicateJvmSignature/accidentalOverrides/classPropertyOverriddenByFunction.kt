@@ -4,5 +4,5 @@ open class B {
 }
 
 class C : B() {
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun getX()<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
 }

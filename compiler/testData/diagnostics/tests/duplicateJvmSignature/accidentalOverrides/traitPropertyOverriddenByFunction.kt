@@ -4,5 +4,5 @@ trait T {
 }
 
 class C : T {
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun getX()<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
 }

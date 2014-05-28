@@ -2,5 +2,5 @@
 
 trait Foo
 
-<!CONFLICTING_PLATFORM_DECLARATIONS!>fun <T: Foo> foo(x: T): T<!> {null!!}
-<!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(x: Foo): Foo<!> {null!!}
+<!CONFLICTING_JVM_DECLARATIONS!>fun <T: Foo> foo(x: T): T<!> {null!!}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(x: Foo): Foo<!> {null!!}

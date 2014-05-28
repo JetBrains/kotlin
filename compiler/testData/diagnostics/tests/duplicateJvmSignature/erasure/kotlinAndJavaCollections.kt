@@ -1,4 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -PLATFORM_CLASS_MAPPED_TO_KOTLIN
 
-<!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(s: List<String>)<!> {}
-<!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(s: java.util.List<String>)<!> {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: List<String>)<!> {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(s: java.util.List<String>)<!> {}

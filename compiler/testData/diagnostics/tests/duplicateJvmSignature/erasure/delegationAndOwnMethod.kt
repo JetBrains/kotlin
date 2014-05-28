@@ -5,5 +5,5 @@ trait Foo<T> {
 }
 
 class Bar(f: Foo<String>): Foo<String> by f {
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun foo(l: List<Int>)<!> {}
+    <!CONFLICTING_JVM_DECLARATIONS!>fun foo(l: List<Int>)<!> {}
 }

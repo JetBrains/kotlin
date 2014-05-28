@@ -19,10 +19,12 @@ package org.jetbrains.jet.lang.diagnostics.rendering;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
 
-public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
-    private final DiagnosticFactoryToRendererMap[] maps;
+import java.util.List;
 
-    public DispatchingDiagnosticRenderer(DiagnosticFactoryToRendererMap... maps) {
+public class DispatchingDiagnosticRenderer implements DiagnosticRenderer<Diagnostic> {
+    private final List<DiagnosticFactoryToRendererMap> maps;
+
+    public DispatchingDiagnosticRenderer(List<DiagnosticFactoryToRendererMap> maps) {
         this.maps = maps;
     }
 

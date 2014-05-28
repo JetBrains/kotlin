@@ -7,5 +7,5 @@ trait T2 {
         get() = 1
 }
 
-<!CONFLICTING_PLATFORM_DECLARATIONS!>class C : T1, T2<!> {
+<!CONFLICTING_JVM_DECLARATIONS!>class C : T1, T2<!> {
 }

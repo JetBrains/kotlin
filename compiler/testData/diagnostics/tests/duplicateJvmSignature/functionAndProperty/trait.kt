@@ -1,5 +1,5 @@
 trait T {
     val x: Int
-        <!CONFLICTING_PLATFORM_DECLARATIONS!>get()<!> = 1
-    <!CONFLICTING_PLATFORM_DECLARATIONS!>fun getX()<!> = 1
+        <!CONFLICTING_JVM_DECLARATIONS!>get()<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>fun getX()<!> = 1
 }

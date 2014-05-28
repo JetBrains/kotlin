@@ -27,13 +27,13 @@ import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
-import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
 import java.util.Collection;
@@ -306,7 +306,7 @@ public class GenerationState {
             }
 
             for (PsiElement element : elements) {
-                diagnostics.report(Errors.CONFLICTING_PLATFORM_DECLARATIONS.on(element, signature.getName() + signature.getDesc()));
+                diagnostics.report(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS.on(element, signature.getName() + signature.getDesc()));
             }
         }
     }
