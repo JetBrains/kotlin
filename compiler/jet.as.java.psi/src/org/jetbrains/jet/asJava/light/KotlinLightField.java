@@ -26,15 +26,24 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.psi.JetProperty;
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightElement;
 
 // Copy of com.intellij.psi.impl.light.LightField
 @SuppressWarnings("UnnecessaryFinalOnLocalVariableOrParameter")
-public class LightField extends LightElement implements PsiField {
+public class KotlinLightField extends LightElement implements PsiField, KotlinLightElement<JetProperty, PsiField> {
+    private final JetProperty myOriginalProperty;
     private final PsiField myField;
     private final PsiClass myContainingClass;
 
-    public LightField(@NotNull final PsiManager manager, @NotNull final PsiField field, @NotNull final PsiClass containingClass) {
+    public KotlinLightField(
+            @NotNull final PsiManager manager,
+            @NotNull final JetProperty originalProperty,
+            @NotNull final PsiField field,
+            @NotNull final PsiClass containingClass
+    ) {
         super(manager, JavaLanguage.INSTANCE);
+        myOriginalProperty = originalProperty;
         myField = field;
         myContainingClass = containingClass;
     }
@@ -127,9 +136,10 @@ public class LightField extends LightElement implements PsiField {
         return myField.getText();
     }
 
+    @NotNull
     @Override
     public PsiElement copy() {
-        return new LightField(myManager, (PsiField)myField.copy(), myContainingClass);
+        return new KotlinLightField(myManager, myOriginalProperty, (PsiField)myField.copy(), myContainingClass);
     }
 
     @Override
@@ -145,5 +155,23 @@ public class LightField extends LightElement implements PsiField {
     @Override
     public String toString() {
         return "PsiField:" + getName();
+    }
+
+    @NotNull
+    @Override
+    public JetProperty getOrigin() {
+        return myOriginalProperty;
+    }
+
+    @NotNull
+    @Override
+    public PsiField getDelegate() {
+        return myField;
+    }
+
+    @NotNull
+    @Override
+    public PsiElement getNavigationElement() {
+        return getOrigin();
     }
 }

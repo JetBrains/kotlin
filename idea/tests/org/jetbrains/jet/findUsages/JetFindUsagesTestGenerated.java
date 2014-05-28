@@ -422,6 +422,11 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaAndKotlinOverrides2.0.kt");
             }
             
+            @TestMetadata("javaClassObjectPropertyUsages.0.kt")
+            public void testJavaClassObjectPropertyUsages() throws Exception {
+                doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaClassObjectPropertyUsages.0.kt");
+            }
+            
             @TestMetadata("javaPropertyReadUsages.0.kt")
             public void testJavaPropertyReadUsages() throws Exception {
                 doTest("idea/testData/findUsages/kotlin/findPropertyUsages/javaPropertyReadUsages.0.kt");

@@ -23,7 +23,8 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.light.AbstractLightClass;
-import org.jetbrains.jet.asJava.light.LightField;
+import com.intellij.psi.impl.light.LightField;
+import org.jetbrains.jet.asJava.light.KotlinLightField;
 import com.intellij.psi.impl.light.LightMethod;
 import com.intellij.psi.impl.source.ClassInnerStuffCache;
 import com.intellij.psi.impl.source.PsiExtensibleClass;
@@ -31,6 +32,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetProperty;
 
 import java.util.List;
 
@@ -109,7 +111,10 @@ public abstract class KotlinWrappingLightClass extends AbstractLightClass implem
         return ContainerUtil.map(getDelegate().getFields(), new Function<PsiField, PsiField>() {
             @Override
             public PsiField fun(PsiField field) {
-                return new LightField(myManager, field, KotlinWrappingLightClass.this);
+                JetDeclaration declaration = ClsWrapperStubPsiFactory.getOriginalDeclaration(field);
+                return declaration instanceof JetProperty
+                        ? new KotlinLightField(myManager, (JetProperty) declaration, field, KotlinWrappingLightClass.this)
+                        : new LightField(myManager, field, KotlinWrappingLightClass.this);
             }
         });
     }
