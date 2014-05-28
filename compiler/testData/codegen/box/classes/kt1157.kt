@@ -1,28 +1,17 @@
 public object SomeClass {
-    var bug: Any = ""
-
-    private val workerThread = object : Thread() {
+    private val work = object : Runnable {
         override fun run() {
-            try {
-              foo()
-              bug = "none"
-            }
-            catch(t: Throwable) {
-                bug = t
-            }
+            foo()
         }
     }
 
-    {
-        workerThread.start()
+    private fun foo(): Unit {
     }
 
-    private fun foo() : Unit {
-    }
+    public fun run(): Unit = work.run()
 }
 
-public fun box():String {
-    if(SomeClass.bug is Throwable)
-      throw SomeClass.bug as Throwable
+fun box(): String {
+    SomeClass.run()
     return "OK"
 }
