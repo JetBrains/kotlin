@@ -55,7 +55,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
 
     public static final String DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS";
     public static final Pattern DIAGNOSTICS_PATTERN = Pattern.compile("([\\+\\-!])(\\w+)\\s*");
-    public static final ImmutableSet<DiagnosticFactory> DIAGNOSTICS_TO_INCLUDE_ANYWAY =
+    public static final ImmutableSet<DiagnosticFactory<?>> DIAGNOSTICS_TO_INCLUDE_ANYWAY =
             ImmutableSet.of(
                     Errors.UNRESOLVED_REFERENCE,
                     Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,

@@ -39,10 +39,7 @@ public class QuickFixFactoryForTypeMismatchError implements JetIntentionActionsF
     public List<IntentionAction> createActions(Diagnostic diagnostic) {
         List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-        assert diagnostic.getFactory() == Errors.TYPE_MISMATCH;
-        @SuppressWarnings("unchecked")
-        DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters =
-                (DiagnosticWithParameters2<JetExpression, JetType, JetType>) diagnostic;
+        DiagnosticWithParameters2<JetExpression, JetType, JetType> diagnosticWithParameters = Errors.TYPE_MISMATCH.cast(diagnostic);
         JetExpression expression = diagnosticWithParameters.getPsiElement();
         JetType expectedType = diagnosticWithParameters.getA();
         JetType expressionType = diagnosticWithParameters.getB();

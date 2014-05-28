@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class DiagnosticFactory0<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E> {
+public class DiagnosticFactory0<E extends PsiElement> extends DiagnosticFactoryWithPsiElement<E, SimpleDiagnostic<E>> {
 
     protected DiagnosticFactory0(Severity severity, PositioningStrategy<? super E> positioningStrategy) {
         super(severity, positioningStrategy);

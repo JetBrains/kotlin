@@ -198,10 +198,8 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 
-                assert diagnostic.getFactory() == Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN;
-                @SuppressWarnings("unchecked")
                 DiagnosticWithParameters1<JetElement, Collection<ClassDescriptor>> parametrizedDiagnostic =
-                        (DiagnosticWithParameters1<JetElement, Collection<ClassDescriptor>>) diagnostic;
+                        Errors.PLATFORM_CLASS_MAPPED_TO_KOTLIN.cast(diagnostic);
 
                 return new MapPlatformClassToKotlinFix(typeExpr, platformClass, parametrizedDiagnostic.getA());
             }

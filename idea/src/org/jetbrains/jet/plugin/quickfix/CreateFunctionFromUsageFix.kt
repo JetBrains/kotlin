@@ -71,6 +71,8 @@ import java.util.ArrayList
 import java.util.Properties
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.plugin.caches.resolve.getBindingContext
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
+import org.jetbrains.jet.lang.diagnostics
 
 private val TYPE_PARAMETER_LIST_VARIABLE_NAME = "typeParameterList"
 private val TEMPLATE_FROM_USAGE_FUNCTION_BODY = "New Kotlin Function Body.kt"
@@ -917,9 +919,7 @@ public class CreateFunctionFromUsageFix internal (
         public fun createCreateHasNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    assert(diagnostic!!.getFactory() == Errors.HAS_NEXT_MISSING || diagnostic.getFactory() == Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
-                    [suppress("UNCHECKED_CAST")]
-                    val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetExpression, JetType>
+                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic!!, Errors.HAS_NEXT_MISSING, Errors.HAS_NEXT_FUNCTION_NONE_APPLICABLE)
                     val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
                     val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
@@ -932,9 +932,7 @@ public class CreateFunctionFromUsageFix internal (
         public fun createCreateNextFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    assert(diagnostic!!.getFactory() == Errors.NEXT_MISSING || diagnostic.getFactory() == Errors.NEXT_NONE_APPLICABLE)
-                    [suppress("UNCHECKED_CAST")]
-                    val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<JetExpression, JetType>
+                    val diagnosticWithParameters = DiagnosticFactory.cast(diagnostic!!, Errors.NEXT_MISSING, Errors.NEXT_NONE_APPLICABLE)
                     val ownerType = TypeOrExpressionThereof(diagnosticWithParameters.getA(), Variance.IN_VARIANCE)
 
                     val forExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<JetForExpression>()) ?: return null
@@ -971,9 +969,7 @@ public class CreateFunctionFromUsageFix internal (
         public fun createCreateComponentFunctionFromUsageFactory(): JetSingleIntentionActionFactory {
             return object : JetSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic?): IntentionAction? {
-                    assert(diagnostic!!.getFactory() == Errors.COMPONENT_FUNCTION_MISSING)
-                    [suppress("UNCHECKED_CAST")]
-                    val diagnosticWithParameters = (diagnostic as DiagnosticWithParameters2<JetExpression, Name, JetType>)
+                    val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic!!)
                     val name = diagnosticWithParameters.getA()
                     val componentNumberMatcher = COMPONENT_FUNCTION_PATTERN.matcher(name.getIdentifier())
                     if (!componentNumberMatcher.matches()) return null

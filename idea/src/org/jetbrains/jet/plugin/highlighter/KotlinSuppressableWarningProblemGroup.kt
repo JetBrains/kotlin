@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 import com.intellij.psi.util.PsiTreeUtil
 
 class KotlinSuppressableWarningProblemGroup(
-        private val diagnosticFactory: DiagnosticFactory
+        private val diagnosticFactory: DiagnosticFactory<*>
 ) : SuppressableProblemGroup {
 
     {
@@ -46,7 +46,7 @@ class KotlinSuppressableWarningProblemGroup(
 
 }
 
-fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory): List<SuppressIntentionAction> {
+fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> {
     if (diagnosticFactory.getSeverity() != Severity.WARNING)
         return Collections.emptyList()
 

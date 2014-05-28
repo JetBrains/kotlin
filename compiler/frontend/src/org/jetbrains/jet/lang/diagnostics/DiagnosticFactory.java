@@ -18,7 +18,10 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
 
-public abstract class DiagnosticFactory {
+import java.util.Arrays;
+import java.util.Collection;
+
+public abstract class DiagnosticFactory<D extends Diagnostic> {
 
     private String name = null;
     private final Severity severity;
@@ -39,6 +42,30 @@ public abstract class DiagnosticFactory {
     @NotNull
     public Severity getSeverity() {
         return severity;
+    }
+
+    @NotNull
+    public D cast(@NotNull Diagnostic diagnostic) {
+        if (diagnostic.getFactory() != this) {
+            throw new IllegalArgumentException("Factory mismatch: expected " + this + " but was " + diagnostic.getFactory());
+        }
+
+        //noinspection unchecked
+        return (D) diagnostic;
+    }
+
+    @NotNull
+    public static <D extends Diagnostic> D cast(@NotNull Diagnostic diagnostic, @NotNull DiagnosticFactory<? extends D>... factories) {
+        return cast(diagnostic, Arrays.asList(factories));
+    }
+
+    @NotNull
+    public static <D extends Diagnostic> D cast(@NotNull Diagnostic diagnostic, @NotNull Collection<? extends DiagnosticFactory<? extends D>> factories) {
+        for (DiagnosticFactory<? extends D> factory : factories) {
+            if (diagnostic.getFactory() == factory) return factory.cast(diagnostic);
+        }
+
+        throw new IllegalArgumentException("Factory mismatch: expected one of " + factories + " but was " + diagnostic.getFactory());
     }
 
     @Override

@@ -589,11 +589,11 @@ public interface Errors {
     DiagnosticFactory0<JetElement> DECLARATION_CANT_BE_INLINED = DiagnosticFactory0.create(ERROR);
 
     // Error sets
-    ImmutableSet<? extends DiagnosticFactory> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
+    ImmutableSet<? extends DiagnosticFactory<?>> UNRESOLVED_REFERENCE_DIAGNOSTICS = ImmutableSet.of(
             UNRESOLVED_REFERENCE, NAMED_PARAMETER_NOT_FOUND, UNRESOLVED_REFERENCE_WRONG_RECEIVER);
-    ImmutableSet<? extends DiagnosticFactory> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
+    ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE);
-    ImmutableSet<? extends DiagnosticFactory> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
+    ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH,
             TYPE_INFERENCE_UPPER_BOUND_VIOLATED, TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH);
 
@@ -612,7 +612,7 @@ public interface Errors {
                     try {
                         Object value = field.get(null);
                         if (value instanceof DiagnosticFactory) {
-                            DiagnosticFactory factory = (DiagnosticFactory)value;
+                            DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
                             factory.setName(field.getName());
                         }
                     }

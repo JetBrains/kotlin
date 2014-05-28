@@ -86,10 +86,8 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.AUTOCAST_IMPOSSIBLE;
-                @SuppressWarnings("unchecked")
                 DiagnosticWithParameters2<JetExpression, JetType, String> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetExpression, JetType, String>) diagnostic;
+                        Errors.AUTOCAST_IMPOSSIBLE.cast(diagnostic);
                 return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }
         };

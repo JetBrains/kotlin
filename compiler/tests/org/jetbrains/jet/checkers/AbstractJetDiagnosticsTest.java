@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.descriptors.DependencyKind;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetElement;
+import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
 import org.jetbrains.jet.lang.resolve.BindingContext;
@@ -146,23 +147,26 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
     @SuppressWarnings({"unchecked", "ConstantConditions"})
     private static void checkResolvedCallsInDiagnostics(BindingContext bindingContext) {
-        Set<DiagnosticFactory> diagnosticsStoringResolvedCalls1 = Sets.<DiagnosticFactory>newHashSet(
+        Set<DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>>> diagnosticsStoringResolvedCalls1 = Sets.newHashSet(
                 OVERLOAD_RESOLUTION_AMBIGUITY, NONE_APPLICABLE, CANNOT_COMPLETE_RESOLVE, UNRESOLVED_REFERENCE_WRONG_RECEIVER,
                 ASSIGN_OPERATOR_AMBIGUITY, ITERATOR_AMBIGUITY);
-        Set<DiagnosticFactory> diagnosticsStoringResolvedCalls2 = Sets.<DiagnosticFactory>newHashSet(
+        Set<DiagnosticFactory2<JetExpression, ? extends Comparable<? extends Comparable<?>>, Collection<? extends ResolvedCall<?>>>>
+                diagnosticsStoringResolvedCalls2 = Sets.newHashSet(
                 COMPONENT_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE);
         Diagnostics diagnostics = bindingContext.getDiagnostics();
         for (Diagnostic diagnostic : diagnostics) {
-            DiagnosticFactory factory = diagnostic.getFactory();
+            DiagnosticFactory<?> factory = diagnostic.getFactory();
+            //noinspection SuspiciousMethodCalls
             if (diagnosticsStoringResolvedCalls1.contains(factory)) {
                 assertResolvedCallsAreCompleted(
-                        diagnostic, ((DiagnosticWithParameters1<PsiElement, Collection<? extends ResolvedCall<?>>>) diagnostic).getA());
+                        diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).getA());
 
             }
+            //noinspection SuspiciousMethodCalls
             if (diagnosticsStoringResolvedCalls2.contains(factory)) {
                 assertResolvedCallsAreCompleted(
                         diagnostic,
-                        ((DiagnosticWithParameters2<PsiElement, Object, Collection<? extends ResolvedCall<?>>>)diagnostic).getB());
+                        DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls2).getB());
             }
         }
     }

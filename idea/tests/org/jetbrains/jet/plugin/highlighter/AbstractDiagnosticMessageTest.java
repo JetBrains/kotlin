@@ -78,7 +78,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
         String fileData = JetTestUtils.doLoadFile(file);
         Map<String,String> directives = JetTestUtils.parseDirectives(fileData);
         int diagnosticNumber = getDiagnosticNumber(directives);
-        final Set<DiagnosticFactory> diagnosticFactories = getDiagnosticFactories(directives);
+        final Set<DiagnosticFactory<?>> diagnosticFactories = getDiagnosticFactories(directives);
         MessageType messageType = getMessageTypeDirective(directives);
 
         JetFile psiFile = createPsiFile(null, fileName, loadFile(fileName));
@@ -128,10 +128,10 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
     }
 
     @NotNull
-    private static Set<DiagnosticFactory> getDiagnosticFactories(Map<String, String> directives) {
+    private static Set<DiagnosticFactory<?>> getDiagnosticFactories(Map<String, String> directives) {
         String diagnosticsData = directives.get(DIAGNOSTICS_DIRECTIVE);
         assert diagnosticsData != null : DIAGNOSTICS_DIRECTIVE + " should be present.";
-        Set<DiagnosticFactory> diagnosticFactories = Sets.newHashSet();
+        Set<DiagnosticFactory<?>> diagnosticFactories = Sets.newHashSet();
         String[] diagnostics = diagnosticsData.split(" ");
         for (String diagnosticName : diagnostics) {
             String errorMessage = "Can't load diagnostic factory for " + diagnosticName;
@@ -139,7 +139,7 @@ public abstract class AbstractDiagnosticMessageTest extends JetLiteFixture {
                 Field field = Errors.class.getField(diagnosticName);
                 Object value = field.get(null);
                 if (value instanceof DiagnosticFactory) {
-                    diagnosticFactories.add((DiagnosticFactory)value);
+                    diagnosticFactories.add((DiagnosticFactory<?>)value);
                 }
                 else {
                     throw new AssertionError(errorMessage);

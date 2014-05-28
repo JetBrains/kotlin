@@ -111,7 +111,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     private static boolean isSuppressedForDebugger(@NotNull Diagnostic diagnostic, @NotNull PsiElement element) {
         PsiFile containingFile = element.getContainingFile();
         if (containingFile instanceof JetFile && CodeFragmentUtilPackage.skipVisibilityCheck((JetFile) containingFile)) {
-            DiagnosticFactory diagnosticFactory = diagnostic.getFactory();
+            DiagnosticFactory<?> diagnosticFactory = diagnostic.getFactory();
             return diagnosticFactory == Errors.INVISIBLE_MEMBER ||
                    diagnosticFactory == Errors.INVISIBLE_REFERENCE ||
                    diagnosticFactory == Errors.INVISIBLE_SETTER;

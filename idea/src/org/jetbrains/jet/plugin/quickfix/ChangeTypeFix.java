@@ -64,9 +64,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.EXPECTED_PARAMETER_TYPE_MISMATCH;
-                @SuppressWarnings("unchecked")
-                DiagnosticWithParameters1<JetParameter, JetType> diagnosticWithParameters = (DiagnosticWithParameters1<JetParameter, JetType>) diagnostic;
+                DiagnosticWithParameters1<JetParameter, JetType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
                 JetTypeReference typeReference = diagnosticWithParameters.getPsiElement().getTypeReference();
                 assert typeReference != null : "EXPECTED_PARAMETER_TYPE_MISMATCH reported on parameter without explicitly declared type";
                 return new ChangeTypeFix(typeReference, diagnosticWithParameters.getA());
@@ -80,9 +78,7 @@ public class ChangeTypeFix extends JetIntentionAction<JetTypeReference> {
             @Nullable
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.EXPECTED_RETURN_TYPE_MISMATCH;
-                @SuppressWarnings("unchecked")
-                DiagnosticWithParameters1<JetTypeReference, JetType> diagnosticWithParameters = (DiagnosticWithParameters1<JetTypeReference, JetType>) diagnostic;
+                DiagnosticWithParameters1<JetTypeReference, JetType> diagnosticWithParameters = Errors.EXPECTED_RETURN_TYPE_MISMATCH.cast(diagnostic);
                 return new ChangeTypeFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
             }
         };

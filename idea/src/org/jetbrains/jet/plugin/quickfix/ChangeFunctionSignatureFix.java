@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,8 +28,9 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.FunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Diagnostic;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters1;
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticWithParameters2;
+import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
@@ -46,6 +46,8 @@ import org.jetbrains.jet.plugin.refactoring.changeSignature.JetParameterInfo;
 import java.util.List;
 
 import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
+import static org.jetbrains.jet.lang.diagnostics.Errors.EXPECTED_PARAMETERS_NUMBER_MISMATCH;
+import static org.jetbrains.jet.lang.diagnostics.Errors.UNUSED_PARAMETER;
 
 public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiElement> {
     protected final PsiElement context;
@@ -143,8 +145,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
                 JetCallElement callElement = PsiTreeUtil.getParentOfType(diagnostic.getPsiElement(), JetCallElement.class);
-                @SuppressWarnings("unchecked")
-                CallableDescriptor descriptor = ((DiagnosticWithParameters1<PsiElement, CallableDescriptor>) diagnostic).getA();
+                //noinspection unchecked
+                CallableDescriptor descriptor = DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).getA();
 
                 if (callElement != null) {
                     return createFix(callElement, callElement, descriptor);
@@ -159,9 +161,8 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return new JetSingleIntentionActionFactory() {
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
-                @SuppressWarnings("unchecked")
                 DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetFunctionLiteral, Integer, List<JetType>>) diagnostic;
+                        EXPECTED_PARAMETERS_NUMBER_MISMATCH.cast(diagnostic);
                 JetFunctionLiteral functionLiteral = diagnosticWithParameters.getPsiElement();
                 BindingContext bindingContext =
                         ResolvePackage.getBindingContext(functionLiteral.getContainingJetFile());
@@ -183,7 +184,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             @Override
             public ChangeFunctionSignatureFix createAction(Diagnostic diagnostic) {
                 @SuppressWarnings("unchecked")
-                Object descriptor = ((DiagnosticWithParameters1<PsiNameIdentifierOwner, Object>) diagnostic).getA();
+                Object descriptor = UNUSED_PARAMETER.cast(diagnostic).getA();
 
                 if (descriptor instanceof ValueParameterDescriptor) {
                     return createFix(null, diagnostic.getPsiElement(), (CallableDescriptor) descriptor);

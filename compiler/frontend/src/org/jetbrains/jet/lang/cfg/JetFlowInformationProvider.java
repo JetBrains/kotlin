@@ -274,7 +274,7 @@ public class JetFlowInformationProvider {
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
 
-        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
 
         PseudocodeTraverserPackage.traverse(
                 pseudocode, FORWARD, initializers,
@@ -548,7 +548,7 @@ public class JetFlowInformationProvider {
         final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData =
                 pseudocodeVariablesData.getVariableUseStatusData();
-        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {
                     @Override
@@ -638,7 +638,7 @@ public class JetFlowInformationProvider {
 //  "Unused literals" in block
 
     public void markUnusedLiteralsInBlock() {
-        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap = Maps.newHashMap();
+        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverserPackage.traverse(
                 pseudocode, FORWARD, new FunctionVoid1<Instruction>() {
                     @Override
@@ -828,13 +828,13 @@ public class JetFlowInformationProvider {
             trace.report(diagnostic);
             return;
         }
-        Map<Instruction, DiagnosticFactory> previouslyReported = ctxt.reportedDiagnosticMap;
+        Map<Instruction, DiagnosticFactory<?>> previouslyReported = ctxt.reportedDiagnosticMap;
         previouslyReported.put(instruction, diagnostic.getFactory());
 
         boolean alreadyReported = false;
         boolean sameErrorForAllCopies = true;
         for (Instruction copy : instruction.getCopies()) {
-            DiagnosticFactory previouslyReportedErrorFactory = previouslyReported.get(copy);
+            DiagnosticFactory<?> previouslyReportedErrorFactory = previouslyReported.get(copy);
             if (previouslyReportedErrorFactory != null) {
                 alreadyReported = true;
             }
@@ -857,7 +857,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private static boolean mustBeReportedOnAllCopies(@NotNull DiagnosticFactory diagnosticFactory) {
+    private static boolean mustBeReportedOnAllCopies(@NotNull DiagnosticFactory<?> diagnosticFactory) {
         return diagnosticFactory == UNUSED_VARIABLE
                || diagnosticFactory == UNUSED_PARAMETER
                || diagnosticFactory == UNUSED_CHANGED_VALUE;
@@ -865,13 +865,13 @@ public class JetFlowInformationProvider {
 
 
     private class VariableContext {
-        final Map<Instruction, DiagnosticFactory> reportedDiagnosticMap;
+        final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap;
         final Instruction instruction;
         final VariableDescriptor variableDescriptor;
 
         private VariableContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory> map
+                @NotNull Map<Instruction, DiagnosticFactory<?>> map
         ) {
             this.instruction = instruction;
             reportedDiagnosticMap = map;
@@ -885,7 +885,7 @@ public class JetFlowInformationProvider {
 
         private VariableInitContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory> map,
+                @NotNull Map<Instruction, DiagnosticFactory<?>> map,
                 @NotNull Map<VariableDescriptor, VariableInitState> in,
                 @NotNull Map<VariableDescriptor, VariableInitState> out,
                 @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
@@ -914,7 +914,7 @@ public class JetFlowInformationProvider {
 
         private VariableUseContext(
                 @NotNull Instruction instruction,
-                @NotNull Map<Instruction, DiagnosticFactory> map,
+                @NotNull Map<Instruction, DiagnosticFactory<?>> map,
                 @NotNull Map<VariableDescriptor, VariableUseState> in,
                 @NotNull Map<VariableDescriptor, VariableUseState> out
         ) {

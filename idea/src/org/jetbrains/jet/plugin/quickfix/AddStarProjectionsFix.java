@@ -72,10 +72,8 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.NO_TYPE_ARGUMENTS_ON_RHS;
-                @SuppressWarnings("unchecked")
                 DiagnosticWithParameters2<JetTypeReference, Integer, String> diagnosticWithParameters =
-                        (DiagnosticWithParameters2<JetTypeReference, Integer, String>) diagnostic;
+                        Errors.NO_TYPE_ARGUMENTS_ON_RHS.cast(diagnostic);
                 JetTypeElement typeElement = diagnosticWithParameters.getPsiElement().getTypeElement();
                 while (typeElement instanceof JetNullableType) {
                     typeElement = ((JetNullableType) typeElement).getInnerType();
@@ -91,9 +89,7 @@ public abstract class AddStarProjectionsFix extends JetIntentionAction<JetUserTy
         return new JetSingleIntentionActionFactory() {
             @Override
             public IntentionAction createAction(Diagnostic diagnostic) {
-                assert diagnostic.getFactory() == Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS;
-                @SuppressWarnings("unchecked")
-                DiagnosticWithParameters1<JetElement, Integer> diagnosticWithParameters = (DiagnosticWithParameters1) diagnostic;
+                DiagnosticWithParameters1<JetElement, Integer> diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic);
 
                 Integer size = diagnosticWithParameters.getA();
 

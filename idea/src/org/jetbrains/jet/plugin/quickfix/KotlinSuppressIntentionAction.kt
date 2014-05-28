@@ -30,7 +30,7 @@ import org.jetbrains.jet.plugin.util.JetPsiPrecedences
 
 public class KotlinSuppressIntentionAction(
         private val suppressAt: JetExpression,
-        private val diagnosticFactory: DiagnosticFactory,
+        private val diagnosticFactory: DiagnosticFactory<*>,
         private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
 

@@ -347,16 +347,16 @@ public class CheckerTestUtil {
 
     public static class AbstractDiagnosticForTests implements Diagnostic {
         private final PsiElement element;
-        private final DiagnosticFactory factory;
+        private final DiagnosticFactory<?> factory;
 
-        public AbstractDiagnosticForTests(@NotNull PsiElement element, @NotNull DiagnosticFactory factory) {
+        public AbstractDiagnosticForTests(@NotNull PsiElement element, @NotNull DiagnosticFactory<?> factory) {
             this.element = element;
             this.factory = factory;
         }
 
         @NotNull
         @Override
-        public DiagnosticFactory getFactory() {
+        public DiagnosticFactory<?> getFactory() {
             return factory;
         }
 
@@ -390,7 +390,7 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class SyntaxErrorDiagnosticFactory extends DiagnosticFactory {
+    public static class SyntaxErrorDiagnosticFactory extends DiagnosticFactory<SyntaxErrorDiagnostic> {
         public static final SyntaxErrorDiagnosticFactory INSTANCE = new SyntaxErrorDiagnosticFactory();
 
         private SyntaxErrorDiagnosticFactory() {
@@ -410,7 +410,7 @@ public class CheckerTestUtil {
         }
     }
 
-    public static class DebugInfoDiagnosticFactory extends DiagnosticFactory {
+    public static class DebugInfoDiagnosticFactory extends DiagnosticFactory<DebugInfoDiagnostic> {
         public static final DebugInfoDiagnosticFactory AUTOCAST = new DebugInfoDiagnosticFactory("AUTOCAST");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");

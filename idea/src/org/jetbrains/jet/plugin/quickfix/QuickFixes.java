@@ -30,14 +30,14 @@ import static org.jetbrains.jet.lexer.JetTokens.*;
 
 public class QuickFixes {
 
-    private static final Multimap<DiagnosticFactory, JetIntentionActionsFactory> factories = HashMultimap.create();
-    private static final Multimap<DiagnosticFactory, IntentionAction> actions = HashMultimap.create();
+    private static final Multimap<DiagnosticFactory<?>, JetIntentionActionsFactory> factories = HashMultimap.create();
+    private static final Multimap<DiagnosticFactory<?>, IntentionAction> actions = HashMultimap.create();
 
-    public static Collection<JetIntentionActionsFactory> getActionsFactories(DiagnosticFactory diagnosticFactory) {
+    public static Collection<JetIntentionActionsFactory> getActionsFactories(DiagnosticFactory<?> diagnosticFactory) {
         return factories.get(diagnosticFactory);
     }
 
-    public static Collection<IntentionAction> getActions(DiagnosticFactory diagnosticFactory) {
+    public static Collection<IntentionAction> getActions(DiagnosticFactory<?> diagnosticFactory) {
         return actions.get(diagnosticFactory);
     }
 

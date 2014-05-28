@@ -58,9 +58,9 @@ public class DebugInfoUtil {
             @NotNull final BindingContext bindingContext,
             @NotNull final DebugInfoReporter debugInfoReporter
     ) {
-        final Map<JetReferenceExpression, DiagnosticFactory> markedWithErrorElements = Maps.newHashMap();
+        final Map<JetReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = Maps.newHashMap();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            DiagnosticFactory factory = diagnostic.getFactory();
+            DiagnosticFactory<?> factory = diagnostic.getFactory();
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
                 markedWithErrorElements.put((JetReferenceExpression) diagnostic.getPsiElement(), factory);
             }
@@ -136,7 +136,7 @@ public class DebugInfoUtil {
                     markedWithError = true;
                 }
                 JetType expressionType = bindingContext.get(EXPRESSION_TYPE, expression);
-                DiagnosticFactory factory = markedWithErrorElements.get(expression);
+                DiagnosticFactory<?> factory = markedWithErrorElements.get(expression);
                 if (declarationDescriptor != null &&
                     (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
                     if (factory != Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {

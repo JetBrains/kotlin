@@ -19,7 +19,7 @@ package org.jetbrains.jet.lang.diagnostics;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 
-public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithPsiElement<E> {
+public class DiagnosticFactory1<E extends PsiElement, A> extends DiagnosticFactoryWithPsiElement<E, DiagnosticWithParameters1<E, A>> {
     @NotNull
     public ParametrizedDiagnostic<E> on(@NotNull E element, @NotNull A argument) {
         return new DiagnosticWithParameters1<E, A>(element, argument, this, getSeverity());

@@ -302,7 +302,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         JetFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
         BindingContext context = resolveSessionForBodies.resolveToElement(functionLiteralExpression);
         for (Diagnostic diagnostic : context.getDiagnostics()) {
-            DiagnosticFactory factory = diagnostic.getFactory();
+            DiagnosticFactory<?> factory = diagnostic.getFactory();
             PsiElement element = diagnostic.getPsiElement();
             boolean hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE && element.getParent().getParent() == functionLiteral;
             boolean hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE && element.getText().equals("it") &&

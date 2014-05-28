@@ -493,8 +493,8 @@ public class DefaultErrorMessages {
                 try {
                     Object fieldValue = field.get(null);
                     if (fieldValue instanceof DiagnosticFactory) {
-                        if (MAP.get((DiagnosticFactory) fieldValue) == null) {
-                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((DiagnosticFactory)fieldValue).getName());
+                        if (MAP.get((DiagnosticFactory<?>) fieldValue) == null) {
+                            throw new IllegalStateException("No default diagnostic renderer is provided for " + ((DiagnosticFactory<?>)fieldValue).getName());
                         }
                     }
                 }

@@ -18,20 +18,18 @@ package org.jetbrains.jet.lang.diagnostics;
 
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.JetNodeTypes;
 
 import java.util.List;
 
 public abstract class AbstractDiagnostic<E extends PsiElement> implements ParametrizedDiagnostic<E> {
     private final E psiElement;
-    private final DiagnosticFactoryWithPsiElement<E> factory;
+    private final DiagnosticFactoryWithPsiElement<E, ?> factory;
     private final Severity severity;
 
     public AbstractDiagnostic(@NotNull E psiElement,
-            @NotNull DiagnosticFactoryWithPsiElement<E> factory,
+            @NotNull DiagnosticFactoryWithPsiElement<E, ?> factory,
             @NotNull Severity severity) {
         this.psiElement = psiElement;
         this.factory = factory;
@@ -40,7 +38,7 @@ public abstract class AbstractDiagnostic<E extends PsiElement> implements Parame
 
     @NotNull
     @Override
-    public DiagnosticFactoryWithPsiElement<E> getFactory() {
+    public DiagnosticFactoryWithPsiElement<E, ?> getFactory() {
         return factory;
     }
 
