@@ -401,4 +401,9 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest("idea/testData/completion/handlers/smart/True2.kt");
     }
     
+    @TestMetadata("WhenElse.kt")
+    public void testWhenElse() throws Exception {
+        doTest("idea/testData/completion/handlers/smart/WhenElse.kt");
+    }
+    
 }

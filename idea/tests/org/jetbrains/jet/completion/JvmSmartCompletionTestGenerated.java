@@ -476,6 +476,56 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest("idea/testData/completion/smart/VariableInitializer.kt");
     }
     
+    @TestMetadata("WhenEntryValue1.kt")
+    public void testWhenEntryValue1() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue1.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue2.kt")
+    public void testWhenEntryValue2() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue2.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue3.kt")
+    public void testWhenEntryValue3() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue3.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue4.kt")
+    public void testWhenEntryValue4() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue4.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue5.kt")
+    public void testWhenEntryValue5() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue5.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue6.kt")
+    public void testWhenEntryValue6() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue6.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue7.kt")
+    public void testWhenEntryValue7() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue7.kt");
+    }
+    
+    @TestMetadata("WhenEntryValue8.kt")
+    public void testWhenEntryValue8() throws Exception {
+        doTest("idea/testData/completion/smart/WhenEntryValue8.kt");
+    }
+    
+    @TestMetadata("WhenWithNoSubjectEntryValue1.kt")
+    public void testWhenWithNoSubjectEntryValue1() throws Exception {
+        doTest("idea/testData/completion/smart/WhenWithNoSubjectEntryValue1.kt");
+    }
+    
+    @TestMetadata("WhenWithNoSubjectEntryValue2.kt")
+    public void testWhenWithNoSubjectEntryValue2() throws Exception {
+        doTest("idea/testData/completion/smart/WhenWithNoSubjectEntryValue2.kt");
+    }
+    
     @TestMetadata("WithPrefix.kt")
     public void testWithPrefix() throws Exception {
         doTest("idea/testData/completion/smart/WithPrefix.kt");

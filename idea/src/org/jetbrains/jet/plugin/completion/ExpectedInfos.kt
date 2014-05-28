@@ -53,6 +53,9 @@ import org.jetbrains.jet.lang.descriptors.Visibilities
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.plugin.util.makeNullable
 import org.jetbrains.jet.plugin.util.makeNotNullable
+import org.jetbrains.jet.lang.psi.JetWhenConditionWithExpression
+import org.jetbrains.jet.lang.psi.JetWhenEntry
+import org.jetbrains.jet.lang.psi.JetWhenExpression
 
 enum class Tail {
     COMMA
@@ -70,6 +73,7 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
             ?: calculateForIf(expressionWithType)
             ?: calculateForElvis(expressionWithType)
             ?: calculateForBlockExpression(expressionWithType)
+            ?: calculateForWhenEntryValue(expressionWithType)
             ?: getFromBindingContext(expressionWithType)
     }
 
@@ -217,6 +221,20 @@ class ExpectedInfos(val bindingContext: BindingContext, val moduleDescriptor: Mo
         val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
         if (expressionWithType != block.getStatements().last()) return null
         return calculate(block)?.map { ExpectedInfo(it.`type`, null) }
+    }
+
+    private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
+        val condition = expressionWithType.getParent() as? JetWhenConditionWithExpression ?: return null
+        val entry = condition.getParent() as JetWhenEntry
+        val whenExpression = entry.getParent() as JetWhenExpression
+        val subject = whenExpression.getSubjectExpression()
+        if (subject != null) {
+            val subjectType = bindingContext[BindingContext.EXPRESSION_TYPE, subject] ?: return null
+            return listOf(ExpectedInfo(subjectType, null))
+        }
+        else {
+            return listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null))
+        }
     }
 
     private fun getFromBindingContext(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

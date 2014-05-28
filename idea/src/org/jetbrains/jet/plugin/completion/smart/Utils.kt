@@ -175,5 +175,6 @@ fun createLookupElement(descriptor: DeclarationDescriptor, resolveSession: Resol
 fun JetType.isSubtypeOf(expectedType: JetType) = !isError() && JetTypeChecker.INSTANCE.isSubtypeOf(this, expectedType)
 
 fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf()
+fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
 fun String?.isNullOrEmpty() = this == null || this.isEmpty()

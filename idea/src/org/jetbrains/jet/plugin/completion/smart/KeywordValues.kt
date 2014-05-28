@@ -20,14 +20,39 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.jet.plugin.completion.ExpectedInfo
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import org.jetbrains.jet.lang.psi.*
+import com.intellij.codeInsight.lookup.LookupElementDecorator
+import com.intellij.codeInsight.completion.InsertionContext
+import org.jetbrains.jet.plugin.completion.handlers.WithTailInsertHandler
 
 object KeywordValues {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
-        val booleanInfoClassifier = { (info: ExpectedInfo) ->
-            if (info.`type` == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, expressionWithType: JetExpression) {
+        var skipTrueFalse = false
+
+        val whenCondition = expressionWithType.getParent() as? JetWhenConditionWithExpression
+        if (whenCondition != null) {
+            val entry = whenCondition.getParent() as JetWhenEntry
+            val whenExpression = entry.getParent() as JetWhenExpression
+            if (whenExpression.getElseExpression() == null && entry == whenExpression.getEntries().last) {
+                val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
+                collection.add(object: LookupElementDecorator<LookupElement>(lookupElement) {
+                    override fun handleInsert(context: InsertionContext) {
+                        WithTailInsertHandler("->", spaceBefore = true, spaceAfter = true).handleInsert(context, getDelegate())
+                    }
+                })
+            }
+            if (whenExpression.getSubjectExpression() == null) { // no sense in true or false entries for when with no subject
+                skipTrueFalse = true
+            }
         }
-        collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold() })
-        collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("false").bold() })
+
+        if (!skipTrueFalse) {
+            val booleanInfoClassifier = { (info: ExpectedInfo) ->
+                if (info.`type` == KotlinBuiltIns.getInstance().getBooleanType()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES
+            }
+            collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("true").bold() })
+            collection.addLookupElements(expectedInfos, booleanInfoClassifier, { LookupElementBuilder.create("false").bold() })
+        }
 
         collection.addLookupElements(expectedInfos,
                                      { info -> if (info.`type`.isNullable()) ExpectedInfoClassification.MATCHES else ExpectedInfoClassification.NOT_MATCHES },

@@ -40,14 +40,18 @@ import org.jetbrains.jet.plugin.util.makeNotNullable
 
 // adds java static members, enum members and members from class object
 class StaticMembers(val bindingContext: BindingContext, val resolveSession: ResolveSessionForBodies) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>, context: JetExpression) {
+    public fun addToCollection(collection: MutableCollection<LookupElement>,
+                               expectedInfos: Collection<ExpectedInfo>,
+                               context: JetExpression,
+                               enumEntriesToSkip: Set<DeclarationDescriptor>) {
+
         val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, context]
         if (scope == null) return
 
         val expectedInfosByClass = expectedInfos.groupBy { TypeUtils.getClassDescriptor(it.`type`) }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
             if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
-                addToCollection(collection, classDescriptor, expectedInfosForClass, scope)
+                addToCollection(collection, classDescriptor, expectedInfosForClass, scope, enumEntriesToSkip)
             }
         }
     }
@@ -56,7 +60,8 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
             collection: MutableCollection<LookupElement>,
             classDescriptor: ClassDescriptor,
             expectedInfos: Collection<ExpectedInfo>,
-            scope: JetScope) {
+            scope: JetScope,
+            enumEntriesToSkip: Set<DeclarationDescriptor>) {
 
         fun processMember(descriptor: DeclarationDescriptor) {
             if (descriptor is DeclarationDescriptorWithVisibility && !Visibilities.isVisible(descriptor, scope.getContainingDeclaration())) return
@@ -74,7 +79,7 @@ class StaticMembers(val bindingContext: BindingContext, val resolveSession: Reso
                         }
                 }
             }
-            else if (DescriptorUtils.isEnumEntry(descriptor)) {
+            else if (DescriptorUtils.isEnumEntry(descriptor) && !enumEntriesToSkip.contains(descriptor)) {
                 classifier = { ExpectedInfoClassification.MATCHES } /* we do not need to check type of enum entry because it's taken from proper enum */
             }
             else {
