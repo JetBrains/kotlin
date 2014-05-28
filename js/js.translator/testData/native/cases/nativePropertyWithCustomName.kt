@@ -9,8 +9,8 @@ native("\"O\"") val foo: String = noImpl
 native("boo") val bar: String = noImpl
 
 class A
-native("__proto__") val Any.proto: String = noImpl
-native("__proto__") val A.proto: String = noImpl
+native("__proto__") val Any.proto: String get() = noImpl
+native("__proto__") val A.proto: String get() = noImpl
 
 fun actual(foo: String, native("boo") bar: String) = foo + bar
 fun expected(foo: String, boo: String) = foo + boo

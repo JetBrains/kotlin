@@ -10,7 +10,7 @@ var Test.b: Int
         a = c - 1
     }
 
-val Test.d: Int = 44
+val Test.d: Int get() = 44
 
 fun box(): Boolean {
     val c = Test()

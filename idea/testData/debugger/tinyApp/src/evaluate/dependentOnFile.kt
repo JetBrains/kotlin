@@ -21,7 +21,7 @@ object TestObject {
 }
 
 val testVal = 1
-val Int.testExtVal = 1
+val Int.testExtVal: Int get() = 1
 val testDelVal by Delegate()
 
 class Delegate {

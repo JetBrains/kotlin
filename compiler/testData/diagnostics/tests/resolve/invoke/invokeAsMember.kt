@@ -22,7 +22,8 @@ fun test(a: A) {
 
 //variable as extension
 trait B {}
-val B.foo = Foo()
+val B.foo: Foo
+    get() = Foo()
 
 
 fun test(b: B) {

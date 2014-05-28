@@ -1,16 +1,19 @@
 class Test {
-  var Int.foo: String = "fail"
-    set(str: String) {
-        $foo = str
-    }
+    var storage = "Fail"
 
-  fun test(): String {
-      val i = 1
-      i.foo = "OK"
-      return i.foo
-  }
+    var Int.foo: String
+        get() = storage
+        set(value) {
+            storage = value
+        }
+
+    fun test(): String {
+        val i = 1
+        i.foo = "OK"
+        return i.foo
+    }
 }
 
 fun box(): String {
-   return Test().test()
+    return Test().test()
 }

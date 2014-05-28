@@ -1252,11 +1252,6 @@ public class LazyResolveByStubTestGenerated extends AbstractLazyResolveByStubTes
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLong.kt");
                 }
                 
-                @TestMetadata("ExtVarLongWithSet.kt")
-                public void testExtVarLongWithSet() throws Exception {
-                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLongWithSet.kt");
-                }
-                
             }
             
             public static Test innerSuite() {

@@ -263,6 +263,7 @@ public interface Errors {
     DiagnosticFactory0<JetProperty> MUST_BE_INITIALIZED = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
     DiagnosticFactory0<JetProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, NAMED_ELEMENT);
 
+    DiagnosticFactory0<JetExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> PROPERTY_INITIALIZER_IN_TRAIT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetProperty> FINAL_PROPERTY_IN_TRAIT = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);

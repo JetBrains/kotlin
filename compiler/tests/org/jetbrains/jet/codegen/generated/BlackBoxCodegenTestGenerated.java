@@ -2272,6 +2272,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     
     @TestMetadata("compiler/testData/codegen/box/extensionProperties")
     public static class ExtensionProperties extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("accessorForPrivateSetter.kt")
+        public void testAccessorForPrivateSetter() throws Exception {
+            doTest("compiler/testData/codegen/box/extensionProperties/accessorForPrivateSetter.kt");
+        }
+        
         public void testAllFilesPresentInExtensionProperties() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/box/extensionProperties"), Pattern.compile("^(.+)\\.kt$"), true);
         }
@@ -2284,11 +2289,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("inClassLongTypeInReceiver.kt")
         public void testInClassLongTypeInReceiver() throws Exception {
             doTest("compiler/testData/codegen/box/extensionProperties/inClassLongTypeInReceiver.kt");
-        }
-        
-        @TestMetadata("inClassWithEmptySetter.kt")
-        public void testInClassWithEmptySetter() throws Exception {
-            doTest("compiler/testData/codegen/box/extensionProperties/inClassWithEmptySetter.kt");
         }
         
         @TestMetadata("inClassWithGetter.kt")
@@ -2319,21 +2319,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("topLevelLongTypeInReceiver.kt")
         public void testTopLevelLongTypeInReceiver() throws Exception {
             doTest("compiler/testData/codegen/box/extensionProperties/topLevelLongTypeInReceiver.kt");
-        }
-        
-        @TestMetadata("topLevelSetterLongTypeInReceiver.kt")
-        public void testTopLevelSetterLongTypeInReceiver() throws Exception {
-            doTest("compiler/testData/codegen/box/extensionProperties/topLevelSetterLongTypeInReceiver.kt");
-        }
-        
-        @TestMetadata("topLevelWithGetter.kt")
-        public void testTopLevelWithGetter() throws Exception {
-            doTest("compiler/testData/codegen/box/extensionProperties/topLevelWithGetter.kt");
-        }
-        
-        @TestMetadata("topLevelWithSetter.kt")
-        public void testTopLevelWithSetter() throws Exception {
-            doTest("compiler/testData/codegen/box/extensionProperties/topLevelWithSetter.kt");
         }
         
     }
@@ -2385,16 +2370,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("genericPropertyWithItself.kt")
         public void testGenericPropertyWithItself() throws Exception {
             doTest("compiler/testData/codegen/box/fieldRename/genericPropertyWithItself.kt");
-        }
-        
-        @TestMetadata("inPackage.kt")
-        public void testInPackage() throws Exception {
-            doTest("compiler/testData/codegen/box/fieldRename/inPackage.kt");
-        }
-        
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            doTest("compiler/testData/codegen/box/fieldRename/simple.kt");
         }
         
     }

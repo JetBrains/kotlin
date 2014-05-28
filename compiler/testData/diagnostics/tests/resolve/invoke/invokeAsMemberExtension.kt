@@ -40,7 +40,8 @@ fun test(c: C, b: B) {
 //variable as extension,
 trait D {
 }
-val D.foo = Foo()
+val D.foo: Foo
+    get() = Foo()
 
 class E {
     fun Foo.invoke() {}

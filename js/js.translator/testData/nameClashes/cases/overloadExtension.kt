@@ -5,8 +5,8 @@ fun Int.foo() {
 fun String.foo() {
 }
 
-val Int.bar = 1
-val String.bar = 2
+val Int.bar: Int get() = 1
+val String.bar: Int get() = 2
 
 fun box(): String {
     val a = 43

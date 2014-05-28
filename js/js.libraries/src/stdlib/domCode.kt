@@ -7,7 +7,7 @@ public fun createDocument(): Document {
     return js.dom.html.document.implementation.createDocument(null, null, null)
 }
 
-native public val Node.outerHTML: String = js.noImpl
+native public val Node.outerHTML: String get() = js.noImpl
 
 /** Converts the node to an XML String */
 public fun Node.toXmlString(): String = this.outerHTML

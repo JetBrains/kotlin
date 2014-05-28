@@ -131,6 +131,7 @@ public class DefaultErrorMessages {
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
         MAP.put(PROPERTY_INITIALIZER_IN_TRAIT, "Property initializers are not allowed in traits");
         MAP.put(FINAL_PROPERTY_IN_TRAIT, "Abstract property in trait cannot be final");
+        MAP.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field");
         MAP.put(PROPERTY_INITIALIZER_NO_BACKING_FIELD, "Initializer is not allowed here because this property has no backing field");
         MAP.put(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS, "Abstract property ''{0}'' in non-abstract class ''{1}''", STRING, NAME);
         MAP.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, "Abstract function ''{0}'' in non-abstract class ''{1}''", STRING, NAME);

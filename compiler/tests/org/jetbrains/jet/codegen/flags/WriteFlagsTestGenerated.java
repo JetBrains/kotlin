@@ -500,16 +500,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     doTest("compiler/testData/writeFlags/property/classObject/class/delegatedPublicVal.kt");
                 }
                 
-                @TestMetadata("extensionPublicVal.kt")
-                public void testExtensionPublicVal() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/class/extensionPublicVal.kt");
-                }
-                
-                @TestMetadata("extensionPublicVar.kt")
-                public void testExtensionPublicVar() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/class/extensionPublicVar.kt");
-                }
-                
                 @TestMetadata("internalVal.kt")
                 public void testInternalVal() throws Exception {
                     doTest("compiler/testData/writeFlags/property/classObject/class/internalVal.kt");
@@ -608,16 +598,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     doTest("compiler/testData/writeFlags/property/classObject/rename/delegatedAndProperty.kt");
                 }
                 
-                @TestMetadata("extensionAndExtension.kt")
-                public void testExtensionAndExtension() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndExtension.kt");
-                }
-                
-                @TestMetadata("extensionAndProperty.kt")
-                public void testExtensionAndProperty() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/rename/extensionAndProperty.kt");
-                }
-                
                 @TestMetadata("propertyAndProperty.kt")
                 public void testPropertyAndProperty() throws Exception {
                     doTest("compiler/testData/writeFlags/property/classObject/rename/propertyAndProperty.kt");
@@ -639,16 +619,6 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                 @TestMetadata("delegatedPublicVal.kt")
                 public void testDelegatedPublicVal() throws Exception {
                     doTest("compiler/testData/writeFlags/property/classObject/trait/delegatedPublicVal.kt");
-                }
-                
-                @TestMetadata("extensionPublicVal.kt")
-                public void testExtensionPublicVal() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/trait/extensionPublicVal.kt");
-                }
-                
-                @TestMetadata("extensionPublicVar.kt")
-                public void testExtensionPublicVar() throws Exception {
-                    doTest("compiler/testData/writeFlags/property/classObject/trait/extensionPublicVar.kt");
                 }
                 
                 @TestMetadata("internalVal.kt")

@@ -2774,11 +2774,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLong.kt");
                 }
                 
-                @TestMetadata("ExtVarLongWithSet.kt")
-                public void testExtVarLongWithSet() throws Exception {
-                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/prop/defaultAccessors/ExtVarLongWithSet.kt");
-                }
-                
             }
             
             public static Test innerSuite() {

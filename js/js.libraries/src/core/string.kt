@@ -36,7 +36,7 @@ native public fun String.match(regex : String) : Array<String> = js.noImpl
 native public fun String.trim() : String = js.noImpl
 
 native("length")
-public val CharSequence.size: Int = js.noImpl
+public val CharSequence.size: Int get() = js.noImpl
 
 library
 public fun CharSequence.length(): Int = js.noImpl

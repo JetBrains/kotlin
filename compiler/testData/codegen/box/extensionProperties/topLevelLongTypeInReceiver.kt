@@ -1,10 +1,22 @@
-var Double.fooDouble: String = "fail"
-var Long.fooLong: String = "fail"
+var fooStorage = "Fail"
+var barStorage = "Fail"
+
+var Double.foo: String
+    get() = fooStorage
+    set(value) {
+        fooStorage = value
+    }
+
+var Long.bar: String
+    get() = barStorage
+    set(value) {
+        barStorage = value
+    }
 
 fun box(): String {
-   val d = 1.0
-   d.fooDouble = "O"
-   val l = 1.toLong()
-   l.fooLong = "K"
-   return d.fooDouble + l.fooLong
+    val d = 1.0
+    d.foo = "O"
+    val l = 1L
+    l.bar = "K"
+    return d.foo + l.bar
 }

@@ -2,7 +2,7 @@
 
 package foo
 
-native val Exception.message: String = noImpl
+native val Exception.message: String get() = noImpl
 
 public fun <T : Throwable> failsWith(block: () -> Any): T {
     try {

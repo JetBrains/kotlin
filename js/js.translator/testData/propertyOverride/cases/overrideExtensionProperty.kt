@@ -3,9 +3,9 @@ package foo
 class T
 
 open class A {
-    open val T.foo: Int = 34
+    open val T.foo: Int
         get() {
-            return $foo
+            return 34
         }
     fun test(): Int {
         return T().foo
@@ -13,7 +13,7 @@ open class A {
 }
 
 class B : A() {
-    override val T.foo: Int = 5
+    override val T.foo: Int get() = 5
 }
 
 

@@ -7,7 +7,8 @@ val Int.getter: Int
     }
 
 
-var Int.setter: Int = 1
+var Int.setter: Int
+    get() = 1
     set(i: Int) {
         val extFun = { Int.() ->
             this@setter

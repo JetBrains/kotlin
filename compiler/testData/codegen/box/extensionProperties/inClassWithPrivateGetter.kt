@@ -1,15 +1,14 @@
 class Test {
-  private val Int.foo: String = "OK"
-    get() {
-        val a = $foo
-        return "OK"
-    }
+    private val Int.foo: String
+        get() {
+            return "OK"
+        }
 
-  fun test(): String {
-     return 1.foo
-  }
+    fun test(): String {
+        return 1.foo
+    }
 }
 
 fun box(): String {
-   return Test().test()
+    return Test().test()
 }

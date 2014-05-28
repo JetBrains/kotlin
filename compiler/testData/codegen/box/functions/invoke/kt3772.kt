@@ -9,10 +9,10 @@ class B {
 }
 
 open class C
-val C.attr = A()
+val C.attr: A get() = A()
 
 open class D: C()
-val D.attr = B()
+val D.attr: B get() = B()
 
 
 fun box(): String {

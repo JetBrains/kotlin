@@ -10,4 +10,5 @@ object A {
 
 class B
 
-val B.c : String = "test"
+val B.c : String
+    get() = "test"

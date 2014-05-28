@@ -1,16 +1,28 @@
 class Test {
-  var Double.fooDouble: String = "fail"
-  var Long.fooLong: String = "fail"
+    var doubleStorage = "fail"
+    var longStorage = "fail"
 
-  fun test(): String {
-     val d = 1.0
-     d.fooDouble = "O"
-     val l = 1.toLong()
-     l.fooLong = "K"
-     return d.fooDouble + l.fooLong
-  }
+    var Double.foo: String
+        get() = doubleStorage
+        set(value) {
+            doubleStorage = value
+        }
+
+    var Long.bar: String
+        get() = longStorage
+        set(value) {
+            longStorage = value
+        }
+
+    fun test(): String {
+        val d = 1.0
+        d.foo = "O"
+        val l = 1L
+        l.bar = "K"
+        return d.foo + l.bar
+    }
 }
 
 fun box(): String {
-   return Test().test()
+    return Test().test()
 }

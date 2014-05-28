@@ -25,4 +25,4 @@ object B {
 fun PairParam<<error>T</error>, <error>T</error>>() {}
 class PParam<<error>T</error>, <error>T</error>> {}
 
-val <<error>T</error>, <error>T</error>> T.fooParam : Int = 1
+val <<error>T</error>, <error>T</error>> T.fooParam : Int get() = 1

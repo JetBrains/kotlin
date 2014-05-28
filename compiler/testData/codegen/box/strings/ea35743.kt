@@ -1,4 +1,4 @@
-val Int.test = "test"
+val Int.test: String get() = "test"
 
 fun box(): String {
     val x = "a ${1.test}"

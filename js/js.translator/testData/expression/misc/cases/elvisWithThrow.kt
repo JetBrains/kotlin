@@ -11,7 +11,7 @@ fun bar(): Any? {
 }
 
 native
-val Exception.message: String = noImpl
+val Exception.message: String get() = noImpl
 
 fun box(): String {
     val a: String? = null

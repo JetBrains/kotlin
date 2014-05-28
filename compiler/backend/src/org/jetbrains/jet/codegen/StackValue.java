@@ -144,12 +144,12 @@ public abstract class StackValue {
             @NotNull Type methodOwner,
             @NotNull Type type,
             boolean isStatic,
-            @NotNull String name,
+            @Nullable String fieldName,
             @Nullable CallableMethod getter,
             @Nullable CallableMethod setter,
             GenerationState state
     ) {
-        return new Property(descriptor, methodOwner, getter, setter, isStatic, name, type, state);
+        return new Property(descriptor, methodOwner, getter, setter, isStatic, fieldName, type, state);
     }
 
     @NotNull
@@ -817,24 +817,19 @@ public abstract class StackValue {
     }
 
     static class Property extends StackValueWithSimpleReceiver {
-        @Nullable
         private final CallableMethod getter;
-        @Nullable
         private final CallableMethod setter;
-        @NotNull
-        public final Type methodOwner;
+        private final Type methodOwner;
 
-        @NotNull
         private final PropertyDescriptor descriptor;
-        @NotNull
         private final GenerationState state;
 
-        private final String name;
+        private final String fieldName;
 
         public Property(
                 @NotNull PropertyDescriptor descriptor, @NotNull Type methodOwner,
                 @Nullable CallableMethod getter, @Nullable CallableMethod setter, boolean isStatic,
-                @NotNull String name, @NotNull Type type, @NotNull GenerationState state
+                @Nullable String fieldName, @NotNull Type type, @NotNull GenerationState state
         ) {
             super(type, isStatic);
             this.methodOwner = methodOwner;
@@ -842,14 +837,14 @@ public abstract class StackValue {
             this.setter = setter;
             this.descriptor = descriptor;
             this.state = state;
-            this.name = name;
+            this.fieldName = fieldName;
         }
 
         @Override
         public void put(Type type, InstructionAdapter v) {
             if (getter == null) {
-                v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), getPropertyName(),
-                                 this.type.getDescriptor());
+                assert fieldName != null : "Property should have either a getter or a field name: " + descriptor;
+                v.visitFieldInsn(isStatic ? GETSTATIC : GETFIELD, methodOwner.getInternalName(), fieldName, this.type.getDescriptor());
                 genNotNullAssertionForField(v, state, descriptor);
                 coerceTo(type, v);
             }
@@ -864,16 +859,13 @@ public abstract class StackValue {
         public void store(Type topOfStackType, InstructionAdapter v) {
             coerceFrom(topOfStackType, v);
             if (setter == null) {
-                v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), getPropertyName(),
-                                 this.type.getDescriptor()); }
+                assert fieldName != null : "Property should have either a setter or a field name: " + descriptor;
+                v.visitFieldInsn(isStatic ? PUTSTATIC : PUTFIELD, methodOwner.getInternalName(), fieldName, this.type.getDescriptor());
+            }
             else {
                 Method method = setter.getAsmMethod();
                 v.visitMethodInsn(setter.getInvokeOpcode(), setter.getOwner().getInternalName(), method.getName(), method.getDescriptor());
             }
-        }
-
-        private String getPropertyName() {
-            return name;
         }
 
         public boolean isPropertyWithBackingFieldInOuterClass() {

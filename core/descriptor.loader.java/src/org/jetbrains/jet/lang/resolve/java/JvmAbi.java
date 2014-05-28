@@ -51,27 +51,13 @@ public final class JvmAbi {
     }
 
     @NotNull
-    public static String getPropertyDelegateName(@NotNull Name name) {
-        return name.asString() + DELEGATED_PROPERTY_NAME_SUFFIX;
-    }
-
-    @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;
     }
 
     @NotNull
-    public static String getDefaultPropertyName(@NotNull Name propertyName, boolean isDelegated, boolean isExtensionProperty) {
-        if (isDelegated) {
-            return getPropertyDelegateName(propertyName);
-        }
-
-        String name = propertyName.asString();
-        if (isExtensionProperty) {
-            name += "$ext";
-        }
-        return name;
-
+    public static String getDefaultFieldNameForProperty(@NotNull Name propertyName, boolean isDelegated) {
+        return isDelegated ? propertyName.asString() + DELEGATED_PROPERTY_NAME_SUFFIX : propertyName.asString();
     }
 
     private JvmAbi() {

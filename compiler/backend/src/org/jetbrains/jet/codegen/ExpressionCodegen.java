@@ -1790,6 +1790,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         boolean isStatic = containingDeclaration instanceof PackageFragmentDescriptor;
         boolean isSuper = superExpression != null;
         boolean isInsideClass = isCallInsideSameClassAsDeclared(propertyDescriptor, context);
+        boolean isExtensionProperty = propertyDescriptor.getReceiverParameter() != null;
 
         JetType delegateType = getPropertyDelegateType(propertyDescriptor, bindingContext);
         boolean isDelegatedProperty = delegateType != null;
@@ -1859,17 +1860,22 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             owner = callableMethod.getOwner();
         }
 
-        String name;
-        if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
-            assert backingFieldContext instanceof FieldOwnerContext : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext" ;
-            name = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
-        } else {
-            name = JvmAbi.getDefaultPropertyName(propertyDescriptor.getName(), isDelegatedProperty, propertyDescriptor.getReceiverParameter() != null);
+        String fieldName;
+        if (isExtensionProperty && !isDelegatedProperty) {
+            fieldName = null;
+        }
+        else if (propertyDescriptor.getContainingDeclaration() == backingFieldContext.getContextDescriptor()) {
+            assert backingFieldContext instanceof FieldOwnerContext
+                    : "Actual context is " + backingFieldContext + " but should be instance of FieldOwnerContext";
+            fieldName = ((FieldOwnerContext) backingFieldContext).getFieldName(propertyDescriptor, isDelegatedProperty);
+        }
+        else {
+            fieldName = JvmAbi.getDefaultFieldNameForProperty(propertyDescriptor.getName(), isDelegatedProperty);
         }
 
         return StackValue.property(propertyDescriptor, owner,
                             typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
-                            isStatic, name, callableGetter, callableSetter, state);
+                            isStatic, fieldName, callableGetter, callableSetter, state);
 
     }
 

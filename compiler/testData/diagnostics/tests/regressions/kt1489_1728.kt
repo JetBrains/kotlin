@@ -26,5 +26,5 @@ class C {
 
 //KT-1728 Can't invoke extension property as a function
 
-val Int.ext : () -> Int = { 5 }
+val Int.ext : () -> Int get() = { 5 }
 val x = 1.ext()

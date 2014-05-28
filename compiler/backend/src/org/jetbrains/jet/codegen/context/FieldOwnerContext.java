@@ -44,16 +44,11 @@ public abstract class FieldOwnerContext<T extends DeclarationDescriptor> extends
     }
 
     @NotNull
-    public String getFieldName(@NotNull PropertyDescriptor descriptor, boolean isDelegated) {
+    public String getFieldName(@NotNull PropertyDescriptor possiblySubstitutedDescriptor, boolean isDelegated) {
+        PropertyDescriptor descriptor = possiblySubstitutedDescriptor.getOriginal();
         assert descriptor.getKind().isReal() : "Only declared properties can have backing fields: " + descriptor;
-        boolean isExtension = descriptor.getReceiverParameter() != null;
 
-        return getFieldName(descriptor.getOriginal(), isDelegated, isExtension);
-    }
-
-    @NotNull
-    private String getFieldName(@NotNull PropertyDescriptor descriptor, boolean isDelegated, boolean isExtension) {
-        String defaultPropertyName = JvmAbi.getDefaultPropertyName(descriptor.getName(), isDelegated, isExtension);
+        String defaultPropertyName = JvmAbi.getDefaultFieldNameForProperty(descriptor.getName(), isDelegated);
 
         Map<PropertyDescriptor, String> descriptor2Name = fieldNames.get(defaultPropertyName);
         if (descriptor2Name == null) {
