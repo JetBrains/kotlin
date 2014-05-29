@@ -68,18 +68,6 @@ public class OverridingUtil {
         return isOverridableByImpl(superDescriptor, subDescriptor, true);
     }
     
-    private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
-        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
-        ArrayList<JetType> parameters = new ArrayList<JetType>();
-        if (receiverParameter != null) {
-            parameters.add(receiverParameter.getType());
-        }
-        for (ValueParameterDescriptor valueParameterDescriptor : callableDescriptor.getValueParameters()) {
-            parameters.add(valueParameterDescriptor.getType());
-        }
-        return parameters;
-    }
-
     /**
      * @param forOverride true for override, false for overload
      */
@@ -169,7 +157,7 @@ public class OverridingUtil {
                     return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }
             }
-            
+
             return OverrideCompatibilityInfo.success();
 
         }
@@ -178,7 +166,19 @@ public class OverridingUtil {
 
         return OverrideCompatibilityInfo.success();
     }
-    
+
+    private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
+        ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
+        ArrayList<JetType> parameters = new ArrayList<JetType>();
+        if (receiverParameter != null) {
+            parameters.add(receiverParameter.getType());
+        }
+        for (ValueParameterDescriptor valueParameterDescriptor : callableDescriptor.getValueParameters()) {
+            parameters.add(valueParameterDescriptor.getType());
+        }
+        return parameters;
+    }
+
     private static JetType getUpperBound(JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
