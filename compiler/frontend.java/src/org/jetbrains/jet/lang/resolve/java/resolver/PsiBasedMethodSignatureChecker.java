@@ -40,8 +40,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.OverridingUtil.isOverridableBy;
-
 public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
     private static final Logger LOG = Logger.getInstance(PsiBasedMethodSignatureChecker.class);
 
@@ -77,7 +75,7 @@ public class PsiBasedMethodSignatureChecker implements MethodSignatureChecker {
 
         assert superFunctionSubstituted != null : "Couldn't substitute super function: " + superFunction + ", substitutor = " + substitutor;
 
-        OverridingUtil.OverrideCompatibilityInfo.Result overridableResult = isOverridableBy(superFunctionSubstituted, function).getResult();
+        OverridingUtil.OverrideCompatibilityInfo.Result overridableResult = OverridingUtil.DEFAULT.isOverridableBy(superFunctionSubstituted, function).getResult();
         boolean paramsOk = overridableResult == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
         boolean returnTypeOk = OverrideResolver.isReturnTypeOkForOverride(superFunctionSubstituted, function);
         if (!paramsOk || !returnTypeOk) {

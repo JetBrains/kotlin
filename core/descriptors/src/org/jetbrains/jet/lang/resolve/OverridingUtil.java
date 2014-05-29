@@ -45,11 +45,13 @@ public class OverridingUtil {
                     ExternalOverridabilityCondition.class.getClassLoader()).iterator()
             );
 
+    public static final OverridingUtil DEFAULT = new OverridingUtil();
+
     private OverridingUtil() {
     }
 
     @NotNull
-    public static OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+    public OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
         if (superDescriptor instanceof FunctionDescriptor) {
             if (!(subDescriptor instanceof FunctionDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
         }
@@ -71,7 +73,7 @@ public class OverridingUtil {
     /**
      * @param forOverride true for override, false for overload
      */
-    static OverrideCompatibilityInfo isOverridableByImpl(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor, boolean forOverride) {
+    OverrideCompatibilityInfo isOverridableByImpl(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor, boolean forOverride) {
 
         // TODO : Visibility
 
@@ -229,7 +231,7 @@ public class OverridingUtil {
     ) {
         Collection<CallableMemberDescriptor> bound = Lists.newArrayList();
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
-            OverrideCompatibilityInfo.Result result = isOverridableBy(fromSupertype, fromCurrent).getResult();
+            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
 
             boolean isVisible = Visibilities.isVisible(fromSupertype, current);
             switch (result) {
@@ -361,8 +363,8 @@ public class OverridingUtil {
                 continue;
             }
 
-            OverrideCompatibilityInfo.Result result1 = isOverridableBy(candidate, overrider).getResult();
-            OverrideCompatibilityInfo.Result result2 = isOverridableBy(overrider, candidate).getResult();
+            OverrideCompatibilityInfo.Result result1 = DEFAULT.isOverridableBy(candidate, overrider).getResult();
+            OverrideCompatibilityInfo.Result result2 = DEFAULT.isOverridableBy(overrider, candidate).getResult();
             if (result1 == OVERRIDABLE && result2 == OVERRIDABLE) {
                 overridable.add(candidate);
                 iterator.remove();

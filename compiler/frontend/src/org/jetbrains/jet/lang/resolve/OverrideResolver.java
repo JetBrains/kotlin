@@ -277,8 +277,8 @@ public class OverrideResolver {
             for (D otherD : candidates) {
                 CallableDescriptor other = transform.fun(otherD);
                 if (me.getOriginal() == other.getOriginal()
-                    && OverridingUtil.isOverridableBy(other, me).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
-                    && OverridingUtil.isOverridableBy(me, other).getResult() == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) {
+                    && OverridingUtil.DEFAULT.isOverridableBy(other, me).getResult() == OVERRIDABLE
+                    && OverridingUtil.DEFAULT.isOverridableBy(me, other).getResult() == OVERRIDABLE) {
                     continue outerLoop;
                 }
             }
@@ -838,7 +838,7 @@ public class OverrideResolver {
             //noinspection unchecked
             all.addAll((Collection) supertype.getMemberScope().getProperties(declared.getName()));
             for (CallableMemberDescriptor fromSuper : all) {
-                if (OverridingUtil.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
+                if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared).getResult() == OVERRIDABLE) {
                     if (Visibilities.isVisible(fromSuper, declared)) {
                         throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
                                                         " and visible but does not appear in its getOverriddenDescriptors()");

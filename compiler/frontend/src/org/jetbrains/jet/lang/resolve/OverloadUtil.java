@@ -34,7 +34,7 @@ public class OverloadUtil {
             return OverloadCompatibilityInfo.success();
         }
         
-        OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.isOverridableByImpl(a, b, false);
+        OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.DEFAULT.isOverridableByImpl(a, b, false);
         switch (overrideCompatibilityInfo.getResult()) {
             case OVERRIDABLE:
             case CONFLICT:

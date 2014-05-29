@@ -214,7 +214,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
 
     private static boolean haveSameSignatures(@NotNull CallableDescriptor memberOne, @NotNull CallableDescriptor memberTwo) {
         //isOverridableBy ignores return types
-        return OverridingUtil.isOverridableBy(memberOne, memberTwo).getResult() == OVERRIDABLE;
+        return OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo).getResult() == OVERRIDABLE;
     }
 
     @NotNull

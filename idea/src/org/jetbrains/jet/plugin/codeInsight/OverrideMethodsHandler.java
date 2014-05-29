@@ -77,8 +77,8 @@ public class OverrideMethodsHandler extends OverrideImplementMethodsHandler {
             for (CallableMemberDescriptor another : filteredMembers) {
 //                if (one == another) continue;
                 factoredMembers.put(one, one);
-                if (OverridingUtil.isOverridableBy(one, another).getResult() == OVERRIDABLE
-                    || OverridingUtil.isOverridableBy(another, one).getResult() == OVERRIDABLE) {
+                if (OverridingUtil.DEFAULT.isOverridableBy(one, another).getResult() == OVERRIDABLE
+                    || OverridingUtil.DEFAULT.isOverridableBy(another, one).getResult() == OVERRIDABLE) {
                     factoredMembers.put(one, another);
                 }
             }
