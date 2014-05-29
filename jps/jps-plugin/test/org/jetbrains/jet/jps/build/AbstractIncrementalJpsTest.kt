@@ -28,6 +28,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.jet.config.IncrementalCompilation
 import java.util.ArrayList
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import kotlin.test.fail
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
@@ -54,6 +55,14 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         } finally {
             descriptor.release()
         }
+    }
+
+    private fun make(): String {
+        return buildGetLog()
+    }
+
+    private fun rebuild() {
+        buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
     }
 
     private fun getModificationsToPerform(): List<List<Modification>> {
@@ -91,6 +100,24 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
+    private fun rebuildAndCheckOutput() {
+        val outDir = File(getAbsolutePath("out"))
+        val outAfterMake = File(getAbsolutePath("out-after-make"))
+        FileUtil.copyDir(outDir, outAfterMake)
+
+        rebuild()
+
+        assertEqualDirectories(outDir, outAfterMake, { it.name == "script.xml" })
+
+        FileUtil.delete(outAfterMake)
+    }
+
+    private fun clearCachesRebuildAndCheckOutput() {
+        FileUtil.delete(BuildDataPathsImpl(myDataStorageRoot).getDataStorageRoot()!!)
+
+        rebuildAndCheckOutput()
+    }
+
     protected fun doTest(testDataPath: String) {
         if (!IncrementalCompilation.ENABLED) {
             return
@@ -107,7 +134,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
 
-        buildGetLog()
+        make()
 
         val modifications = getModificationsToPerform()
         val logs = ArrayList<String>()
@@ -115,19 +142,14 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         for (step in modifications) {
             step.forEach { it.perform(workDir) }
 
-            val log = buildGetLog()
+            val log = make()
             logs.add(log)
         }
 
         UsefulTestCase.assertSameLinesWithFile(File(testDataDir, "build.log").getAbsolutePath(), logs.makeString("\n\n"))
 
-        val outDir = File(getAbsolutePath("out"))
-        val outAfterMake = File(getAbsolutePath("out-after-make"))
-        FileUtil.copyDir(outDir, outAfterMake)
-
-        buildGetLog(CompileScopeTestBuilder.rebuild().allModules())
-
-        assertEqualDirectories(outDir, outAfterMake, { it.name == "script.xml" })
+        rebuildAndCheckOutput()
+        clearCachesRebuildAndCheckOutput()
     }
 
     override fun doGetProjectDir(): File? = workDir
