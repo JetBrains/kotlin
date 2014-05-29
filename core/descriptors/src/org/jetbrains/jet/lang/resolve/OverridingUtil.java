@@ -99,7 +99,10 @@ public class OverridingUtil {
         List<JetType> subValueParameters = compiledValueParameters(subDescriptor);
 
         if (forOverride) {
-            if (superDescriptor.getTypeParameters().size() != subDescriptor.getTypeParameters().size()) {
+            List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
+            List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
+
+            if (superTypeParameters.size() != subTypeParameters.size()) {
                 for (int i = 0; i < superValueParameters.size(); ++i) {
                     JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
                     JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
@@ -110,12 +113,6 @@ public class OverridingUtil {
                 }
                 return OverrideCompatibilityInfo.valueParameterTypeMismatch(null, null, OverrideCompatibilityInfo.Result.CONFLICT);
             }
-        }
-
-        if (forOverride) {
-
-            List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
-            List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
 
             BiMap<TypeConstructor, TypeConstructor> axioms = HashBiMap.create();
             for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
