@@ -16,8 +16,6 @@
 
 package org.jetbrains.jet.lang.types.checker;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeConstructor;
@@ -25,7 +23,9 @@ import org.jetbrains.jet.lang.types.TypeConstructor;
 public class JetTypeChecker {
 
     public static final JetTypeChecker INSTANCE = new JetTypeChecker();
-    public static final HashBiMap<TypeConstructor, TypeConstructor> EMPTY_AXIOMS = HashBiMap.create();
+    public interface TypeConstructorEquality {
+        boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b);
+    }
 
     private JetTypeChecker() {
     }
@@ -39,19 +39,11 @@ public class JetTypeChecker {
         return TYPE_CHECKER.equalTypes(a, b);
     }
 
-    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull final BiMap<TypeConstructor, TypeConstructor> equalityAxioms) {
+    public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull final TypeConstructorEquality equalityAxioms) {
         return new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {
             @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor constructor1, @NotNull TypeConstructor constructor2) {
-                if (!constructor1.equals(constructor2)) {
-                    TypeConstructor img1 = equalityAxioms.get(constructor1);
-                    TypeConstructor img2 = equalityAxioms.get(constructor2);
-                    if (!(img1 != null && img1.equals(constructor2)) &&
-                            !(img2 != null && img2.equals(constructor1))) {
-                        return false;
-                    }
-                }
-                return true;
+                return constructor1.equals(constructor2) || equalityAxioms.equals(constructor1, constructor2);
             }
         }).equalTypes(a, b);
     }
