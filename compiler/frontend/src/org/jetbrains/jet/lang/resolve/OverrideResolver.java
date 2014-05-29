@@ -24,6 +24,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.LinkedMultiMap;
 import com.intellij.util.containers.MultiMap;
+import com.intellij.util.containers.hash.EqualityPolicy;
 import kotlin.Function1;
 import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
@@ -40,6 +41,7 @@ import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
+import org.jetbrains.jet.utils.HashSetUtil;
 
 import javax.inject.Inject;
 import java.util.*;
@@ -225,14 +227,37 @@ public class OverrideResolver {
     @NotNull
     private static <D> Set<D> filterOverrides(
             @NotNull Set<D> candidateSet,
-            @NotNull Function<? super D, ? extends CallableDescriptor> transform,
+            @NotNull final Function<? super D, ? extends CallableDescriptor> transform,
             @NotNull Filtering filtering
     ) {
+        if (candidateSet.size() <= 1) return candidateSet;
+
+        // In a multi-module project different "copies" of the same class may be present in different libraries,
+        // that's why we use structural equivalence for members (DescriptorEquivalenceForOverrides).
+        // Here we filter out structurally equivalent descriptors before processing overrides, because such descriptors
+        // "override" each other (overrides(f, g) = overrides(g, f) = true) and the code below removes them all from the
+        // candidates, unless we first compute noDuplicates
+        Set<D> noDuplicates = HashSetUtil.linkedHashSet(
+                candidateSet,
+                new EqualityPolicy<D>() {
+                    @Override
+                    public int getHashCode(D d) {
+                        return DescriptorUtils.getFqName(transform.fun(d).getContainingDeclaration()).hashCode();
+                    }
+
+                    @Override
+                    public boolean isEqual(D d1, D d2) {
+                        CallableDescriptor f = transform.fun(d1);
+                        CallableDescriptor g = transform.fun(d2);
+                        return DescriptorEquivalenceForOverrides.instance$.areEquivalent(f.getOriginal(), g.getOriginal());
+                    }
+                });
+
         Set<D> candidates = Sets.newLinkedHashSet();
         outerLoop:
-        for (D meD : candidateSet) {
+        for (D meD : noDuplicates) {
             CallableDescriptor me = transform.fun(meD);
-            for (D otherD : candidateSet) {
+            for (D otherD : noDuplicates) {
                 CallableDescriptor other = transform.fun(otherD);
                 if (me == other) continue;
                 if (filtering == Filtering.RETAIN_OVERRIDING) {
@@ -259,13 +284,22 @@ public class OverrideResolver {
             }
             candidates.add(meD);
         }
+
+        assert !candidates.isEmpty() : "All candidates filtered out from " + candidateSet;
+
         return candidates;
     }
 
+    // check whether f overrides g
     public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
+        // This first check cover the case of duplicate classes in different modules:
+        // when B is defined in modules m1 and m2, and C (indirectly) inherits from both versions,
+        // we'll be getting sets of members that do not override each other, but are structurally equivalent.
+        // As other code relies on no equal descriptors passed here, we guard against f == g, but this may not be necessary
+        if (!f.equals(g) && DescriptorEquivalenceForOverrides.instance$.areEquivalent(f.getOriginal(), g.getOriginal())) return true;
         CallableDescriptor originalG = g.getOriginal();
         for (D overriddenFunction : getAllOverriddenDescriptors(f)) {
-            if (originalG.equals(overriddenFunction.getOriginal())) return true;
+            if (DescriptorEquivalenceForOverrides.instance$.areEquivalent(originalG, overriddenFunction.getOriginal())) return true;
         }
         return false;
     }
