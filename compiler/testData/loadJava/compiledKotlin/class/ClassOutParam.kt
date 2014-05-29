@@ -1,3 +1,3 @@
 package test
 
-class Juice<in T>
+class Juice<out T>
