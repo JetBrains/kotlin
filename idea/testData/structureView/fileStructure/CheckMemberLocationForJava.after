@@ -1,14 +1,20 @@
--InheritedJavaMembers.kt
- -InheritedJavaMembers
-  call(): String? location=→Callable
+-CheckMemberLocationForJava.kt
+ -Some
   clone(): Any location=→Object
   equals(Any?): Boolean location=→Object
   finalize(): Unit location=→Object
+  foo123(): Unit location=→A3
+  foo12_(): Unit location=→A2
+  foo1_3(): Unit location=→A3
+  foo1__(): Unit location=→A1
+  foo_23(): Unit location=→A3
+  foo_2_(): Unit location=→A2
+  foo__3(): Unit location=→A3
+  foo___(): Unit location=→First
   getClass(): Class<out Any?> location=→Object
   hashCode(): Int location=→Object
   notify(): Unit location=→Object
   notifyAll(): Unit location=→Object
-  test(): Unit
   toString(): String location=→Object
   wait(): Unit location=→Object
   wait(Long): Unit location=→Object

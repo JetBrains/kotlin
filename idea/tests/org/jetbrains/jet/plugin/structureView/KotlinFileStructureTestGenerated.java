@@ -36,6 +36,16 @@ public class KotlinFileStructureTestGenerated extends AbstractKotlinFileStructur
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("idea/testData/structureView/fileStructure"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
     
+    @TestMetadata("CheckLocationForKotlin.kt")
+    public void testCheckLocationForKotlin() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/CheckLocationForKotlin.kt");
+    }
+    
+    @TestMetadata("CheckMemberLocationForJava.kt")
+    public void testCheckMemberLocationForJava() throws Exception {
+        doTest("idea/testData/structureView/fileStructure/CheckMemberLocationForJava.kt");
+    }
+    
     @TestMetadata("DoNotShowParentsInLocationJava.kt")
     public void testDoNotShowParentsInLocationJava() throws Exception {
         doTest("idea/testData/structureView/fileStructure/DoNotShowParentsInLocationJava.kt");

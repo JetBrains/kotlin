@@ -33,12 +33,14 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassInitializer;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.psi.JetPsiUtil;
-import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.plugin.JetDescriptorIconProvider;
-import org.jetbrains.jet.renderer.DescriptorRenderer;
 
 import javax.swing.*;
 import java.util.Set;
+
+import static org.jetbrains.jet.lang.resolve.OverrideResolver.filterOutOverridden;
+import static org.jetbrains.jet.lang.resolve.OverrideResolver.getAllOverriddenDeclarations;
+import static org.jetbrains.jet.renderer.DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES;
 
 class KotlinStructureElementPresentation implements ColoredItemPresentation, LocationPresentation {
     private final TextAttributesKey attributesKey;
@@ -55,7 +57,7 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
         this.isInherited = isInherited;
         attributesKey = getElementAttributesKey(isInherited, navigatablePsiElement);
         elementText = getElementText(navigatablePsiElement, descriptor);
-        locationString = isInherited ? getElementLocationString(descriptor) : null;
+        locationString = getElementLocationString(isInherited, descriptor);
         icon = getElementIcon(navigatablePsiElement, descriptor);
     }
 
@@ -118,7 +120,7 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
     @Nullable
     private static String getElementText(@NotNull NavigatablePsiElement navigatablePsiElement, @Nullable DeclarationDescriptor descriptor) {
         if (descriptor != null) {
-            return DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(descriptor);
+            return ONLY_NAMES_WITH_SHORT_TYPES.render(descriptor);
         }
 
         String text = navigatablePsiElement.getName();
@@ -134,20 +136,22 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
     }
 
     @Nullable
-    private static String getElementLocationString(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof CallableMemberDescriptor) {
-            Set<CallableMemberDescriptor>
-                    baseCallableDescriptors = OverrideResolver.getDeepestSuperDeclarations((CallableMemberDescriptor) descriptor);
-            CallableMemberDescriptor first = ContainerUtil.getFirstItem(baseCallableDescriptors);
-            if (first != null) {
-                DeclarationDescriptor typeDescriptor = first.getContainingDeclaration();
+    private static String getElementLocationString(boolean isInherited, @Nullable DeclarationDescriptor descriptor) {
+        if (!(isInherited && descriptor instanceof CallableMemberDescriptor)) return null;
 
-                String typeName = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(typeDescriptor);
-                return withRightArrow(typeName);
-            }
+        CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
+
+        if (callableMemberDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+            return withRightArrow(ONLY_NAMES_WITH_SHORT_TYPES.render(callableMemberDescriptor.getContainingDeclaration()));
         }
 
-        return null;
+        Set<CallableMemberDescriptor> overridingDescriptors = filterOutOverridden(getAllOverriddenDeclarations(callableMemberDescriptor));
+        CallableMemberDescriptor firstOverriding = ContainerUtil.getFirstItem(overridingDescriptors);
+        if (firstOverriding != null) {
+            return withRightArrow(ONLY_NAMES_WITH_SHORT_TYPES.render(firstOverriding.getContainingDeclaration()));
+        }
+
+        throw new IllegalStateException("At least one element should be returned");
     }
 
     private static String withRightArrow(String str) {
