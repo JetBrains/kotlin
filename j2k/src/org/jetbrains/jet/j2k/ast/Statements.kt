@@ -20,22 +20,18 @@ package org.jetbrains.jet.j2k.ast
 abstract class Statement() : Element {
     object Empty : Statement() {
         override fun toKotlin() = ""
-        override fun isEmpty() = true
+
+        override val isEmpty: Boolean
+            get() = true
     }
 }
 
 open class DeclarationStatement(val elements: List<Element>) : Statement() {
-    override fun toKotlin(): String {
-        return elements.filter { it is LocalVariable }.map { convertDeclaration(it as LocalVariable) }.makeString("\n")
-    }
+    override fun toKotlin(): String
+            = elements.filterIsInstance(javaClass<LocalVariable>()).map { convertDeclaration(it) }.makeString("\n")
 
-    private fun convertDeclaration(v: LocalVariable): String {
-        val varKeyword: String? = (if (v.isImmutable())
-            "val"
-        else
-            "var")
-        return varKeyword + " " + v.toKotlin()
-    }
+    private fun convertDeclaration(v: LocalVariable): String
+            = (if (v.isImmutable) "val" else "var") + " " + v.toKotlin()
 }
 
 open class ExpressionListStatement(val expressions: List<Expression>) : Expression() {
@@ -80,7 +76,7 @@ open class ForeachStatement(
         val expression: Expression,
         val body: Element
 ) : Statement() {
-    override fun toKotlin() = "for (" + variable.identifier.name + " in " +
+    override fun toKotlin() = "for (" + variable.identifier.toKotlin() + " in " +
     expression.toKotlin() + ")\n" + body.toKotlin()
 }
 
@@ -104,10 +100,16 @@ open class ContinueStatement(val label: Identifier = Identifier.Empty) : Stateme
 
 open class TryStatement(val block: Block, val catches: List<CatchStatement>, val finallyBlock: Block) : Statement() {
     override fun toKotlin(): String {
-        return "try\n" + block.toKotlin() + "\n" + catches.toKotlin("\n") + "\n" + (if (finallyBlock.isEmpty())
-            ""
-        else
-            "finally\n" + finallyBlock.toKotlin())
+        val builder = StringBuilder()
+                .append("try\n")
+                .append(block.toKotlin())
+                .append("\n")
+                .append(catches.toKotlin("\n"))
+                .append("\n")
+        if (!finallyBlock.isEmpty) {
+            builder.append("finally\n").append(finallyBlock.toKotlin())
+        }
+        return builder.toString()
     }
 }
 
@@ -126,14 +128,9 @@ open class SwitchContainer(val expression: Expression, val caseContainers: List<
 }
 
 open class CaseContainer(val caseStatement: List<Element>, statements: List<Statement>) : Statement() {
-    private val myBlock: Block
+    private val block = Block(statements.filterNot { it is BreakStatement || it is ContinueStatement }, true)
 
-    {
-        val newStatements = statements.filterNot { it is BreakStatement || it is ContinueStatement }
-        myBlock = Block(newStatements, true)
-    }
-
-    override fun toKotlin() = caseStatement.toKotlin(", ") + " -> " + myBlock.toKotlin()
+    override fun toKotlin() = caseStatement.toKotlin(", ") + " -> " + block.toKotlin()
 }
 
 open class SwitchLabelStatement(val expression: Expression) : Statement() {
@@ -152,5 +149,5 @@ open class SynchronizedStatement(val expression: Expression, val block: Block) :
 
 class StatementList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
     val statements: List<Statement>
-        get() = elements.filter { it is Statement }.map { it as Statement }
+        get() = elements.filterIsInstance(javaClass<Statement>())
 }

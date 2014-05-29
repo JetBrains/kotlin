@@ -17,30 +17,27 @@
 package org.jetbrains.jet.j2k.ast
 
 
-open class Identifier(
+class Identifier(
         val name: String,
-        val myNullable: Boolean = true,
-        val quotingNeeded: Boolean = true
+        public override val isNullable: Boolean = true,
+        private val quotingNeeded: Boolean = true
 ) : Expression() {
-    override fun isEmpty() = name.length() == 0
 
-    private open fun ifNeedQuote(): String {
-        if (quotingNeeded && (ONLY_KOTLIN_KEYWORDS.contains(name)) || name.contains("$")) {
+    override val isEmpty: Boolean
+        get() = name.isEmpty()
+
+    override fun toKotlin(): String {
+        if (quotingNeeded && ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$")) {
             return quote(name)
         }
 
         return name
     }
 
-    override fun toKotlin(): String = ifNeedQuote()
-    override fun isNullable(): Boolean = myNullable
+    private fun quote(str: String): String = "`" + str + "`"
 
     class object {
         val Empty = Identifier("")
-
-        private open fun quote(str: String): String {
-            return "`" + str + "`"
-        }
 
         val ONLY_KOTLIN_KEYWORDS: Set<String> = setOf(
                 "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"

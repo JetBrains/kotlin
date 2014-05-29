@@ -27,11 +27,11 @@ class LocalVariable(
         val converter: Converter
 ) : Expression() {
 
-    fun isImmutable(): Boolean =
-            converter.settings.forceLocalVariableImmutability || modifiersSet.contains(Modifier.FINAL)
+    val isImmutable: Boolean
+        get() = converter.settings.forceLocalVariableImmutability || modifiersSet.contains(Modifier.FINAL)
 
     override fun toKotlin(): String {
-        if (initializer.isEmpty()) {
+        if (initializer.isEmpty) {
             return "${identifier.toKotlin()} : ${javaType.toKotlin()}"
         }
 

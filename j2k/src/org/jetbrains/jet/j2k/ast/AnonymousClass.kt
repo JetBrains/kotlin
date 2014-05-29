@@ -26,8 +26,9 @@ class AnonymousClass(converter: Converter, members: List<Element>)
         MemberComments.Empty,
         Collections.emptySet<Modifier>(),
         TypeParameterList.Empty,
-        Collections.emptyList<Type>(),
-        Collections.emptyList<Expression>(),
-        Collections.emptyList<Type>(), members) {
+        listOf(),
+        listOf(),
+        listOf(),
+        members) {
     override fun toKotlin() = bodyToKotlin()
 }

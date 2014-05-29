@@ -21,71 +21,61 @@ import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.ast.types.Type
 
-open class ElementVisitor(val myConverter: Converter) : JavaElementVisitor() {
-    protected var myResult: Element = Element.Empty
+class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
+    public var result: Element = Element.Empty
+        protected set
 
-    fun getConverter(): Converter {
-        return myConverter
-    }
-
-    open fun getResult(): Element {
-        return myResult
-    }
-
-    override fun visitLocalVariable(variable: PsiLocalVariable?) {
-        val theVariable = variable!!
-        var kType = myConverter.convertType(theVariable.getType(), isAnnotatedAsNotNull(theVariable.getModifierList()))
-        if (theVariable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(theVariable.getInitializer())) {
+    override fun visitLocalVariable(variable: PsiLocalVariable) {
+        var kType = converter.convertType(variable.getType(), isAnnotatedAsNotNull(variable.getModifierList()))
+        if (variable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(variable.getInitializer())) {
             kType = kType.convertedToNotNull();
         }
-        myResult = LocalVariable(Identifier(theVariable.getName()!!),
-                                 myConverter.convertModifierList(theVariable.getModifierList()),
+        result = LocalVariable(Identifier(variable.getName()!!),
+                                 converter.convertModifierList(variable.getModifierList()),
                                  kType,
-                                 myConverter.convertExpression(theVariable.getInitializer(), theVariable.getType()),
-                                 myConverter)
+                                 converter.convertExpression(variable.getInitializer(), variable.getType()),
+                                 converter)
     }
 
-    override fun visitExpressionList(list: PsiExpressionList?) {
-        myResult = ExpressionList(myConverter.convertExpressions(list!!.getExpressions()))
+    override fun visitExpressionList(list: PsiExpressionList) {
+        result = ExpressionList(converter.convertExpressions(list.getExpressions()))
     }
 
-    override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement?) {
-        val theReference = reference!!
-        val types: List<Type> = myConverter.convertTypes(theReference.getTypeParameters())
-        if (!theReference.isQualified()) {
-            myResult = ReferenceElement(Identifier(theReference.getReferenceName()!!), types)
+    override fun visitReferenceElement(reference: PsiJavaCodeReferenceElement) {
+        val types = converter.convertTypes(reference.getTypeParameters())
+        if (!reference.isQualified()) {
+            result = ReferenceElement(Identifier(reference.getReferenceName()!!), types)
         }
         else {
-            var result: String = Identifier(reference.getReferenceName()!!).toKotlin()
-            var qualifier: PsiElement? = theReference.getQualifier()
-            while (qualifier != null)
-            {
-                val p: PsiJavaCodeReferenceElement = (qualifier as PsiJavaCodeReferenceElement)
-                result = Identifier(p.getReferenceName()!!).toKotlin() + "." + result
+            var code = Identifier(reference.getReferenceName()!!).toKotlin()
+            var qualifier = reference.getQualifier()
+            while (qualifier != null) {
+                val p = qualifier as PsiJavaCodeReferenceElement
+                code = Identifier(p.getReferenceName()!!).toKotlin() + "." + code
                 qualifier = p.getQualifier()
             }
-            myResult = ReferenceElement(Identifier(result), types)
+            result = ReferenceElement(Identifier(code), types)
         }
     }
 
-    override fun visitTypeElement(`type`: PsiTypeElement?) {
-        myResult = TypeElement(myConverter.convertType(`type`!!.getType()))
+    override fun visitTypeElement(`type`: PsiTypeElement) {
+        result = TypeElement(converter.convertType(`type`.getType()))
     }
 
-    override fun visitTypeParameter(classParameter: PsiTypeParameter?) {
-        myResult = TypeParameter(Identifier(classParameter!!.getName()!!),
-                                 classParameter.getExtendsListTypes().map { myConverter.convertType(it) })
+    override fun visitTypeParameter(classParameter: PsiTypeParameter) {
+        result = TypeParameter(Identifier(classParameter.getName()!!),
+                                 classParameter.getExtendsListTypes().map { converter.convertType(it) })
     }
 
-    override fun visitParameterList(list: PsiParameterList?) {
-        myResult = ParameterList(myConverter.convertParameterList(list!!.getParameters()).requireNoNulls())
+    override fun visitParameterList(list: PsiParameterList) {
+        result = ParameterList(converter.convertParameterList(list.getParameters()))
     }
 
-    override fun visitComment(comment: PsiComment?) {
-        myResult = Comment(comment!!.getText()!!)
+    override fun visitComment(comment: PsiComment) {
+        result = Comment(comment.getText()!!)
     }
 
-    override fun visitWhiteSpace(space: PsiWhiteSpace?) {
-        myResult = WhiteSpace(space!!.getText()!!)
+    override fun visitWhiteSpace(space: PsiWhiteSpace) {
+        result = WhiteSpace(space.getText()!!)
     }
 }

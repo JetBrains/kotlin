@@ -19,16 +19,16 @@ package org.jetbrains.jet.j2k.ast
 
 class WhiteSpace(val text: String) : Element {
     override fun toKotlin() = text
-    override fun isEmpty() = text.isEmpty()
+
+    override val isEmpty: Boolean
+        get() = text.isEmpty()
 
     fun compareTo(other: WhiteSpace): Int {
 
         fun newLinesCount(w: WhiteSpace) = w.text.count { it == '\n' }
 
         val lineCountDiff = newLinesCount(this) - newLinesCount(other)
-        if (lineCountDiff != 0) {
-            return lineCountDiff
-        }
+        if (lineCountDiff != 0) return lineCountDiff
 
         fun spacesCount(w: WhiteSpace) = w.text.count { it == ' ' }
 

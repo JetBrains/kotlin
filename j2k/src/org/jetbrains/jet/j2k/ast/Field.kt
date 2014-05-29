@@ -48,7 +48,7 @@ open class Field(
     override fun toKotlin(): String {
         val declaration: String = commentsToKotlin() +
         modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
-        if (initializer.isEmpty()) {
+        if (initializer.isEmpty) {
             return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)
                 ""
             else

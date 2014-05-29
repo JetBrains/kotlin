@@ -56,7 +56,7 @@ public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
                 elements
             }
             is JetTypeParameter -> toPsiTypeParameters()
-            else -> Collections.emptyList()
+            else -> listOf()
         }
 
 public fun PsiElement.toLightMethods(): List<PsiMethod> =
@@ -66,7 +66,7 @@ public fun PsiElement.toLightMethods(): List<PsiMethod> =
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
             is PsiMethod -> Collections.singletonList(this)
-            else -> Collections.emptyList()
+            else -> listOf()
         }
 
 public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
@@ -102,13 +102,13 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
 
 public fun JetTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
     val paramList = getParentByType(javaClass<JetTypeParameterList>())
-    if (paramList == null) return Collections.emptyList()
+    if (paramList == null) return listOf()
 
     val paramIndex = paramList.getParameters().indexOf(this)
-    val lightOwners = paramList.getParentByType(javaClass<JetDeclaration>())?.toLightElements()
+    val jetDeclaration = paramList.getParentByType(javaClass<JetDeclaration>()) ?: return listOf()
+    val lightOwners = jetDeclaration.toLightElements()
 
-    return lightOwners?.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
-        ?: Collections.emptyList()
+    return lightOwners.map { lightOwner -> (lightOwner as PsiTypeParameterListOwner).getTypeParameters()[paramIndex] }
 }
 
 // Returns original declaration if given PsiElement is a Kotlin light element, and element itself otherwise

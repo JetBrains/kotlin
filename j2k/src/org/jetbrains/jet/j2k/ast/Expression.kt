@@ -18,12 +18,11 @@ package org.jetbrains.jet.j2k.ast
 
 
 abstract class Expression() : Statement() {
-    open fun isNullable(): Boolean {
-        return false
-    }
+    open val isNullable: Boolean get() = false
 
     object Empty : Expression() {
         override fun toKotlin() = ""
-        override fun isEmpty() = true
+
+        override val isEmpty: Boolean get() = true
     }
 }

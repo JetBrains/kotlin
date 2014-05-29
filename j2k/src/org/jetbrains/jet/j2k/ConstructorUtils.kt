@@ -19,9 +19,9 @@ package org.jetbrains.jet.j2k
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.PsiElement
 import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
+import com.intellij.psi.PsiReference
 
 fun isConstructorPrimary(constructor: PsiMethod): Boolean {
     val parent = constructor.getParent()
@@ -30,8 +30,9 @@ fun isConstructorPrimary(constructor: PsiMethod): Boolean {
             return true
         }
         else {
-            val c = getPrimaryConstructorForThisCase(parent)
-            if (c != null && c.hashCode() == constructor.hashCode()) {
+            val primary = getPrimaryConstructorForThisCase(parent)
+            //TODO: I do not understand code below
+            if (primary != null && primary.hashCode() == constructor.hashCode()) {
                 return true
             }
         }
@@ -39,37 +40,39 @@ fun isConstructorPrimary(constructor: PsiMethod): Boolean {
     return false
 }
 
-private fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
-    val tv = FindPrimaryConstructorVisitor()
-    psiClass.accept(tv)
-    return tv.getPrimaryConstructor()
-}
+fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
+    class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
+        private val resolvedConstructors = LinkedHashSet<PsiMethod>()
 
-private class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
-    private val myResolvedConstructors = LinkedHashSet<PsiMethod>()
+        override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+            expression.getReferences()
+                    .filter { it.getCanonicalText() == "this" }
+                    .map { it.resolve() }
+                    .filterIsInstance(javaClass<PsiMethod>())
+                    .filterTo(resolvedConstructors) { it.isConstructor() }
+        }
 
-    override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
-        for (r in expression?.getReferences()!!) {
-            if (r.getCanonicalText() == "this") {
-                val res: PsiElement? = r.resolve()
-                if (res is PsiMethod && res.isConstructor()) {
-                    myResolvedConstructors.add(res)
-                }
+        val result: PsiMethod?
+            get() {
+                if (resolvedConstructors.isEmpty()) return null
+                //TODO: I do not understand code below
+                val first = resolvedConstructors.first()
+                return if (resolvedConstructors.all { it.hashCode() == first.hashCode() }) first else null
             }
-        }
     }
 
-    fun getPrimaryConstructor(): PsiMethod? {
-        if (myResolvedConstructors.size() > 0) {
-            val first: PsiMethod = myResolvedConstructors.iterator().next()
-            for (m in myResolvedConstructors)
-                if (m.hashCode() != first.hashCode()) {
-                    return null
-                }
-
-            return first
-        }
-        return null
-    }
+    val visitor = FindPrimaryConstructorVisitor()
+    psiClass.accept(visitor)
+    return visitor.result
 }
 
+fun isSuperConstructorRef(ref: PsiReference): Boolean {
+    if (ref.getCanonicalText().equals("super")) {
+        val baseConstructor = ref.resolve()
+        if (baseConstructor is PsiMethod && baseConstructor.isConstructor()) {
+            return true
+        }
+    }
+
+    return false
+}

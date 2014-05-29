@@ -18,5 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 open class ExpressionList(val expressions: List<Expression>) : Expression() {
     override fun toKotlin(): String = expressions.map { it.toKotlin() }.makeString(", ")
-    override fun isEmpty(): Boolean = expressions.isEmpty()
+
+    override val isEmpty: Boolean
+        get() = expressions.isEmpty()
 }

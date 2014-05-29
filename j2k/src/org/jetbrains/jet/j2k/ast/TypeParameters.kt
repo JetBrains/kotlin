@@ -56,7 +56,9 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element {
         return ""
     }
 
-    override fun isEmpty(): Boolean = parameters.isEmpty()
+
+    override val isEmpty: Boolean
+        get() = parameters.isEmpty()
 
     private fun hasWhere(): Boolean = parameters.any { it.hasWhere() }
 

@@ -23,11 +23,11 @@ fun Type.isPrimitive(): Boolean = this is PrimitiveType
 fun Type.isUnit(): Boolean = this == UnitType
 
 abstract class MayBeNullableType(nullable: Boolean, val converter: Converter) : Type {
-    override val nullable: Boolean = !converter.settings.forceNotNullTypes && nullable
+    override val isNullable: Boolean = !converter.settings.forceNotNullTypes && nullable
 }
 
 trait NotNullType : Type {
-    override val nullable: Boolean
+    override val isNullable: Boolean
         get() = false
 }
 
@@ -36,15 +36,14 @@ object UnitType: NotNullType {
 }
 
 trait Type : Element {
-
-    val nullable: Boolean
+    val isNullable: Boolean
 
     open fun convertedToNotNull(): Type {
-        if (nullable) throw UnsupportedOperationException("convertedToNotNull must be defined")
+        if (isNullable) throw UnsupportedOperationException("convertedToNotNull must be defined")
         return this
     }
 
     protected fun isNullableStr(): String? {
-        return if (nullable) "?" else ""
+        return if (isNullable) "?" else ""
     }
 }

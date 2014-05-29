@@ -19,43 +19,36 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
 import java.util.ArrayList
-import java.util.Collections
 import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
 import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.types.ArrayType
 
-open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter) {
-    {
-        myResult = Expression.Empty
-    }
+open class ExpressionVisitor(public val converter: Converter) : JavaElementVisitor() {
+    public var result: Expression = Expression.Empty
+        protected set
 
-    override fun getResult(): Expression {
-        return myResult as Expression
-    }
-
-    override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression?) {
+    override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression) {
         val assignment = PsiTreeUtil.getParentOfType(expression, javaClass<PsiAssignmentExpression>())
         val lvalue = assignment != null && expression == assignment.getLExpression();
-        myResult = ArrayAccessExpression(getConverter().convertExpression(expression?.getArrayExpression()),
-                                         getConverter().convertExpression(expression?.getIndexExpression()),
+        result = ArrayAccessExpression(converter.convertExpression(expression.getArrayExpression()),
+                                       converter.convertExpression(expression.getIndexExpression()),
                                          lvalue)
     }
 
-    override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression?) {
-        val expressionType = getConverter().convertType(expression?.getType())
+    override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
+        val expressionType = converter.convertType(expression.getType())
         assert(expressionType is ArrayType) { "Array initializer must have array type" }
-        myResult = ArrayInitializerExpression(expressionType as ArrayType,
-                                              getConverter().convertExpressions(expression?.getInitializers()!!))
+        result = ArrayInitializerExpression(expressionType as ArrayType,
+                                              converter.convertExpressions(expression.getInitializers()))
     }
 
-    override fun visitAssignmentExpression(expression: PsiAssignmentExpression?) {
-        val tokenType: IElementType = expression?.getOperationSign()?.getTokenType()!!
-        val secondOp: String = when(tokenType) {
+    override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
+        val tokenType = expression.getOperationSign().getTokenType()
+        val secondOp = when(tokenType) {
             JavaTokenType.GTGTEQ -> "shr"
             JavaTokenType.LTLTEQ -> "shl"
             JavaTokenType.XOREQ -> "xor"
@@ -65,61 +58,61 @@ open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter)
             else -> ""
         }
 
-        val lhs = getConverter().convertExpression(expression?.getLExpression()!!)
-        val rhs = getConverter().convertExpression(expression?.getRExpression()!!, expression?.getLExpression()?.getType())
+        val lhs = converter.convertExpression(expression.getLExpression())
+        val rhs = converter.convertExpression(expression.getRExpression()!!, expression.getLExpression().getType())
         if (!secondOp.isEmpty()) {
-            myResult = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), "=")
+            result = AssignmentExpression(lhs, BinaryExpression(lhs, rhs, secondOp), "=")
         }
         else {
-            myResult = AssignmentExpression(lhs, rhs, expression?.getOperationSign()?.getText()!!)
+            result = AssignmentExpression(lhs, rhs, expression.getOperationSign().getText()!!)
         }
     }
 
-    override fun visitBinaryExpression(expression: PsiBinaryExpression?) {
-        val lhs = getConverter().convertExpression(expression?.getLOperand()!!, expression?.getType())
-        val rhs = getConverter().convertExpression(expression?.getROperand(), expression?.getType())
-        if (expression?.getOperationSign()?.getTokenType() == JavaTokenType.GTGTGT) {
-            myResult = MethodCallExpression.build(lhs, "ushr", listOf(rhs))
+    override fun visitBinaryExpression(expression: PsiBinaryExpression) {
+        val lhs = converter.convertExpression(expression.getLOperand(), expression.getType())
+        val rhs = converter.convertExpression(expression.getROperand(), expression.getType())
+        if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT) {
+            result = MethodCallExpression.build(lhs, "ushr", listOf(rhs))
         }
         else {
-            myResult = BinaryExpression(lhs, rhs,
-                                        getOperatorString(expression?.getOperationSign()?.getTokenType()!!))
+            result = BinaryExpression(lhs, rhs,
+                                        getOperatorString(expression.getOperationSign().getTokenType()))
         }
     }
 
-    override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression?) {
-        myResult = ClassObjectAccessExpression(getConverter().convertTypeElement(expression?.getOperand()))
+    override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
+        result = ClassObjectAccessExpression(converter.convertTypeElement(expression.getOperand()))
     }
 
-    override fun visitConditionalExpression(expression: PsiConditionalExpression?) {
-        val condition: PsiExpression? = expression?.getCondition()
-        val `type`: PsiType? = condition?.getType()
-        val e: Expression = (if (`type` != null)
-            getConverter().convertExpression(condition, `type`)
+    override fun visitConditionalExpression(expression: PsiConditionalExpression) {
+        val condition = expression.getCondition()
+        val `type` = condition.getType()
+        val e = if (`type` != null)
+            converter.convertExpression(condition, `type`)
         else
-            getConverter().convertExpression(condition))
-        myResult = ParenthesizedExpression(IfStatement(e,
-                                                       getConverter().convertExpression(expression?.getThenExpression()),
-                                                       getConverter().convertExpression(expression?.getElseExpression())))
+            converter.convertExpression(condition)
+        result = ParenthesizedExpression(IfStatement(e,
+                                                       converter.convertExpression(expression.getThenExpression()),
+                                                       converter.convertExpression(expression.getElseExpression())))
     }
 
-    override fun visitExpressionList(list: PsiExpressionList?) {
-        myResult = ExpressionList(getConverter().convertExpressions(list!!.getExpressions()))
+    override fun visitExpressionList(list: PsiExpressionList) {
+        result = ExpressionList(converter.convertExpressions(list.getExpressions()))
     }
 
-    override fun visitInstanceOfExpression(expression: PsiInstanceOfExpression?) {
-        val checkType: PsiTypeElement? = expression?.getCheckType()
-        myResult = IsOperator(getConverter().convertExpression(expression?.getOperand()),
-                              myConverter.convertTypeElement(checkType))
+    override fun visitInstanceOfExpression(expression: PsiInstanceOfExpression) {
+        val checkType = expression.getCheckType()
+        result = IsOperator(converter.convertExpression(expression.getOperand()),
+                              converter.convertTypeElement(checkType))
     }
 
-    override fun visitLiteralExpression(expression: PsiLiteralExpression?) {
-        val value: Any? = expression?.getValue()
-        var text: String = expression?.getText()!!
-        val `type`: PsiType? = expression?.getType()
+    override fun visitLiteralExpression(expression: PsiLiteralExpression) {
+        val value = expression.getValue()
+        var text = expression.getText()!!
+        val `type` = expression.getType()
         if (`type` != null) {
-            val canonicalTypeStr: String? = `type`.getCanonicalText()
-            if (canonicalTypeStr?.equals("double")!! || canonicalTypeStr?.equals(JAVA_LANG_DOUBLE)!!) {
+            val canonicalTypeStr = `type`.getCanonicalText()
+            if (canonicalTypeStr == "double" || canonicalTypeStr == JAVA_LANG_DOUBLE) {
                 text = text.replace("D", "").replace("d", "")
                 if (!text.contains(".")) {
                     text += ".0"
@@ -127,124 +120,110 @@ open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter)
 
             }
 
-            if (canonicalTypeStr?.equals("float")!! || canonicalTypeStr?.equals(JAVA_LANG_FLOAT)!!) {
+            if (canonicalTypeStr == "float" || canonicalTypeStr == JAVA_LANG_FLOAT) {
                 text = text.replace("F", "").replace("f", "") + "." + OperatorConventions.FLOAT + "()"
             }
 
-            if (canonicalTypeStr?.equals("long")!! || canonicalTypeStr?.equals(JAVA_LANG_LONG)!!) {
+            if (canonicalTypeStr == "long" || canonicalTypeStr == JAVA_LANG_LONG) {
                 text = text.replace("L", "").replace("l", "")
             }
 
-            if (canonicalTypeStr?.equals("int")!! || canonicalTypeStr?.equals(JAVA_LANG_INTEGER)!!) {
-                text = (if (value != null) value.toString() else text)
+            if (canonicalTypeStr == "int" || canonicalTypeStr == JAVA_LANG_INTEGER) {
+                text = if (value != null) value.toString() else text
             }
         }
 
-        myResult = LiteralExpression(text)
+        result = LiteralExpression(text)
     }
 
-    override fun visitMethodCallExpression(expression: PsiMethodCallExpression?) {
-        convertMethodCallExpression(expression!!)
+    override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
+        convertMethodCallExpression(expression)
     }
 
     protected fun convertMethodCallExpression(expression: PsiMethodCallExpression) {
-        if (!SuperVisitor.isSuper(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
-            myResult = MethodCallExpression(getConverter().convertExpression(expression.getMethodExpression()),
-                                            getConverter().convertArguments(expression),
-                                            getConverter().convertTypes(expression.getTypeArguments()),
-                                            getConverter().convertType(expression.getType()).nullable)
+        if (!isSuperConstructorRef(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
+            result = MethodCallExpression(converter.convertExpression(expression.getMethodExpression()),
+                                            converter.convertArguments(expression),
+                                            converter.convertTypes(expression.getTypeArguments()),
+                                            converter.convertType(expression.getType()).isNullable)
         }
     }
 
-    override fun visitNewExpression(expression: PsiNewExpression?) {
-        if (expression?.getArrayInitializer() != null)
-        {
-            myResult = createNewEmptyArray(expression)
+    override fun visitNewExpression(expression: PsiNewExpression) {
+        if (expression.getArrayInitializer() != null) {
+            result = createNewEmptyArray(expression)
         }
-        else
-            if (expression?.getArrayDimensions()?.size!! > 0) {
-                myResult = createNewEmptyArrayWithoutInitialization(expression!!)
-            }
-            else
-            {
-                myResult = createNewClassExpression(expression)
-            }
+        else if (expression.getArrayDimensions().size > 0) {
+            result = createNewEmptyArrayWithoutInitialization(expression)
+        }
+        else {
+            result = createNewClassExpression(expression)
+        }
     }
 
-    private fun createNewClassExpression(expression: PsiNewExpression?): Expression {
-        val anonymousClass: PsiAnonymousClass? = expression?.getAnonymousClass()
-        val constructor: PsiMethod? = expression?.resolveMethod()
-        var classReference: PsiJavaCodeReferenceElement? = expression?.getClassOrAnonymousClassReference()
-        val isNotConvertedClass: Boolean = classReference != null && !getConverter().getClassIdentifiers().contains(classReference?.getQualifiedName())
-        var argumentList: PsiExpressionList? = expression?.getArgumentList()
-        var arguments: Array<PsiExpression> = (if (argumentList != null)
-            argumentList?.getExpressions()!!
-        else
-            array<PsiExpression>())
-        if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass)
-        {
-            return NewClassExpression(getConverter().convertElement(classReference),
-                                      getConverter().convertArguments(expression!!),
-                                      getConverter().convertExpression(expression.getQualifier()),
-                                      (if (anonymousClass != null)
-                                          getConverter().convertAnonymousClass(anonymousClass)
-                                      else
-                                          null))
+    private fun createNewClassExpression(expression: PsiNewExpression): Expression {
+        val anonymousClass = expression.getAnonymousClass()
+        val constructor = expression.resolveMethod()
+        val classReference = expression.getClassOrAnonymousClassReference()
+        val isNotConvertedClass = classReference != null && !converter.getClassIdentifiers().contains(classReference.getQualifiedName())
+        val argumentList = expression.getArgumentList()
+        var arguments = argumentList?.getExpressions() ?: array()
+        if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
+            return NewClassExpression(converter.convertElement(classReference),
+                                      converter.convertArguments(expression),
+                                      converter.convertExpression(expression.getQualifier()),
+                                      if (anonymousClass != null) converter.convertAnonymousClass(anonymousClass) else null)
         }
 
-        val reference: PsiJavaCodeReferenceElement? = expression?.getClassReference()
-        val typeParameters: List<Type> = (if (reference != null)
-            getConverter().convertTypes(reference.getTypeParameters())
-        else
-            Collections.emptyList<Type>())
+        val reference = expression.getClassReference()
+        val typeParameters = if (reference != null) converter.convertTypes(reference.getTypeParameters()) else listOf()
         return CallChainExpression(Identifier(constructor.getName(), false),
-                                   MethodCallExpression(Identifier("init"), getConverter().convertExpressions(arguments), typeParameters, false))
+                                   MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
     }
 
     private fun createNewEmptyArrayWithoutInitialization(expression: PsiNewExpression): Expression {
         return ArrayWithoutInitializationExpression(
-                getConverter().convertType(expression.getType(), true),
-                getConverter().convertExpressions(expression.getArrayDimensions()))
+                converter.convertType(expression.getType(), true),
+                converter.convertExpressions(expression.getArrayDimensions()))
     }
 
-    private fun createNewEmptyArray(expression: PsiNewExpression?): Expression {
-        return getConverter().convertExpression(expression?.getArrayInitializer())
+    private fun createNewEmptyArray(expression: PsiNewExpression): Expression {
+        return converter.convertExpression(expression.getArrayInitializer())
     }
 
-    override fun visitParenthesizedExpression(expression: PsiParenthesizedExpression?) {
-        myResult = ParenthesizedExpression(getConverter().convertExpression(expression?.getExpression()))
+    override fun visitParenthesizedExpression(expression: PsiParenthesizedExpression) {
+        result = ParenthesizedExpression(converter.convertExpression(expression.getExpression()))
     }
 
-    override fun visitPostfixExpression(expression: PsiPostfixExpression?) {
-        myResult = PostfixOperator(getOperatorString(expression!!.getOperationSign().getTokenType()!!),
-                                   getConverter().convertExpression(expression.getOperand()))
+    override fun visitPostfixExpression(expression: PsiPostfixExpression) {
+        result = PostfixOperator(getOperatorString(expression.getOperationSign().getTokenType()),
+                                   converter.convertExpression(expression.getOperand()))
     }
 
-    override fun visitPrefixExpression(expression: PsiPrefixExpression?) {
-        val operand = getConverter().convertExpression(expression?.getOperand(), expression?.getOperand()!!.getType())
-        val token = expression?.getOperationTokenType()!!
+    override fun visitPrefixExpression(expression: PsiPrefixExpression) {
+        val operand = converter.convertExpression(expression.getOperand(), expression.getOperand()!!.getType())
+        val token = expression.getOperationTokenType()
         if (token == JavaTokenType.TILDE) {
-            myResult = MethodCallExpression.build(ParenthesizedExpression(operand), "inv", ArrayList())
+            result = MethodCallExpression.build(ParenthesizedExpression(operand), "inv", ArrayList())
         }
         else {
-            myResult = PrefixOperator(getOperatorString(token), operand)
+            result = PrefixOperator(getOperatorString(token), operand)
         }
     }
 
-    override fun visitReferenceExpression(expression: PsiReferenceExpression?) {
-        val isFieldReference: Boolean = isFieldReference(expression!!, getContainingClass(expression))
-        val insideSecondaryConstructor: Boolean = isInsideSecondaryConstructor(expression)
-        val hasReceiver: Boolean = isFieldReference && insideSecondaryConstructor
-        val isThis: Boolean = isThisExpression(expression)
+    override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+        val isFieldReference = isFieldReference(expression, getContainingClass(expression))
+        val insideSecondaryConstructor = isInsideSecondaryConstructor(expression)
+        val hasReceiver = isFieldReference && insideSecondaryConstructor
+        val isThis = isThisExpression(expression)
         val notNull = isResolvedToNotNull(expression)
-        val isNullable: Boolean = getConverter().convertType(expression.getType(), notNull).nullable
-        val className: String = getClassNameWithConstructor(expression)
+        val isNullable = converter.convertType(expression.getType(), notNull).isNullable
+        val className = getClassNameWithConstructor(expression)
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
-        val __: String = "__"
         val qualifier = expression.getQualifierExpression()
         if (hasReceiver) {
-            identifier = CallChainExpression(Identifier(__, false), Identifier(referencedName, isNullable))
+            identifier = CallChainExpression(Identifier("__", false), Identifier(referencedName, isNullable))
         }
         else if (insideSecondaryConstructor && isThis) {
             identifier = Identifier("val __ = " + className)
@@ -255,29 +234,29 @@ open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter)
         else if (qualifier == null) {
             val resolved = expression.getReference()?.resolve()
             if (resolved is PsiClass) {
-                val clazz = resolved as PsiClass
-
-                if (PrimitiveType.values() any { it.getTypeName().asString() == clazz.getName() }) {
-                    myResult = Identifier(clazz.getQualifiedName()!!, false)
+                if (PrimitiveType.values() any { it.getTypeName().asString() == resolved.getName() }) {
+                    result = Identifier(resolved.getQualifiedName()!!, false)
                     return
                 }
             }
-            if (resolved is PsiMember && resolved.hasModifierProperty(PsiModifier.STATIC) &&
-            resolved.getContainingClass() != null &&
-            PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass() &&
-            !isStaticallyImported(resolved, expression)) {
+
+            if (resolved is PsiMember
+                    && resolved.hasModifierProperty(PsiModifier.STATIC)
+                    && resolved.getContainingClass() != null
+                    && PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass()
+                    && !isStaticallyImported(resolved, expression)) {
                 var member = resolved as PsiMember
-                var result = Identifier(referencedName).toKotlin()
+                var code = Identifier(referencedName).toKotlin()
                 while (member.getContainingClass() != null) {
-                    result = Identifier(member.getContainingClass()!!.getName()!!).toKotlin() + "." + result
+                    code = Identifier(member.getContainingClass()!!.getName()!!).toKotlin() + "." + code
                     member = member.getContainingClass()!!
                 }
-                myResult = Identifier(result, false, false)
+                result = Identifier(code, false, false)
                 return
             }
         }
 
-        myResult = CallChainExpression(getConverter().convertExpression(qualifier), identifier)
+        result = CallChainExpression(converter.convertExpression(qualifier), identifier)
     }
 
     private fun isResolvedToNotNull(expression: PsiReference): Boolean {
@@ -291,238 +270,193 @@ open class ExpressionVisitor(converter: Converter) : StatementVisitor(converter)
         return false;
     }
 
-    override fun visitSuperExpression(expression: PsiSuperExpression?) {
-        val qualifier: PsiJavaCodeReferenceElement? = expression?.getQualifier()
-        myResult = SuperExpression((if (qualifier != null)
+    override fun visitSuperExpression(expression: PsiSuperExpression) {
+        val qualifier: PsiJavaCodeReferenceElement? = expression.getQualifier()
+        result = SuperExpression((if (qualifier != null)
             Identifier(qualifier.getQualifiedName()!!)
         else
             Identifier.Empty))
     }
 
-    override fun visitThisExpression(expression: PsiThisExpression?) {
-        val qualifier: PsiJavaCodeReferenceElement? = expression?.getQualifier()
-        myResult = ThisExpression((if (qualifier != null)
+    override fun visitThisExpression(expression: PsiThisExpression) {
+        val qualifier: PsiJavaCodeReferenceElement? = expression.getQualifier()
+        result = ThisExpression((if (qualifier != null)
             Identifier(qualifier.getQualifiedName()!!)
         else
             Identifier.Empty))
     }
 
-    override fun visitTypeCastExpression(expression: PsiTypeCastExpression?) {
-        val castType: PsiTypeElement? = expression?.getCastType()
+    override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {
+        val castType: PsiTypeElement? = expression.getCastType()
         if (castType != null) {
-            val operand = expression?.getOperand()
+            val operand = expression.getOperand()
             val operandType = operand?.getType()
             val typeText = castType.getType().getCanonicalText()
             val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
             if (operandType is PsiPrimitiveType && typeConversion != null) {
-                myResult = MethodCallExpression.build(getConverter().convertExpression(operand), typeConversion)
+                result = MethodCallExpression.build(converter.convertExpression(operand), typeConversion)
             }
             else {
-                myResult = TypeCastExpression(getConverter().convertType(castType.getType()),
-                                              getConverter().convertExpression(operand))
+                result = TypeCastExpression(converter.convertType(castType.getType()),
+                                              converter.convertExpression(operand))
             }
         }
     }
 
-    override fun visitPolyadicExpression(expression: PsiPolyadicExpression?) {
+    override fun visitPolyadicExpression(expression: PsiPolyadicExpression) {
         var parameters = ArrayList<Expression>()
-        for (operand : PsiExpression in expression?.getOperands()!!) {
-            parameters.add(getConverter().convertExpression(operand, expression?.getType()))
+        for (operand : PsiExpression in expression.getOperands()) {
+            parameters.add(converter.convertExpression(operand, expression.getType()))
         }
-        myResult = PolyadicExpression(parameters, getOperatorString(expression?.getOperationTokenType()!!))
+        result = PolyadicExpression(parameters, getOperatorString(expression.getOperationTokenType()))
     }
 
-    class object {
-        private fun getOperatorString(tokenType: IElementType): String {
-            if (tokenType == JavaTokenType.PLUS)
-                return "+"
-
-            if (tokenType == JavaTokenType.MINUS)
-                return "-"
-
-            if (tokenType == JavaTokenType.ASTERISK)
-                return "*"
-
-            if (tokenType == JavaTokenType.DIV)
-                return "/"
-
-            if (tokenType == JavaTokenType.PERC)
-                return "%"
-
-            if (tokenType == JavaTokenType.GTGT)
-                return "shr"
-
-            if (tokenType == JavaTokenType.LTLT)
-                return "shl"
-
-            if (tokenType == JavaTokenType.XOR)
-                return "xor"
-
-            if (tokenType == JavaTokenType.AND)
-                return "and"
-
-            if (tokenType == JavaTokenType.OR)
-                return "or"
-
-            if (tokenType == JavaTokenType.GTGTGT)
-                return "ushr"
-
-            if (tokenType == JavaTokenType.GT)
-                return ">"
-
-            if (tokenType == JavaTokenType.LT)
-                return "<"
-
-            if (tokenType == JavaTokenType.GE)
-                return ">="
-
-            if (tokenType == JavaTokenType.LE)
-                return "<="
-
-            if (tokenType == JavaTokenType.EQEQ)
-                return "=="
-
-            if (tokenType == JavaTokenType.NE)
-                return "!="
-
-            if (tokenType == JavaTokenType.ANDAND)
-                return "&&"
-
-            if (tokenType == JavaTokenType.OROR)
-                return "||"
-
-            if (tokenType == JavaTokenType.PLUSPLUS)
-                return "++"
-
-            if (tokenType == JavaTokenType.MINUSMINUS)
-                return "--"
-
-            if (tokenType == JavaTokenType.EXCL)
-                return "!"
-
-            //            System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
-            return ""
+    private fun getOperatorString(tokenType: IElementType): String {
+        return when(tokenType) {
+            JavaTokenType.EQEQ -> "=="
+            JavaTokenType.NE -> "!="
+            JavaTokenType.ANDAND -> "&&"
+            JavaTokenType.OROR -> "||"
+            JavaTokenType.GT -> ">"
+            JavaTokenType.LT -> "<"
+            JavaTokenType.GE -> ">="
+            JavaTokenType.LE -> "<="
+            JavaTokenType.EXCL -> "!"
+            JavaTokenType.PLUS -> "+"
+            JavaTokenType.MINUS -> "-"
+            JavaTokenType.ASTERISK -> "*"
+            JavaTokenType.DIV -> "/"
+            JavaTokenType.PERC -> "%"
+            JavaTokenType.GTGT -> "shr"
+            JavaTokenType.LTLT -> "shl"
+            JavaTokenType.XOR -> "xor"
+            JavaTokenType.AND -> "and"
+            JavaTokenType.OR -> "or"
+            JavaTokenType.GTGTGT -> "ushr"
+            JavaTokenType.PLUSPLUS -> "++"
+            JavaTokenType.MINUSMINUS -> "--"
+            else -> "" //System.out.println("UNSUPPORTED TOKEN TYPE: " + tokenType?.toString())
         }
+    }
 
-        private fun getClassNameWithConstructor(expression: PsiReferenceExpression): String {
-            var context: PsiElement? = expression.getContext()
-            while (context != null) {
-                if (context is PsiMethod && ((context as PsiMethod)).isConstructor()) {
-                    val containingClass: PsiClass? = ((context as PsiMethod)).getContainingClass()
-                    if (containingClass != null) {
-                        val identifier: PsiIdentifier? = containingClass.getNameIdentifier()
-                        if (identifier != null) {
-                            return identifier.getText()!!
-                        }
-
-                    }
-
-                }
-
-                context = context?.getContext()
-            }
-            return ""
-        }
-
-        open fun getClassName(expression: PsiExpression): String {
-            var context: PsiElement? = expression.getContext()
-            while (context != null)
-            {
-                if ((context is PsiClass?)) {
-                    val containingClass: PsiClass? = (context as PsiClass?)
-                    val identifier: PsiIdentifier? = containingClass?.getNameIdentifier()
+    private fun getClassNameWithConstructor(expression: PsiReferenceExpression): String {
+        var context = expression.getContext()
+        while (context != null) {
+            val _context = context!!
+            if (_context is PsiMethod && _context.isConstructor()) {
+                val containingClass = _context.getContainingClass()
+                if (containingClass != null) {
+                    val identifier = containingClass.getNameIdentifier()
                     if (identifier != null) {
                         return identifier.getText()!!
                     }
-
                 }
 
-                context = context?.getContext()
-            }
-            return ""
-        }
-
-        private fun isFieldReference(expression: PsiReferenceExpression, currentClass: PsiClass?): Boolean {
-            val reference: PsiReference? = expression.getReference()
-            if (reference != null) {
-                val resolvedReference: PsiElement? = reference.resolve()
-                if (resolvedReference is PsiField) {
-                    return (resolvedReference as PsiField).getContainingClass() == currentClass
-                }
             }
 
-            return false
+            context = _context.getContext()
         }
-
-        private fun isInsideSecondaryConstructor(expression: PsiReferenceExpression): Boolean {
-            var context: PsiElement? = expression.getContext()
-            while (context != null) {
-                if (context is PsiMethod && (context as PsiMethod).isConstructor()) {
-                    return !isConstructorPrimary((context as PsiMethod))
-                }
-
-                context = context?.getContext()
-            }
-            return false
-        }
-
-        private fun isInsidePrimaryConstructor(expression: PsiExpression): Boolean {
-            var context: PsiElement? = expression.getContext()
-            while (context != null) {
-                if (context is PsiMethod && (context as PsiMethod).isConstructor()) {
-                    return isConstructorPrimary(context as PsiMethod)
-                }
-
-                context = context?.getContext()
-            }
-            return false
-        }
-
-        private fun getContainingClass(expression: PsiExpression): PsiClass? {
-            var context: PsiElement? = expression.getContext()
-            while (context != null)
-            {
-                if (context is PsiMethod && (context as PsiMethod).isConstructor())
-                {
-                    return (context as PsiMethod).getContainingClass()
-                }
-
-                context = context?.getContext()
-            }
-            return null
-        }
-        private fun isThisExpression(expression: PsiReferenceExpression): Boolean {
-            for (r : PsiReference? in expression.getReferences())
-                if (r?.getCanonicalText()?.equals("this")!!)
-                {
-                    val res: PsiElement? = r?.resolve()
-                    if (res is PsiMethod && res.isConstructor()) {
-                        return true
-                    }
-
-                }
-
-            return false
-        }
+        return ""
     }
-}
 
-private fun isStaticallyImported(member: PsiMember, context: PsiElement): Boolean {
-    val containingFile = context.getContainingFile()
-    val targetContainingClass = member.getContainingClass()
-    if (containingFile is PsiJavaFile && targetContainingClass != null) {
-        val importList = containingFile.getImportList();
-        if (importList != null) {
-            val importStatics = importList.getImportStaticStatements();
-            return importStatics.any { importResolvesTo(it, member) }
+    protected fun getClassName(expression: PsiExpression): String {
+        var context = expression.getContext()
+        while (context != null) {
+            val _context = context!!
+            if (_context is PsiClass) {
+                val identifier = _context.getNameIdentifier()
+                if (identifier != null) {
+                    return identifier.getText()!!
+                }
+
+            }
+
+            context = _context.getContext()
         }
+        return ""
     }
-    return false
-}
 
-private fun importResolvesTo(stmt: PsiImportStaticStatement?, member: PsiMember): Boolean {
-    val targetContainingClass = member.getContainingClass()
-    var importedClass = stmt?.resolveTargetClass()
-    return importedClass == targetContainingClass && (stmt?.isOnDemand() ?: false ||
-    stmt?.getReferenceName() == member.getName())
+    private fun isFieldReference(expression: PsiReferenceExpression, currentClass: PsiClass?): Boolean {
+        val reference = expression.getReference()
+        if (reference != null) {
+            val target = reference.resolve()
+            if (target is PsiField) {
+                return target.getContainingClass() == currentClass
+            }
+        }
+
+        return false
+    }
+
+    private fun isInsideSecondaryConstructor(expression: PsiReferenceExpression): Boolean {
+        var context = expression.getContext()
+        while (context != null) {
+            val _context = context!!
+            if (_context is PsiMethod && _context.isConstructor()) {
+                return !isConstructorPrimary(_context)
+            }
+
+            context = _context.getContext()
+        }
+        return false
+    }
+
+    private fun isInsidePrimaryConstructor(expression: PsiExpression): Boolean {
+        var context = expression.getContext()
+        while (context != null) {
+            val _context = context!!
+            if (_context is PsiMethod && _context.isConstructor()) {
+                return isConstructorPrimary(_context)
+            }
+
+            context = _context.getContext()
+        }
+        return false
+    }
+
+    private fun getContainingClass(expression: PsiExpression): PsiClass? {
+        var context = expression.getContext()
+        while (context != null) {
+            val _context = context!!
+            if (_context is PsiMethod && _context.isConstructor()) {
+                return _context.getContainingClass()
+            }
+
+            context = _context.getContext()
+        }
+        return null
+    }
+
+    private fun isThisExpression(expression: PsiReferenceExpression): Boolean {
+        for (ref in expression.getReferences()) {
+            if (ref.getCanonicalText() == "this") {
+                val target = ref.resolve()
+                if (target is PsiMethod && target.isConstructor()) {
+                    return true
+                }
+
+            }
+        }
+
+        return false
+    }
+
+    private fun isStaticallyImported(member: PsiMember, context: PsiElement): Boolean {
+        val containingFile = context.getContainingFile()
+        val targetContainingClass = member.getContainingClass()
+        if (containingFile is PsiJavaFile && targetContainingClass != null) {
+            val importList = containingFile.getImportList();
+            if (importList != null) {
+                return importList.getImportStaticStatements().any { importResolvesTo(it, member) }
+            }
+        }
+        return false
+    }
+
+    private fun importResolvesTo(importStatement: PsiImportStaticStatement, member: PsiMember): Boolean {
+        val targetContainingClass = member.getContainingClass()
+        val importedClass = importStatement.resolveTargetClass()
+        return importedClass == targetContainingClass
+                && (importStatement.isOnDemand() || importStatement.getReferenceName() == member.getName())
+    }
 }

@@ -42,9 +42,9 @@ class ImportList(val imports: List<Import>) : Element {
         }
     }
 
-    override fun isEmpty(): Boolean {
-        return filteredImports.isEmpty()
-    }
+
+    override val isEmpty: Boolean
+        get() = filteredImports.isEmpty()
 
     override fun toKotlin() = filteredImports.toKotlin("\n")
 }

@@ -45,7 +45,7 @@ open class Class(
 
     fun primaryConstructorBodyToKotlin(): String? {
         val maybeConstructor = classMembers.primaryConstructor
-        if (maybeConstructor != null && !(maybeConstructor.block?.isEmpty() ?: true)) {
+        if (maybeConstructor != null && !(maybeConstructor.block?.isEmpty ?: true)) {
             return "\n" + maybeConstructor.primaryBodyToKotlin() + "\n"
         }
         return ""

@@ -30,12 +30,12 @@ class Block(val statementList: StatementList, val notEmpty: Boolean = false) : S
 
     val statements: List<Statement> = statementList.statements
 
-    override fun isEmpty(): Boolean {
-        return !notEmpty && statements.all { it.isEmpty() }
-    }
+
+    override val isEmpty: Boolean
+        get() = !notEmpty && statements.all { it.isEmpty }
 
     override fun toKotlin(): String {
-        if (!isEmpty()) {
+        if (!isEmpty) {
             return "{${statementList.toKotlin()}}"
         }
 

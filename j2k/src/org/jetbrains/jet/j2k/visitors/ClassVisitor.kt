@@ -21,16 +21,15 @@ import com.intellij.psi.PsiClass
 import java.util.HashSet
 
 public open class ClassVisitor() : JavaRecursiveElementVisitor() {
-    private val myClassIdentifiers = HashSet<String>()
+    private val _classIdentifiers = HashSet<String>()
 
-    public fun getClassIdentifiers(): Set<String> {
-        return HashSet<String>(myClassIdentifiers)
-    }
+    public val classIdentifiers: Set<String>
+      get() = _classIdentifiers
 
-    override fun visitClass(aClass: PsiClass?) {
-        val qName = aClass?.getQualifiedName()
+    override fun visitClass(aClass: PsiClass) {
+        val qName = aClass.getQualifiedName()
         if (qName != null) {
-            myClassIdentifiers.add(qName)
+            _classIdentifiers.add(qName)
         }
         super.visitClass(aClass)
     }

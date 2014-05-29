@@ -18,11 +18,11 @@ package org.jetbrains.jet.j2k.ast
 
 
 trait Element : Node {
-    fun isEmpty(): Boolean = false
+    val isEmpty: Boolean get() = false
 
     object Empty : Element {
         override fun toKotlin() = ""
-        override fun isEmpty() = true
+        override val isEmpty: Boolean get() = true
     }
 }
 

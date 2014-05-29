@@ -92,7 +92,7 @@ public object JavaToKotlinTranslator {
         val c = ClassVisitor()
         psiFile.accept(c)
         converter.clearClassIdentifiers()
-        converter.setClassIdentifiers(HashSet(c.getClassIdentifiers()))
+        converter.setClassIdentifiers(HashSet(c.classIdentifiers))
     }
 
     fun generateKotlinCode(javaCode: String): String {

@@ -39,7 +39,7 @@ public class JavaToKotlinActionUtil {
     static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiFile psiFile) {
         ClassVisitor c = new ClassVisitor();
         psiFile.accept(c);
-        converter.setClassIdentifiers(c.getClassIdentifiers());
+        converter.setClassIdentifiers(new HashSet<String>(c.getClassIdentifiers()));
     }
 
     @NotNull

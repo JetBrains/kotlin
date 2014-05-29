@@ -1,8 +1,243 @@
 <root>
+  <item name='com.intellij.psi.ImplicitVariable'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaCodeFragment'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.JavaCodeFragment java.lang.String importsToString()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitAnnotation(com.intellij.psi.PsiAnnotation) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitAnonymousClass(com.intellij.psi.PsiAnonymousClass) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitArrayAccessExpression(com.intellij.psi.PsiArrayAccessExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitArrayInitializerExpression(com.intellij.psi.PsiArrayInitializerExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitAssertStatement(com.intellij.psi.PsiAssertStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitAssignmentExpression(com.intellij.psi.PsiAssignmentExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitBinaryExpression(com.intellij.psi.PsiBinaryExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitBlockStatement(com.intellij.psi.PsiBlockStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitBreakStatement(com.intellij.psi.PsiBreakStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitCatchSection(com.intellij.psi.PsiCatchSection) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitClass(com.intellij.psi.PsiClass) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitClassInitializer(com.intellij.psi.PsiClassInitializer) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitClassObjectAccessExpression(com.intellij.psi.PsiClassObjectAccessExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitCodeBlock(com.intellij.psi.PsiCodeBlock) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitConditionalExpression(com.intellij.psi.PsiConditionalExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitContinueStatement(com.intellij.psi.PsiContinueStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitDeclarationStatement(com.intellij.psi.PsiDeclarationStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitDoWhileStatement(com.intellij.psi.PsiDoWhileStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitDocComment(com.intellij.psi.javadoc.PsiDocComment) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitDocTag(com.intellij.psi.javadoc.PsiDocTag) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitDocToken(com.intellij.psi.javadoc.PsiDocToken) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitEmptyStatement(com.intellij.psi.PsiEmptyStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitEnumConstant(com.intellij.psi.PsiEnumConstant) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitExpressionList(com.intellij.psi.PsiExpressionList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitExpressionListStatement(com.intellij.psi.PsiExpressionListStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitExpressionStatement(com.intellij.psi.PsiExpressionStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitField(com.intellij.psi.PsiField) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitForStatement(com.intellij.psi.PsiForStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitForeachStatement(com.intellij.psi.PsiForeachStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitIfStatement(com.intellij.psi.PsiIfStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitImplicitVariable(com.intellij.psi.ImplicitVariable) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='com.intellij.psi.JavaElementVisitor void visitImportStaticReferenceElement(com.intellij.psi.PsiImportStaticReferenceElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitInstanceOfExpression(com.intellij.psi.PsiInstanceOfExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitJavaFile(com.intellij.psi.PsiJavaFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitJavaToken(com.intellij.psi.PsiJavaToken) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitKeyword(com.intellij.psi.PsiKeyword) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitLabeledStatement(com.intellij.psi.PsiLabeledStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitLiteralExpression(com.intellij.psi.PsiLiteralExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitLocalVariable(com.intellij.psi.PsiLocalVariable) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitMethod(com.intellij.psi.PsiMethod) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitMethodCallExpression(com.intellij.psi.PsiMethodCallExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitMethodReferenceExpression(com.intellij.psi.PsiMethodReferenceExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitNewExpression(com.intellij.psi.PsiNewExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitPackage(com.intellij.psi.PsiPackage) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitParameter(com.intellij.psi.PsiParameter) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitParameterList(com.intellij.psi.PsiParameterList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitParenthesizedExpression(com.intellij.psi.PsiParenthesizedExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitPolyadicExpression(com.intellij.psi.PsiPolyadicExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitPostfixExpression(com.intellij.psi.PsiPostfixExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitPrefixExpression(com.intellij.psi.PsiPrefixExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitReferenceElement(com.intellij.psi.PsiJavaCodeReferenceElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitReferenceExpression(com.intellij.psi.PsiReferenceExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitReferenceList(com.intellij.psi.PsiReferenceList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitReferenceParameterList(com.intellij.psi.PsiReferenceParameterList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitResourceList(com.intellij.psi.PsiResourceList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitResourceVariable(com.intellij.psi.PsiResourceVariable) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitReturnStatement(com.intellij.psi.PsiReturnStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitStatement(com.intellij.psi.PsiStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitSuperExpression(com.intellij.psi.PsiSuperExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitSwitchLabelStatement(com.intellij.psi.PsiSwitchLabelStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitSwitchStatement(com.intellij.psi.PsiSwitchStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitSynchronizedStatement(com.intellij.psi.PsiSynchronizedStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitThisExpression(com.intellij.psi.PsiThisExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitThrowStatement(com.intellij.psi.PsiThrowStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitTryStatement(com.intellij.psi.PsiTryStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitTypeCastExpression(com.intellij.psi.PsiTypeCastExpression) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitTypeElement(com.intellij.psi.PsiTypeElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitTypeParameter(com.intellij.psi.PsiTypeParameter) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitTypeParameterList(com.intellij.psi.PsiTypeParameterList) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitVariable(com.intellij.psi.PsiVariable) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.JavaElementVisitor void visitWhileStatement(com.intellij.psi.PsiWhileStatement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.JavaPsiFacade com.intellij.psi.JavaPsiFacade getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiAnnotationMethod'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiAnnotationParameterList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiArrayInitializerMemberValue'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiCallExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiDoWhileStatement'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.psi.PsiDocumentManager com.intellij.psi.PsiDocumentManager getInstance(com.intellij.openapi.project.Project)'>
@@ -14,14 +249,215 @@
   <item name='com.intellij.psi.PsiElement com.intellij.psi.PsiElement replace(com.intellij.psi.PsiElement)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitBinaryFile(com.intellij.psi.PsiBinaryFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitComment(com.intellij.psi.PsiComment) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitDirectory(com.intellij.psi.PsiDirectory) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.intellij.psi.PsiElementVisitor void visitElement(com.intellij.psi.PsiElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitErrorElement(com.intellij.psi.PsiErrorElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitFile(com.intellij.psi.PsiFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitOuterLanguageElement(com.intellij.psi.templateLanguages.OuterLanguageElement) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitPlainText(com.intellij.psi.PsiPlainText) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitPlainTextFile(com.intellij.psi.PsiPlainTextFile) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiElementVisitor void visitWhiteSpace(com.intellij.psi.PsiWhiteSpace) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiEmptyStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiEnumConstantInitializer'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiExpressionList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiExpressionListStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiExpressionListStatement com.intellij.psi.PsiExpressionList getExpressionList()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiExpressionStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiForStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiForeachStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiIdentifier'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiIfStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiImportList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiImportStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiImportStaticReferenceElement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiImportStaticStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiInstanceOfExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiJavaCodeReferenceElement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiJavaToken com.intellij.psi.tree.IElementType getTokenType()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiLabeledStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiLambdaExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiLiteralExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiLocalVariable'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiMethodCallExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiMethodReferenceExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiModifierList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiNameValuePair'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiNewExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiPackageStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiParameterList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiParenthesizedExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiPolyadicExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiPostfixExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiPrefixExpression'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.psi.PsiReference com.intellij.psi.PsiElement getElement()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.psi.PsiReferenceExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiReferenceParameterList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item
       name='com.intellij.psi.PsiReferenceService java.util.List&lt;com.intellij.psi.PsiReference&gt; getReferences(com.intellij.psi.PsiElement, com.intellij.psi.PsiReferenceService.Hints)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiResourceVariable'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiSuperExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiSwitchLabelStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiSwitchStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiSynchronizedStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiThisExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiThrowStatement'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeCastExpression'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeParameter'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeParameterList'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitArrayType(com.intellij.psi.PsiArrayType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitCapturedWildcardType(com.intellij.psi.PsiCapturedWildcardType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitClassType(com.intellij.psi.PsiClassType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitDiamondType(com.intellij.psi.PsiDiamondType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitDisjunctionType(com.intellij.psi.PsiDisjunctionType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitEllipsisType(com.intellij.psi.PsiEllipsisType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitIntersectionType(com.intellij.psi.PsiIntersectionType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitLambdaExpressionType(com.intellij.psi.PsiLambdaExpressionType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitMethodReferenceType(com.intellij.psi.PsiMethodReferenceType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitPrimitiveType(com.intellij.psi.PsiPrimitiveType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitType(com.intellij.psi.PsiType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiTypeVisitor A visitWildcardType(com.intellij.psi.PsiWildcardType) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.psi.PsiWhileStatement'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
   <item name='com.intellij.psi.SmartPointerManager com.intellij.psi.SmartPointerManager getInstance(com.intellij.openapi.project.Project)'>
