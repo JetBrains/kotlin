@@ -45,9 +45,22 @@ public class OverridingUtil {
                     ExternalOverridabilityCondition.class.getClassLoader()).iterator()
             );
 
-    public static final OverridingUtil DEFAULT = new OverridingUtil();
+    public static final OverridingUtil DEFAULT = new OverridingUtil(new JetTypeChecker.TypeConstructorEquality() {
+        @Override
+        public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+            return a.equals(b);
+        }
+    });
 
-    private OverridingUtil() {
+    @NotNull
+    public static OverridingUtil createWithEqualityAxioms(@NotNull JetTypeChecker.TypeConstructorEquality equalityAxioms) {
+        return new OverridingUtil(equalityAxioms);
+    }
+
+    private final JetTypeChecker.TypeConstructorEquality equalityAxioms;
+
+    private OverridingUtil(JetTypeChecker.TypeConstructorEquality axioms) {
+        equalityAxioms = axioms;
     }
 
     @NotNull
@@ -111,9 +124,10 @@ public class OverridingUtil {
                 matchingTypeConstructors.put(superTypeParameter.getTypeConstructor(), subTypeParameter.getTypeConstructor());
             }
 
-            JetTypeChecker.TypeConstructorEquality equalityAxioms = new JetTypeChecker.TypeConstructorEquality() {
+            JetTypeChecker.TypeConstructorEquality localEqualityAxioms = new JetTypeChecker.TypeConstructorEquality() {
                 @Override
                 public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+                    if (equalityAxioms.equals(a, b)) return true;
                     TypeConstructor img1 = matchingTypeConstructors.get(a);
                     TypeConstructor img2 = matchingTypeConstructors.get(b);
                     if (!(img1 != null && img1.equals(b)) &&
@@ -128,7 +142,7 @@ public class OverridingUtil {
                 TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
                 TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
 
-                if (!JetTypeChecker.INSTANCE.equalTypes(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), equalityAxioms)) {
+                if (!JetTypeChecker.INSTANCE.equalTypes(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), localEqualityAxioms)) {
                     return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
                 }
             }
@@ -138,7 +152,7 @@ public class OverridingUtil {
                 JetType subValueParameter = subValueParameters.get(i);
 
                 boolean bothErrors = superValueParameter.isError() && subValueParameter.isError();
-                if (!bothErrors && !JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, equalityAxioms)) {
+                if (!bothErrors && !JetTypeChecker.INSTANCE.equalTypes(superValueParameter, subValueParameter, localEqualityAxioms)) {
                     return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, OverrideCompatibilityInfo.Result.INCOMPATIBLE);
                 }
             }
