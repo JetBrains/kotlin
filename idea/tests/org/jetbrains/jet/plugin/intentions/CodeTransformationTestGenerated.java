@@ -2537,6 +2537,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestMoveLambdaOutsideParentheses("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicable3.kt");
         }
         
+        @TestMetadata("labeledLambda.kt")
+        public void testLabeledLambda() throws Exception {
+            doTestMoveLambdaOutsideParentheses("idea/testData/intentions/moveLambdaOutsideParentheses/labeledLambda.kt");
+        }
+        
         @TestMetadata("lambdaWithCommas.kt")
         public void testLambdaWithCommas() throws Exception {
             doTestMoveLambdaOutsideParentheses("idea/testData/intentions/moveLambdaOutsideParentheses/lambdaWithCommas.kt");
