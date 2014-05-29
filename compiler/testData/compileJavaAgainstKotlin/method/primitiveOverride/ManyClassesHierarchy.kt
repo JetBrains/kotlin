@@ -4,7 +4,7 @@ trait A<T> {
     fun foo(): T
 }
 
-trait B : A
+trait B : A<Int>
 
 abstract class C : B
 

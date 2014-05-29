@@ -264,22 +264,25 @@ public class OverrideResolver {
 
     public static <D extends CallableDescriptor> boolean overrides(@NotNull D f, @NotNull D g) {
         CallableDescriptor originalG = g.getOriginal();
-        for (CallableDescriptor overriddenFunction : getAllOverriddenDescriptors(f)) {
+        for (D overriddenFunction : getAllOverriddenDescriptors(f)) {
             if (originalG.equals(overriddenFunction.getOriginal())) return true;
         }
         return false;
     }
 
     @NotNull
-    public static Set<CallableDescriptor> getAllOverriddenDescriptors(@NotNull CallableDescriptor f) {
-        Set<CallableDescriptor> result = new LinkedHashSet<CallableDescriptor>();
-        collectAllOverriddenDescriptors(f.getOriginal(), result);
+    @SuppressWarnings("unchecked")
+    public static <D extends CallableDescriptor> Set<D> getAllOverriddenDescriptors(@NotNull D f) {
+        Set<D> result = new LinkedHashSet<D>();
+        collectAllOverriddenDescriptors((D) f.getOriginal(), result);
         return result;
     }
 
-    private static void collectAllOverriddenDescriptors(@NotNull CallableDescriptor current, @NotNull Set<CallableDescriptor> result) {
+    private static <D extends CallableDescriptor> void collectAllOverriddenDescriptors(@NotNull D current, @NotNull Set<D> result) {
         if (result.contains(current)) return;
-        for (CallableDescriptor descriptor : current.getOriginal().getOverriddenDescriptors()) {
+        for (CallableDescriptor callableDescriptor : current.getOriginal().getOverriddenDescriptors()) {
+            @SuppressWarnings("unchecked")
+            D descriptor = (D) callableDescriptor;
             collectAllOverriddenDescriptors(descriptor, result);
             result.add(descriptor);
         }

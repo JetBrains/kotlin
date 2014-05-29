@@ -24,9 +24,6 @@ import org.jetbrains.jet.codegen.binding.CalculatedClosure;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
@@ -36,10 +33,14 @@ import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
+import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
@@ -605,7 +606,7 @@ public class JetTypeMapper {
         //noinspection ConstantConditions
         if (!KotlinBuiltIns.getInstance().isPrimitiveType(descriptor.getReturnType())) return false;
 
-        for (FunctionDescriptor overridden : descriptor.getOverriddenDescriptors()) {
+        for (FunctionDescriptor overridden : OverrideResolver.getAllOverriddenDescriptors(descriptor)) {
             //noinspection ConstantConditions
             if (!KotlinBuiltIns.getInstance().isPrimitiveType(overridden.getOriginal().getReturnType())) return true;
         }
