@@ -113,6 +113,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
+import org.jetbrains.jet.jps.build.AbstractIncrementalJpsTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -639,6 +640,12 @@ fun main(args: Array<String>) {
     testGroup("j2k/tests/test", "j2k/tests/testData") {
         testClass(javaClass<AbstractJavaToKotlinConverterTest>()) {
             model("ast", extension = "java")
+        }
+    }
+
+    testGroup("jps-plugin/test", "jps-plugin/testData") {
+        testClass(javaClass<AbstractIncrementalJpsTest>()) {
+            model("incremental", extension = null, recursive = false)
         }
     }
 }
