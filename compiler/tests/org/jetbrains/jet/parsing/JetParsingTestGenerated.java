@@ -900,6 +900,11 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest("compiler/testData/psi/recovery/kt2172.kt");
             }
             
+            @TestMetadata("kt5102.kt")
+            public void testKt5102() throws Exception {
+                doParsingTest("compiler/testData/psi/recovery/kt5102.kt");
+            }
+            
             @TestMetadata("MissingCommaInConstructorValueParameterList.kt")
             public void testMissingCommaInConstructorValueParameterList() throws Exception {
                 doParsingTest("compiler/testData/psi/recovery/MissingCommaInConstructorValueParameterList.kt");
