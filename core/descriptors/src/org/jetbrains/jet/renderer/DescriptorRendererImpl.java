@@ -191,6 +191,12 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         throw new IllegalStateException("Unexpected textFormat: " + textFormat);
     }
 
+    private static void renderSpaceIfNeeded(@NotNull StringBuilder builder) {
+        int length = builder.length();
+        if (length == 0 || builder.charAt(length - 1) != ' ') {
+            builder.append(' ');
+        }
+    }
 
     /* NAMES RENDERING */
     @NotNull
@@ -205,9 +211,11 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
 
     private void renderClassObjectName(@NotNull DeclarationDescriptor descriptor, @NotNull StringBuilder builder) {
         if (renderClassObjectName) {
+            if (!startFromName) renderSpaceIfNeeded(builder);
             builder.append("<class object>");
         }
         if (verbose) {
+            if (!startFromName) renderSpaceIfNeeded(builder);
             builder.append(renderName(descriptor.getName()));
         }
     }
@@ -791,10 +799,10 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             }
             renderInner(klass.isInner(), builder);
             renderClassKindPrefix(klass, builder);
-            builder.append(" ");
         }
 
         if (klass.getKind() != ClassKind.CLASS_OBJECT) {
+            if (!startFromName) renderSpaceIfNeeded(builder);
             renderName(klass, builder);
         }
         else {
@@ -825,7 +833,8 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 supertypes.size() == 1 && KotlinBuiltIns.getInstance().isAnyOrNullableAny(supertypes.iterator().next())) {
             }
             else {
-                builder.append(" : ");
+                renderSpaceIfNeeded(builder);
+                builder.append(": ");
                 for (Iterator<JetType> iterator = supertypes.iterator(); iterator.hasNext(); ) {
                     JetType supertype = iterator.next();
                     builder.append(renderType(supertype));
