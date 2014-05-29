@@ -22,21 +22,43 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.InTextDirectivesUtils;
+import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.utils.UtilsPackage;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 public abstract class JetLightCodeInsightFixtureTestCase extends LightCodeInsightFixtureTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
+        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+
+        super.tearDown();
+
+        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+        // otherwise built-ins psi elements will become invalid in next test.
+        for (JetFile source : builtInsSources) {
+            FileViewProvider provider = source.getViewProvider();
+            fileManager.setViewProvider(provider.getVirtualFile(), provider);
+        }
     }
 
     @NotNull
