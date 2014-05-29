@@ -626,15 +626,17 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker body = mark();
 
         myBuilder.enableNewlines();
-        expect(LBRACE, "Expecting a class body", TokenSet.create(LBRACE));
 
-        while (!eof()) {
-            if (at(RBRACE)) {
-                break;
+        if (expect(LBRACE, "Expecting a class body")) {
+            while (!eof()) {
+                if (at(RBRACE)) {
+                    break;
+                }
+                parseMemberDeclaration();
             }
-            parseMemberDeclaration();
+            expect(RBRACE, "Missing '}");
         }
-        expect(RBRACE, "Missing '}");
+
         myBuilder.restoreNewlinesState();
 
         body.done(CLASS_BODY);
