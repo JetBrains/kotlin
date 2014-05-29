@@ -21,7 +21,6 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -937,11 +936,13 @@ public class DescriptorResolver {
             }
         }
 
-        ReceiverParameterDescriptor receiverDescriptor = DescriptorFactory.createReceiverParameterForCallable(propertyDescriptor,
-                                                                                                              receiverType);
+        ReceiverParameterDescriptor receiverDescriptor =
+                DescriptorFactory.createReceiverParameterForCallable(propertyDescriptor, receiverType);
+
+        ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? NO_RECEIVER_PARAMETER : receiverDescriptor;
 
         JetScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
-                                                                                NO_RECEIVER_PARAMETER, trace);
+                                                                                implicitInitializerReceiver, trace);
 
         JetType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
 
