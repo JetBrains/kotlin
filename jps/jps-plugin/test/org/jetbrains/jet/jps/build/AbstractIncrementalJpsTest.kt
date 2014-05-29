@@ -30,22 +30,14 @@ import org.jetbrains.jet.config.IncrementalCompilation
 import java.util.ArrayList
 import kotlin.test.fail
 
-public class IncrementalJpsTest : JpsBuildTestCase() {
-    private val testDataDir: File
-        get() = File(AbstractKotlinJpsBuildTestCase.TEST_DATA_PATH + "incremental/" + getTestName(true))
+public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
+    private var testDataDir: File by Delegates.notNull()
 
     var workDir: File by Delegates.notNull()
 
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
-
-        workDir = FileUtil.createTempDirectory("jps-build", null)
-
-        FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
-
-        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject!!)
-                .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
     }
 
     override fun tearDown() {
@@ -99,10 +91,18 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
         }
     }
 
-    private fun doTest() {
+    protected fun doTest(testDataPath: String) {
         if (!IncrementalCompilation.ENABLED) {
             return
         }
+
+        testDataDir = File(testDataPath)
+        workDir = FileUtil.createTempDirectory("jps-build", null)
+
+        FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
+
+        JpsJavaExtensionService.getInstance().getOrCreateProjectExtension(myProject!!)
+                .setOutputUrl(JpsPathUtil.pathToUrl(getAbsolutePath("out")))
 
         addModule("module", array(getAbsolutePath("src")), null, null, addJdk("my jdk"))
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject!!)
@@ -131,58 +131,6 @@ public class IncrementalJpsTest : JpsBuildTestCase() {
     }
 
     override fun doGetProjectDir(): File? = workDir
-
-    fun testIndependentClasses() {
-        doTest()
-    }
-
-    fun testSimpleClassDependency() {
-        doTest()
-    }
-
-    fun testTopLevelMembersInTwoPackages() {
-        doTest()
-    }
-
-    fun testReturnTypeChanged() {
-        doTest()
-    }
-
-    fun testTopLevelFunctionSameSignature() {
-        doTest()
-    }
-
-    fun testClassSignatureChanged() {
-        doTest()
-    }
-
-    fun testConstantValue() {
-        doTest()
-    }
-
-    fun testConstantUnchanged() {
-        doTest()
-    }
-
-    fun testPackageFileAdded() {
-        doTest()
-    }
-
-    fun testPackageFileRemoved() {
-        doTest()
-    }
-
-    fun testPackageFilesChangedInTurn() {
-        doTest()
-    }
-
-    fun testPackageFileChangedThenOtherRemoved() {
-        doTest()
-    }
-
-    fun testPackageFileChangedPackage() {
-        doTest()
-    }
 
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
