@@ -33,10 +33,7 @@ import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetExpression;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
@@ -62,10 +59,11 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         );
 
         CliLightClassGenerationSupport support = CliLightClassGenerationSupport.getInstanceForCli(getProject());
-        BindingTrace trace = support.getTrace();
+        BindingTrace supportTrace = support.getTrace();
 
         List<JetFile> allJetFiles = new ArrayList<JetFile>();
         Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule);
+        Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
 
         for (Map.Entry<TestModule, List<TestFile>> entry : groupedByModule.entrySet()) {
             TestModule testModule = entry.getKey();
@@ -75,13 +73,17 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             allJetFiles.addAll(jetFiles);
 
             ModuleDescriptorImpl module = modules.get(testModule);
+            BindingTrace moduleTrace = groupedByModule.size() > 1
+                                           ? new DelegatingBindingTrace(supportTrace.getBindingContext(), "Trace for module " + module)
+                                           : supportTrace;
+            moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
             // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
             // albeit with same class names
             AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
                     getProject(),
                     jetFiles,
-                    trace,
+                    moduleTrace,
                     Predicates.<PsiFile>alwaysTrue(),
                     module == null ? support.getModule() : module,
                     MemberFilter.ALWAYS_TRUE
@@ -92,14 +94,14 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(trace.getBindingContext(), actualText);
+            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText);
         }
 
         JetTestUtils.assertEqualsToFile(testDataFile, actualText.toString());
 
         assertTrue("Diagnostics mismatch. See the output above", ok);
 
-        checkAllResolvedCallsAreCompleted(allJetFiles, trace.getBindingContext());
+        checkAllResolvedCallsAreCompleted(allJetFiles, supportTrace.getBindingContext());
     }
 
     private Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
