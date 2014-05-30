@@ -16,10 +16,17 @@
 
 package org.jetbrains.jet.lang.resolve;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor;
 import org.jetbrains.jet.lang.descriptors.ConstructorDescriptor;
 import org.jetbrains.jet.lang.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.jet.lang.descriptors.PropertyDescriptor;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.checker.JetTypeChecker;
+
+import java.util.List;
+
+import static org.jetbrains.jet.lang.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
 
 public class OverloadUtil {
 
@@ -34,7 +41,7 @@ public class OverloadUtil {
             return OverloadCompatibilityInfo.success();
         }
         
-        OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = OverridingUtil.DEFAULT.isOverridableByImpl(a, b, false);
+        OverridingUtil.OverrideCompatibilityInfo overrideCompatibilityInfo = isOverloadableBy(a, b);
         switch (overrideCompatibilityInfo.getResult()) {
             case OVERRIDABLE:
             case CONFLICT:
@@ -45,7 +52,34 @@ public class OverloadUtil {
                 throw new IllegalStateException();
         }
     }
-    
+
+    @NotNull
+    private static OverridingUtil.OverrideCompatibilityInfo isOverloadableBy(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor
+    ) {
+        OverridingUtil.OverrideCompatibilityInfo
+                receiverAndParameterResult = OverridingUtil.checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+        if (receiverAndParameterResult != null) {
+            return receiverAndParameterResult;
+        }
+
+        List<JetType> superValueParameters = OverridingUtil.compiledValueParameters(superDescriptor);
+        List<JetType> subValueParameters = OverridingUtil.compiledValueParameters(subDescriptor);
+
+        for (int i = 0; i < superValueParameters.size(); ++i) {
+            JetType superValueParameterType = OverridingUtil.getUpperBound(superValueParameters.get(i));
+            JetType subValueParameterType = OverridingUtil.getUpperBound(subValueParameters.get(i));
+            // TODO: compare erasure
+            if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
+                return OverridingUtil.OverrideCompatibilityInfo
+                        .valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
+            }
+        }
+
+        return OverridingUtil.OverrideCompatibilityInfo.success();
+    }
+
     private static int braceCount(CallableDescriptor a) {
         if (a instanceof PropertyDescriptor) {
             return 0;

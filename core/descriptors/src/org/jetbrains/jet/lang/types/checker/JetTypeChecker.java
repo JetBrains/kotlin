@@ -31,8 +31,11 @@ public class JetTypeChecker {
     }
 
     public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype) {
-//        return new TypeCheckingProcedure().run(subtype, supertype);
         return TYPE_CHECKER.isSubtypeOf(subtype, supertype);
+    }
+
+    public boolean isSubtypeOf(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull final TypeConstructorEquality equalityAxioms) {
+        return createWithAxioms(equalityAxioms).isSubtypeOf(subtype, supertype);
     }
 
     public boolean equalTypes(@NotNull JetType a, @NotNull JetType b) {
@@ -40,12 +43,17 @@ public class JetTypeChecker {
     }
 
     public boolean equalTypes(@NotNull JetType a, @NotNull JetType b, @NotNull final TypeConstructorEquality equalityAxioms) {
+        return createWithAxioms(equalityAxioms).equalTypes(a, b);
+    }
+
+    @NotNull
+    private static TypeCheckingProcedure createWithAxioms(@NotNull final TypeConstructorEquality equalityAxioms) {
         return new TypeCheckingProcedure(new TypeCheckerTypingConstraints() {
             @Override
             public boolean assertEqualTypeConstructors(@NotNull TypeConstructor constructor1, @NotNull TypeConstructor constructor2) {
                 return constructor1.equals(constructor2) || equalityAxioms.equals(constructor1, constructor2);
             }
-        }).equalTypes(a, b);
+        });
     }
 
     private static final TypeCheckingProcedure TYPE_CHECKER = new TypeCheckingProcedure(new TypeCheckerTypingConstraints());

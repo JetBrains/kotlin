@@ -66,6 +66,20 @@ public class OverridingUtil {
 
     @NotNull
     public OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        return isOverridableBy(superDescriptor, subDescriptor, false);
+    }
+
+    @NotNull
+    public OverrideCompatibilityInfo isOverridableByIncludingReturnType(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        return isOverridableBy(superDescriptor, subDescriptor, true);
+    }
+
+    @NotNull
+    private OverrideCompatibilityInfo isOverridableBy(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            boolean checkReturnType
+    ) {
         if (superDescriptor instanceof FunctionDescriptor) {
             if (!(subDescriptor instanceof FunctionDescriptor)) return OverrideCompatibilityInfo.memberKindMismatch();
         }
@@ -81,21 +95,95 @@ public class OverridingUtil {
             return OverrideCompatibilityInfo.nameMismatch();
         }
 
-        return isOverridableByImpl(superDescriptor, subDescriptor, true, false);
+        OverrideCompatibilityInfo receiverAndParameterResult = checkReceiverAndParameterCount(superDescriptor, subDescriptor);
+        if (receiverAndParameterResult != null) {
+            return receiverAndParameterResult;
+        }
+
+        List<JetType> superValueParameters = compiledValueParameters(superDescriptor);
+        List<JetType> subValueParameters = compiledValueParameters(subDescriptor);
+
+        List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
+        List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
+
+        if (superTypeParameters.size() != subTypeParameters.size()) {
+            for (int i = 0; i < superValueParameters.size(); ++i) {
+                JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
+                JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
+                // TODO: compare erasure
+                if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
+                    return OverrideCompatibilityInfo.typeParameterNumberMismatch();
+                }
+            }
+            return OverrideCompatibilityInfo.valueParameterTypeMismatch(null, null, OverrideCompatibilityInfo.Result.CONFLICT);
+        }
+
+        final Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
+        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
+            matchingTypeConstructors.put(superTypeParameter.getTypeConstructor(), subTypeParameter.getTypeConstructor());
+        }
+
+        JetTypeChecker.TypeConstructorEquality localEqualityAxioms = new JetTypeChecker.TypeConstructorEquality() {
+            @Override
+            public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
+                if (equalityAxioms.equals(a, b)) return true;
+                TypeConstructor img1 = matchingTypeConstructors.get(a);
+                TypeConstructor img2 = matchingTypeConstructors.get(b);
+                if (!(img1 != null && img1.equals(b)) &&
+                    !(img2 != null && img2.equals(a))) {
+                    return false;
+                }
+                return true;
+            }
+        };
+
+        for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
+            TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
+            TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
+
+            if (!areTypesEquivalent(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), localEqualityAxioms)) {
+                return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
+            }
+        }
+
+        for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
+            JetType superValueParameter = superValueParameters.get(i);
+            JetType subValueParameter = subValueParameters.get(i);
+
+            if (!areTypesEquivalent(superValueParameter, subValueParameter, localEqualityAxioms)) {
+                return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, INCOMPATIBLE);
+            }
+        }
+
+        if (checkReturnType) {
+            JetType superReturnType = superDescriptor.getReturnType();
+            JetType subReturnType = subDescriptor.getReturnType();
+
+            if (superReturnType != null && subReturnType != null) {
+                boolean bothErrors = subReturnType.isError() && superReturnType.isError();
+                if (!bothErrors && !JetTypeChecker.INSTANCE.isSubtypeOf(subReturnType, superReturnType, localEqualityAxioms)) {
+                    return OverrideCompatibilityInfo.returnTypeMismatch(superReturnType, subReturnType);
+                }
+            }
+        }
+
+
+        for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            if (!externalCondition.isOverridable(superDescriptor, subDescriptor)) {
+                return OverrideCompatibilityInfo.externalConditionFailed(externalCondition.getClass());
+            }
+        }
+
+        return OverrideCompatibilityInfo.success();
     }
-    
-    /**
-     * @param forOverride true for override, false for overload
-     */
-    OverrideCompatibilityInfo isOverridableByImpl(
-            @NotNull CallableDescriptor superDescriptor,
-            @NotNull CallableDescriptor subDescriptor,
-            boolean forOverride,
-            boolean checkReturnType
+
+    @Nullable
+    static OverrideCompatibilityInfo checkReceiverAndParameterCount(
+            CallableDescriptor superDescriptor,
+            CallableDescriptor subDescriptor
     ) {
-
-        // TODO : Visibility
-
         if ((superDescriptor.getReceiverParameter() == null) != (subDescriptor.getReceiverParameter() == null)) {
             return OverrideCompatibilityInfo.receiverPresenceMismatch();
         }
@@ -104,100 +192,7 @@ public class OverridingUtil {
             return OverrideCompatibilityInfo.valueParameterNumberMismatch();
         }
 
-        List<JetType> superValueParameters = compiledValueParameters(superDescriptor);
-        List<JetType> subValueParameters = compiledValueParameters(subDescriptor);
-
-        if (forOverride) {
-            List<TypeParameterDescriptor> superTypeParameters = superDescriptor.getTypeParameters();
-            List<TypeParameterDescriptor> subTypeParameters = subDescriptor.getTypeParameters();
-
-            if (superTypeParameters.size() != subTypeParameters.size()) {
-                for (int i = 0; i < superValueParameters.size(); ++i) {
-                    JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
-                    JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
-                    // TODO: compare erasure
-                    if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
-                        return OverrideCompatibilityInfo.typeParameterNumberMismatch();
-                    }
-                }
-                return OverrideCompatibilityInfo.valueParameterTypeMismatch(null, null, OverrideCompatibilityInfo.Result.CONFLICT);
-            }
-
-            final Map<TypeConstructor, TypeConstructor> matchingTypeConstructors = new HashMap<TypeConstructor, TypeConstructor>();
-            for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
-                TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
-                TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-                matchingTypeConstructors.put(superTypeParameter.getTypeConstructor(), subTypeParameter.getTypeConstructor());
-            }
-
-            JetTypeChecker.TypeConstructorEquality localEqualityAxioms = new JetTypeChecker.TypeConstructorEquality() {
-                @Override
-                public boolean equals(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-                    if (equalityAxioms.equals(a, b)) return true;
-                    TypeConstructor img1 = matchingTypeConstructors.get(a);
-                    TypeConstructor img2 = matchingTypeConstructors.get(b);
-                    if (!(img1 != null && img1.equals(b)) &&
-                        !(img2 != null && img2.equals(a))) {
-                        return false;
-                    }
-                    return true;
-                }
-            };
-
-            for (int i = 0, typeParametersSize = superTypeParameters.size(); i < typeParametersSize; i++) {
-                TypeParameterDescriptor superTypeParameter = superTypeParameters.get(i);
-                TypeParameterDescriptor subTypeParameter = subTypeParameters.get(i);
-
-                if (!areTypesEquivalent(superTypeParameter.getUpperBoundsAsType(), subTypeParameter.getUpperBoundsAsType(), localEqualityAxioms)) {
-                    return OverrideCompatibilityInfo.boundsMismatch(superTypeParameter, subTypeParameter);
-                }
-            }
-
-            for (int i = 0, unsubstitutedValueParametersSize = superValueParameters.size(); i < unsubstitutedValueParametersSize; i++) {
-                JetType superValueParameter = superValueParameters.get(i);
-                JetType subValueParameter = subValueParameters.get(i);
-
-                if (!areTypesEquivalent(superValueParameter, subValueParameter, localEqualityAxioms)) {
-                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameter, subValueParameter, INCOMPATIBLE);
-                }
-            }
-
-            if (checkReturnType) {
-                JetType superReturnType = superDescriptor.getReturnType();
-                JetType subReturnType = subDescriptor.getReturnType();
-
-                if (superReturnType != null &&
-                    subReturnType != null &&
-                    !areTypesEquivalent(superReturnType, subReturnType, localEqualityAxioms)) {
-                    return OverrideCompatibilityInfo.returnTypeMismatch(superReturnType, subReturnType);
-                }
-            }
-
-
-            for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
-                if (!externalCondition.isOverridable(superDescriptor, subDescriptor)) {
-                    return OverrideCompatibilityInfo.externalConditionFailed(externalCondition.getClass());
-                }
-            }
-        }
-        else {
-
-            for (int i = 0; i < superValueParameters.size(); ++i) {
-                JetType superValueParameterType = getUpperBound(superValueParameters.get(i));
-                JetType subValueParameterType = getUpperBound(subValueParameters.get(i));
-                // TODO: compare erasure
-                if (!JetTypeChecker.INSTANCE.equalTypes(superValueParameterType, subValueParameterType)) {
-                    return OverrideCompatibilityInfo.valueParameterTypeMismatch(superValueParameterType, subValueParameterType, INCOMPATIBLE);
-                }
-            }
-
-            return OverrideCompatibilityInfo.success();
-
-        }
-
-        // TODO : Default values, varargs etc
-
-        return OverrideCompatibilityInfo.success();
+        return null;
     }
 
     private static boolean areTypesEquivalent(
@@ -212,7 +207,7 @@ public class OverridingUtil {
         return true;
     }
 
-    private static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
+    static List<JetType> compiledValueParameters(CallableDescriptor callableDescriptor) {
         ReceiverParameterDescriptor receiverParameter = callableDescriptor.getReceiverParameter();
         ArrayList<JetType> parameters = new ArrayList<JetType>();
         if (receiverParameter != null) {
@@ -224,7 +219,7 @@ public class OverridingUtil {
         return parameters;
     }
 
-    private static JetType getUpperBound(JetType type) {
+    static JetType getUpperBound(JetType type) {
         if (type.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
             return type;
         }
