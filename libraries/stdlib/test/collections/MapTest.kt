@@ -140,6 +140,13 @@ class MapTest {
         assertEquals(2, map.get("b"))
     }
 
+    test fun createFromIterable() {
+        val map = listOf(Pair("a", 1), Pair("b", 2)).toMap()
+        assertEquals(2, map.size)
+        assertEquals(1, map.get("a"))
+        assertEquals(2, map.get("b"))
+    }
+
     test fun createUsingTo() {
         val map = hashMapOf("a" to 1, "b" to 2)
         assertEquals(2, map.size)

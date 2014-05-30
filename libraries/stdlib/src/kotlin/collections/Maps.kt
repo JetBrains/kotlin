@@ -18,7 +18,7 @@ public fun <K, V> MutableMap<K, V>.set(key : K, value : V) : V? = this.put(key, 
 
 /** Returns the [[Map]] if its not null otherwise it returns the empty [[Map]] */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
-= if (this != null) this else Collections.emptyMap<K,V>() as Map<K,V>
+= if (this != null) this else stdlib_emptyMap()
 
 public fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
 
@@ -94,17 +94,37 @@ public inline fun <K,V,R,C: MutableMap<K,R>> Map<K,V>.mapValuesTo(result: C, tra
  * Puts all the entries into this [[MutableMap]] with the first value in the pair being the key and the second the value
  */
 public fun <K,V> MutableMap<K,V>.putAll(vararg values: Pair<K, V>): Unit {
-    for (v in values) {
-        put(v.first, v.second)
+    for ((key, value) in values) {
+        put(key, value)
     }
 }
 
 /**
  * Copies the entries in this [[Map]] to the given mutable *map*
  */
-public fun <K,V> Map<K,V>.toMap(map: MutableMap<K,V>): Map<K,V> {
+public fun <K,V, C : MutableMap<K, in V>> Map<K,V>.toMap(map: C): C {
     map.putAll(this)
     return map
+}
+
+/**
+ * Copies the entries from given iterable of pairs to the given mutable *map*
+ */
+public fun <K,V, C : MutableMap<K, in V>> Iterable<Pair<K,V>>.toMap(map: C): C {
+    for((key,value) in this) {
+        if (map.containsKey(key)) {
+            throw DuplicateKeyException()
+        }
+        map.put(key,value)
+    }
+    return map
+}
+
+/**
+ * Creates map from given iterable of pairs
+ */
+public fun <K,V> Iterable<Pair<K,V>>.toMap() : Map<K,V> {
+    return toMap(HashMap<K,V>())
 }
 
 /**
