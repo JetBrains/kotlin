@@ -10,7 +10,7 @@ import java.util.*
 /**
  * Returns *true* if all elements match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.all(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (!predicate(element)) return false
     return true
@@ -19,7 +19,7 @@ public inline fun <T> Iterator<T>.all(predicate: (T) -> Boolean) : Boolean {
 /**
  * Returns *true* if any elements match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.any(predicate: (T) -> Boolean) : Boolean {
     for (element in this) if (predicate(element)) return true
     return false
@@ -30,7 +30,7 @@ public inline fun <T> Iterator<T>.any(predicate: (T) -> Boolean) : Boolean {
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.appendString(buffer: Appendable, separator: String = ", ", prefix: String ="", postfix: String = "", limit: Int = -1, truncated: String = "...") : Unit {
     buffer.append(prefix)
     var count = 0
@@ -48,7 +48,7 @@ public fun <T> Iterator<T>.appendString(buffer: Appendable, separator: String = 
 /**
  * Returns the number of elements which match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.count(predicate: (T) -> Boolean) : Int {
     var count = 0
     for (element in this) if (predicate(element)) count++
@@ -58,7 +58,7 @@ public inline fun <T> Iterator<T>.count(predicate: (T) -> Boolean) : Int {
 /**
  * Returns a list containing everything but the first *n* elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.drop(n: Int) : List<T> {
     return dropWhile(countTo(n))
 }
@@ -66,7 +66,7 @@ public fun <T> Iterator<T>.drop(n: Int) : List<T> {
 /**
  * Returns a list containing the everything but the first elements that satisfy the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.dropWhile(predicate: (T) -> Boolean) : List<T> {
     return dropWhileTo(ArrayList<T>(), predicate)
 }
@@ -74,7 +74,7 @@ public inline fun <T> Iterator<T>.dropWhile(predicate: (T) -> Boolean) : List<T>
 /**
  * Returns a list containing the everything but the first elements that satisfy the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, L: MutableList<in T>> Iterator<T>.dropWhileTo(result: L, predicate: (T) -> Boolean) : L {
     var start = true
     for (element in this) {
@@ -91,7 +91,7 @@ public inline fun <T, L: MutableList<in T>> Iterator<T>.dropWhileTo(result: L, p
 /**
  * Returns an iterator over elements which match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.filter(predicate: (T) -> Boolean) : Iterator<T> {
     return FilterIterator<T>(this, predicate)
 }
@@ -99,7 +99,7 @@ public fun <T> Iterator<T>.filter(predicate: (T) -> Boolean) : Iterator<T> {
 /**
  * Returns an iterator over elements which don't match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.filterNot(predicate: (T) -> Boolean) : Iterator<T> {
     return filter {!predicate(it)}
 }
@@ -107,7 +107,7 @@ public inline fun <T> Iterator<T>.filterNot(predicate: (T) -> Boolean) : Iterato
 /**
  * Returns an iterator over non-*null* elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T:Any> Iterator<T?>.filterNotNull() : Iterator<T> {
     return FilterNotNullIterator(this)
 }
@@ -115,7 +115,7 @@ public fun <T:Any> Iterator<T?>.filterNotNull() : Iterator<T> {
 /**
  * Filters all non-*null* elements into the given list
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T:Any, C: MutableCollection<in T>> Iterator<T?>.filterNotNullTo(result: C) : C {
     for (element in this) if (element != null) result.add(element)
     return result
@@ -124,7 +124,7 @@ public fun <T:Any, C: MutableCollection<in T>> Iterator<T?>.filterNotNullTo(resu
 /**
  * Returns a list containing all elements which do not match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, C: MutableCollection<in T>> Iterator<T>.filterNotTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (!predicate(element)) result.add(element)
     return result
@@ -133,7 +133,7 @@ public inline fun <T, C: MutableCollection<in T>> Iterator<T>.filterNotTo(result
 /**
  * Filters all elements which match the given predicate into the given list
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, C: MutableCollection<in T>> Iterator<T>.filterTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element)
     return result
@@ -142,7 +142,7 @@ public inline fun <T, C: MutableCollection<in T>> Iterator<T>.filterTo(result: C
 /**
  * Returns the first element which matches the given *predicate* or *null* if none matched
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T:Any> Iterator<T>.find(predicate: (T) -> Boolean) : T? {
     for (element in this) if (predicate(element)) return element
     return null
@@ -151,7 +151,7 @@ public inline fun <T:Any> Iterator<T>.find(predicate: (T) -> Boolean) : T? {
 /**
  * Returns an iterator over the concatenated results of transforming each element to one or more values
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T, R> Iterator<T>.flatMap(transform: (T) -> Iterator<R>) : Iterator<R> {
     return FlatMapIterator<T, R>(this, transform)
 }
@@ -159,7 +159,7 @@ public fun <T, R> Iterator<T>.flatMap(transform: (T) -> Iterator<R>) : Iterator<
 /**
  * Returns the result of transforming each element to one or more values which are concatenated together into a single collection
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, R, C: MutableCollection<in R>> Iterator<T>.flatMapTo(result: C, transform: (T) -> Iterable<R>) : C {
     for (element in this) {
         val list = transform(element)
@@ -171,7 +171,7 @@ public inline fun <T, R, C: MutableCollection<in R>> Iterator<T>.flatMapTo(resul
 /**
  * Folds all elements from from left to right with the *initial* value to perform the operation on sequential pairs of elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, R> Iterator<T>.fold(initial: R, operation: (R, T) -> R) : R {
     var answer = initial
     for (element in this) answer = operation(answer, element)
@@ -181,7 +181,7 @@ public inline fun <T, R> Iterator<T>.fold(initial: R, operation: (R, T) -> R) : 
 /**
  * Performs the given *operation* on each element
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
     for (element in this) operation(element)
 }
@@ -189,12 +189,12 @@ public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
 /**
  * Groups the elements in the collection into a new [[Map]] using the supplied *toKey* function to calculate the key to group the elements by
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, K> Iterator<T>.groupBy(toKey: (T) -> K) : Map<K, List<T>> {
     return groupByTo(HashMap<K, MutableList<T>>(), toKey)
 }
 
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, K> Iterator<T>.groupByTo(result: MutableMap<K, MutableList<T>>, toKey: (T) -> K) : Map<K, MutableList<T>> {
     for (element in this) {
         val key = toKey(element)
@@ -209,7 +209,7 @@ public inline fun <T, K> Iterator<T>.groupByTo(result: MutableMap<K, MutableList
  * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
  * a special *truncated* separator (which defaults to "..."
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.makeString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...") : String {
     val buffer = StringBuilder()
     appendString(buffer, separator, prefix, postfix, limit, truncated)
@@ -221,7 +221,7 @@ public fun <T> Iterator<T>.makeString(separator: String = ", ", prefix: String =
 /**
  * Returns an iterator obtained by applying *transform*, a function transforming an object of type *T* into an object of type *R*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T, R> Iterator<T>.map(transform : (T) -> R) : Iterator<R> {
     return MapIterator<T, R>(this, transform)
 }
@@ -230,7 +230,7 @@ public fun <T, R> Iterator<T>.map(transform : (T) -> R) : Iterator<R> {
  * Transforms each element of this collection with the given *transform* function and
  * adds each return value to the given *results* collection
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, R, C: MutableCollection<in R>> Iterator<T>.mapTo(result: C, transform : (T) -> R) : C {
     for (item in this)
         result.add(transform(item))
@@ -240,7 +240,7 @@ public inline fun <T, R, C: MutableCollection<in R>> Iterator<T>.mapTo(result: C
 /**
  * Returns the largest element or null if there are no elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T: Comparable<T>> Iterator<T>.max() : T? {
     if (!hasNext()) return null
 
@@ -255,7 +255,7 @@ public fun <T: Comparable<T>> Iterator<T>.max() : T? {
 /**
  * Returns the first element yielding the largest value of the given function or null if there are no elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <R: Comparable<R>, T: Any> Iterator<T>.maxBy(f: (T) -> R) : T? {
     if (!hasNext()) return null
 
@@ -275,7 +275,7 @@ public inline fun <R: Comparable<R>, T: Any> Iterator<T>.maxBy(f: (T) -> R) : T?
 /**
  * Returns the smallest element or null if there are no elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T: Comparable<T>> Iterator<T>.min() : T? {
     if (!hasNext()) return null
 
@@ -290,7 +290,7 @@ public fun <T: Comparable<T>> Iterator<T>.min() : T? {
 /**
  * Returns the first element yielding the smallest value of the given function or null if there are no elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <R: Comparable<R>, T: Any> Iterator<T>.minBy(f: (T) -> R) : T? {
     if (!hasNext()) return null
 
@@ -310,7 +310,7 @@ public inline fun <R: Comparable<R>, T: Any> Iterator<T>.minBy(f: (T) -> R) : T?
 /**
  * Partitions this collection into a pair of collections
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.partition(predicate: (T) -> Boolean) : Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
     val second = ArrayList<T>()
@@ -327,7 +327,7 @@ public inline fun <T> Iterator<T>.partition(predicate: (T) -> Boolean) : Pair<Li
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following collection
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(collection: Iterable<T>) : Iterator<T> {
     return plus(collection.iterator())
 }
@@ -335,7 +335,7 @@ public fun <T> Iterator<T>.plus(collection: Iterable<T>) : Iterator<T> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the given element at the end
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(element: T) : Iterator<T> {
     return CompositeIterator<T>(this, SingleIterator(element))
 }
@@ -343,7 +343,7 @@ public fun <T> Iterator<T>.plus(element: T) : Iterator<T> {
 /**
  * Creates an [[Iterator]] which iterates over this iterator then the following iterator
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.plus(iterator: Iterator<T>) : Iterator<T> {
     return CompositeIterator<T>(this, iterator)
 }
@@ -352,7 +352,7 @@ public fun <T> Iterator<T>.plus(iterator: Iterator<T>) : Iterator<T> {
  * Applies binary operation to all elements of iterable, going from left to right.
  * Similar to fold function, but uses the first element as initial value
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T> Iterator<T>.reduce(operation: (T, T) -> T) : T {
     val iterator = this.iterator()
     if (!iterator.hasNext()) {
@@ -370,7 +370,7 @@ public inline fun <T> Iterator<T>.reduce(operation: (T, T) -> T) : T {
 /**
  * Returns a original Iterable containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T:Any> Iterator<T?>.requireNoNulls() : Iterator<T> {
     return map<T?, T>{
         if (it == null) throw IllegalArgumentException("null element in iterator $this") else it
@@ -380,7 +380,7 @@ public fun <T:Any> Iterator<T?>.requireNoNulls() : Iterator<T> {
 /**
  * Reverses the order the elements into a list
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.reverse() : List<T> {
     val list = toCollection(ArrayList<T>())
     Collections.reverse(list)
@@ -391,7 +391,7 @@ public fun <T> Iterator<T>.reverse() : List<T> {
  * Copies all elements into a [[List]] and sorts it by value of compare_function(element)
  * E.g. arrayList("two" to 2, "one" to 1).sortBy({it.second}) returns list sorted by second element of pair
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, R: Comparable<R>> Iterator<T>.sortBy(f: (T) -> R) : List<T> {
     val sortedList = toCollection(ArrayList<T>())
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) ->
@@ -406,7 +406,7 @@ public inline fun <T, R: Comparable<R>> Iterator<T>.sortBy(f: (T) -> R) : List<T
 /**
  * Returns an iterator restricted to the first *n* elements
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.take(n: Int) : Iterator<T> {
     var count = n
     return takeWhile{ --count >= 0 }
@@ -415,7 +415,7 @@ public fun <T> Iterator<T>.take(n: Int) : Iterator<T> {
 /**
  * Returns an iterator restricted to the first elements that match the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.takeWhile(predicate: (T) -> Boolean) : Iterator<T> {
     return TakeWhileIterator<T>(this, predicate)
 }
@@ -423,7 +423,7 @@ public fun <T> Iterator<T>.takeWhile(predicate: (T) -> Boolean) : Iterator<T> {
 /**
  * Returns a list containing the first elements that satisfy the given *predicate*
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public inline fun <T, C: MutableCollection<in T>> Iterator<T>.takeWhileTo(result: C, predicate: (T) -> Boolean) : C {
     for (element in this) if (predicate(element)) result.add(element) else break
     return result
@@ -432,7 +432,7 @@ public inline fun <T, C: MutableCollection<in T>> Iterator<T>.takeWhileTo(result
 /**
  * Copies all elements into the given collection
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T, C: MutableCollection<in T>> Iterator<T>.toCollection(result: C) : C {
     for (element in this) result.add(element)
     return result
@@ -441,7 +441,7 @@ public fun <T, C: MutableCollection<in T>> Iterator<T>.toCollection(result: C) :
 /**
  * Copies all elements into a [[LinkedList]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toLinkedList() : LinkedList<T> {
     return toCollection(LinkedList<T>())
 }
@@ -449,7 +449,7 @@ public fun <T> Iterator<T>.toLinkedList() : LinkedList<T> {
 /**
  * Copies all elements into a [[List]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toList() : List<T> {
     return toCollection(ArrayList<T>())
 }
@@ -457,7 +457,7 @@ public fun <T> Iterator<T>.toList() : List<T> {
 /**
  * Copies all elements into a [[ArrayList]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toArrayList() : ArrayList<T> {
     return toCollection(ArrayList<T>())
 }
@@ -465,7 +465,7 @@ public fun <T> Iterator<T>.toArrayList() : ArrayList<T> {
 /**
  * Copies all elements into a [[Set]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toSet() : Set<T> {
     return toCollection(LinkedHashSet<T>())
 }
@@ -473,7 +473,7 @@ public fun <T> Iterator<T>.toSet() : Set<T> {
 /**
  * Copies all elements into a [[HashSet]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toHashSet() : HashSet<T> {
     return toCollection(HashSet<T>())
 }
@@ -481,7 +481,7 @@ public fun <T> Iterator<T>.toHashSet() : HashSet<T> {
 /**
  * Copies all elements into a [[SortedSet]]
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.toSortedSet() : SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
@@ -489,7 +489,7 @@ public fun <T> Iterator<T>.toSortedSet() : SortedSet<T> {
 /**
  * Returns an iterator of Pairs(index, data)
  */
-deprecated("Use streams for lazy collection operations.")
+deprecated("Replace Iterator<T> with Stream<T> by using stream() function instead of iterator()")
 public fun <T> Iterator<T>.withIndices() : Iterator<Pair<Int, T>> {
     return IndexIterator(iterator())
 }
