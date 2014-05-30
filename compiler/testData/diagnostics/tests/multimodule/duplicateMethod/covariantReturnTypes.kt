@@ -22,7 +22,7 @@ public trait C : B {
 package p
 
 public trait B {
-    public fun getParent(): Int
+    public fun getParent(): Any?
 }
 
 // MODULE: m4(m3, m2)

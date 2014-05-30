@@ -4797,9 +4797,19 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/classGenericsInParamsNameMismatch.kt");
                 }
                 
+                @TestMetadata("classGenericsInReturnType.kt")
+                public void testClassGenericsInReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/classGenericsInReturnType.kt");
+                }
+                
                 @TestMetadata("classVsFunctionGenericsInParamsMismatch.kt")
                 public void testClassVsFunctionGenericsInParamsMismatch() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/classVsFunctionGenericsInParamsMismatch.kt");
+                }
+                
+                @TestMetadata("covariantReturnTypes.kt")
+                public void testCovariantReturnTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/covariantReturnTypes.kt");
                 }
                 
                 @TestMetadata("differenceInParamNames.kt")

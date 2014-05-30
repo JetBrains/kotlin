@@ -85,8 +85,8 @@ object DescriptorEquivalenceForOverrides {
             areTypeParametersEquivalent(d1, d2, {x, y -> x == a && y == b})
         }
 
-        return overridingUtil.isOverridableBy(a, b).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
-                && overridingUtil.isOverridableBy(b, a).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
+        return overridingUtil.isOverridableByIncludingReturnType(a, b).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
+                && overridingUtil.isOverridableByIncludingReturnType(b, a).getResult() == OverrideCompatibilityInfo.Result.OVERRIDABLE
 
     }
 

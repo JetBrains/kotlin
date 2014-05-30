@@ -4,16 +4,16 @@
 // FILE: a.kt
 package p
 
-public trait B {
-    public fun getParent(): B?
+public trait B<T> {
+    public fun foo(): T
 }
 
 // MODULE: m2(m1)
 // FILE: b.kt
 package p
 
-public trait C : B {
-    override fun getParent(): B?
+public trait C<X> : B<X> {
+    override fun foo(): X
 
 }
 
@@ -21,16 +21,16 @@ public trait C : B {
 // FILE: b.kt
 package p
 
-public trait B {
-    public fun getParent(): Int
+public trait B<T> {
+    public fun foo(): T
 }
 
 // MODULE: m4(m3, m2)
 // FILE: c.kt
 import p.*
 
-fun test(b: B?) {
+fun test(b: B<String>?) {
     if (b is C) {
-        b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getParent<!>()
+        <!DEBUG_INFO_AUTOCAST!>b<!>?.foo()
     }
 }
