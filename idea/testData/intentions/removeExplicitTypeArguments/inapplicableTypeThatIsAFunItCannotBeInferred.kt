@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 fun foo() {
-    <caret>bar<(Int) -> Int>({ baz(it) })
+    bar<caret><(Int) -> Int>({ baz(it) })
 }
 
 fun baz(x: Int): Int = x

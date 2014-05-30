@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    val x = <caret>Box("x")
+    val x = Box<caret>("x")
 }
 
 class Box<T>(t : T) {
