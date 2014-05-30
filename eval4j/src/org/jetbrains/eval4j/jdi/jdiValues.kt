@@ -33,14 +33,18 @@ fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Valu
     val frame = Frame<Value>(methodNode.maxLocals, methodNode.maxStack)
     frame.setReturn(makeNotInitializedValue(Type.getReturnType(methodNode.desc)))
 
+    var index = 0
     for ((i, arg) in arguments.withIndices()) {
-        frame.setLocal(i, arg)
+        frame.setLocal(index++, arg)
+        if (arg.getSize() == 2) {
+            frame.setLocal(index++, NOT_A_VALUE)
+        }
     }
 
-    for (i in arguments.size..methodNode.maxLocals - 1) {
-        frame.setLocal(i, NOT_A_VALUE)
+    while (index < methodNode.maxLocals) {
+        frame.setLocal(index++, NOT_A_VALUE)
     }
-    
+
     return frame
 }
 
