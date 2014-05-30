@@ -1,7 +1,4 @@
 // !CALL: +
-// !EXPLICIT_RECEIVER_KIND: RECEIVER_ARGUMENT
-// !THIS_OBJECT: Title
-// !RECEIVER_ARGUMENT: "Foo"
 
 trait Element {
     fun render(builder: StringBuilder, indent: String)

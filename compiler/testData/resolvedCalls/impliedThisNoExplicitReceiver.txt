@@ -1,0 +1,15 @@
+// !CALL: foo
+
+class A {
+    fun foo() {}
+    fun bar() {
+        foo()
+    }
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = Class{A}
+Receiver argument = NO_RECEIVER

@@ -1,6 +1,4 @@
-// !ONLY_ARGUMENTS
 // !CALL: foo
-// !ARG_1: A() = ArgumentMatch(a : A, SUCCESS)
 
 class A {}
 

@@ -1,0 +1,16 @@
+// !CALL: invoke
+
+trait A {
+    val foo: Int.()->Unit
+
+    fun test() {
+        1.foo()
+    }
+}
+
+
+Resolved call:
+
+Explicit receiver kind = BOTH_RECEIVERS
+This object = foo
+Receiver argument = 1

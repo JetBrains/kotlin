@@ -1,0 +1,16 @@
+// !CALL: invoke
+
+class Foo() {
+    fun Int.invoke() {}
+}
+
+fun bar(f: Foo) {
+    1.f()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = BOTH_RECEIVERS
+This object = f
+Receiver argument = 1

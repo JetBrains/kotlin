@@ -1,0 +1,20 @@
+// !CALL: foo
+
+class A {}
+
+fun foo(a: A) {}
+
+fun bar() {
+    foo(b)
+}
+
+
+Resolved call:
+
+Explicit receiver kind = NO_EXPLICIT_RECEIVER
+This object = NO_RECEIVER
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+ARGUMENT_HAS_NO_TYPE  a : A = b

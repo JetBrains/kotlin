@@ -1,7 +1,4 @@
-// !ONLY_ARGUMENTS
 // !CALL: foo
-// !ARG_1: B() = ArgumentMatch(b : B, SUCCESS)
-// !ARG_2: A() = ArgumentUnmapped
 
 class A {}
 class B {}

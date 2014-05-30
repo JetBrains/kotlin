@@ -1,7 +1,4 @@
 // !CALL: foo
-// !EXPLICIT_RECEIVER_KIND: NO_EXPLICIT_RECEIVER
-// !THIS_OBJECT: A
-// !RECEIVER_ARGUMENT: B
 
 class A {
     fun B.foo() {}

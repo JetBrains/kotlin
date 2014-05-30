@@ -1,0 +1,12 @@
+// !CALL: invoke
+
+fun bar(f: Int.()->Unit) {
+    1.f()
+}
+
+
+Resolved call:
+
+Explicit receiver kind = BOTH_RECEIVERS
+This object = f
+Receiver argument = 1

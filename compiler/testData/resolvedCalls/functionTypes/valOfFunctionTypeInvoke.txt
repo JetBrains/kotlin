@@ -1,0 +1,20 @@
+// !CALL: invoke
+
+trait A {
+    val foo: (Int)->Int
+}
+
+fun test(a: A) {
+    a.foo(1)
+}
+
+
+Resolved call:
+
+Explicit receiver kind = THIS_OBJECT
+This object = foo
+Receiver argument = NO_RECEIVER
+
+Value arguments mapping:
+
+SUCCESS  p1 : Int = 1

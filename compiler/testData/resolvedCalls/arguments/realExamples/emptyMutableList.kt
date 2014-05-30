@@ -1,6 +1,4 @@
-// !ONLY_ARGUMENTS
 // !CALL: foo
-// !ARG_1: emptyList() = ArgumentMatch(t : MutableList<???>, UNINFERRED_TYPE_IN_PARAMETER)
 
 class A {}
 

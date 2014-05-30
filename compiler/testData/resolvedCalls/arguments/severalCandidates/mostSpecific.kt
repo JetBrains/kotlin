@@ -1,7 +1,4 @@
-// !ONLY_ARGUMENTS
 // !CALL: foo
-// !ARG_1: A() = ArgumentMatch(a : A, SUCCESS)
-// !ARG_2: "" = ArgumentMatch(s : String, SUCCESS)
 
 class A {}
 
