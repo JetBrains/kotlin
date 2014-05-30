@@ -122,7 +122,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             }
         }
 
-        if (!psiClass.isEnum() && !psiClass.isInterface() && psiClass.getConstructors().size > 1 && getPrimaryConstructorForThisCase(psiClass) == null) {
+        if (!psiClass.isEnum() && !psiClass.isInterface() && psiClass.getConstructors().size > 1 && psiClass.getPrimaryConstructor() == null) {
             val finalOrWithEmptyInitializer = fields.filter { it.isVal() || it.initializer.toKotlin().isEmpty() }
             val initializers = HashMap<String, String>()
             for (member in members) {
@@ -243,7 +243,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
         if (method.isConstructor()) {
             return Constructor(this, identifier, getComments(method), modifiers, returnType, typeParameterList, params,
-                               Block(body.statements), isConstructorPrimary(method))
+                               Block(body.statements), method.isPrimaryConstructor())
         }
 
         return Function(this, identifier, getComments(method), modifiers, returnType, typeParameterList, params, body)

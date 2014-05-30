@@ -168,7 +168,7 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
         val isNotConvertedClass = classReference != null && !converter.getClassIdentifiers().contains(classReference.getQualifiedName())
         val argumentList = expression.getArgumentList()
         var arguments = argumentList?.getExpressions() ?: array()
-        if (constructor == null || isConstructorPrimary(constructor) || isNotConvertedClass) {
+        if (constructor == null || constructor.isPrimaryConstructor() || isNotConvertedClass) {
             return NewClassExpression(converter.convertElement(classReference),
                                       converter.convertArguments(expression),
                                       converter.convertExpression(expression.getQualifier()),
@@ -385,32 +385,6 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
             }
         }
 
-        return false
-    }
-
-    private fun isInsideSecondaryConstructor(expression: PsiReferenceExpression): Boolean {
-        var context = expression.getContext()
-        while (context != null) {
-            val _context = context!!
-            if (_context is PsiMethod && _context.isConstructor()) {
-                return !isConstructorPrimary(_context)
-            }
-
-            context = _context.getContext()
-        }
-        return false
-    }
-
-    private fun isInsidePrimaryConstructor(expression: PsiExpression): Boolean {
-        var context = expression.getContext()
-        while (context != null) {
-            val _context = context!!
-            if (_context is PsiMethod && _context.isConstructor()) {
-                return isConstructorPrimary(_context)
-            }
-
-            context = _context.getContext()
-        }
         return false
     }
 

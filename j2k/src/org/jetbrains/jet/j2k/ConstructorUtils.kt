@@ -22,57 +22,70 @@ import com.intellij.psi.PsiReferenceExpression
 import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
 import com.intellij.psi.PsiReference
+import com.intellij.psi.PsiElement
 
-fun isConstructorPrimary(constructor: PsiMethod): Boolean {
-    val parent = constructor.getParent()
-    if (parent is PsiClass) {
-        if (parent.getConstructors().size == 1) {
-            return true
-        }
-        else {
-            val primary = getPrimaryConstructorForThisCase(parent)
-            //TODO: I do not understand code below
-            if (primary != null && primary.hashCode() == constructor.hashCode()) {
-                return true
-            }
-        }
-    }
-    return false
+fun PsiMethod.isPrimaryConstructor(): Boolean {
+    if (!isConstructor()) return false
+    val parent = getParent()
+    if (parent !is PsiClass) return false
+    return parent.getPrimaryConstructor() == this
 }
 
-fun getPrimaryConstructorForThisCase(psiClass: PsiClass): PsiMethod? {
-    class FindPrimaryConstructorVisitor() : JavaRecursiveElementVisitor() {
-        private val resolvedConstructors = LinkedHashSet<PsiMethod>()
+fun PsiClass.getPrimaryConstructor(): PsiMethod? {
+    val constructors = getConstructors()
+    return when (constructors.size) {
+        0 -> null
 
-        override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-            expression.getReferences()
-                    .filter { it.getCanonicalText() == "this" }
-                    .map { it.resolve() }
-                    .filterIsInstance(javaClass<PsiMethod>())
-                    .filterTo(resolvedConstructors) { it.isConstructor() }
+        1 -> constructors.single()
+
+        else -> {
+            // if there is more than one constructor then choose one invoked by all others
+            class Visitor() : JavaRecursiveElementVisitor() {
+                //TODO: skip all non-constructor members (optimization)
+                private val invokedConstructors = LinkedHashSet<PsiMethod>()
+
+                override fun visitReferenceExpression(expression: PsiReferenceExpression) {
+                    expression.getReferences()
+                            .filter { it.getCanonicalText() == "this" }
+                            .map { it.resolve() }
+                            .filterIsInstance(javaClass<PsiMethod>())
+                            .filterTo(invokedConstructors) { it.isConstructor() }
+                }
+
+                val primaryConstructor: PsiMethod?
+                    get() = if (invokedConstructors.size == 1) invokedConstructors.single() else null
+            }
+
+            val visitor = Visitor()
+            accept(visitor)
+            visitor.primaryConstructor
+        }
+    }
+}
+
+fun isInsidePrimaryConstructor(element: PsiElement): Boolean
+        = containingConstructor(element)?.isPrimaryConstructor() ?: false
+
+fun isInsideSecondaryConstructor(element: PsiElement): Boolean
+        = !(containingConstructor(element)?.isPrimaryConstructor() ?: true)
+
+fun containingConstructor(element: PsiElement): PsiMethod? {
+    var context = element.getContext()
+    while (context != null) {
+        val _context = context!!
+        if (_context is PsiMethod) {
+            return if (_context.isConstructor()) _context else null
         }
 
-        val result: PsiMethod?
-            get() {
-                if (resolvedConstructors.isEmpty()) return null
-                //TODO: I do not understand code below
-                val first = resolvedConstructors.first()
-                return if (resolvedConstructors.all { it.hashCode() == first.hashCode() }) first else null
-            }
+        context = _context.getContext()
     }
-
-    val visitor = FindPrimaryConstructorVisitor()
-    psiClass.accept(visitor)
-    return visitor.result
+    return null
 }
 
 fun isSuperConstructorRef(ref: PsiReference): Boolean {
     if (ref.getCanonicalText().equals("super")) {
-        val baseConstructor = ref.resolve()
-        if (baseConstructor is PsiMethod && baseConstructor.isConstructor()) {
-            return true
-        }
+        val target = ref.resolve()
+        return target is PsiMethod && target.isConstructor()
     }
-
     return false
 }
