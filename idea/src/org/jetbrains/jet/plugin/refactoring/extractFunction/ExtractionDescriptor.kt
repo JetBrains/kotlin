@@ -94,9 +94,7 @@ trait ControlFlow {
     val returnType: JetType
 }
 
-object DefaultControlFlow: ControlFlow {
-    override val returnType: JetType get() = DEFAULT_RETURN_TYPE
-}
+class DefaultControlFlow(override val returnType: JetType = DEFAULT_RETURN_TYPE): ControlFlow
 
 trait JumpBasedControlFlow : ControlFlow {
     val elementsToReplace: List<JetElement>

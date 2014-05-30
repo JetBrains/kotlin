@@ -44,6 +44,12 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetDeclaration
 import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 
+data class ExtractionOptions(val inferUnitTypeForUnusedValues: Boolean) {
+    class object {
+        val DEFAULT = ExtractionOptions(true)
+    }
+}
+
 data class ResolveResult(
         val originalRefExpr: JetSimpleNameExpression,
         val declaration: PsiNamedElement,
@@ -60,7 +66,8 @@ data class ResolvedReferenceInfo(
 class ExtractionData(
         val originalFile: JetFile,
         val originalElements: List<PsiElement>,
-        val targetSibling: PsiElement
+        val targetSibling: PsiElement,
+        val options: ExtractionOptions = ExtractionOptions.DEFAULT
 ) {
     val project: Project = originalFile.getProject()
 
@@ -133,9 +140,6 @@ class ExtractionData(
 
         return referencesInfo
     }
-
-    fun getInferredResultType(): JetType? =
-            getExpressions().last?.let { AnalyzerFacadeWithCache.getContextForElement(it)[BindingContext.EXPRESSION_TYPE, it] }
 }
 
 private fun compareDescriptors(d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {

@@ -17,85 +17,43 @@
 package org.jetbrains.jet.plugin.refactoring.extractFunction
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.jet.lang.types.JetType
-import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import org.jetbrains.jet.lang.psi.JetNamedFunction
+import org.jetbrains.jet.lang.types.*
+import org.jetbrains.jet.lang.psi.*
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
-import org.jetbrains.jet.lang.psi.JetPsiFactory
-import java.util.HashMap
-import org.jetbrains.jet.lang.psi.JetParameter
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.jet.lang.psi.JetBlockExpression
-import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle
-import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
-import java.util.HashSet
-import org.jetbrains.jet.lang.cfg.pseudocode.WriteValueInstruction
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor
-import org.jetbrains.jet.lang.psi.psiUtil.appendElement
+import java.util.*
 import org.jetbrains.jet.plugin.refactoring.createTempCopy
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.psi.JetProperty
-import org.jetbrains.jet.lang.psi.psiUtil.prependElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.jet.lang.cfg.pseudocode.JetElementInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.AbstractJumpInstruction
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ThisReceiver
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
-import org.jetbrains.jet.lang.psi.JetThisExpression
-import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction
-import java.util.ArrayList
-import org.jetbrains.jet.lang.cfg.pseudocode.ReadValueInstruction
-import org.jetbrains.jet.lang.cfg.pseudocode.CallInstruction
-import org.jetbrains.jet.lang.types.CommonSupertypes
+import org.jetbrains.jet.lang.cfg.pseudocode.*
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.cfg.pseudocode.ReturnValueInstruction
 import org.jetbrains.jet.lang.cfg.Label
-import org.jetbrains.jet.lang.psi.JetReturnExpression
-import org.jetbrains.jet.lang.psi.JetBreakExpression
-import org.jetbrains.jet.lang.psi.JetContinueExpression
 import org.jetbrains.jet.lang.psi.JetPsiFactory.FunctionBuilder
 import org.jetbrains.jet.plugin.refactoring.JetNameValidatorImpl
-import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
-import org.jetbrains.jet.lang.psi.JetThrowExpression
 import org.jetbrains.jet.plugin.imports.canBeReferencedViaImport
-import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.psi.JetSuperExpression
-import org.jetbrains.jet.lang.psi.JetQualifiedExpression
-import org.jetbrains.jet.lang.psi.JetCallExpression
-import org.jetbrains.jet.lang.psi.JetTreeVisitorVoid
 import org.jetbrains.jet.lang.types.checker.JetTypeChecker
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
-import com.intellij.refactoring.util.RefactoringUIUtil
-import org.jetbrains.jet.lang.psi.psiUtil.replaced
-import java.util.Collections
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.jet.lang.types.ErrorUtils
-import org.jetbrains.jet.lang.psi.JetTypeParameter
-import org.jetbrains.jet.lang.psi.JetTypeConstraint
-import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.utils.DFS
-import org.jetbrains.jet.utils.DFS.Neighbors
-import org.jetbrains.jet.utils.DFS.VisitedWithSet
-import org.jetbrains.jet.utils.DFS.CollectingNodeHandler
+import org.jetbrains.jet.utils.DFS.*
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.psi.psiUtil.prependElement
+import org.jetbrains.jet.lang.psi.psiUtil.appendElement
+import org.jetbrains.jet.plugin.codeInsight.ShortenReferences
+import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
 import org.jetbrains.jet.lang.diagnostics.Errors
-import org.jetbrains.jet.lang.psi.JetTypeReference
-import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
+import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 
@@ -114,21 +72,29 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
 private fun List<Instruction>.getExitPoints(): List<Instruction> =
         filter { localInstruction -> localInstruction.getNextInstructions().any { it !in this } }
 
-private fun List<Instruction>.getResultType(bindingContext: BindingContext): JetType {
+private fun List<Instruction>.getResultType(bindingContext: BindingContext, options: ExtractionOptions): JetType {
     fun instructionToType(instruction: Instruction): JetType? {
-        return when (instruction) {
-            is ReadValueInstruction -> {
-                PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, bindingContext)?.getType()
+        val expression = when (instruction) {
+            is ReturnValueInstruction -> {
+                (instruction.getElement() as JetReturnExpression).getReturnedExpression()
             }
             is CallInstruction -> {
-                instruction.resolvedCall.getResultingDescriptor()?.getReturnType()
+                val callElement = instruction.resolvedCall.getCall().getCallElement() as? JetExpression
+                if (callElement is JetSimpleNameExpression) callElement.getParentByType(javaClass<JetExpression>(), true) else callElement
             }
-            is ReturnValueInstruction -> {
-                val expression = (instruction.getElement() as JetReturnExpression).getReturnedExpression()
-                bindingContext[BindingContext.EXPRESSION_TYPE, expression]
+            is ReadValueInstruction, is OperationInstruction -> {
+                (instruction as JetElementInstruction).getElement() as? JetExpression
             }
             else -> null
         }
+
+        if (expression == null) return null
+        if (options.inferUnitTypeForUnusedValues) {
+            val pseudocode = firstOrNull()?.getOwner()
+            if (pseudocode != null && expression.isStatement(pseudocode)) return null
+        }
+
+        return bindingContext[BindingContext.EXPRESSION_TYPE, expression]
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
@@ -140,68 +106,79 @@ private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): B
     return !checkPsi || mapTo(HashSet<String?>()) { it.getElement().getText() }.size <= 1
 }
 
+private fun JetType.isMeaningful(): Boolean {
+    return KotlinBuiltIns.getInstance().let { builtins -> !builtins.isUnit(this) && !builtins.isNothing(this) }
+}
+
 private fun List<Instruction>.analyzeControlFlow(
         bindingContext: BindingContext,
-        parameters: Set<Parameter>,
-        inferredType: JetType?
+        options: ExtractionOptions,
+        parameters: Set<Parameter>
 ): Pair<ControlFlow, ErrorMessage?> {
-    val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
-
-    if (outParameters.size > 1) {
-        val outValuesStr = outParameters.map { it.argumentText }.sort()
-        return Pair(
-                DefaultControlFlow,
-                ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
-        )
-    }
-
     val exitPoints = getExitPoints()
 
     val valuedReturnExits = ArrayList<ReturnValueInstruction>()
     val defaultExits = ArrayList<Instruction>()
     val jumpExits = ArrayList<AbstractJumpInstruction>()
     exitPoints.forEach {
-        when (it) {
-            is ReturnValueInstruction -> valuedReturnExits.add(it)
+        val e = (it as? UnconditionalJumpInstruction)?.getElement()
+        val insn =
+                if (e != null && e !is JetBreakExpression && e !is JetContinueExpression) {
+                    it.getPreviousInstructions().firstOrNull()
+                }
+                else it
+
+        when (insn) {
+            is ReturnValueInstruction -> valuedReturnExits.add(insn)
 
             is AbstractJumpInstruction -> {
-                val element = it.getElement()
+                val element = insn.getElement()
                 if (element is JetReturnExpression
                 || element is JetBreakExpression
                 || element is JetContinueExpression) {
-                    jumpExits.add(it)
+                    jumpExits.add(insn)
                 }
                 else if (element !is JetThrowExpression) {
-                    defaultExits.add(it)
+                    defaultExits.add(insn)
                 }
             }
 
-            else -> if (it !is LocalFunctionDeclarationInstruction) {
-                defaultExits.add(it)
+            else -> if (insn != null && insn !is LocalFunctionDeclarationInstruction) {
+                defaultExits.add(insn)
             }
         }
     }
 
-    val builtins = KotlinBuiltIns.getInstance()
-    val hasMeaningfulType = inferredType != null && !builtins.isUnit(inferredType) && !builtins.isNothing(inferredType)
+    val typeOfDefaultFlow = defaultExits.getResultType(bindingContext, options)
+    val returnValueType = valuedReturnExits.getResultType(bindingContext, options)
+    val defaultControlFlow = DefaultControlFlow(if (returnValueType.isMeaningful()) returnValueType else typeOfDefaultFlow)
 
-    if (outParameters.isNotEmpty()) {
-        if (hasMeaningfulType || valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) {
-            return Pair(DefaultControlFlow, ErrorMessage.OUTPUT_AND_EXIT_POINT)
+    val outParameters = parameters.filterTo(HashSet<Parameter>()) { it.mirrorVarName != null }
+    when {
+        outParameters.size > 1 -> {
+            val outValuesStr = outParameters.map { it.argumentText }.sort()
+
+            return Pair(
+                    defaultControlFlow,
+                    ErrorMessage.MULTIPLE_OUTPUT.addAdditionalInfo(outValuesStr)
+            )
         }
 
-        return Pair(ParameterUpdate(outParameters.first()), null)
+        outParameters.size == 1 -> {
+            if (returnValueType.isMeaningful() || typeOfDefaultFlow.isMeaningful() || jumpExits.isNotEmpty()) {
+                return Pair(defaultControlFlow, ErrorMessage.OUTPUT_AND_EXIT_POINT)
+            }
+
+            return Pair(ParameterUpdate(outParameters.first()), null)
+        }
     }
 
-    val multipleExitsError = Pair(
-            DefaultControlFlow,
-            ErrorMessage.MULTIPLE_EXIT_POINTS
-    )
+    val multipleExitsError = Pair(defaultControlFlow, ErrorMessage.MULTIPLE_EXIT_POINTS)
 
-    if (hasMeaningfulType) {
+    if (typeOfDefaultFlow.isMeaningful()) {
         if (valuedReturnExits.isNotEmpty() || jumpExits.isNotEmpty()) return multipleExitsError
 
-        return Pair(ExpressionEvaluation(inferredType!!), null)
+        return Pair(ExpressionEvaluation(typeOfDefaultFlow), null)
     }
 
     if (valuedReturnExits.isNotEmpty()) {
@@ -215,7 +192,7 @@ private fun List<Instruction>.analyzeControlFlow(
         }
 
         if (!valuedReturnExits.checkEquivalence(false)) return multipleExitsError
-        return Pair(ExpressionEvaluationWithCallSiteReturn(valuedReturnExits.getResultType(bindingContext)), null)
+        return Pair(ExpressionEvaluationWithCallSiteReturn(valuedReturnExits.getResultType(bindingContext, options)), null)
     }
 
     if (jumpExits.isNotEmpty()) {
@@ -226,7 +203,7 @@ private fun List<Instruction>.analyzeControlFlow(
         return Pair(UnconditionalJump(elements, elements.first!!), null)
     }
 
-    return Pair(DefaultControlFlow, null)
+    return Pair(defaultControlFlow, null)
 }
 
 fun ExtractionData.createTemporaryFunction(functionText: String): JetNamedFunction {
@@ -291,7 +268,7 @@ fun TypeParameter.collectReferencedTypes(bindingContext: BindingContext): List<J
 private fun JetType.processTypeIfExtractable(
         bindingContext: BindingContext,
         typeParameters: MutableSet<TypeParameter>,
-        nonDenotableTypes: HashSet<JetType>
+        nonDenotableTypes: MutableSet<JetType>
 ): Boolean {
     return collectReferencedTypes().fold(true) { (extractable, typeToCheck) ->
         val parameterTypeDescriptor = typeToCheck.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
@@ -320,10 +297,10 @@ private fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
         localInstructions: List<Instruction>,
         bindingContext: BindingContext,
-        resultType: JetType?,
         replacementMap: MutableMap<Int, Replacement>,
         parameters: MutableSet<Parameter>,
-        typeParameters: MutableSet<TypeParameter>
+        typeParameters: MutableSet<TypeParameter>,
+        nonDenotableTypes: MutableSet<JetType>
 ): ErrorMessage? {
     val varNameValidator = JetNameValidatorImpl(
             commonParent.getParentByType(javaClass<JetExpression>()),
@@ -333,7 +310,6 @@ private fun ExtractionData.inferParametersInfo(
     val modifiedVarDescriptors = localInstructions.getModifiedVarDescriptors(bindingContext)
 
     val extractedDescriptorToParameter = HashMap<DeclarationDescriptor, Parameter>()
-    val nonDenotableTypes = HashSet<JetType>()
 
     for (refInfo in getBrokenReferencesInfo(createTemporaryCodeBlock())) {
         val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
@@ -406,19 +382,15 @@ private fun ExtractionData.inferParametersInfo(
                             else existingParameter
                         }
                         else {
-                            val parameterName: String =
+                            val parameterName =
                                     if (extractThis) {
                                         JetNameSuggester.suggestNames(parameterType, varNameValidator, null).first()
                                     }
                                     else originalDeclaration.getName()!!
 
-                            val mirrorVarName: String?
-                            if (descriptorToExtract in modifiedVarDescriptors) {
-                                mirrorVarName = varNameValidator.validateName(parameterName)
-                            }
-                            else {
-                                mirrorVarName = null
-                            }
+                            val mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors)
+                                varNameValidator.validateName(parameterName)!!
+                            else null
 
                             val argumentText =
                                     if (hasThisReceiver && extractThis)
@@ -439,17 +411,8 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    resultType?.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)
     for (typeToCheck in typeParameters.flatMapTo(HashSet<JetType>()) { it.collectReferencedTypes(bindingContext) }) {
         typeToCheck.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)
-    }
-
-    if (nonDenotableTypes.isNotEmpty()) {
-        val typeStr = nonDenotableTypes.map {
-            DescriptorRenderer.HTML.renderType(it)
-        }.sort()
-
-        return ErrorMessage.DENOTABLE_TYPES.addAdditionalInfo(typeStr)
     }
 
     parameters.addAll(extractedDescriptorToParameter.values())
@@ -527,13 +490,12 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
         it is JetElementInstruction && it.getElement().isInsideOf(originalElements)
     }
 
-    val inferredResultType = getInferredResultType()
-
     val replacementMap = HashMap<Int, Replacement>()
     val parameters = HashSet<Parameter>()
     val typeParameters = HashSet<TypeParameter>()
+    val nonDenotableTypes = HashSet<JetType>()
     val parameterError = inferParametersInfo(
-            commonParent, localInstructions, bindingContext, inferredResultType, replacementMap, parameters, typeParameters
+            commonParent, localInstructions, bindingContext, replacementMap, parameters, typeParameters, nonDenotableTypes
     )
     if (parameterError != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(parameterError))
@@ -541,17 +503,29 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val messages = ArrayList<ErrorMessage>()
 
-    val (controlFlow, controlFlowMessage) = localInstructions.analyzeControlFlow(bindingContext, parameters, inferredResultType)
+    val (controlFlow, controlFlowMessage) = localInstructions.analyzeControlFlow(bindingContext, options, parameters)
     controlFlowMessage?.let { messages.add(it) }
+
+    controlFlow.returnType.processTypeIfExtractable(bindingContext, typeParameters, nonDenotableTypes)
+
+    if (nonDenotableTypes.isNotEmpty()) {
+        val typeStr = nonDenotableTypes.map {DescriptorRenderer.HTML.renderType(it)}.sort()
+        return AnalysisResult(
+                null,
+                Status.CRITICAL_ERROR,
+                listOf(ErrorMessage.DENOTABLE_TYPES.addAdditionalInfo(typeStr))
+        )
+    }
 
     checkLocalDeclarationsWithNonLocalUsages(pseudocode.getInstructions(), localInstructions, bindingContext)?.let { messages.add(it) }
     checkDeclarationsMovingOutOfScope(controlFlow)?.let { messages.add(it) }
 
-    val functionNameValidator = JetNameValidatorImpl(
-            targetSibling.getParent(),
-            targetSibling,
-            JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
-    )
+    val functionNameValidator =
+            JetNameValidatorImpl(
+                    targetSibling.getParent(),
+                    targetSibling,
+                    JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
+            )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
 
     val receiverCandidates = parameters.filterTo(HashSet<Parameter>()) { it.receiverCandidate }

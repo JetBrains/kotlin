@@ -70,6 +70,7 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
+import org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractionOptions
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -359,7 +360,9 @@ private fun getFunctionForExtractedFragment(
             val targetSibling = tmpFile.getDeclarations().firstOrNull()
             if (targetSibling == null) return null
 
-            val analysisResult = ExtractionData(tmpFile, Collections.singletonList(newDebugExpression), targetSibling).performAnalysis()
+            val analysisResult = ExtractionData(
+                    tmpFile, Collections.singletonList(newDebugExpression), targetSibling, ExtractionOptions(false)
+            ).performAnalysis()
             if (analysisResult.status != Status.SUCCESS) {
                 throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
             }

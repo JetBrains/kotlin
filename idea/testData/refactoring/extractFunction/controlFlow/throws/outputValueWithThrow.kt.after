@@ -1,0 +1,15 @@
+// SIBLING:
+fun foo(a: Int): Int {
+    var b: Int = 1
+
+    b = i(b)
+
+    return b
+}
+
+fun i(b: Int): Int {
+    var b1 = b
+    if (n == 10) throw Exception("")
+    b1++
+    return b1
+}
