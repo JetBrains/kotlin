@@ -98,4 +98,30 @@
     <description>Remove explicit type arguments</description>
   </problem>
 
+  <problem>
+    <file>returnCallWithUnnecessaryTypeArgs.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/returnCallWithUnnecessaryTypeArgs.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>propertyInitializerIsCallWithUnnecessaryTypeArgs.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/propertyInitializerIsCallWithUnnecessaryTypeArgs.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>functionBodyIsCallWithUnnecessaryTypeArgs.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/functionBodyIsCallWithUnnecessaryTypeArgs.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
 </problems>

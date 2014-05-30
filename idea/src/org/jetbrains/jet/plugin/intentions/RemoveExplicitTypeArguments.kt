@@ -31,6 +31,12 @@ import java.util.ArrayList
 import org.jetbrains.jet.di.InjectorForMacros
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.plugin.caches.resolve.getLazyResolveSession
+import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.lang.psi.JetTypeArgumentList
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.psi.JetReturnExpression
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 
 public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(
         "remove.explicit.type.arguments", javaClass()) {
@@ -48,7 +54,23 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
         if (originalCall == null || scope !is JetScope) return false
         val untypedCall = CallWithoutTypeArgs(originalCall)
 
-        val jType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, element] ?: TypeUtils.NO_EXPECTED_TYPE
+        // todo Check with expected type for other expressions
+        // If always use expected type from trace there is a problem with nested calls:
+        // the expression type for them can depend on their explicit type arguments (via outer call),
+        // therefore we should resolve outer call with erased type arguments for inner call
+        val parent = element.getParent()
+        val expectedTypeIsExplicitInCode = when(parent) {
+            is JetProperty -> parent.getInitializer() == callExpression && parent.getTypeRef() != null
+            is JetDeclarationWithBody -> parent.getBodyExpression() == callExpression
+            is JetReturnExpression -> true
+            else -> false
+        }
+        val jType = if (expectedTypeIsExplicitInCode) {
+            context[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE
+        }
+        else {
+            TypeUtils.NO_EXPECTED_TYPE
+        }
         val dataFlow = context[BindingContext.EXPRESSION_DATA_FLOW_INFO, element] ?: DataFlowInfo.EMPTY
         val resolvedCall = injector.getExpressionTypingServices()?.getCallResolver()?.resolveFunctionCall(
                 BindingTraceContext(), scope, untypedCall, jType, dataFlow, false)

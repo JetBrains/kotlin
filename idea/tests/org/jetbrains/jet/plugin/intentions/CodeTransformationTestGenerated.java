@@ -4092,6 +4092,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/fourLiterals.kt");
         }
         
+        @TestMetadata("functionBodyIsCallWithUnnecessaryTypeArgs.kt")
+        public void testFunctionBodyIsCallWithUnnecessaryTypeArgs() throws Exception {
+            doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/functionBodyIsCallWithUnnecessaryTypeArgs.kt");
+        }
+        
         @TestMetadata("inapplicableTypeThatIsAFunItCannotBeInferred.kt")
         public void testInapplicableTypeThatIsAFunItCannotBeInferred() throws Exception {
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/inapplicableTypeThatIsAFunItCannotBeInferred.kt");
@@ -4122,6 +4127,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/literalsWhenTypeArgHasTypeArg.kt");
         }
         
+        @TestMetadata("nestedCall-KT-5028.kt")
+        public void testNestedCall_KT_5028() throws Exception {
+            doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/nestedCall-KT-5028.kt");
+        }
+        
         @TestMetadata("notApplicableNotEnoughtInfo.kt")
         public void testNotApplicableNotEnoughtInfo() throws Exception {
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/notApplicableNotEnoughtInfo.kt");
@@ -4135,6 +4145,16 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
         @TestMetadata("notApplicableSupertypeOfInferredClass.kt")
         public void testNotApplicableSupertypeOfInferredClass() throws Exception {
             doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/notApplicableSupertypeOfInferredClass.kt");
+        }
+        
+        @TestMetadata("propertyInitializerIsCallWithUnnecessaryTypeArgs.kt")
+        public void testPropertyInitializerIsCallWithUnnecessaryTypeArgs() throws Exception {
+            doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/propertyInitializerIsCallWithUnnecessaryTypeArgs.kt");
+        }
+        
+        @TestMetadata("returnCallWithUnnecessaryTypeArgs.kt")
+        public void testReturnCallWithUnnecessaryTypeArgs() throws Exception {
+            doTestRemoveExplicitTypeArguments("idea/testData/intentions/removeExplicitTypeArguments/returnCallWithUnnecessaryTypeArgs.kt");
         }
         
         @TestMetadata("twoLiteralValues.kt")
