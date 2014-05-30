@@ -6,20 +6,20 @@ import org.junit.Test as test
 
 class CollectionTest {
 
-    test fun appendString() {
+    test fun joinTo() {
         val data = arrayListOf("foo", "bar")
         val buffer = StringBuilder()
-        val text = data.appendString(buffer, "-", "{", "}")
+        data.joinTo(buffer, "-", "{", "}")
         assertEquals("{foo-bar}", buffer.toString())
     }
 
-    test fun makeString() {
+    test fun join() {
         val data = arrayListOf("foo", "bar")
-        val text = data.makeString("-", "<", ">")
+        val text = data.join("-", "<", ">")
         assertEquals("<foo-bar>", text)
 
         val big = arrayListOf("a", "b", "c", "d", "e", "f")
-        val text2 = big.makeString(limit = 3, truncated = "*")
+        val text2 = big.join(limit = 3, truncated = "*")
         assertEquals("a, b, c, *", text2)
     }
 

@@ -65,18 +65,18 @@ public class StreamTest {
     }
 
     test fun joinConcatenatesTheFirstNElementsAboveAThreshold() {
-        assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.makeString(separator = ", ", limit = 5))
+        assertEquals("13, 21, 34, 55, 89, ...", fibonacci().filter { it > 10 }.joinToString(separator = ", ", limit = 5))
     }
 
     test fun skippingIterator() {
-        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).makeString(limit = 10))
-        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).makeString(limit = 10))
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(7).joinToString(limit = 10))
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
     }
 
     test fun toStringJoinsNoMoreThanTheFirstTenElements() {
-        assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().makeString(limit = 10))
-        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter { it > 10 }.makeString(limit = 10))
-        assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.makeString())
+        assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().joinToString(limit = 10))
+        assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter { it > 10 }.joinToString(limit = 10))
+        assertEquals("144, 233, 377, 610, 987", fibonacci().filter { it > 100 }.takeWhile { it < 1000 }.joinToString())
     }
 
     test fun plus() {
@@ -146,7 +146,7 @@ public class StreamTest {
 
     /*
     test fun pairIterator() {
-        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).makeString(limit = 10)
+        val pairStr = (fibonacci() zip fibonacci().map { i -> i*2 }).joinToString(limit = 10)
         assertEquals("(0, 0), (1, 2), (1, 2), (2, 4), (3, 6), (5, 10), (8, 16), (13, 26), (21, 42), (34, 68), ...", pairStr)
     }
 */

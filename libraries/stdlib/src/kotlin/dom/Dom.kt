@@ -333,7 +333,7 @@ fun NodeList?.toXmlString(xmlDeclaration: Boolean = false): String {
 /** Converts the collection of nodes to an XML String */
 public fun nodesToXmlString(nodes: Iterable<Node>, xmlDeclaration: Boolean = false): String {
     // TODO this should work...
-    // return this.map{it.toXmlString()}.makeString("")
+    // return this.map{it.toXmlString()}.join("")
     val builder = StringBuilder()
     for (n in nodes) {
         builder.append(n.toXmlString(xmlDeclaration))

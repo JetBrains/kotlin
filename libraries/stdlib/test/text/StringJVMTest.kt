@@ -111,10 +111,10 @@ class StringJVMTest {
         }
     }
 
-    test fun appendString() {
-        val data = "kotlin"
+    test fun joinTo() {
+        val data = "kotlin".toList()
         val sb = StringBuilder()
-        data.appendString(sb, "^", "<", ">")
+        data.joinTo(sb, "^", "<", ">")
         assertEquals("<k^o^t^l^i^n>", sb.toString())
     }
 
@@ -228,13 +228,23 @@ class StringJVMTest {
         assertEquals(listOf('a','b','b','a','c'), result.get(true))
     }
 
-    test fun makeString() {
-        val data = "abcd"
-        val result = data.makeString("_", "(", ")")
+    test fun joinToString() {
+        val data = "abcd".toList()
+        val result = data.joinToString("_", "(", ")")
         assertEquals("(a_b_c_d)", result)
 
-        val data2 = "verylongstring"
-        val result2 = data2.makeString("-", "[", "]", 11, "oops")
+        val data2 = "verylongstring".toList()
+        val result2 = data2.joinToString("-", "[", "]", 11, "oops")
+        assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
+    }
+
+    test fun join() {
+        val data = "abcd".map { it.toString() }
+        val result = data.join("_", "(", ")")
+        assertEquals("(a_b_c_d)", result)
+
+        val data2 = "verylongstring".map { it.toString() }
+        val result2 = data2.join("-", "[", "]", 11, "oops")
         assertEquals("[v-e-r-y-l-o-n-g-s-t-r-oops]", result2)
     }
 

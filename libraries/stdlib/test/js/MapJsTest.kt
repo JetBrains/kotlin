@@ -219,7 +219,7 @@ abstract class MapJsTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     test fun iterateWithProperties() {
@@ -236,7 +236,7 @@ abstract class MapJsTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
     }
 
     test fun map() {
@@ -305,7 +305,7 @@ abstract class MapJsTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.joinToString(","))
         println("==== worked! $list")
     }
     */

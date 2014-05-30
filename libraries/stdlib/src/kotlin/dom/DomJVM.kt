@@ -109,7 +109,7 @@ get() = childNodes.outerHTML
  * Returns the HTML representation of the nodes
  */
 public val NodeList.outerHTML: String
-get() = toList().map { it.innerHTML }.makeString("")
+get() = toList().map { it.innerHTML }.join("")
 
 /** Returns an [[Iterator]] of all the next [[Element]] siblings */
 fun Node.nextElements(): List<Element> = nextSiblings().filterIsInstance<Node, Element>(javaClass<Element>())
@@ -130,7 +130,7 @@ get() {
     return answer
 }
 set(value) {
-    this.classes = value.makeString(" ")
+    this.classes = value.join(" ")
 }
 
 /** Adds the given CSS class to this element's 'class' attribute */

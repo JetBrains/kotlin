@@ -13,7 +13,7 @@ class CollectionJVMTest {
         val characters = data.flatMap { it.toCharList() }
         println("Got list of characters ${characters}")
         assertEquals(7, characters.size())
-        val text = characters.makeString("")
+        val text = characters.joinToString("")
         assertEquals("foobarx", text)
     }
 

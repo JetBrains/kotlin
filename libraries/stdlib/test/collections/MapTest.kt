@@ -68,7 +68,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
     }
 
     test fun iterateWithProperties() {
@@ -85,7 +85,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
     }
 
     test fun iterateWithExtraction() {
@@ -102,7 +102,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
     }
 
     test fun contains() {
@@ -203,7 +203,7 @@ class MapTest {
         }
 
         assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals("beverage,beer,location,Mells,name,James", list.join(","))
         println("==== worked! $list")
     }
     */
