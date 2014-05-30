@@ -57,27 +57,4 @@ public class JetTypeChecker {
     }
 
     private static final TypeCheckingProcedure TYPE_CHECKER = new TypeCheckingProcedure(new TypeCheckerTypingConstraints());
-
-    private static class TypeCheckerTypingConstraints implements TypingConstraints {
-        @Override
-        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
-            return typeCheckingProcedure.equalTypes(a, b);
-//            return TypeUtils.equalTypes(a, b);
-        }
-
-        @Override
-        public boolean assertEqualTypeConstructors(@NotNull TypeConstructor a, @NotNull TypeConstructor b) {
-            return a.equals(b);
-        }
-
-        @Override
-        public boolean assertSubtype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
-            return typeCheckingProcedure.isSubtypeOf(subtype, supertype);
-        }
-
-        @Override
-        public boolean noCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
-            return false; // type checking fails
-        }
-    }
 }

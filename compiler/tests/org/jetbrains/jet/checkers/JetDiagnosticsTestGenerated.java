@@ -4847,6 +4847,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/functionGenericsInParamsNotIs.kt");
                 }
                 
+                @TestMetadata("functionGenericsInParamsReturnFooT.kt")
+                public void testFunctionGenericsInParamsReturnFooT() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/functionGenericsInParamsReturnFooT.kt");
+                }
+                
+                @TestMetadata("functionGenericsInParamsReturnT.kt")
+                public void testFunctionGenericsInParamsReturnT() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/functionGenericsInParamsReturnT.kt");
+                }
+                
                 @TestMetadata("noGenericsInParams.kt")
                 public void testNoGenericsInParams() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/multimodule/duplicateMethod/noGenericsInParams.kt");

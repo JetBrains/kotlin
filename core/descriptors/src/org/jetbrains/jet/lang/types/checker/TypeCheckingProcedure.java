@@ -32,12 +32,19 @@ public class TypeCheckingProcedure {
     // as the second parameter, applying the substitution of type arguments to it
     @Nullable
     public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype) {
+        return findCorrespondingSupertype(subtype, supertype, new TypeCheckerTypingConstraints());
+    }
+
+    // This method returns the supertype of the first parameter that has the same constructor
+    // as the second parameter, applying the substitution of type arguments to it
+    @Nullable
+    public static JetType findCorrespondingSupertype(@NotNull JetType subtype, @NotNull JetType supertype, @NotNull TypingConstraints typingConstraints) {
         TypeConstructor constructor = subtype.getConstructor();
-        if (constructor.equals(supertype.getConstructor())) {
+        if (typingConstraints.assertEqualTypeConstructors(constructor, supertype.getConstructor())) {
             return subtype;
         }
         for (JetType immediateSupertype : constructor.getSupertypes()) {
-            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype);
+            JetType correspondingSupertype = findCorrespondingSupertype(immediateSupertype, supertype, typingConstraints);
             if (correspondingSupertype != null) {
                 return TypeSubstitutor.create(subtype).safeSubstitute(correspondingSupertype, Variance.INVARIANT);
             }
@@ -167,7 +174,7 @@ public class TypeCheckingProcedure {
         if (KotlinBuiltIns.getInstance().isNothingOrNullableNothing(subtype)) {
             return true;
         }
-        @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype);
+        @Nullable JetType closestSupertype = findCorrespondingSupertype(subtype, supertype, constraints);
         if (closestSupertype == null) {
             return constraints.noCorrespondingSupertype(subtype, supertype); // if this returns true, there still isn't any supertype to continue with
         }
@@ -177,7 +184,7 @@ public class TypeCheckingProcedure {
 
     private boolean checkSubtypeForTheSameConstructor(@NotNull JetType subtype, @NotNull JetType supertype) {
         TypeConstructor constructor = subtype.getConstructor();
-        assert constructor.equals(supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
+        assert constraints.assertEqualTypeConstructors(constructor, supertype.getConstructor()) : constructor + " is not " + supertype.getConstructor();
 
         List<TypeProjection> subArguments = subtype.getArguments();
         List<TypeProjection> superArguments = supertype.getArguments();

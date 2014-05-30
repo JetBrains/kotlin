@@ -321,7 +321,7 @@ public class ConstraintSystemImpl implements ConstraintSystem {
             public boolean assertEqualTypeConstructors(
                     @NotNull TypeConstructor a, @NotNull TypeConstructor b
             ) {
-                throw new IllegalStateException("'assertEqualTypeConstructors' shouldn't be invoked inside 'isSubtypeOf'");
+                return a.equals(b);
             }
 
             @Override
