@@ -41,6 +41,9 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
     val buildFamilies = HashSet<Family>(defaultFamilies.toList())
     private val buildPrimitives = HashSet<PrimitiveType>(PrimitiveType.values().toList())
 
+    var deprecate: String = ""
+    val deprecates = HashMap<Family, String>()
+
     var doc: String = ""
     val docs = HashMap<Family, String>()
 
@@ -69,6 +72,16 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
         else {
             for (f in families) {
                 docs[f] = b()
+            }
+        }
+    }
+
+    fun deprecate(vararg families: Family, b: () -> String) {
+        if (families.isEmpty())
+            deprecate = b()
+        else {
+            for (f in families) {
+                deprecates[f] = b()
             }
         }
     }
@@ -224,6 +237,10 @@ class GenericFunction(val signature: String) : Comparable<GenericFunction> {
                 }
             }
             builder.append(" */\n")
+        }
+        val deprecated = deprecates[f] ?: deprecate
+        if (deprecated != "") {
+            builder.append("deprecated(\"$deprecated\")\n")
         }
 
         builder.append("public ")
