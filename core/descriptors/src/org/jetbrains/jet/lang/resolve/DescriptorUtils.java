@@ -101,6 +101,20 @@ public class DescriptorUtils {
         return false;
     }
 
+    /**
+     * descriptor may be local itself or have a local ancestor
+     */
+    public static boolean isLocal(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor current = descriptor;
+        while (current instanceof MemberDescriptor) {
+            if (isAnonymousObject(current) || ((DeclarationDescriptorWithVisibility) current).getVisibility() == Visibilities.LOCAL) {
+                return true;
+            }
+            current = current.getContainingDeclaration();
+        }
+        return false;
+    }
+
     @NotNull
     public static FqNameUnsafe getFqName(@NotNull DeclarationDescriptor descriptor) {
         FqName safe = getFqNameSafeIfPossible(descriptor);

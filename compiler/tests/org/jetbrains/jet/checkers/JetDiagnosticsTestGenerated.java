@@ -6917,6 +6917,36 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/subtyping/kt-1457.kt");
             }
             
+            @TestMetadata("localAnonymousObjects.kt")
+            public void testLocalAnonymousObjects() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/localAnonymousObjects.kt");
+            }
+            
+            @TestMetadata("localClasses.kt")
+            public void testLocalClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/localClasses.kt");
+            }
+            
+            @TestMetadata("memberAnonymousObjects.kt")
+            public void testMemberAnonymousObjects() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/memberAnonymousObjects.kt");
+            }
+            
+            @TestMetadata("nestedIntoLocalClasses.kt")
+            public void testNestedIntoLocalClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/nestedIntoLocalClasses.kt");
+            }
+            
+            @TestMetadata("nestedLocalClasses.kt")
+            public void testNestedLocalClasses() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/nestedLocalClasses.kt");
+            }
+            
+            @TestMetadata("topLevelAnonymousObjects.kt")
+            public void testTopLevelAnonymousObjects() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/subtyping/topLevelAnonymousObjects.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/suppress")
