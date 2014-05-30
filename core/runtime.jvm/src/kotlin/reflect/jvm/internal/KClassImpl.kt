@@ -16,6 +16,21 @@
 
 package kotlin.reflect.jvm.internal
 
+enum class KClassOrigin {
+    BUILT_IN
+    KOTLIN
+    FOREIGN
+}
+
 class KClassImpl<out T>(
         val jClass: Class<T>
-) : KClass<T>
+) : KClass<T> {
+    val origin: KClassOrigin =
+            if (K_OBJECT_CLASS.isAssignableFrom(jClass)) {
+                KClassOrigin.KOTLIN
+            }
+            else {
+                KClassOrigin.FOREIGN
+                // TODO: built-in classes
+            }
+}

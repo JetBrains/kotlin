@@ -16,17 +16,32 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 open class KMemberPropertyImpl<T, out R>(
         name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R>(name) {
-    // TODO: extract, make lazy (weak?), use our descriptors knowledge, support Java fields
-    protected val getter: Method = owner.jClass.getMethod(getterName(name))
+    protected val field: Field? =
+            if (owner.origin == KClassOrigin.FOREIGN) {
+                owner.jClass.getField(name)
+            }
+            else null
 
+    // TODO: extract, make lazy (weak?), use our descriptors knowledge
+    protected val getter: Method? =
+            if (owner.origin == KClassOrigin.KOTLIN) {
+                owner.jClass.getMethod(getterName(name))
+            }
+            else null
+
+    // TODO: built-in classes
     override fun get(receiver: T): R {
-        return getter(receiver) as R
+        if (getter != null) {
+            return getter!!(receiver) as R
+        }
+        return field!!.get(receiver) as R
     }
 }
 
@@ -34,9 +49,17 @@ class KMutableMemberPropertyImpl<T, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMemberPropertyImpl<T, R>(name, owner) {
-    private val setter = owner.jClass.getMethod(setterName(name), getter.getReturnType()!!)
+    private val setter: Method? =
+            if (owner.origin == KClassOrigin.KOTLIN) {
+                owner.jClass.getMethod(setterName(name), getter!!.getReturnType()!!)
+            }
+            else null
 
     override fun set(receiver: T, value: R) {
-        setter.invoke(receiver, value)
+        if (setter != null) {
+            setter!!(receiver, value)
+            return
+        }
+        field!!.set(receiver, value)
     }
 }

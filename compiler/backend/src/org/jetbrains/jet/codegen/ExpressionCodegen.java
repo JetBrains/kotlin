@@ -50,6 +50,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -2461,7 +2462,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.anew(propertyType);
             v.dup();
             v.visitLdcInsn(descriptor.getName().asString());
-            v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
+
+            if (containingDeclaration instanceof JavaClassDescriptor) {
+                v.aconst(Type.getObjectType(reflectionFieldOwner));
+                v.invokestatic("kotlin/reflect/jvm/internal/InternalPackage", "foreignKotlinClass",
+                               Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
+            }
+            else {
+                // TODO: built-in classes
+                v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
+            }
 
             String constructorDesc;
             if (receiverParameter != null) {

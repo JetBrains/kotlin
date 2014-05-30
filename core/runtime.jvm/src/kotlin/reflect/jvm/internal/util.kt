@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.util.concurrent.ConcurrentHashMap
+
 // TODO: use stdlib?
 suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private fun String.capitalizeWithJavaBeanConvention(): String {
@@ -32,13 +34,24 @@ private fun getterName(propertyName: String): String = "get" + propertyName.capi
 private fun setterName(propertyName: String): String = "set" + propertyName.capitalizeWithJavaBeanConvention()
 
 
+// TODO: should use weak references
+private val foreignKClasses: MutableMap<Class<*>, KClassImpl<*>> = ConcurrentHashMap()
+
+fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
+    val cached = foreignKClasses[jClass] as? KClassImpl<T>
+    if (cached != null) return cached
+    val result = KClassImpl<T>(jClass)
+    foreignKClasses.put(jClass, result)
+    return result
+}
+
 private val K_OBJECT_CLASS = Class.forName("kotlin.jvm.internal.KObject")
 
-// TODO
 fun <T> kotlinClass(jClass: Class<T>): KClassImpl<T> {
     if (K_OBJECT_CLASS.isAssignableFrom(jClass)) {
         val field = jClass.getDeclaredField("\$kotlinClass")
         return field.get(null) as KClassImpl<T>
     }
-    throw UnsupportedOperationException("Unsupported class: $jClass")
+    // TODO: built-in classes
+    return foreignKotlinClass(jClass)
 }
