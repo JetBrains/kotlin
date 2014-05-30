@@ -356,10 +356,10 @@ private fun getFunctionForExtractedFragment(
             val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
             if (newDebugExpression == null) return null
 
-            val nextSibling = tmpFile.getDeclarations().firstOrNull()
-            if (nextSibling == null) return null
+            val targetSibling = tmpFile.getDeclarations().firstOrNull()
+            if (targetSibling == null) return null
 
-            val analysisResult = ExtractionData(tmpFile, Collections.singletonList(newDebugExpression), nextSibling).performAnalysis()
+            val analysisResult = ExtractionData(tmpFile, Collections.singletonList(newDebugExpression), targetSibling).performAnalysis()
             if (analysisResult.status != Status.SUCCESS) {
                 throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
             }

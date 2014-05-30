@@ -2,7 +2,7 @@ public open class Z {
     val z: Int = 0
 }
 
-// NEXT_SIBLING:
+// SIBLING:
 public class A(): Z() {
     var a: Int = 1
 

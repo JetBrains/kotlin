@@ -2,11 +2,7 @@ public open class Z {
     val z: Int = 0
 }
 
-// NEXT_SIBLING:
-fun i(a1: A, b1: A.B): Int {
-    return a1.a + b1.b + b1.z
-}
-
+// SIBLING:
 public class A(): Z() {
     var a: Int = 1
 
@@ -17,4 +13,8 @@ public class A(): Z() {
             return i(this@A, this)
         }
     }
+}
+
+fun i(a1: A, b1: A.B): Int {
+    return a1.a + b1.b + b1.z
 }

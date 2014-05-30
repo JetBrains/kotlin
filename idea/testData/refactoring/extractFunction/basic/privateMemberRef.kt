@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 class A {
     private val t: Int = 1
 

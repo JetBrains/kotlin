@@ -4,7 +4,7 @@ public open class Z {
     }
 }
 
-// NEXT_SIBLING:
+// SIBLING:
 public class A(): Z() {
     var a: Int = 1
 

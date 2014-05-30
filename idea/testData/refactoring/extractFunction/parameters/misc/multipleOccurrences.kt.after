@@ -1,8 +1,8 @@
-// NEXT_SIBLING:
-fun i(a: Int, b: Int, c: Int): Int {
-    return (a + b * a - c) + b * c
-}
-
+// SIBLING:
 fun foo(a: Int, b: Int, c: Int): Int {
     return i(a, b, c)
+}
+
+fun i(a: Int, b: Int, c: Int): Int {
+    return (a + b * a - c) + b * c
 }

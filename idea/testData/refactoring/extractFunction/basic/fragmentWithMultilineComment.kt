@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 fun foo(a: Int): Int {
     <selection>/*
     test

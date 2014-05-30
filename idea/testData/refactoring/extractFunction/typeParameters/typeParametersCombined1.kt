@@ -1,6 +1,6 @@
 open class Data(val x: Int)
 
-// NEXT_SIBLING:
+// SIBLING:
 class A<T: Data>(val t: T) {
     inner class B<U: Data>(val u: U) {
         fun foo<V: Data>(v: V): Int {

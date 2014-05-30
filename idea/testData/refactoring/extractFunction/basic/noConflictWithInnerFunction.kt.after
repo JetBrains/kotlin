@@ -1,6 +1,6 @@
 fun foo() {
     val a = 1
-    // NEXT_SIBLING
+    // SIBLING:
     fun b1(): Boolean {
         return a > 0
     }

@@ -2,11 +2,11 @@ open class Data(val x: Int)
 
 class Pair<A, B>(val a: A, val b: B)
 
-// NEXT_SIBLING:
-fun <V : Data> pair(v: V): Pair<Int, V> {
-    return Pair(v.x + 10, v)
-}
-
+// SIBLING:
 fun foo<V: Data>(v: V): Pair<Int, V> {
     return pair(v)
+}
+
+fun <V : Data> pair(v: V): Pair<Int, V> {
+    return Pair(v.x + 10, v)
 }

@@ -1,14 +1,14 @@
 open class Data(val x: Int)
 
-// NEXT_SIBLING:
-fun <T : Data, U : Data, V : Data> i(a: A<T>, b: A.B<U>, v: V): Int {
-    return a.t.x + b.u.x + v.x
-}
-
+// SIBLING:
 class A<T: Data>(val t: T) {
     inner class B<U: Data>(val u: U) {
         fun foo<V: Data>(v: V): Int {
             return i(this@A, this@B, v)
         }
     }
+}
+
+fun <T : Data, U : Data, V : Data> i(a: A<T>, b: A.B<U>, v: V): Int {
+    return a.t.x + b.u.x + v.x
 }

@@ -26,7 +26,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.JetClassBody;
-import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.plugin.refactoring.JetNameSuggester;
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringBundle;
@@ -72,7 +71,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean isVisibilitySectionAvailable() {
-        PsiElement target = originalDescriptor.getDescriptor().getExtractionData().getNextSibling().getParent();
+        PsiElement target = originalDescriptor.getDescriptor().getExtractionData().getTargetSibling().getParent();
         return target instanceof JetClassBody || target instanceof JetFile;
     }
 

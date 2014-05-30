@@ -1,4 +1,9 @@
-// NEXT_SIBLING:
+// SIBLING:
+fun foo(a: Int): Int {
+    if (b(a)) return a
+    return -a
+}
+
 fun b(a: Int): Boolean {
     /*
         test
@@ -6,9 +11,4 @@ fun b(a: Int): Boolean {
     println(a)
     if (a > 0) return true
     return false
-}
-
-fun foo(a: Int): Int {
-    if (b(a)) return a
-    return -a
 }

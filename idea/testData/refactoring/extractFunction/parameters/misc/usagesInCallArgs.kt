@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 public class A() {
     fun bar(a: Int, b: Int): Int {
         return a + b

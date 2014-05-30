@@ -49,12 +49,12 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
 
     protected fun doExtractFunctionTest(path: String) {
         doTest(path) { file ->
-            var explicitNextSibling: PsiElement? = null
+            var explicitPreviousSibling: PsiElement? = null
             file.accept(
                     object: JetTreeVisitorVoid() {
                         override fun visitComment(comment: PsiComment?) {
-                            if (comment?.getText() == "// NEXT_SIBLING:") {
-                                explicitNextSibling = PsiTreeUtil.skipSiblingsForward(
+                            if (comment?.getText() == "// SIBLING:") {
+                                explicitPreviousSibling = PsiTreeUtil.skipSiblingsForward(
                                         comment,
                                         javaClass<PsiWhiteSpace>(),
                                         javaClass<PsiComment>(),
@@ -66,8 +66,8 @@ public abstract class AbstractJetExtractionTest() : LightCodeInsightFixtureTestC
             )
 
             val editor = fixture.getEditor()
-            selectElements(editor, file) { (elements, nextSibling) ->
-                ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitNextSibling ?: nextSibling)
+            selectElements(editor, file) { (elements, previousSibling) ->
+                ExtractKotlinFunctionHandler().doInvoke(editor, file, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }

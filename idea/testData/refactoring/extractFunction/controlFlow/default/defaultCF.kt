@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 fun foo(a: Int) {
     val b: Int = 1
 

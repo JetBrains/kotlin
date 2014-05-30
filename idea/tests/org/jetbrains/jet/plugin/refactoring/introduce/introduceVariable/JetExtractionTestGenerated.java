@@ -223,6 +223,11 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localClassPropertyRef.kt");
             }
             
+            @TestMetadata("localExtraction.kt")
+            public void testLocalExtraction() throws Exception {
+                doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localExtraction.kt");
+            }
+            
             @TestMetadata("localFunctionRef.kt")
             public void testLocalFunctionRef() throws Exception {
                 doExtractFunctionTest("idea/testData/refactoring/extractFunction/basic/localFunctionRef.kt");

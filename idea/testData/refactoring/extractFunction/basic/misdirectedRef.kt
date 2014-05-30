@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 fun bar(): Int = 100
 
 fun foo(a: Int): Int {

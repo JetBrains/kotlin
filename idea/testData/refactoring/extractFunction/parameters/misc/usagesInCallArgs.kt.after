@@ -1,12 +1,12 @@
-// NEXT_SIBLING:
-fun i(a: A, t: Int, u: Int, x: Int): Int {
-    return a.bar(t - x, u + x)
-}
-
+// SIBLING:
 public class A() {
     fun bar(a: Int, b: Int): Int {
         return a + b
     }
+}
+
+fun i(a: A, t: Int, u: Int, x: Int): Int {
+    return a.bar(t - x, u + x)
 }
 
 fun foo(a: A, x: Int): Int {

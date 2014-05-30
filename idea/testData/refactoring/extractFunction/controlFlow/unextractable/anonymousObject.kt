@@ -3,7 +3,7 @@ trait Callable<T> {
 }
 
 fun foo(a: Int): Int {
-    // NEXT_SIBLING:
+    // SIBLING:
     val o = <selection>object: Callable<Int> {
         val b: Int = 1
 

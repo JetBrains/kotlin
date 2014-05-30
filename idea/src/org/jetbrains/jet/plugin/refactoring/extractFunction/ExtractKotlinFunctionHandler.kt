@@ -56,11 +56,11 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
             editor: Editor,
             file: JetFile,
             elements: List<PsiElement>,
-            nextSibling: PsiElement
+            targetSibling: PsiElement
     ) {
         val project = file.getProject()
 
-        val analysisResult = ExtractionData(file, elements, nextSibling).performAnalysis()
+        val analysisResult = ExtractionData(file, elements, targetSibling).performAnalysis()
 
         if (ApplicationManager.getApplication()!!.isUnitTestMode() && analysisResult.status != Status.SUCCESS) {
             throw ConflictsInTestsException(analysisResult.messages.map { it.renderMessage() })
@@ -119,8 +119,8 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is JetFile) return
 
-        selectElements(editor, file) { (elements, targetNextSibling) ->
-            doInvoke(editor, file, elements, targetNextSibling)
+        selectElements(editor, file) { (elements, targetSibling) ->
+            doInvoke(editor, file, elements, targetSibling)
         }
     }
 
@@ -142,7 +142,7 @@ private fun showErrorHintByKey(project: Project, editor: Editor, key: String) {
 fun selectElements(
         editor: Editor,
         file: PsiFile,
-        continuation: (elements: List<PsiElement>, targetNextSibling: PsiElement) -> Unit
+        continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
     fun noExpressionError() {
         showErrorHintByKey(file.getProject(), editor, "cannot.refactor.no.expression")

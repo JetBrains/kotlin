@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 class A {
     class B {
         fun test(): Int {

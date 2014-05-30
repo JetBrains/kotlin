@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 fun foo() {
     open class X(val x: Int)
 

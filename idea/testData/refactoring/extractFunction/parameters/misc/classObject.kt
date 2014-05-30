@@ -1,4 +1,4 @@
-// NEXT_SIBLING:
+// SIBLING:
 class MyClass {
     fun test(): Int {
         <selection>coFun()

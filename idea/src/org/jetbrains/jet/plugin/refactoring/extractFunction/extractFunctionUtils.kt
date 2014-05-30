@@ -97,7 +97,6 @@ import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
-import org.jetbrains.jet.lang.descriptors.FunctionDescriptor
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
@@ -232,14 +231,31 @@ private fun List<Instruction>.analyzeControlFlow(
     return Pair(DefaultControlFlow, null)
 }
 
-private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression {
-    val position = nextSibling.getTextRange()!!.getStartOffset()
-    val tmpFile = originalFile.createTempCopy { text ->
-        StringBuilder(text).insert(position, "fun() {\n${getCodeFragmentText()}\n}\n").toString()
+fun ExtractionData.createTemporaryFunction(functionText: String): JetNamedFunction {
+    val textRange = targetSibling.getTextRange()!!
+
+    val insertText: String
+    val insertPosition: Int
+    val lookupPosition: Int
+    if (insertBefore) {
+        insertPosition = textRange.getStartOffset()
+        lookupPosition = insertPosition
+        insertText = functionText
     }
-    val tmpFunction = tmpFile.findElementAt(position)?.getParentByType(javaClass<JetNamedFunction>())!!
-    return tmpFunction.getBodyExpression() as JetBlockExpression
+    else {
+        insertPosition = textRange.getEndOffset()
+        lookupPosition = insertPosition + 1
+        insertText = "\n$functionText"
+    }
+
+    val tmpFile = originalFile.createTempCopy { text ->
+        StringBuilder(text).insert(insertPosition, insertText).toString()
+    }
+    return tmpFile.findElementAt(lookupPosition)?.getParentByType(javaClass<JetNamedFunction>())!!
 }
+
+private fun ExtractionData.createTemporaryCodeBlock(): JetBlockExpression =
+        createTemporaryFunction("fun() {\n${getCodeFragmentText()}\n}\n").getBodyExpression() as JetBlockExpression
 
 private fun JetType.collectReferencedTypes(): List<JetType> {
     return DFS.dfsFromNode(
@@ -534,8 +550,8 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
     checkDeclarationsMovingOutOfScope(controlFlow)?.let { messages.add(it) }
 
     val functionNameValidator = JetNameValidatorImpl(
-            nextSibling.getParent(),
-            nextSibling,
+            targetSibling.getParent(),
+            targetSibling,
             JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
     )
     val functionName = JetNameSuggester.suggestNames(controlFlow.returnType, functionNameValidator, DEFAULT_FUNCTION_NAME).first()
@@ -673,14 +689,11 @@ fun ExtractionDescriptor.generateFunction(
     fun createFunction(): JetNamedFunction {
         return with(extractionData) {
             if (inTempFile) {
-                val position = nextSibling.getTextRange()!!.getStartOffset()
-                val tmpFile = originalFile.createTempCopy { text ->
-                    StringBuilder(text).insert(position, getFunctionText() + "\n").toString()
-                }
+                val function = createTemporaryFunction("${getFunctionText()}\n")
                 if (originalFile.skipVisibilityCheck()) {
-                    tmpFile.setSkipVisibilityCheck(true)
+                    function.getContainingJetFile().setSkipVisibilityCheck(true)
                 }
-                tmpFile.findElementAt(position)?.getParentByType(javaClass<JetNamedFunction>())!!
+                function
             }
             else {
                 JetPsiFactory.createFunction(project, getFunctionText())
@@ -763,11 +776,20 @@ fun ExtractionDescriptor.generateFunction(
 
     fun insertFunction(function: JetNamedFunction): JetNamedFunction {
         return with(extractionData) {
-            val targetContainer = nextSibling.getParent()!!
-            val functionInFile = targetContainer.addBefore(function, nextSibling) as JetNamedFunction
-            targetContainer.addBefore(JetPsiFactory.createWhiteSpace(project, "\n\n"), nextSibling)
+            val targetContainer = targetSibling.getParent()!!
+            val emptyLines = JetPsiFactory.createWhiteSpace(project, "\n\n")
+            if (insertBefore) {
+                val functionInFile = targetContainer.addBefore(function, targetSibling) as JetNamedFunction
+                targetContainer.addBefore(emptyLines, targetSibling)
 
-            functionInFile
+                functionInFile
+            }
+            else {
+                val functionInFile = targetContainer.addAfter(function, targetSibling) as JetNamedFunction
+                targetContainer.addAfter(emptyLines, targetSibling)
+
+                functionInFile
+            }
         }
     }
 

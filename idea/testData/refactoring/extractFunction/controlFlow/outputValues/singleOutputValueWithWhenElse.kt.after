@@ -1,4 +1,12 @@
-// NEXT_SIBLING:
+// SIBLING:
+fun foo(a: Int): Int {
+    var b: Int = 1
+
+    b = i(a, b)
+
+    return b
+}
+
 fun i(a: Int, b: Int): Int {
     var b1 = b
     when {
@@ -14,12 +22,4 @@ fun i(a: Int, b: Int): Int {
     }
     println(b1)
     return b1
-}
-
-fun foo(a: Int): Int {
-    var b: Int = 1
-
-    b = i(a, b)
-
-    return b
 }

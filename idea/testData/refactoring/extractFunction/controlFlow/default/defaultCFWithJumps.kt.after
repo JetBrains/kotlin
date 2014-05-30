@@ -1,4 +1,10 @@
-// NEXT_SIBLING:
+// SIBLING:
+fun foo(a: Int) {
+    val b: Int = 1
+
+    unit(a)
+}
+
 fun unit(a: Int) {
     var t = a
     while (t > 0) {
@@ -7,10 +13,4 @@ fun unit(a: Int) {
         if (t == 1) break
         t--
     }
-}
-
-fun foo(a: Int) {
-    val b: Int = 1
-
-    unit(a)
 }

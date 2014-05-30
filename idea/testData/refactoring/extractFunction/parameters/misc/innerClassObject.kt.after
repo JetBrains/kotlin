@@ -1,9 +1,4 @@
-// NEXT_SIBLING:
-fun i(): Int {
-    A.B.coFun()
-    return A.B.coProp + 10
-}
-
+// SIBLING:
 class A {
     class B {
         fun test(): Int {
@@ -18,6 +13,11 @@ class A {
             }
         }
     }
+}
+
+fun i(): Int {
+    A.B.coFun()
+    return A.B.coProp + 10
 }
 
 

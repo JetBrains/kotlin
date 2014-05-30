@@ -33,7 +33,6 @@ import org.jetbrains.jet.plugin.codeInsight.DescriptorToDeclarationUtil
 import java.util.Collections
 import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.renderer.DescriptorRenderer
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByTypeAndBranch
 import org.jetbrains.jet.lang.psi.JetQualifiedExpression
 import org.jetbrains.jet.lang.psi.psiUtil.isInsideOf
 import java.util.ArrayList
@@ -41,6 +40,9 @@ import com.intellij.psi.PsiNamedElement
 import org.jetbrains.jet.lang.psi.JetSuperExpression
 import org.jetbrains.jet.lang.types.JetType
 import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 
 data class ResolveResult(
         val originalRefExpr: JetSimpleNameExpression,
@@ -58,9 +60,11 @@ data class ResolvedReferenceInfo(
 class ExtractionData(
         val originalFile: JetFile,
         val originalElements: List<PsiElement>,
-        val nextSibling: PsiElement
+        val targetSibling: PsiElement
 ) {
     val project: Project = originalFile.getProject()
+
+    val insertBefore: Boolean = targetSibling.getParentByType(javaClass<JetDeclaration>(), true) is JetDeclarationWithBody
 
     fun getExpressions(): List<JetExpression> = originalElements.filterIsInstance(javaClass<JetExpression>())
 
