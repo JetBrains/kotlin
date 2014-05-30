@@ -6,15 +6,27 @@ fun strings(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("appendString(buffer: Appendable, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+        deprecate{"Use joinTo() instead"}
+        returns { "Unit" }
+        exclude(Strings)
+        body {
+            """
+            joinTo(buffer, separator, prefix, postfix, limit, truncated)
+            """
+        }
+    }
+
+    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
             Appends the string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied
 
             If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
-            a special *truncated* separator (which defaults to "..."
+            a special *truncated* separator (which defaults to "...")
             """
         }
-        returns { "Unit" }
+        typeParam("A : Appendable")
+        returns { "A" }
         body {
             """
             buffer.append(prefix)
@@ -28,11 +40,40 @@ fun strings(): List<GenericFunction> {
             }
             if (limit >= 0 && count > limit) buffer.append(truncated)
             buffer.append(postfix)
+            return buffer
+            """
+        }
+        exclude(Strings)
+        body(ArraysOfPrimitives) {
+            """
+            buffer.append(prefix)
+            var count = 0
+            for (element in this) {
+                if (++count > 1) buffer.append(separator)
+                if (limit < 0 || count <= limit) {
+                    val text = element.toString()
+                    buffer.append(text)
+                } else break
+            }
+            if (limit >= 0 && count > limit) buffer.append(truncated)
+            buffer.append(postfix)
+            return buffer
             """
         }
     }
 
     templates add f("makeString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
+        deprecate{"Use joinToString() instead"}
+        exclude(Strings)
+        returns("String")
+        body {
+            """
+            return joinToString(separator, prefix, postfix, limit, truncated)
+            """
+        }
+    }
+
+    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\")") {
         doc {
             """
             Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
@@ -42,12 +83,11 @@ fun strings(): List<GenericFunction> {
             """
         }
 
+        exclude(Strings)
         returns("String")
         body {
             """
-            val buffer = StringBuilder()
-            appendString(buffer, separator, prefix, postfix, limit, truncated)
-            return buffer.toString()
+            return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated).toString()
             """
         }
     }

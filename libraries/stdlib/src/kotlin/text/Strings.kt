@@ -68,3 +68,30 @@ public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
  * Returns a substring specified by given range
  */
 public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a collection could be huge you can specify a non-negative value of *limit* which will only show a subset of the collection then it will
+ * a special *truncated* separator (which defaults to "...")
+ */
+public fun Iterable<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+    return joinToString(separator, prefix, postfix, limit, truncated)
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If an array could be huge you can specify a non-negative value of *limit* which will only show a subset of the array then it will
+ * a special *truncated* separator (which defaults to "...")
+ */
+public fun Array<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+    return joinToString(separator, prefix, postfix, limit, truncated)
+}
+
+/**
+ * Creates a string from all the elements separated using the *separator* and using the given *prefix* and *postfix* if supplied.
+ * If a stream could be huge you can specify a non-negative value of *limit* which will only show a subset of the stream then it will
+ * a special *truncated* separator (which defaults to "...")
+ */
+public fun Stream<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
+    return joinToString(separator, prefix, postfix, limit, truncated)
+}
