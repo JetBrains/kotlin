@@ -107,6 +107,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest("compiler/testData/codegen/bytecodeText/kt2887.kt");
     }
     
+    @TestMetadata("kt5016.kt")
+    public void testKt5016() throws Exception {
+        doTest("compiler/testData/codegen/bytecodeText/kt5016.kt");
+    }
+    
     @TestMetadata("noVolatileAnnotation.kt")
     public void testNoVolatileAnnotation() throws Exception {
         doTest("compiler/testData/codegen/bytecodeText/noVolatileAnnotation.kt");
