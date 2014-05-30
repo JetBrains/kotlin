@@ -66,6 +66,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         doTest("idea/testData/debugger/tinyApp/src/evaluate/dependentOnFile.kt");
     }
     
+    @TestMetadata("doubles.kt")
+    public void testDoubles() throws Exception {
+        doTest("idea/testData/debugger/tinyApp/src/evaluate/doubles.kt");
+    }
+    
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         doTest("idea/testData/debugger/tinyApp/src/evaluate/enums.kt");
