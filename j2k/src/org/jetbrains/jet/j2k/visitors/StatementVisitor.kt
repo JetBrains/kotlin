@@ -79,11 +79,13 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         val update = statement.getUpdate()
         val condition = statement.getCondition()
         val body = statement.getBody()
-        val firstChildLocalVar = initialization?.getFirstChild() as? PsiLocalVariable
-        var bodyWriteCount = countWriteAccesses(firstChildLocalVar, body)
-        var conditionWriteCount = countWriteAccesses(firstChildLocalVar, condition)
-        var updateWriteCount = countWriteAccesses(firstChildLocalVar, update)
-        val onceWritableIterator = updateWriteCount == 1 && bodyWriteCount + conditionWriteCount == 0
+
+        val initializationVar = initialization?.getFirstChild() as? PsiLocalVariable
+        val onceWritableIterator = initializationVar != null
+                && initializationVar.countWriteAccesses(body) == 0
+                && initializationVar.countWriteAccesses(condition) == 0
+                && initializationVar.countWriteAccesses(update) == 1
+
         val operationTokenType = (condition as? PsiBinaryExpression)?.getOperationTokenType()
         if (initialization is PsiDeclarationStatement
                 && initialization.getFirstChild() == initialization.getLastChild()
@@ -92,16 +94,16 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
                 && update.getChildren().size == 1
                 && isPlusPlusExpression(update.getChildren().single())
                 && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE)
-                && firstChildLocalVar != null
-                && firstChildLocalVar.getNameIdentifier() != null
+                && initializationVar != null
+                && initializationVar.getNameIdentifier() != null
                 && onceWritableIterator) {
             val end = converter.convertExpression((condition as PsiBinaryExpression).getROperand())
             val endExpression = if (operationTokenType == JavaTokenType.LT)
                 BinaryExpression(end, Identifier("1"), "-")
             else
                 end
-            result = ForeachWithRangeStatement(Identifier(firstChildLocalVar.getName()!!),
-                                                 converter.convertExpression(firstChildLocalVar.getInitializer()),
+            result = ForeachWithRangeStatement(Identifier(initializationVar.getName()!!),
+                                                 converter.convertExpression(initializationVar.getInitializer()),
                                                  endExpression,
                                                  converter.convertStatement(body))
         }

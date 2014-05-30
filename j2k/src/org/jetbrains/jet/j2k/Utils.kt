@@ -19,53 +19,36 @@ package org.jetbrains.jet.j2k
 import org.jetbrains.jet.j2k.ast.Identifier
 import com.intellij.psi.PsiElement
 import com.intellij.psi.JavaRecursiveElementVisitor
-import java.util.ArrayList
 import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.util.PsiUtil
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiNewExpression
 import org.jetbrains.jet.j2k.ast.Field
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.PsiModifierListOwner
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
-fun countWriteAccesses(element: PsiElement?, container: PsiElement?): Int {
-    if (container == null) return 0
+fun PsiElement.countWriteAccesses(scope: PsiElement?): Int {
+    if (scope == null) return 0
 
-    class ReferenceCollector() : JavaRecursiveElementVisitor() {
-        private val _collectedReferences = ArrayList<PsiReferenceExpression>()
-
-        public val collectedReferences: List<PsiReferenceExpression>
-            get() = _collectedReferences
-
+    var writes = 0
+    scope.accept(object: JavaRecursiveElementVisitor() {
         override fun visitReferenceExpression(expression: PsiReferenceExpression) {
             super.visitReferenceExpression(expression)
-            _collectedReferences.add(expression)
+            if (PsiUtil.isAccessedForWriting(expression) && expression.isReferenceTo(this@countWriteAccesses)) {
+                writes++
+            }
         }
-    }
-
-    val collector = ReferenceCollector()
-    container.accept(collector)
-    return collector.collectedReferences.count { it.isReferenceTo(element) && PsiUtil.isAccessedForWriting(it) }
+    })
+    return writes
 }
 
-fun isReadOnly(element: PsiElement?, container: PsiElement?): Boolean
-        = countWriteAccesses(element, container) == 0
+fun PsiModifierListOwner.isAnnotatedAsNotNull(): Boolean
+        = getModifierList()?.getAnnotations()?.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) } ?: false
 
-fun isAnnotatedAsNotNull(modifierList: PsiModifierList?): Boolean {
-    if (modifierList != null) {
-        for (annotation in modifierList.getAnnotations()) {
-            val qualifiedName = annotation.getQualifiedName()
-            return qualifiedName != null && NOT_NULL_ANNOTATIONS.contains(qualifiedName)
-        }
-    }
-    return false
-}
-
-fun isDefinitelyNotNull(element: PsiElement?): Boolean = when(element) {
-    is PsiLiteralExpression -> element.getValue() != null
+fun PsiElement?.isDefinitelyNotNull(): Boolean = when(this) {
+    is PsiLiteralExpression -> getValue() != null
     is PsiNewExpression -> true
     else -> false
 }

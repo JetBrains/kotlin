@@ -141,7 +141,7 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     protected fun convertMethodCallExpression(expression: PsiMethodCallExpression) {
-        if (!isSuperConstructorRef(expression.getMethodExpression()) || !isInsidePrimaryConstructor(expression)) {
+        if (!expression.isSuperConstructorCall() || !isInsidePrimaryConstructor(expression)) {
             result = MethodCallExpression(converter.convertExpression(expression.getMethodExpression()),
                                             converter.convertArguments(expression),
                                             converter.convertTypes(expression.getTypeArguments()),
@@ -212,21 +212,20 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-        val isFieldReference = isFieldReference(expression, getContainingClass(expression))
-        val insideSecondaryConstructor = isInsideSecondaryConstructor(expression)
-        val hasReceiver = isFieldReference && insideSecondaryConstructor
-        val isThis = isThisExpression(expression)
-        val notNull = isResolvedToNotNull(expression)
-        val isNullable = converter.convertType(expression.getType(), notNull).isNullable
-        val className = getClassNameWithConstructor(expression)
+        val containingConstructor = getContainingConstructor(expression)
+        val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
+        val addReceiver = insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()
+
+        val isNullable = converter.convertType(expression.getType(), expression.isResolvedToNotNull()).isNullable
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
         val qualifier = expression.getQualifierExpression()
-        if (hasReceiver) {
+
+        if (addReceiver) {
             identifier = CallChainExpression(Identifier("__", false), Identifier(referencedName, isNullable))
         }
-        else if (insideSecondaryConstructor && isThis) {
-            identifier = Identifier("val __ = " + className)
+        else if (insideSecondaryConstructor && expression.isThisConstructorCall()) {
+            identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: ""))
         }
         else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
             identifier = Identifier("size", isNullable)
@@ -259,15 +258,13 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
         result = CallChainExpression(converter.convertExpression(qualifier), identifier)
     }
 
-    private fun isResolvedToNotNull(expression: PsiReference): Boolean {
-        val target = expression.resolve()
-        if (target is PsiEnumConstant) {
-            return true;
+    private fun PsiReference.isResolvedToNotNull(): Boolean {
+        val target = resolve()
+        return when(target) {
+            is PsiEnumConstant -> true
+            is PsiModifierListOwner -> target.isAnnotatedAsNotNull()
+            else -> false
         }
-        if (target is PsiModifierListOwner) {
-            return isAnnotatedAsNotNull(target.getModifierList());
-        }
-        return false;
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {
@@ -287,19 +284,17 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {
-        val castType: PsiTypeElement? = expression.getCastType()
-        if (castType != null) {
-            val operand = expression.getOperand()
-            val operandType = operand?.getType()
-            val typeText = castType.getType().getCanonicalText()
-            val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
-            if (operandType is PsiPrimitiveType && typeConversion != null) {
-                result = MethodCallExpression.build(converter.convertExpression(operand), typeConversion)
-            }
-            else {
-                result = TypeCastExpression(converter.convertType(castType.getType()),
-                                              converter.convertExpression(operand))
-            }
+        val castType = expression.getCastType() ?: return
+        val operand = expression.getOperand()
+        val operandType = operand?.getType()
+        val typeText = castType.getType().getCanonicalText()
+        val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
+        if (operandType is PsiPrimitiveType && typeConversion != null) {
+            result = MethodCallExpression.build(converter.convertExpression(operand), typeConversion)
+        }
+        else {
+            result = TypeCastExpression(converter.convertType(castType.getType()),
+                                        converter.convertExpression(operand))
         }
     }
 
@@ -339,26 +334,6 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
         }
     }
 
-    private fun getClassNameWithConstructor(expression: PsiReferenceExpression): String {
-        var context = expression.getContext()
-        while (context != null) {
-            val _context = context!!
-            if (_context is PsiMethod && _context.isConstructor()) {
-                val containingClass = _context.getContainingClass()
-                if (containingClass != null) {
-                    val identifier = containingClass.getNameIdentifier()
-                    if (identifier != null) {
-                        return identifier.getText()!!
-                    }
-                }
-
-            }
-
-            context = _context.getContext()
-        }
-        return ""
-    }
-
     protected fun getClassName(expression: PsiExpression): String {
         var context = expression.getContext()
         while (context != null) {
@@ -374,45 +349,6 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
             context = _context.getContext()
         }
         return ""
-    }
-
-    private fun isFieldReference(expression: PsiReferenceExpression, currentClass: PsiClass?): Boolean {
-        val reference = expression.getReference()
-        if (reference != null) {
-            val target = reference.resolve()
-            if (target is PsiField) {
-                return target.getContainingClass() == currentClass
-            }
-        }
-
-        return false
-    }
-
-    private fun getContainingClass(expression: PsiExpression): PsiClass? {
-        var context = expression.getContext()
-        while (context != null) {
-            val _context = context!!
-            if (_context is PsiMethod && _context.isConstructor()) {
-                return _context.getContainingClass()
-            }
-
-            context = _context.getContext()
-        }
-        return null
-    }
-
-    private fun isThisExpression(expression: PsiReferenceExpression): Boolean {
-        for (ref in expression.getReferences()) {
-            if (ref.getCanonicalText() == "this") {
-                val target = ref.resolve()
-                if (target is PsiMethod && target.isConstructor()) {
-                    return true
-                }
-
-            }
-        }
-
-        return false
     }
 
     private fun isStaticallyImported(member: PsiMember, context: PsiElement): Boolean {

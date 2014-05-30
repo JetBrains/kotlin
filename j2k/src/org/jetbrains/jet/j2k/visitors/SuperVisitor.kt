@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
 import java.util.HashSet
-import org.jetbrains.jet.j2k.isSuperConstructorRef
+import org.jetbrains.jet.j2k.isSuperConstructorCall
 
 class SuperVisitor() : JavaRecursiveElementVisitor() {
     private val _resolvedSuperCallParameters = HashSet<PsiExpressionList>()
@@ -27,7 +27,7 @@ class SuperVisitor() : JavaRecursiveElementVisitor() {
         get() = _resolvedSuperCallParameters
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
-        if (isSuperConstructorRef(expression.getMethodExpression())) {
+        if (expression.isSuperConstructorCall()) {
             _resolvedSuperCallParameters.add(expression.getArgumentList())
         }
     }

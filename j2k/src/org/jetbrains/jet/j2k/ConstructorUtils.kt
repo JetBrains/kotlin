@@ -21,8 +21,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiReferenceExpression
 import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
-import com.intellij.psi.PsiReference
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethodCallExpression
 
 fun PsiMethod.isPrimaryConstructor(): Boolean {
     if (!isConstructor()) return false
@@ -64,12 +64,9 @@ fun PsiClass.getPrimaryConstructor(): PsiMethod? {
 }
 
 fun isInsidePrimaryConstructor(element: PsiElement): Boolean
-        = containingConstructor(element)?.isPrimaryConstructor() ?: false
+        = getContainingConstructor(element)?.isPrimaryConstructor() ?: false
 
-fun isInsideSecondaryConstructor(element: PsiElement): Boolean
-        = !(containingConstructor(element)?.isPrimaryConstructor() ?: true)
-
-fun containingConstructor(element: PsiElement): PsiMethod? {
+fun getContainingConstructor(element: PsiElement): PsiMethod? {
     var context = element.getContext()
     while (context != null) {
         val _context = context!!
@@ -82,10 +79,14 @@ fun containingConstructor(element: PsiElement): PsiMethod? {
     return null
 }
 
-fun isSuperConstructorRef(ref: PsiReference): Boolean {
+fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
+    val ref = getMethodExpression()
     if (ref.getCanonicalText().equals("super")) {
         val target = ref.resolve()
         return target is PsiMethod && target.isConstructor()
     }
     return false
 }
+
+fun PsiReferenceExpression.isThisConstructorCall(): Boolean
+        = getReferences().filter { it.getCanonicalText() == "this" }.map { it.resolve() }.any { it is PsiMethod && it.isConstructor() }

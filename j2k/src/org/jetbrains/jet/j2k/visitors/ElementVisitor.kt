@@ -26,9 +26,9 @@ class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
         protected set
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
-        var kType = converter.convertType(variable.getType(), isAnnotatedAsNotNull(variable.getModifierList()))
-        if (variable.hasModifierProperty(PsiModifier.FINAL) && isDefinitelyNotNull(variable.getInitializer())) {
-            kType = kType.convertedToNotNull();
+        var kType = converter.convertType(variable.getType(), variable.isAnnotatedAsNotNull())
+        if (variable.hasModifierProperty(PsiModifier.FINAL) && variable.getInitializer().isDefinitelyNotNull()) {
+            kType = kType.convertedToNotNull()
         }
         result = LocalVariable(Identifier(variable.getName()!!),
                                  converter.convertModifierList(variable.getModifierList()),
