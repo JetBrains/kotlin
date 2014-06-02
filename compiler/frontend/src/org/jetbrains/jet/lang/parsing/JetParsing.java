@@ -19,6 +19,7 @@ package org.jetbrains.jet.lang.parsing;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.JetNodeType;
 import org.jetbrains.jet.lexer.JetKeywordToken;
@@ -1478,14 +1479,7 @@ public class JetParsing extends AbstractJetParsing {
                                    TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON), extraRecoverySet));
         }
 
-        while (at(QUEST)) {
-            PsiBuilder.Marker precede = typeRefMarker.precede();
-
-            advance(); // QUEST
-            typeRefMarker.done(NULLABLE_TYPE);
-
-            typeRefMarker = precede;
-        }
+        typeRefMarker = parseNullableTypeSuffix(typeRefMarker);
 
         if (at(DOT)) {
             // This is a receiver for a function type
@@ -1510,6 +1504,17 @@ public class JetParsing extends AbstractJetParsing {
             functionType.done(FUNCTION_TYPE);
         }
 //        myBuilder.restoreJoiningComplexTokensState();
+        return typeRefMarker;
+    }
+
+    @NotNull
+    PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeRefMarker) {
+        while (at(QUEST)) {
+            PsiBuilder.Marker precede = typeRefMarker.precede();
+            advance(); // QUEST
+            typeRefMarker.done(NULLABLE_TYPE);
+            typeRefMarker = precede;
+        }
         return typeRefMarker;
     }
 

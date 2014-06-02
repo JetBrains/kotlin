@@ -104,7 +104,7 @@ postfixUnaryExpression
 
 // TODO: callSuffix is forbidden after callableReference, since parentheses will be used to provide parameter types
 callableReference
-  : userType? "::" SimpleName
+  : (userType "?"*)? "::" SimpleName
   ;
 
 // !!! When you add here, remember to update the FIRST set in the parser

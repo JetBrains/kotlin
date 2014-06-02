@@ -192,6 +192,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionInClassDisallowed.kt");
             }
             
+            @TestMetadata("extensionOnNullable.kt")
+            public void testExtensionOnNullable() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/extensionOnNullable.kt");
+            }
+            
             @TestMetadata("genericClassFromTopLevel.kt")
             public void testGenericClassFromTopLevel() throws Exception {
                 doTest("compiler/testData/diagnostics/testsWithStdLib/callableReference/function/genericClassFromTopLevel.kt");
