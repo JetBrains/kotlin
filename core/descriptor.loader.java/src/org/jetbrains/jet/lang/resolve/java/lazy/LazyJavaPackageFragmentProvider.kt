@@ -100,11 +100,26 @@ public class LazyJavaPackageFragmentProvider(
 
     override fun getClassNamesInPackage(packageName: FqName) = getPackageFragment(packageName)?.getMemberScope()?.getAllClassNames().orEmpty()
 
-    fun getClass(fqName: FqName): ClassDescriptor? = c.javaClassResolver.resolveClassByFqName(fqName)
-    fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
-
     internal val resolveKotlinBinaryClass = c.storageManager.createMemoizedFunctionWithNullableValues {
         (kotlinClass: KotlinJvmBinaryClass) -> c.deserializedDescriptorResolver.resolveClass(kotlinClass)
+    }
+
+    fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
+
+    fun getClass(fqName: FqName): ClassDescriptor? {
+        val builtinClass = DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName)
+        if (builtinClass != null) return builtinClass
+
+        // TODO Here we prefer sources (something outside JDR subsystem) to binaries, which should actually be driven by module dependencies separation
+        // See DeserializedDescriptorResolver.javaDescriptorFinder
+        val classFromSources = c.javaResolverCache.getClassResolvedFromSource(fqName)
+        if (classFromSources != null) return classFromSources
+
+        val (jClass, kClass) = c.findClassInJava(fqName)
+        if (jClass != null) return c.javaClassResolver.resolveClass(jClass)
+        if (kClass != null) return kClass
+
+        return null
     }
 
     private inner class FragmentClassResolver : LazyJavaClassResolver {
@@ -127,22 +142,6 @@ public class LazyJavaPackageFragmentProvider(
             val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
             val nestedClass = outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
             return nestedClass ?: c.javaResolverCache.getClass(javaClass)
-        }
-
-        override fun resolveClassByFqName(fqName: FqName): ClassDescriptor? {
-            val builtinClass = DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName)
-            if (builtinClass != null) return builtinClass
-
-            // TODO Here we prefer sources (something outside JDR subsystem) to binaries, which should actually be driven by module dependencies separation
-            // See DeserializedDescriptorResolver.javaDescriptorFinder
-            val classFromSources = c.javaResolverCache.getClassResolvedFromSource(fqName)
-            if (classFromSources != null) return classFromSources
-
-            val (jClass, kClass) = c.findClassInJava(fqName)
-            if (jClass != null) return resolveClass(jClass)
-            if (kClass != null) return kClass
-
-            return null
         }
     }
 }
