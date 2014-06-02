@@ -1,0 +1,11 @@
+fun foo(a: Int, b: Int): Int {
+    fun i(): Int {
+        return a + b - 1
+    }
+
+    fun bar() {
+        return i()
+    }
+
+    return bar()
+}

@@ -1,0 +1,13 @@
+class A {
+    fun foo(a: Int, b: Int): Int {
+        return object: Function0<Int> {
+            override fun invoke(): Int {
+                return i()
+            }
+
+            fun i(): Int {
+                return a + b - 1
+            }
+        }
+    }
+}

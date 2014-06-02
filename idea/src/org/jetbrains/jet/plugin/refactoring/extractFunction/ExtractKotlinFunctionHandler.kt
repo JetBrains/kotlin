@@ -50,8 +50,11 @@ import javax.swing.event.HyperlinkEvent
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
 import com.intellij.ui.awt.RelativePoint
 import com.intellij.openapi.ui.popup.Balloon.Position
+import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
+import org.jetbrains.jet.lang.psi.JetDeclaration
+import java.util.Collections
 
-public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
+public class ExtractKotlinFunctionHandler(public val allContainersEnabled: Boolean = false) : RefactoringActionHandler {
     fun doInvoke(
             editor: Editor,
             file: JetFile,
@@ -119,7 +122,7 @@ public class ExtractKotlinFunctionHandler : RefactoringActionHandler {
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
         if (file !is JetFile) return
 
-        selectElements(editor, file) { (elements, targetSibling) ->
+        selectElements(editor, file, allContainersEnabled) { (elements, targetSibling) ->
             doInvoke(editor, file, elements, targetSibling)
         }
     }
@@ -142,6 +145,7 @@ private fun showErrorHintByKey(project: Project, editor: Editor, key: String) {
 fun selectElements(
         editor: Editor,
         file: PsiFile,
+        allContainersEnabled: Boolean = false,
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
     fun noExpressionError() {
@@ -167,17 +171,40 @@ fun selectElements(
         continuation(elements, outermostParent)
     }
 
+    fun getContainers(element: PsiElement, strict: Boolean): List<JetElement> {
+        if (allContainersEnabled) return element.getAllExtractionContainers(strict)
+
+        val declaration = element.getParentByType(javaClass<JetDeclaration>(), strict)
+        if (declaration == null) return Collections.emptyList()
+
+        val parent = declaration.getParent()
+        return when (parent) {
+            is JetFile -> Collections.singletonList(parent)
+            is JetClassBody -> {
+                element.getAllExtractionContainers(strict)
+                        .filter {
+                            it is JetClassBody || (it is JetBlockExpression && it.getParent() is JetDeclarationWithBody)
+                        }
+                        .dropWhile { it !is JetClassBody }
+            }
+            else -> {
+                val targetContainer = parent?.getParentByType(javaClass<JetDeclarationWithBody>())?.getBodyExpression()
+                if (targetContainer is JetBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
+            }
+        }
+    }
+
     fun selectTargetContainer(elements: List<PsiElement>) {
         val parent = PsiTreeUtil.findCommonParent(elements)
             ?: throw AssertionError("Should have at least one parent: ${elements.makeString("\n")}")
 
-        val containers = parent.getAllExtractionContainers(elements.size == 1)
+        val containers = getContainers(parent, elements.size == 1)
         if (containers.empty) {
             noContainerError()
             return
         }
 
-        if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
+        if (containers.size == 1 || ApplicationManager.getApplication()!!.isUnitTestMode()) {
             onSelectionComplete(parent, elements, containers[0])
             return
         }
