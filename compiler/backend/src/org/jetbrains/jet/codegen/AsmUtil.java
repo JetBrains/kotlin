@@ -71,7 +71,6 @@ public class AsmUtil {
 
     private static final Set<Type> STRING_BUILDER_OBJECT_APPEND_ARG_TYPES = Sets.newHashSet(
             getType(String.class),
-            getType(StringBuilder.class),
             getType(StringBuffer.class),
             getType(CharSequence.class)
     );
