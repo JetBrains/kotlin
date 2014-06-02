@@ -1222,6 +1222,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/reflection"), Pattern.compile("^(.+)\\.kt$"), true);
         }
         
+        @TestMetadata("kt5112.kt")
+        public void testKt5112() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/reflection/kt5112.kt");
+        }
+        
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/insideLambda")
         public static class InsideLambda extends AbstractBlackBoxCodegenTest {
             public void testAllFilesPresentInInsideLambda() throws Exception {

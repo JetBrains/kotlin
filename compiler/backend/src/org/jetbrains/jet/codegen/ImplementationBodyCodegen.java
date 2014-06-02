@@ -1030,7 +1030,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             PropertyDescriptor property = info.descriptor;
 
             FieldVisitor fv = v.newField(null, ACC_STATIC | ACC_FINAL | ACC_PUBLIC, context.getFieldName(property, false),
-                                              typeMapper.mapType(property).getDescriptor(), null, info.defaultValue);
+                                         typeMapper.mapType(property).getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
+                                         info.defaultValue);
 
             AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property);
 
