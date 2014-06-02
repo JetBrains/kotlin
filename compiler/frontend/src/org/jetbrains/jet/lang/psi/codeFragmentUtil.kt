@@ -23,14 +23,14 @@ import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 public val SKIP_VISIBILITY_CHECK: Key<Boolean> = Key.create<Boolean>("SKIP_VISIBILITY_CHECK")
 
-fun JetFile.skipVisibilityCheck() =
+public fun JetFile.skipVisibilityCheck(): Boolean =
         when (this) {
             is JetCodeFragment -> true
             is JetFile -> getUserData(SKIP_VISIBILITY_CHECK) ?: false
             else -> false
         }
 
-fun JetFile.setSkipVisibilityCheck(skip: Boolean) {
+public fun JetFile.setSkipVisibilityCheck(skip: Boolean) {
     putUserData(SKIP_VISIBILITY_CHECK, skip)
 }
 

@@ -97,8 +97,6 @@ import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.JetTypeReference
 import org.jetbrains.jet.lang.psi.JetTypeParameterListOwner
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
@@ -689,11 +687,7 @@ fun ExtractionDescriptor.generateFunction(
     fun createFunction(): JetNamedFunction {
         return with(extractionData) {
             if (inTempFile) {
-                val function = createTemporaryFunction("${getFunctionText()}\n")
-                if (originalFile.skipVisibilityCheck()) {
-                    function.getContainingJetFile().setSkipVisibilityCheck(true)
-                }
-                function
+                createTemporaryFunction("${getFunctionText()}\n")
             }
             else {
                 JetPsiFactory.createFunction(project, getFunctionText())

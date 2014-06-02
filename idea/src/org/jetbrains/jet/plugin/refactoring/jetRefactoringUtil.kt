@@ -45,10 +45,8 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.lexer.JetTokens
-import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
-import org.jetbrains.jet.plugin.codeInsight.TipsManager
-import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
+import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 
 /**
  * Replace [[JetSimpleNameExpression]] (and its enclosing qualifier) with qualified element given by FqName
@@ -128,6 +126,9 @@ public fun PsiElement.isInJavaSourceRoot(): Boolean =
 public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
     val tmpFile = JetPsiFactory.createFile(getProject(), getName(), textTransform(getText() ?: ""))
     tmpFile.setOriginalFile(this)
+    if (skipVisibilityCheck()) {
+        tmpFile.setSkipVisibilityCheck(true)
+    }
     return tmpFile
 }
 
