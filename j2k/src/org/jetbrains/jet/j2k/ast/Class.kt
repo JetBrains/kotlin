@@ -47,10 +47,8 @@ open class Class(
 
     protected val classMembers: ClassMembers = ClassMembers.fromBodyElements(bodyElements)
 
-    protected open fun primaryConstructorSignatureToKotlin(): String {
-        val constructor = classMembers.primaryConstructor
-        return if (constructor != null) constructor.signatureToKotlin() else "()"
-    }
+    protected open fun primaryConstructorSignatureToKotlin(): String
+            = classMembers.primaryConstructor?.signatureToKotlin() ?: "()"
 
     protected fun primaryConstructorBodyToKotlin(): String {
         val constructor = classMembers.primaryConstructor

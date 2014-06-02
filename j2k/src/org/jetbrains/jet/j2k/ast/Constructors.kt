@@ -35,7 +35,11 @@ class PrimaryConstructor(converter: Converter,
                          block: Block)
   : Constructor(converter, comments, modifiers, parameterList, block) {
 
-    public fun signatureToKotlin(): String = "(" + parameterList.toKotlin() + ")"
+    public fun signatureToKotlin(): String {
+        val accessModifier = modifiers.accessModifier()
+        val modifiersString = if (accessModifier != null && accessModifier != Modifier.PUBLIC) " " + accessModifier.toKotlin() else ""
+        return modifiersString + "(" + parameterList.toKotlin() + ")"
+    }
 
     public fun bodyToKotlin(): String = block!!.toKotlin()
 }

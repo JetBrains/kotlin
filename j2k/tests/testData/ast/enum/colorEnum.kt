@@ -1,6 +1,6 @@
 package demo
 
-enum class MyEnum(private val color: Int) {
+enum class MyEnum private(private val color: Int) {
     RED : MyEnum(10)
     BLUE : MyEnum(20)
 

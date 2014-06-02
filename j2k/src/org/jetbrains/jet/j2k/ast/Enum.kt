@@ -31,23 +31,20 @@ class Enum(
 ) : Class(converter, name, comments, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, bodyElements) {
 
-    override fun primaryConstructorSignatureToKotlin(): String {
-        val s: String = super.primaryConstructorSignatureToKotlin()
-        return if (s.equals("()")) "" else s
-    }
+    override fun primaryConstructorSignatureToKotlin(): String
+        = classMembers.primaryConstructor?.signatureToKotlin() ?: ""
 
     override fun isDefinitelyFinal() = true
 
     override fun toKotlin(): String {
-        val primaryConstructorBody = primaryConstructorBodyToKotlin() ?: ""
         return modifiersToKotlin() +
-        "enum class " + name.toKotlin() +
-        primaryConstructorSignatureToKotlin() +
-        typeParameterList.toKotlin() +
-        implementTypesToKotlin() +
-        " {" +
-        classMembers.allMembers.toKotlin() +
-        ( if (primaryConstructorBody.isEmpty()) "" else primaryConstructorBody) +
-        "}"
+                "enum class " + name.toKotlin() +
+                primaryConstructorSignatureToKotlin() +
+                typeParameterList.toKotlin() +
+                implementTypesToKotlin() +
+                " {" +
+                classMembers.allMembers.toKotlin() +
+                primaryConstructorBodyToKotlin() +
+                "}"
     }
 }

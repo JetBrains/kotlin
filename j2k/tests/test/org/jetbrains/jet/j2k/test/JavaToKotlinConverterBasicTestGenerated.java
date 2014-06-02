@@ -765,6 +765,11 @@ public class JavaToKotlinConverterBasicTestGenerated extends AbstractJavaToKotli
             doTest("j2k/tests/testData/ast/constructors/identifier.java");
         }
         
+        @TestMetadata("privateConstructors.java")
+        public void testPrivateConstructors() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/privateConstructors.java");
+        }
+        
         @TestMetadata("withManyDefaultParams.java")
         public void testWithManyDefaultParams() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/withManyDefaultParams.java");
