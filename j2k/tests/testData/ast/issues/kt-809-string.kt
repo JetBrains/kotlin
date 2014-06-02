@@ -10,7 +10,7 @@ open class One() {
     }
 }
 
-open class StringContainer(s: String?) {}
+open class StringContainer(s: String?)
 
 open class Test() {
     open fun putString(s: String?) {

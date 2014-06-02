@@ -2,7 +2,7 @@ package demo
 
 class Foo() {
     class object {
-        class Bar() {}
+        class Bar()
     }
 }
 

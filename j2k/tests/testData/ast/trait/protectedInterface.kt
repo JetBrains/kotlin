@@ -1,1 +1,1 @@
-protected trait Test {}
+protected trait Test

@@ -10,7 +10,7 @@ class One() {
     }
 }
 
-class IntContainer(i: Int) {}
+class IntContainer(i: Int)
 
 class Test() {
     fun putInt(i: Int) {

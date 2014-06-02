@@ -1,1 +1,1 @@
-abstract trait I {}
+abstract trait I

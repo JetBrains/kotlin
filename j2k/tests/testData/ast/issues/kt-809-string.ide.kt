@@ -10,7 +10,7 @@ class One() {
     }
 }
 
-class StringContainer(s: String) {}
+class StringContainer(s: String)
 
 class Test() {
     fun putString(s: String) {

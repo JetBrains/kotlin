@@ -1,3 +1,3 @@
 package demo
 
-class C(private val i: Int) {}
+class C(private val i: Int)

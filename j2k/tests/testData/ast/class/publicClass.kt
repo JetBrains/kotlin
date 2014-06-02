@@ -1,1 +1,1 @@
-public open class Test() {}
+public open class Test()

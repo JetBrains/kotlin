@@ -104,10 +104,8 @@ open class Class(
             = !isDefinitelyFinal() && converter.settings.openByDefault
 
     fun bodyToKotlin(): String {
-        return " {" + classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin() + "}"
-        //TODO:
-        //val insideBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()
-        //return if (insideBody.trim().isNotEmpty()) " {" + insideBody + "}" else ""
+        val innerBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()
+        return if (innerBody.trim().isNotEmpty()) " {" + innerBody + "}" else ""
     }
 
     private fun classObjectToKotlin(): String {

@@ -1,3 +1,3 @@
 package demo
 
-open class C(private val i: Int) {}
+open class C(private val i: Int)

@@ -2,7 +2,7 @@ package org.test
 
 import java.util.LinkedList
 
-class Member() {}
+class Member()
 
 class User() {
     fun main() {

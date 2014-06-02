@@ -1,6 +1,6 @@
 import java.util.HashMap
 
-open class G<T : String?>(t: T?) {}
+open class G<T : String?>(t: T?)
 
 public open class Java() {
     open fun test() {

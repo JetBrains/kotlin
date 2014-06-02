@@ -1,6 +1,6 @@
 package org.test
 
-class Library() {}
+class Library()
 
 class User() {
     fun main() {
