@@ -2,7 +2,7 @@ package demo
 
 import java.util.HashMap
 
-open class Test() {
+open class Test private() {
     class object {
         open fun init(): Test {
             val __ = Test()

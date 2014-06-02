@@ -160,7 +160,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
                     //TODO: comments?
                     val parameters = finalOrWithEmptyInitializerFields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, Parameter.VarValModifier.None, listOf()) }
-                    classBodyElements.add(PrimaryConstructor(this, MemberComments.Empty, setOf(),
+                    classBodyElements.add(PrimaryConstructor(this, MemberComments.Empty, setOf(Modifier.PRIVATE),
                                                              ParameterList(parameters),
                                                              Block(createInitStatementsFromFields(finalOrWithEmptyInitializerFields))))
                 }

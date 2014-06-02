@@ -1,4 +1,4 @@
-public class Identifier(_myName: String, _myHasDollar: Boolean) {
+public class Identifier private(_myName: String, _myHasDollar: Boolean) {
     private val myName: String
     private var myHasDollar: Boolean = false
     private var myNullable: Boolean = true
