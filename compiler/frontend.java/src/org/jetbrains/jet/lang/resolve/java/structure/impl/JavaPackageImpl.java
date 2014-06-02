@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
+import com.intellij.openapi.util.Condition;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiPackage;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage;
@@ -35,7 +38,12 @@ public class JavaPackageImpl extends JavaElementImpl<PsiPackage> implements Java
     @Override
     @NotNull
     public Collection<JavaClass> getClasses() {
-        return classes(getPsi().getClasses());
+        return classes(ContainerUtil.filter(getPsi().getClasses(), new Condition<PsiClass>() {
+            @Override
+            public boolean value(PsiClass aClass) {
+                return aClass.getName() != null;
+            }
+        }));
     }
 
     @Override

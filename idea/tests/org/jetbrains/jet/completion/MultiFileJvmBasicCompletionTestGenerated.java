@@ -76,6 +76,16 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest("idea/testData/completion/basic/multifile/ExtensionOnNullable");
     }
     
+    @TestMetadata("GroovyClassNameCompletionFromDefaultPackage")
+    public void testGroovyClassNameCompletionFromDefaultPackage() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromDefaultPackage");
+    }
+    
+    @TestMetadata("GroovyClassNameCompletionFromNonDefaultPackage")
+    public void testGroovyClassNameCompletionFromNonDefaultPackage() throws Exception {
+        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromNonDefaultPackage");
+    }
+    
     @TestMetadata("InImportedFunctionLiteralParameter")
     public void testInImportedFunctionLiteralParameter() throws Exception {
         doTest("idea/testData/completion/basic/multifile/InImportedFunctionLiteralParameter");

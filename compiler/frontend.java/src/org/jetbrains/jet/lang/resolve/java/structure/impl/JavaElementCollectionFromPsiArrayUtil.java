@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
 import com.intellij.psi.*;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.java.structure.*;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -142,7 +144,23 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
+    private static <Psi, Java> List<Java> convert(@NotNull Iterable<Psi> elements, @NotNull final Factory<Psi, Java> factory) {
+        if (!elements.iterator().hasNext()) return Collections.emptyList();
+        return KotlinPackage.map(elements, new Function1<Psi, Java>() {
+            @Override
+            public Java invoke(Psi psi) {
+                return factory.create(psi);
+            }
+        });
+    }
+
+    @NotNull
     public static Collection<JavaClass> classes(@NotNull PsiClass[] classes) {
+        return convert(classes, Factories.CLASSES);
+    }
+
+    @NotNull
+    public static Collection<JavaClass> classes(@NotNull Iterable<PsiClass> classes) {
         return convert(classes, Factories.CLASSES);
     }
 
