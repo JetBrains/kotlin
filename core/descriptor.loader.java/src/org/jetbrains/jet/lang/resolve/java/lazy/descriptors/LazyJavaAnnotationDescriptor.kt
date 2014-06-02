@@ -48,6 +48,7 @@ import org.jetbrains.jet.lang.resolve.java.lazy.types.toAttributes
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import org.jetbrains.jet.lang.types.TypeUtils
+import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
 
 private object DEPRECATED_IN_JAVA : JavaLiteralAnnotationArgument {
     override fun getName(): Name? = null
@@ -159,7 +160,8 @@ class LazyJavaAnnotationDescriptor(
     private fun resolveFromJavaClassObjectType(javaType: JavaType): CompileTimeConstant<*>? {
         // Class type is never nullable in 'Foo.class' in Java
         val `type` = TypeUtils.makeNotNullable(c.typeResolver.transformJavaType(javaType, TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes()))
-        val jlClass = c.javaClassResolver.resolveClassByFqName(FqName("java.lang.Class"))
+
+        val jlClass = c.resolveTopLevelClassInModule(FqName("java.lang.Class"))
         if (jlClass == null) return null
 
         val arguments = listOf(TypeProjectionImpl(`type`))

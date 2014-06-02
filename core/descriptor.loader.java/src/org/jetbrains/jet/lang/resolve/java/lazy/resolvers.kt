@@ -114,3 +114,8 @@ private fun LazyJavaResolverContext.resolveBinaryClass(kotlinClass: KotlinJvmBin
 
     return null
 }
+
+fun LazyJavaResolverContext.resolveTopLevelClassInModule(fqName: FqName): ClassDescriptor? {
+    return packageFragmentProvider.getModule().getPackage(fqName.parent())
+            ?.getMemberScope()?.getClassifier(fqName.shortName()) as? ClassDescriptor
+}

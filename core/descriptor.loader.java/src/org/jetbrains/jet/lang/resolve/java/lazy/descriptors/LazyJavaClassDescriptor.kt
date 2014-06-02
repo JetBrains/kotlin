@@ -53,6 +53,7 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFra
 import org.jetbrains.jet.lang.descriptors.impl.MutableClassDescriptor
 import org.jetbrains.jet.lang.resolve.name.SpecialNames
 import org.jetbrains.jet.lang.types.AbstractClassTypeConstructor
+import org.jetbrains.jet.lang.resolve.java.lazy.resolveTopLevelClassInModule
 
 class LazyJavaClassDescriptor(
         private val outerC: LazyJavaResolverContextWithTypes,
@@ -203,15 +204,17 @@ class LazyJavaClassDescriptor(
 
         private val _supertypes = c.storageManager.createLazyValue<Collection<JetType>> {
             val supertypes = jClass.getSupertypes()
-            if (supertypes.isEmpty())
-                if (jClass.getFqName() == DescriptorResolverUtils.OBJECT_FQ_NAME) {
+            if (supertypes.isEmpty()) {
+                val objectFqName = DescriptorResolverUtils.OBJECT_FQ_NAME
+                if (jClass.getFqName() == objectFqName) {
                     listOf(KotlinBuiltIns.getInstance().getAnyType())
                 }
                 else {
-                    val jlObject = c.javaClassResolver.resolveClassByFqName(DescriptorResolverUtils.OBJECT_FQ_NAME)?.getDefaultType()
+                    val objectType = c.resolveTopLevelClassInModule(objectFqName)?.getDefaultType()
                     // If java.lang.Object is not found, we simply use Any to recover
-                    listOf(jlObject ?: KotlinBuiltIns.getInstance().getAnyType())
+                    listOf(objectType ?: KotlinBuiltIns.getInstance().getAnyType())
                 }
+            }
             else
                 supertypes.stream()
                         .map {
