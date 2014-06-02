@@ -16,12 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.java.structure.impl;
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiAnnotationMemberValue;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotation;
 import org.jetbrains.jet.lang.resolve.java.structure.JavaAnnotationArgument;
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 
@@ -52,5 +52,17 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
     public FqName getFqName() {
         String qualifiedName = getPsi().getQualifiedName();
         return qualifiedName == null ? null : new FqName(qualifiedName);
+    }
+
+    @Nullable
+    @Override
+    public JavaClass resolve() {
+        PsiJavaCodeReferenceElement referenceElement = getPsi().getNameReferenceElement();
+        if (referenceElement == null) return null;
+
+        PsiElement resolved = referenceElement.resolve();
+        if (!(resolved instanceof PsiClass)) return null;
+
+        return new JavaClassImpl((PsiClass) resolved);
     }
 }

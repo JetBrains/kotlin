@@ -32,4 +32,7 @@ public interface JavaAnnotation extends JavaElement {
 
     @Nullable
     FqName getFqName();
+
+    @Nullable
+    JavaClass resolve();
 }
