@@ -44,6 +44,11 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
         return new ExtractKotlinFunctionHandler();
     }
 
+    @NotNull
+    public RefactoringActionHandler getExtractFunctionToScopeHandler() {
+        return new ExtractKotlinFunctionHandler(true);
+    }
+
     @Override
     public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
         if (element instanceof JetProperty) {

@@ -96,6 +96,12 @@
             text="Configure Kotlin (JavaScript) in Project">
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
+
+    <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
+            text="Extract Function to _Scope...">
+      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
+    </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
