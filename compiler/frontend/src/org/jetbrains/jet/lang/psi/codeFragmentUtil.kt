@@ -17,20 +17,17 @@
 package org.jetbrains.jet.lang.psi.codeFragmentUtil
 
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.jet.lang.psi.JetCodeFragment
 
 public val SKIP_VISIBILITY_CHECK: Key<Boolean> = Key.create<Boolean>("SKIP_VISIBILITY_CHECK")
 
-public fun JetFile.skipVisibilityCheck(): Boolean =
-        when (this) {
-            is JetCodeFragment -> true
-            is JetFile -> getUserData(SKIP_VISIBILITY_CHECK) ?: false
-            else -> false
-        }
-
-public fun JetFile.setSkipVisibilityCheck(skip: Boolean) {
-    putUserData(SKIP_VISIBILITY_CHECK, skip)
-}
-
+public var JetFile.skipVisibilityCheck: Boolean
+    get() = when (this) {
+        is JetCodeFragment -> true
+        is JetFile -> getUserData(SKIP_VISIBILITY_CHECK) ?: false
+        else -> false
+    }
+    set(skip: Boolean) {
+        putUserData(SKIP_VISIBILITY_CHECK, skip)
+    }

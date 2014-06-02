@@ -45,7 +45,6 @@ import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsExcepti
 import com.intellij.refactoring.ui.ConflictsDialog
 import com.intellij.util.containers.MultiMap
 import com.intellij.openapi.command.CommandProcessor
-import org.jetbrains.jet.lang.psi.codeFragmentUtil.setSkipVisibilityCheck
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
 
 /**
@@ -126,9 +125,7 @@ public fun PsiElement.isInJavaSourceRoot(): Boolean =
 public inline fun JetFile.createTempCopy(textTransform: (String) -> String): JetFile {
     val tmpFile = JetPsiFactory.createFile(getProject(), getName(), textTransform(getText() ?: ""))
     tmpFile.setOriginalFile(this)
-    if (skipVisibilityCheck()) {
-        tmpFile.setSkipVisibilityCheck(true)
-    }
+    tmpFile.skipVisibilityCheck = skipVisibilityCheck
     return tmpFile
 }
 
