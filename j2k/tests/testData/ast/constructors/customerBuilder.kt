@@ -1,8 +1,6 @@
 package org.test.customer
 
-open class Customer(first: String?, last: String?) {
-    public val _firstName: String?
-    public val _lastName: String?
+open class Customer(public val _firstName: String?, public val _lastName: String?) {
 
     public open fun getFirstName(): String? {
         return _firstName
@@ -19,8 +17,6 @@ open class Customer(first: String?, last: String?) {
 
     {
         doSmthBefore()
-        _firstName = first
-        _lastName = last
         doSmthAfter()
     }
 }

@@ -17,8 +17,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.ast.types.ClassType
-import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.HashSet
 import java.util.ArrayList
 
@@ -31,53 +29,50 @@ open class Class(
         val extendsTypes: List<Type>,
         val baseClassParams: List<Expression>,
         val implementsTypes: List<Type>,
-        val members: List<Element>
+        val bodyElements: List<Element>
 ) : Member(comments, modifiers) {
-    open val TYPE: String
+
+    override fun toKotlin(): String =
+            commentsToKotlin() +
+            modifiersToKotlin() +
+            keyword + " " + name.toKotlin() +
+            typeParameterList.toKotlin() +
+            primaryConstructorSignatureToKotlin() +
+            implementTypesToKotlin() +
+            typeParameterList.whereToKotlin().withPrefix(" ") +
+            bodyToKotlin()
+
+    protected open val keyword: String
         get() = "class"
 
-    val classMembers = parseClassMembers(members)
+    protected val classMembers: ClassMembers = ClassMembers.fromBodyElements(bodyElements)
 
-    open fun primaryConstructorSignatureToKotlin(): String {
+    protected open fun primaryConstructorSignatureToKotlin(): String {
         val constructor = classMembers.primaryConstructor
-        return if (constructor != null) constructor.primarySignatureToKotlin() else "()"
+        return if (constructor != null) constructor.signatureToKotlin() else "()"
     }
 
-    fun primaryConstructorBodyToKotlin(): String? {
-        val maybeConstructor = classMembers.primaryConstructor
-        if (maybeConstructor != null && !(maybeConstructor.block?.isEmpty ?: true)) {
-            return "\n" + maybeConstructor.primaryBodyToKotlin() + "\n"
+    protected fun primaryConstructorBodyToKotlin(): String {
+        val constructor = classMembers.primaryConstructor
+        if (constructor != null && !(constructor.block?.isEmpty ?: true)) {
+            return "\n" + constructor.bodyToKotlin() + "\n"
         }
         return ""
     }
 
-    fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
-        return MemberList(classMembers.secondaryConstructors.elements.map { if (it is Constructor) constructorToInit(it) else it })
+    private fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
+        return MemberList(classMembers.secondaryConstructors.elements.map { if (it is SecondaryConstructor) it.toInitFunction(this) else it })
     }
 
-    private fun constructorToInit(f: Function): Function {
-        val modifiers = HashSet<Modifier>(f.modifiers)
-        modifiers.add(Modifier.STATIC)
-        val statements = ArrayList(f.block?.statements ?: ArrayList())
-        statements.add(ReturnStatement(Identifier("__")))
-        val block = Block(statements)
-        val constructorTypeParameters = ArrayList<TypeParameter>()
-        constructorTypeParameters.addAll(typeParameterList.parameters)
-        constructorTypeParameters.addAll(f.typeParameterList.parameters)
-        return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
-                        ClassType(name, constructorTypeParameters, false, converter),
-                        TypeParameterList(constructorTypeParameters), f.params, block)
-    }
-
-    fun baseClassSignatureWithParams(): List<String> {
-        if (TYPE.equals("class") && extendsTypes.size() == 1) {
+    private fun baseClassSignatureWithParams(): List<String> {
+        if (keyword.equals("class") && extendsTypes.size() == 1) {
             val baseParams = baseClassParams.toKotlin(", ")
             return arrayListOf(extendsTypes[0].toKotlin() + "(" + baseParams + ")")
         }
         return extendsTypes.map { it.toKotlin() }
     }
 
-    fun implementTypesToKotlin(): String {
+    protected fun implementTypesToKotlin(): String {
         val allTypes = ArrayList<String>()
         allTypes.addAll(baseClassSignatureWithParams())
         allTypes.addAll(implementsTypes.map { it.toKotlin() })
@@ -87,9 +82,9 @@ open class Class(
             " : " + allTypes.makeString(", ")
     }
 
-    fun modifiersToKotlin(): String {
+    protected fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
-        val modifier = accessModifier()
+        val modifier = modifiers.accessModifier()
         if (modifier != null) {
             modifierList.add(modifier)
         }
@@ -102,15 +97,20 @@ open class Class(
         return modifierList.toKotlin()
     }
 
-    open fun isDefinitelyFinal() = modifiers.contains(Modifier.FINAL)
+    protected open fun isDefinitelyFinal(): Boolean
+            = modifiers.contains(Modifier.FINAL)
 
-    open fun needsOpenModifier() = !isDefinitelyFinal() && converter.settings.openByDefault
+    protected open fun needsOpenModifier(): Boolean
+            = !isDefinitelyFinal() && converter.settings.openByDefault
 
     fun bodyToKotlin(): String {
         return " {" + classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin() + "}"
+        //TODO:
+        //val insideBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()
+        //return if (insideBody.trim().isNotEmpty()) " {" + insideBody + "}" else ""
     }
 
-    fun classObjectToKotlin(): String {
+    private fun classObjectToKotlin(): String {
         val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
         val staticMembers = classMembers.staticMembers
         if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) {
@@ -118,14 +118,4 @@ open class Class(
         }
         return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
     }
-
-    override fun toKotlin(): String =
-            commentsToKotlin() +
-            modifiersToKotlin() +
-            TYPE + " " + name.toKotlin() +
-            typeParameterList.toKotlin() +
-            primaryConstructorSignatureToKotlin() +
-            implementTypesToKotlin() +
-            typeParameterList.whereToKotlin().withPrefix(" ") +
-            bodyToKotlin()
 }

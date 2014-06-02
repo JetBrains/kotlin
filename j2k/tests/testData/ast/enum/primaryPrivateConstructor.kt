@@ -1,13 +1,8 @@
 package demo
 
-enum class Color(c: Int) {
-    private var code: Int = 0
+enum class Color(private var code: Int) {
 
     public fun getCode(): Int {
         return code
-    }
-
-    {
-        code = c
     }
 }

@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
 import org.jetbrains.jet.j2k.*
 import java.util.ArrayList
 
@@ -35,7 +34,7 @@ open class Field(
             modifierList.add(Modifier.ABSTRACT)
         }
 
-        val modifier = accessModifier()
+        val modifier = modifiers.accessModifier()
         if (modifier != null) {
             modifierList.add(modifier)
         }

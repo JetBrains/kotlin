@@ -1,10 +1,8 @@
-class C(arg1: Int) {
-    val myArg1: Int
+class C(val myArg1: Int) {
     var myArg2: Int = 0
     var myArg3: Int = 0
 
     {
-        myArg1 = arg1
         myArg2 = 0
         myArg3 = 0
     }

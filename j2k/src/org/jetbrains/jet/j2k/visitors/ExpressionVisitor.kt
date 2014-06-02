@@ -25,9 +25,9 @@ import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
 import org.jetbrains.jet.j2k.*
-import org.jetbrains.jet.j2k.ast.types.ArrayType
 
-open class ExpressionVisitor(public val converter: Converter) : JavaElementVisitor() {
+open class ExpressionVisitor(protected val converter: Converter,
+                             private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
     public var result: Expression = Expression.Empty
         protected set
 
@@ -141,7 +141,7 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     protected fun convertMethodCallExpression(expression: PsiMethodCallExpression) {
-        if (!expression.isSuperConstructorCall() || !isInsidePrimaryConstructor(expression)) {
+        if (!expression.isSuperConstructorCall() || !expression.isInsidePrimaryConstructor()) {
             result = MethodCallExpression(converter.convertExpression(expression.getMethodExpression()),
                                             converter.convertArguments(expression),
                                             converter.convertTypes(expression.getTypeArguments()),
@@ -212,7 +212,7 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-        val containingConstructor = getContainingConstructor(expression)
+        val containingConstructor = expression.getContainingConstructor()
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
         val addReceiver = insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()
 
@@ -231,20 +231,21 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
             identifier = Identifier("size", isNullable)
         }
         else if (qualifier == null) {
-            val resolved = expression.getReference()?.resolve()
-            if (resolved is PsiClass) {
-                if (PrimitiveType.values() any { it.getTypeName().asString() == resolved.getName() }) {
-                    result = Identifier(resolved.getQualifiedName()!!, false)
+            val target = expression.getReference()?.resolve()
+
+            if (target is PsiClass) {
+                if (PrimitiveType.values() any { it.getTypeName().asString() == target.getName() }) {
+                    result = Identifier(target.getQualifiedName()!!, false)
                     return
                 }
             }
 
-            if (resolved is PsiMember
-                    && resolved.hasModifierProperty(PsiModifier.STATIC)
-                    && resolved.getContainingClass() != null
-                    && PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != resolved.getContainingClass()
-                    && !isStaticallyImported(resolved, expression)) {
-                var member = resolved as PsiMember
+            if (target is PsiMember
+                    && target.hasModifierProperty(PsiModifier.STATIC)
+                    && target.getContainingClass() != null
+                    && PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != target.getContainingClass()
+                    && !isStaticallyImported(target, expression)) {
+                var member = target as PsiMember
                 var code = Identifier(referencedName).toKotlin()
                 while (member.getContainingClass() != null) {
                     code = Identifier(member.getContainingClass()!!.getName()!!).toKotlin() + "." + code
@@ -252,6 +253,13 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
                 }
                 result = Identifier(code, false, false)
                 return
+            }
+
+            if (target is PsiVariable) {
+                val replacement = usageReplacementMap[target]
+                if (replacement != null) {
+                    identifier = Identifier(replacement, isNullable)
+                }
             }
         }
 
@@ -268,19 +276,13 @@ open class ExpressionVisitor(public val converter: Converter) : JavaElementVisit
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {
-        val qualifier: PsiJavaCodeReferenceElement? = expression.getQualifier()
-        result = SuperExpression((if (qualifier != null)
-            Identifier(qualifier.getQualifiedName()!!)
-        else
-            Identifier.Empty))
+        val qualifier = expression.getQualifier()
+        result = SuperExpression(if (qualifier != null) Identifier(qualifier.getQualifiedName()!!) else Identifier.Empty)
     }
 
     override fun visitThisExpression(expression: PsiThisExpression) {
-        val qualifier: PsiJavaCodeReferenceElement? = expression.getQualifier()
-        result = ThisExpression((if (qualifier != null)
-            Identifier(qualifier.getQualifiedName()!!)
-        else
-            Identifier.Empty))
+        val qualifier = expression.getQualifier()
+        result = ThisExpression(if (qualifier != null) Identifier(qualifier.getQualifiedName()!!) else Identifier.Empty)
     }
 
     override fun visitTypeCastExpression(expression: PsiTypeCastExpression) {

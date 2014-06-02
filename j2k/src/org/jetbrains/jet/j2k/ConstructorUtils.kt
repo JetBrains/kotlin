@@ -23,6 +23,14 @@ import com.intellij.psi.JavaRecursiveElementVisitor
 import java.util.LinkedHashSet
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethodCallExpression
+import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiAssignmentExpression
+import com.intellij.psi.PsiThisExpression
+import com.intellij.psi.PsiStatement
+import com.intellij.psi.PsiExpressionStatement
+import com.intellij.psi.PsiBlockStatement
+import com.intellij.psi.util.PsiUtil
 
 fun PsiMethod.isPrimaryConstructor(): Boolean {
     if (!isConstructor()) return false
@@ -63,11 +71,11 @@ fun PsiClass.getPrimaryConstructor(): PsiMethod? {
     }
 }
 
-fun isInsidePrimaryConstructor(element: PsiElement): Boolean
-        = getContainingConstructor(element)?.isPrimaryConstructor() ?: false
+fun PsiElement.isInsidePrimaryConstructor(): Boolean
+        = getContainingConstructor()?.isPrimaryConstructor() ?: false
 
-fun getContainingConstructor(element: PsiElement): PsiMethod? {
-    var context = element.getContext()
+fun PsiElement.getContainingConstructor(): PsiMethod? {
+    var context = getContext()
     while (context != null) {
         val _context = context!!
         if (_context is PsiMethod) {
@@ -90,3 +98,4 @@ fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
 
 fun PsiReferenceExpression.isThisConstructorCall(): Boolean
         = getReferences().filter { it.getCanonicalText() == "this" }.map { it.resolve() }.any { it is PsiMethod && it.isConstructor() }
+

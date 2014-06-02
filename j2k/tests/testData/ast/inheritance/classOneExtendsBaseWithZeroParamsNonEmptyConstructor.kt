@@ -1,9 +1,3 @@
 open class Base(name: String?) {}
 
-open class One(name: String?, second: String?) : Base(name) {
-    private var mySecond: String? = null
-
-    {
-        mySecond = second
-    }
-}
+open class One(name: String?, private var mySecond: String?) : Base(name) {}

@@ -17,7 +17,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.ast.types.Type
 
 class Trait(
         converter: Converter,
@@ -28,11 +27,11 @@ class Trait(
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
-        members: List<Element>
+        bodyElements: List<Element>
 ) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, members) {
+          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
 
-    override val TYPE: String
+    override val keyword: String
         get() = "trait"
 
     override fun primaryConstructorSignatureToKotlin() = ""

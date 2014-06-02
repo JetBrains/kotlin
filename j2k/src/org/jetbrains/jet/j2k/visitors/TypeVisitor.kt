@@ -20,7 +20,6 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.ast.types.*
 import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
 import java.util.ArrayList
@@ -32,7 +31,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
-            UnitType
+            Type.Unit
         }
         else if (PRIMITIVE_TYPES_NAMES.contains(name)) {
             PrimitiveType(Identifier(StringUtil.capitalize(name)))
@@ -120,7 +119,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
     }
 
     override fun visitEllipsisType(ellipsisType: PsiEllipsisType): Type {
-        return VarArg(converter.convertType(ellipsisType.getComponentType()))
+        return VarArgType(converter.convertType(ellipsisType.getComponentType()))
     }
 
     private fun createQualifiedName(classType: PsiClassType): String {

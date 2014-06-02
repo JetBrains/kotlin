@@ -19,16 +19,15 @@ package org.jetbrains.jet.j2k.visitors
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
-import org.jetbrains.jet.j2k.ast.types.Type
 
 class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Element = Element.Empty
         protected set
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
-        var kType = converter.convertType(variable.getType(), variable.isAnnotatedAsNotNull())
+        var kType = converter.convertVariableType(variable)
         if (variable.hasModifierProperty(PsiModifier.FINAL) && variable.getInitializer().isDefinitelyNotNull()) {
-            kType = kType.convertedToNotNull()
+            kType = kType.toNotNullType()
         }
         result = LocalVariable(Identifier(variable.getName()!!),
                                  converter.convertModifierList(variable.getModifierList()),
@@ -68,7 +67,7 @@ class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
     }
 
     override fun visitParameterList(list: PsiParameterList) {
-        result = ParameterList(converter.convertParameterList(list.getParameters()))
+        result = converter.convertParameterList(list)
     }
 
     override fun visitComment(comment: PsiComment) {

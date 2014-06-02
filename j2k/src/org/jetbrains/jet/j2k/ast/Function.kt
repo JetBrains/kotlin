@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
 import java.util.ArrayList
-import org.jetbrains.jet.j2k.ast.types.isUnit
 import org.jetbrains.jet.j2k.Converter
 
 open class Function(
@@ -28,7 +26,7 @@ open class Function(
         modifiers: Set<Modifier>,
         val `type`: Type,
         val typeParameterList: TypeParameterList,
-        val params: Element,
+        val parameterList: ParameterList,
         var block: Block?
 ) : Member(comments, modifiers) {
 
@@ -39,7 +37,7 @@ open class Function(
             resultingModifiers.add(Modifier.OVERRIDE)
         }
 
-        val accessModifier = accessModifier()
+        val accessModifier = modifiers.accessModifier()
         if (accessModifier != null && !isOverride) {
             resultingModifiers.add(accessModifier)
         }
@@ -49,10 +47,10 @@ open class Function(
         }
 
         if (converter.settings.openByDefault &&
-        !modifiers.contains(Modifier.ABSTRACT) &&
-        !isOverride &&
-        !modifiers.contains(Modifier.FINAL) &&
-        !modifiers.contains(Modifier.PRIVATE)) {
+                !modifiers.contains(Modifier.ABSTRACT) &&
+                !isOverride &&
+                !modifiers.contains(Modifier.FINAL) &&
+                !modifiers.contains(Modifier.PRIVATE)) {
             resultingModifiers.add(Modifier.OPEN)
         }
 
@@ -69,7 +67,7 @@ open class Function(
         return commentsToKotlin() +
         modifiersToKotlin() +
         "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
-        "(${params.toKotlin()})" +
+        "(${parameterList.toKotlin()})" +
         returnTypeToKotlin() +
         typeParameterList.whereToKotlin() +
         block?.toKotlin()

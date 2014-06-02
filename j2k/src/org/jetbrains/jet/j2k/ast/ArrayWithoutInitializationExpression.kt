@@ -16,10 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.ArrayType
-import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.ast.types.PrimitiveType
-
 open class ArrayWithoutInitializationExpression(val `type`: Type, val expressions: List<Expression>) : Expression() {
     override fun toKotlin(): String {
         if (`type` is ArrayType) {
@@ -55,17 +51,17 @@ open class ArrayWithoutInitializationExpression(val `type`: Type, val expression
             return if (`type` is ArrayType)
                 when (`type`.elementType) {
                     is PrimitiveType ->
-                        `type`.convertedToNotNull().toKotlin()
+                        `type`.toNotNullType().toKotlin()
                     is ArrayType ->
                         if (hasInit)
-                            `type`.convertedToNotNull().toKotlin()
+                            `type`.toNotNullType().toKotlin()
                         else
                             "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
                     else ->
                         "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
                 }
             else
-                `type`.convertedToNotNull().toKotlin()
+                `type`.toNotNullType().toKotlin()
         }
     }
 }

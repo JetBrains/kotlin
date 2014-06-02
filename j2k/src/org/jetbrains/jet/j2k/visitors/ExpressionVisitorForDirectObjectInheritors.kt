@@ -23,16 +23,17 @@ import org.jetbrains.jet.j2k.ast.Identifier
 import com.intellij.psi.CommonClassNames.JAVA_LANG_OBJECT
 import org.jetbrains.jet.j2k.ast.MethodCallExpression
 
-open class ExpressionVisitorForDirectObjectInheritors(converter: Converter) : ExpressionVisitor(converter) {
+open class ExpressionVisitorForDirectObjectInheritors(converter: Converter, usageReplacementMap: Map<PsiVariable, String> = mapOf())
+: ExpressionVisitor(converter, usageReplacementMap) {
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
         val methodExpression = expression.getMethodExpression()
-        if (superMethodInvocation(methodExpression, "hashCode")) {
+        if (isSuperMethodInvocation(methodExpression, "hashCode")) {
             result = MethodCallExpression.build(Identifier("System", false), "identityHashCode", listOf(Identifier("this")))
         }
-        else if (superMethodInvocation(methodExpression, "equals")) {
+        else if (isSuperMethodInvocation(methodExpression, "equals")) {
             result = MethodCallExpression.build(Identifier("this", false), "identityEquals", converter.convertArguments(expression))
         }
-        else if (superMethodInvocation(methodExpression, "toString")) {
+        else if (isSuperMethodInvocation(methodExpression, "toString")) {
             result = DummyStringExpression("getJavaClass<${getClassName(methodExpression)}>.getName() + '@' + Integer.toHexString(hashCode())")
         }
         else {
@@ -40,14 +41,7 @@ open class ExpressionVisitorForDirectObjectInheritors(converter: Converter) : Ex
         }
     }
 
-    private fun superMethodInvocation(expression: PsiReferenceExpression, methodName: String?): Boolean {
-        val referenceName: String? = expression.getReferenceName()
-        val qualifierExpression: PsiExpression? = expression.getQualifierExpression()
-        if (referenceName == methodName && qualifierExpression is PsiSuperExpression) {
-            if (qualifierExpression.getType()?.getCanonicalText() == JAVA_LANG_OBJECT) {
-                return true
-            }
-        }
-        return false
-    }
+    private fun isSuperMethodInvocation(expression: PsiReferenceExpression, methodName: String): Boolean
+            = expression.getReferenceName() == methodName
+                && (expression.getQualifierExpression() as? PsiSuperExpression)?.getType()?.getCanonicalText() == JAVA_LANG_OBJECT
 }

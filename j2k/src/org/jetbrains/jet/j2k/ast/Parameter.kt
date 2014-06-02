@@ -16,19 +16,31 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
-import org.jetbrains.jet.j2k.ast.types.VarArg
+class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parameter.VarValModifier, val modifiers: Collection<Modifier>) : Expression() {
+    //TODO: merge with modifiers?
+    //TODO: maybe vararg is modifier too?
+    public enum class VarValModifier {
+        None
+        Val
+        Var
+    }
 
-open class Parameter(val identifier: Identifier, val `type`: Type, val readOnly: Boolean = true) : Expression() {
     override fun toKotlin(): String {
-        val vararg: String = (if (`type` is VarArg)
-            "vararg "
-        else
-            "")
-        val `var`: String? = (if (readOnly)
-            ""
-        else
-            "var ")
-        return vararg + `var` + identifier.toKotlin() + " : " + `type`.toKotlin()
+        val builder = StringBuilder()
+
+        builder.append(modifiers.toKotlin())
+
+        if (`type` is VarArgType) {
+            assert(varVal == VarValModifier.None)
+            builder.append("vararg ")
+        }
+
+        when (varVal) {
+            VarValModifier.Var -> builder.append("var ")
+            VarValModifier.Val -> builder.append("val ")
+        }
+
+        builder.append(identifier.toKotlin()).append(": ").append(`type`.toKotlin())
+        return builder.toString()
     }
 }

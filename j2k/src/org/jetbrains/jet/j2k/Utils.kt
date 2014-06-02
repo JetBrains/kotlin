@@ -24,25 +24,33 @@ import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiNewExpression
 import org.jetbrains.jet.j2k.ast.Field
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.PsiModifierListOwner
+import java.util.ArrayList
+import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.PsiThisExpression
+import java.util.HashMap
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
-fun PsiElement.countWriteAccesses(scope: PsiElement?): Int {
-    if (scope == null) return 0
+fun findExpressionReferences(element: PsiElement, scope: PsiElement): Collection<PsiReferenceExpression> {
+    class Visitor : JavaRecursiveElementVisitor() {
+        val refs = ArrayList<PsiReferenceExpression>()
 
-    var writes = 0
-    scope.accept(object: JavaRecursiveElementVisitor() {
         override fun visitReferenceExpression(expression: PsiReferenceExpression) {
             super.visitReferenceExpression(expression)
-            if (PsiUtil.isAccessedForWriting(expression) && expression.isReferenceTo(this@countWriteAccesses)) {
-                writes++
+            if (expression.isReferenceTo(element)) {
+                refs.add(expression)
             }
         }
-    })
-    return writes
+    }
+
+    val visitor = Visitor()
+    scope.accept(visitor)
+    return visitor.refs
 }
+
+fun PsiElement.countWriteAccesses(scope: PsiElement?): Int
+        = if (scope != null) findExpressionReferences(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
 fun PsiModifierListOwner.isAnnotatedAsNotNull(): Boolean
         = getModifierList()?.getAnnotations()?.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) } ?: false
@@ -66,4 +74,9 @@ fun getDefaultInitializer(field: Field): String {
             else -> "0"
         }
     }
+}
+
+fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {
+    val qualifier = ref.getQualifierExpression()
+    return qualifier == null || (qualifier is PsiThisExpression && qualifier.getQualifier() == null)
 }

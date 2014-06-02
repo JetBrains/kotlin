@@ -17,7 +17,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.ast.types.Type
 
 class Enum(
         converter: Converter,
@@ -28,9 +27,9 @@ class Enum(
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
-        members: List<Element>
+        bodyElements: List<Element>
 ) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, members) {
+          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
 
     override fun primaryConstructorSignatureToKotlin(): String {
         val s: String = super.primaryConstructorSignatureToKotlin()

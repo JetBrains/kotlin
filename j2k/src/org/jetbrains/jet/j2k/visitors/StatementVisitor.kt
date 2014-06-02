@@ -32,7 +32,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
-        result = converter.convertBlock(statement.getCodeBlock(), true)
+        result = converter.convertBlock(statement.getCodeBlock())
     }
 
     override fun visitBreakStatement(statement: PsiBreakStatement) {
@@ -217,10 +217,10 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         val catchBlockParameters = statement.getCatchBlockParameters()
         for (i in 0..catchBlocks.size - 1) {
             catches.add(CatchStatement(converter.convertParameter(catchBlockParameters[i], true),
-                                       converter.convertBlock(catchBlocks[i], true)))
+                                       converter.convertBlock(catchBlocks[i])))
         }
-        result = TryStatement(converter.convertBlock(statement.getTryBlock(), true),
-                                catches, converter.convertBlock(statement.getFinallyBlock(), true))
+        result = TryStatement(converter.convertBlock(statement.getTryBlock()),
+                                catches, converter.convertBlock(statement.getFinallyBlock()))
     }
 
     override fun visitWhileStatement(statement: PsiWhileStatement) {

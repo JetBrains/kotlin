@@ -1,9 +1,3 @@
 class Base(name: String) {}
 
-class One(name: String, second: String) : Base(name) {
-    private var mySecond: String = 0
-
-    {
-        mySecond = second
-    }
-}
+class One(name: String, private var mySecond: String) : Base(name) {}

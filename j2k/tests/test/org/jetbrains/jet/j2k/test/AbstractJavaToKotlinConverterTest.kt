@@ -42,10 +42,7 @@ import java.io.StringReader
 public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
 public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
 
-abstract class AbstractJavaToKotlinConverterTest(
-        val kotlinFileExtension: String,
-                                                 val settings: ConverterSettings
-) : LightIdeaTestCase() {
+abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension: String, val settings: ConverterSettings ) : LightIdeaTestCase() {
 
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 

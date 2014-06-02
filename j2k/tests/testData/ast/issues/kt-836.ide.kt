@@ -2,15 +2,10 @@ package com.voltvoodoo.saplo4j.model
 
 import java.io.Serializable
 
-public class Language(code: String) : Serializable {
-    protected var code: String = 0
+public class Language(protected var code: String) : Serializable {
 
     override fun toString(): String {
         return this.code
-    }
-
-    {
-        this.code = code
     }
 }
 

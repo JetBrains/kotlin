@@ -16,15 +16,13 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
-
 open class EnumConstant(
         identifier: Identifier,
         members: MemberComments,
         modifiers: Set<Modifier>,
         `type`: Type,
         params: Element
-) : Field(identifier, members, modifiers, `type`.convertedToNotNull(), params, 0) {
+) : Field(identifier, members, modifiers, `type`.toNotNullType(), params, 0) {
 
     override fun toKotlin(): String {
         if (initializer.toKotlin().isEmpty()) {

@@ -25,10 +25,6 @@ class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(e
 }
 
 abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
-    fun accessModifier(): Modifier? {
-        return modifiers.find { m -> m == Modifier.PUBLIC || m == Modifier.PROTECTED || m == Modifier.PRIVATE }
-    }
-
     fun isAbstract(): Boolean = modifiers.contains(Modifier.ABSTRACT)
     fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
     fun commentsToKotlin(): String = comments.toKotlin()
@@ -42,28 +38,28 @@ class MemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(eleme
         get() = elements.filter { it is Member }.map { it as Member }
 }
 
-class ClassMembers(
-        val primaryConstructor: Constructor?,
+class ClassMembers private(
+        val primaryConstructor: PrimaryConstructor?,
         val secondaryConstructors: MemberList,
         val allMembers: MemberList,
         val staticMembers: MemberList,
-        val nonStaticMembers: MemberList
-) {
-}
-
-fun parseClassMembers(elements: List<Element>): ClassMembers {
-    val groups = splitInGroups(elements)
-    val constructors = groups.filter { it.member is Constructor }
-    val primaryConstructor = constructors.map { it.member }.find { (it as Constructor).isPrimary }
-    val secondaryConstructors = constructors.filter { !(it.member as Constructor).isPrimary }
-    val nonConstructors = groups.filter { it.member !is Constructor }
-    val staticMembers = nonConstructors.filter { it.member.isStatic() }
-    val nonStaticMembers = nonConstructors.filter { !it.member.isStatic() }
-    return ClassMembers(primaryConstructor as Constructor?,
-                        secondaryConstructors.toMemberList(),
-                        nonConstructors.toMemberList(),
-                        staticMembers.toMemberList(),
-                        nonStaticMembers.toMemberList())
+        val nonStaticMembers: MemberList) {
+    class object {
+        public fun fromBodyElements(elements: List<Element>): ClassMembers {
+            val groups = splitInGroups(elements)
+            val constructors = groups.filter { it.member is Constructor }
+            val primaryConstructor = constructors.map { it.member }.filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
+            val secondaryConstructors = constructors.filter { it.member is SecondaryConstructor }
+            val nonConstructors = groups.filter { it.member !is Constructor }
+            val staticMembers = nonConstructors.filter { it.member.isStatic() }
+            val nonStaticMembers = nonConstructors.filter { !it.member.isStatic() }
+            return ClassMembers(primaryConstructor,
+                                secondaryConstructors.toMemberList(),
+                                nonConstructors.toMemberList(),
+                                staticMembers.toMemberList(),
+                                nonStaticMembers.toMemberList())
+        }
+    }
 }
 
 private fun List<MemberHolder>.toMemberList() = MemberList(flatMap { it.elements })
@@ -74,8 +70,8 @@ private fun splitInGroups(elements: List<Element>): List<MemberHolder> {
     for (element in elements) {
         currentGroup.add(element)
         if (element is Member) {
-            result.add(Pair(element, currentGroup))
-            currentGroup = ArrayList<Element>()
+            result.add(element to currentGroup)
+            currentGroup = ArrayList()
         }
     }
     if (result.isNotEmpty()) {

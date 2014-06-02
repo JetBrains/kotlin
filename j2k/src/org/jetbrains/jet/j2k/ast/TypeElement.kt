@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.types.Type
-
 open class TypeElement(val `type`: Type) : Element {
     override fun toKotlin() = `type`.toKotlin()
 
-    fun toKotlinNotNull(): String = `type`.convertedToNotNull().toKotlin()
+    fun toKotlinNotNull(): String = `type`.toNotNullType().toKotlin()
 }

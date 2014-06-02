@@ -21,9 +21,6 @@ import java.util.ArrayList
 fun List<Node>.toKotlin(separator: String, prefix: String = "", postfix: String = ""): String
         = if (isNotEmpty()) map { it.toKotlin() }.makeString(separator, prefix, postfix) else ""
 
-fun Collection<Modifier>.toKotlin(separator: String = " "): String
-        = if (isNotEmpty()) map { it.name }.makeString(separator) + separator else ""
-
 fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix
 fun String.withPrefix(prefix: String): String = if (isEmpty()) "" else prefix + this
 fun Expression.withPrefix(prefix: String): String = if (isEmpty) "" else prefix + toKotlin()

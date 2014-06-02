@@ -17,8 +17,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.j2k.ast.types.ArrayType
-import org.jetbrains.jet.j2k.ast.types.isPrimitive
 
 open class ArrayInitializerExpression(val arrayType: ArrayType, val initializers: List<Expression>) : Expression() {
     override fun toKotlin(): String {
@@ -32,14 +30,14 @@ open class ArrayInitializerExpression(val arrayType: ArrayType, val initializers
     private fun createArrayFunction(): String {
         val elementType = arrayType.elementType
         if (elementType.isPrimitive()) {
-            return (elementType.convertedToNotNull().toKotlin() + "Array").decapitalize()
+            return (elementType.toNotNullType().toKotlin() + "Array").decapitalize()
         }
 
-        return arrayType.convertedToNotNull().toKotlin().decapitalize()
+        return arrayType.toNotNullType().toKotlin().decapitalize()
     }
 
     private fun innerTypeStr(): String {
-        return arrayType.convertedToNotNull().toKotlin().replace("Array", "").toLowerCase()
+        return arrayType.toNotNullType().toKotlin().replace("Array", "").toLowerCase()
     }
 
     private fun explicitConvertIfNeeded(i: Expression): String {

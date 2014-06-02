@@ -720,6 +720,41 @@ public class JavaToKotlinConverterBasicTestGenerated extends AbstractJavaToKotli
             doTest("j2k/tests/testData/ast/constructors/customerBuilder.java");
         }
         
+        @TestMetadata("fieldsInitializedFromParams1.java")
+        public void testFieldsInitializedFromParams1() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams1.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams2.java")
+        public void testFieldsInitializedFromParams2() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams2.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams3.java")
+        public void testFieldsInitializedFromParams3() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams3.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams4.java")
+        public void testFieldsInitializedFromParams4() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams4.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams5.java")
+        public void testFieldsInitializedFromParams5() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams5.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams6.java")
+        public void testFieldsInitializedFromParams6() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams6.java");
+        }
+        
+        @TestMetadata("fieldsInitializedFromParams7.java")
+        public void testFieldsInitializedFromParams7() throws Exception {
+            doTest("j2k/tests/testData/ast/constructors/fieldsInitializedFromParams7.java");
+        }
+        
         @TestMetadata("genericIdentifier.java")
         public void testGenericIdentifier() throws Exception {
             doTest("j2k/tests/testData/ast/constructors/genericIdentifier.java");
