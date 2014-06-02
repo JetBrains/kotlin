@@ -1,15 +1,8 @@
-public class Identifier<T> private(_myName: T, _myHasDollar: Boolean) {
-    private val myName: T
-    private var myHasDollar: Boolean = false
+public class Identifier<T> private(private val myName: T, private var myHasDollar: Boolean) {
     private var myNullable: Boolean = true
 
     public fun getName(): T {
         return myName
-    }
-
-    {
-        myName = _myName
-        myHasDollar = _myHasDollar
     }
 
     class object {

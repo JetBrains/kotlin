@@ -159,10 +159,16 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
 
                     //TODO: comments?
-                    val parameters = finalOrWithEmptyInitializerFields.map { Parameter(Identifier("_" + it.identifier.name), it.`type`, Parameter.VarValModifier.None, listOf()) }
-                    classBodyElements.add(PrimaryConstructor(this, MemberComments.Empty, setOf(Modifier.PRIVATE),
+                    val parameters = finalOrWithEmptyInitializerFields.map { field ->
+                        val varValModifier = if (field.modifiers.contains(Modifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
+                        Parameter(field.identifier, field.`type`, varValModifier, field.modifiers.filter { ACCESS_MODIFIERS.contains(it) })
+                    }
+                    classBodyElements.add(PrimaryConstructor(this,
+                                                             MemberComments.Empty,
+                                                             setOf(Modifier.PRIVATE),
                                                              ParameterList(parameters),
-                                                             Block(createInitStatementsFromFields(finalOrWithEmptyInitializerFields))))
+                                                             Block.Empty))
+                    classBodyElements.removeAll(finalOrWithEmptyInitializerFields)
                 }
 
                 val baseClassParams: List<Expression> = run {
@@ -457,15 +463,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         return expression
-    }
-
-    private fun createInitStatementsFromFields(fields: List<Field>): List<Statement> {
-        val result = ArrayList<Statement>()
-        for (field in fields) {
-            val kotlinIdentifier = field.identifier.toKotlin()
-            result.add(DummyStringExpression(kotlinIdentifier + " = " + "_" + kotlinIdentifier))
-        }
-        return result
     }
 
     private fun createPrimaryConstructorInvocation(s: String, fields: List<Field>, initializers: Map<String, String>): String {
