@@ -97,10 +97,15 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
+    <action id="ExtractFunction" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionAction"
+            text="Extract _Function..." use-shortcut-of="ExtractMethod">
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
+    </action>
+
     <action id="ExtractFunctionToScope" class="org.jetbrains.jet.plugin.refactoring.extractFunction.ExtractFunctionToScopeAction"
             text="Extract Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
-      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
+      <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
     </action>
   </actions>
 

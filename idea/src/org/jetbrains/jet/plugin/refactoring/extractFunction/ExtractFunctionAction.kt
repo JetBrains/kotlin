@@ -23,20 +23,23 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.plugin.refactoring.JetRefactoringSupportProvider
 
-public class ExtractFunctionToScopeAction: BasePlatformRefactoringAction() {
+public abstract class AbstractExtractFunctionAction: BasePlatformRefactoringAction() {
     {
         setInjectedContext(true)
     }
 
-    override fun isAvailableInEditorOnly(): Boolean {
-        return true
-    }
+    override fun isAvailableInEditorOnly(): Boolean = true
 
-    protected override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean {
-        return elements.all { it is JetElement }
-    }
+    protected override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean = 
+            elements.all { it is JetElement }
+}
 
-    override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? {
-        return (provider as? JetRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
-    }
+public class ExtractFunctionAction: AbstractExtractFunctionAction() {
+    override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
+            (provider as? JetRefactoringSupportProvider)?.getExtractFunctionHandler()
+}
+
+public class ExtractFunctionToScopeAction: AbstractExtractFunctionAction() {
+    override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
+            (provider as? JetRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
 }

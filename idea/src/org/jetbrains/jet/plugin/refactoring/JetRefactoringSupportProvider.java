@@ -39,8 +39,8 @@ public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
         return new KotlinIntroduceVariableHandler();
     }
 
-    @Override
-    public RefactoringActionHandler getExtractMethodHandler() {
+    @NotNull
+    public RefactoringActionHandler getExtractFunctionHandler() {
         return new ExtractKotlinFunctionHandler();
     }
 
