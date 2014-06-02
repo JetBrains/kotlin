@@ -36,6 +36,9 @@ import org.jetbrains.jet.lang.descriptors.annotations.Annotations
 import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.jet.lang.resolve.java.JavaVisibilities
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaConstructorDescriptor
+import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
 
 public class LazyJavaClassMemberScope(
         c: LazyJavaResolverContextWithTypes,
@@ -65,6 +68,44 @@ public class LazyJavaClassMemberScope(
         } ifEmpty {
             emptyOrSingletonList(createDefaultConstructor())
         }
+    }
+    override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        val functionsFromSupertypes = getFunctionsFromSupertypes(name, getContainingDeclaration())
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, getContainingDeclaration(), c.errorReporter))
+    }
+
+    private fun getFunctionsFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
+          return descriptor.getTypeConstructor().getSupertypes().flatMap {
+              it.getMemberScope().getFunctions(name).map { f -> f as SimpleFunctionDescriptor }
+          }.toSet()
+      }
+
+    override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
+        val propertiesFromSupertypes = getPropertiesFromSupertypes(name, getContainingDeclaration())
+
+        result.addAll(DescriptorResolverUtils.resolveOverrides(name, propertiesFromSupertypes, result, getContainingDeclaration(),
+                                                                   c.errorReporter))
+    }
+
+    private fun getPropertiesFromSupertypes(name: Name, descriptor: ClassDescriptor): Set<PropertyDescriptor> {
+        return descriptor.getTypeConstructor().getSupertypes().flatMap {
+            it.getMemberScope().getProperties(name).map { p -> p as PropertyDescriptor }
+        }.toSet()
+    }
+
+    override fun resolveMethodSignature(
+            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
+            valueParameters: LazyJavaMemberScope.ResolvedValueParameters
+    ): LazyJavaMemberScope.MethodSignatureData {
+        val propagated = c.externalSignatureResolver.resolvePropagatedSignature(
+                method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters)
+        val superFunctions = propagated.getSuperMethods()
+        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+                method, !superFunctions.isEmpty(), propagated.getReturnType(),
+                propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
+                propagated.hasStableParameterNames())
+
+        return MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
     private fun resolveSamAdapter(original: ConstructorDescriptor): ConstructorDescriptor? {
@@ -205,9 +246,7 @@ public class LazyJavaClassMemberScope(
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
 
 
-    override fun getContainingDeclaration(): ClassDescriptor {
-        return super.getContainingDeclaration() as ClassDescriptor
-    }
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as ClassDescriptor
 
     // namespaces should be resolved elsewhere
     override fun getPackage(name: Name) = null

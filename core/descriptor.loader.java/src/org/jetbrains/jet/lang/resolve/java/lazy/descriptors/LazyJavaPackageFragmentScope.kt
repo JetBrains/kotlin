@@ -22,7 +22,6 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaResolverContext
 import org.jetbrains.jet.lang.resolve.java.lazy.withTypes
-import org.jetbrains.jet.lang.resolve.java.lazy.TypeParameterResolver
 import org.jetbrains.jet.lang.resolve.java.structure.JavaPackage
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.utils.flatten
@@ -33,7 +32,12 @@ import org.jetbrains.jet.lang.resolve.java.lazy.findJavaClass
 import org.jetbrains.jet.lang.resolve.java.lazy.findClassInJava
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.storage.NotNullLazyValue
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaPackageFragmentDescriptor
+import org.jetbrains.jet.lang.resolve.java.sam.SingleAbstractMethodUtils
+import org.jetbrains.jet.lang.resolve.java.structure.JavaMethod
+import org.jetbrains.jet.lang.types.JetType
+import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaMemberScope.MethodSignatureData
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor
 
 public abstract class LazyJavaPackageFragmentScope(
         c: LazyJavaResolverContext,
@@ -41,6 +45,63 @@ public abstract class LazyJavaPackageFragmentScope(
 ) : LazyJavaMemberScope(c.withTypes(), packageFragment) {
     
     protected val fqName: FqName = DescriptorUtils.getFqName(packageFragment).toSafe()
+
+    protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
+        override fun getAllMethodNames(): Collection<Name> {
+            val jClass = c.findJavaClass(fqName)
+            return delegate.getAllMethodNames() +
+                   // For SAM-constructors
+                   getAllClassNames() +
+                   jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
+        }
+    }
+
+    public abstract override fun getAllClassNames(): Collection<Name>
+
+    // Package fragments are not nested
+    override fun getPackage(name: Name) = null
+    abstract fun getSubPackages(): Collection<FqName>
+
+    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
+
+    override fun resolveMethodSignature(
+            method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: JetType,
+            valueParameters: LazyJavaMemberScope.ResolvedValueParameters
+    ): LazyJavaMemberScope.MethodSignatureData {
+        val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
+                method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
+        return MethodSignatureData(effectiveSignature, listOf(), effectiveSignature.getErrors())
+    }
+
+    override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
+        //no undeclared properties
+    }
+
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyJavaPackageFragment
+
+    fun ClassifierDescriptor.createSamConstructor(): SamConstructorDescriptor? {
+        if (this is LazyJavaClassDescriptor && this.getFunctionTypeForSamInterface() != null) {
+            return SingleAbstractMethodUtils.createSamConstructorFunction(this@LazyJavaPackageFragmentScope.getContainingDeclaration(), this)
+        }
+        return null
+    }
+}
+
+public class LazyPackageFragmentScopeForJavaPackage(
+        c: LazyJavaResolverContext,
+        private val jPackage: JavaPackage,
+        packageFragment: LazyPackageFragmentForJavaPackage
+) : LazyJavaPackageFragmentScope(c, packageFragment) {
+
+    private val deserializedPackageScope = c.storageManager.createLazyValue {
+        val packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName)
+        val kotlinBinaryClass = c.kotlinClassFinder.findKotlinClass(packageClassFqName)
+        if (kotlinBinaryClass == null)
+            JetScope.EMPTY
+        else
+            c.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.EMPTY
+    }
+
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
         name ->
         val fqName = fqName.child(name)
@@ -63,42 +124,7 @@ public abstract class LazyJavaPackageFragmentScope(
         }
     }
 
-    protected fun computeMemberIndexForSamConstructors(delegate: MemberIndex): MemberIndex = object : MemberIndex by delegate {
-        override fun getAllMethodNames(): Collection<Name> {
-            val jClass = c.findJavaClass(fqName)
-            return delegate.getAllMethodNames() +
-                   // For SAM-constructors
-                   getAllClassNames() +
-                   jClass.inn({ jC -> jC.getInnerClasses().map { c -> c.getName() }}, listOf())
-        }
-    }
-
     override fun getClassifier(name: Name): ClassifierDescriptor? = classes(name)
-    public abstract override fun getAllClassNames(): Collection<Name>
-
-    // Package fragments are not nested
-    override fun getPackage(name: Name) = null
-    abstract fun getSubPackages(): Collection<FqName>
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = listOf()
-
-    override fun getContainingDeclaration()= super.getContainingDeclaration() as LazyJavaPackageFragment
-}
-
-public class LazyPackageFragmentScopeForJavaPackage(
-        c: LazyJavaResolverContext,
-        private val jPackage: JavaPackage,
-        packageFragment: LazyJavaPackageFragment
-) : LazyJavaPackageFragmentScope(c, packageFragment) {
-
-    private val deserializedPackageScope = c.storageManager.createLazyValue {
-        val packageClassFqName = PackageClassUtils.getPackageClassFqName(fqName)
-        val kotlinBinaryClass = c.kotlinClassFinder.findKotlinClass(packageClassFqName)
-        if (kotlinBinaryClass == null)
-            JetScope.EMPTY
-        else
-            c.deserializedDescriptorResolver.createKotlinPackageScope(packageFragment, kotlinBinaryClass) ?: JetScope.EMPTY
-    }
 
     override fun getProperties(name: Name) = deserializedPackageScope().getProperties(name)
     override fun getFunctions(name: Name) = deserializedPackageScope().getFunctions(name) + super.getFunctions(name)
@@ -127,6 +153,13 @@ public class LazyPackageFragmentScopeForJavaPackage(
                                 // This breaks infinite recursion between loading Java descriptors and building light classes
                                 onRecursiveCall = listOf())
 
+    override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        val samConstructor = getClassifier(name)?.createSamConstructor()
+        if (samConstructor != null) {
+            result.add(samConstructor)
+        }
+    }
+
     override fun getSubPackages() = _subPackages()
 
     override fun getAllPropertyNames() = Collections.emptyList<Name>()
@@ -135,7 +168,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
 public class LazyPackageFragmentScopeForJavaClass(
         c: LazyJavaResolverContext,
         private val jClass: JavaClass,
-        packageFragment: LazyJavaPackageFragment
+        packageFragment: LazyPackageFragmentForJavaClass
 ) : LazyJavaPackageFragmentScope(c, packageFragment) {
 
     override fun computeMemberIndex(): MemberIndex = computeMemberIndexForSamConstructors(ClassMemberIndex(jClass, { m -> m.isStatic() }))
@@ -149,4 +182,14 @@ public class LazyPackageFragmentScopeForJavaClass(
     override fun getSubPackages(): Collection<FqName> = jClass.getInnerClasses().stream()
                                                                 .filter { c -> c.isStatic() }
                                                                 .map { c -> c.getFqName().sure("Nested class has no fqName: $c}") }.toList()
+
+    override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        val samConstructor = getContainingDeclaration().getCorrespondingClass().getUnsubstitutedInnerClassesScope().getClassifier(name)
+                ?.createSamConstructor()
+        if (samConstructor != null) {
+            result.add(samConstructor)
+        }
+    }
+
+    override fun getContainingDeclaration() = super.getContainingDeclaration() as LazyPackageFragmentForJavaClass
 }
