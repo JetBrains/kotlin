@@ -230,10 +230,10 @@ public class BytecodeCompiler {
             @Nullable String[] externalAnnotationsPath, boolean enableInline
     ) {
         try {
-            ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
+            List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(getKotlinPathsForAntTask(), module,
                                                                                 MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
             List<String> sourcesRoots = new ArrayList<String>();
-            for (Module m : modules.getModules()) {
+            for (Module m : modules) {
                 sourcesRoots.addAll(m.getSourceFiles());
             }
             CompilerConfiguration configuration = createConfiguration(stdlib, classpath, externalAnnotationsPath, sourcesRoots.toArray(new String[0]),

@@ -153,18 +153,16 @@ public class KotlinToJVMBytecodeCompiler {
 
     public static boolean compileModules(
             @NotNull CompilerConfiguration configuration,
-            @NotNull ModuleChunk chunk,
+            @NotNull List<Module> chunk,
             @NotNull File directory,
             @Nullable File jarPath,
             boolean jarRuntime
     ) {
-        List<Module> modules = chunk.getModules();
-
-        Map<Module, ClassFileFactory> outputFiles = compileModule(configuration, modules, directory);
+        Map<Module, ClassFileFactory> outputFiles = compileModule(configuration, chunk, directory);
         if (outputFiles == null) {
             return false;
         }
-        for (Module module : modules) {
+        for (Module module : chunk) {
             writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
         }
         return true;

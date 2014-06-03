@@ -20,6 +20,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.cli.common.CLICompiler;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
@@ -124,7 +125,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
-                ModuleChunk modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
+                List<Module> modules = CompileEnvironmentUtil.loadModuleDescriptions(paths, arguments.module, sanitizedCollector);
 
                 if (outputDir != null) {
                     messageCollector.report(CompilerMessageSeverity.WARNING, "The '-output' option is ignored because '-module' is specified",

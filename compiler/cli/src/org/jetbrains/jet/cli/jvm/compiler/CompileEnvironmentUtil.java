@@ -51,6 +51,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.jar.*;
 
@@ -66,28 +67,28 @@ public class CompileEnvironmentUtil {
     }
 
     @NotNull
-    public static ModuleChunk loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
+    public static List<Module> loadModuleDescriptions(KotlinPaths paths, String moduleDefinitionFile, MessageCollector messageCollector) {
         File file = new File(moduleDefinitionFile);
         if (!file.exists()) {
             messageCollector.report(ERROR, "Module definition file does not exist: " + moduleDefinitionFile, NO_LOCATION);
-            return ModuleChunk.EMPTY;
+            return Collections.emptyList();
         }
         String extension = FileUtilRt.getExtension(moduleDefinitionFile);
         if ("ktm".equalsIgnoreCase(extension)) {
-            return new ModuleChunk(loadModuleScript(paths, moduleDefinitionFile, messageCollector));
+            return loadModuleScript(paths, moduleDefinitionFile, messageCollector);
         }
         if ("xml".equalsIgnoreCase(extension)) {
-            return new ModuleChunk(ContainerUtil.map(
+            return ContainerUtil.map(
                     ModuleXmlParser.parse(moduleDefinitionFile, messageCollector),
                     new Function<ModuleDescription, Module>() {
                         @Override
                         public Module fun(ModuleDescription description) {
                             return new DescriptionToModuleAdapter(description);
                         }
-                    }));
+                    });
         }
         messageCollector.report(ERROR, "Unknown module definition type: " + moduleDefinitionFile, NO_LOCATION);
-        return ModuleChunk.EMPTY;
+        return Collections.emptyList();
     }
 
     @NotNull
