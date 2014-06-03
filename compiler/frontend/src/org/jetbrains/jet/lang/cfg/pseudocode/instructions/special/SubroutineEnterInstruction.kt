@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 
-public class UnsupportedElementInstruction(
-        element: JetElement,
+public class SubroutineEnterInstruction(
+        public val subroutine: JetElement,
         lexicalScope: LexicalScope
-) : InstructionWithNext(element, lexicalScope) {
+) : InstructionWithNext(subroutine, lexicalScope) {
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitUnsupportedElementInstruction(this)
+        visitor.visitSubroutineEnter(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitUnsupportedElementInstruction(this)
+        return visitor.visitSubroutineEnter(this)
     }
 
-    override fun toString(): String =
-            "unsupported(" + element + " : " + render(element) + ")"
+    override fun toString(): String = "<START>"
 
     override fun createCopy(): InstructionImpl =
-            UnsupportedElementInstruction(element, lexicalScope)
+            SubroutineEnterInstruction(subroutine, lexicalScope)
 }

@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.jet.lang.cfg.Label
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.Label
 import java.util.Arrays
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 
 public class ConditionalJumpInstruction(
         element: JetElement,

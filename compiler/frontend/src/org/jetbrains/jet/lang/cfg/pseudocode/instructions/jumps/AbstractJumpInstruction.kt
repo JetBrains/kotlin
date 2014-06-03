@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
-import org.jetbrains.jet.lang.cfg.Label
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.Label
 import java.util.Collections
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 
 public abstract class AbstractJumpInstruction(
         element: JetElement,
@@ -40,5 +44,6 @@ public abstract class AbstractJumpInstruction(
         return createCopy(targetLabel, lexicalScope)
     }
 
-    override val nextInstructions: Collection<Instruction> get() = Collections.singleton(resolvedTarget)
+    override val nextInstructions: Collection<Instruction>
+        get() = Collections.singleton(resolvedTarget)
 }

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
 import java.util.Collections
 import java.util.LinkedHashSet
 import java.util.HashSet
 import com.google.common.collect.Sets
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
 public abstract class InstructionImpl(public override val lexicalScope: LexicalScope): Instruction {
     private var _owner: Pseudocode? = null

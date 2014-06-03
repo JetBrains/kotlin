@@ -14,33 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
-import org.jetbrains.jet.lang.psi.JetDeclaration
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetVariableDeclaration
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 
-public class VariableDeclarationInstruction(
-        element: JetDeclaration,
+public class UnsupportedElementInstruction(
+        element: JetElement,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {
-    {
-        assert(element is JetVariableDeclaration || element is JetParameter) { "Invalid element: ${render(element)}}" }
-    }
-
-    public val variableDeclarationElement: JetDeclaration
-        get() = element as JetDeclaration
-
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitVariableDeclarationInstruction(this)
+        visitor.visitUnsupportedElementInstruction(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitVariableDeclarationInstruction(this)
+        return visitor.visitUnsupportedElementInstruction(this)
     }
 
-    override fun toString(): String = "v(${render(element)})"
+    override fun toString(): String =
+            "unsupported(" + element + " : " + render(element) + ")"
 
     override fun createCopy(): InstructionImpl =
-            VariableDeclarationInstruction(variableDeclarationElement, lexicalScope)
+            UnsupportedElementInstruction(element, lexicalScope)
 }

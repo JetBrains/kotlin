@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration
-import java.util.Arrays
 import java.util.Collections
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithReceiver
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import java.util.Arrays
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 
 public class WriteValueInstruction(
         assignment: JetElement,

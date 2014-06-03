@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
 import org.jetbrains.jet.lang.psi.JetElement
-import java.util.Collections
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class SubroutineSinkInstruction(
-        public val subroutine: JetElement,
+public class CompilationErrorInstruction(
+        element: JetElement,
         lexicalScope: LexicalScope,
-        private val debugLabel: String) : InstructionImpl(lexicalScope) {
-    override val nextInstructions: Collection<Instruction>
-        get() = Collections.emptyList()
+        val message: String
+) : InstructionWithNext(element, lexicalScope) {
 
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitSubroutineSink(this)
+        visitor.visitCompilationErrorInstruction(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineSink(this)
+        return visitor.visitCompilationErrorInstruction(this)
     }
 
-    override fun toString(): String = debugLabel
+    override fun createCopy() = CompilationErrorInstruction(element, lexicalScope, message)
 
-    override fun createCopy(): InstructionImpl =
-            SubroutineSinkInstruction(subroutine, lexicalScope, debugLabel)
+    override fun toString() = "error(${render(element)}, $message)"
 }

@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.psi.JetElement
-import java.util.Collections
-import com.intellij.util.containers.ContainerUtil
 
-public abstract class InstructionWithNext(
-        element: JetElement,
+public abstract class JetElementInstructionImpl(
+        public override val element: JetElement,
         lexicalScope: LexicalScope
-) : JetElementInstructionImpl(element, lexicalScope) {
-    public var next: Instruction? = null
-        set(value: Instruction?) {
-            $next = outgoingEdgeTo(value)
-        }
-
-    override val nextInstructions: Collection<Instruction>
-        get() = ContainerUtil.createMaybeSingletonList(next)
+) : InstructionImpl(lexicalScope), JetElementInstruction {
+    protected fun render(element: PsiElement): String =
+            element.getText()?.replaceAll("\\s+", " ") ?: ""
 }

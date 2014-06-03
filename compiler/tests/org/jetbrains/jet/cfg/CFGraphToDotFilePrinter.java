@@ -19,7 +19,13 @@ package org.jetbrains.jet.cfg;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.io.FileUtil;
 import org.jetbrains.jet.JetTestUtils;
-import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*;
 import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetNamedDeclaration;
 

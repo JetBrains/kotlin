@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions
+
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*
 
 public open class InstructionVisitor() {
     public open fun visitInstructionWithReceiver(instruction: InstructionWithReceiver) {

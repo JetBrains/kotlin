@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.cfg.pseudocode
 
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 
 class PseudoValueImpl(
         public override val debugName: String,

@@ -16,10 +16,8 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode
 
-import java.util.Collections
-import org.jetbrains.jet.lang.psi.JetExpression
-import kotlin.properties.Delegates
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 
 public trait PseudoValue {
     public val debugName: String

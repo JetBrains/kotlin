@@ -19,8 +19,8 @@ package org.jetbrains.jet.cfg;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.InstructionImpl;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 

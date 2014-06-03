@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
 import org.jetbrains.jet.lang.psi.JetElement
+import com.intellij.util.containers.ContainerUtil
 
-public class SubroutineEnterInstruction(
-        public val subroutine: JetElement,
+public abstract class InstructionWithNext(
+        element: JetElement,
         lexicalScope: LexicalScope
-) : InstructionWithNext(subroutine, lexicalScope) {
-    override fun accept(visitor: InstructionVisitor) {
-        visitor.visitSubroutineEnter(this)
-    }
+) : JetElementInstructionImpl(element, lexicalScope) {
+    public var next: Instruction? = null
+        set(value: Instruction?) {
+            $next = outgoingEdgeTo(value)
+        }
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineEnter(this)
-    }
-
-    override fun toString(): String = "<START>"
-
-    override fun createCopy(): InstructionImpl =
-            SubroutineEnterInstruction(subroutine, lexicalScope)
+    override val nextInstructions: Collection<Instruction>
+        get() = ContainerUtil.createMaybeSingletonList(next)
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
+
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 
 public trait JumpInstruction : Instruction

@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
-import com.google.common.collect.Lists
 import org.jetbrains.jet.lang.psi.JetElement
-import java.util.ArrayList
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
+import com.google.common.collect.Lists
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 
 public class LocalFunctionDeclarationInstruction(
         element: JetElement,

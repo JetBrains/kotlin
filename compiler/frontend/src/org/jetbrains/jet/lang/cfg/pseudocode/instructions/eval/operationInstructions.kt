@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
-import kotlin.properties.Delegates
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValueFactory
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
 public abstract class OperationInstruction protected(
         element: JetElement,

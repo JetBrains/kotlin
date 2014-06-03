@@ -56,6 +56,18 @@ import org.jetbrains.jet.lang.diagnostics.Errors
 import org.jetbrains.jet.lang.psi.psiUtil.replaced
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.ErrorMessage
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.WriteValueInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.CallInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.OperationInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.ReadValueInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.getNextInstructions
 
 private val DEFAULT_FUNCTION_NAME = "myFun"
 private val DEFAULT_RETURN_TYPE = KotlinBuiltIns.getInstance().getUnitType()

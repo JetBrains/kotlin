@@ -14,33 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
+import org.jetbrains.jet.lang.psi.JetExpression
 import org.jetbrains.jet.lang.cfg.Label
-import org.jetbrains.jet.lang.psi.JetThrowExpression
 import java.util.Collections
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class ThrowExceptionInstruction(
-        expression: JetThrowExpression,
+public class ReturnValueInstruction(
+        returnExpression: JetExpression,
         lexicalScope: LexicalScope,
-        errorLabel: Label,
-        public val thrownValue: PseudoValue
-) : AbstractJumpInstruction(expression, errorLabel, lexicalScope) {
-    override val inputValues: List<PseudoValue> get() = Collections.singletonList(thrownValue)
+        targetLabel: Label,
+        public val returnedValue: PseudoValue
+) : AbstractJumpInstruction(returnExpression, targetLabel, lexicalScope) {
+    override val inputValues: List<PseudoValue> get() = Collections.singletonList(returnedValue)
 
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitThrowExceptionInstruction(this)
+        visitor.visitReturnValue(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitThrowExceptionInstruction(this)
+        return visitor.visitReturnValue(this)
     }
 
     override fun toString(): String {
-        return "throw (${element.getText()}|$thrownValue)"
+        return "ret(*|$returnedValue) $targetLabel"
     }
 
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction {
-        return ThrowExceptionInstruction((element as JetThrowExpression), lexicalScope, newLabel, thrownValue)
+        return ReturnValueInstruction((element as JetExpression), lexicalScope, newLabel, returnedValue)
     }
 }

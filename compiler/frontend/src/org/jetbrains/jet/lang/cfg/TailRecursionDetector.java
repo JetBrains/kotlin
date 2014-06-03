@@ -18,7 +18,14 @@ package org.jetbrains.jet.lang.cfg;
 
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.cfg.pseudocode.*;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.MagicInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.AbstractJumpInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.ThrowExceptionInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.MarkInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
 import org.jetbrains.jet.lang.psi.JetElement;
 
 public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, Boolean> {

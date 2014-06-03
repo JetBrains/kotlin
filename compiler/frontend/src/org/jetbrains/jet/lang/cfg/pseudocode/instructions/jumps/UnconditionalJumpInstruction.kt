@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.*
 import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.Label
 
-public class CompilationErrorInstruction(
+public class UnconditionalJumpInstruction(
         element: JetElement,
-        lexicalScope: LexicalScope,
-        val message: String
-) : InstructionWithNext(element, lexicalScope) {
-
+        targetLabel: Label,
+        lexicalScope: LexicalScope
+) : AbstractJumpInstruction(element, targetLabel, lexicalScope) {
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitCompilationErrorInstruction(this)
+        visitor.visitUnconditionalJump(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitCompilationErrorInstruction(this)
+        return visitor.visitUnconditionalJump(this)
     }
 
-    override fun createCopy() = CompilationErrorInstruction(element, lexicalScope, message)
+    override fun toString(): String = "jmp(${targetLabel.getName()})"
 
-    override fun toString() = "error(${render(element)}, $message)"
+    override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction =
+            UnconditionalJumpInstruction(element, newLabel, lexicalScope)
 }

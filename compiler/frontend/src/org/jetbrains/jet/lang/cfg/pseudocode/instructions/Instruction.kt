@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions
 
-import kotlin.jvm.KotlinSignature
-import org.jetbrains.annotations.Nullable
-import org.jetbrains.annotations.ReadOnly
+import org.jetbrains.jet.lang.cfg.pseudocode
+import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
 public trait Instruction {
     public var owner: Pseudocode
@@ -29,7 +29,7 @@ public trait Instruction {
     public val lexicalScope: LexicalScope
 
     public val inputValues: List<PseudoValue>
-    public val outputValue: PseudoValue?
+    public val outputValue: pseudocode.PseudoValue?
 
     public fun getCopies(): Collection<Instruction>
 

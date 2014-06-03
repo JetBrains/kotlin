@@ -19,6 +19,10 @@ package org.jetbrains.jet.lang.cfg.pseudocodeTraverser
 import org.jetbrains.jet.lang.cfg.pseudocode.*
 import java.util.*
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder.FORWARD
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 
 fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,

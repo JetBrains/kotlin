@@ -21,8 +21,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.cfg.PseudocodeVariablesData;
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
+import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
@@ -30,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.Edges;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableInitState;
 import static org.jetbrains.jet.lang.cfg.PseudocodeVariablesData.VariableUseState;
 

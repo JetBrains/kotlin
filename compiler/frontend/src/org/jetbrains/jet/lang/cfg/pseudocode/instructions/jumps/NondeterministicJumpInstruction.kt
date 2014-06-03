@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps
 
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import org.jetbrains.annotations.Nullable
-import org.jetbrains.jet.lang.cfg.Label
+import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.psi.JetElement
-import java.util.*
+import org.jetbrains.jet.lang.cfg.Label
+import com.google.common.collect.Maps
+import com.google.common.collect.Lists
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
 
 public class NondeterministicJumpInstruction(
         element: JetElement,

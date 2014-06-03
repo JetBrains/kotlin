@@ -14,37 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
 import org.jetbrains.jet.lang.psi.JetElement
 import java.util.Collections
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class SubroutineExitInstruction(
+public class SubroutineSinkInstruction(
         public val subroutine: JetElement,
         lexicalScope: LexicalScope,
-        public val isError: Boolean
-) : InstructionImpl(lexicalScope) {
-    private var _sink: SubroutineSinkInstruction? = null
-
-    public var sink: SubroutineSinkInstruction
-        get() = _sink!!
-        set(value: SubroutineSinkInstruction) {
-            _sink = outgoingEdgeTo(value) as SubroutineSinkInstruction
-        }
-
+        private val debugLabel: String) : InstructionImpl(lexicalScope) {
     override val nextInstructions: Collection<Instruction>
-        get() = Collections.singleton(sink)
+        get() = Collections.emptyList()
 
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitSubroutineExit(this)
+        visitor.visitSubroutineSink(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitSubroutineExit(this)
+        return visitor.visitSubroutineSink(this)
     }
 
-    override fun toString(): String = if (isError) "<ERROR>" else "<END>"
+    override fun toString(): String = debugLabel
 
     override fun createCopy(): InstructionImpl =
-            SubroutineExitInstruction(subroutine, lexicalScope, isError)
+            SubroutineSinkInstruction(subroutine, lexicalScope, debugLabel)
 }

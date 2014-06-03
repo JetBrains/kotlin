@@ -16,20 +16,16 @@
 
 package org.jetbrains.jet.lang.cfg
 
-import org.jetbrains.jet.lang.cfg.pseudocode.Instruction
-import org.jetbrains.jet.lang.cfg.pseudocode.LocalFunctionDeclarationInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.*
-import org.jetbrains.jet.lang.cfg.pseudocode.LexicalScope
-import org.jetbrains.jet.lang.cfg.pseudocode.VariableDeclarationInstruction
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.jet.utils.addToStdlib.*
 
-import kotlin.properties.Delegates
-
 import java.util.*
-import org.jetbrains.jet.lang.psi.JetDeclaration
 
 public class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,

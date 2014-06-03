@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.special
 
-import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.psi.JetElement
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class LoadUnitValueInstruction(
-        expression: JetExpression,
+public class MarkInstruction(
+        element: JetElement,
         lexicalScope: LexicalScope
-) : InstructionWithNext(expression, lexicalScope) {
+) : InstructionWithNext(element, lexicalScope) {
+
     override fun accept(visitor: InstructionVisitor) {
-        visitor.visitLoadUnitValue(this)
+        visitor.visitMarkInstruction(this)
     }
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
-        return visitor.visitLoadUnitValue(this)
+        return visitor.visitMarkInstruction(this)
     }
 
-    override fun toString(): String =
-            "read (Unit)"
+    override fun createCopy() = MarkInstruction(element, lexicalScope)
 
-    override fun createCopy(): InstructionImpl =
-            LoadUnitValueInstruction(element as JetExpression, lexicalScope)
+    override fun toString() = "mark(${render(element)})"
 }
