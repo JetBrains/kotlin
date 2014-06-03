@@ -56,4 +56,9 @@ public class CapturedParamDesc {
     public static CapturedParamDesc createDesc(@NotNull CapturedParamOwner containingLambdaInfo, @NotNull String fieldName, @NotNull Type type) {
         return new CapturedParamDesc(containingLambdaInfo, fieldName, type);
     }
+
+    @NotNull
+    public String getContainingLambdaName() {
+        return containingLambda.getType().getInternalName();
+    }
 }

@@ -384,20 +384,19 @@ public class AnonymousObjectTransformer {
         //For all inlined lambdas add their captured parameters
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
-        List<CapturedParamInfo> allRecapturedParameters = new ArrayList<CapturedParamInfo>();
+        List<CapturedParamDesc> allRecapturedParameters = new ArrayList<CapturedParamDesc>();
         for (LambdaInfo info : capturedLambdas) {
-            for (CapturedParamInfo var : info.getCapturedVars()) {
-                CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(var,
-                                                                                              getNewFieldName(var.getOriginalFieldName()));
+            for (CapturedParamDesc desc : info.getCapturedVars()) {
+                CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
                 StackValue composed = StackValue.composed(StackValue.local(0, oldObjectType),
-                                                          StackValue.field(var.getType(),
+                                                          StackValue.field(desc.getType(),
                                                                            oldObjectType, /*TODO owner type*/
                                                                            recapturedParamInfo.getNewFieldName(), false)
                 );
                 recapturedParamInfo.setRemapValue(composed);
-                allRecapturedParameters.add(var);
+                allRecapturedParameters.add(desc);
 
-                constructorParamBuilder.addCapturedParam(var, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
+                constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
             }
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);
         }

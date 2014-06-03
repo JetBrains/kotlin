@@ -31,8 +31,6 @@ public class CapturedParamInfo extends ParameterInfo {
 
     public final CapturedParamDesc desc;
 
-    private int shift = 0;
-
     private final String newFieldName;
 
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, int remapIndex) {
@@ -59,15 +57,6 @@ public class CapturedParamInfo extends ParameterInfo {
     @NotNull
     public String getOriginalFieldName() {
         return desc.getFieldName();
-    }
-
-    @Override
-    public int getIndex() {
-        return shift + super.getIndex();
-    }
-
-    public void setShift(int shift) {
-        this.shift = shift;
     }
 
     @NotNull

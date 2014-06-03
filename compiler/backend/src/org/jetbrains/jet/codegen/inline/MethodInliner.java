@@ -181,7 +181,7 @@ public class MethodInliner {
                     int valueParamShift = getNextLocalIndex();//NB: don't inline cause it changes
                     putStackValuesIntoLocals(info.getParamsWithoutCapturedValOrVar(), valueParamShift, this, desc);
 
-                    Parameters lambdaParameters = info.addAllParameters();
+                    Parameters lambdaParameters = info.addAllParameters(nodeRemapper);
 
                     InlinedLambdaRemapper newCapturedRemapper =
                             new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), nodeRemapper, lambdaParameters);
@@ -207,8 +207,9 @@ public class MethodInliner {
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
                     if (invocation.shouldRegenerate()) {
                         //put additional captured parameters on stack
-                        for (CapturedParamInfo capturedParamInfo : invocation.getAllRecapturedParameters()) {
-                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamInfo.getContainingLambdaName(), "$$$" + capturedParamInfo.getOriginalFieldName(), capturedParamInfo.getType().getDescriptor());
+                        for (CapturedParamDesc capturedParamDesc : invocation.getAllRecapturedParameters()) {
+                            visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
+                                           "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
                         }
                         super.visitMethodInsn(opcode, invocation.getNewLambdaType().getInternalName(), name, invocation.getNewConstructorDescriptor(), itf);
                         invocation = null;

@@ -44,10 +44,10 @@ class ParameterInfo {
         this(type, skipped, index, remapValue == -1 ? null : StackValue.local(remapValue, type));
     }
 
-    ParameterInfo(Type type, boolean skipped, int index, StackValue stackValue) {
+    ParameterInfo(@NotNull Type type, boolean skipped, int index, @Nullable StackValue remapValue) {
         this.type = type;
         this.isSkipped = skipped;
-        this.remapValue = stackValue;
+        this.remapValue = remapValue;
         this.index = index;
     }
 

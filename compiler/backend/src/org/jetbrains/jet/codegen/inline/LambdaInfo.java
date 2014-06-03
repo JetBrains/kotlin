@@ -18,6 +18,7 @@ package org.jetbrains.jet.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 import org.jetbrains.jet.codegen.AsmUtil;
 import org.jetbrains.jet.codegen.binding.CalculatedClosure;
@@ -48,7 +49,7 @@ public class LambdaInfo implements CapturedParamOwner {
 
     private MethodNode node;
 
-    private List<CapturedParamInfo> capturedVars;
+    private List<CapturedParamDesc> capturedVars;
 
     private final FunctionDescriptor functionDescriptor;
 
@@ -67,7 +68,6 @@ public class LambdaInfo implements CapturedParamOwner {
         closureClassType = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
 
         closure = bindingContext.get(CLOSURE, classDescriptor);
-
     }
 
     public MethodNode getNode() {
@@ -94,11 +94,12 @@ public class LambdaInfo implements CapturedParamOwner {
         return closureClassType;
     }
 
-    public List<CapturedParamInfo> getCapturedVars() {
+    public List<CapturedParamDesc> getCapturedVars() {
         //lazy initialization cause it would be calculated after object creation
         int index = 0;
         if (capturedVars == null) {
-            capturedVars = new ArrayList<CapturedParamInfo>();
+            capturedVars = new ArrayList<CapturedParamDesc>();
+            assert closure != null : "Closure for lambda should be not null " + expression.getText();
 
             if (closure.getCaptureThis() != null) {
                 EnclosedValueDescriptor descriptor = new EnclosedValueDescriptor(AsmUtil.CAPTURED_THIS_FIELD, null, null, typeMapper.mapType(closure.getCaptureThis()));
@@ -112,33 +113,28 @@ public class LambdaInfo implements CapturedParamOwner {
                 index += descriptor.getType().getSize();
             }
 
-            if (closure != null) {
-                for (EnclosedValueDescriptor descriptor : closure.getCaptureVariables().values()) {
-                    capturedVars.add(getCapturedParamInfo(descriptor, index));
-                    index += descriptor.getType().getSize();
-                }
+            for (EnclosedValueDescriptor descriptor : closure.getCaptureVariables().values()) {
+                capturedVars.add(getCapturedParamInfo(descriptor, index));
+                index += descriptor.getType().getSize();
             }
         }
         return capturedVars;
     }
 
     @NotNull
-    public CapturedParamInfo getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
-        return new CapturedParamInfo(CapturedParamDesc.createDesc(this, descriptor.getFieldName(), descriptor.getType()), false, index, -1);
+    private CapturedParamDesc getCapturedParamInfo(@NotNull EnclosedValueDescriptor descriptor, int index) {
+        //return new CapturedParamInfo(CapturedParamDesc.createDesc(this, descriptor.getFieldName(), descriptor.getType()), false, index, -1);
+        return CapturedParamDesc.createDesc(this, descriptor.getFieldName(), descriptor.getType());
     }
 
-    public void setParamOffset(int paramOffset) {
-        for (CapturedParamInfo var : getCapturedVars()) {
-            var.setShift(paramOffset);
-        }
-    }
-
+    @NotNull
     public List<Type> getParamsWithoutCapturedValOrVar() {
         Type[] types = typeMapper.mapSignature(functionDescriptor).getAsmMethod().getArgumentTypes();
         return Arrays.asList(types);
     }
 
-    public Parameters addAllParameters() {
+    @NotNull
+    public Parameters addAllParameters(FieldRemapper remapper) {
         ParametersBuilder builder = ParametersBuilder.newBuilder();
         //add skipped this cause inlined lambda doesn't have it
         builder.addThis(AsmTypeConstants.OBJECT_TYPE, true).setLambda(this);
@@ -149,19 +145,12 @@ public class LambdaInfo implements CapturedParamOwner {
             builder.addNextParameter(type, false, null);
         }
 
-        for (CapturedParamInfo info : getCapturedVars()) {
-            builder.addCapturedParam(info, info.getOriginalFieldName());
+        for (CapturedParamDesc info : getCapturedVars()) {
+            CapturedParamInfo field = remapper.findField(new FieldInsnNode(0, info.getContainingLambdaName(), info.getFieldName(), ""));
+            builder.addCapturedParam(field, info.getFieldName());
         }
 
         return builder.buildParameters();
-    }
-
-    public int getCapturedVarsSize() {
-        int size = 0;
-        for (CapturedParamInfo next : getCapturedVars()) {
-            size += next.getType().getSize();
-        }
-        return size;
     }
 
     @Override
