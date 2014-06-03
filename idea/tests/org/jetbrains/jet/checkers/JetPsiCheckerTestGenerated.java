@@ -469,6 +469,11 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
                 doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/topLevel.kt");
             }
             
+            @TestMetadata("trait.kt")
+            public void testTrait() throws Exception {
+                doTest("idea/testData/checker/duplicateJvmSignature/functionAndProperty/trait.kt");
+            }
+            
         }
         
         @TestMetadata("idea/testData/checker/duplicateJvmSignature/traitImpl")
