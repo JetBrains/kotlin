@@ -17,12 +17,10 @@
 package org.jetbrains.jet.plugin.framework
 
 import com.intellij.ide.util.projectWizard.WizardContext
-import com.intellij.platform.ProjectTemplate
 import com.intellij.platform.ProjectTemplatesFactory
 import com.intellij.platform.templates.BuilderBasedTemplate
 import org.jetbrains.jet.plugin.JetIcons
 import org.jetbrains.jet.plugin.project.TargetPlatform
-import javax.swing.*
 
 public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     class object {
@@ -30,7 +28,7 @@ public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     }
 
     override fun getGroups() = array(KOTLIN_GROUP_NAME)
-    override fun getGroupIcon(group: String) = JetIcons.KOTLIN_LOGO_24
+    override fun getGroupIcon(group: String) = JetIcons.SMALL_LOGO
 
     override fun createTemplates(group: String, context: WizardContext?) =
         array(
