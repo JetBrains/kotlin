@@ -29,9 +29,15 @@ import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.util.JpsPathUtil;
+import org.jetbrains.org.objectweb.asm.ClassReader;
+import org.jetbrains.org.objectweb.asm.ClassVisitor;
+import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     private static final String PROJECT_NAME = "kotlinProject";
@@ -202,6 +208,34 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/kt2.kt", "kt2.Kt2Package");
         checkPackageDeletedFromOutputWhen(Operation.CHANGE, "module2", "module2/src/kt1.kt", "kt1.Kt1Package");
+    }
+
+    public void testCircularDependenciesSamePackage() throws IOException {
+        initProject();
+        BuildResult result = makeAll();
+        result.assertSuccessful();
+
+        // Check that outputs are located properly
+        File facadeWithA = findFileInOutputDir(findModule("module1"), "test/TestPackage.class");
+        File facadeWithB = findFileInOutputDir(findModule("module2"), "test/TestPackage.class");
+        assertSameElements(getMethodsOfClass(facadeWithA), "a", "getA");
+        assertSameElements(getMethodsOfClass(facadeWithB), "b", "getB", "setB");
+
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "module1", "module1/src/a.kt", "test.TestPackage");
+        checkPackageDeletedFromOutputWhen(Operation.CHANGE, "module2", "module2/src/b.kt", "test.TestPackage");
+    }
+
+    @NotNull
+    private static Set<String> getMethodsOfClass(@NotNull File classFile) throws IOException {
+        final Set<String> result = new TreeSet<String>();
+        new ClassReader(FileUtil.loadFileBytes(classFile)).accept(new ClassVisitor(Opcodes.ASM5) {
+            @Override
+            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+                result.add(name);
+                return null;
+            }
+        }, 0);
+        return result;
     }
 
     public void testReexportedDependency() {
