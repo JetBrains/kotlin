@@ -23,16 +23,25 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 public class ReadValueInstruction private (
         element: JetElement,
         lexicalScope: LexicalScope,
-        receiverValue: PseudoValue?,
+        public val receiverValue: PseudoValue?,
         private var _outputValue: PseudoValue?
-) : InstructionWithReceiver(element, lexicalScope, receiverValue), InstructionWithValue {
+) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers, InstructionWithValue {
     private fun newResultValue(factory: PseudoValueFactory) {
         _outputValue = factory.newValue(element, this)
     }
+
+    override val receiverValues: List<PseudoValue>
+        get() = ContainerUtil.createMaybeSingletonList(receiverValue)
+
+    override val inputValues: List<PseudoValue>
+        get() = receiverValues
 
     override val outputValue: PseudoValue
         get() = _outputValue!!

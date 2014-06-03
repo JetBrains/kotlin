@@ -26,10 +26,12 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
@@ -456,14 +458,16 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         public PseudoValue call(
                 @NotNull JetExpression expression,
                 @NotNull ResolvedCall<?> resolvedCall,
-                @NotNull List<PseudoValue> inputValues
+                @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
+                @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
         ) {
             JetType returnType = resolvedCall.getResultingDescriptor().getReturnType();
             OperationInstruction instruction = CallInstruction.object$.create(
                     expression,
                     getCurrentScope(),
                     resolvedCall,
-                    inputValues,
+                    receiverValues,
+                    arguments,
                     returnType != null && KotlinBuiltIns.getInstance().isNothing(returnType) ? null : valueFactory
             );
             add(instruction);

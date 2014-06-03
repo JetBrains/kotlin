@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
 
 public abstract class OperationInstruction protected(
         element: JetElement,
@@ -54,8 +56,12 @@ public class CallInstruction private(
         element: JetElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
-        inputValues: List<PseudoValue>
-) : OperationInstruction(element, lexicalScope, inputValues) {
+        public val receiverValueMap: Map<PseudoValue, ReceiverValue>,
+        public val arguments: Map<PseudoValue, ValueParameterDescriptor>
+) : OperationInstruction(element, lexicalScope, receiverValueMap.keySet() + arguments.keySet()), InstructionWithReceivers {
+    override val receiverValues: List<PseudoValue>
+        get() = receiverValueMap.keySet().toList()
+
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCallInstruction(this)
     }
@@ -65,7 +71,7 @@ public class CallInstruction private(
     }
 
     override fun createCopy() =
-            CallInstruction(element, lexicalScope, resolvedCall, inputValues).setResult(resultValue)
+            CallInstruction(element, lexicalScope, resolvedCall, receiverValueMap, arguments).setResult(resultValue)
 
     override fun toString() =
             renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
@@ -75,9 +81,11 @@ public class CallInstruction private(
                 element: JetElement,
                 lexicalScope: LexicalScope,
                 resolvedCall: ResolvedCall<*>,
-                inputValues: List<PseudoValue>,
+                receiverValues: Map<PseudoValue, ReceiverValue>,
+                arguments: Map<PseudoValue, ValueParameterDescriptor>,
                 factory: PseudoValueFactory?
-        ): CallInstruction = CallInstruction(element, lexicalScope, resolvedCall, inputValues).setResult(factory) as CallInstruction
+        ): CallInstruction =
+                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory) as CallInstruction
     }
 }
 

@@ -16,16 +16,9 @@
 
 package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
-import org.jetbrains.jet.lang.psi.JetElement
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
-import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
 
-public abstract class InstructionWithReceiver(
-        element: JetElement,
-        lexicalScope: LexicalScope,
-        protected val receiverValue: PseudoValue?
-) : InstructionWithNext(element, lexicalScope) {
-    override val inputValues: List<PseudoValue> = ContainerUtil.createMaybeSingletonList(receiverValue)
+public trait InstructionWithReceivers: Instruction {
+    public val receiverValues: List<PseudoValue>
 }

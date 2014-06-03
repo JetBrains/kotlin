@@ -21,12 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
 
@@ -90,8 +93,13 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @Nullable
     @Override
-    public PseudoValue call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall, @NotNull List<PseudoValue> inputValues) {
-        return getDelegateBuilder().call(expression, resolvedCall, inputValues);
+    public PseudoValue call(
+            @NotNull JetExpression expression,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
+            @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
+    ) {
+        return getDelegateBuilder().call(expression, resolvedCall, receiverValues, arguments);
     }
 
     @NotNull

@@ -21,6 +21,8 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.SmartFMap;
+import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -36,9 +38,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.CompileTimeConstantUtils;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
-import org.jetbrains.jet.lang.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.jet.lang.resolve.calls.model.*;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver;
@@ -438,25 +438,64 @@ public class JetControlFlowProcessor {
                 mark(lhs);
             }
 
-            generateArrayAccessArguments(lhs);
+            generateInstructions(lhs.getArrayExpression(), NOT_IN_CONDITION);
 
-            List<JetExpression> inputExpressions = new ArrayList<JetExpression>();
-            inputExpressions.add(lhs.getArrayExpression());
-            inputExpressions.addAll(lhs.getIndexExpressions());
+            Map<PseudoValue, ReceiverValue> receiverValues = getReceiverValues(setResolvedCall, false);
+            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues =
+                    getArraySetterArguments(rhsDeferredValue, setResolvedCall);
 
-            List<PseudoValue> inputValues = elementsToValues(inputExpressions);
-            PseudoValue rhsValue = rhsDeferredValue.invoke();
-            if (rhsValue != null) {
-                inputValues.add(rhsValue);
+            builder.call(parentExpression, setResolvedCall, receiverValues, argumentValues);
+        }
+
+        /* We assume that assignment right-hand side corresponds to the last argument of the call
+        *  So receiver instructions/pseudo-values are generated for all arguments except the last one which is replaced
+        *  by pre-generated pseudo-value
+        *  For example, assignment a[1, 2] += 3 means a.set(1, 2, a.get(1) + 3), so in order to generate "set" call
+        *  we first generate instructions for 1 and 2 whereas 3 is replaced by pseudo-value corresponding to "a.get(1) + 3"
+        */
+        private SmartFMap<PseudoValue, ValueParameterDescriptor> getArraySetterArguments(
+                Function0<PseudoValue> rhsDeferredValue,
+                final ResolvedCall<FunctionDescriptor> setResolvedCall
+        ) {
+            List<ValueArgument> valueArguments = KotlinPackage.flatMapTo(
+                    setResolvedCall.getResultingDescriptor().getValueParameters(),
+                    new ArrayList<ValueArgument>(),
+                    new Function1<ValueParameterDescriptor, Iterable<? extends ValueArgument>>() {
+                        @Override
+                        public Iterable<? extends ValueArgument> invoke(ValueParameterDescriptor descriptor) {
+                            ResolvedValueArgument resolvedValueArgument = setResolvedCall.getValueArguments().get(descriptor);
+                            return resolvedValueArgument != null
+                                   ? resolvedValueArgument.getArguments()
+                                   : Collections.<ValueArgument>emptyList();
+                        }
+                    }
+            );
+
+            ValueArgument rhsArgument = KotlinPackage.lastOrNull(valueArguments);
+            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues = SmartFMap.emptyMap();
+            for (ValueArgument valueArgument : valueArguments) {
+                ArgumentMapping argumentMapping = setResolvedCall.getArgumentMapping(valueArgument);
+                if (argumentMapping.isError() || (!(argumentMapping instanceof ArgumentMatch))) continue;
+
+                ValueParameterDescriptor parameterDescriptor = ((ArgumentMatch) argumentMapping).getValueParameter();
+                if (valueArgument != rhsArgument) {
+                    argumentValues = generateValueArgument(valueArgument, parameterDescriptor, argumentValues);
+                }
+                else {
+                    PseudoValue rhsValue = rhsDeferredValue.invoke();
+                    if (rhsValue != null) {
+                        argumentValues = argumentValues.plus(rhsValue, parameterDescriptor);
+                    }
+                }
             }
-
-            builder.call(parentExpression, setResolvedCall, inputValues);
+            return argumentValues;
         }
 
         private void recordWrite(JetExpression left, PseudoValue rightValue, PseudoValue receiverValue, JetExpression parentExpression) {
             VariableDescriptor descriptor = BindingContextUtils.extractVariableDescriptorIfAny(trace.getBindingContext(), left, false);
             if (descriptor != null) {
-                builder.write(parentExpression, left, rightValue != null ? rightValue : createSyntheticValue(parentExpression), receiverValue);
+                builder.write(parentExpression, left, rightValue != null ? rightValue : createSyntheticValue(parentExpression),
+                              receiverValue);
             }
         }
 
@@ -1027,13 +1066,18 @@ public class JetControlFlowProcessor {
         private void visitMultiDeclaration(@NotNull JetMultiDeclaration declaration, boolean generateWriteForEntries) {
             JetExpression initializer = declaration.getInitializer();
             generateInstructions(initializer, NOT_IN_CONDITION);
-            List<PseudoValue> inputValues = elementsToValues(Collections.singletonList(initializer));
             for (JetMultiDeclarationEntry entry : declaration.getEntries()) {
                 builder.declareVariable(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 PseudoValue writtenValue = resolvedCall != null
-                                           ? builder.call(entry, resolvedCall, inputValues)
-                                           : builder.magic(entry, null, inputValues, true);
+                                           ? builder.call(
+                        entry,
+                        resolvedCall,
+                        getReceiverValues(resolvedCall, false),
+                        Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
+                )
+                                           : builder.magic(entry, null,
+                                                           ContainerUtil.createMaybeSingletonList(builder.getBoundValue(initializer)), true);
                 if (generateWriteForEntries) {
                     builder.write(entry, entry, writtenValue != null ? writtenValue : createSyntheticValue(entry), null);
                 }
@@ -1286,41 +1330,54 @@ public class JetControlFlowProcessor {
                 return;
             }
 
-            List<PseudoValue> inputValues = new ArrayList<PseudoValue>();
-
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-
-            generateReceiver(resolvedCall.getThisObject(), inputValues);
-            generateReceiver(resolvedCall.getReceiverArgument(), inputValues);
-
+            Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall, true);
+            SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
             for (ValueParameterDescriptor parameterDescriptor : resultingDescriptor.getValueParameters()) {
                 ResolvedValueArgument argument = resolvedCall.getValueArguments().get(parameterDescriptor);
                 if (argument == null) continue;
 
-                generateValueArgument(argument, inputValues);
+                parameterValues = generateValueArgument(argument, parameterDescriptor, parameterValues);
             }
 
             if (resultingDescriptor instanceof VariableDescriptor) {
-                assert inputValues.size() <= 1 : "Wrong input values for variable-based call (must be at most 1): " + resolvedCall.getCall().getCallElement();
-                builder.readVariable(calleeExpression, (VariableDescriptor) resultingDescriptor, KotlinPackage.firstOrNull(inputValues));
+                assert parameterValues.isEmpty() && receivers.size() <= 1
+                        : "Wrong input values for variable-based call (must be at most 1 receiver): " + resolvedCall.getCall().getCallElement().getText();
+                builder.readVariable(calleeExpression, (VariableDescriptor) resultingDescriptor, KotlinPackage.firstOrNull(receivers.keySet()));
             }
             else {
-                builder.call(calleeExpression, resolvedCall, inputValues);
+                builder.call(calleeExpression, resolvedCall, receivers, parameterValues);
             }
         }
 
-        private void generateReceiver(ReceiverValue receiver, List<PseudoValue> values) {
-            if (!receiver.exists()) return;
+        @NotNull
+        private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall, boolean generateInstructions) {
+            SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
+            receiverValues = getReceiverValues(resolvedCall.getThisObject(), generateInstructions, receiverValues);
+            receiverValues = getReceiverValues(resolvedCall.getReceiverArgument(), generateInstructions, receiverValues);
+            return receiverValues;
+        }
+
+        @NotNull
+        private SmartFMap<PseudoValue, ReceiverValue> getReceiverValues(
+                ReceiverValue receiver,
+                boolean generateInstructions,
+                SmartFMap<PseudoValue, ReceiverValue> receiverValues
+        ) {
+            if (!receiver.exists()) return receiverValues;
+
             if (receiver instanceof ThisReceiver) {
                 // TODO: Receiver is passed implicitly: no expression to tie the read to
             }
             else if (receiver instanceof ExpressionReceiver) {
                 JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
-                generateInstructions(expression, NOT_IN_CONDITION);
+                if (generateInstructions) {
+                    generateInstructions(expression, NOT_IN_CONDITION);
+                }
 
-                PseudoValue receiverValue = builder.getBoundValue(expression);
-                if (receiverValue != null) {
-                    values.add(receiverValue);
+                PseudoValue receiverPseudoValue = builder.getBoundValue(expression);
+                if (receiverPseudoValue != null) {
+                    receiverValues = receiverValues.plus(receiverPseudoValue, receiver);
                 }
             }
             else if (receiver instanceof TransientReceiver) {
@@ -1329,20 +1386,38 @@ public class JetControlFlowProcessor {
             else {
                 throw new IllegalArgumentException("Unknown receiver kind: " + receiver);
             }
+
+            return receiverValues;
         }
 
-        private void generateValueArgument(ResolvedValueArgument argument, List<PseudoValue> values) {
+        @NotNull
+        private SmartFMap<PseudoValue, ValueParameterDescriptor> generateValueArgument(
+                ResolvedValueArgument argument,
+                ValueParameterDescriptor parameterDescriptor,
+                SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues
+        ) {
             for (ValueArgument valueArgument : argument.getArguments()) {
-                JetExpression expression = valueArgument.getArgumentExpression();
-                if (expression != null) {
-                    generateInstructions(expression, NOT_IN_CONDITION);
+                parameterValues = generateValueArgument(valueArgument, parameterDescriptor, parameterValues);
+            }
 
-                    PseudoValue argValue = builder.getBoundValue(expression);
-                    if (argValue != null) {
-                        values.add(argValue);
-                    }
+            return parameterValues;
+        }
+
+        @NotNull
+        private SmartFMap<PseudoValue, ValueParameterDescriptor> generateValueArgument(
+                ValueArgument valueArgument,
+                ValueParameterDescriptor parameterDescriptor,
+                SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues) {
+            JetExpression expression = valueArgument.getArgumentExpression();
+            if (expression != null) {
+                generateInstructions(expression, NOT_IN_CONDITION);
+
+                PseudoValue argValue = builder.getBoundValue(expression);
+                if (argValue != null) {
+                    parameterValues = parameterValues.plus(argValue, parameterDescriptor);
                 }
             }
+            return parameterValues;
         }
     }
 }

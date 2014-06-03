@@ -21,12 +21,15 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
+import java.util.Map;
 
 public interface JetControlFlowBuilder {
     // Subroutines
@@ -123,7 +126,12 @@ public interface JetControlFlowBuilder {
     );
 
     @Nullable
-    PseudoValue call(@NotNull JetExpression expression, @NotNull ResolvedCall<?> resolvedCall, @NotNull List<PseudoValue> inputValues);
+    PseudoValue call(
+            @NotNull JetExpression expression,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
+            @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
+    );
 
     enum PredefinedOperation {
         AND,

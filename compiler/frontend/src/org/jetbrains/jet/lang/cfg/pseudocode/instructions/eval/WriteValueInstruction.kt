@@ -25,14 +25,19 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import java.util.Arrays
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
+import com.intellij.util.containers.ContainerUtil
 
 public class WriteValueInstruction(
         assignment: JetElement,
         public val lValue: JetElement,
         public val rValue: PseudoValue,
-        receiverValue: PseudoValue?,
+        public val receiverValue: PseudoValue?,
         lexicalScope: LexicalScope
-) : InstructionWithReceiver(assignment, lexicalScope, receiverValue) {
+) : InstructionWithNext(assignment, lexicalScope), InstructionWithReceivers {
+    override val receiverValues: List<PseudoValue>
+        get() = ContainerUtil.createMaybeSingletonList(receiverValue)
+
     override val inputValues: List<PseudoValue>
         get() = receiverValue?.let{ receiverValue -> Arrays.asList(receiverValue, rValue) } ?: Collections.singletonList(rValue)
 
