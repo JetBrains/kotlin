@@ -63,7 +63,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement): Diagnostics? {
 
             val filtered = arrayListOf<Diagnostic>()
             conflicting.groupBy {
-                CONFLICTING_JVM_DECLARATIONS.cast(it).getA().signature
+                CONFLICTING_JVM_DECLARATIONS.cast(it).getA().signature.name
             }.forEach {
                 val diagnostics = it.getValue()
                 if (diagnostics.size <= 1) {
@@ -89,7 +89,11 @@ public fun getJvmSignatureDiagnostics(element: PsiElement): Diagnostics? {
 }
 
 private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDeclarationsData): Boolean {
-    return this.classOrigin.originKind == PACKAGE_FACADE && other.classOrigin.originKind == PACKAGE_PART
+    return when (other.classOrigin.originKind) {
+        PACKAGE_PART -> this.classOrigin.originKind == PACKAGE_FACADE
+        TRAIT_IMPL -> this.classOrigin.originKind != TRAIT_IMPL
+        else -> false
+    }
 }
 
 private fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
