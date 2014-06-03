@@ -41,6 +41,7 @@ public class PseudocodeImpl implements Pseudocode {
             this.name = name;
         }
 
+        @NotNull
         @Override
         public String getName() {
             return name;
@@ -193,9 +194,9 @@ public class PseudocodeImpl implements Pseudocode {
     }
 
     private static boolean isDead(@NotNull Instruction instruction) {
-        if (!((InstructionImpl)instruction).isDead()) return false;
+        if (!((InstructionImpl)instruction).getDead()) return false;
         for (Instruction copy : instruction.getCopies()) {
-            if (!((InstructionImpl)copy).isDead()) return false;
+            if (!((InstructionImpl)copy).getDead()) return false;
         }
         return true;
     }
@@ -326,7 +327,7 @@ public class PseudocodeImpl implements Pseudocode {
             public void visitConditionalJump(ConditionalJumpInstruction instruction) {
                 Instruction nextInstruction = getNextPosition(currentPosition);
                 Instruction jumpTarget = getJumpTarget(instruction.getTargetLabel());
-                if (instruction.onTrue()) {
+                if (instruction.getOnTrue()) {
                     instruction.setNextOnFalse(nextInstruction);
                     instruction.setNextOnTrue(jumpTarget);
                 }

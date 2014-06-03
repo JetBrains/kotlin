@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.traverseFollowingInstructi
 import java.util.HashSet
 import org.jetbrains.jet.lang.cfg.pseudocodeTraverser.TraversalOrder
 import org.jetbrains.jet.lang.psi.JetFunction
-import org.jetbrains.jet.lang.psi.JetBlockExpression
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.JetFunctionLiteral
 
@@ -41,6 +40,6 @@ fun JetExpression.isStatement(pseudocode: Pseudocode): Boolean {
     }
 
     val instruction = value.createdAt
-    if (considerUsedIfCreatedBeforeExit() && instruction.getNextInstructions().any { it == pseudocode.getExitInstruction() }) return false
-    return traverseFollowingInstructions(instruction, HashSet(), TraversalOrder.FORWARD) { value !in it.getInputValues() }
+    if (considerUsedIfCreatedBeforeExit() && instruction.nextInstructions.any { it == pseudocode.getExitInstruction() }) return false
+    return traverseFollowingInstructions(instruction, HashSet(), TraversalOrder.FORWARD) { value !in it.inputValues }
 }

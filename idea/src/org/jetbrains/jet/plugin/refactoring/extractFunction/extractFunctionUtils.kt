@@ -70,27 +70,27 @@ private fun List<Instruction>.getModifiedVarDescriptors(bindingContext: BindingC
 }
 
 private fun List<Instruction>.getExitPoints(): List<Instruction> =
-        filter { localInstruction -> localInstruction.getNextInstructions().any { it !in this } }
+        filter { localInstruction -> localInstruction.nextInstructions.any { it !in this } }
 
 private fun List<Instruction>.getResultType(bindingContext: BindingContext, options: ExtractionOptions): JetType {
     fun instructionToType(instruction: Instruction): JetType? {
         val expression = when (instruction) {
             is ReturnValueInstruction -> {
-                (instruction.getElement() as JetReturnExpression).getReturnedExpression()
+                (instruction.element as JetReturnExpression).getReturnedExpression()
             }
             is CallInstruction -> {
                 val callElement = instruction.resolvedCall.getCall().getCallElement() as? JetExpression
                 if (callElement is JetSimpleNameExpression) callElement.getParentByType(javaClass<JetExpression>(), true) else callElement
             }
             is ReadValueInstruction, is OperationInstruction -> {
-                (instruction as JetElementInstruction).getElement() as? JetExpression
+                (instruction as JetElementInstruction).element as? JetExpression
             }
             else -> null
         }
 
         if (expression == null) return null
         if (options.inferUnitTypeForUnusedValues) {
-            val pseudocode = firstOrNull()?.getOwner()
+            val pseudocode = firstOrNull()?.owner
             if (pseudocode != null && expression.isStatement(pseudocode)) return null
         }
 
@@ -102,8 +102,8 @@ private fun List<Instruction>.getResultType(bindingContext: BindingContext, opti
 }
 
 private fun List<AbstractJumpInstruction>.checkEquivalence(checkPsi: Boolean): Boolean {
-    if (mapTo(HashSet<Label?>()) { it.getTargetLabel() }.size > 1) return false
-    return !checkPsi || mapTo(HashSet<String?>()) { it.getElement().getText() }.size <= 1
+    if (mapTo(HashSet<Label?>()) { it.targetLabel }.size > 1) return false
+    return !checkPsi || mapTo(HashSet<String?>()) { it.element.getText() }.size <= 1
 }
 
 private fun JetType.isMeaningful(): Boolean {
@@ -121,10 +121,10 @@ private fun List<Instruction>.analyzeControlFlow(
     val defaultExits = ArrayList<Instruction>()
     val jumpExits = ArrayList<AbstractJumpInstruction>()
     exitPoints.forEach {
-        val e = (it as? UnconditionalJumpInstruction)?.getElement()
+        val e = (it as? UnconditionalJumpInstruction)?.element
         val insn =
                 if (e != null && e !is JetBreakExpression && e !is JetContinueExpression) {
-                    it.getPreviousInstructions().firstOrNull()
+                    it.previousInstructions.firstOrNull()
                 }
                 else it
 
@@ -132,7 +132,7 @@ private fun List<Instruction>.analyzeControlFlow(
             is ReturnValueInstruction -> valuedReturnExits.add(insn)
 
             is AbstractJumpInstruction -> {
-                val element = insn.getElement()
+                val element = insn.element
                 if (element is JetReturnExpression
                 || element is JetBreakExpression
                 || element is JetContinueExpression) {
@@ -187,7 +187,7 @@ private fun List<Instruction>.analyzeControlFlow(
         if (defaultExits.isNotEmpty()) {
             if (valuedReturnExits.size != 1) return multipleExitsError
 
-            val element = valuedReturnExits.first!!.getElement()
+            val element = valuedReturnExits.first!!.element
             return Pair(ConditionalJump(listOf(element), element), null)
         }
 
@@ -198,7 +198,7 @@ private fun List<Instruction>.analyzeControlFlow(
     if (jumpExits.isNotEmpty()) {
         if (!jumpExits.checkEquivalence(true)) return multipleExitsError
 
-        val elements = jumpExits.map { it.getElement() }
+        val elements = jumpExits.map { it.element }
         if (defaultExits.isNotEmpty()) return Pair(ConditionalJump(elements, elements.first!!), null)
         return Pair(UnconditionalJump(elements, elements.first!!), null)
     }
@@ -505,7 +505,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val pseudocode = PseudocodeUtil.generatePseudocode(enclosingDeclaration, bindingContext)
     val localInstructions = pseudocode.getInstructions().filter {
-        it is JetElementInstruction && it.getElement().isInsideOf(originalElements)
+        it is JetElementInstruction && it.element.isInsideOf(originalElements)
     }
 
     val replacementMap = HashMap<Int, Replacement>()

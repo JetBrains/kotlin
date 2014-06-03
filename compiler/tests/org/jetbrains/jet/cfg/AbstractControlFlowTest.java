@@ -109,7 +109,7 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
         //check edges directions
         Collection<Instruction> instructions = pseudocode.getAllInstructions();
         for (Instruction instruction : instructions) {
-            if (!((InstructionImpl)instruction).isDead()) {
+            if (!((InstructionImpl)instruction).getDead()) {
                 for (Instruction nextInstruction : instruction.getNextInstructions()) {
                     assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
                                nextInstruction.getPreviousInstructions().contains(instruction));

@@ -60,8 +60,8 @@ public class PseudocodeVariableDataCollector(
             data: Map<VariableDescriptor, D>
     ): Map<VariableDescriptor, D> {
         // If an edge goes from deeper lexical scope to a less deep one, this means that it points outside of the deeper scope.
-        val toDepth = to.getLexicalScope().depth
-        if (toDepth >= from.getLexicalScope().depth) return data
+        val toDepth = to.lexicalScope.depth
+        if (toDepth >= from.lexicalScope.depth) return data
 
         // Variables declared in an inner (deeper) scope can't be accessed from an outer scope.
         // Thus they can be filtered out upon leaving the inner scope.
@@ -77,14 +77,14 @@ public class PseudocodeVariableDataCollector(
         val lexicalScopeVariableInfo = LexicalScopeVariableInfoImpl()
         pseudocode.traverse(TraversalOrder.FORWARD, { instruction ->
             if (instruction is VariableDeclarationInstruction) {
-                val variableDeclarationElement = instruction.getVariableDeclarationElement()
+                val variableDeclarationElement = instruction.variableDeclarationElement
                 val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
                 if (descriptor != null) {
                     assert(descriptor is VariableDescriptor,
-                           "Variable descriptor should correspond to the instruction for ${instruction.getElement().getText()}.\n" +
+                           "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
                            "Descriptor : $descriptor")
                     lexicalScopeVariableInfo.registerVariableDeclaredInScope(
-                            descriptor as VariableDescriptor, instruction.getLexicalScope())
+                            descriptor as VariableDescriptor, instruction.lexicalScope)
                 }
             }
         })

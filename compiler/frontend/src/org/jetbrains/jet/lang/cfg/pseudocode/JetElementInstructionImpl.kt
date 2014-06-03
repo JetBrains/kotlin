@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode;/**/
+package org.jetbrains.jet.lang.cfg.pseudocode
 
-public interface JumpInstruction extends Instruction {
+import com.intellij.psi.PsiElement
+import org.jetbrains.jet.lang.psi.JetElement
+
+public abstract class JetElementInstructionImpl(
+        public override val element: JetElement,
+        lexicalScope: LexicalScope
+) : InstructionImpl(lexicalScope), JetElementInstruction {
+    protected fun render(element: PsiElement): String =
+            element.getText()?.replaceAll("\\s+", " ") ?: ""
 }

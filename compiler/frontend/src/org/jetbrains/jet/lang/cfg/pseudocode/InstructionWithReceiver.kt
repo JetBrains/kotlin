@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg;
+package org.jetbrains.jet.lang.cfg.pseudocode
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.psi.JetElement
+import com.intellij.util.containers.ContainerUtil
 
-public interface Label {
-    @NotNull
-    String getName();
+public abstract class InstructionWithReceiver(
+        element: JetElement,
+        lexicalScope: LexicalScope,
+        protected val receiverValue: PseudoValue?
+) : InstructionWithNext(element, lexicalScope) {
+    override val inputValues: List<PseudoValue> = ContainerUtil.createMaybeSingletonList(receiverValue)
 }

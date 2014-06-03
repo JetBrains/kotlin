@@ -1,4 +1,13 @@
 <root>
+  <item name='com.google.common.collect.Lists java.util.ArrayList&lt;E&gt; newArrayList(E...)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.Lists java.util.ArrayList&lt;E&gt; newArrayList(java.lang.Iterable&lt;? extends E&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.Maps java.util.LinkedHashMap&lt;K,V&gt; newLinkedHashMap()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
   <item name='com.google.common.collect.Multimap java.util.Set&lt;K&gt; keySet()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
@@ -7,6 +16,9 @@
   </item>
   <item
       name='com.google.common.collect.Sets com.google.common.collect.Sets.SetView&lt;E&gt; intersection(java.util.Set&lt;E&gt;, java.util.Set&lt;?&gt;)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.google.common.collect.Sets java.util.HashSet&lt;E&gt; newHashSet(java.lang.Iterable&lt;? extends E&gt;)'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
 </root>

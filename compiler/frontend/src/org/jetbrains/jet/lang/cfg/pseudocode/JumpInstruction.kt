@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode;
+package org.jetbrains.jet.lang.cfg.pseudocode
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.psi.JetElement;
-
-public interface JetElementInstruction extends Instruction {
-    @NotNull
-    JetElement getElement();
-}
+public trait JumpInstruction : Instruction

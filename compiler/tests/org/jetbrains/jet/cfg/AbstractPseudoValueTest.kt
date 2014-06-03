@@ -45,7 +45,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         fun elementText(element: JetElement): String = element.getText()!!.replaceAll("\\s+", " ")
 
         fun valueDescription(element: JetElement, value: PseudoValue): String {
-            return if (value.element != element) "COPY" else "NEW${value.createdAt.getInputValues().makeString(", ", "(", ")")}"
+            return if (value.element != element) "COPY" else "NEW${value.createdAt.inputValues.makeString(", ", "(", ")")}"
         }
 
         val elementToValues = getElementToValueMap(pseudocode)

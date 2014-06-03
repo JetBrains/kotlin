@@ -36,37 +36,37 @@ public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean>
     }
 
     @Override
-    public Boolean visitInstruction(Instruction instruction) {
+    public Boolean visitInstruction(@NotNull Instruction instruction) {
         return false;
     }
 
     @Override
-    public Boolean visitSubroutineExit(SubroutineExitInstruction instruction) {
-        return !instruction.isError() && instruction.getSubroutine() == subroutine;
+    public Boolean visitSubroutineExit(@NotNull SubroutineExitInstruction instruction) {
+        return !instruction.getIsError() && instruction.getSubroutine() == subroutine;
     }
 
     @Override
-    public Boolean visitSubroutineSink(SubroutineSinkInstruction instruction) {
+    public Boolean visitSubroutineSink(@NotNull SubroutineSinkInstruction instruction) {
         return instruction.getSubroutine() == subroutine;
     }
 
     @Override
-    public Boolean visitJump(AbstractJumpInstruction instruction) {
+    public Boolean visitJump(@NotNull AbstractJumpInstruction instruction) {
         return true;
     }
 
     @Override
-    public Boolean visitThrowExceptionInstruction(ThrowExceptionInstruction instruction) {
+    public Boolean visitThrowExceptionInstruction(@NotNull ThrowExceptionInstruction instruction) {
         return false;
     }
 
     @Override
-    public Boolean visitMarkInstruction(MarkInstruction instruction) {
+    public Boolean visitMarkInstruction(@NotNull MarkInstruction instruction) {
         return true;
     }
 
     @Override
-    public Boolean visitMagic(MagicInstruction instruction) {
+    public Boolean visitMagic(@NotNull MagicInstruction instruction) {
         return instruction.getSynthetic();
     }
 }

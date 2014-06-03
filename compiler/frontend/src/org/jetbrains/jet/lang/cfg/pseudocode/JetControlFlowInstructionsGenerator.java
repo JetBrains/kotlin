@@ -28,10 +28,7 @@ import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
     private JetControlFlowBuilder builder = null;
@@ -352,7 +349,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @Override
         public void nondeterministicJump(@NotNull Label label, @NotNull JetElement element, @Nullable PseudoValue inputValue) {
             handleJumpInsideTryFinally(label);
-            add(new NondeterministicJumpInstruction(element, label, getCurrentScope(), inputValue));
+            add(new NondeterministicJumpInstruction(element, Collections.singletonList(label), getCurrentScope(), inputValue));
         }
 
         @Override
@@ -485,7 +482,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         private PseudoValue read(@NotNull JetExpression expression, @Nullable PseudoValue receiverValue) {
-            ReadValueInstruction instruction = new ReadValueInstruction(expression, getCurrentScope(), receiverValue, valueFactory);
+            ReadValueInstruction instruction =
+                    ReadValueInstruction.object$.create(expression, getCurrentScope(), receiverValue, valueFactory);
             add(instruction);
             return instruction.getOutputValue();
         }
