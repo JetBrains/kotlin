@@ -258,17 +258,25 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
 
             val modifiers = HashSet(convertModifierList(method.getModifierList()))
-            if (isOverride(method)) {
-                modifiers.add(Modifier.OVERRIDE)
-            }
 
             val containingClass = method.getContainingClass()
             if (containingClass != null && containingClass.isInterface()) {
                 modifiers.remove(Modifier.ABSTRACT)
             }
+            if (containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())) {
+                modifiers.add(Modifier.FINAL)
+            }
 
-            if (isNotOpenMethod(method)) {
-                modifiers.add(Modifier.NOT_OPEN)
+            if (settings.openByDefault &&
+                    !modifiers.contains(Modifier.ABSTRACT) &&
+                    !modifiers.contains(Modifier.FINAL) &&
+                    !modifiers.contains(Modifier.PRIVATE)) {
+                modifiers.add(Modifier.OPEN)
+            }
+
+            if (isOverride(method)) {
+                modifiers.add(Modifier.OVERRIDE)
+                modifiers.remove(Modifier.OPEN)
             }
 
             val comments = getComments(method)

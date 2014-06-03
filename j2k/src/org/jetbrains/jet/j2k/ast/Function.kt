@@ -46,16 +46,8 @@ open class Function(
             resultingModifiers.add(Modifier.ABSTRACT)
         }
 
-        if (converter.settings.openByDefault &&
-                !modifiers.contains(Modifier.ABSTRACT) &&
-                !isOverride &&
-                !modifiers.contains(Modifier.FINAL) &&
-                !modifiers.contains(Modifier.PRIVATE)) {
+        if (modifiers.contains(Modifier.OPEN)) {
             resultingModifiers.add(Modifier.OPEN)
-        }
-
-        if (modifiers.contains(Modifier.NOT_OPEN)) {
-            resultingModifiers.remove(Modifier.OPEN)
         }
 
         return resultingModifiers.toKotlin()

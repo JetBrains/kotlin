@@ -30,13 +30,11 @@ enum class Modifier(val name: String) {
     ABSTRACT: Modifier("abstract")
     FINAL: Modifier("final")
     OPEN: Modifier("open")
-    NOT_OPEN: Modifier("not open") //TODO: drop it
     OVERRIDE: Modifier("override")
 
     public fun toKotlin(): String? {
         return when(this) {
             INTERNAL -> null
-            NOT_OPEN -> throw IllegalArgumentException()
             else -> name
         }
     }

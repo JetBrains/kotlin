@@ -55,17 +55,6 @@ fun Converter.isOverride(method: PsiMethod): Boolean {
     return false
 }
 
-fun isNotOpenMethod(method: PsiMethod): Boolean {
-    val parent = method.getParent()
-    if (parent is PsiClass) {
-        val parentModifierList = parent.getModifierList()
-        if ((parentModifierList != null && parentModifierList.hasExplicitModifier(PsiModifier.FINAL)) || parent.isEnum()) {
-            return true
-        }
-    }
-    return false
-}
-
 fun directlyOverridesMethodFromObject(method: PsiMethod): Boolean {
     var superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
     if (superSignatures.size() == 1) {
