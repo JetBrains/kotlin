@@ -21,6 +21,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jps.builders.BuildResult;
@@ -189,19 +190,14 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         doTest();
     }
 
-    public void testCircularDependenciesWithKotlinFilesDifferentPackages() {
+    public void testCircularDependenciesDifferentPackages() {
         initProject();
         BuildResult result = makeAll();
 
         // Check that outputs are located properly
-        for (JpsModule module : myProject.getModules()) {
-            if (module.getName().equals("module2")) {
-                assertFilesExistInOutput(module, "kt1/Kt1Package.class");
-            }
-            if (module.getName().equals("kotlinProject")) {
-                assertFilesExistInOutput(module, "kt2/Kt2Package.class");
-            }
-        }
+        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Package.class");
+        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Package.class");
+
         result.assertSuccessful();
 
         checkPackageDeletedFromOutputWhen(Operation.CHANGE, "kotlinProject", "src/kt2.kt", "kt2.Kt2Package");
@@ -216,22 +212,37 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
                                        public boolean value(JpsModule module) {
                                            return module.getName().equals("module2");
                                        }
-                                   }), true);
+                                   }), true
+        );
         makeAll().assertSuccessful();
     }
 
+    @NotNull
+    private JpsModule findModule(@NotNull String name) {
+        for (JpsModule module : myProject.getModules()) {
+            if (module.getName().equals(name)) {
+                return module;
+            }
+        }
+        throw new IllegalStateException("Couldn't find module " + name);
+    }
+
     private static void assertFilesExistInOutput(JpsModule module, String... relativePaths) {
-        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
-        assertNotNull(outputUrl);
-        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
         for (String path : relativePaths) {
-            File outputFile = new File(outputDir, path);
+            File outputFile = findFileInOutputDir(module, path);
             assertTrue("Output not written: " +
                        outputFile.getAbsolutePath() +
                        "\n Directory contents: \n" +
                        dirContents(outputFile.getParentFile()),
                        outputFile.exists());
         }
+    }
+
+    private static File findFileInOutputDir(JpsModule module, String relativePath) {
+        String outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false);
+        assertNotNull(outputUrl);
+        File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
+        return new File(outputDir, relativePath);
     }
 
     private void checkExcludesNotAffectedToOutput(String module, String... excludeRelativePaths) {
@@ -246,7 +257,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         File outputDir = new File(JpsPathUtil.urlToPath(outputUrl));
         for (String path : relativePaths) {
             File outputFile = new File(outputDir, path);
-            assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path  + "\"",
+            assertFalse("Output directory \"" + outputFile.getAbsolutePath() + "\" contains \"" + path + "\"",
                         outputFile.exists());
         }
     }
