@@ -158,13 +158,47 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
-        checkWhen(touch("src/Bar.kt"), null, new String[] {klass("kotlinProject", "foo.Bar")});
+        checkWhen(touch("src/Bar.kt"),
+                  new String[] {"src/Bar.kt", "src/boo.kt", "src/main.kt"},
+                  new String[] {klass("kotlinProject", "foo.Bar")});
 
-        checkWhen(del("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+        checkWhen(del("src/main.kt"),
+                  new String[] {"src/Bar.kt", "src/boo.kt"},
+                  packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+        assertFilesExistInOutput(module, "boo/BooPackage.class", "foo/Bar.class");
         assertFilesNotExistInOutput(module, "foo/FooPackage.class");
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
         checkWhen(touch("src/Bar.kt"), null, new String[] {klass("kotlinProject", "foo.Bar")});
+    }
+
+    public void testManyFilesForPackage() {
+        doTest();
+
+        JpsModule module = myProject.getModules().get(0);
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
+
+        checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
+        checkWhen(touch("src/Bar.kt"),
+                  new String[] {"src/Bar.kt", "src/boo.kt", "src/main.kt"},
+                  new String[] {
+                          klass("kotlinProject", "foo.Bar"),
+                          klass("kotlinProject", "foo.FooPackage"),
+                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")});
+
+        checkWhen(del("src/main.kt"),
+                  new String[] {"src/Bar.kt", "src/boo.kt"},
+                  packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+        assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
+
+        checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
+        checkWhen(touch("src/Bar.kt"), null,
+                  new String[] {
+                          klass("kotlinProject", "foo.Bar"),
+                          klass("kotlinProject", "foo.FooPackage"),
+                          packagePartClass("kotlinProject", "src/Bar.kt", "foo.FooPackage")
+                  });
     }
 
     public void testKotlinProjectTwoFilesInOnePackage() {
@@ -172,6 +206,15 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkWhen(touch("src/test1.kt"), null, packageClasses("kotlinProject", "src/test1.kt", "_DefaultPackage"));
         checkWhen(touch("src/test2.kt"), null, packageClasses("kotlinProject", "src/test2.kt", "_DefaultPackage"));
+
+        checkWhen(new Action[]{ del("src/test1.kt"), del("src/test2.kt") }, NOTHING,
+                  new String[] {
+                          packagePartClass("kotlinProject", "src/test1.kt", "_DefaultPackage"),
+                          packagePartClass("kotlinProject", "src/test2.kt", "_DefaultPackage"),
+                          klass("kotlinProject", "_DefaultPackage")
+                  });
+
+        assertFilesNotExistInOutput(myProject.getModules().get(0), "_DefaultPackage.class");
     }
 
     public void testKotlinJavaProject() {
@@ -310,7 +353,14 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     }
 
     private void checkWhen(Action action, @Nullable String[] pathsToCompile, @Nullable String[] pathsToDelete) {
-        action.apply();
+        checkWhen(new Action[]{action}, pathsToCompile, pathsToDelete);
+    }
+
+    private void checkWhen(Action[] actions, @Nullable String[] pathsToCompile, @Nullable String[] pathsToDelete) {
+        for (Action action : actions) {
+            action.apply();
+        }
+
         makeAll().assertSuccessful();
 
         if (pathsToCompile != null) {
