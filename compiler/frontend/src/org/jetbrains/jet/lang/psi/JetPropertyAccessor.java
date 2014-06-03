@@ -129,6 +129,11 @@ public class JetPropertyAccessor extends JetDeclarationStub<PsiJetPropertyAccess
     }
 
     @Nullable
+    public ASTNode getRightParenthesis() {
+        return getNode().findChildByType(JetTokens.RPAR);
+    }
+
+    @Nullable
     @Override
     public JetExpression getInitializer() {
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), JetExpression.class);
