@@ -22,7 +22,6 @@ enum class Modifier(val name: String) {
     PRIVATE: Modifier("private")
     STATIC: Modifier("static")
     ABSTRACT: Modifier("abstract")
-    FINAL: Modifier("final")
     OPEN: Modifier("open")
     OVERRIDE: Modifier("override")
 

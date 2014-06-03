@@ -25,6 +25,7 @@ open class Field(
         modifiers: Set<Modifier>,
         val `type`: Type,
         val initializer: Element,
+        val isVal: Boolean,
         val writingAccesses: Int
 ) : Member(comments, modifiers) {
 
@@ -36,18 +37,16 @@ open class Field(
 
         modifiers.accessModifier()?.let { modifierList.add(it) }
 
-        return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
+        return modifierList.toKotlin() + (if (isVal) "val " else "var ")
     }
 
-    fun isVal(): Boolean = modifiers.contains(Modifier.FINAL)
-
     override fun toKotlin(): String {
-        val declaration: String = commentsToKotlin() +
-        modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
+        val declaration = commentsToKotlin() + modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty) {
-            return declaration + (if (isVal() && !isStatic() && writingAccesses != 0) "" else " = " + getDefaultInitializer(this))
+            return declaration + (if (isVal && !isStatic() && writingAccesses != 0) "" else " = " + getDefaultInitializer(this))
         }
-
-        return declaration + " = " + initializer.toKotlin()
+        else {
+            return declaration + " = " + initializer.toKotlin()
+        }
     }
 }

@@ -26,14 +26,16 @@ class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
         var kType = converter.convertVariableType(variable)
-        if (variable.hasModifierProperty(PsiModifier.FINAL) && variable.getInitializer().isDefinitelyNotNull()) {
+        val isFinal = variable.hasModifierProperty(PsiModifier.FINAL)
+        if (isFinal && variable.getInitializer().isDefinitelyNotNull()) {
             kType = kType.toNotNullType()
         }
         result = LocalVariable(Identifier(variable.getName()!!),
-                                 converter.convertModifierList(variable.getModifierList()),
+                                 converter.convertModifiers(variable),
                                  kType,
                                  converter.convertExpression(variable.getInitializer(), variable.getType()),
-                                 converter)
+                                 converter.settings.forceLocalVariableImmutability || isFinal,
+                                 converter.settings)
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {

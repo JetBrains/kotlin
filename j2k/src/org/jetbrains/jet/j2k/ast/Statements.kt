@@ -31,7 +31,7 @@ open class DeclarationStatement(val elements: List<Element>) : Statement() {
             = elements.filterIsInstance(javaClass<LocalVariable>()).map { convertDeclaration(it) }.makeString("\n")
 
     private fun convertDeclaration(v: LocalVariable): String
-            = (if (v.isImmutable) "val" else "var") + " " + v.toKotlin()
+            = (if (v.isVal) "val" else "var") + " " + v.toKotlin()
 }
 
 open class ExpressionListStatement(val expressions: List<Expression>) : Expression() {

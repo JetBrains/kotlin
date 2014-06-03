@@ -22,7 +22,7 @@ open class EnumConstant(
         modifiers: Set<Modifier>,
         `type`: Type,
         params: Element
-) : Field(identifier, members, modifiers, `type`.toNotNullType(), params, 0) {
+) : Field(identifier, members, modifiers, `type`.toNotNullType(), params, true, 0) {
 
     override fun toKotlin(): String {
         if (initializer.toKotlin().isEmpty()) {

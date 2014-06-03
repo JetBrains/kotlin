@@ -16,25 +16,23 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.ConverterSettings
 
 class LocalVariable(
         val identifier: Identifier,
         val modifiersSet: Set<Modifier>,
         val javaType: Type,
         val initializer: Expression,
-        val converter: Converter
+        val isVal: Boolean,
+        val settings: ConverterSettings
 ) : Expression() {
-
-    val isImmutable: Boolean
-        get() = converter.settings.forceLocalVariableImmutability || modifiersSet.contains(Modifier.FINAL)
 
     override fun toKotlin(): String {
         if (initializer.isEmpty) {
             return "${identifier.toKotlin()} : ${javaType.toKotlin()}"
         }
 
-        val shouldSpecifyType = converter.settings.specifyLocalVariableTypeByDefault
+        val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
         return "${identifier.toKotlin()} ${if (shouldSpecifyType) ": ${javaType.toKotlin()} " else ""}= ${initializer.toKotlin()}"
     }
 }

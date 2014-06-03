@@ -108,7 +108,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun convertClass(psiClass: PsiClass): Class {
-        val modifiers = convertModifierList(psiClass.getModifierList())
+        val modifiers = convertModifiers(psiClass)
         val typeParameters = convertTypeParameterList(psiClass.getTypeParameterList())
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
@@ -137,7 +137,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
                 }
 
-                if (settings.openByDefault && !modifiers.contains(Modifier.FINAL)) {
+                if (settings.openByDefault && !psiClass.hasModifierProperty(PsiModifier.FINAL)) {
                     modifiers.add(Modifier.OPEN)
                 }
 
@@ -147,7 +147,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun generateArtificialPrimaryConstructor(className: Identifier, classBodyElements: MutableList<Element>) {
-        val finalOrWithEmptyInitializerFields = classBodyElements.filterIsInstance(javaClass<Field>()).filter { it.isVal() || it.initializer.toKotlin().isEmpty() }
+        val finalOrWithEmptyInitializerFields = classBodyElements.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.toKotlin().isEmpty() }
         val initializers = HashMap<String, String>()
         for (element in classBodyElements) {
             if (element is SecondaryConstructor) {
@@ -185,7 +185,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
         //TODO: comments?
         val parameters = finalOrWithEmptyInitializerFields.map { field ->
-            val varValModifier = if (field.modifiers.contains(Modifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
+            val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
             Parameter(field.identifier, field.`type`, varValModifier, field.modifiers.filter { ACCESS_MODIFIERS.contains(it) })
         }
         classBodyElements.add(PrimaryConstructor(this,
@@ -197,11 +197,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
-        return Initializer(convertBlock(initializer.getBody()), convertModifierList(initializer.getModifierList()))
+        return Initializer(convertBlock(initializer.getBody()), convertModifiers(initializer))
     }
 
     private fun convertField(field: PsiField): Field {
-        val modifiers = convertModifierList(field.getModifierList())
+        val modifiers = convertModifiers(field)
         if (field is PsiEnumConstant) {
             return EnumConstant(Identifier(field.getName()!!),
                                 getComments(field),
@@ -210,8 +210,9 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                                 convertElement(field.getArgumentList()))
         }
 
+        val isFinal = field.hasModifierProperty(PsiModifier.FINAL)
         var kType = convertVariableType(field)
-        if (field.hasModifierProperty(PsiModifier.FINAL) && field.getInitializer().isDefinitelyNotNull()) {
+        if (isFinal && field.getInitializer().isDefinitelyNotNull()) {
             kType = kType.toNotNullType();
         }
 
@@ -220,6 +221,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                      modifiers,
                      kType,
                      convertExpression(field.getInitializer(), field.getType()),
+                     isFinal,
                      field.countWriteAccesses(field.getContainingClass()))
     }
 
@@ -235,12 +237,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             methodReturnType = method.getReturnType()
             val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
 
-            val modifiers = convertModifierList(method.getModifierList())
+            val modifiers = convertModifiers(method)
 
             val containingClass = method.getContainingClass()
-            if (containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())) {
-                modifiers.add(Modifier.FINAL)
-            }
+            val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
+                    containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())
 
             if (isOverride(method)) {
                 modifiers.add(Modifier.OVERRIDE)
@@ -248,7 +249,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
             if (settings.openByDefault &&
                     !modifiers.contains(Modifier.ABSTRACT) &&
-                    !modifiers.contains(Modifier.FINAL) &&
+                    !isEffectivelyFinal &&
                     !modifiers.contains(Modifier.PRIVATE)) {
                 modifiers.add(Modifier.OPEN)
             }
@@ -314,7 +315,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 Parameter(Identifier(field.getName()!!),
                           convertVariableType(it),
                           if (field.hasModifierProperty(PsiModifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
-                          convertModifierList(field.getModifierList()).filter { ACCESS_MODIFIERS.contains(it) })
+                          convertModifiers(field).filter { ACCESS_MODIFIERS.contains(it) })
             }
         })
         return PrimaryConstructor(this, comments, modifiers, parameterList, block)
@@ -494,32 +495,16 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return Identifier(identifier.getText()!!)
     }
 
-    public fun convertModifierList(modifierList: PsiModifierList?): MutableSet<Modifier> {
-        if (modifierList == null) return HashSet()
+    public fun convertModifiers(owner: PsiModifierListOwner): MutableSet<Modifier>
+            = HashSet(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
 
-        val modifiersSet = HashSet<Modifier>()
-
-        //TODO: map
-        if (modifierList.hasModifierProperty(PsiModifier.ABSTRACT))
-            modifiersSet.add(Modifier.ABSTRACT)
-
-        if (modifierList.hasModifierProperty(PsiModifier.FINAL))
-            modifiersSet.add(Modifier.FINAL)
-
-        if (modifierList.hasModifierProperty(PsiModifier.STATIC))
-            modifiersSet.add(Modifier.STATIC)
-
-        if (modifierList.hasModifierProperty(PsiModifier.PUBLIC))
-            modifiersSet.add(Modifier.PUBLIC)
-
-        if (modifierList.hasModifierProperty(PsiModifier.PROTECTED))
-            modifiersSet.add(Modifier.PROTECTED)
-
-        if (modifierList.hasModifierProperty(PsiModifier.PRIVATE))
-            modifiersSet.add(Modifier.PRIVATE)
-
-        return modifiersSet
-    }
+    private val MODIFIERS_MAP = listOf(
+            PsiModifier.ABSTRACT to Modifier.ABSTRACT,
+            PsiModifier.STATIC to Modifier.STATIC,
+            PsiModifier.PUBLIC to Modifier.PUBLIC,
+            PsiModifier.PROTECTED to Modifier.PROTECTED,
+            PsiModifier.PRIVATE to Modifier.PRIVATE
+    )
 
     private val TYPE_MAP: Map<String, String> = mapOf(
             JAVA_LANG_BYTE to "byte",
