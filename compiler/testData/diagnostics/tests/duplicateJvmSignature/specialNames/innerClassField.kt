@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
-    <!CONFLICTING_JVM_DECLARATIONS!>inner class D<!> {
+    inner class <!CONFLICTING_JVM_DECLARATIONS!>D<!> {
         <!CONFLICTING_JVM_DECLARATIONS!>val `this$0`: C?<!> = null
     }
 }
