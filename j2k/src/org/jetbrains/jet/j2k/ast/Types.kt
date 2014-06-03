@@ -22,8 +22,8 @@ import java.util.ArrayList
 fun Type.isPrimitive(): Boolean = this is PrimitiveType
 fun Type.isUnit(): Boolean = this == Type.Unit
 
-abstract class MayBeNullableType(nullable: Boolean, val converter: Converter) : Type {
-    override val isNullable: Boolean = !converter.settings.forceNotNullTypes && nullable
+abstract class MayBeNullableType(isNullable: Boolean, val converter: Converter) : Type {
+    override val isNullable: Boolean = !converter.settings.forceNotNullTypes && isNullable
 }
 
 trait NotNullType : Type {
@@ -56,8 +56,8 @@ trait Type : Element {
     override fun hashCode(): Int = toKotlin().hashCode()
 }
 
-open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullable: Boolean,
-                     converter: Converter) : MayBeNullableType(nullable, converter) {
+open class ClassType(val `type`: Identifier, val parameters: List<Element>, isNullable: Boolean,
+                     converter: Converter) : MayBeNullableType(isNullable, converter) {
 
     override fun toKotlin(): String {
         // TODO change to map() when KT-2051 is fixed
@@ -78,9 +78,9 @@ open class ClassType(val `type`: Identifier, val parameters: List<Element>, null
 
 class ArrayType(
         val elementType: Type,
-        nullable: Boolean,
+        isNullable: Boolean,
         converter: Converter
-) : MayBeNullableType(nullable, converter) {
+) : MayBeNullableType(isNullable, converter) {
     override fun toKotlin(): String {
         if (elementType is PrimitiveType) {
             return elementType.toKotlin() + "Array" + isNullableStr()
