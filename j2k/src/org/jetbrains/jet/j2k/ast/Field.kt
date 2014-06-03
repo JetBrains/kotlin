@@ -30,14 +30,11 @@ open class Field(
 
     fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
-        if (isAbstract()) {
+        if (modifiers.contains(Modifier.ABSTRACT)) {
             modifierList.add(Modifier.ABSTRACT)
         }
 
-        val modifier = modifiers.accessModifier()
-        if (modifier != null) {
-            modifierList.add(modifier)
-        }
+        modifiers.accessModifier()?.let { modifierList.add(it) }
 
         return modifierList.toKotlin() + (if (isVal()) "val " else "var ")
     }

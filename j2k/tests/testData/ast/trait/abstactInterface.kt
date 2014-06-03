@@ -1,1 +1,1 @@
-abstract trait I
+trait I

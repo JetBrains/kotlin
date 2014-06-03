@@ -27,7 +27,8 @@ open class Function(
         val `type`: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
-        var block: Block?
+        var block: Block?,
+        val isInTrait: Boolean
 ) : Member(comments, modifiers) {
 
     private fun modifiersToKotlin(): String {
@@ -42,11 +43,11 @@ open class Function(
             resultingModifiers.add(accessModifier)
         }
 
-        if (isAbstract()) {
+        if (modifiers.contains(Modifier.ABSTRACT) && !isInTrait) {
             resultingModifiers.add(Modifier.ABSTRACT)
         }
 
-        if (modifiers.contains(Modifier.OPEN)) {
+        if (modifiers.contains(Modifier.OPEN) && !isOverride) {
             resultingModifiers.add(Modifier.OPEN)
         }
 

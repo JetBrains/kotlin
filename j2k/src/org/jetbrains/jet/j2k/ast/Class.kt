@@ -17,7 +17,6 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import java.util.HashSet
 import java.util.ArrayList
 
 open class Class(
@@ -80,26 +79,20 @@ open class Class(
             " : " + allTypes.makeString(", ")
     }
 
-    protected fun modifiersToKotlin(): String {
+    protected open fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()
-        val modifier = modifiers.accessModifier()
-        if (modifier != null) {
-            modifierList.add(modifier)
-        }
-        if (isAbstract()) {
+
+        modifiers.accessModifier()?.let { modifierList.add(it) }
+
+        if (modifiers.contains(Modifier.ABSTRACT)) {
             modifierList.add(Modifier.ABSTRACT)
         }
-        else if (needsOpenModifier()) {
+        else if (modifiers.contains(Modifier.OPEN)) {
             modifierList.add(Modifier.OPEN)
         }
+
         return modifierList.toKotlin()
     }
-
-    protected open fun isDefinitelyFinal(): Boolean
-            = modifiers.contains(Modifier.FINAL)
-
-    protected open fun needsOpenModifier(): Boolean
-            = !isDefinitelyFinal() && converter.settings.openByDefault
 
     fun bodyToKotlin(): String {
         val innerBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()

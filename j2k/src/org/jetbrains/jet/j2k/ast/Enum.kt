@@ -34,8 +34,6 @@ class Enum(
     override fun primaryConstructorSignatureToKotlin(): String
         = classMembers.primaryConstructor?.signatureToKotlin() ?: ""
 
-    override fun isDefinitelyFinal() = true
-
     override fun toKotlin(): String {
         return modifiersToKotlin() +
                 "enum class " + name.toKotlin() +

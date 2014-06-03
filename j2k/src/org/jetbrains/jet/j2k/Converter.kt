@@ -137,6 +137,10 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     }
                 }
 
+                if (settings.openByDefault && !modifiers.contains(Modifier.FINAL)) {
+                    modifiers.add(Modifier.OPEN)
+                }
+
                 return Class(this, name, getComments(psiClass), modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBodyElements)
             }
         }
@@ -231,14 +235,15 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             methodReturnType = method.getReturnType()
             val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
 
-            val modifiers = HashSet(convertModifierList(method.getModifierList()))
+            val modifiers = convertModifierList(method.getModifierList())
 
             val containingClass = method.getContainingClass()
-            if (containingClass != null && containingClass.isInterface()) {
-                modifiers.remove(Modifier.ABSTRACT)
-            }
             if (containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())) {
                 modifiers.add(Modifier.FINAL)
+            }
+
+            if (isOverride(method)) {
+                modifiers.add(Modifier.OVERRIDE)
             }
 
             if (settings.openByDefault &&
@@ -246,11 +251,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     !modifiers.contains(Modifier.FINAL) &&
                     !modifiers.contains(Modifier.PRIVATE)) {
                 modifiers.add(Modifier.OPEN)
-            }
-
-            if (isOverride(method)) {
-                modifiers.add(Modifier.OVERRIDE)
-                modifiers.remove(Modifier.OPEN)
             }
 
             val comments = getComments(method)
@@ -268,7 +268,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 val params = convertParameterList(method.getParameterList())
                 val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
                 val block = convertBlock(method.getBody())
-                return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block)
+                return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
             }
         }
         finally {
@@ -494,12 +494,13 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return Identifier(identifier.getText()!!)
     }
 
-    public fun convertModifierList(modifierList: PsiModifierList?): Set<Modifier> {
-        if (modifierList == null) return setOf()
+    public fun convertModifierList(modifierList: PsiModifierList?): MutableSet<Modifier> {
+        if (modifierList == null) return HashSet()
 
         val modifiersSet = HashSet<Modifier>()
 
-        if (modifierList.hasExplicitModifier(PsiModifier.ABSTRACT))
+        //TODO: map
+        if (modifierList.hasModifierProperty(PsiModifier.ABSTRACT))
             modifiersSet.add(Modifier.ABSTRACT)
 
         if (modifierList.hasModifierProperty(PsiModifier.FINAL))
@@ -508,16 +509,13 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         if (modifierList.hasModifierProperty(PsiModifier.STATIC))
             modifiersSet.add(Modifier.STATIC)
 
-        if (modifierList.hasExplicitModifier(PsiModifier.PUBLIC))
+        if (modifierList.hasModifierProperty(PsiModifier.PUBLIC))
             modifiersSet.add(Modifier.PUBLIC)
 
-        if (modifierList.hasExplicitModifier(PsiModifier.PROTECTED))
+        if (modifierList.hasModifierProperty(PsiModifier.PROTECTED))
             modifiersSet.add(Modifier.PROTECTED)
 
-        if (modifierList.hasExplicitModifier(PsiModifier.PACKAGE_LOCAL))
-            modifiersSet.add(Modifier.INTERNAL)
-
-        if (modifierList.hasExplicitModifier(PsiModifier.PRIVATE))
+        if (modifierList.hasModifierProperty(PsiModifier.PRIVATE))
             modifiersSet.add(Modifier.PRIVATE)
 
         return modifiersSet

@@ -16,37 +16,26 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.ast.Modifier.PUBLIC
-import org.jetbrains.jet.j2k.ast.Modifier.PROTECTED
-import org.jetbrains.jet.j2k.ast.Modifier.PRIVATE
-import org.jetbrains.jet.j2k.ast.Modifier.INTERNAL
-
 enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
     PROTECTED: Modifier("protected")
     PRIVATE: Modifier("private")
-    INTERNAL: Modifier("internal")
     STATIC: Modifier("static")
     ABSTRACT: Modifier("abstract")
     FINAL: Modifier("final")
     OPEN: Modifier("open")
     OVERRIDE: Modifier("override")
 
-    public fun toKotlin(): String? {
-        return when(this) {
-            INTERNAL -> null
-            else -> name
-        }
-    }
+    public fun toKotlin(): String = name
 }
 
-val ACCESS_MODIFIERS = setOf(PUBLIC, PROTECTED, PRIVATE, INTERNAL)
+val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE)
 
 fun Collection<Modifier>.accessModifier(): Modifier? {
     return firstOrNull { ACCESS_MODIFIERS.contains(it) }
 }
 
 fun Collection<Modifier>.toKotlin(): String
-        = if (isNotEmpty()) map { it.toKotlin() }.filterNotNull().makeString(" ") + " " else ""
+        = if (isNotEmpty()) map { it.toKotlin() }.makeString(" ") + " " else ""
 
 

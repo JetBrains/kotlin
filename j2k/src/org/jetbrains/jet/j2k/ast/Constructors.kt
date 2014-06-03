@@ -26,7 +26,7 @@ abstract class Constructor(
         modifiers: Set<Modifier>,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, comments, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block)
+) : Function(converter, Identifier.Empty, comments, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
                          comments: MemberComments,
@@ -61,6 +61,6 @@ class SecondaryConstructor(converter: Converter,
         typeParameters.addAll(containingClass.typeParameterList.parameters)
         return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
                         ClassType(containingClass.name, typeParameters, false, converter),
-                        TypeParameterList(typeParameters), parameterList, block)
+                        TypeParameterList(typeParameters), parameterList, block, false)
     }
 }

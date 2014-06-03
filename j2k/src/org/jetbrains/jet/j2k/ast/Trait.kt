@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
+import java.util.ArrayList
 
 class Trait(
         converter: Converter,
@@ -35,5 +36,11 @@ class Trait(
         get() = "trait"
 
     override fun primaryConstructorSignatureToKotlin() = ""
-    override fun needsOpenModifier() = false
+
+    override fun modifiersToKotlin(): String {
+        val modifierList = ArrayList<Modifier>()
+        modifiers.accessModifier()?.let { modifierList.add(it) }
+        return modifierList.toKotlin()
+    }
+
 }

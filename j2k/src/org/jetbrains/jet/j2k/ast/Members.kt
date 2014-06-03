@@ -25,7 +25,6 @@ class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(e
 }
 
 abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
-    fun isAbstract(): Boolean = modifiers.contains(Modifier.ABSTRACT)
     fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
     fun commentsToKotlin(): String = comments.toKotlin()
 }
