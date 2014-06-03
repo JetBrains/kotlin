@@ -155,6 +155,9 @@
     <projectService serviceInterface="org.jetbrains.jet.asJava.KotlinLightClassForPackage$FileStubCache"
                     serviceImplementation="org.jetbrains.jet.asJava.KotlinLightClassForPackage$FileStubCache"/>
 
+    <projectService serviceInterface="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"
+                    serviceImplementation="org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache"/>
+
     <errorHandler implementation="org.jetbrains.jet.plugin.reporter.KotlinReportSubmitter"/>
 
     <internalFileTemplate name="Kotlin File"/>

@@ -612,7 +612,8 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {
-            model("debugger/tinyApp/src/evaluate")
+            model("debugger/tinyApp/src/evaluate/singleBreakpoint", testMethod = "doSingleBreakpointTest")
+            model("debugger/tinyApp/src/evaluate/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
         }
 
         testClass(javaClass<AbstractStubBuilderTest>()) {

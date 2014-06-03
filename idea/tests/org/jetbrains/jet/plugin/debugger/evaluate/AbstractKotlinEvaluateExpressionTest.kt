@@ -37,12 +37,9 @@ import java.util.Collections
 import com.intellij.debugger.engine.evaluation.EvaluateException
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestCase() {
-    fun doTest(path: String) {
+    fun doSingleBreakpointTest(path: String) {
         val file = File(path)
-        val fileContent = FileUtil.loadFile(file, true)
-        val expressions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, "// EXPRESSION: ")
-        val expectedExpressionResults = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, "// RESULT: ")
-        assert(expressions.size == expectedExpressionResults.size, "Sizes of test directives are different")
+        val expressions = loadTestDirectivesPairs(file, "// EXPRESSION: ", "// RESULT: ")
 
         val blocks = findFilesWithBlocks(file).map { FileUtil.loadFile(it, true) }
         val expectedBlockResults = blocks.map { InTextDirectivesUtils.findLinesWithPrefixesRemoved(it, "// RESULT: ").makeString("\n") }
@@ -51,32 +48,66 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestC
 
         onBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
-            for ((i, expression) in expressions.withIndices()) {
-                try {
-                    evaluate(expression, CodeFragmentKind.EXPRESSION, expectedExpressionResults[i])
-                }
-                catch (e: Throwable) {
-                    exceptions.put(expression, e)
+            for ((expression, expected) in expressions) {
+                mayThrow(exceptions, expression) {
+                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
                 }
             }
 
             for ((i, block) in blocks.withIndices()) {
-                try {
+                mayThrow(exceptions, block) {
                     evaluate(block, CodeFragmentKind.CODE_BLOCK, expectedBlockResults[i])
-                }
-                catch (e: Throwable) {
-                    exceptions.put(block, e)
                 }
             }
 
-            if (!exceptions.empty) {
-                for (exc in exceptions.values()) {
-                    exc.printStackTrace()
-                }
-                throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
-            }
+            checkExceptions(exceptions)
         }
         finish()
+    }
+
+    fun doMultipleBreakpointsTest(path: String) {
+        val expressions = loadTestDirectivesPairs(File(path), "// EXPRESSION: ", "// RESULT: ")
+
+        createDebugProcess(path)
+
+        val exceptions = linkedMapOf<String, Throwable>()
+        for ((expression, expected) in expressions) {
+            mayThrow(exceptions, expression) {
+                onBreakpoint {
+                    evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
+                }
+            }
+        }
+
+        checkExceptions(exceptions)
+
+        finish()
+    }
+
+    private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
+        if (!exceptions.empty) {
+            for (exc in exceptions.values()) {
+                exc.printStackTrace()
+            }
+            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.makeString("\n"))
+        }
+    }
+
+    private fun mayThrow(map: MutableMap<String, Throwable>, expression: String, f: () -> Unit) {
+        try {
+            f()
+        }
+        catch (e: Throwable) {
+            map.put(expression, e)
+        }
+    }
+
+    private fun loadTestDirectivesPairs(file: File, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
+        val fileContent = FileUtil.loadFile(file, true)
+        val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
+        val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
+        assert(directives.size == expected.size, "Sizes of test directives are different")
+        return directives.zip(expected)
     }
 
     private fun findFilesWithBlocks(mainFile: File): List<File> {

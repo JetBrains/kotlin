@@ -49,10 +49,7 @@ import org.jetbrains.jet.codegen.ClassFileFactory
 import org.jetbrains.jet.OutputFileCollection
 import org.jetbrains.jet.plugin.caches.resolve.getAnalysisResults
 import org.jetbrains.jet.lang.psi.JetCodeFragment
-import org.jetbrains.jet.lang.psi.JetImportList
 import org.jetbrains.jet.lang.psi.codeFragmentUtil.skipVisibilityCheck
-import org.jetbrains.jet.lang.psi.JetExpression
-import org.jetbrains.jet.plugin.refactoring.extractFunction.AnalysisResult.Status
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jet.codegen.CompilationErrorHandler
 import org.jetbrains.jet.lang.diagnostics.Severity
@@ -60,6 +57,10 @@ import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.ObjectReference
 import com.intellij.debugger.engine.SuspendContext
+import org.jetbrains.jet.plugin.debugger.evaluate.KotlinEvaluateExpressionCache.*
+import org.jetbrains.jet.lang.resolve.BindingContext
+import com.sun.jdi.StackFrame
+import com.sun.jdi.VirtualMachine
 
 object KotlinEvaluationBuilder: EvaluatorBuilder {
     override fun build(codeFragment: PsiElement, position: SourcePosition?): ExpressionEvaluator {
@@ -86,9 +87,24 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                       val sourcePosition: SourcePosition
 ) : Evaluator {
     override fun evaluate(context: EvaluationContextImpl): Any? {
+        var isCompiledDataFromCache = true
         try {
-            val compiledData = extractAndCompile(codeFragment, sourcePosition)
-            return runEval4j(context, compiledData)
+            val compiledData = KotlinEvaluateExpressionCache.getOrCreateCompiledData(codeFragment, sourcePosition, context) {
+                fragment, position ->
+                isCompiledDataFromCache = false
+                extractAndCompile(fragment, position)
+            }
+            val args = context.getArgumentsByNames(compiledData.parameters.getParameterNames())
+            val result = runEval4j(context, compiledData, args)
+
+            val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
+
+            // If bytecode was taken from cache and exception was thrown - recompile bytecode and run eval4j again
+            if (result is ExceptionThrown && isCompiledDataFromCache) {
+                return runEval4j(context, extractAndCompile(codeFragment, sourcePosition), args).toJdiValue(virtualMachine)
+            }
+
+            return result.toJdiValue(virtualMachine)
         }
         catch(e: EvaluateException) {
             throw e
@@ -121,77 +137,79 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             if (funName == null) {
                 throw IllegalStateException("Extracted function should have a name: ${extractedFunction.getText()}")
             }
-            return CompiledDataDescriptor(outputFiles.first().asByteArray(), funName, extractedFunction.getParameterNamesForDebugger())
+            return CompiledDataDescriptor(outputFiles.first().asByteArray(), sourcePosition, funName, extractedFunction.getParametersForDebugger())
         }
 
-        private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): Any? {
+        private fun runEval4j(
+                context: EvaluationContextImpl,
+                compiledData: CompiledDataDescriptor,
+                args: List<Value>
+        ): InterpreterResult {
             val virtualMachine = context.getDebugProcess().getVirtualMachineProxy().getVirtualMachine()
 
-            var resultValue: Value? = null
+            var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     if (name == compiledData.funName) {
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
-                                val value = interpreterLoop(
+                                resultValue = interpreterLoop(
                                         this,
-                                        makeInitialFrame(this, context.getArgumentsByNames(compiledData.parameterNames)),
+                                        makeInitialFrame(this, args),
                                         JDIEval(virtualMachine,
                                                 context.getClassLoader()!!,
-                                                context.getSuspendContext().getThread()?.getThreadReference()!!, context.getSuspendContext().getInvokePolicy())
+                                                context.getSuspendContext().getThread()?.getThreadReference()!!,
+                                                context.getSuspendContext().getInvokePolicy())
                                 )
-
-                                resultValue = when (value) {
-                                    is ValueReturned -> value.result
-                                    is ExceptionThrown -> exception(value.exception.toString())
-                                    is AbnormalTermination -> exception(value.message)
-                                    else -> throw IllegalStateException("Unknown result value produced by eval4j")
-                                }
                             }
                         }
                     }
+
                     return super.visitMethod(access, name, desc, signature, exceptions)
                 }
             }, 0)
 
-            if (resultValue == null) {
-                throw IllegalStateException("resultValue is null: cannot find method ${compiledData.funName}")
-            }
+            return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method ${compiledData.funName}")
+        }
 
-            return resultValue!!.asJdiValue(virtualMachine, resultValue!!.asmType)
+        private fun InterpreterResult.toJdiValue(vm: VirtualMachine): com.sun.jdi.Value? {
+            val jdiValue = when (this) {
+                is ValueReturned -> result
+                is ExceptionThrown -> exception(exception.toString())
+                is AbnormalTermination -> exception(message)
+                else -> throw IllegalStateException("Unknown result value produced by eval4j")
+            }
+            return jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
         private fun SuspendContext.getInvokePolicy(): Int {
             return if (getSuspendPolicy() == EventRequest.SUSPEND_EVENT_THREAD) ObjectReference.INVOKE_SINGLE_THREADED else 0
         }
 
-        private fun JetNamedFunction.getParameterNamesForDebugger(): List<String> {
-            val result = arrayListOf<String>()
-            if (getReceiverTypeRef() != null) {
-                result.add("this")
-            }
-            for (param in getValueParameters()) {
-                result.add(param.getName()!!)
-            }
-            return result
+        private fun JetNamedFunction.getParametersForDebugger(): ParametersDescriptor {
+            return ApplicationManager.getApplication()?.runReadAction(Computable {
+                val parameters = ParametersDescriptor()
+                val bindingContext = getAnalysisResults().getBindingContext()
+                val descriptor = bindingContext[BindingContext.FUNCTION, this]
+                if (descriptor != null) {
+                    val receiver = descriptor.getReceiverParameter()
+                    if (receiver != null) {
+                        parameters.add("this", receiver.getType())
+                    }
+
+                    descriptor.getValueParameters().forEach {
+                        param ->
+                        parameters.add(param.getName().asString(), param.getType())
+                    }
+                }
+                parameters
+            })!!
         }
 
         private fun EvaluationContextImpl.getArgumentsByNames(parameterNames: List<String>): List<Value> {
             val frames = getFrameProxy()?.getStackFrame()
             if (frames != null) {
-                fun getValue(name: String): Value {
-                    return try {
-                        when (name) {
-                            "this" -> frames.thisObject().asValue()
-                            else -> frames.getValue(frames.visibleVariableByName(name)).asValue()
-                        }
-                    }
-                    catch(e: Exception) {
-                        exception("Cannot get parameter value from local variables table: parameterName = ${name}. Note that captured parameters are unsupported yet.")
-                    }
-                }
-
-                return parameterNames.map { getValue(it) }
+                return parameterNames.map { frames.findLocalVariable(it)!! }
             }
             return Collections.emptyList()
         }
@@ -283,6 +301,22 @@ fun checkForSyntacticErrors(file: JetFile) {
     }
 }
 
-data class CompiledDataDescriptor(val bytecodes: ByteArray, val funName: String, val parameterNames: List<String>)
+fun StackFrame.findLocalVariable(name: String, failIfNotFound: Boolean = true): Value? {
+    return try {
+        when (name) {
+            "this" -> thisObject().asValue()
+            else -> getValue(visibleVariableByName(name)).asValue()
+        }
+    }
+    catch(e: Exception) {
+        if (failIfNotFound) {
+            throw EvaluateExceptionUtil.createEvaluateException(
+                    "Cannot find local variable: name = ${name}. Note that captured variables are unsupported yet.")
+        }
+        else {
+            return null
+        }
+    }
+}
 
 
