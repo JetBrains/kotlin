@@ -109,9 +109,7 @@ open class Class(
     private fun classObjectToKotlin(): String {
         val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
         val staticMembers = classMembers.staticMembers
-        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) {
-            return ""
-        }
+        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) return ""
         return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
     }
 }
