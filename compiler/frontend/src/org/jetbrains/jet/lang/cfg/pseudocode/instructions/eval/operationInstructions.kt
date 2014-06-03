@@ -52,6 +52,11 @@ public abstract class OperationInstruction protected(
     }
 }
 
+trait StrictlyValuedOperationInstruction: OperationInstruction {
+    override val outputValue: PseudoValue
+        get() = resultValue!!
+}
+
 public class CallInstruction private(
         element: JetElement,
         lexicalScope: LexicalScope,
@@ -95,16 +100,13 @@ public class CallInstruction private(
 //      denote value transformation which can't be expressed by other instructions (such as call or read)
 //      pass more than one value to instruction which formally requires only one (e.g. jump)
 // "Synthetic" means that the instruction does not correspond to some operation explicitly expressed by PSI element
-//      Examples: merging branches of 'if', 'when' and 'try' expressions, providing initial values for parameters, etc.
+//      Examples: providing initial values for parameters, missing right-hand side in assignments
 public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
         val synthetic: Boolean,
         inputValues: List<PseudoValue>
-) : OperationInstruction(element, lexicalScope, inputValues) {
-    override val outputValue: PseudoValue
-        get() = resultValue!!
-
+) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMagic(this)
     }
@@ -127,5 +129,34 @@ public class MagicInstruction(
                 inputValues: List<PseudoValue>,
                 factory: PseudoValueFactory
         ): MagicInstruction = MagicInstruction(element, lexicalScope, synthetic, inputValues).setResult(factory, valueElement) as MagicInstruction
+    }
+}
+
+// Merges values produced by alternative control-flow paths (such as 'if' branches)
+class MergeInstruction private(
+        element: JetElement,
+        lexicalScope: LexicalScope,
+        inputValues: List<PseudoValue>
+): OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
+    override fun accept(visitor: InstructionVisitor) {
+        visitor.visitMerge(this)
+    }
+
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R {
+        return visitor.visitMerge(this)
+    }
+
+    override fun createCopy() =
+            MergeInstruction(element, lexicalScope, inputValues).setResult(resultValue)
+
+    override fun toString() = renderInstruction("merge", render(element))
+
+    class object {
+        fun create(
+                element: JetElement,
+                lexicalScope: LexicalScope,
+                inputValues: List<PseudoValue>,
+                factory: PseudoValueFactory
+        ): MergeInstruction = MergeInstruction(element, lexicalScope, inputValues).setResult(factory) as MergeInstruction
     }
 }

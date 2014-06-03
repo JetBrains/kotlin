@@ -101,6 +101,10 @@ public open class InstructionVisitor() {
         visitOperation(instruction)
     }
 
+    public open fun visitMerge(instruction: MergeInstruction) {
+        visitOperation(instruction)
+    }
+
     public open fun visitCompilationErrorInstruction(instruction: CompilationErrorInstruction) {
         visitInstructionWithNext(instruction)
     }

@@ -203,7 +203,7 @@ public class JetControlFlowProcessor {
                     builder.bindValue(values.get(0), to);
                     break;
                 default:
-                    builder.magic(to, to, values, true);
+                    builder.merge(to, values);
                     break;
             }
         }

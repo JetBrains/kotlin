@@ -110,7 +110,7 @@ L6 [skipFinallyToErrorBlock]:
   3 mark({ return 1 })                                                                                                                                        PREV:[jmp(L6 [skipFinallyToErrorBlock])]
     r(1) -> <v5>
     ret(*|<v5>) L1                                                                                                                                            NEXT:[<END>]
-- 2 magic(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 }|<v0>, <v2>, <v4>) -> <v6>    PREV:[]
+- 2 merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { return 1 }|<v0>, <v2>, <v4>) -> <v6>    PREV:[]
 L1:
   1 <END>                                                                                                                                                     NEXT:[<SINK>]                                                                                                                              PREV:[ret(*|<v5>) L1, ret(*|<v5>) L1]
 error:
@@ -195,9 +195,9 @@ L10 [skipFinallyToErrorBlock]:
     call(cond, cond) -> <v6>
     jf(copy L12|<v6>)                                                                                                                                                                 NEXT:[jmp(L2 [loop entry point]), ret L1]
     ret L1                                                                                                                                                                            NEXT:[<END>]
--   jmp(copy L13)                                                                                                                                                                     NEXT:[magic(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }|<v1>, <v3>, <v5>) -> <v7>]    PREV:[]
+-   jmp(copy L13)                                                                                                                                                                     NEXT:[merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }|<v1>, <v3>, <v5>) -> <v7>]    PREV:[]
     jmp(L2 [loop entry point])                                                                                                                                                        NEXT:[mark(cond())]                                                                                                                                                                      PREV:[jf(copy L12|<v6>)]
-- 3 magic(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }|<v1>, <v3>, <v5>) -> <v7>    PREV:[]
+- 3 merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue }|<v1>, <v3>, <v5>) -> <v7>    PREV:[]
 - 2 jmp(L2 [loop entry point])                                                                                                                                                        NEXT:[mark(cond())]                                                                                                                                                                      PREV:[]
 L3 [loop exit point]:
     read (Unit)                                                                                                                                                                       PREV:[jf(L3 [loop exit point]|<v0>)]
@@ -276,7 +276,7 @@ L6 [skipFinallyToErrorBlock]:
     jf(copy L9 [loop exit point]|<v5>)                                                                                                                               NEXT:[read (Unit), jmp(copy L8 [loop entry point])]
     jmp(copy L8 [loop entry point])                                                                                                                                  NEXT:[mark(cond())]
     read (Unit)                                                                                                                                                      PREV:[jf(copy L9 [loop exit point]|<v5>)]
-  2 magic(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }|<v0>, <v2>, <v4>) -> <v6>
+  2 merge(try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { while (cond()); }|<v0>, <v2>, <v4>) -> <v6>
 L1:
   1 <END>                                                                                                                                                            NEXT:[<SINK>]
 error:

@@ -439,6 +439,14 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
 
         @NotNull
         @Override
+        public PseudoValue merge(@NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues) {
+            MergeInstruction instruction = MergeInstruction.object$.create(expression, getCurrentScope(), inputValues, valueFactory);
+            add(instruction);
+            return instruction.getOutputValue();
+        }
+
+        @NotNull
+        @Override
         public PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
             return read(expression, null);
         }

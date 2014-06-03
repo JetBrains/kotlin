@@ -256,6 +256,7 @@ public class JetFlowInformationProvider {
         for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
             if (!(deadInstruction instanceof JetElementInstruction)
                     || deadInstruction instanceof LoadUnitValueInstruction
+                    || deadInstruction instanceof MergeInstruction
                     || (deadInstruction instanceof MagicInstruction && ((MagicInstruction) deadInstruction).getSynthetic())) continue;
 
             JetElement element = ((JetElementInstruction) deadInstruction).getElement();

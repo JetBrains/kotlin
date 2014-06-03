@@ -100,6 +100,10 @@ public abstract class InstructionVisitorWithResult<R>() {
         return visitOperation(instruction)
     }
 
+    public open fun visitMerge(instruction: MergeInstruction): R {
+        return visitOperation(instruction)
+    }
+
     public open fun visitCompilationErrorInstruction(instruction: CompilationErrorInstruction): R {
         return visitInstructionWithNext(instruction)
     }

@@ -78,6 +78,14 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
+    public PseudoValue merge(
+            @NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues
+    ) {
+        return getDelegateBuilder().merge(expression, inputValues);
+    }
+
+    @NotNull
+    @Override
     public PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
         return getDelegateBuilder().readThis(expression, parameterDescriptor);
     }

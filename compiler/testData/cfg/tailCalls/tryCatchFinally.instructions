@@ -40,7 +40,7 @@ L5 [skipFinallyToErrorBlock]:
   3 mark({ test() })                                                                                  PREV:[jmp(L5 [skipFinallyToErrorBlock])]
     mark(test())
     call(test, test) -> <v3>
-  2 magic(try { test() } catch (any : Exception) { test() } finally { test() }|<v0>, <v2>) -> <v4>
+  2 merge(try { test() } catch (any : Exception) { test() } finally { test() }|<v0>, <v2>) -> <v4>
 L1:
   1 <END>                                                                                             NEXT:[<SINK>]
 error:

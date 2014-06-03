@@ -119,6 +119,12 @@ public interface JetControlFlowBuilder {
     );
 
     @NotNull
+    PseudoValue merge(
+            @NotNull JetExpression expression,
+            @NotNull List<PseudoValue> inputValues
+    );
+
+    @NotNull
     PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
     @NotNull
     PseudoValue readVariable(

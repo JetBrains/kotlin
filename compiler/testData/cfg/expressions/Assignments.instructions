@@ -46,11 +46,11 @@ L0:
     r(true) -> <v5>
     jf(L2|<v5>)                                                                                                                             NEXT:[r(2) -> <v7>, r(1) -> <v6>]
     r(1) -> <v6>
-    jmp(L3)                                                                                                                                 NEXT:[magic(if (true) 1 else 2|<v6>, <v7>) -> <v8>]
+    jmp(L3)                                                                                                                                 NEXT:[merge(if (true) 1 else 2|<v6>, <v7>) -> <v8>]
 L2:
     r(2) -> <v7>                                                                                                                            PREV:[jf(L2|<v5>)]
 L3:
-    magic(if (true) 1 else 2|<v6>, <v7>) -> <v8>                                                                                            PREV:[jmp(L3), r(2) -> <v7>]
+    merge(if (true) 1 else 2|<v6>, <v7>) -> <v8>                                                                                            PREV:[jmp(L3), r(2) -> <v7>]
     w(x|<v8>)
     v(val y = true && false)
     r(true) -> <v9>
