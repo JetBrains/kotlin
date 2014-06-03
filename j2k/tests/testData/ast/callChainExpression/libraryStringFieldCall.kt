@@ -1,9 +1,9 @@
-open class Library() {
-    public val myString: String? = null
+class Library() {
+    public val myString: String = 0
 }
 
-open class User() {
-    open fun main() {
-        Library.myString?.isEmpty()
+class User() {
+    fun main() {
+        Library.myString.isEmpty()
     }
 }

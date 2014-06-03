@@ -1,10 +1,10 @@
-open class `$$$$$`()
+class `$$$$$`()
 
-open class `$`()
+class `$`()
 
-open class `$$`(val `$$$`: `$$$$$`?) : `$`() {
+class `$$`(val `$$$`: `$$$$$`) : `$`() {
 
-    public open fun `$$$$$$`(): `$$$$$`? {
+    public fun `$$$$$$`(): `$$$$$` {
         return `$$$`
     }
 }

@@ -1,17 +1,17 @@
-open class Library() {
+class Library() {
     class object {
-        open fun call() {
+        fun call() {
         }
 
-        open fun getString(): String? {
+        fun getString(): String {
             return ""
         }
     }
 }
 
-open class User() {
-    open fun main() {
+class User() {
+    fun main() {
         Library.call()
-        Library.getString()?.isEmpty()
+        Library.getString().isEmpty()
     }
 }

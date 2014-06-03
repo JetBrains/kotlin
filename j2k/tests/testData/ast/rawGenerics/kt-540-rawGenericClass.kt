@@ -1,15 +1,15 @@
 package demo
 
-open class Collection<E>(e: E?) {
+class Collection<E>(e: E) {
     {
-        System.out?.println(e)
+        System.out.println(e)
     }
 }
 
-open class Test() {
-    open fun main() {
-        var raw1: Collection<*>? = Collection(1)
-        var raw2: Collection<*>? = Collection<Int?>(1)
-        var raw3: Collection<*>? = Collection<String?>("1")
+class Test() {
+    fun main() {
+        val raw1 = Collection(1)
+        val raw2 = Collection<Int>(1)
+        val raw3 = Collection<String>("1")
     }
 }

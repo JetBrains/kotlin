@@ -1,1 +1,1 @@
-var a: ByteArray? = byteArray(1, 2, 3)
+val a = byteArray(1, 2, 3)

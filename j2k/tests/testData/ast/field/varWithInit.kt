@@ -1,3 +1,3 @@
-open class C() {
-    var f: Foo? = Foo(1, 2)
+class C() {
+    var f: Foo = Foo(1, 2)
 }

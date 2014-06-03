@@ -1,4 +1,6 @@
 //file
+// !forceNotNullTypes: false
+// !specifyLocalVariableTypeByDefault: true
 package test;
 
 import org.jetbrains.annotations.NotNull;

@@ -1,1 +1,1 @@
-val s: String?
+val s: String

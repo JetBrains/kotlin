@@ -1,11 +1,11 @@
-open class Base() {
-    open fun foo() {
+class Base() {
+    fun foo() {
     }
 }
 
-open class A() : Base() {
-    open class C() {
-        open fun test() {
+class A() : Base() {
+    class C() {
+        fun test() {
             this@A.foo()
         }
     }

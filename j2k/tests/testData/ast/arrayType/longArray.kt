@@ -1,1 +1,1 @@
-var a: LongArray? = longArray(1, 2, 3)
+val a = longArray(1, 2, 3)

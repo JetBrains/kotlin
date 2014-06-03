@@ -1,19 +1,19 @@
-open class Library() {
-    open fun call() {
+class Library() {
+    fun call() {
     }
 
-    open fun getString(): String? {
+    fun getString(): String {
         return ""
     }
 }
 
-open class User() {
-    open fun main() {
-        var lib: Library? = Library()
-        lib?.call()
-        lib?.getString()?.isEmpty()
+class User() {
+    fun main() {
+        val lib = Library()
+        lib.call()
+        lib.getString().isEmpty()
 
         Library().call()
-        Library().getString()?.isEmpty()
+        Library().getString().isEmpty()
     }
 }

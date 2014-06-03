@@ -1,3 +1,0 @@
-fun getString(): String {
-    return ""
-}

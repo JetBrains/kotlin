@@ -1,5 +1,5 @@
-open class C(private val field: Int) {
+class C(private val field: Int) {
     {
-        System.out?.println(field)
+        System.out.println(field)
     }
 }

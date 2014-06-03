@@ -5,14 +5,14 @@ import java.io.File
 /**
  * User: ignatov
  */
-public open class Test() {
+public class Test() {
     class object {
-        public open fun isDir(parent: File?): Boolean {
-            if (parent == null || !parent?.exists()!!) {
+        public fun isDir(parent: File): Boolean {
+            if (parent == null || !parent.exists()) {
                 return false
             }
-            var result: Boolean = true
-            if (parent?.isDirectory()!!) {
+            val result = true
+            if (parent.isDirectory()) {
                 return true
             } else
                 return false

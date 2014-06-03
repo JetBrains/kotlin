@@ -1,11 +1,11 @@
 package switch_demo
 
-public open class SwitchDemo() {
+public class SwitchDemo() {
     class object {
-        public open fun main(args: Array<String?>?) {
+        public fun main(args: Array<String>) {
 
-            var month: Int = 8
-            var monthString: String?
+            val month = 8
+            val monthString: String
             when (month) {
                 1 -> {
                     monthString = "January"
@@ -47,7 +47,7 @@ public open class SwitchDemo() {
                     monthString = "Invalid month"
                 }
             }
-            System.out?.println(monthString)
+            System.out.println(monthString)
         }
     }
 }

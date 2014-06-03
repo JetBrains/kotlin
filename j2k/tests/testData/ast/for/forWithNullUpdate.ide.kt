@@ -1,6 +1,0 @@
-{
-    init()
-    while (condition()) {
-        body()
-    }
-}

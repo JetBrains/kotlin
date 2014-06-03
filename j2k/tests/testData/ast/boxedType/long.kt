@@ -1,1 +1,1 @@
-var i: Long? = 10
+val i = 10

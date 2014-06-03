@@ -1,1 +1,1 @@
-var d2: Array<IntArray?>? = arrayOfNulls<IntArray?>(5)
+val d2 = arrayOfNulls<IntArray>(5)

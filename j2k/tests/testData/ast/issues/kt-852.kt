@@ -1,14 +1,14 @@
 package demo
 
-open class Test() {
-    open fun test(): String? {
-        var s1: String? = ""
-        var s2: String? = ""
-        var s3: String? = ""
-        if (s1?.isEmpty()!! && s2?.isEmpty()!!)
+class Test() {
+    fun test(): String {
+        val s1 = ""
+        val s2 = ""
+        val s3 = ""
+        if (s1.isEmpty() && s2.isEmpty())
             return "OK"
 
-        if (s1?.isEmpty()!! && s2?.isEmpty()!! && s3?.isEmpty()!!)
+        if (s1.isEmpty() && s2.isEmpty() && s3.isEmpty())
             return "OOOK"
 
         return ""

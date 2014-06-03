@@ -1,8 +1,8 @@
 {
-    var i: Int = 0
+    val i = 0
     while (i < 0) {
         {
-            var i: Int = 1
+            val i = 1
             i++
         }
         {

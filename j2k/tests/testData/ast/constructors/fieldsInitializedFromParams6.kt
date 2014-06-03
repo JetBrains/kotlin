@@ -1,5 +1,5 @@
-open class C(x: String?) {
-    public var x: Any? = null
+class C(x: String) {
+    public var x: Any = 0
 
     {
         this.x = x

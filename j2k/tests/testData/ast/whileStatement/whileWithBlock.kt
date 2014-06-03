@@ -1,4 +1,4 @@
 while (a > b) {
-    var i: Int = 1
+    val i = 1
     i = i + 1
 }

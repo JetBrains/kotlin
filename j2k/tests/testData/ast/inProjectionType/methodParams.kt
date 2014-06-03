@@ -1,2 +1,2 @@
-fun popAll(dst: Collection<in E?>?) {
+fun popAll(dst: Collection<in E>) {
 }

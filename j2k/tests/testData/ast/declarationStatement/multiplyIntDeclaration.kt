@@ -1,3 +1,3 @@
-var k: Int
-var l: Int
-var m: Int
+val k: Int
+val l: Int
+val m: Int

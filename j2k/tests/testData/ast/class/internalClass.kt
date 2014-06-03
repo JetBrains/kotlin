@@ -1,1 +1,1 @@
-open class Test()
+class Test()

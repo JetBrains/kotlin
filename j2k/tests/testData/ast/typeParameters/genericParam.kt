@@ -1,1 +1,1 @@
-var l: List<T?>?
+val l: List<T>

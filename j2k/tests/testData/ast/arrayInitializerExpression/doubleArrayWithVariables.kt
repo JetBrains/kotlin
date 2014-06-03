@@ -1,4 +1,4 @@
-var a: Double = 0
-var b: Double = 0
-var c: Double = 0
-var ds: DoubleArray? = doubleArray((a).toDouble(), (b).toDouble(), (c).toDouble())
+val a = 0
+val b = 0
+val c = 0
+val ds = doubleArray((a).toDouble(), (b).toDouble(), (c).toDouble())

@@ -1,1 +1,1 @@
-var i: Boolean? = 10
+val i = 10

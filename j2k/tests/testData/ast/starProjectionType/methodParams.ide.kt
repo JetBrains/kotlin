@@ -1,2 +1,0 @@
-fun wtf(w: Collection<*>) {
-}

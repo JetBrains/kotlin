@@ -1,14 +1,14 @@
 package demo
 
-open class Test() {
-    open fun test() {
-        var name: String? = "$$$$"
-        name = name?.replaceAll("\\$[0-9]+", "\\$")
+class Test() {
+    fun test() {
+        val name = "$$$$"
+        name = name.replaceAll("\\$[0-9]+", "\\$")
 
-        var c: Char = '$'
-        System.out?.println(c)
+        val c = '$'
+        System.out.println(c)
 
-        var C: Char? = '$'
-        System.out?.println(C)
+        val C = '$'
+        System.out.println(C)
     }
 }

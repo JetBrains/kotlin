@@ -1,11 +1,11 @@
 package demo
 
-open class Test() {
-    open fun putInt(i: Int?) {
+class Test() {
+    fun putInt(i: Int) {
     }
 
-    open fun test() {
-        var i: Int = 10
+    fun test() {
+        val i = 10
         putInt(i)
     }
 }

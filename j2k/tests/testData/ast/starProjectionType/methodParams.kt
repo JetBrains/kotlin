@@ -1,2 +1,2 @@
-fun wtf(w: Collection<*>?) {
+fun wtf(w: Collection<*>) {
 }

@@ -1,6 +1,6 @@
-open class Test() {
-    open fun test() {
-        var c1: Char = 'c'
-        var c2: Char? = 'C'
+class Test() {
+    fun test() {
+        val c1 = 'c'
+        val c2 = 'C'
     }
 }

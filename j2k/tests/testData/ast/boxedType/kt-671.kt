@@ -1,9 +1,9 @@
 package demo
 
-open class Test() {
-    open fun test() {
-        var i: Int? = Integer.valueOf(100)
-        var s: Short = 3
-        var ss: Short? = java.lang.Short.valueOf(s)
+class Test() {
+    fun test() {
+        val i = Integer.valueOf(100)
+        val s = 3
+        val ss = java.lang.Short.valueOf(s)
     }
 }

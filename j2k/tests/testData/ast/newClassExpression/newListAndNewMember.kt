@@ -2,11 +2,11 @@ package org.test
 
 import java.util.LinkedList
 
-open class Member()
+class Member()
 
-open class User() {
-    open fun main() {
-        var members: MutableList<Member?>? = LinkedList<Member?>()
-        members?.add(Member())
+class User() {
+    fun main() {
+        val members = LinkedList<Member>()
+        members.add(Member())
     }
 }

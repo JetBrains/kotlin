@@ -1,9 +1,9 @@
 import java.util.BitSet
 
-open class Foo() {
-    open fun foo(o: BitSet?) {
-        var o2: BitSet? = o
-        var foo: Int = 0
-        foo = o2?.size()!!
+class Foo() {
+    fun foo(o: BitSet) {
+        val o2 = o
+        val foo = 0
+        foo = o2.size()
     }
 }

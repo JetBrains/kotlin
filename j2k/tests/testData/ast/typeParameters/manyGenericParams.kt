@@ -1,1 +1,1 @@
-var l: List<T?, K?, M?>?
+val l: List<T, K, M>

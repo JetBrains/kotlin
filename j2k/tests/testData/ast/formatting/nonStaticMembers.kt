@@ -1,13 +1,13 @@
-open class F() {
+class F() {
 
-    open fun f1() {
+    fun f1() {
     }
 
 
-    open fun f2() {
+    fun f2() {
     }
-    var i: Int? = 0
+    var i: Int = 0
 
-    open fun f3() {
+    fun f3() {
     }
 }

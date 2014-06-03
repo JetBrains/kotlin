@@ -1,23 +1,23 @@
 package demo
 
-open class Test() : java.lang.Iterable<String?> {
-    override fun iterator(): java.util.Iterator<String?>? {
+class Test() : java.lang.Iterable<String> {
+    override fun iterator(): java.util.Iterator<String> {
         return null
     }
 
-    public open fun push(i: java.util.Iterator<String?>?): java.util.Iterator<String?>? {
-        var j: java.util.Iterator<String?>? = i
+    public fun push(i: java.util.Iterator<String>): java.util.Iterator<String> {
+        val j = i
         return j
     }
 }
 
-open class FullTest() : java.lang.Iterable<String?> {
-    override fun iterator(): java.util.Iterator<String?>? {
+class FullTest() : java.lang.Iterable<String> {
+    override fun iterator(): java.util.Iterator<String> {
         return null
     }
 
-    public open fun push(i: java.util.Iterator<String?>?): java.util.Iterator<String?>? {
-        var j: java.util.Iterator<String?>? = i
+    public fun push(i: java.util.Iterator<String>): java.util.Iterator<String> {
+        val j = i
         return j
     }
 }

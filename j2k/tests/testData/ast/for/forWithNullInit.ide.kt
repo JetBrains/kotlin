@@ -1,8 +1,0 @@
-{
-    while (condition()) {
-        body()
-        {
-            update()
-        }
-    }
-}

@@ -9,7 +9,7 @@ This is a block comment
 //one line comment of class
 //another one
 /*another doc*/
-open class C() {
+class C() {
     // This is a class comment
 
     /**
@@ -20,12 +20,12 @@ open class C() {
     /**
      * This is a function doc comment.
      */
-    public open fun foo() {
+    public fun foo() {
         /* This is a function comment */
     }
 
     //simple one line comment for function
-    open fun f1() {
+    fun f1() {
     }
 
     //simple one line comment for field
@@ -33,7 +33,7 @@ open class C() {
 
     //double c style
     //comment before function
-    open fun f2() {
+    fun f2() {
     }
 
     //double c style
@@ -48,7 +48,7 @@ open class C() {
      * different
      */
     //comments
-    open fun f3() {
+    fun f3() {
     }
 
     //combination

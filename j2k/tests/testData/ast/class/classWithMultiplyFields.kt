@@ -1,5 +1,5 @@
 class T() {
-    var a: String? = null
-    var b: String? = null
-    var c: String? = "abc"
+    var a: String = 0
+    var b: String = 0
+    var c: String = "abc"
 }

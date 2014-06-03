@@ -1,6 +1,6 @@
-open class Test() {
-    open fun getInt(): Int {
-        var b: Byte = 10
+class Test() {
+    fun getInt(): Int {
+        val b = 10
         return b.toInt()
     }
 }

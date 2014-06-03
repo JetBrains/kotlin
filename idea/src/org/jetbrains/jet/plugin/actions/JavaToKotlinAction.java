@@ -28,7 +28,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
-import org.jetbrains.jet.j2k.J2kPackage;
+import org.jetbrains.jet.j2k.ConverterSettings;
 
 import java.util.List;
 
@@ -78,7 +78,7 @@ public class JavaToKotlinAction extends AnAction {
 
     @NotNull
     private static Converter prepareConverter(@NotNull Project project, @NotNull List<PsiFile> selectedJavaFiles) {
-        Converter converter = new Converter(project, J2kPackage.getPluginSettings());
+        Converter converter = new Converter(project, ConverterSettings.defaultSettings);
         converter.clearClassIdentifiers();
         for (PsiFile f : selectedJavaFiles) {
             if (f.getFileType() instanceof JavaFileType) {

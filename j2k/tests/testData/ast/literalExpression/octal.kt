@@ -1,6 +1,6 @@
-open class Test() {
-    open fun test() {
-        var i1: Int = 37
-        var i2: Int? = 26
+class Test() {
+    fun test() {
+        val i1 = 37
+        val i2 = 26
     }
 }

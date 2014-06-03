@@ -3,6 +3,6 @@ class T() {
     }
     fun i(): Int {
     }
-    fun s(): String? {
+    fun s(): String {
     }
 }

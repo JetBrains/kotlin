@@ -1,4 +1,4 @@
-open class C(p: Int) {
+class C(p: Int) {
     public var p: Int = 0
 
     {

@@ -1,1 +1,1 @@
-var i: Double? = 10
+val i = 10

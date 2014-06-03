@@ -1,4 +1,4 @@
-open class C(val myArg1: Int) {
+class C(val myArg1: Int) {
     var myArg2: Int = 0
     var myArg3: Int = 0
 
@@ -9,14 +9,14 @@ open class C(val myArg1: Int) {
 
     class object {
 
-        open fun init(arg1: Int, arg2: Int, arg3: Int): C {
+        fun init(arg1: Int, arg2: Int, arg3: Int): C {
             val __ = C(arg1)
             __.myArg2 = arg2
             __.myArg3 = arg3
             return __
         }
 
-        open fun init(arg1: Int, arg2: Int): C {
+        fun init(arg1: Int, arg2: Int): C {
             val __ = C(arg1)
             __.myArg2 = arg2
             __.myArg3 = 0
@@ -25,12 +25,12 @@ open class C(val myArg1: Int) {
     }
 }
 
-public open class User() {
+public class User() {
     class object {
-        public open fun main() {
-            var c1: C? = C.init(100, 100, 100)
-            var c2: C? = C.init(100, 100)
-            var c3: C? = C(100)
+        public fun main() {
+            val c1 = C.init(100, 100, 100)
+            val c2 = C.init(100, 100)
+            val c3 = C(100)
         }
     }
 }

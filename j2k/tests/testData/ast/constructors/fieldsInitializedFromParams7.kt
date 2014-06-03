@@ -1,5 +1,5 @@
-open class C(x: Any?, b: Boolean) {
-    public var x: Any? = null
+class C(x: Any, b: Boolean) {
+    public var x: Any = 0
 
     {
         if (b) {

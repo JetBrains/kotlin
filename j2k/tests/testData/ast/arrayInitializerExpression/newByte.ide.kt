@@ -1,1 +1,0 @@
-val a = byteArray(1, 2, 3)

@@ -23,8 +23,6 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.JavaToKotlinTranslator
 import org.jetbrains.jet.j2k.ConverterSettings
-import org.jetbrains.jet.j2k.PluginSettings
-import org.jetbrains.jet.j2k.TestSettings
 import java.util.regex.Pattern
 import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightIdeaTestCase
@@ -32,29 +30,40 @@ import com.intellij.openapi.projectRoots.Sdk
 import org.jetbrains.jet.plugin.PluginTestCaseBase
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
-import com.intellij.openapi.application.Result
-import java.io.BufferedReader
-import java.io.StringReader
 
-public abstract class AbstractJavaToKotlinConverterPluginTest() : AbstractJavaToKotlinConverterTest("ide.kt", PluginSettings)
-public abstract class AbstractJavaToKotlinConverterBasicTest() : AbstractJavaToKotlinConverterTest("kt", TestSettings)
-
-abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension: String, val settings: ConverterSettings ) : LightIdeaTestCase() {
-
+abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
     public fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
-        val converter = Converter(project, settings)
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)
         val matcher = testHeaderPattern.matcher(fileContents)
         matcher.find()
         val prefix = matcher.group().trim().substring(2)
         val javaCode = matcher.replaceFirst("")
+
+        fun parseBoolean(text: String): Boolean = when (text) {
+            "true" -> true
+            "false" -> false
+            else -> throw IllegalArgumentException("Unknown option value: $text")
+        }
+
+        var settings = ConverterSettings.defaultSettings.copy()
+        val directives = JetTestUtils.parseDirectives(javaCode)
+        for ((name, value) in directives) {
+            when (name) {
+                "forceNotNullTypes" -> settings.forceNotNullTypes = parseBoolean(value)
+                "forceLocalVariableImmutability" -> settings.forceLocalVariableImmutability = parseBoolean(value)
+                "specifyLocalVariableTypeByDefault" -> settings.specifyLocalVariableTypeByDefault = parseBoolean(value)
+                "openByDefault" -> settings.openByDefault = parseBoolean(value)
+                else -> throw IllegalArgumentException("Unknown option: $name")
+            }
+        }
+        val converter = Converter(project, settings)
+
         val rawConverted = when (prefix) {
             "element" -> elementToKotlin(converter, javaCode)
             "expression" -> expressionToKotlin(converter, javaCode)
@@ -72,7 +81,7 @@ abstract class AbstractJavaToKotlinConverterTest(val kotlinFileExtension: String
         }
 
         val actual = reformat(rawConverted, project, reformatInFun)
-        val kotlinPath = javaPath.replace(".java", ".$kotlinFileExtension")
+        val kotlinPath = javaPath.replace(".java", ".kt")
         val expectedFile = File(kotlinPath)
         JetTestUtils.assertEqualsToFile(expectedFile, actual)
     }

@@ -1,14 +1,14 @@
-public open class NonDefault() {
+public class NonDefault() {
     class object {
-        public open fun main(args: Array<String?>?) {
+        public fun main(args: Array<String>) {
 
-            var value: Int = 3
-            var valueString: String? = ""
+            val value = 3
+            val valueString = ""
             when (value) {
                 else -> {
                 }
             }
-            System.out?.println(valueString)
+            System.out.println(valueString)
         }
     }
 }

@@ -1,1 +1,1 @@
-var i: Float? = 10
+val i = 10

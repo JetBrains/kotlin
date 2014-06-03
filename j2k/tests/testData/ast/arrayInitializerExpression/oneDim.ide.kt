@@ -1,1 +1,0 @@
-val a = intArray(1, 2, 3)

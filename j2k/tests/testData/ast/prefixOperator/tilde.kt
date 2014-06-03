@@ -1,2 +1,2 @@
-var i: Int = 10
-var j: Int = (10).inv()
+val i = 10
+val j = (10).inv()

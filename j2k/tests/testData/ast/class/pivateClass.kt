@@ -1,1 +1,1 @@
-private open class Test()
+private class Test()

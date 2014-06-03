@@ -1,11 +1,11 @@
-open class F() {
+class F() {
     class object {
 
         //c1
 
         /*c2*/
 
-        open fun f1() {
+        fun f1() {
         }
 
 
@@ -16,11 +16,11 @@ open class F() {
 
         //c4
 
-        open fun f2() {
+        fun f2() {
         }
-        var i: Int? = 0
+        var i: Int = 0
 
-        open fun f3() {
+        fun f3() {
         }
 
         //c5

@@ -1,1 +1,1 @@
-var i: Int? = 10
+val i = 10

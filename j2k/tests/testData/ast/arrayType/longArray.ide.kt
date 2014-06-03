@@ -1,1 +1,0 @@
-val a = longArray(1, 2, 3)

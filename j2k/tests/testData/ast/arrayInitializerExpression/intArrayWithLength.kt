@@ -1,1 +1,1 @@
-var a: IntArray? = IntArray(10)
+val a = IntArray(10)

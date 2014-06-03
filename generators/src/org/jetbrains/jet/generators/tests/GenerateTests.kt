@@ -78,8 +78,6 @@ import org.jetbrains.jet.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.jet.plugin.refactoring.rename.AbstractRenameTest
 import org.jetbrains.jet.generators.tests.generator.SingleClassTestModel
 import org.jetbrains.jet.generators.tests.generator.TestClassModel
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterPluginTest
-import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterBasicTest
 import org.jetbrains.jet.plugin.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.jet.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.jet.completion.handlers.AbstractSmartCompletionHandlerTest
@@ -114,6 +112,7 @@ import org.jetbrains.jet.plugin.stubs.AbstractLazyResolveByStubTest
 import org.jetbrains.jet.plugin.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.jet.cfg.AbstractPseudoValueTest
 import org.jetbrains.jet.plugin.structureView.AbstractKotlinFileStructureTest
+import org.jetbrains.jet.j2k.test.AbstractJavaToKotlinConverterTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -637,11 +636,7 @@ fun main(args: Array<String>) {
     }
 
     testGroup("j2k/tests/test", "j2k/tests/testData") {
-        testClass(javaClass<AbstractJavaToKotlinConverterPluginTest>()) {
-            model("ast", extension = "java")
-        }
-
-        testClass(javaClass<AbstractJavaToKotlinConverterBasicTest>()) {
+        testClass(javaClass<AbstractJavaToKotlinConverterTest>()) {
             model("ast", extension = "java")
         }
     }

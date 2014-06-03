@@ -1,11 +1,11 @@
-open class Library() {
+class Library() {
     class object {
-        val ourOut: java.io.PrintStream? = null
+        val ourOut: java.io.PrintStream = 0
     }
 }
 
-open class User() {
-    open fun main() {
-        Library.ourOut?.print()
+class User() {
+    fun main() {
+        Library.ourOut.print()
     }
 }

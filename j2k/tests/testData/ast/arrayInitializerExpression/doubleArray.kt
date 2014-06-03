@@ -1,1 +1,1 @@
-var a: DoubleArray? = doubleArray(1.0, 2.0, 3.0)
+val a = doubleArray(1.0, 2.0, 3.0)

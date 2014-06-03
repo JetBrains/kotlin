@@ -1,13 +1,13 @@
 package demo
 
-public open class SwitchDemo() {
+public class SwitchDemo() {
     class object {
-        public open fun print(o: Any?) {
-            System.out?.println(o)
+        public fun print(o: Any) {
+            System.out.println(o)
         }
 
-        public open fun test(i: Int) {
-            var monthString: String? = "<empty>"
+        public fun test(i: Int) {
+            val monthString = "<empty>"
             when (i) {
                 1 -> {
                     print(1)
@@ -80,10 +80,10 @@ public open class SwitchDemo() {
                     monthString = "Invalid month"
                 }
             }
-            System.out?.println(monthString)
+            System.out.println(monthString)
         }
 
-        public open fun main(args: Array<String?>?) {
+        public fun main(args: Array<String>) {
             for (i in 1..12) test(i)
         }
     }

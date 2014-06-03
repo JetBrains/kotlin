@@ -1,9 +1,9 @@
 package org.test
 
-open class Library()
+class Library()
 
-open class User() {
-    open fun main() {
-        var lib: Library? = Library()
+class User() {
+    fun main() {
+        val lib = Library()
     }
 }

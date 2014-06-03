@@ -4,7 +4,7 @@ enum class Color {
     RED
     YELLOW
     BLUE
-    override fun toString(): String? {
+    override fun toString(): String {
         return "COLOR"
     }
 }

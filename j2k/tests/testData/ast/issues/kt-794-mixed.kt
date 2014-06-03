@@ -1,11 +1,11 @@
 package demo
 
-open class Test() {
-    open fun getInteger(i: Int?): Int? {
+class Test() {
+    fun getInteger(i: Int): Int {
         return i
     }
 
-    open fun test() {
-        var i: Int = getInteger(10)!!
+    fun test() {
+        val i = getInteger(10)!!
     }
 }

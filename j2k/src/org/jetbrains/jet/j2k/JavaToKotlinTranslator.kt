@@ -77,7 +77,7 @@ public object JavaToKotlinTranslator {
         while (classLoader != null) {
             val loader = classLoader
             if (loader is URLClassLoader) {
-                for (url in loader.getURLs()!!) {
+                for (url in loader.getURLs()) {
                     if ("file" == url.getProtocol() && url.getFile()!!.endsWith("/annotations.jar")) {
                         return File(url.getFile()!!)
                     }
@@ -98,7 +98,7 @@ public object JavaToKotlinTranslator {
     fun generateKotlinCode(javaCode: String): String {
         val file = createFile(javaCode)
         if (file is PsiJavaFile) {
-            val converter = Converter(file.getProject(), TestSettings)
+            val converter = Converter(file.getProject(), ConverterSettings.defaultSettings)
             setClassIdentifiers(converter, file)
             return prettify(converter.convertFile(file).toKotlin())
         }

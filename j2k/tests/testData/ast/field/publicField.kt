@@ -1,3 +1,3 @@
-open class C() {
-    public var f: Foo? = null
+class C() {
+    public var f: Foo = 0
 }
