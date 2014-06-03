@@ -29,7 +29,7 @@ public abstract class OperationInstruction protected(
         element: JetElement,
         lexicalScope: LexicalScope,
         public override val inputValues: List<PseudoValue>
-) : InstructionWithNext(element, lexicalScope) {
+) : InstructionWithNext(element, lexicalScope), InstructionWithValue {
     protected var resultValue: PseudoValue? = null
 
     override val outputValue: PseudoValue?

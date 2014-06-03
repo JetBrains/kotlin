@@ -69,7 +69,6 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
     override val previousInstructions: MutableCollection<Instruction> = LinkedHashSet()
 
     override val inputValues: List<PseudoValue> = Collections.emptyList()
-    override val outputValue: PseudoValue? = null
 
     override fun getCopies(): Collection<Instruction> {
         return original?.let { original ->

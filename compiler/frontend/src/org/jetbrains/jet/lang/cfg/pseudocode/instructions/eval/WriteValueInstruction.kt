@@ -21,7 +21,6 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclaration
 import java.util.Collections
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithReceiver
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import java.util.Arrays
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult

@@ -14,24 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.cfg.pseudocode.instructions
+package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.jet.lang.cfg.pseudocode
-import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.JetElementInstruction
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 
-public trait Instruction {
-    public var owner: Pseudocode
-
-    public val previousInstructions: MutableCollection<Instruction>
-    public val nextInstructions: Collection<Instruction>
-
-    public val lexicalScope: LexicalScope
-
-    public val inputValues: List<PseudoValue>
-
-    public fun getCopies(): Collection<Instruction>
-
-    public fun accept(visitor: InstructionVisitor)
-    public fun <R> accept(visitor: InstructionVisitorWithResult<R>): R
+public trait InstructionWithValue : JetElementInstruction {
+    public val outputValue: PseudoValue?
 }

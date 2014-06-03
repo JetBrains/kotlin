@@ -20,7 +20,6 @@ import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValueFactory
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.InstructionWithReceiver
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
@@ -30,7 +29,7 @@ public class ReadValueInstruction private (
         lexicalScope: LexicalScope,
         receiverValue: PseudoValue?,
         private var _outputValue: PseudoValue?
-) : InstructionWithReceiver(element, lexicalScope, receiverValue) {
+) : InstructionWithReceiver(element, lexicalScope, receiverValue), InstructionWithValue {
     private fun newResultValue(factory: PseudoValueFactory) {
         _outputValue = factory.newValue(element, this)
     }
