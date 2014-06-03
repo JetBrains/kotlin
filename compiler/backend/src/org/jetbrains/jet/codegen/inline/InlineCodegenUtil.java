@@ -214,11 +214,11 @@ public class InlineCodegenUtil {
         return false;
     }
 
-    public static boolean isLambdaConstructorCall(@NotNull String internalName, @NotNull String methodName) {
-        return "<init>".equals(methodName) && isLambdaClass(internalName);
+    public static boolean isAnonymousConstructorCall(@NotNull String internalName, @NotNull String methodName) {
+        return "<init>".equals(methodName) && isAnonymousClass(internalName);
     }
 
-    public static boolean isLambdaClass(String internalName) {
+    public static boolean isAnonymousClass(String internalName) {
         String shortName = getLastNamePart(internalName);
         int index = shortName.lastIndexOf("$");
 

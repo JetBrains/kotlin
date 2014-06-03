@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isInvokeOnLambda;
-import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isLambdaConstructorCall;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isAnonymousConstructorCall;
 
 public class MethodInliner {
 
@@ -129,12 +129,12 @@ public class MethodInliner {
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
                                                                                    new TypeRemapper(currentTypeMapping));
 
-        InlineAdapter inliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize()) {
+        InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.totalSize()) {
 
             private ConstructorInvocation invocation;
             @Override
             public void anew(Type type) {
-                if (isLambdaConstructorCall(type.getInternalName(), "<init>")) {
+                if (isAnonymousConstructorCall(type.getInternalName(), "<init>")) {
                     invocation = iterator.next();
 
                     if (invocation.shouldRegenerate()) {
@@ -179,14 +179,14 @@ public class MethodInliner {
                     }
 
                     int valueParamShift = getNextLocalIndex();//NB: don't inline cause it changes
-                    putStackValuesIntoLocals(info.getParamsWithoutCapturedValOrVar(), valueParamShift, this, desc);
+                    putStackValuesIntoLocals(info.getInvokeParamsWithoutCaptured(), valueParamShift, this, desc);
 
                     Parameters lambdaParameters = info.addAllParameters(nodeRemapper);
 
                     InlinedLambdaRemapper newCapturedRemapper =
                             new InlinedLambdaRemapper(info.getLambdaClassType().getInternalName(), nodeRemapper, lambdaParameters);
 
-                    setInlining(true);
+                    setLambdaInlining(true);
                     MethodInliner inliner = new MethodInliner(info.getNode(), lambdaParameters,
                                                               inliningContext.subInlineLambda(info),
                                                               newCapturedRemapper, true /*cause all calls in same module as lambda*/,
@@ -201,9 +201,9 @@ public class MethodInliner {
                             typeMapper.mapSignature(ClosureCodegen.getErasedInvokeFunction(info.getFunctionDescriptor())).getAsmMethod();
                     Method delegate = typeMapper.mapSignature(info.getFunctionDescriptor()).getAsmMethod();
                     StackValue.onStack(delegate.getReturnType()).put(bridge.getReturnType(), this);
-                    setInlining(false);
+                    setLambdaInlining(false);
                 }
-                else if (isLambdaConstructorCall(owner, name)) { //TODO add method
+                else if (isAnonymousConstructorCall(owner, name)) { //TODO add method
                     assert invocation != null : "<init> call not corresponds to new call" + owner + " " + name;
                     if (invocation.shouldRegenerate()) {
                         //put additional captured parameters on stack
@@ -224,7 +224,7 @@ public class MethodInliner {
 
         };
 
-        node.accept(inliner);
+        node.accept(lambdaInliner);
 
         return resultNode;
     }
@@ -344,7 +344,7 @@ public class MethodInliner {
 
                         invokeCalls.add(new InvokeCall(varIndex, lambdaInfo));
                     }
-                    else if (isLambdaConstructorCall(owner, name)) {
+                    else if (isAnonymousConstructorCall(owner, name)) {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
                         int paramStart = frame.getStackSize() - paramLength;
 

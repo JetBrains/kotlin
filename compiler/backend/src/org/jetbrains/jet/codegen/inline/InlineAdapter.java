@@ -62,7 +62,7 @@ public class InlineAdapter extends InstructionAdapter {
         return nextLocalIndex;
     }
 
-    public void setInlining(boolean isInlining) {
+    public void setLambdaInlining(boolean isInlining) {
         this.isInlining = isInlining;
         if (isInlining) {
             nextLocalIndexBeforeInline = nextLocalIndex;

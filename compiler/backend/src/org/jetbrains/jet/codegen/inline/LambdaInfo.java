@@ -128,7 +128,7 @@ public class LambdaInfo implements CapturedParamOwner {
     }
 
     @NotNull
-    public List<Type> getParamsWithoutCapturedValOrVar() {
+    public List<Type> getInvokeParamsWithoutCaptured() {
         Type[] types = typeMapper.mapSignature(functionDescriptor).getAsmMethod().getArgumentTypes();
         return Arrays.asList(types);
     }
