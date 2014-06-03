@@ -16,20 +16,8 @@
 
 package org.jetbrains.jet.j2k
 
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.JavaRecursiveElementVisitor
+import com.intellij.psi.*
 import java.util.LinkedHashSet
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethodCallExpression
-import com.intellij.psi.PsiParameter
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiAssignmentExpression
-import com.intellij.psi.PsiThisExpression
-import com.intellij.psi.PsiStatement
-import com.intellij.psi.PsiExpressionStatement
-import com.intellij.psi.PsiBlockStatement
 import com.intellij.psi.util.PsiUtil
 
 fun PsiMethod.isPrimaryConstructor(): Boolean {
@@ -48,6 +36,7 @@ fun PsiClass.getPrimaryConstructor(): PsiMethod? {
 
         else -> {
             // if there is more than one constructor then choose one invoked by all others
+            //TODO: logic is incorrect - there can be a constructor which does not call any other
             class Visitor() : JavaRecursiveElementVisitor() {
                 //TODO: skip all non-constructor members (optimization)
                 private val invokedConstructors = LinkedHashSet<PsiMethod>()
@@ -89,7 +78,7 @@ fun PsiElement.getContainingConstructor(): PsiMethod? {
 
 fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {
     val ref = getMethodExpression()
-    if (ref.getCanonicalText().equals("super")) {
+    if (ref.getCanonicalText() == "super") {
         val target = ref.resolve()
         return target is PsiMethod && target.isConstructor()
     }

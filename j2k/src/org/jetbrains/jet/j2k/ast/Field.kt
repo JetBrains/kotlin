@@ -48,10 +48,7 @@ open class Field(
         val declaration: String = commentsToKotlin() +
         modifiersToKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin()
         if (initializer.isEmpty) {
-            return declaration + ((if (isVal() && !isStatic() && writingAccesses != 0)
-                ""
-            else
-                " = " + getDefaultInitializer(this)))
+            return declaration + (if (isVal() && !isStatic() && writingAccesses != 0) "" else " = " + getDefaultInitializer(this))
         }
 
         return declaration + " = " + initializer.toKotlin()

@@ -80,11 +80,11 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         val condition = statement.getCondition()
         val body = statement.getBody()
 
-        val initializationVar = initialization?.getFirstChild() as? PsiLocalVariable
-        val onceWritableIterator = initializationVar != null
-                && initializationVar.countWriteAccesses(body) == 0
-                && initializationVar.countWriteAccesses(condition) == 0
-                && initializationVar.countWriteAccesses(update) == 1
+        val loopVar = initialization?.getFirstChild() as? PsiLocalVariable
+        val onceWritableIterator = loopVar != null
+                && loopVar.countWriteAccesses(body) == 0
+                && loopVar.countWriteAccesses(condition) == 0
+                && loopVar.countWriteAccesses(update) == 1
 
         val operationTokenType = (condition as? PsiBinaryExpression)?.getOperationTokenType()
         if (initialization is PsiDeclarationStatement
@@ -94,16 +94,16 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
                 && update.getChildren().size == 1
                 && isPlusPlusExpression(update.getChildren().single())
                 && (operationTokenType == JavaTokenType.LT || operationTokenType == JavaTokenType.LE)
-                && initializationVar != null
-                && initializationVar.getNameIdentifier() != null
+                && loopVar != null
+                && loopVar.getNameIdentifier() != null
                 && onceWritableIterator) {
             val end = converter.convertExpression((condition as PsiBinaryExpression).getROperand())
             val endExpression = if (operationTokenType == JavaTokenType.LT)
                 BinaryExpression(end, Identifier("1"), "-")
             else
                 end
-            result = ForeachWithRangeStatement(Identifier(initializationVar.getName()!!),
-                                                 converter.convertExpression(initializationVar.getInitializer()),
+            result = ForeachWithRangeStatement(Identifier(loopVar.getName()!!),
+                                                 converter.convertExpression(loopVar.getInitializer()),
                                                  endExpression,
                                                  converter.convertStatement(body))
         }
