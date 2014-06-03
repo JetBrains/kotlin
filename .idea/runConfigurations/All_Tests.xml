@@ -21,7 +21,9 @@
     <option name="TEST_SEARCH_SCOPE">
       <value defaultName="moduleWithDependencies" />
     </option>
-    <envs />
+    <envs>
+      <env name="NO_FS_ROOTS_ACCESS_CHECK" value="true" />
+    </envs>
     <patterns />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="53032" />
