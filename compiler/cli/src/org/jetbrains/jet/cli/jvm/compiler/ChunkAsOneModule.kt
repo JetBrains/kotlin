@@ -19,7 +19,11 @@ package org.jetbrains.jet.cli.jvm.compiler
 import kotlin.modules.Module
 
 class ChunkAsOneModule(private val chunk: ModuleChunk) : Module {
-    override fun getModuleName(): String = "chunk" + chunk.getModules().map { it.getModuleName() }.toString()
+    fun getModules(): List<Module> {
+        return chunk.getModules()
+    }
+
+    override fun getModuleName(): String = "chunk" + getModules().map { it.getModuleName() }.toString()
 
     override fun getOutputDirectory(): String {
         throw UnsupportedOperationException("Each module in a chunk has its own output directory")

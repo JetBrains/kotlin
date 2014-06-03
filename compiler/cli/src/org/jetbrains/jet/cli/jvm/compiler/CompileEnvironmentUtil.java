@@ -32,7 +32,6 @@ import org.jetbrains.jet.cli.common.messages.MessageCollector;
 import org.jetbrains.jet.cli.common.messages.MessageRenderer;
 import org.jetbrains.jet.cli.common.modules.ModuleDescription;
 import org.jetbrains.jet.cli.common.modules.ModuleXmlParser;
-import org.jetbrains.jet.cli.common.output.OutputDirector;
 import org.jetbrains.jet.cli.common.output.outputUtils.OutputUtilsPackage;
 import org.jetbrains.jet.cli.jvm.JVMConfigurationKeys;
 import org.jetbrains.jet.codegen.ClassFileFactory;
@@ -249,7 +248,7 @@ public class CompileEnvironmentUtil {
 
     static void writeOutputToDirOrJar(
             @Nullable File jar,
-            @Nullable OutputDirector outputDir,
+            @Nullable File outputDir,
             boolean includeRuntime,
             @Nullable FqName mainClass,
             @NotNull ClassFileFactory outputFiles,

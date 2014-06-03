@@ -21,15 +21,13 @@ import org.jetbrains.jet.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.jet.cli.common.messages.OutputMessageUtil
 import org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.jet.cli.common.messages.MessageCollector
-import org.jetbrains.jet.cli.common.output.OutputDirector
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jet.cli.common.output.SingleDirectoryDirector
 
-public fun OutputFileCollection.writeAll(outputDirector: OutputDirector, report: (sources: List<File>, output: File) -> Unit) {
+public fun OutputFileCollection.writeAll(outputDir: File, report: (sources: List<File>, output: File) -> Unit) {
     for (file in asList()) {
         val sources = file.sourceFiles
-        val output = File(outputDirector.getOutputDirectory(sources), file.relativePath)
+        val output = File(outputDir, file.relativePath)
         report(sources, output)
         FileUtil.writeToFile(output, file.asByteArray())
     }
@@ -38,11 +36,11 @@ public fun OutputFileCollection.writeAll(outputDirector: OutputDirector, report:
 private val REPORT_NOTHING = { (sources: List<File>, output: File) -> }
 
 public fun OutputFileCollection.writeAllTo(outputDir: File) {
-    writeAll(SingleDirectoryDirector(outputDir), REPORT_NOTHING)
+    writeAll(outputDir, REPORT_NOTHING)
 }
 
-public fun OutputFileCollection.writeAll(outputDirector: OutputDirector, messageCollector: MessageCollector) {
-    writeAll(outputDirector) { sources, output ->
+public fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector) {
+    writeAll(outputDir) { sources, output ->
         messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
     }
 }
