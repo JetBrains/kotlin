@@ -347,13 +347,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
             assert superType != null : "No supertype for class: " + myClass.getText();
-            ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-            if (isInterface(superClassDescriptor)) {
-                interfaceSupertypes.add(superType);
+            ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
+            if (classifierDescriptor instanceof ClassDescriptor) {
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) classifierDescriptor;
+                if (isInterface(superClassDescriptor)) {
+                    interfaceSupertypes.add(superType);
 
-                assert superClassDescriptor != null : "should be already checked by isInterface()";
-                if (JvmAbi.K_OBJECT.equalsTo(DescriptorUtils.getFqName(superClassDescriptor))) {
-                    explicitKObject = true;
+                    if (JvmAbi.K_OBJECT.equalsTo(DescriptorUtils.getFqName(superClassDescriptor))) {
+                        explicitKObject = true;
+                    }
                 }
             }
         }
@@ -400,8 +402,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert superType != null :
                         String.format("No type recorded for \n---\n%s\n---\n", JetPsiUtil.getElementTextWithContext(specifier));
 
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-                assert superClassDescriptor != null;
+                ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
+                if (!(classifierDescriptor instanceof ClassDescriptor)) continue;
+
+                ClassDescriptor superClassDescriptor = (ClassDescriptor) classifierDescriptor;
                 if (!isInterface(superClassDescriptor)) {
                     superClassType = superType;
                     superClassAsmType = typeMapper.mapClass(superClassDescriptor);
