@@ -42,7 +42,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
     }
 
     override fun visitArrayType(arrayType: PsiArrayType): Type {
-        return ArrayType(converter.convertType(arrayType.getComponentType()), true, converter)
+        return ArrayType(converter.convertType(arrayType.getComponentType()), Nullability.Default, converter)
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
@@ -53,18 +53,18 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.single() as ClassType).`type`.name == "Any") {
                     starParamList.add(StarProjectionType())
-                    return ClassType(identifier, starParamList, true, converter)
+                    return ClassType(identifier, starParamList, Nullability.Default, converter)
                 }
                 else {
-                    return ClassType(identifier, resolvedClassTypeParams, true, converter)
+                    return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter)
                 }
             }
             else {
-                return ClassType(identifier, resolvedClassTypeParams, true, converter)
+                return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter)
             }
         }
         else {
-            return ClassType(identifier, converter.convertTypes(classType.getParameters()), true, converter)
+            return ClassType(identifier, converter.convertTypes(classType.getParameters()), Nullability.Default, converter)
         }
     }
 
@@ -98,7 +98,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
                     val boundType = if (superTypes.size > 0)
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
                                   converter.convertTypes(superTypes[0].getParameters()),
-                                  true,
+                                  Nullability.Default,
                                   converter)
                     else
                         StarProjectionType()

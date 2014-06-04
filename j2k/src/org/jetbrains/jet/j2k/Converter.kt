@@ -226,55 +226,94 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
-        if (directlyOverridesMethodFromObject(method)) {
-            dispatcher.expressionVisitor = ExpressionVisitorForDirectObjectInheritors(this)
-        }
-        else {
-            dispatcher.expressionVisitor = ExpressionVisitor(this)
-        }
+        methodReturnType = method.getReturnType()
+        val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
 
-        try {
-            methodReturnType = method.getReturnType()
-            val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
+        val modifiers = convertModifiers(method)
 
-            val modifiers = convertModifiers(method)
+        val comments = getComments(method)
 
-            val containingClass = method.getContainingClass()
-            val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
-                    containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())
-
-            if (isOverride(method)) {
-                modifiers.add(Modifier.OVERRIDE)
-            }
-
-            if (settings.openByDefault &&
-                    !modifiers.contains(Modifier.ABSTRACT) &&
-                    !isEffectivelyFinal &&
-                    !modifiers.contains(Modifier.PRIVATE)) {
-                modifiers.add(Modifier.OPEN)
-            }
-
-            val comments = getComments(method)
-
-            if (method.isConstructor()) {
-                if (method.isPrimaryConstructor()) {
-                    return convertPrimaryConstructor(method, modifiers, comments, membersToRemove)
-                }
-                else {
-                    val params = convertParameterList(method.getParameterList())
-                    return SecondaryConstructor(this, comments, modifiers, params, convertBlock(method.getBody()))
-                }
+        if (method.isConstructor()) {
+            if (method.isPrimaryConstructor()) {
+                return convertPrimaryConstructor(method, modifiers, comments, membersToRemove)
             }
             else {
                 val params = convertParameterList(method.getParameterList())
-                val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
-                val block = convertBlock(method.getBody())
-                return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
+                return SecondaryConstructor(this, comments, modifiers, params, convertBlock(method.getBody()))
             }
         }
-        finally {
-            dispatcher.expressionVisitor = ExpressionVisitor(this)
+        else {
+            val isOverride = isOverride(method)
+            if (isOverride) {
+                modifiers.add(Modifier.OVERRIDE)
+            }
+
+            val containingClass = method.getContainingClass()
+
+            if (settings.openByDefault) {
+                val isEffectivelyFinal = method.hasModifierProperty(PsiModifier.FINAL) ||
+                        containingClass != null && (containingClass.hasModifierProperty(PsiModifier.FINAL) || containingClass.isEnum())
+                if (!isEffectivelyFinal && !modifiers.contains(Modifier.ABSTRACT) && !modifiers.contains(Modifier.PRIVATE)) {
+                    modifiers.add(Modifier.OPEN)
+                }
+            }
+
+            var params = convertParameterList(method.getParameterList())
+
+            // if we override equals from Object, change parameter type to nullable
+            if (isOverride && method.getName() == "equals") {
+                val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
+                val overridesMethodFromObject = superSignatures.any {
+                    it.getMethod().getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT
+                }
+                if (overridesMethodFromObject) {
+                    val correctedParameter = Parameter(Identifier("other"),
+                                                       ClassType(Identifier("Any"), listOf(), Nullability.Nullable, this),
+                                                       Parameter.VarValModifier.None,
+                                                       listOf())
+                    params = ParameterList(listOf(correctedParameter))
+                }
+            }
+
+            val typeParameterList = convertTypeParameterList(method.getTypeParameterList())
+            val block = convertBlock(method.getBody())
+            return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
         }
+    }
+
+    /**
+     * Overrides of methods from Object should not be marked as overrides in Kotlin unless the class itself has java ancestors
+     */
+    private fun isOverride(method: PsiMethod): Boolean {
+        val superSignatures = method.getHierarchicalMethodSignature().getSuperSignatures()
+
+        val overridesMethodNotFromObject = superSignatures.any {
+            it.getMethod().getContainingClass()?.getQualifiedName() != JAVA_LANG_OBJECT
+        }
+        if (overridesMethodNotFromObject) return true
+
+        val overridesMethodFromObject = superSignatures.any {
+            it.getMethod().getContainingClass()?.getQualifiedName() == JAVA_LANG_OBJECT
+        }
+        if (overridesMethodFromObject) {
+            when(method.getName()) {
+                "equals", "hashCode", "toString" -> return true // these methods from java.lang.Object exist in kotlin.Any
+
+                else -> {
+                    val containing = method.getContainingClass()
+                    if (containing != null) {
+                        val hasOtherJavaSuperclasses = containing.getSuperTypes().any {
+                            val canonicalText = it.getCanonicalText()
+                            //TODO: correctly check for kotlin class
+                            canonicalText != JAVA_LANG_OBJECT && !getClassIdentifiers().contains(canonicalText)
+                        }
+                        if (hasOtherJavaSuperclasses) return true
+                    }
+                }
+            }
+        }
+
+        return false
     }
 
     private fun convertPrimaryConstructor(constructor: PsiMethod,
@@ -300,7 +339,12 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 }
             }
             dispatcher.expressionVisitor = ExpressionVisitor(this, usageReplacementMap)
-            Block(convertStatements(body.getStatements().filter{ !statementsToRemove.contains(it) }), false)
+            try {
+                Block(convertStatements(body.getStatements().filter{ !statementsToRemove.contains(it) }), false)
+            }
+            finally {
+                dispatcher.expressionVisitor = ExpressionVisitor(this, mapOf())
+            }
         }
         else {
             Block.Empty

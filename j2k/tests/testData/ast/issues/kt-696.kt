@@ -1,16 +1,16 @@
 package test
 
 class Base() {
-    public fun hashCode(): Int {
-        return System.identityHashCode(this)
+    override fun hashCode(): Int {
+        return super.hashCode()
     }
 
-    public fun equals(o: Any): Boolean {
-        return this.identityEquals(o)
+    override fun equals(other: Any?): Boolean {
+        return super.equals(o)
     }
 
-    public fun toString(): String {
-        return getJavaClass<Base>.getName() + '@' + Integer.toHexString(hashCode())
+    override fun toString(): String {
+        return super.toString()
     }
 }
 

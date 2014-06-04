@@ -1,29 +1,29 @@
 //file
-package test;
+class X {
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 
-class Test {
-  @Override
-  public int hashCode() {
-    return super.hashCode();
-  }
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    return super.equals(o);
-  }
+    @Override
+    public String toString() {
+        return super.toString();
+    }
 
-  @Override
-  protected Object clone() throws CloneNotSupportedException {
-    return super.clone();
-  }
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+}
 
-  @Override
-  public String toString() {
-    return super.toString();
-  }
-
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
-  }
+class Y extends Thread {
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
 }

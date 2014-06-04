@@ -1,23 +1,23 @@
-package test
-
-class Test() {
-    public fun hashCode(): Int {
-        return System.identityHashCode(this)
+class X() {
+    override fun hashCode(): Int {
+        return super.hashCode()
     }
 
-    public fun equals(o: Any): Boolean {
-        return this.identityEquals(o)
+    override fun equals(other: Any?): Boolean {
+        return super.equals(o)
+    }
+
+    override fun toString(): String {
+        return super.toString()
     }
 
     protected fun clone(): Any {
         return super.clone()
     }
+}
 
-    public fun toString(): String {
-        return getJavaClass<Test>.getName() + '@' + Integer.toHexString(hashCode())
-    }
-
-    protected fun finalize() {
-        super.finalize()
+class Y() : Thread() {
+    override fun clone(): Any {
+        return super.clone()
     }
 }

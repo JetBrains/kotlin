@@ -41,7 +41,7 @@ open class ExpressionVisitor(protected val converter: Converter,
 
     override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
         val expressionType = converter.convertType(expression.getType())
-        assert(expressionType is ArrayType) { "Array initializer must have array type" }
+        assert(expressionType is ArrayType, "Array initializer must have array type")
         result = ArrayInitializerExpression(expressionType as ArrayType,
                                               converter.convertExpressions(expression.getInitializers()))
     }

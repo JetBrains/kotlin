@@ -60,7 +60,7 @@ class SecondaryConstructor(converter: Converter,
         val typeParameters = ArrayList<TypeParameter>()
         typeParameters.addAll(containingClass.typeParameterList.parameters)
         return Function(converter, Identifier("init"), MemberComments.Empty, modifiers,
-                        ClassType(containingClass.name, typeParameters, false, converter),
+                        ClassType(containingClass.name, typeParameters, Nullability.NotNull, converter),
                         TypeParameterList(typeParameters), parameterList, block, false)
     }
 }

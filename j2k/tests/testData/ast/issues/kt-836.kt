@@ -13,7 +13,7 @@ public class Language(protected var code: String) : Serializable {
 class Base() {
     fun test() {
     }
-    fun toString(): String {
+    override fun toString(): String {
         return "BASE"
     }
 }

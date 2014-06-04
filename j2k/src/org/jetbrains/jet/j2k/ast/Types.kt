@@ -22,8 +22,18 @@ import java.util.ArrayList
 fun Type.isPrimitive(): Boolean = this is PrimitiveType
 fun Type.isUnit(): Boolean = this == Type.Unit
 
-abstract class MayBeNullableType(isNullable: Boolean, val converter: Converter) : Type {
-    override val isNullable: Boolean = !converter.settings.forceNotNullTypes && isNullable
+enum class Nullability {
+    Nullable
+    NotNull
+    Default
+}
+
+abstract class MayBeNullableType(nullability: Nullability, val converter: Converter) : Type {
+    override val isNullable: Boolean = when (nullability) {
+        Nullability.Nullable -> true
+        Nullability.NotNull -> false
+        Nullability.Default -> !converter.settings.forceNotNullTypes
+    }
 }
 
 trait NotNullType : Type {
@@ -36,6 +46,11 @@ trait Type : Element {
 
     open fun toNotNullType(): Type {
         if (isNullable) throw UnsupportedOperationException("toNotNullType must be defined")
+        return this
+    }
+
+    open fun toNullableType(): Type {
+        if (!isNullable) throw UnsupportedOperationException("toNullableType must be defined")
         return this
     }
 
@@ -56,8 +71,8 @@ trait Type : Element {
     override fun hashCode(): Int = toKotlin().hashCode()
 }
 
-open class ClassType(val `type`: Identifier, val parameters: List<Element>, isNullable: Boolean,
-                     converter: Converter) : MayBeNullableType(isNullable, converter) {
+open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, converter: Converter)
+  : MayBeNullableType(nullability, converter) {
 
     override fun toKotlin(): String {
         // TODO change to map() when KT-2051 is fixed
@@ -73,14 +88,13 @@ open class ClassType(val `type`: Identifier, val parameters: List<Element>, isNu
     }
 
 
-    override fun toNotNullType(): Type = ClassType(`type`, parameters, false, converter)
+    override fun toNotNullType(): Type = ClassType(`type`, parameters, Nullability.NotNull, converter)
+    override fun toNullableType(): Type = ClassType(`type`, parameters, Nullability.Nullable, converter)
 }
 
-class ArrayType(
-        val elementType: Type,
-        isNullable: Boolean,
-        converter: Converter
-) : MayBeNullableType(isNullable, converter) {
+class ArrayType(val elementType: Type, nullability: Nullability, converter: Converter)
+  : MayBeNullableType(nullability, converter) {
+
     override fun toKotlin(): String {
         if (elementType is PrimitiveType) {
             return elementType.toKotlin() + "Array" + isNullableStr()
@@ -89,7 +103,8 @@ class ArrayType(
         return "Array<" + elementType.toKotlin() + ">" + isNullableStr()
     }
 
-    override fun toNotNullType(): Type = ArrayType(elementType, false, converter)
+    override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, converter)
+    override fun toNullableType(): Type = ArrayType(elementType, Nullability.Nullable, converter)
 }
 
 open class InProjectionType(val bound: Type) : NotNullType {
