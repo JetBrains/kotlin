@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 package f
 
 fun h<R>(<!UNUSED_PARAMETER!>f<!>: (Boolean) -> R) = 1
