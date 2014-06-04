@@ -88,6 +88,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                     null,
                     null
             );
+            checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
 
         boolean ok = true;
