@@ -8,4 +8,4 @@ class Testing {
     }
 }
 
-// INFO: <b>internal</b> <b>fun</b> foo(bar: kotlin.Int): kotlin.Unit <i>defined in</i> some<br/><p>KDoc foo<br/></p>
+// INFO: <b>internal</b> <b>fun</b> foo(bar: Int): Unit<br/><p>KDoc foo<br/></p>

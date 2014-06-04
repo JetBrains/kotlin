@@ -55,15 +55,15 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return getText(element, originalElement, false);
     }
 
-    private static String getText(PsiElement element, PsiElement originalElement, boolean mergeKotlinAndJava) {
+    private static String getText(PsiElement element, PsiElement originalElement, boolean quickNavigation) {
         if (element instanceof JetDeclaration) {
-            return renderKotlinDeclaration((JetDeclaration) element);
+            return renderKotlinDeclaration((JetDeclaration) element, quickNavigation);
         }
         else if (element instanceof KotlinLightMethod) {
-            return renderKotlinDeclaration(((KotlinLightMethod) element).getOrigin());
+            return renderKotlinDeclaration(((KotlinLightMethod) element).getOrigin(), quickNavigation);
         }
 
-        if (mergeKotlinAndJava) {
+        if (quickNavigation) {
             JetReferenceExpression referenceExpression = PsiTreeUtil.getParentOfType(originalElement, JetReferenceExpression.class, false);
             if (referenceExpression != null) {
                 BindingContext context = AnalyzerFacadeWithCache.getContextForElement(referenceExpression);
@@ -80,13 +80,17 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return null;
     }
 
-    private static String renderKotlinDeclaration(JetDeclaration declaration) {
+    private static String renderKotlinDeclaration(JetDeclaration declaration, boolean quickNavigation) {
         BindingContext context = AnalyzerFacadeWithCache.getContextForElement(declaration);
         DeclarationDescriptor declarationDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration);
 
         assert declarationDescriptor != null;
 
-        String renderedDecl = DescriptorRenderer.HTML.render(declarationDescriptor);
+        String renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor);
+        if (!quickNavigation) {
+            renderedDecl = "<pre>" + DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor) + "</pre>";
+        }
+
         KDoc comment = findElementKDoc(declaration);
         if (comment != null) {
             renderedDecl = renderedDecl + "<br/>" + kDocToHtml(comment);
@@ -95,12 +99,13 @@ public class JetQuickDocumentationProvider extends AbstractDocumentationProvider
         return renderedDecl;
     }
 
-    private static String mixKotlinToJava(@NotNull DeclarationDescriptor declarationDescriptor,
+    private static String mixKotlinToJava(
+            @NotNull DeclarationDescriptor declarationDescriptor,
             PsiElement element, PsiElement originalElement
     ) {
         String originalInfo = new JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement);
         if (originalInfo != null) {
-            String renderedDecl = DescriptorRenderer.HTML.render(declarationDescriptor);
+            String renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor);
             return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo;
         }
 

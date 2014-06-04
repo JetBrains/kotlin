@@ -75,6 +75,11 @@ public interface DescriptorRenderer extends Renderer<DeclarationDescriptor> {
             .setWithDefinedIn(false)
             .setTextFormat(TextFormat.HTML).build();
 
+    DescriptorRenderer HTML_NAMES_WITH_SHORT_TYPES = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setShortNames(true)
+            .setTextFormat(TextFormat.HTML).build();
+
     DescriptorRenderer HTML = new DescriptorRendererBuilder().setTextFormat(TextFormat.HTML).build();
 
     DescriptorRenderer HTML_FOR_UNINFERRED_TYPE_PARAMS = new DescriptorRendererBuilder()
