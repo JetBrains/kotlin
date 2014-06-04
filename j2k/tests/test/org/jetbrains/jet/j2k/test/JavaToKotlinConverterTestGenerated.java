@@ -1780,19 +1780,59 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/nullability"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("FieldAssignedWithNull.java")
+        public void testFieldAssignedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/FieldAssignedWithNull.java");
+        }
+        
+        @TestMetadata("FieldComparedWithNull.java")
+        public void testFieldComparedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/FieldComparedWithNull.java");
+        }
+        
+        @TestMetadata("FieldComparedWithNull2.java")
+        public void testFieldComparedWithNull2() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/FieldComparedWithNull2.java");
+        }
+        
+        @TestMetadata("FieldComparedWithNull3.java")
+        public void testFieldComparedWithNull3() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/FieldComparedWithNull3.java");
+        }
+        
+        @TestMetadata("FieldComparedWithNull4.java")
+        public void testFieldComparedWithNull4() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/FieldComparedWithNull4.java");
+        }
+        
         @TestMetadata("FieldInitializedWithNull.java")
         public void testFieldInitializedWithNull() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/FieldInitializedWithNull.java");
         }
         
-        @TestMetadata("InitializedWithNull.java")
-        public void testInitializedWithNull() throws Exception {
-            doTest("j2k/tests/testData/ast/nullability/InitializedWithNull.java");
+        @TestMetadata("ParameterComparedWithNull.java")
+        public void testParameterComparedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/ParameterComparedWithNull.java");
         }
         
-        @TestMetadata("InitializedWithTernaryNull.java")
-        public void testInitializedWithTernaryNull() throws Exception {
-            doTest("j2k/tests/testData/ast/nullability/InitializedWithTernaryNull.java");
+        @TestMetadata("VariableAssignedWithNull.java")
+        public void testVariableAssignedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/VariableAssignedWithNull.java");
+        }
+        
+        @TestMetadata("VariableComparedWithNull.java")
+        public void testVariableComparedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/VariableComparedWithNull.java");
+        }
+        
+        @TestMetadata("VariableInitializedWithNull.java")
+        public void testVariableInitializedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/VariableInitializedWithNull.java");
+        }
+        
+        @TestMetadata("VariableInitializedWithTernaryNull.java")
+        public void testVariableInitializedWithTernaryNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/VariableInitializedWithTernaryNull.java");
         }
         
     }

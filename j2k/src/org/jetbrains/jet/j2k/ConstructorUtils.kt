@@ -18,7 +18,6 @@ package org.jetbrains.jet.j2k
 
 import com.intellij.psi.*
 import java.util.LinkedHashSet
-import com.intellij.psi.util.PsiUtil
 
 fun PsiMethod.isPrimaryConstructor(): Boolean {
     if (!isConstructor()) return false
@@ -63,17 +62,19 @@ fun PsiClass.getPrimaryConstructor(): PsiMethod? {
 fun PsiElement.isInsidePrimaryConstructor(): Boolean
         = getContainingConstructor()?.isPrimaryConstructor() ?: false
 
-fun PsiElement.getContainingConstructor(): PsiMethod? {
+fun PsiElement.getContainingMethod(): PsiMethod? {
     var context = getContext()
     while (context != null) {
         val _context = context!!
-        if (_context is PsiMethod) {
-            return if (_context.isConstructor()) _context else null
-        }
-
+        if (_context is PsiMethod) return _context
         context = _context.getContext()
     }
     return null
+}
+
+fun PsiElement.getContainingConstructor(): PsiMethod? {
+    val method = getContainingMethod()
+    return if (method?.isConstructor() == true) method else null
 }
 
 fun PsiMethodCallExpression.isSuperConstructorCall(): Boolean {

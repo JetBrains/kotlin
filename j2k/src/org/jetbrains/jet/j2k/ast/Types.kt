@@ -69,6 +69,8 @@ trait Type : Element {
     override fun equals(other: Any?): Boolean = other is Type && other.toKotlin() == this.toKotlin()
 
     override fun hashCode(): Int = toKotlin().hashCode()
+
+    override fun toString(): String = toKotlin()
 }
 
 open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, converter: Converter)

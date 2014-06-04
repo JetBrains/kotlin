@@ -17,28 +17,22 @@
 package org.jetbrains.jet.j2k
 
 import org.jetbrains.jet.j2k.ast.Identifier
-import com.intellij.psi.PsiElement
-import com.intellij.psi.JavaRecursiveElementVisitor
-import com.intellij.psi.PsiReferenceExpression
-import com.intellij.psi.PsiLiteralExpression
-import com.intellij.psi.PsiNewExpression
 import org.jetbrains.jet.j2k.ast.Field
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import com.intellij.psi.PsiModifierListOwner
 import java.util.ArrayList
-import com.intellij.psi.util.PsiUtil
-import com.intellij.psi.PsiThisExpression
 import org.jetbrains.jet.j2k.ast.Nullability
+import com.intellij.psi.*
+import com.intellij.psi.util.PsiUtil
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
-fun findExpressionReferences(element: PsiElement, scope: PsiElement): Collection<PsiReferenceExpression> {
+fun findVariableReferences(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
     class Visitor : JavaRecursiveElementVisitor() {
         val refs = ArrayList<PsiReferenceExpression>()
 
         override fun visitReferenceExpression(expression: PsiReferenceExpression) {
             super.visitReferenceExpression(expression)
-            if (expression.isReferenceTo(element)) {
+            if (expression.isReferenceTo(variable)) {
                 refs.add(expression)
             }
         }
@@ -49,8 +43,8 @@ fun findExpressionReferences(element: PsiElement, scope: PsiElement): Collection
     return visitor.refs
 }
 
-fun PsiElement.countWriteAccesses(scope: PsiElement?): Int
-        = if (scope != null) findExpressionReferences(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
+fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
+        = if (scope != null) findVariableReferences(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
 fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
     val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default

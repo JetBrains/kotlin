@@ -315,16 +315,28 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                                           comments: MemberComments,
                                           membersToRemove: MutableSet<PsiMember>): PrimaryConstructor {
         val params = constructor.getParameterList().getParameters()
-        val parameterToField = HashMap<PsiParameter, PsiField>()
+        val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
         val body = constructor.getBody()
         val block = if (body != null) {
             val statementsToRemove = HashSet<PsiStatement>()
             val usageReplacementMap = HashMap<PsiVariable, String>()
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, constructor) ?: continue
-                if (convertVariableType(field) != convertVariableType(parameter)) continue
 
-                parameterToField.put(parameter, field)
+                val fieldType = convertVariableType(field)
+                val parameterType = convertVariableType(parameter)
+                // types can be different only in nullability
+                val `type` = if (fieldType == parameterType) {
+                    fieldType
+                }
+                else if (fieldType.toNotNullType() == parameterType.toNotNullType()) {
+                    if (fieldType.isNullable) fieldType else parameterType // prefer nullable one
+                }
+                else {
+                    continue
+                }
+
+                parameterToField.put(parameter, field to `type`)
                 statementsToRemove.add(initializationStatement)
                 membersToRemove.add(field)
 
@@ -345,13 +357,13 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         val parameterList = ParameterList(params.map {
-            val field = parameterToField[it]
-            if (field == null) {
+            if (!parameterToField.containsKey(it)) {
                 convertParameter(it)
             }
             else {
+                val (field, `type`) = parameterToField[it]!!
                 Parameter(Identifier(field.getName()!!),
-                          convertVariableType(it),
+                          `type`,
                           if (field.hasModifierProperty(PsiModifier.FINAL)) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var,
                           convertModifiers(field).filter { ACCESS_MODIFIERS.contains(it) })
             }
@@ -362,7 +374,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
         val body = constructor.getBody() ?: return null
 
-        val refs = findExpressionReferences(parameter, body)
+        val refs = findVariableReferences(parameter, body)
 
         if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
 
@@ -381,7 +393,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             if (statement.getParent() != body) continue
 
             // and no other assignments to field should exist in the constructor
-            if (findExpressionReferences(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
+            if (findVariableReferences(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
             //TODO: check access to field before assignment
 
             return field to statement
@@ -459,6 +471,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     public fun convertVariableType(variable: PsiVariable): Type {
         var nullability = variable.nullabilityFromAnnotations()
+
         if (nullability == Nullability.Default) {
             val initializer = variable.getInitializer()
             if (initializer != null) {
@@ -471,7 +484,26 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 }
             }
         }
+
+        if (nullability == Nullability.Default) {
+            val scope = usageScope(variable)
+            if (scope != null) {
+                if (findVariableReferences(variable, scope).any { isVariableNullableFromUsage(it) }) {
+                    nullability = Nullability.Nullable
+                }
+            }
+        }
+
         return convertType(variable.getType(), nullability)
+    }
+
+    private fun usageScope(variable: PsiVariable): PsiElement? {
+        return when(variable) {
+            is PsiParameter -> variable.getDeclarationScope()
+            is PsiField -> if (variable.hasModifierProperty(PsiModifier.PRIVATE)) variable.getContainingClass() else variable.getContainingFile()
+            is PsiLocalVariable -> variable.getContainingMethod()
+            else -> null
+        }
     }
 
     private fun PsiExpression.nullability(): Nullability {
@@ -497,6 +529,20 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
     }
 
+    private fun isVariableNullableFromUsage(ref: PsiReferenceExpression): Boolean {
+        val parent = ref.getParent() ?: return false
+        if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && ref == parent.getLExpression()) {
+            return parent.getRExpression()?.nullability() == Nullability.Nullable
+        }
+        else if (parent is PsiBinaryExpression) {
+            val operationType = parent.getOperationTokenType()
+            if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
+                val otherOperand = if (ref == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
+                return otherOperand?.nullability() == Nullability.Nullable
+            }
+        }
+        return false
+    }
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { convertType(it, Nullability.NotNull) }

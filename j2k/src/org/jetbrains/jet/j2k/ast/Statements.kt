@@ -28,10 +28,7 @@ abstract class Statement() : Element {
 
 open class DeclarationStatement(val elements: List<Element>) : Statement() {
     override fun toKotlin(): String
-            = elements.filterIsInstance(javaClass<LocalVariable>()).map { convertDeclaration(it) }.makeString("\n")
-
-    private fun convertDeclaration(v: LocalVariable): String
-            = (if (v.isVal) "val" else "var") + " " + v.toKotlin()
+            = elements.filterIsInstance(javaClass<LocalVariable>()).map { it.toKotlin() }.makeString("\n")
 }
 
 open class ExpressionListStatement(val expressions: List<Expression>) : Expression() {
@@ -53,7 +50,7 @@ open class IfStatement(
 ) : Expression() {
     override fun toKotlin(): String {
         val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin()
-        if (elseStatement != Statement.Empty) {
+        if (!elseStatement.isEmpty) {
             return result + "\nelse\n" + elseStatement.toKotlin()
         }
 

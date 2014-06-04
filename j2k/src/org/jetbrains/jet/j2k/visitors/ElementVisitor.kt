@@ -27,7 +27,7 @@ class ElementVisitor(public val converter: Converter) : JavaElementVisitor() {
     override fun visitLocalVariable(variable: PsiLocalVariable) {
         result = LocalVariable(Identifier(variable.getName()!!),
                                  converter.convertModifiers(variable),
-                                 converter.convertVariableType(variable),
+                                 { converter.convertVariableType(variable) },
                                  converter.convertExpression(variable.getInitializer(), variable.getType()),
                                  converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
                                  converter.settings)
