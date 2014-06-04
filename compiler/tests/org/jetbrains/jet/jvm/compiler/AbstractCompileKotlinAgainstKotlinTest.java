@@ -64,24 +64,17 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
         invokeMain();
     }
 
-    public void doBoxTestWithInlineCheck(@NotNull String folderName) throws Exception {
-        ArrayList<OutputFile> files = doBoxTest(folderName);
+    public void doBoxTestWithInlineCheck(@NotNull String firstFileName) throws Exception {
+        List<String> ifiles = new ArrayList<String>(2);
+        ifiles.add(firstFileName);
+        ifiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
+
+        ArrayList<OutputFile> files = doBoxTest(ifiles);
         InlineTestUtil.checkNoCallsToInline(files);
     }
 
     @NotNull
-    private ArrayList<OutputFile> doBoxTest(@NotNull String folderName) throws Exception {
-        final List<String> files = new ArrayList<String>(2);
-        FileUtil.processFilesRecursively(new File(folderName), new Processor<File>() {
-            @Override
-            public boolean process(File file) {
-                if (file.getName().endsWith(".kt")) {
-                    files.add(file.getPath());
-                }
-                return true;
-            }
-        });
-
+    private ArrayList<OutputFile> doBoxTest(@NotNull List<String> files) throws Exception {
         Collections.sort(files);
 
         ClassFileFactory factory1 = null;

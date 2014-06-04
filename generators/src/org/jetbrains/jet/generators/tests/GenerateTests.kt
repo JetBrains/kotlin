@@ -157,11 +157,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxInlineCodegenTestGenerated") {
-            model("codegen/boxInline", extension = null, recursive = false, testMethod = "doTestMultiFileWithInlineCheck")
+            model("codegen/boxInline", extension = "1.kt", testMethod = "doTestMultiFileWithInlineCheck")
         }
 
         testClass(javaClass<AbstractCompileKotlinAgainstKotlinTest>(), "CompileKotlinAgainstInlineKotlinTestGenerated") {
-            model("codegen/boxInline", extension = null, recursive = false, testMethod = "doBoxTestWithInlineCheck")
+            model("codegen/boxInline", extension = "1.kt", testMethod = "doBoxTestWithInlineCheck")
         }
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>(), "BlackBoxMultiFileCodegenTestGenerated") {
