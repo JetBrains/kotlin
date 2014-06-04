@@ -1810,6 +1810,41 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/nullability/FieldInitializedWithNull.java");
         }
         
+        @TestMetadata("MethodInvokedWithNullArg.java")
+        public void testMethodInvokedWithNullArg() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodInvokedWithNullArg.java");
+        }
+        
+        @TestMetadata("MethodInvokedWithNullArg2.java")
+        public void testMethodInvokedWithNullArg2() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodInvokedWithNullArg2.java");
+        }
+        
+        @TestMetadata("MethodInvokedWithTernaryNullArg.java")
+        public void testMethodInvokedWithTernaryNullArg() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodInvokedWithTernaryNullArg.java");
+        }
+        
+        @TestMetadata("MethodResultComparedWithNull.java")
+        public void testMethodResultComparedWithNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodResultComparedWithNull.java");
+        }
+        
+        @TestMetadata("MethodReturnsNull.java")
+        public void testMethodReturnsNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodReturnsNull.java");
+        }
+        
+        @TestMetadata("MethodReturnsNullInAnonymousClass.java")
+        public void testMethodReturnsNullInAnonymousClass() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodReturnsNullInAnonymousClass.java");
+        }
+        
+        @TestMetadata("MethodReturnsTernaryNull.java")
+        public void testMethodReturnsTernaryNull() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodReturnsTernaryNull.java");
+        }
+        
         @TestMetadata("ParameterComparedWithNull.java")
         public void testParameterComparedWithNull() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/ParameterComparedWithNull.java");

@@ -221,7 +221,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         methodReturnType = method.getReturnType()
-        val returnType = convertType(method.getReturnType(), method.nullabilityFromAnnotations())
+        val returnType = convertMethodReturnType(method)
 
         val modifiers = convertModifiers(method)
 
@@ -273,6 +273,38 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             val block = convertBlock(method.getBody())
             return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
         }
+    }
+
+    private fun convertMethodReturnType(method: PsiMethod): Type {
+        var nullability = method.nullabilityFromAnnotations()
+
+        if (nullability == Nullability.Default) {
+            var isInAnonymousClass = false
+            method.getBody()?.accept(object: JavaRecursiveElementVisitor() {
+                override fun visitAnonymousClass(aClass: PsiAnonymousClass) {
+                    isInAnonymousClass = true
+                    super.visitAnonymousClass(aClass)
+                    isInAnonymousClass = false
+                }
+
+                override fun visitReturnStatement(statement: PsiReturnStatement) {
+                    if (!isInAnonymousClass && statement.getReturnValue()?.nullability() == Nullability.Nullable) {
+                        nullability = Nullability.Nullable
+                    }
+                }
+            })
+        }
+
+        if (nullability == Nullability.Default) {
+            val scope = searchScope(method)
+            if (scope != null) {
+                if (findMethodCalls(method, scope).any { isNullableFromUsage(it) }) {
+                    nullability = Nullability.Nullable
+                }
+            }
+        }
+
+        return convertType(method.getReturnType(), nullability)
     }
 
     /**
@@ -374,7 +406,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
         val body = constructor.getBody() ?: return null
 
-        val refs = findVariableReferences(parameter, body)
+        val refs = findVariableUsages(parameter, body)
 
         if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
 
@@ -393,7 +425,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             if (statement.getParent() != body) continue
 
             // and no other assignments to field should exist in the constructor
-            if (findVariableReferences(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
+            if (findVariableUsages(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && isQualifierEmptyOrThis(it) }) continue
             //TODO: check access to field before assignment
 
             return field to statement
@@ -486,10 +518,30 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
 
         if (nullability == Nullability.Default) {
-            val scope = usageScope(variable)
+            val scope = searchScope(variable)
             if (scope != null) {
-                if (findVariableReferences(variable, scope).any { isVariableNullableFromUsage(it) }) {
+                if (findVariableUsages(variable, scope).any { isNullableFromUsage(it) }) {
                     nullability = Nullability.Nullable
+                }
+            }
+        }
+
+        if (nullability == Nullability.Default && variable is PsiParameter) {
+            val method = variable.getDeclarationScope() as? PsiMethod
+            if (method != null) {
+                val scope = searchScope(method)
+                if (scope != null) {
+                    val parameters = method.getParameterList().getParameters()
+                    val parameterIndex = parameters.indexOf(variable)
+                    for (call in findMethodCalls(method, scope)) {
+                        val args = call.getArgumentList().getExpressions()
+                        if (args.size == parameters.size) {
+                            if (args[parameterIndex].nullability() == Nullability.Nullable) {
+                                nullability = Nullability.Nullable
+                                break
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -497,11 +549,12 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return convertType(variable.getType(), nullability)
     }
 
-    private fun usageScope(variable: PsiVariable): PsiElement? {
-        return when(variable) {
-            is PsiParameter -> variable.getDeclarationScope()
-            is PsiField -> if (variable.hasModifierProperty(PsiModifier.PRIVATE)) variable.getContainingClass() else variable.getContainingFile()
-            is PsiLocalVariable -> variable.getContainingMethod()
+    private fun searchScope(element: PsiElement): PsiElement? {
+        return when(element) {
+            is PsiParameter -> element.getDeclarationScope()
+            is PsiField -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
+            is PsiMethod -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
+            is PsiLocalVariable -> element.getContainingMethod()
             else -> null
         }
     }
@@ -529,15 +582,15 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         }
     }
 
-    private fun isVariableNullableFromUsage(ref: PsiReferenceExpression): Boolean {
-        val parent = ref.getParent() ?: return false
-        if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && ref == parent.getLExpression()) {
+    private fun isNullableFromUsage(usage: PsiExpression): Boolean {
+        val parent = usage.getParent() ?: return false
+        if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getLExpression()) {
             return parent.getRExpression()?.nullability() == Nullability.Nullable
         }
         else if (parent is PsiBinaryExpression) {
             val operationType = parent.getOperationTokenType()
             if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
-                val otherOperand = if (ref == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
+                val otherOperand = if (usage == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
                 return otherOperand?.nullability() == Nullability.Nullable
             }
         }

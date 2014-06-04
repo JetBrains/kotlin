@@ -1,7 +1,7 @@
 package demo
 
 class Test() : java.lang.Iterable<String> {
-    override fun iterator(): java.util.Iterator<String> {
+    override fun iterator(): java.util.Iterator<String>? {
         return null
     }
 
@@ -12,7 +12,7 @@ class Test() : java.lang.Iterable<String> {
 }
 
 class FullTest() : java.lang.Iterable<String> {
-    override fun iterator(): java.util.Iterator<String> {
+    override fun iterator(): java.util.Iterator<String>? {
         return null
     }
 

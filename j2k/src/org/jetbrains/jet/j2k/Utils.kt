@@ -19,32 +19,32 @@ package org.jetbrains.jet.j2k
 import org.jetbrains.jet.j2k.ast.Identifier
 import org.jetbrains.jet.j2k.ast.Field
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Nullability
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
-fun findVariableReferences(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
-    class Visitor : JavaRecursiveElementVisitor() {
-        val refs = ArrayList<PsiReferenceExpression>()
+fun findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression> {
+    return ReferencesSearch.search(variable, LocalSearchScope(scope)).findAll().filterIsInstance(javaClass<PsiReferenceExpression>())
+}
 
-        override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-            super.visitReferenceExpression(expression)
-            if (expression.isReferenceTo(variable)) {
-                refs.add(expression)
-            }
+fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
+    return ReferencesSearch.search(method, LocalSearchScope(scope)).findAll().map {
+        if (it is PsiReferenceExpression) {
+            val methodCall = it.getParent() as? PsiMethodCallExpression
+            if (methodCall?.getMethodExpression() == it) methodCall else null
         }
-    }
-
-    val visitor = Visitor()
-    scope.accept(visitor)
-    return visitor.refs
+        else {
+            null
+        }
+    }.filterNotNull()
 }
 
 fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
-        = if (scope != null) findVariableReferences(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
+        = if (scope != null) findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
 fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
     val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default
