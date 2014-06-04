@@ -307,20 +307,16 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             return jetFile;
         }
 
-        public boolean getActualText(BindingContext bindingContext, StringBuilder actualText) {
+        public boolean getActualText(BindingContext bindingContext, StringBuilder actualText, boolean skipJvmSignatureDiagnostics) {
             if (this.jetFile == null) {
                 // TODO: check java files too
                 actualText.append(this.clearText);
                 return true;
             }
 
-            Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
-            Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
-            for (JetDeclaration declaration : declarations) {
-                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics());
-                if (diagnostics == null) continue;
-                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
-            }
+            Set<Diagnostic> jvmSignatureDiagnostics = skipJvmSignatureDiagnostics
+                                                            ? Collections.<Diagnostic>emptySet()
+                                                            : computeJvmSignatureDiagnostics(bindingContext);
 
             final boolean[] ok = { true };
             List<Diagnostic> diagnostics = ContainerUtil.filter(
@@ -353,6 +349,17 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
                 }
             }));
             return ok[0];
+        }
+
+        private Set<Diagnostic> computeJvmSignatureDiagnostics(BindingContext bindingContext) {
+            Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
+            Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
+            for (JetDeclaration declaration : declarations) {
+                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics());
+                if (diagnostics == null) continue;
+                jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
+            }
+            return jvmSignatureDiagnostics;
         }
     }
 }
