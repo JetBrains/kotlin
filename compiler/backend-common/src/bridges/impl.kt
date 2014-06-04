@@ -78,7 +78,6 @@ public fun findTraitImplementation(descriptor: CallableMemberDescriptor): Callab
     var implementation: CallableMemberDescriptor? = null
     for (overriddenDeclaration in filteredOverriddenDeclarations) {
         if (DescriptorUtils.isTrait(overriddenDeclaration.getContainingDeclaration()) && overriddenDeclaration.getModality() != Modality.ABSTRACT) {
-            assert(implementation == null) { "Ambiguous overridden declaration: $descriptor" }
             implementation = overriddenDeclaration
         }
     }
