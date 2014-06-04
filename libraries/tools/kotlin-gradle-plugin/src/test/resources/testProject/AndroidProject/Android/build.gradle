@@ -25,6 +25,14 @@ android {
         annotations = "kotlinAnnotations"
     }
 
+    sourceSets {
+        main {
+            kotlin {
+                srcDirs = ['root/kotlin']
+            }
+        }
+    }
+
     defaultConfig {
         minSdkVersion 7
         targetSdkVersion 16

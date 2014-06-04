@@ -135,9 +135,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
 
         ext.getSourceSets().all(object : Action<AndroidSourceSet> {
             override fun execute(sourceSet: AndroidSourceSet?) {
-                if (sourceSet is ExtensionAware) {
+                if (sourceSet is HasConvention) {
                     val sourceSetName = sourceSet.getName()
-                    val kotlinSourceSet = sourceSet.getExtensions().create("kotlin", javaClass<KotlinSourceSetImpl>(), sourceSetName, project.getFileResolver())!!
+                    val kotlinSourceSet = KotlinSourceSetImpl( sourceSetName, project.getFileResolver())
+                    sourceSet.getConvention().getPlugins().put("kotlin", kotlinSourceSet)
                     val kotlinDirSet = kotlinSourceSet.getKotlin()
                     kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
@@ -264,7 +265,14 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
     }
 
     fun <T> getExtention(obj: Any, extensionName: String): T {
-        return (obj as ExtensionAware).getExtensions().getByName(extensionName) as T
+        if (obj is ExtensionAware) {
+            val result = obj.getExtensions().findByName(extensionName)
+            if (result != null) {
+                return result as T
+            }
+        }
+        val result = (obj as HasConvention).getConvention().getPlugins()[extensionName]
+        return result as T
     }
 
 }
