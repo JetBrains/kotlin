@@ -160,7 +160,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     var keepStatement = true
                     if (statement is AssignmentExpression) {
                         val assignee = statement.left
-                        if (assignee is CallChainExpression) {
+                        if (assignee is QualifiedExpression) {
                             for (field in finalOrWithEmptyInitializerFields) {
                                 val id = field.identifier.toKotlin()
                                 if (assignee.identifier.toKotlin().endsWith("." + id)) {
@@ -600,8 +600,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { convertType(it, Nullability.NotNull) }
 
-    public fun convertParameterList(parameters: PsiParameterList): ParameterList
-            = ParameterList(parameters.getParameters().map { convertParameter(it) })
+    public fun convertParameterList(parameterList: PsiParameterList): ParameterList
+            = ParameterList(parameterList.getParameters().map { convertParameter(it) })
 
     public fun convertParameter(parameter: PsiParameter,
                                 nullability: Nullability = Nullability.Default,

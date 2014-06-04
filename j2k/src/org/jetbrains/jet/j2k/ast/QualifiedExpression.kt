@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class CallChainExpression(val expression: Expression, val identifier: Expression) : Expression() {
+class QualifiedExpression(val expression: Expression, val identifier: Expression) : Expression() {
     override val isNullable: Boolean
       get() {
           if (!expression.isEmpty && expression.isNullable) return true

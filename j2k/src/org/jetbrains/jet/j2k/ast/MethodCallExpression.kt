@@ -36,7 +36,7 @@ open class MethodCallExpression(
 
     class object {
         fun build(receiver: Expression, methodName: String, arguments: List<Expression> = ArrayList()): MethodCallExpression {
-            return MethodCallExpression(CallChainExpression(receiver, Identifier(methodName, false)),
+            return MethodCallExpression(QualifiedExpression(receiver, Identifier(methodName, false)),
                                         arguments,
                                         ArrayList(), false)
         }

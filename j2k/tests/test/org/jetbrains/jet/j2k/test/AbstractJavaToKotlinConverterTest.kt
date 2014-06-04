@@ -32,9 +32,21 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.application.ApplicationManager
 
 abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
+
+    override fun setUp() {
+        super.setUp()
+
+        ApplicationManager.getApplication()!!.runWriteAction{
+            val kotlinApiFileName = "KotlinApi.kt"
+            val kotlinCode = FileUtil.loadFile(File("j2k/tests/testData/$kotlinApiFileName"), true)
+            val kotlinFile = LightPlatformTestCase.getSourceRoot()!!.createChildData(null, kotlinApiFileName)!!
+            kotlinFile.getOutputStream(null)!!.writer().use { it.write(kotlinCode) }
+        }
+    }
 
     public fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!

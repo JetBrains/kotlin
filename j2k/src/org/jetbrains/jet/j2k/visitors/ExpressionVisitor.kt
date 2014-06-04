@@ -25,6 +25,8 @@ import com.intellij.psi.CommonClassNames.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.jet.lang.types.lang.PrimitiveType
 import org.jetbrains.jet.j2k.*
+import org.jetbrains.jet.lang.resolve.java.jetAsJava.KotlinLightMethod
+import org.jetbrains.jet.lang.psi.JetProperty
 
 open class ExpressionVisitor(protected val converter: Converter,
                              private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
@@ -75,8 +77,7 @@ open class ExpressionVisitor(protected val converter: Converter,
             result = MethodCallExpression.build(lhs, "ushr", listOf(rhs))
         }
         else {
-            result = BinaryExpression(lhs, rhs,
-                                        getOperatorString(expression.getOperationSign().getTokenType()))
+            result = BinaryExpression(lhs, rhs, getOperatorString(expression.getOperationSign().getTokenType()))
         }
     }
 
@@ -137,15 +138,38 @@ open class ExpressionVisitor(protected val converter: Converter,
     }
 
     override fun visitMethodCallExpression(expression: PsiMethodCallExpression) {
-        convertMethodCallExpression(expression)
-    }
+        val methodExpr = expression.getMethodExpression()
+        val target = methodExpr.resolve()
+        if (target is KotlinLightMethod) {
+            val property = target.origin as? JetProperty
+            if (property != null) {
+                val parameterCount = target.getParameterList().getParameters().size
+                val argCount = expression.getArgumentList().getExpressions().size
+                if (parameterCount == argCount) {
+                    val qualifier = converter.convertExpression(methodExpr.getQualifierExpression())
+                    val propertyName = Identifier(property.getName()!!, false)
+                    val propertyAccess = QualifiedExpression(qualifier, propertyName)
+                    when(parameterCount) {
+                        0 /* getter */ -> {
+                            result = propertyAccess
+                            return
+                        }
 
-    protected fun convertMethodCallExpression(expression: PsiMethodCallExpression) {
+                        1 /* setter */ -> {
+                            val argument = converter.convertExpression(expression.getArgumentList().getExpressions().single())
+                            result = AssignmentExpression(propertyAccess, argument, "=")
+                            return
+                        }
+                    }
+                }
+            }
+        }
+
         if (!expression.isSuperConstructorCall() || !expression.isInsidePrimaryConstructor()) {
-            result = MethodCallExpression(converter.convertExpression(expression.getMethodExpression()),
-                                            converter.convertArguments(expression),
-                                            converter.convertTypes(expression.getTypeArguments()),
-                                            converter.convertType(expression.getType()).isNullable)
+            result = MethodCallExpression(converter.convertExpression(methodExpr),
+                                          converter.convertArguments(expression),
+                                          converter.convertTypes(expression.getTypeArguments()),
+                                          converter.convertType(expression.getType()).isNullable)
         }
     }
 
@@ -177,7 +201,7 @@ open class ExpressionVisitor(protected val converter: Converter,
 
         val reference = expression.getClassReference()
         val typeParameters = if (reference != null) converter.convertTypes(reference.getTypeParameters()) else listOf()
-        return CallChainExpression(Identifier(constructor.getName(), false),
+        return QualifiedExpression(Identifier(constructor.getName(), false),
                                    MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
     }
 
@@ -222,7 +246,7 @@ open class ExpressionVisitor(protected val converter: Converter,
         val qualifier = expression.getQualifierExpression()
 
         if (addReceiver) {
-            identifier = CallChainExpression(Identifier("__", false), Identifier(referencedName, isNullable))
+            identifier = QualifiedExpression(Identifier("__", false), Identifier(referencedName, isNullable))
         }
         else if (insideSecondaryConstructor && expression.isThisConstructorCall()) {
             identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: ""))
@@ -263,7 +287,7 @@ open class ExpressionVisitor(protected val converter: Converter,
             }
         }
 
-        result = CallChainExpression(converter.convertExpression(qualifier), identifier)
+        result = QualifiedExpression(converter.convertExpression(qualifier), identifier)
     }
 
     private fun PsiReference.nullability(): Nullability {
