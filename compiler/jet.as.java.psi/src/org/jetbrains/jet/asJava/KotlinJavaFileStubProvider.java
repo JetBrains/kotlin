@@ -42,6 +42,7 @@ import com.intellij.util.containers.Stack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.CompilationErrorHandler;
+import org.jetbrains.jet.codegen.KotlinCodegenFacade;
 import org.jetbrains.jet.codegen.PackageCodegen;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.state.GenerationState;
@@ -293,7 +294,7 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
                     null,
                     forExtraDiagnostics
             );
-            state.beforeCompile();
+            KotlinCodegenFacade.prepareForCompilation(state);
 
             bindingContext = state.getBindingContext();
 

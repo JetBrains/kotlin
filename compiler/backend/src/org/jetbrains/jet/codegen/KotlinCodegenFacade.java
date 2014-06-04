@@ -33,10 +33,8 @@ import java.util.Set;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
 public class KotlinCodegenFacade {
-    public static void compileCorrectFiles(
-            @NotNull GenerationState state,
-            @NotNull CompilationErrorHandler errorHandler
-    ) {
+
+    public static void prepareForCompilation(@NotNull GenerationState state) {
         for (JetFile file : state.getFiles()) {
             if (file.isScript()) {
                 // SCRIPT: register class name for scripting from this file, move outside of this function
@@ -50,6 +48,13 @@ public class KotlinCodegenFacade {
         }
 
         state.beforeCompile();
+    }
+
+    public static void compileCorrectFiles(
+            @NotNull GenerationState state,
+            @NotNull CompilationErrorHandler errorHandler
+    ) {
+        prepareForCompilation(state);
 
         MultiMap<FqName, JetFile> packageFqNameToFiles = new MultiMap<FqName, JetFile>();
         for (JetFile file : state.getFiles()) {
