@@ -31,10 +31,7 @@ import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.*;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.resolver.TraceBasedErrorReporter;
@@ -154,9 +151,9 @@ public final class AnalyzerWithCompilerReport {
         }
     }
 
-    public static boolean reportDiagnostics(@NotNull BindingContext bindingContext, @NotNull MessageCollector messageCollector) {
+    public static boolean reportDiagnostics(@NotNull Diagnostics diagnostics, @NotNull MessageCollector messageCollector) {
         boolean hasErrors = false;
-        for (Diagnostic diagnostic : sortedDiagnostics(bindingContext.getDiagnostics().all())) {
+        for (Diagnostic diagnostic : sortedDiagnostics(diagnostics.all())) {
             hasErrors |= reportDiagnostic(diagnostic, messageCollector);
         }
         return hasErrors;
@@ -227,7 +224,7 @@ public final class AnalyzerWithCompilerReport {
         reportAbiVersionErrors();
         reportSyntaxErrors(files);
         //noinspection ConstantConditions
-        reportDiagnostics(analyzeExhaust.getBindingContext(), messageCollectorWrapper);
+        reportDiagnostics(analyzeExhaust.getBindingContext().getDiagnostics(), messageCollectorWrapper);
         reportIncompleteHierarchies();
         reportAlternativeSignatureErrors();
     }

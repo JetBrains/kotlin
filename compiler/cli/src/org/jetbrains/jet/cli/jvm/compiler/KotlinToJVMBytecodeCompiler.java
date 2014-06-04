@@ -345,8 +345,10 @@ public class KotlinToJVMBytecodeCompiler {
                 diagnosticHolder
         );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
-        AnalyzerWithCompilerReport.reportDiagnostics(diagnosticHolder.getBindingContext(),
-                                                     environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY));
+        AnalyzerWithCompilerReport.reportDiagnostics(
+                diagnosticHolder.getBindingContext().getDiagnostics(),
+                environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        );
         return generationState;
     }
 }

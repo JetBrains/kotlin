@@ -180,7 +180,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         exhaust.throwIfError();
 
         BindingContext bindingContext = exhaust.getBindingContext();
-        AnalyzerWithCompilerReport.reportDiagnostics(bindingContext, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
+        AnalyzerWithCompilerReport.reportDiagnostics(bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         assertEquals("There should be no diagnostics", 0, Iterables.size(bindingContext.getDiagnostics()));
     }

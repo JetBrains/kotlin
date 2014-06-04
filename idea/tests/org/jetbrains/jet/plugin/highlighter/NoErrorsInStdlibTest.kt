@@ -52,7 +52,7 @@ public class NoErrorsInStdlibTest: LightCodeInsightFixtureTestCase() {
                     if (!errors.isEmpty()) {
                         System.err.println("${psiFile.getName()}: ${errors.size()} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext, MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR)
+                                bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR)
 
                         totalErrors += errors.size()
                     }

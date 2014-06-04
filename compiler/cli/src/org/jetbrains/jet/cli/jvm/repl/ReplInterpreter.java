@@ -319,7 +319,7 @@ public class ReplInterpreter {
         injector.getTopDownAnalyzer().doProcess(topDownAnalysisContext,
                                                 scope, new PackageLikeBuilderDummy(), Collections.singletonList(psiFile));
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext(), messageCollector);
+        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), messageCollector);
         if (hasErrors) {
             return null;
         }
