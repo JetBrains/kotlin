@@ -30,7 +30,7 @@ class Import(val name: String) : Element {
 
 class ImportList(val imports: List<Import>) : Element {
     val filteredImports = imports.filter {
-        !it.name.isEmpty() && it.name !in NOT_NULL_ANNOTATIONS
+        !it.name.isEmpty() && it.name !in NOT_NULL_ANNOTATIONS && it.name !in NULLABLE_ANNOTATIONS
     }.filter {
         // If name is invalid, like with star imports, don't try to filter
         if (!isValidJavaFqName(it.name))

@@ -183,7 +183,7 @@ open class ExpressionVisitor(protected val converter: Converter,
 
     private fun createNewEmptyArrayWithoutInitialization(expression: PsiNewExpression): Expression {
         return ArrayWithoutInitializationExpression(
-                converter.convertType(expression.getType(), true),
+                converter.convertType(expression.getType(), Nullability.NotNull),
                 converter.convertExpressions(expression.getArrayDimensions()))
     }
 
@@ -216,7 +216,7 @@ open class ExpressionVisitor(protected val converter: Converter,
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
         val addReceiver = insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()
 
-        val isNullable = converter.convertType(expression.getType(), expression.isResolvedToNotNull()).isNullable
+        val isNullable = converter.convertType(expression.getType(), expression.nullability()).isNullable
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
         val qualifier = expression.getQualifierExpression()
@@ -266,12 +266,12 @@ open class ExpressionVisitor(protected val converter: Converter,
         result = CallChainExpression(converter.convertExpression(qualifier), identifier)
     }
 
-    private fun PsiReference.isResolvedToNotNull(): Boolean {
+    private fun PsiReference.nullability(): Nullability {
         val target = resolve()
         return when(target) {
-            is PsiEnumConstant -> true
-            is PsiModifierListOwner -> target.isAnnotatedAsNotNull()
-            else -> false
+            is PsiEnumConstant -> Nullability.NotNull
+            is PsiModifierListOwner -> target.nullabilityFromAnnotations()
+            else -> Nullability.Default
         }
     }
 

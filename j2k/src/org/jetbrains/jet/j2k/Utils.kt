@@ -28,7 +28,7 @@ import com.intellij.psi.PsiModifierListOwner
 import java.util.ArrayList
 import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.PsiThisExpression
-import java.util.HashMap
+import org.jetbrains.jet.j2k.ast.Nullability
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
@@ -52,13 +52,21 @@ fun findExpressionReferences(element: PsiElement, scope: PsiElement): Collection
 fun PsiElement.countWriteAccesses(scope: PsiElement?): Int
         = if (scope != null) findExpressionReferences(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
-fun PsiModifierListOwner.isAnnotatedAsNotNull(): Boolean
-        = getModifierList()?.getAnnotations()?.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) } ?: false
+fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
+    val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default
+    return if (annotations.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) })
+        Nullability.NotNull
+    else if (annotations.any { NULLABLE_ANNOTATIONS.contains(it.getQualifiedName()) })
+        Nullability.Nullable
+    else
+        Nullability.Default
+}
 
-fun PsiElement?.isDefinitelyNotNull(): Boolean = when(this) {
-    is PsiLiteralExpression -> getValue() != null
-    is PsiNewExpression -> true
-    else -> false
+fun PsiElement?.nullability(): Nullability = when(this) {
+    is PsiLiteralExpression -> if (getValue() != null) Nullability.NotNull else Nullability.Nullable
+    is PsiNewExpression -> Nullability.NotNull
+    //TODO: other cases
+    else -> Nullability.Default
 }
 
 fun getDefaultInitializer(field: Field): String {

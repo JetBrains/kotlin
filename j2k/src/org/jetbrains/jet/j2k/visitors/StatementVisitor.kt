@@ -216,7 +216,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         val catchBlocks = statement.getCatchBlocks()
         val catchBlockParameters = statement.getCatchBlockParameters()
         for (i in 0..catchBlocks.size - 1) {
-            catches.add(CatchStatement(converter.convertParameter(catchBlockParameters[i], true),
+            catches.add(CatchStatement(converter.convertParameter(catchBlockParameters[i], Nullability.NotNull),
                                        converter.convertBlock(catchBlocks[i])))
         }
         result = TryStatement(converter.convertBlock(statement.getTryBlock()),
@@ -226,7 +226,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     override fun visitWhileStatement(statement: PsiWhileStatement) {
         var condition: PsiExpression? = statement.getCondition()
         val expression: Expression = (if (condition != null && condition?.getType() != null)
-            this.converter.convertExpression(condition, condition?.getType())
+            converter.convertExpression(condition, condition?.getType())
         else
             converter.convertExpression(condition))
         result = WhileStatement(expression, converter.convertStatement(statement.getBody()))
@@ -236,7 +236,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         val returnValue = statement.getReturnValue()
         val methodReturnType = converter.methodReturnType
         val expression = (if (returnValue != null && methodReturnType != null)
-            this.converter.convertExpression(returnValue, methodReturnType)
+            converter.convertExpression(returnValue, methodReturnType)
         else
             converter.convertExpression(returnValue))
         result = ReturnStatement(expression)

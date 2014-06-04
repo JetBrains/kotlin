@@ -206,28 +206,22 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             return EnumConstant(Identifier(field.getName()!!),
                                 getComments(field),
                                 modifiers,
-                                convertType(field.getType()),
+                                convertType(field.getType(), Nullability.NotNull),
                                 convertElement(field.getArgumentList()))
-        }
-
-        val isFinal = field.hasModifierProperty(PsiModifier.FINAL)
-        var kType = convertVariableType(field)
-        if (isFinal && field.getInitializer().isDefinitelyNotNull()) {
-            kType = kType.toNotNullType();
         }
 
         return Field(Identifier(field.getName()!!),
                      getComments(field),
                      modifiers,
-                     kType,
+                     convertVariableType(field),
                      convertExpression(field.getInitializer(), field.getType()),
-                     isFinal,
+                     field.hasModifierProperty(PsiModifier.FINAL),
                      field.countWriteAccesses(field.getContainingClass()))
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         methodReturnType = method.getReturnType()
-        val returnType = convertType(method.getReturnType(), method.isAnnotatedAsNotNull())
+        val returnType = convertType(method.getReturnType(), method.nullabilityFromAnnotations())
 
         val modifiers = convertModifiers(method)
 
@@ -448,41 +442,46 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                                convertType(element.getType()))
     }
 
-    public fun convertType(`type`: PsiType?): Type {
+    public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
         if (`type` == null) return Type.Empty
 
-        return `type`.accept<Type>(TypeVisitor(this))!!
+        val result = `type`.accept<Type>(TypeVisitor(this))!!
+        return when (nullability) {
+            Nullability.NotNull -> result.toNotNullType()
+            Nullability.Nullable -> result.toNullableType()
+            Nullability.Default -> result
+        }
     }
 
     public fun convertTypes(types: Array<PsiType>): List<Type> {
         return types.map { convertType(it) }
     }
 
-    public fun convertType(`type`: PsiType?, notNull: Boolean): Type {
-        val result = convertType(`type`)
-        if (notNull) {
-            return result.toNotNullType()
+    public fun convertVariableType(variable: PsiVariable): Type {
+        var nullability = variable.nullabilityFromAnnotations()
+        if (nullability == Nullability.Default) {
+            val initializer = variable.getInitializer()
+            if (initializer != null && variable.hasModifierProperty(PsiModifier.FINAL)) {
+                nullability = initializer.nullability()
+            }
         }
-
-        return result
+        return convertType(variable.getType(), nullability)
     }
 
-    public fun convertVariableType(variable: PsiVariable): Type
-            = convertType(variable.getType(), variable.isAnnotatedAsNotNull())
-
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
-            = types.map { convertType(it).toNotNullType() }
+            = types.map { convertType(it, Nullability.NotNull) }
 
     public fun convertParameterList(parameters: PsiParameterList): ParameterList
             = ParameterList(parameters.getParameters().map { convertParameter(it) })
 
     public fun convertParameter(parameter: PsiParameter,
-                                forceNotNull: Boolean = false,
+                                nullability: Nullability = Nullability.Default,
                                 varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                                 modifiers: Collection<Modifier> = listOf()): Parameter {
         var `type` = convertVariableType(parameter)
-        if (forceNotNull) {
-            `type` = `type`.toNotNullType()
+        when (nullability) {
+            Nullability.NotNull -> `type` = `type`.toNotNullType()
+            Nullability.Nullable -> `type` = `type`.toNullableType()
         }
         return Parameter(Identifier(parameter.getName()!!), `type`, varValModifier, modifiers)
     }
@@ -573,6 +572,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 }
 
 val NOT_NULL_ANNOTATIONS: Set<String> = setOf("org.jetbrains.annotations.NotNull", "com.sun.istack.internal.NotNull", "javax.annotation.Nonnull")
+val NULLABLE_ANNOTATIONS: Set<String> = setOf("org.jetbrains.annotations.Nullable", "com.sun.istack.internal.Nullable", "javax.annotation.Nullable")
 
 val PRIMITIVE_TYPE_CONVERSIONS: Map<String, String> = mapOf(
         "byte" to BYTE.asString(),
