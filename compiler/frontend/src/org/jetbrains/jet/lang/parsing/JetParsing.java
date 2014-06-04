@@ -52,6 +52,8 @@ public class JetParsing extends AbstractJetParsing {
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
+    private static final TokenSet LAMBDA_VALUE_PARAMETER_FIRST =
+            TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET), MODIFIER_KEYWORDS);
 
     static JetParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
         JetParsing jetParsing = new JetParsing(builder);
@@ -1728,6 +1730,7 @@ public class JetParsing extends AbstractJetParsing {
                     error("Expecting a parameter declaration");
                     break;
                 }
+
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter()) {
                         PsiBuilder.Marker valueParameter = mark();
@@ -1739,12 +1742,13 @@ public class JetParsing extends AbstractJetParsing {
                 else {
                     parseValueParameter();
                 }
+
                 if (at(COMMA)) {
                     advance(); // COMMA
                 }
                 else {
                     if (!at(RPAR)) error("Expecting comma or ')'");
-                    if (!atSet(VALUE_PARAMETER_FIRST)) break;
+                    if (!atSet(isFunctionTypeContents ? LAMBDA_VALUE_PARAMETER_FIRST : VALUE_PARAMETER_FIRST)) break;
                 }
             }
         }
