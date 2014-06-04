@@ -27,8 +27,9 @@ import org.jetbrains.jet.lang.diagnostics.Diagnostic
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
+import org.jetbrains.jet.lang.diagnostics.Errors.*
 
-public fun getJvmSignatureDiagnostics(element: PsiElement): Diagnostics? {
+public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
         var parent = element.getParent()
         if (parent is JetFile) {
@@ -57,9 +58,17 @@ public fun getJvmSignatureDiagnostics(element: PsiElement): Diagnostics? {
 
     return object : Diagnostics by result {
 
-        override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
+        private fun alreadyReported(psiElement: PsiElement): Boolean {
+            return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf(CONFLICTING_OVERLOADS, REDECLARATION) }
+                    || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
+        }
 
+        override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
             val (conflicting, other) = result.forElement(element).partition { it.getFactory() == CONFLICTING_JVM_DECLARATIONS }
+            if (alreadyReported(psiElement)) {
+                // CONFLICTING_OVERLOADS already reported, no need to duplicate it
+                return other
+            }
 
             val filtered = arrayListOf<Diagnostic>()
             conflicting.groupBy {

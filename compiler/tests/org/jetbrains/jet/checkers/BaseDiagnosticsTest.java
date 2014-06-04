@@ -317,7 +317,7 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
             Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
             for (JetDeclaration declaration : declarations) {
-                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration);
+                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics());
                 if (diagnostics == null) continue;
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
             }

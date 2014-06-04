@@ -23,8 +23,10 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
+import org.jetbrains.jet.lang.psi.JetElement;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.Diagnostics;
+import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
 
@@ -36,7 +38,8 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         PsiFile file = element.getContainingFile();
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;
 
-        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element);
+        Diagnostics otherDiagnostics = ResolvePackage.getBindingContext((JetElement) element).getDiagnostics();
+        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics);
         
         if (diagnostics == null) return;
         JetPsiChecker.annotateElement(element, holder, diagnostics);
