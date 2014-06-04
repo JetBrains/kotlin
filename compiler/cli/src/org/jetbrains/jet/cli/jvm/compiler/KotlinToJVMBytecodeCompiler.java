@@ -66,60 +66,6 @@ public class KotlinToJVMBytecodeCompiler {
     private KotlinToJVMBytecodeCompiler() {
     }
 
-    @Nullable
-    public static Map<Module, ClassFileFactory> compileModule(
-            @NotNull CompilerConfiguration configuration,
-            @NotNull List<Module> modules,
-            @NotNull File directory
-    ) {
-        CompilerConfiguration compilerConfiguration = configuration.copy();
-        for (Module module : modules) {
-            compilerConfiguration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
-
-            for (String classpathRoot : module.getClasspathRoots()) {
-                compilerConfiguration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
-            }
-
-            for (String annotationsRoot : module.getAnnotationsRoots()) {
-                compilerConfiguration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
-            }
-        }
-
-        Disposable parentDisposable = Disposer.newDisposable();
-        JetCoreEnvironment moduleEnvironment = null;
-        try {
-            moduleEnvironment = JetCoreEnvironment.createForProduction(parentDisposable, compilerConfiguration);
-
-            AnalyzeExhaust exhaust = analyze(moduleEnvironment);
-            if (exhaust == null) {
-                return null;
-            }
-
-            exhaust.throwIfError();
-
-            Map<Module, ClassFileFactory> result = Maps.newHashMap();
-
-            for (Module module : modules) {
-                List<JetFile> jetFiles = JetCoreEnvironment.getJetFiles(
-                        moduleEnvironment, getAbsolutePaths(directory, module), new Function1<String, Unit>() {
-                            @Override
-                            public Unit invoke(String s) {
-                                return null;
-                            }
-                });
-                GenerationState generationState = generate(moduleEnvironment, exhaust, jetFiles);
-                result.put(module, generationState.getFactory());
-            }
-
-            return result;
-        }
-        finally {
-            if (moduleEnvironment != null) {
-                Disposer.dispose(parentDisposable);
-            }
-        }
-    }
-
     @NotNull
     private static List<String> getAbsolutePaths(@NotNull File directory, @NotNull Module module) {
         List<String> result = Lists.newArrayList();
@@ -158,14 +104,65 @@ public class KotlinToJVMBytecodeCompiler {
             @Nullable File jarPath,
             boolean jarRuntime
     ) {
-        Map<Module, ClassFileFactory> outputFiles = compileModule(configuration, chunk, directory);
-        if (outputFiles == null) {
-            return false;
+        Map<Module, ClassFileFactory> outputFiles = Maps.newHashMap();
+
+        CompilerConfiguration compilerConfiguration = createCompilerConfiguration(configuration, chunk, directory);
+
+        Disposable parentDisposable = Disposer.newDisposable();
+        JetCoreEnvironment environment = null;
+        try {
+            environment = JetCoreEnvironment.createForProduction(parentDisposable, compilerConfiguration);
+
+            AnalyzeExhaust exhaust = analyze(environment);
+            if (exhaust == null) {
+                return false;
+            }
+
+            exhaust.throwIfError();
+
+            for (Module module : chunk) {
+                List<JetFile> jetFiles = JetCoreEnvironment.getJetFiles(
+                        environment, getAbsolutePaths(directory, module), new Function1<String, Unit>() {
+                            @Override
+                            public Unit invoke(String s) {
+                                throw new IllegalStateException("Should have been checked before: " + s);
+                            }
+                        });
+                GenerationState generationState = generate(environment, exhaust, jetFiles);
+                outputFiles.put(module, generationState.getFactory());
+            }
         }
+        finally {
+            if (environment != null) {
+                Disposer.dispose(parentDisposable);
+            }
+        }
+
         for (Module module : chunk) {
             writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
         }
         return true;
+    }
+
+    @NotNull
+    private static CompilerConfiguration createCompilerConfiguration(
+            @NotNull CompilerConfiguration base,
+            @NotNull List<Module> chunk,
+            @NotNull File directory
+    ) {
+        CompilerConfiguration configuration = base.copy();
+        for (Module module : chunk) {
+            configuration.addAll(CommonConfigurationKeys.SOURCE_ROOTS_KEY, getAbsolutePaths(directory, module));
+
+            for (String classpathRoot : module.getClasspathRoots()) {
+                configuration.add(JVMConfigurationKeys.CLASSPATH_KEY, new File(classpathRoot));
+            }
+
+            for (String annotationsRoot : module.getAnnotationsRoots()) {
+                configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
+            }
+        }
+        return configuration;
     }
 
     @Nullable
