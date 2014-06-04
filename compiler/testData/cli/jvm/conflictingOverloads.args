@@ -1,0 +1,4 @@
+-src
+$TESTDATA_DIR$/conflictingOverloads.kt
+-output
+$TEMP_DIR$

@@ -44,6 +44,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest("compiler/testData/cli/jvm/classpath.args");
         }
         
+        @TestMetadata("conflictingOverloads.args")
+        public void testConflictingOverloads() throws Exception {
+            doJvmTest("compiler/testData/cli/jvm/conflictingOverloads.args");
+        }
+        
         @TestMetadata("diagnosticsOrder.args")
         public void testDiagnosticsOrder() throws Exception {
             doJvmTest("compiler/testData/cli/jvm/diagnosticsOrder.args");
