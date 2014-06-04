@@ -179,6 +179,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
 
             runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment,
                              moduleFile, outputItemCollector);
+            moduleFile.delete();
         }
 
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
