@@ -62,13 +62,6 @@ fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
         Nullability.Default
 }
 
-fun PsiElement?.nullability(): Nullability = when(this) {
-    is PsiLiteralExpression -> if (getValue() != null) Nullability.NotNull else Nullability.Nullable
-    is PsiNewExpression -> Nullability.NotNull
-    //TODO: other cases
-    else -> Nullability.Default
-}
-
 fun getDefaultInitializer(field: Field): String {
     if (field.`type`.isNullable) {
         return "null"

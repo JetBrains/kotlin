@@ -461,12 +461,42 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         var nullability = variable.nullabilityFromAnnotations()
         if (nullability == Nullability.Default) {
             val initializer = variable.getInitializer()
-            if (initializer != null && variable.hasModifierProperty(PsiModifier.FINAL)) {
-                nullability = initializer.nullability()
+            if (initializer != null) {
+                val initializerNullability = initializer.nullability()
+                if (variable.hasModifierProperty(PsiModifier.FINAL)) { //TODO: replace check for final modifier with effective final
+                    nullability = initializerNullability
+                }
+                else if (initializerNullability == Nullability.Nullable) { // if variable is not final then non-nullability of initializer does not mean that variable is non-null
+                    nullability = Nullability.Nullable
+                }
             }
         }
         return convertType(variable.getType(), nullability)
     }
+
+    private fun PsiExpression.nullability(): Nullability {
+        return when (this) {
+            is PsiLiteralExpression -> if (getValue() != null) Nullability.NotNull else Nullability.Nullable
+
+            is PsiNewExpression -> Nullability.NotNull
+
+            is PsiConditionalExpression -> {
+                val nullability1 = getThenExpression()?.nullability()
+                if (nullability1 == Nullability.Nullable) return Nullability.Nullable
+                val nullability2 = getElseExpression()?.nullability()
+                if (nullability2 == Nullability.Nullable) return Nullability.Nullable
+                if (nullability1 == Nullability.NotNull && nullability2 == Nullability.NotNull) return Nullability.NotNull
+                Nullability.Default
+            }
+
+            is PsiParenthesizedExpression -> getExpression()?.nullability() ?: Nullability.Default
+
+        //TODO: some other cases
+
+            else -> Nullability.Default
+        }
+    }
+
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { convertType(it, Nullability.NotNull) }
