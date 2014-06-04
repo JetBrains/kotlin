@@ -16,12 +16,23 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.openapi.vfs.StandardFileSystems;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFileSystem;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Function1;
+import kotlin.Unit;
+import kotlin.io.IoPackage;
 import kotlin.modules.AllModules;
 import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
@@ -39,8 +50,10 @@ import org.jetbrains.jet.codegen.GeneratedClassLoader;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.config.CommonConfigurationKeys;
 import org.jetbrains.jet.config.CompilerConfiguration;
+import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
@@ -264,6 +277,51 @@ public class CompileEnvironmentUtil {
         else {
             throw new CompileEnvironmentException("Output directory or jar file is not specified - no files will be saved to the disk");
         }
+    }
+
+    @NotNull
+    public static List<JetFile> getJetFiles(
+            @NotNull final Project project,
+            @NotNull List<String> sourceRoots,
+            @NotNull Function1<String, Unit> reportError
+    ) {
+        final VirtualFileSystem localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
+
+        final List<JetFile> result = Lists.newArrayList();
+
+        for (String sourceRootPath : sourceRoots) {
+            if (sourceRootPath == null) {
+                continue;
+            }
+
+            VirtualFile vFile = localFileSystem.findFileByPath(sourceRootPath);
+            if (vFile == null) {
+                reportError.invoke("Source file or directory not found: " + sourceRootPath);
+                continue;
+            }
+            if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
+                reportError.invoke("Source entry is not a Kotlin file: " + sourceRootPath);
+                continue;
+            }
+
+            IoPackage.recurse(new File(sourceRootPath), new Function1<File, Unit>() {
+                @Override
+                public Unit invoke(File file) {
+                    if (file.isFile()) {
+                        VirtualFile fileByPath = localFileSystem.findFileByPath(file.getAbsolutePath());
+                        if (fileByPath != null) {
+                            PsiFile psiFile = PsiManager.getInstance(project).findFile(fileByPath);
+                            if (psiFile instanceof JetFile) {
+                                result.add((JetFile) psiFile);
+                            }
+                        }
+                    }
+                    return Unit.VALUE;
+                }
+            });
+        }
+
+        return result;
     }
 
     private static class DescriptionToModuleAdapter implements Module {

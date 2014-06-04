@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.cli.jvm.compiler;
 
-import com.google.common.collect.Lists;
 import com.intellij.codeInsight.ExternalAnnotationsManager;
 import com.intellij.core.CoreApplicationEnvironment;
 import com.intellij.core.CoreJavaFileManager;
@@ -33,14 +32,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElementFinder;
-import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy;
 import com.intellij.psi.impl.file.impl.JavaFileManager;
 import kotlin.Function1;
 import kotlin.Unit;
-import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.jet.CompilerModeProvider;
@@ -207,13 +204,14 @@ public class JetCoreEnvironment {
             addExternalAnnotationsRoot(path);
         }
         sourceFiles.addAll(
-                getJetFiles(this, configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY), new Function1<String, Unit>() {
-                    @Override
-                    public Unit invoke(String s) {
-                        report(ERROR, s);
-                        return null;
-                    }
-                }));
+                CompileEnvironmentUtil
+                        .getJetFiles(getProject(), configuration.getList(CommonConfigurationKeys.SOURCE_ROOTS_KEY), new Function1<String, Unit>() {
+                            @Override
+                            public Unit invoke(String s) {
+                                report(ERROR, s);
+                                return Unit.VALUE;
+                            }
+                        }));
 
         JetScriptDefinitionProvider.getInstance(project).addScriptDefinitions(
                 configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY));
@@ -246,45 +244,6 @@ public class JetCoreEnvironment {
             return;
         }
         annotationsManager.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path));
-    }
-
-    @NotNull
-    public static List<JetFile> getJetFiles(@NotNull final JetCoreEnvironment environment, @NotNull List<String> sourceRoots, @NotNull Function1<String, Unit> reportError) {
-        final List<JetFile> result = Lists.newArrayList();
-
-        for (String sourceRootPath : sourceRoots) {
-            if (sourceRootPath == null) {
-                continue;
-            }
-
-            VirtualFile vFile = environment.getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(sourceRootPath);
-            if (vFile == null) {
-                reportError.invoke("Source file or directory not found: " + sourceRootPath);
-                continue;
-            }
-            if (!vFile.isDirectory() && vFile.getFileType() != JetFileType.INSTANCE) {
-                reportError.invoke("Source entry is not a Kotlin file: " + sourceRootPath);
-                continue;
-            }
-
-            IoPackage.recurse(new File(sourceRootPath), new Function1<File, Unit>() {
-                @Override
-                public Unit invoke(File file) {
-                    if (file.isFile()) {
-                        VirtualFile fileByPath = environment.getMyApplicationEnvironment().getLocalFileSystem().findFileByPath(file.getAbsolutePath());
-                        if (fileByPath != null) {
-                            PsiFile psiFile = PsiManager.getInstance(environment.getProject()).findFile(fileByPath);
-                            if (psiFile instanceof JetFile) {
-                                result.add((JetFile) psiFile);
-                            }
-                        }
-                    }
-                    return null;
-                }
-            });
-        }
-
-        return result;
     }
 
     private void addToClasspath(File path) {

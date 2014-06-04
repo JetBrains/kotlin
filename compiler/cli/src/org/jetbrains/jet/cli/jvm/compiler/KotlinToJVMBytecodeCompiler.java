@@ -121,13 +121,14 @@ public class KotlinToJVMBytecodeCompiler {
             exhaust.throwIfError();
 
             for (Module module : chunk) {
-                List<JetFile> jetFiles = JetCoreEnvironment.getJetFiles(
-                        environment, getAbsolutePaths(directory, module), new Function1<String, Unit>() {
+                List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
+                        environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
                             @Override
                             public Unit invoke(String s) {
                                 throw new IllegalStateException("Should have been checked before: " + s);
                             }
-                        });
+                        }
+                );
                 GenerationState generationState = generate(environment, exhaust, jetFiles);
                 outputFiles.put(module, generationState.getFactory());
             }
