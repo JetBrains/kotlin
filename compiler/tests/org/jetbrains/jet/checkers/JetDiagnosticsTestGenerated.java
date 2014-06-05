@@ -2626,6 +2626,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/nullableType.kt");
                 }
                 
+                @TestMetadata("twoTraitsAndOwnFunction.kt")
+                public void testTwoTraitsAndOwnFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/twoTraitsAndOwnFunction.kt");
+                }
+                
                 @TestMetadata("typeMappedToJava.kt")
                 public void testTypeMappedToJava() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/erasure/typeMappedToJava.kt");

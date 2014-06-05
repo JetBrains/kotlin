@@ -18,6 +18,8 @@ package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
@@ -37,6 +39,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclaration
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -287,9 +290,18 @@ public class GenerationState {
         ) {
             Collection<PsiElement> elements = new LinkedHashSet<PsiElement>();
 
+            boolean allDelegatedToTraitImpls = KotlinPackage.all(
+                    data.getSignatureOrigins(),
+                    new Function1<JvmDeclarationOrigin, Boolean>() {
+                        @Override
+                        public Boolean invoke(JvmDeclarationOrigin origin) {
+                            return origin.getOriginKind() == JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL;
+                        }
+                    }
+            );
             for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 PsiElement element = origin.getElement();
-                if (element == null) {
+                if (element == null || allDelegatedToTraitImpls) {
                     element = data.getClassOrigin().getElement();
                 }
                 if (element != null) {
