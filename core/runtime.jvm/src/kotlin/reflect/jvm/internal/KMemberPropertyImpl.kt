@@ -32,7 +32,7 @@ open class KMemberPropertyImpl<T, out R>(
     // TODO: extract, make lazy (weak?), use our descriptors knowledge
     protected val getter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
-                owner.jClass.getMethod(getterName(name))
+                owner.jClass.getMaybeDeclaredMethod(getterName(name))
             }
             else null
 
@@ -51,7 +51,7 @@ class KMutableMemberPropertyImpl<T, R>(
 ) : KMutableMemberProperty<T, R>, KMemberPropertyImpl<T, R>(name, owner) {
     private val setter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
-                owner.jClass.getMethod(setterName(name), getter!!.getReturnType()!!)
+                owner.jClass.getMaybeDeclaredMethod(setterName(name), getter!!.getReturnType()!!)
             }
             else null
 

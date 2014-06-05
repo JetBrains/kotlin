@@ -454,6 +454,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/overriddenInSubclass.kt");
             }
             
+            @TestMetadata("privateClassVal.kt")
+            public void testPrivateClassVal() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/privateClassVal.kt");
+            }
+            
             @TestMetadata("simpleExtension.kt")
             public void testSimpleExtension() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleExtension.kt");
