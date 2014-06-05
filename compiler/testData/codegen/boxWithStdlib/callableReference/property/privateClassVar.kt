@@ -1,27 +1,29 @@
 import kotlin.reflect.jvm.accessible
 
-class Result {
-    private val value = "OK"
+class A {
+    private var value = 0
 
-    fun ref(): KMemberProperty<Result, String> = ::value
+    fun ref(): KMutableMemberProperty<A, Int> = ::value
 }
 
 fun box(): String {
-    val p = Result().ref()
+    val a = A()
+    val p = a.ref()
     try {
-        p.get(Result())
+        p.set(a, 1)
         return "Fail: private property is accessible by default"
     } catch(e: IllegalAccessException) { }
 
     p.accessible = true
 
-    val r = p.get(Result())
+    p.set(a, 2)
+    p.get(a)
 
     p.accessible = false
     try {
-        p.get(Result())
+        p.set(a, 3)
         return "Fail: setAccessible(false) had no effect"
     } catch(e: IllegalAccessException) { }
 
-    return r
+    return "OK"
 }

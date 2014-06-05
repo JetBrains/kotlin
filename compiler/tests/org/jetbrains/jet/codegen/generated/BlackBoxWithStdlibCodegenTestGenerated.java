@@ -459,6 +459,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/privateClassVal.kt");
             }
             
+            @TestMetadata("privateClassVar.kt")
+            public void testPrivateClassVar() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/privateClassVar.kt");
+            }
+            
+            @TestMetadata("protectedClassVar.kt")
+            public void testProtectedClassVar() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/protectedClassVar.kt");
+            }
+            
+            @TestMetadata("publicClassValAccessible.kt")
+            public void testPublicClassValAccessible() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/publicClassValAccessible.kt");
+            }
+            
             @TestMetadata("simpleExtension.kt")
             public void testSimpleExtension() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleExtension.kt");

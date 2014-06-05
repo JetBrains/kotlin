@@ -23,14 +23,14 @@ open class KMemberPropertyImpl<T, out R>(
         name: String,
         protected val owner: KClassImpl<T>
 ) : KMemberProperty<T, R>, KPropertyImpl<R>(name) {
-    protected val field: Field? =
+    val field: Field? =
             if (owner.origin == KClassOrigin.FOREIGN) {
                 owner.jClass.getField(name)
             }
             else null
 
     // TODO: extract, make lazy (weak?), use our descriptors knowledge
-    protected val getter: Method? =
+    val getter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
                 owner.jClass.getMaybeDeclaredMethod(getterName(name))
             }
@@ -49,7 +49,7 @@ class KMutableMemberPropertyImpl<T, R>(
         name: String,
         owner: KClassImpl<T>
 ) : KMutableMemberProperty<T, R>, KMemberPropertyImpl<T, R>(name, owner) {
-    private val setter: Method? =
+    val setter: Method? =
             if (owner.origin == KClassOrigin.KOTLIN) {
                 owner.jClass.getMaybeDeclaredMethod(setterName(name), getter!!.getReturnType()!!)
             }
