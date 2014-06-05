@@ -259,7 +259,9 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         assert propertyDescriptor != null;
 
         CompileTimeConstant<?> compileTimeValue = propertyDescriptor.getCompileTimeInitializer();
-        if (compileTimeValue == null) return true;
+        // we must write constant values for fields in light classes,
+        // because Java's completion for annotation arguments uses this information
+        if (compileTimeValue == null) return state.getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES;
 
         //TODO: OPTIMIZATION: don't initialize static final fields
 
