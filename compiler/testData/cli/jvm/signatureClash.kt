@@ -1,4 +1,10 @@
-class A {
+open class B {
+    val x = 1
+}
+
+class A : B() {
+    fun getX() = 1
+
     fun getA(): Int = 1
     val a: Int = 1
 }

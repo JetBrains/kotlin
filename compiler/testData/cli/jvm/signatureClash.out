@@ -1,5 +1,6 @@
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (2, 5) Platform declaration clash: 'getA()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (3, 5) Platform declaration clash: 'getA()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 1) Platform declaration clash: 'getB()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (7, 1) Platform declaration clash: 'getB()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 5) Accidental override: 'getX()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (8, 5) Platform declaration clash: 'getA()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (9, 5) Platform declaration clash: 'getA()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: 'getB()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: 'getB()I'
 COMPILATION_ERROR

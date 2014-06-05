@@ -31,6 +31,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
 ) : ClassBuilderFactory by delegate {
 
     protected abstract fun handleClashingSignatures(data: ConflictingJvmDeclarationsData)
+    protected abstract fun onClassDone(classOrigin: JvmDeclarationOrigin, classInternalName: String?, hasDuplicateSignatures: Boolean)
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): SignatureCollectingClassBuilder {
         return SignatureCollectingClassBuilder(origin, delegate.newClassBuilder(origin))
@@ -67,6 +68,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
         }
 
         override fun done() {
+            var hasDuplicateSignatures = false
             for ((signature, elementsAndDescriptors) in signatures.entrySet()!!) {
                 if (elementsAndDescriptors.size == 1) continue // no clash
                 handleClashingSignatures(ConflictingJvmDeclarationsData(
@@ -75,7 +77,9 @@ public abstract class SignatureCollectingClassBuilderFactory(
                         signature,
                         elementsAndDescriptors
                 ))
+                hasDuplicateSignatures = true
             }
+            onClassDone(classCreatedFor, classInternalName, hasDuplicateSignatures)
             super.done()
         }
 

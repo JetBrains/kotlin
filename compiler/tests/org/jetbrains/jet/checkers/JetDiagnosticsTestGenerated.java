@@ -2568,9 +2568,34 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByProperty.kt");
                 }
                 
+                @TestMetadata("classFunctionOverriddenByPropertyInConstructor.kt")
+                public void testClassFunctionOverriddenByPropertyInConstructor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByPropertyInConstructor.kt");
+                }
+                
+                @TestMetadata("classFunctionOverriddenByPropertyNoGetter.kt")
+                public void testClassFunctionOverriddenByPropertyNoGetter() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classFunctionOverriddenByPropertyNoGetter.kt");
+                }
+                
                 @TestMetadata("classPropertyOverriddenByFunction.kt")
                 public void testClassPropertyOverriddenByFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/classPropertyOverriddenByFunction.kt");
+                }
+                
+                @TestMetadata("delegatedFunctionOverriddenByProperty.kt")
+                public void testDelegatedFunctionOverriddenByProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/delegatedFunctionOverriddenByProperty.kt");
+                }
+                
+                @TestMetadata("genericClassFunction.kt")
+                public void testGenericClassFunction() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/genericClassFunction.kt");
+                }
+                
+                @TestMetadata("privateClassFunctionOverriddenByProperty.kt")
+                public void testPrivateClassFunctionOverriddenByProperty() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/privateClassFunctionOverriddenByProperty.kt");
                 }
                 
                 @TestMetadata("traitFunctionOverriddenByProperty.kt")
@@ -2578,9 +2603,29 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
                 }
                 
+                @TestMetadata("traitFunctionOverriddenByPropertyInTrait.kt")
+                public void testTraitFunctionOverriddenByPropertyInTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyInTrait.kt");
+                }
+                
+                @TestMetadata("traitFunctionOverriddenByPropertyNoImpl.kt")
+                public void testTraitFunctionOverriddenByPropertyNoImpl() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByPropertyNoImpl.kt");
+                }
+                
                 @TestMetadata("traitPropertyOverriddenByFunction.kt")
                 public void testTraitPropertyOverriddenByFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunction.kt");
+                }
+                
+                @TestMetadata("traitPropertyOverriddenByFunctionInTrait.kt")
+                public void testTraitPropertyOverriddenByFunctionInTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionInTrait.kt");
+                }
+                
+                @TestMetadata("traitPropertyOverriddenByFunctionNoImpl.kt")
+                public void testTraitPropertyOverriddenByFunctionNoImpl() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionNoImpl.kt");
                 }
                 
             }

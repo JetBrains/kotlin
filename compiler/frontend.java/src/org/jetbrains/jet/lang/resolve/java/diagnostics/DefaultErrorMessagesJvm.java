@@ -34,6 +34,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     static {
         MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: ''{0}''", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: ''{0}''", CONFLICTING_JVM_DECLARATIONS_DATA);
     }
 
 

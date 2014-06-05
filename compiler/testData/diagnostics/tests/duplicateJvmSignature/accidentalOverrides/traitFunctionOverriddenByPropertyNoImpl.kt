@@ -1,8 +1,8 @@
-open class B {
-    fun getX() = 1
+trait T {
+    fun getX(): Int
 }
 
-class C : B() {
+abstract class C : T {
     val x: Int
         <!ACCIDENTAL_OVERRIDE!>get()<!> = 1
 }

@@ -28,6 +28,7 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.*
 import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.jet.lang.diagnostics.Errors.*
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
@@ -64,7 +65,8 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
         }
 
         override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
-            val (conflicting, other) = result.forElement(element).partition { it.getFactory() == CONFLICTING_JVM_DECLARATIONS }
+            val jvmDiagnostics = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
+            val (conflicting, other) = result.forElement(element).partition { it.getFactory() in jvmDiagnostics }
             if (alreadyReported(psiElement)) {
                 // CONFLICTING_OVERLOADS already reported, no need to duplicate it
                 return other
@@ -72,7 +74,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 
             val filtered = arrayListOf<Diagnostic>()
             conflicting.groupBy {
-                CONFLICTING_JVM_DECLARATIONS.cast(it).getA().signature.name
+                cast(it, jvmDiagnostics).getA().signature.name
             }.forEach {
                 val diagnostics = it.getValue()
                 if (diagnostics.size <= 1) {
@@ -84,8 +86,12 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
                                 me ->
                                 diagnostics.none {
                                     other ->
-                                    me != other &&
-                                            CONFLICTING_JVM_DECLARATIONS.cast(other).getA() higherThan CONFLICTING_JVM_DECLARATIONS.cast(me).getA()
+                                    me != other && (
+                                            // in case of implementation copied from a super trait there will be both diagnostics on the same signature
+                                            me.getFactory() == ACCIDENTAL_OVERRIDE && other.getFactory() == CONFLICTING_JVM_DECLARATIONS
+                                               // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
+                                               || cast(other, jvmDiagnostics).getA() higherThan cast(me, jvmDiagnostics).getA()
+                                            )
                                 }
                             }
                     )

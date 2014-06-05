@@ -25,7 +25,7 @@
 
     class <error>MyIllegalGenericClass1</error><T> : MyTrait<T>, MyAbstractClass<T>() {}
     class <error>MyIllegalGenericClass2</error><T, R> : MyTrait<T>, MyAbstractClass<R>() {
-        <error>override</error> fun foo(r: R) = r
+        <error><error>override</error> fun foo(r: R)</error> = r
     }
     class <error>MyIllegalClass1</error> : MyTrait<Int>, MyAbstractClass<String>() {}
 
