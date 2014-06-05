@@ -47,13 +47,6 @@ public class GenerationState {
     public interface GenerateClassFilter {
         boolean shouldProcess(JetClassOrObject classOrObject);
 
-        GenerateClassFilter ONLY_PACKAGE_CLASS = new GenerateClassFilter() {
-            @Override
-            public boolean shouldProcess(JetClassOrObject classOrObject) {
-                return false;
-            }
-        };
-
         GenerateClassFilter GENERATE_ALL = new GenerateClassFilter() {
             @Override
             public boolean shouldProcess(JetClassOrObject classOrObject) {

@@ -50,6 +50,7 @@ import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
+import org.jetbrains.jet.lang.psi.JetPsiUtil;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
@@ -104,7 +105,14 @@ public class KotlinJavaFileStubProvider<T extends WithFileStubAndExtraDiagnostic
 
                     @Override
                     public GenerationState.GenerateClassFilter getGenerateClassFilter() {
-                        return GenerationState.GenerateClassFilter.ONLY_PACKAGE_CLASS;
+                        return new GenerationState.GenerateClassFilter() {
+                            @Override
+                            public boolean shouldProcess(JetClassOrObject classOrObject) {
+                                // Top-level classes and such should not be generated for performance reasons.
+                                // Local classes in top-level functions must still be generated
+                                return JetPsiUtil.isLocal(classOrObject);
+                            }
+                        };
                     }
 
                     @Override
