@@ -165,7 +165,7 @@ class AnalysisResult (
 
         fun renderMessage(): String {
             val message = JetRefactoringBundle.message(when(this) {
-                NO_EXPRESSION -> "cannot.refactor.no.expresson"
+                NO_EXPRESSION -> "cannot.refactor.no.expression"
                 NO_CONTAINER -> "cannot.refactor.no.container"
                 SUPER_CALL -> "cannot.extract.super.call"
                 DENOTABLE_TYPES -> "parameter.types.are.not.denotable"
