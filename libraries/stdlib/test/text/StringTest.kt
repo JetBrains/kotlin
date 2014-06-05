@@ -123,5 +123,4 @@ class StringTest {
         assertEquals("new name", s.replaceBefore("=", "new name"))
         assertEquals("/new/path", s.replaceBeforeLast("=", "/new/path"))
     }
-
 }

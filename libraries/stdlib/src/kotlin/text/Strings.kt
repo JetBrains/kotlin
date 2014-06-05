@@ -57,11 +57,11 @@ public val String.indices: IntRange
  * Returns a subsequence specified by given set of indices.
  */
 public fun CharSequence.slice(indices: Iterable<Int>): CharSequence {
-    val result = StringBuilder()
+    val sb = StringBuilder()
     for (i in indices) {
-        result.append(get(i))
+        sb.append(get(i))
     }
-    return result.toString()
+    return sb.toString()
 }
 
 /**

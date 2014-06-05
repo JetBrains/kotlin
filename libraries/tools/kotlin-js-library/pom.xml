@@ -71,6 +71,7 @@
 -->
                                         <include name="Standard.kt"/>
                                         <include name="text/Strings.kt"/>
+                                        <include name="text/StringBuilder.kt"/>
                                     </fileset>
                                     <fileset dir="${basedir}/../../stdlib/src/generated">
                                         <include name="*.kt"/>

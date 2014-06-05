@@ -649,8 +649,15 @@
         function () {
             this.string = "";
         }, {
-        append: function (obj) {
-            this.string = this.string + obj.toString();
+        append: function (obj, from, to) {
+            if (from == undefined && to == undefined) {
+                this.string = this.string + obj.toString();
+            } else if (to == undefined) {
+                this.string = this.string + obj.toString().substring(from);
+            } else {
+                this.string = this.string + obj.toString().substring(from, to);
+            }
+
             return this;
         },
         reverse: function () {
