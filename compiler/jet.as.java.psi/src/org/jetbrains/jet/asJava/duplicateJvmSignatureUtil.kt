@@ -32,16 +32,16 @@ import org.jetbrains.jet.lang.diagnostics.Errors.*
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
         var parent = element.getParent()
+        if (element is JetPropertyAccessor) {
+            parent = parent?.getParent()
+        }
+
         if (parent is JetFile) {
             if (element is JetClassOrObject) {
                 return getDiagnosticsForNonLocalClass(element)
             }
             return getDiagnosticsForPackage(parent as JetFile)
         }
-        else
-            if (element is JetPropertyAccessor) {
-                parent = parent?.getParent()
-            }
 
         if (parent is JetClassBody) {
             val parentsParent = parent?.getParent()
