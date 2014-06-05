@@ -66,6 +66,62 @@ class StringTest {
     test fun indices() {
         assertEquals(0..4, "abcde".indices)
         assertEquals(0..0, "a".indices)
-        assertEquals(IntRange.EMPTY, "".indices)
+        assertTrue("".indices.isEmpty())
     }
+
+    test fun replaceRange() {
+        val s = "sample text"
+        assertEquals("sa??e text", s.replaceRange(2, 5, "??"))
+        assertEquals("sa??e text", s.replaceRange(2..5, "??"))
+        fails {
+            s.replaceRange(5..2, "??")
+        }
+        fails {
+            s.replaceRange(5, 2, "??")
+        }
+    }
+
+    test fun substringDelimited() {
+        val s = "-1,22,3+"
+        // chars
+        assertEquals("22,3+", s.substringAfter(','))
+        assertEquals("3+", s.substringAfterLast(','))
+        assertEquals("-1", s.substringBefore(','))
+        assertEquals("-1,22", s.substringBeforeLast(','))
+
+        // strings
+        assertEquals("22,3+", s.substringAfter(","))
+        assertEquals("3+", s.substringAfterLast(","))
+        assertEquals("-1", s.substringBefore(","))
+        assertEquals("-1,22", s.substringBeforeLast(","))
+
+        // non-existing delimiter
+        assertEquals("", s.substringAfter("+"))
+        assertEquals("", s.substringBefore("-"))
+        assertEquals(s, s.substringBefore("="))
+        assertEquals("", s.substringAfter("="))
+
+    }
+
+    test fun replaceDelimited() {
+        val s = "/user/folder/file.extension"
+        // chars
+        assertEquals("/user/folder/file.doc", s.replaceAfter('.', "doc"))
+        assertEquals("/user/folder/another.doc", s.replaceAfterLast('/', "another.doc"))
+        assertEquals("new name.extension", s.replaceBefore('.', "new name"))
+        assertEquals("/new/path/file.extension", s.replaceBeforeLast('/', "/new/path"))
+
+        // strings
+        assertEquals("/user/folder/file.doc", s.replaceAfter(".", "doc"))
+        assertEquals("/user/folder/another.doc", s.replaceAfterLast("/", "another.doc"))
+        assertEquals("new name.extension", s.replaceBefore(".", "new name"))
+        assertEquals("/new/path/file.extension", s.replaceBeforeLast("/", "/new/path"))
+
+        // non-existing delimiter
+        assertEquals("/user/folder/file.extension", s.replaceAfter("=", "doc"))
+        assertEquals("/user/folder/file.extension", s.replaceAfterLast("=", "another.doc"))
+        assertEquals("new name", s.replaceBefore("=", "new name"))
+        assertEquals("/new/path", s.replaceBeforeLast("=", "/new/path"))
+    }
+
 }
