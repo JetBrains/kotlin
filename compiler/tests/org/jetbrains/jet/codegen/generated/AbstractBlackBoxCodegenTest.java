@@ -90,12 +90,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     public void doTestMultiFileWithInlineCheck(@NotNull String firstFileName) {
-        firstFileName = firstFileName.substring("compiler/testData/codegen/".length());
-        List<String> ifiles = new ArrayList<String>(2);
-        ifiles.add(firstFileName);
-        ifiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
+        firstFileName = relativePath(new File(firstFileName));
+        List<String> inputFiles = new ArrayList<String>(2);
+        inputFiles.add(firstFileName);
+        inputFiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
 
-        doTestMultiFile(ifiles);
+        doTestMultiFile(inputFiles);
         InlineTestUtil.checkNoCallsToInline(initializedClassLoader.getAllGeneratedFiles());
     }
 

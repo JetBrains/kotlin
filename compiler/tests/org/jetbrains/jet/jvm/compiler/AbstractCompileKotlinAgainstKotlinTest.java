@@ -65,11 +65,11 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends TestCaseWit
     }
 
     public void doBoxTestWithInlineCheck(@NotNull String firstFileName) throws Exception {
-        List<String> ifiles = new ArrayList<String>(2);
-        ifiles.add(firstFileName);
-        ifiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
+        List<String> inputFiles = new ArrayList<String>(2);
+        inputFiles.add(firstFileName);
+        inputFiles.add(firstFileName.substring(0, firstFileName.length() - "1.kt".length()) + "2.kt");
 
-        ArrayList<OutputFile> files = doBoxTest(ifiles);
+        ArrayList<OutputFile> files = doBoxTest(inputFiles);
         InlineTestUtil.checkNoCallsToInline(files);
     }
 

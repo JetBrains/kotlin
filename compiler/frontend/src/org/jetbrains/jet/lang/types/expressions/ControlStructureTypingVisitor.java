@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
@@ -459,10 +460,11 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                 PsiElement containingFunction = BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor);
                 assert containingFunction != null;
                 if (containingFunction instanceof JetFunctionLiteral) {
-                    do {
-                        containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
-                        containingFunction = containingFunctionDescriptor != null ? BindingContextUtils.callableDescriptorToDeclaration(context.trace.getBindingContext(), containingFunctionDescriptor) : null;
-                    } while (containingFunction instanceof JetFunctionLiteral);
+                    Pair<FunctionDescriptor, PsiElement> result = BindingContextUtils
+                            .getLambdaContainingFunction(containingFunctionDescriptor, context.trace.getBindingContext());
+                    containingFunctionDescriptor = result.getFirst();
+                    containingFunction = result.getSecond();
+
                     // Unqualified, in a function literal
                     context.trace.report(RETURN_NOT_ALLOWED.on(expression));
                     resultType = ErrorUtils.createErrorType(RETURN_NOT_ALLOWED_MESSAGE);

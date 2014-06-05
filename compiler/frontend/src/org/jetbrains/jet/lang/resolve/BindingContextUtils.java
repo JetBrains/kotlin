@@ -17,6 +17,7 @@
 package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -325,4 +326,21 @@ public class BindingContextUtils {
         VariableDescriptor variableDescriptor = (VariableDescriptor) descriptor;
         return bindingContext.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null && variableDescriptor.isVar();
     }
+
+    @NotNull
+    public static Pair<FunctionDescriptor, PsiElement> getLambdaContainingFunction(
+            @NotNull FunctionDescriptor lambdaDescriptor,
+            @NotNull BindingContext context
+    ) {
+        FunctionDescriptor containingFunctionDescriptor = lambdaDescriptor;
+        PsiElement containingFunction;
+        do {
+            containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
+            containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(context,
+                                                                                                        containingFunctionDescriptor) : null;
+        } while (containingFunction instanceof JetFunctionLiteral);
+
+        return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);
+    }
+
 }

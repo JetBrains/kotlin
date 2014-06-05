@@ -43,11 +43,15 @@ import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.*;
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.ListIterator;
 
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.getFqName;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
@@ -63,6 +67,10 @@ public class InlineCodegenUtil {
 
     public static final String RECEIVER$0 = "receiver$0";
 
+    public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
+
+    public static final String ROOT_LABEL = "$$$$$ROOT$$$$$";
+
     @Nullable
     public static MethodNode getMethodNode(
             InputStream classData,
@@ -74,7 +82,7 @@ public class InlineCodegenUtil {
         cr.accept(new ClassVisitor(API) {
 
             @Override
-            public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+            public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
                 if (methodName.equals(name) && methodDescriptor.equals(desc)) {
                     return methodNode[0] = new MethodNode(access, name, desc, signature, exceptions);
                 }
@@ -270,5 +278,38 @@ public class InlineCodegenUtil {
         return (fieldName.startsWith(CAPTURED_FIELD_PREFIX) && !fieldName.equals(JvmAbi.KOTLIN_CLASS_FIELD_NAME)) ||
                THIS$0.equals(fieldName) ||
                RECEIVER$0.equals(fieldName);
+    }
+
+    public static boolean isReturnOpcode(int opcode) {
+        return opcode >= Opcodes.IRETURN && opcode <= Opcodes.RETURN;
+    }
+
+    public static void generateGlobalReturnFlag(@NotNull InstructionAdapter iv, @NotNull String labelName) {
+        iv.invokestatic(NON_LOCAL_RETURN, labelName, "()V", false);
+    }
+
+    public static Type getReturnType(int opcode) {
+        switch (opcode) {
+            case Opcodes.RETURN: return Type.VOID_TYPE;
+            case Opcodes.IRETURN: return Type.INT_TYPE;
+            case Opcodes.DRETURN: return Type.DOUBLE_TYPE;
+            case Opcodes.FRETURN: return Type.FLOAT_TYPE;
+            case Opcodes.LRETURN: return Type.LONG_TYPE;
+            default: return Type.getObjectType("object");
+        }
+    }
+
+    public static void insertNodeBefore(@NotNull MethodNode from, @NotNull MethodNode to, @NotNull AbstractInsnNode afterNode) {
+        InsnList instructions = to.instructions;
+        ListIterator<AbstractInsnNode> iterator = from.instructions.iterator();
+        while (iterator.hasNext()) {
+            AbstractInsnNode next = iterator.next();
+            instructions.insertBefore(afterNode, next);
+        }
+    }
+
+
+    public static MethodNode createEmptyMethodNode() {
+        return new MethodNode(API, 0, "fake", "()V", null, null);
     }
 }

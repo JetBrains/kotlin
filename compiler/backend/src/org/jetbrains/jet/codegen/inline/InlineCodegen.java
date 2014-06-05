@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
+import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.context.CodegenContext;
 import org.jetbrains.jet.codegen.context.MethodContext;
 import org.jetbrains.jet.codegen.context.PackageContext;
@@ -221,7 +222,31 @@ public class InlineCodegen implements CallGenerator {
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
-        return inliner.doInline(codegen.v, remapper);
+
+        MethodNode adapter = InlineCodegenUtil.createEmptyMethodNode();
+        InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
+
+        LabelOwner labelOwner = new LabelOwner() {
+
+            final CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
+
+            final boolean isLambda = CodegenBinding.isLocalFunOrLambda(descriptor) && descriptor.getName().isSpecial();
+
+            @Override
+            public boolean isMyLabel(@NotNull String name) {
+                if (InlineCodegenUtil.ROOT_LABEL.equals(name)) {
+                    return !isLambda;
+                }
+                else {
+                    return descriptor.getName().asString().equals(name);
+                }
+            }
+        };
+        List<MethodInliner.FinallyBlockInfo> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
+        generateAndInsertFinallyBlocks(adapter, infos);
+
+        adapter.accept(new InliningInstructionAdapter(codegen.v));
+        return result;
     }
 
     private void generateClosuresBodies() {
@@ -270,7 +295,8 @@ public class InlineCodegen implements CallGenerator {
                 CapturedParamDesc capturedParamInfoInLambda = activeLambda.getCapturedVars().get(capturedParamIndex);
                 info = invocationParamBuilder.addCapturedParam(capturedParamInfoInLambda, capturedParamInfoInLambda.getFieldName());
                 info.setRemapValue(remappedIndex);
-            } else {
+            }
+            else {
                 info = invocationParamBuilder.addNextParameter(type, false, remappedIndex);
             }
 
@@ -313,13 +339,14 @@ public class InlineCodegen implements CallGenerator {
         return true;
     }
 
-    private void putParameterOnStack(ParameterInfo ... infos) {
-        int [] index = new int[infos.length];
+    private void putParameterOnStack(ParameterInfo... infos) {
+        int[] index = new int[infos.length];
         for (int i = 0; i < infos.length; i++) {
             ParameterInfo info = infos[i];
             if (!info.isSkippedOrRemapped()) {
                 index[i] = codegen.getFrameMap().enterTemp(info.getType());
-            } else {
+            }
+            else {
                 index[i] = -1;
             }
         }
@@ -364,26 +391,32 @@ public class InlineCodegen implements CallGenerator {
     }
 
     public static boolean isInliningClosure(JetExpression expression, ValueParameterDescriptor valueParameterDescriptora) {
-        //TODO deparenthisise
-        return expression instanceof JetFunctionLiteralExpression &&
+        //TODO deparenthisise typed
+        JetExpression deparenthesize = JetPsiUtil.deparenthesize(expression);
+        return deparenthesize instanceof JetFunctionLiteralExpression &&
                !InlineUtil.hasNoinlineAnnotation(valueParameterDescriptora);
     }
 
-    public void rememberClosure(JetFunctionLiteralExpression expression, Type type) {
+    public void rememberClosure(JetExpression expression, Type type) {
+        JetFunctionLiteralExpression lambda = (JetFunctionLiteralExpression) JetPsiUtil.deparenthesize(expression);
+        assert lambda != null : "Couldn't find lambda in " + expression.getText();
+
+        String labelNameIfPresent = null;
+        PsiElement parent = lambda.getParent();
+        if (parent instanceof JetLabeledExpression) {
+            labelNameIfPresent = ((JetLabeledExpression) parent).getLabelName();
+        }
+        LambdaInfo info = new LambdaInfo(lambda, typeMapper, labelNameIfPresent);
+
         ParameterInfo closureInfo = invocationParamBuilder.addNextParameter(type, true, null);
-
-        LambdaInfo info = new LambdaInfo(expression, typeMapper);
-        expressionMap.put(closureInfo.getIndex(), info);
-
         closureInfo.setLambda(info);
+        expressionMap.put(closureInfo.getIndex(), info);
     }
 
     private void putClosureParametersOnStack() {
         for (LambdaInfo next : expressionMap.values()) {
-            if (next.closure != null) {
-                activeLambda = next;
-                codegen.pushClosureOnStack(next.closure, false, this);
-            }
+            activeLambda = next;
+            codegen.pushClosureOnStack(next.closure, false, this);
         }
         activeLambda = null;
     }
@@ -435,7 +468,7 @@ public class InlineCodegen implements CallGenerator {
     ) {
         //TODO deparenthisise
         if (isInliningClosure(argumentExpression, valueParameterDescriptor)) {
-            rememberClosure((JetFunctionLiteralExpression) argumentExpression, parameterType);
+            rememberClosure(argumentExpression, parameterType);
         } else {
             StackValue value = codegen.gen(argumentExpression);
             putValueIfNeeded(valueParameterDescriptor, parameterType, value);
@@ -459,4 +492,22 @@ public class InlineCodegen implements CallGenerator {
         }
         putCapturedInLocal(stackValue.type, stackValue, null, paramIndex);
     }
+
+
+    public void generateAndInsertFinallyBlocks(MethodNode intoNode, List<MethodInliner.FinallyBlockInfo> insertPoints) {
+        if (!codegen.hasFinallyBLocks()) return;
+
+        for (MethodInliner.FinallyBlockInfo insertPoint : insertPoints) {
+            MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
+            ExpressionCodegen finallyCodegen =
+                    new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),
+                                          codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
+            finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements());
+
+            finallyCodegen.generateFinallyBlocksIfNeeded(insertPoint.returnType);
+
+            InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, insertPoint.beforeIns);
+        }
+    }
+
 }

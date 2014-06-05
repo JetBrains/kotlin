@@ -34,8 +34,9 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.*;
 
 import java.util.*;
 
-import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isInvokeOnLambda;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.getReturnType;
 import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isAnonymousConstructorCall;
+import static org.jetbrains.jet.codegen.inline.InlineCodegenUtil.isInvokeOnLambda;
 
 public class MethodInliner {
 
@@ -87,25 +88,25 @@ public class MethodInliner {
         this.result = InlineResult.create();
     }
 
-
-    public InlineResult doInline(MethodVisitor adapter, LocalVarRemapper remapper) {
-        return doInline(adapter, remapper, true);
-    }
-
     public InlineResult doInline(
-            MethodVisitor adapter,
-            LocalVarRemapper remapper,
-            boolean remapReturn
+            @NotNull MethodVisitor adapter,
+            @NotNull LocalVarRemapper remapper,
+            boolean remapReturn,
+            @NotNull LabelOwner labelOwner
     ) {
         //analyze body
         MethodNode transformedNode = markPlacesForInlineAndRemoveInlinable(node);
 
+        //substitute returns with "goto end" instruction to keep non local returns in lambdas
+        Label end = new Label();
         transformedNode = doInline(transformedNode);
         removeClosureAssertions(transformedNode);
-        transformedNode.instructions.resetLabels();
+        InsnList instructions = transformedNode.instructions;
+        instructions.resetLabels();
 
-        Label end = new Label();
-        RemapVisitor visitor = new RemapVisitor(adapter, end, remapper, remapReturn, nodeRemapper);
+        MethodNode resultNode = new MethodNode(InlineCodegenUtil.API, transformedNode.access, transformedNode.name, transformedNode.desc,
+                                         transformedNode.signature, ArrayUtil.toStringArray(transformedNode.exceptions));
+        RemapVisitor visitor = new RemapVisitor(resultNode, remapper, nodeRemapper);
         try {
             transformedNode.accept(visitor);
         }
@@ -113,7 +114,11 @@ public class MethodInliner {
             throw wrapException(e, transformedNode, "couldn't inline method call");
         }
 
-        visitor.visitLabel(end);
+        resultNode.visitLabel(end);
+        processReturns(resultNode, labelOwner, remapReturn, end);
+
+        //flush transformed node to output
+        resultNode.accept(new InliningInstructionAdapter(adapter));
 
         return result;
     }
@@ -133,7 +138,7 @@ public class MethodInliner {
 
             private ConstructorInvocation invocation;
             @Override
-            public void anew(Type type) {
+            public void anew(@NotNull Type type) {
                 if (isAnonymousConstructorCall(type.getInternalName(), "<init>")) {
                     invocation = iterator.next();
 
@@ -193,7 +198,7 @@ public class MethodInliner {
                                                               "Lambda inlining " + info.getLambdaClassType().getInternalName());
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
-                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper);//TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info);//TODO add skipped this and receiver
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
@@ -275,7 +280,7 @@ public class MethodInliner {
             }
 
             @Override
-            public void visitLineNumber(int line, Label start) {
+            public void visitLineNumber(int line, @NotNull Label start) {
                 if(isInliningLambda) {
                     super.visitLineNumber(line, start);
                 }
@@ -283,7 +288,7 @@ public class MethodInliner {
 
             @Override
             public void visitLocalVariable(
-                    String name, String desc, String signature, Label start, Label end, int index
+                    @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {
                 if (isInliningLambda) {
                     super.visitLocalVariable(name, desc, signature, start, end, getNewIndex(index));
@@ -303,6 +308,7 @@ public class MethodInliner {
         node = prepareNode(node);
 
         Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter());
+
         Frame<SourceValue>[] sources;
         try {
             sources = analyzer.analyze("fake", node);
@@ -513,7 +519,7 @@ public class MethodInliner {
         return type;
     }
 
-
+    @NotNull
     public RuntimeException wrapException(@NotNull Exception originalException, @NotNull MethodNode node, @NotNull String errorSuffix) {
         if (originalException instanceof InlineException) {
             return new InlineException(errorPrefix + ": " + errorSuffix, originalException);
@@ -521,5 +527,61 @@ public class MethodInliner {
             return new InlineException(errorPrefix + ": " + errorSuffix + "\ncause: " +
                                        InlineCodegen.getNodeText(node), originalException);
         }
+    }
+
+    @NotNull
+    public static List<FinallyBlockInfo> processReturns(@NotNull MethodNode node, @NotNull LabelOwner labelOwner, boolean remapReturn, Label endLabel) {
+        if (!remapReturn) {
+            return Collections.emptyList();
+        }
+        List<FinallyBlockInfo> result = new ArrayList<FinallyBlockInfo>();
+        InsnList instructions = node.instructions;
+        AbstractInsnNode insnNode = instructions.getFirst();
+        while (insnNode != null) {
+            if (InlineCodegenUtil.isReturnOpcode(insnNode.getOpcode())) {
+                AbstractInsnNode previous = insnNode.getPrevious();
+                MethodInsnNode flagNode;
+                boolean isLocalReturn = true;
+                String labelName = null;
+                if (previous != null && previous instanceof MethodInsnNode && InlineCodegenUtil.NON_LOCAL_RETURN.equals(((MethodInsnNode) previous).owner)) {
+                    flagNode = (MethodInsnNode) previous;
+                    labelName = flagNode.name;
+                }
+
+                if (labelName != null) {
+                    isLocalReturn = labelOwner.isMyLabel(labelName);
+                    //remove global return flag
+                    if (isLocalReturn) {
+                        instructions.remove(previous);
+                    }
+                }
+
+                if (isLocalReturn && endLabel != null) {
+                    LabelNode labelNode = (LabelNode) endLabel.info;
+                    JumpInsnNode jumpInsnNode = new JumpInsnNode(Opcodes.GOTO, labelNode);
+                    instructions.insert(insnNode, jumpInsnNode);
+                    instructions.remove(insnNode);
+                    insnNode = jumpInsnNode;
+                }
+
+                //genetate finally block before nonLocalReturn flag/return/goto
+                result.add(new FinallyBlockInfo(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())));
+            }
+            insnNode = insnNode.getNext();
+        }
+        return result;
+    }
+
+    public static class FinallyBlockInfo {
+
+        final AbstractInsnNode beforeIns;
+
+        final Type returnType;
+
+        public FinallyBlockInfo(AbstractInsnNode beforeIns, Type returnType) {
+            this.beforeIns = beforeIns;
+            this.returnType = returnType;
+        }
+
     }
 }
