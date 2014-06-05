@@ -114,7 +114,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                             exhaust.getModuleDescriptor(), exhaust.getBindingContext(),
                                             Collections.singletonList(jetFile), true, true,
                                             GenerationState.GenerateClassFilter.GENERATE_ALL,
-                                            enableInline.isSelected());
+                                            enableInline.isSelected(), null);
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
             }
             catch (ProcessCanceledException e) {

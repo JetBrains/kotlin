@@ -25,8 +25,11 @@ import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
 import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 
-public class CliSourcesMemberFilter(files: Collection<JetFile>): MemberFilter {
-    val packagePartClassNames = files.map { PackagePartClassUtils.getPackagePartInternalName(it) }.toSet()
+public class CliSourcesMemberFilter(files: Collection<JetFile>, removedPackageParts: Collection<JvmClassName>): MemberFilter {
+    val packagePartClassNames = (
+            files.map { PackagePartClassUtils.getPackagePartInternalName(it) }
+            + removedPackageParts.map { it.getInternalName() }
+        ).toSet()
 
     override fun acceptPackagePartClass(container: PackageFragmentDescriptor, member: ProtoBuf.Callable, nameResolver: NameResolver): Boolean {
         if (member.hasExtension(JavaProtoBuf.implClassName)) {

@@ -36,11 +36,15 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames
 import org.jetbrains.jet.lang.resolve.java.JvmClassName
 import java.util.TreeMap
+import java.util.HashSet
+import org.jetbrains.jet.lang.psi.JetFile
+import java.util.HashMap
 
 public class IncrementalCache(baseDir: File) {
     class object {
         val PROTO_MAP = "proto.tab"
         val CONSTANTS_MAP = "constants.tab"
+        val PACKAGE_SOURCES = "package-sources.tab"
 
         private fun getConstantsHash(bytes: ByteArray): Int {
             val result = TreeMap<String, Any>() // keys order should defined to check hash of a map
@@ -59,7 +63,12 @@ public class IncrementalCache(baseDir: File) {
     }
 
     private val protoData: PersistentMap<ClassOrPackageId, ByteArray>
-    private val constantsData = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), IntInlineKeyDescriptor())
+    private val constantsData: PersistentHashMap<String, Int>
+            = PersistentHashMap(File(baseDir, CONSTANTS_MAP), EnumeratorStringDescriptor(), IntInlineKeyDescriptor())
+
+    // Format of serialization to string: <module id> <path separator> <source file path>  -->  <package part JVM internal name>
+    private val packageSourcesData: PersistentHashMap<String, String>
+            = PersistentHashMap(File(baseDir, PACKAGE_SOURCES), EnumeratorStringDescriptor(), EnumeratorStringDescriptor())
 
     ;{
         protoData = PersistentHashMap(File(baseDir, PROTO_MAP), object : KeyDescriptor<ClassOrPackageId> {
@@ -96,7 +105,7 @@ public class IncrementalCache(baseDir: File) {
         })
     }
 
-    public fun saveFileToCache(moduleId: String, file: File): Boolean {
+    public fun saveFileToCache(moduleId: String, sourceFiles: Collection<File>, file: File): Boolean {
         val fileBytes = file.readBytes()
         val classNameAndHeader = VirtualFileKotlinClass.readClassNameAndHeader(fileBytes)
         if (classNameAndHeader == null) return false
@@ -116,6 +125,8 @@ public class IncrementalCache(baseDir: File) {
             }
         }
         if (header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART) {
+            assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
+            putPackagePartSourceData(moduleId, sourceFiles.first(), className)
             return putConstantsData(className, getConstantsHash(fileBytes))
         }
 
@@ -143,6 +154,57 @@ public class IncrementalCache(baseDir: File) {
         return true
     }
 
+    private fun putPackagePartSourceData(moduleId: String, sourceFile: File, className: JvmClassName?) {
+        val key = moduleId + File.pathSeparator + sourceFile.getAbsolutePath()
+
+        if (className != null) {
+            packageSourcesData.put(key, className.getInternalName())
+        }
+        else {
+            packageSourcesData.remove(key)
+        }
+    }
+
+    public fun clearPackagePartSourceData(moduleId: String, sourceFile: File) {
+        putPackagePartSourceData(moduleId, sourceFile, null)
+    }
+
+    public fun getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName> {
+        return getRemovedPackageParts(moduleId, compiledSourceFiles).map { it.getFqNameForClassNameWithoutDollars().parent() }
+    }
+
+    public fun getRemovedPackageParts(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName> {
+        val sourceFileToCurrentFqNameMap = HashMap<File, FqName>()
+        for (sourceFile in compiledSourceFiles) {
+            sourceFileToCurrentFqNameMap[File(sourceFile.getVirtualFile()!!.getPath())] = sourceFile.getPackageFqName()
+        }
+
+        val result = HashSet<JvmClassName>()
+
+        packageSourcesData.processKeysWithExistingMapping { key ->
+            if (key!!.startsWith(moduleId + File.pathSeparator)) {
+                val indexOf = key.indexOf(File.pathSeparator)
+                val sourceFile = File(key.substring(indexOf + 1))
+
+                val packagePartClassName = JvmClassName.byInternalName(packageSourcesData[key]!!)
+                if (!sourceFile.exists()) {
+                    result.add(packagePartClassName)
+                }
+                else {
+                    val previousPackageFqName = packagePartClassName.getFqNameForClassNameWithoutDollars().parent()
+                    val currentPackageFqName = sourceFileToCurrentFqNameMap[sourceFile]
+                    if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName) {
+                        result.add(packagePartClassName)
+                    }
+                }
+            }
+
+            true
+        }
+
+        return result
+    }
+
     public fun getPackageData(moduleId: String, fqName: FqName): ByteArray? {
         return protoData[ClassOrPackageId(moduleId, fqName)]
     }
@@ -150,6 +212,7 @@ public class IncrementalCache(baseDir: File) {
     public fun close() {
         protoData.close()
         constantsData.close()
+        packageSourcesData.close()
     }
 
     private data class ClassOrPackageId(val moduleId: String, val fqName: FqName) {

@@ -76,9 +76,11 @@ public class PackageCodegen {
     public PackageCodegen(@NotNull GenerationState state, @NotNull Collection<JetFile> files, @NotNull final FqName fqName) {
         this.state = state;
         this.files = files;
-        this.packageFragment = getOnlyPackageFragment();
-        this.compiledPackageFragment = getCompiledPackageFragment(packageFragment);
+        this.packageFragment = getOnlyPackageFragment(fqName);
+        this.compiledPackageFragment = getCompiledPackageFragment(fqName);
         this.previouslyCompiledCallables = filterDeserializedCallables(compiledPackageFragment);
+
+        assert packageFragment != null || compiledPackageFragment != null : fqName.asString() + " " + files;
 
         this.v = new ClassBuilderOnDemand(new Function0<ClassBuilder>() {
             @Override
@@ -117,14 +119,14 @@ public class PackageCodegen {
     }
 
     @Nullable
-    private static PackageFragmentDescriptor getCompiledPackageFragment(@NotNull PackageFragmentDescriptor packageFragment) {
+    private PackageFragmentDescriptor getCompiledPackageFragment(@NotNull FqName fqName) {
         if (!IncrementalCompilation.ENABLED) {
             return null;
         }
 
         // TODO rewrite it to something more robust when module system is implemented
-        for (PackageFragmentDescriptor anotherFragment : packageFragment.getContainingDeclaration().getPackageFragmentProvider()
-                .getPackageFragments(packageFragment.getFqName())) {
+        for (PackageFragmentDescriptor anotherFragment : state.getModule().getPackageFragmentProvider()
+                .getPackageFragments(fqName)) {
             if (anotherFragment instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
                 return anotherFragment;
             }
@@ -212,9 +214,9 @@ public class PackageCodegen {
             }
         }
 
-        if (generateCallableMemberTasks.isEmpty()) return;
-
         generateDelegationsToPreviouslyCompiled(generateCallableMemberTasks);
+
+        if (generateCallableMemberTasks.isEmpty()) return;
 
         for (CallableMemberDescriptor member : Ordering.from(MemberComparator.INSTANCE).sortedCopy(generateCallableMemberTasks.keySet())) {
             generateCallableMemberTasks.get(member).run();
@@ -235,9 +237,9 @@ public class PackageCodegen {
         }
 
         DescriptorSerializer serializer = new DescriptorSerializer(new JavaSerializerExtension(bindings));
-        Collection<PackageFragmentDescriptor> packageFragments = compiledPackageFragment == null
-                                                                 ? Collections.singleton(packageFragment)
-                                                                 : Arrays.asList(packageFragment, compiledPackageFragment);
+        Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
+        ContainerUtil.addIfNotNull(packageFragments, packageFragment);
+        ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);
         ProtoBuf.Package packageProto = serializer.packageProto(packageFragments).build();
 
         if (packageProto.getMemberCount() == 0) return;
@@ -325,19 +327,26 @@ public class PackageCodegen {
         };
     }
 
-    @NotNull
-    private PackageFragmentDescriptor getOnlyPackageFragment() {
+    @Nullable
+    private PackageFragmentDescriptor getOnlyPackageFragment(@NotNull FqName expectedFqName) {
         SmartList<PackageFragmentDescriptor> fragments = new SmartList<PackageFragmentDescriptor>();
         for (JetFile file : files) {
             PackageFragmentDescriptor fragment = state.getBindingContext().get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, file);
             assert fragment != null : "package fragment is null for " + file;
 
+            assert expectedFqName.equals(fragment.getFqName()) :
+                    "expected package fq name: " + expectedFqName + ", actual: " + fragment.getFqName();
+
             if (!fragments.contains(fragment)) {
                 fragments.add(fragment);
             }
         }
-        if (fragments.size() != 1) {
+        if (fragments.size() > 1) {
             throw new IllegalStateException("More than one package fragment, files: " + files + " | fragments: " + fragments);
+        }
+
+        if (fragments.isEmpty()) {
+            return null;
         }
         return fragments.get(0);
     }

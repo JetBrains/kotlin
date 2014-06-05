@@ -59,7 +59,8 @@ public class KotlinBuilderModuleScriptGenerator {
     public static File generateModuleDescription(
             CompileContext context,
             ModuleChunk chunk,
-            List<File> sourceFiles // ignored for non-incremental compilation
+            List<File> sourceFiles, // ignored for non-incremental compilation
+            boolean hasRemovedFiles
     )
             throws IOException
     {
@@ -79,7 +80,7 @@ public class KotlinBuilderModuleScriptGenerator {
                 sourceFiles = new ArrayList<File>(KotlinSourceFileCollector.getAllKotlinSourceFiles(target));
             }
 
-            if (sourceFiles.size() > 0) {
+            if (sourceFiles.size() > 0 || hasRemovedFiles) {
                 noSources = false;
 
                 if (logger.isEnabled()) {

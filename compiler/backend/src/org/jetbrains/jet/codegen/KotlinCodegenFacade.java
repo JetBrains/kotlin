@@ -16,17 +16,19 @@
 
 package org.jetbrains.jet.codegen;
 
+import com.google.common.collect.Sets;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.registerClassNameForScript;
 
@@ -55,8 +57,9 @@ public class KotlinCodegenFacade {
             packageFqNameToFiles.putValue(file.getPackageFqName(), file);
         }
 
-        for (Map.Entry<FqName, Collection<JetFile>> entry : packageFqNameToFiles.entrySet()) {
-            generatePackage(state, entry.getKey(), entry.getValue(), errorHandler);
+        Set<FqName> removedPackageFiles = new HashSet<FqName>(state.getPackagesWithRemovedFiles());
+        for (FqName fqName : Sets.union(removedPackageFiles, packageFqNameToFiles.keySet())) {
+            generatePackage(state, fqName, packageFqNameToFiles.get(fqName), errorHandler);
         }
 
         state.getFactory().done();

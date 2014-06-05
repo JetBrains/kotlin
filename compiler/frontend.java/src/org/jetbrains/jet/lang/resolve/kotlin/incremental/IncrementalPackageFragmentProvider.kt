@@ -52,7 +52,7 @@ public class IncrementalPackageFragmentProvider(
 
 ) : PackageFragmentProvider {
 
-    val memberFilter = CliSourcesMemberFilter(sourceFiles)
+    val memberFilter = CliSourcesMemberFilter(sourceFiles, incrementalCache.getRemovedPackageParts(moduleId, sourceFiles))
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
 
@@ -75,6 +75,10 @@ public class IncrementalPackageFragmentProvider(
             if (source.getDeclarations().any { it is JetProperty || it is JetNamedFunction }) {
                 createPackageFragment(source.getPackageFqName())
             }
+        }
+
+        for (fqName in incrementalCache.getPackagesWithRemovedFiles(moduleId, sourceFiles)) {
+            createPackageFragment(fqName)
         }
     }
 
