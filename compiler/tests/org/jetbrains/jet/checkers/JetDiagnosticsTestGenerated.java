@@ -2699,6 +2699,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/localClass.kt");
                 }
                 
+                @TestMetadata("localClassInClass.kt")
+                public void testLocalClassInClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/localClassInClass.kt");
+                }
+                
                 @TestMetadata("nestedClass.kt")
                 public void testNestedClass() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/nestedClass.kt");
@@ -2712,6 +2717,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("objectExpression.kt")
                 public void testObjectExpression() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/objectExpression.kt");
+                }
+                
+                @TestMetadata("objectExpressionInConstructor.kt")
+                public void testObjectExpressionInConstructor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/objectExpressionInConstructor.kt");
                 }
                 
                 @TestMetadata("topLevel.kt")
