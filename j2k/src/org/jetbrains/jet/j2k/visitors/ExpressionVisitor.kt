@@ -294,7 +294,7 @@ open class ExpressionVisitor(protected val converter: Converter,
             identifier = Identifier("size", isNullable)
         }
         else if (qualifier != null) {
-            if (referencedName == "object$") {
+            if (referencedName == "object$" || referencedName == "instance$") {
                 val target = expression.getReference()?.resolve()
                 if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
                     result = converter.convertExpression(qualifier)
