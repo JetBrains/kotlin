@@ -2,6 +2,14 @@ package kotlinApi
 
 public open class KotlinClass {
     public var property: String = ""
+
+    class object {
+        public fun statucFun(p: Int): Int = p
+        public var staticVar: Int = 1
+        public var staticProperty: Int
+          get() = 1
+          set(value) {}
+    }
 }
 
 public fun globalFunction(s: String): String = s

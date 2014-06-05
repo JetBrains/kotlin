@@ -32,6 +32,7 @@ import org.jetbrains.jet.lang.psi.JetClassOrObject
 import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
+import com.intellij.psi.impl.light.LightField
 
 open class ExpressionVisitor(protected val converter: Converter,
                              private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
@@ -292,7 +293,16 @@ open class ExpressionVisitor(protected val converter: Converter,
         else if (qualifier != null && qualifier.getType() is PsiArrayType && referencedName == "length") {
             identifier = Identifier("size", isNullable)
         }
-        else if (qualifier == null) {
+        else if (qualifier != null) {
+            if (referencedName == "object$") {
+                val target = expression.getReference()?.resolve()
+                if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
+                    result = converter.convertExpression(qualifier)
+                    return
+                }
+            }
+        }
+        else {
             val target = expression.getReference()?.resolve()
 
             if (target is PsiClass) {

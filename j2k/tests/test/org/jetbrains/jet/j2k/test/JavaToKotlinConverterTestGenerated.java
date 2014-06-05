@@ -1556,6 +1556,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("ClassObjectMembers.java")
+        public void testClassObjectMembers() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/ClassObjectMembers.java");
+        }
+        
         @TestMetadata("ExtensionFunction.java")
         public void testExtensionFunction() throws Exception {
             doTest("j2k/tests/testData/ast/kotlinApiAccess/ExtensionFunction.java");
