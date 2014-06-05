@@ -3,14 +3,12 @@ package test.text
 import kotlin.*
 import kotlin.test.*
 import kotlin.util.*
+import org.junit.Test as test
 
-import junit.framework.*
-
-class StringUtilTest() : TestCase() {
-
-    fun testToRegex() {
+class StringUtilTest() {
+    test fun toRegex() {
         val re = """foo""".toRegex()
         val list = re.split("hellofoobar").toList()
-        assertEquals(arrayList("hello", "bar"), list)
+        assertEquals(listOf("hello", "bar"), list)
     }
 }
