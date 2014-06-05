@@ -65,6 +65,7 @@ import static org.jetbrains.jet.compiler.runner.KotlinCompilerRunner.runK2JvmCom
 
 public class KotlinBuilder extends ModuleLevelBuilder {
     private static final Key<Set<File>> ALL_COMPILED_FILES_KEY = Key.create("_all_kotlin_compiled_files_");
+    private static final Key<Set<ModuleBuildTarget>> PROCESSED_TARGETS_WITH_REMOVED_FILES = Key.create("_processed_targets_with_removed_files_");
 
     public static final String KOTLIN_BUILDER_NAME = "Kotlin Builder";
     private static final List<String> COMPILABLE_FILE_EXTENSIONS = Collections.singletonList("kt");
@@ -172,7 +173,20 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             filesToCompile.removeAll(allCompiledFiles);
             allCompiledFiles.addAll(filesToCompile);
 
-            File moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile);
+            Set<ModuleBuildTarget> processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context);
+
+            boolean haveRemovedFiles = false;
+            for (ModuleBuildTarget target : chunk.getTargets()) {
+                if (processedTargetsWithRemoved.add(target)) {
+                    if (!dirtyFilesHolder.getRemovedFiles(target).isEmpty()) {
+                        haveRemovedFiles = true;
+                        break;
+                    }
+                }
+            }
+
+            File moduleFile = KotlinBuilderModuleScriptGenerator
+                    .generateModuleDescription(context, chunk, filesToCompile, haveRemovedFiles);
             if (moduleFile == null) {
                 // No Kotlin sources found
                 return ExitCode.NOTHING_DONE;
@@ -198,16 +212,19 @@ public class KotlinBuilder extends ModuleLevelBuilder {
         IncrementalCache cache = new IncrementalCache(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
+            for (ModuleBuildTarget target : chunk.getTargets()) {
+                for (String file : dirtyFilesHolder.getRemovedFiles(target)) {
+                    cache.clearPackagePartSourceData(target.getId(), new File(file));
+                }
+            }
+
             boolean significantChanges = false;
 
             for (SimpleOutputItem outputItem : outputItemCollector.getOutputs()) {
                 BuildTarget<?> target = null;
                 Collection<File> sourceFiles = outputItem.getSourceFiles();
-                if (sourceFiles != null && !sourceFiles.isEmpty()) {
+                if (!sourceFiles.isEmpty()) {
                     target = sourceToTarget.get(sourceFiles.iterator().next());
-                }
-                else {
-                    messageCollector.report(EXCEPTION, "KotlinBuilder: outputItem.sourceFiles is null or empty, outputItem = " + outputItem, NO_LOCATION);
                 }
 
                 if (target == null) {
@@ -217,7 +234,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
                 File outputFile = outputItem.getOutputFile();
 
                 if (IncrementalCompilation.ENABLED) {
-                    if (cache.saveFileToCache(target.getId(), outputFile)) {
+                    if (cache.saveFileToCache(target.getId(), sourceFiles, outputFile)) {
                         significantChanges = true;
                     }
                 }
@@ -253,6 +270,15 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             ALL_COMPILED_FILES_KEY.set(context, allCompiledFiles);
         }
         return allCompiledFiles;
+    }
+
+    private static Set<ModuleBuildTarget> getProcessedTargetsWithRemovedFilesContainer(CompileContext context) {
+        Set<ModuleBuildTarget> set = PROCESSED_TARGETS_WITH_REMOVED_FILES.get(context);
+        if (set == null) {
+            set = new HashSet<ModuleBuildTarget>();
+            PROCESSED_TARGETS_WITH_REMOVED_FILES.set(context, set);
+        }
+        return set;
     }
 
     private static boolean hasKotlinFiles(@NotNull ModuleChunk chunk) {
