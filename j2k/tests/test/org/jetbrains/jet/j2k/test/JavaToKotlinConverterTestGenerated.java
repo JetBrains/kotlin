@@ -1556,6 +1556,36 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
+        @TestMetadata("ExtensionFunction.java")
+        public void testExtensionFunction() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/ExtensionFunction.java");
+        }
+        
+        @TestMetadata("ExtensionProperty.java")
+        public void testExtensionProperty() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/ExtensionProperty.java");
+        }
+        
+        @TestMetadata("GlobalFunction.java")
+        public void testGlobalFunction() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/GlobalFunction.java");
+        }
+        
+        @TestMetadata("GlobalGenericFunction.java")
+        public void testGlobalGenericFunction() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/GlobalGenericFunction.java");
+        }
+        
+        @TestMetadata("GlobalValue1.java")
+        public void testGlobalValue1() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/GlobalValue1.java");
+        }
+        
+        @TestMetadata("GlobalValue2.java")
+        public void testGlobalValue2() throws Exception {
+            doTest("j2k/tests/testData/ast/kotlinApiAccess/GlobalValue2.java");
+        }
+        
         @TestMetadata("InheritedProperty.java")
         public void testInheritedProperty() throws Exception {
             doTest("j2k/tests/testData/ast/kotlinApiAccess/InheritedProperty.java");

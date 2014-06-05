@@ -58,7 +58,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         is PsiExpression -> convertExpression(element)
         is PsiComment -> Comment(element.getText()!!)
         is PsiImportList -> convertImportList(element)
-        is PsiImportStatementBase -> convertImport(element)
+        is PsiImportStatementBase -> convertImport(element, false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: ""))
         is PsiWhiteSpace -> WhiteSpace(element.getText()!!)
         else -> null
@@ -613,20 +613,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             Nullability.Nullable -> `type` = `type`.toNullableType()
         }
         return Parameter(Identifier(parameter.getName()!!), `type`, varValModifier, modifiers)
-    }
-
-    public fun convertArguments(expression: PsiCallExpression): List<Expression> {
-        val arguments = expression.getArgumentList()?.getExpressions() ?: array()
-        val resolved = expression.resolveMethod()
-        val expectedTypes = if (resolved != null)
-            resolved.getParameterList().getParameters().map { it.getType() }
-        else
-            listOf()
-
-        return if (arguments.size == expectedTypes.size())
-            (0..expectedTypes.lastIndex).map { i -> convertExpression(arguments[i], expectedTypes[i]) }
-        else
-            arguments.map { convertExpression(it) }
     }
 
     public fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
