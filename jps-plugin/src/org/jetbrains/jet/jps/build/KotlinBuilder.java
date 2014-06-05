@@ -99,7 +99,9 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             return ExitCode.NOTHING_DONE;
         }
 
-        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION);
+        if (hasKotlinFiles(chunk)) {
+            messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION);
+        }
 
         ModuleBuildTarget representativeTarget = chunk.representativeTarget();
 
