@@ -2742,9 +2742,9 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
-                @TestMetadata("componentInheritedFromTrait.kt")
-                public void testComponentInheritedFromTrait() throws Exception {
-                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/componentInheritedFromTrait.kt");
+                @TestMetadata("dataClassCopy.kt")
+                public void testDataClassCopy() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/dataClassCopy.kt");
                 }
                 
                 @TestMetadata("defaults.kt")

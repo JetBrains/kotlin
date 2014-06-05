@@ -26,9 +26,9 @@ var varx: Int
     set(v) {}
 
 var vardef: Int = 1
-    [platformName("f")]
+    [platformName("h")]
     get
-    [platformName("g")]
+    [platformName("i")]
     set
 
 [<!INAPPLICABLE_ANNOTATION!>platformName("C")<!>]
