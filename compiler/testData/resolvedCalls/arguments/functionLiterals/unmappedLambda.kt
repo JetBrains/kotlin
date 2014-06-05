@@ -1,7 +1,5 @@
-// !CALL: foo
-
 fun foo() {}
 
 fun test() {
-    foo { x -> "$x"}
+    <caret>foo { x -> "$x"}
 }

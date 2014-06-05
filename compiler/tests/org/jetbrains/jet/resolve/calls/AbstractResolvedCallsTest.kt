@@ -20,7 +20,6 @@ import org.jetbrains.jet.ConfigurationKind
 import org.jetbrains.jet.JetLiteFixture
 import org.jetbrains.jet.JetTestUtils
 import org.jetbrains.jet.cli.jvm.compiler.JetCoreEnvironment
-import org.jetbrains.jet.lang.psi.JetElement
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall
 import org.jetbrains.jet.lang.resolve.scopes.receivers.AbstractReceiverValue
@@ -28,8 +27,6 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 import java.io.File
-import kotlin.test.assertTrue
-import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMapping
 import org.jetbrains.jet.lang.resolve.calls.model.ArgumentMatch
@@ -37,43 +34,36 @@ import org.jetbrains.jet.lang.resolve.calls.util.getAllValueArguments
 import org.jetbrains.jet.renderer.DescriptorRenderer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jet.lang.psi.ValueArgument
+import org.jetbrains.jet.lang.psi.JetPsiFactory
+import org.jetbrains.jet.lang.psi.JetExpression
+import org.jetbrains.jet.lang.resolve.bindingContextUtil.getEnclosingCall
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.jet.lang.resolve.calls.model.VariableAsFunctionResolvedCall
 
 public abstract class AbstractResolvedCallsTest() : JetLiteFixture() {
     override fun createEnvironment(): JetCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
     public fun doTest(filePath: String) {
-        val file = File(filePath)
-        val text = JetTestUtils.doLoadFile(file)
-        val directives = JetTestUtils.parseDirectives(text)
+        val text = JetTestUtils.doLoadFile(File(filePath))!!
 
-        val callName = directives["CALL"]
+        val jetFile = JetPsiFactory.createFile(getProject(), text.replace("<caret>", ""))
+        val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(jetFile).getBindingContext()
 
-        fun analyzeFileAndGetResolvedCallEntries(): Map<JetElement, ResolvedCall<*>> {
-            val psiFile = JetTestUtils.loadJetFile(getProject(), file)!!
-            val analyzeExhaust = JvmResolveUtil.analyzeOneFileWithJavaIntegration(psiFile)
-            val bindingContext = analyzeExhaust.getBindingContext()
-            return bindingContext.getSliceContents(BindingContext.RESOLVED_CALL)
+        val element = jetFile.findElementAt(text.indexOf("<caret>"))
+        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetExpression>())
+        val call = expression?.getEnclosingCall(bindingContext)
+
+        val cachedCall = bindingContext[BindingContext.RESOLVED_CALL, call?.getCalleeExpression()]
+        if (cachedCall == null) {
+            throw AssertionError("No resolved call for:\nelement: ${element.toString()}\nexpression: ${expression.toString()}\ncall: $call")
         }
 
-        var callFound = false
-        fun tryCall(resolvedCall: ResolvedCall<*>, actualName: String?) {
-            if (callName == null || callName != actualName) return
-            callFound = true
+        val resolvedCall = if (cachedCall !is VariableAsFunctionResolvedCall) cachedCall
+            else if ("(" == element?.getText()) cachedCall.functionCall
+            else cachedCall.variableCall
 
-            val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
-            JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall.renderToText()}")
-        }
-
-        for ((element, resolvedCall) in analyzeFileAndGetResolvedCallEntries()) {
-            if (resolvedCall is VariableAsFunctionResolvedCall) {
-                tryCall(resolvedCall.functionCall, "invoke")
-                tryCall(resolvedCall.variableCall, element.getText())
-            }
-            else {
-                tryCall(resolvedCall, element.getText())
-            }
-        }
-        assertTrue(callFound, "Resolved call for $callName was not found")
+        val resolvedCallInfoFileName = FileUtil.getNameWithoutExtension(filePath) + ".txt"
+        JetTestUtils.assertEqualsToFile(File(resolvedCallInfoFileName), "$text\n\n\n${resolvedCall.renderToText()}")
     }
 }
 

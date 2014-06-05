@@ -34,6 +34,11 @@ import org.jetbrains.jet.lang.psi.JetDeclarationWithBody
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.jet.lang.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.jet.lang.psi.JetArrayAccessExpression
+import org.jetbrains.jet.lang.psi.JetUnaryExpression
+import org.jetbrains.jet.lang.psi.JetBinaryExpression
+import org.jetbrains.jet.lang.psi.JetSimpleNameExpression
+import com.intellij.psi.util.PsiTreeUtil
 
 /**
  *  For expressions like <code>a(), a[i], a.b.c(), +a, a + b, (a()), a(): Int, @label a()</code>
@@ -55,6 +60,14 @@ fun JetExpression.getCorrespondingCall(bindingContext: BindingContext): Call? {
         else -> expr
     }
     return bindingContext[CALL, reference]
+}
+
+fun JetExpression.getEnclosingCall(bindingContext: BindingContext): Call? {
+    val parent = PsiTreeUtil.getNonStrictParentOfType<JetExpression>(
+            this,
+            javaClass<JetSimpleNameExpression>(), javaClass<JetCallExpression>(), javaClass<JetBinaryExpression>(),
+            javaClass<JetUnaryExpression>(), javaClass<JetArrayAccessExpression>())
+    return parent?.getCorrespondingCall(bindingContext)
 }
 
 fun Call.hasUnresolvedArguments(bindingContext: BindingContext): Boolean {

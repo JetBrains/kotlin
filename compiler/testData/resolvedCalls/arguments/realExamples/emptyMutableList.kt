@@ -1,5 +1,3 @@
-// !CALL: foo
-
 class A {}
 
 fun <T> foo(t: T) {}
@@ -7,5 +5,5 @@ fun <T> foo(t: T) {}
 fun <T> emptyList(): MutableList<T> = throw Exception()
 
 fun bar() {
-    foo(emptyList())
+    <caret>foo(emptyList())
 }
