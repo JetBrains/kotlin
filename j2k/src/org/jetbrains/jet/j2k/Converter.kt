@@ -27,9 +27,11 @@ import com.intellij.psi.util.PsiUtil
 
 public class Converter(val project: Project, val settings: ConverterSettings) {
 
+    private val typeConverter = TypeConverter(settings)
+
     private var classIdentifiersSet: MutableSet<String> = HashSet()
 
-    private val dispatcher: Dispatcher = Dispatcher(this)
+    private val dispatcher: Dispatcher = Dispatcher(this, typeConverter)
 
     public var methodReturnType: PsiType? = null
         private set
@@ -206,14 +208,14 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             return EnumConstant(Identifier(field.getName()!!),
                                 getComments(field),
                                 modifiers,
-                                convertType(field.getType(), Nullability.NotNull),
+                                typeConverter.convertType(field.getType(), Nullability.NotNull),
                                 convertElement(field.getArgumentList()))
         }
 
         return Field(Identifier(field.getName()!!),
                      getComments(field),
                      modifiers,
-                     convertVariableType(field),
+                     typeConverter.convertVariableType(field),
                      convertExpression(field.getInitializer(), field.getType()),
                      field.hasModifierProperty(PsiModifier.FINAL),
                      field.countWriteAccesses(field.getContainingClass()))
@@ -221,7 +223,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         methodReturnType = method.getReturnType()
-        val returnType = convertMethodReturnType(method)
+        val returnType = typeConverter.convertMethodReturnType(method)
 
         val modifiers = convertModifiers(method)
 
@@ -262,7 +264,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                 }
                 if (overridesMethodFromObject) {
                     val correctedParameter = Parameter(Identifier("other"),
-                                                       ClassType(Identifier("Any"), listOf(), Nullability.Nullable, this),
+                                                       ClassType(Identifier("Any"), listOf(), Nullability.Nullable, settings),
                                                        Parameter.VarValModifier.None,
                                                        listOf())
                     params = ParameterList(listOf(correctedParameter))
@@ -273,38 +275,6 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             val block = convertBlock(method.getBody())
             return Function(this, Identifier(method.getName()), comments, modifiers, returnType, typeParameterList, params, block, containingClass?.isInterface() ?: false)
         }
-    }
-
-    private fun convertMethodReturnType(method: PsiMethod): Type {
-        var nullability = method.nullabilityFromAnnotations()
-
-        if (nullability == Nullability.Default) {
-            var isInAnonymousClass = false
-            method.getBody()?.accept(object: JavaRecursiveElementVisitor() {
-                override fun visitAnonymousClass(aClass: PsiAnonymousClass) {
-                    isInAnonymousClass = true
-                    super.visitAnonymousClass(aClass)
-                    isInAnonymousClass = false
-                }
-
-                override fun visitReturnStatement(statement: PsiReturnStatement) {
-                    if (!isInAnonymousClass && statement.getReturnValue()?.nullability() == Nullability.Nullable) {
-                        nullability = Nullability.Nullable
-                    }
-                }
-            })
-        }
-
-        if (nullability == Nullability.Default) {
-            val scope = searchScope(method)
-            if (scope != null) {
-                if (findMethodCalls(method, scope).any { isNullableFromUsage(it) }) {
-                    nullability = Nullability.Nullable
-                }
-            }
-        }
-
-        return convertType(method.getReturnType(), nullability)
     }
 
     /**
@@ -355,8 +325,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             for (parameter in params) {
                 val (field, initializationStatement) = findBackingFieldForConstructorParameter(parameter, constructor) ?: continue
 
-                val fieldType = convertVariableType(field)
-                val parameterType = convertVariableType(parameter)
+                val fieldType = typeConverter.convertVariableType(field)
+                val parameterType = typeConverter.convertVariableType(parameter)
                 // types can be different only in nullability
                 val `type` = if (fieldType == parameterType) {
                     fieldType
@@ -376,12 +346,12 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                     usageReplacementMap.put(parameter, field.getName()!!)
                 }
             }
-            dispatcher.expressionVisitor = ExpressionVisitor(this, usageReplacementMap)
+            dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, usageReplacementMap)
             try {
                 Block(convertStatements(body.getStatements().filter{ !statementsToRemove.contains(it) }), false)
             }
             finally {
-                dispatcher.expressionVisitor = ExpressionVisitor(this, mapOf())
+                dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, mapOf())
             }
         }
         else {
@@ -466,7 +436,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
     public fun convertElement(element: PsiElement?): Element {
         if (element == null) return Element.Empty
 
-        val elementVisitor = ElementVisitor(this)
+        val elementVisitor = ElementVisitor(this, typeConverter)
         element.accept(elementVisitor)
         return elementVisitor.result
     }
@@ -483,122 +453,11 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return TypeElement(if (element == null)
                                Type.Empty
                            else
-                               convertType(element.getType()))
-    }
-
-    public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
-        if (`type` == null) return Type.Empty
-
-        val result = `type`.accept<Type>(TypeVisitor(this))!!
-        return when (nullability) {
-            Nullability.NotNull -> result.toNotNullType()
-            Nullability.Nullable -> result.toNullableType()
-            Nullability.Default -> result
-        }
-    }
-
-    public fun convertTypes(types: Array<PsiType>): List<Type> {
-        return types.map { convertType(it) }
-    }
-
-    public fun convertVariableType(variable: PsiVariable): Type {
-        var nullability = variable.nullabilityFromAnnotations()
-
-        if (nullability == Nullability.Default) {
-            val initializer = variable.getInitializer()
-            if (initializer != null) {
-                val initializerNullability = initializer.nullability()
-                if (variable.hasModifierProperty(PsiModifier.FINAL)) { //TODO: replace check for final modifier with effective final
-                    nullability = initializerNullability
-                }
-                else if (initializerNullability == Nullability.Nullable) { // if variable is not final then non-nullability of initializer does not mean that variable is non-null
-                    nullability = Nullability.Nullable
-                }
-            }
-        }
-
-        if (nullability == Nullability.Default) {
-            val scope = searchScope(variable)
-            if (scope != null) {
-                if (findVariableUsages(variable, scope).any { isNullableFromUsage(it) }) {
-                    nullability = Nullability.Nullable
-                }
-            }
-        }
-
-        if (nullability == Nullability.Default && variable is PsiParameter) {
-            val method = variable.getDeclarationScope() as? PsiMethod
-            if (method != null) {
-                val scope = searchScope(method)
-                if (scope != null) {
-                    val parameters = method.getParameterList().getParameters()
-                    val parameterIndex = parameters.indexOf(variable)
-                    for (call in findMethodCalls(method, scope)) {
-                        val args = call.getArgumentList().getExpressions()
-                        if (args.size == parameters.size) {
-                            if (args[parameterIndex].nullability() == Nullability.Nullable) {
-                                nullability = Nullability.Nullable
-                                break
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return convertType(variable.getType(), nullability)
-    }
-
-    private fun searchScope(element: PsiElement): PsiElement? {
-        return when(element) {
-            is PsiParameter -> element.getDeclarationScope()
-            is PsiField -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
-            is PsiMethod -> if (element.hasModifierProperty(PsiModifier.PRIVATE)) element.getContainingClass() else element.getContainingFile()
-            is PsiLocalVariable -> element.getContainingMethod()
-            else -> null
-        }
-    }
-
-    private fun PsiExpression.nullability(): Nullability {
-        return when (this) {
-            is PsiLiteralExpression -> if (getValue() != null) Nullability.NotNull else Nullability.Nullable
-
-            is PsiNewExpression -> Nullability.NotNull
-
-            is PsiConditionalExpression -> {
-                val nullability1 = getThenExpression()?.nullability()
-                if (nullability1 == Nullability.Nullable) return Nullability.Nullable
-                val nullability2 = getElseExpression()?.nullability()
-                if (nullability2 == Nullability.Nullable) return Nullability.Nullable
-                if (nullability1 == Nullability.NotNull && nullability2 == Nullability.NotNull) return Nullability.NotNull
-                Nullability.Default
-            }
-
-            is PsiParenthesizedExpression -> getExpression()?.nullability() ?: Nullability.Default
-
-        //TODO: some other cases
-
-            else -> Nullability.Default
-        }
-    }
-
-    private fun isNullableFromUsage(usage: PsiExpression): Boolean {
-        val parent = usage.getParent() ?: return false
-        if (parent is PsiAssignmentExpression && parent.getOperationTokenType() == JavaTokenType.EQ && usage == parent.getLExpression()) {
-            return parent.getRExpression()?.nullability() == Nullability.Nullable
-        }
-        else if (parent is PsiBinaryExpression) {
-            val operationType = parent.getOperationTokenType()
-            if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
-                val otherOperand = if (usage == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
-                return otherOperand?.nullability() == Nullability.Nullable
-            }
-        }
-        return false
+                               typeConverter.convertType(element.getType()))
     }
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
-            = types.map { convertType(it, Nullability.NotNull) }
+            = types.map { typeConverter.convertType(it, Nullability.NotNull) }
 
     public fun convertParameterList(parameterList: PsiParameterList): ParameterList
             = ParameterList(parameterList.getParameters().map { convertParameter(it) })
@@ -607,7 +466,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                                 nullability: Nullability = Nullability.Default,
                                 varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                                 modifiers: Collection<Modifier> = listOf()): Parameter {
-        var `type` = convertVariableType(parameter)
+        var `type` = typeConverter.convertVariableType(parameter)
         when (nullability) {
             Nullability.NotNull -> `type` = `type`.toNotNullType()
             Nullability.Nullable -> `type` = `type`.toNullableType()

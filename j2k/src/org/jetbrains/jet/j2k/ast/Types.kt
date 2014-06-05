@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.ConverterSettings
 
 fun Type.isPrimitive(): Boolean = this is PrimitiveType
 fun Type.isUnit(): Boolean = this == Type.Unit
@@ -28,11 +29,11 @@ enum class Nullability {
     Default
 }
 
-abstract class MayBeNullableType(nullability: Nullability, val converter: Converter) : Type {
+abstract class MayBeNullableType(nullability: Nullability, val settings: ConverterSettings) : Type {
     override val isNullable: Boolean = when (nullability) {
         Nullability.Nullable -> true
         Nullability.NotNull -> false
-        Nullability.Default -> !converter.settings.forceNotNullTypes
+        Nullability.Default -> !settings.forceNotNullTypes
     }
 }
 
@@ -73,8 +74,8 @@ trait Type : Element {
     override fun toString(): String = toKotlin()
 }
 
-open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, converter: Converter)
-  : MayBeNullableType(nullability, converter) {
+open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, settings: ConverterSettings)
+  : MayBeNullableType(nullability, settings) {
 
     override fun toKotlin(): String {
         // TODO change to map() when KT-2051 is fixed
@@ -90,12 +91,12 @@ open class ClassType(val `type`: Identifier, val parameters: List<Element>, null
     }
 
 
-    override fun toNotNullType(): Type = ClassType(`type`, parameters, Nullability.NotNull, converter)
-    override fun toNullableType(): Type = ClassType(`type`, parameters, Nullability.Nullable, converter)
+    override fun toNotNullType(): Type = ClassType(`type`, parameters, Nullability.NotNull, settings)
+    override fun toNullableType(): Type = ClassType(`type`, parameters, Nullability.Nullable, settings)
 }
 
-class ArrayType(val elementType: Type, nullability: Nullability, converter: Converter)
-  : MayBeNullableType(nullability, converter) {
+class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)
+  : MayBeNullableType(nullability, settings) {
 
     override fun toKotlin(): String {
         if (elementType is PrimitiveType) {
@@ -105,8 +106,8 @@ class ArrayType(val elementType: Type, nullability: Nullability, converter: Conv
         return "Array<" + elementType.toKotlin() + ">" + isNullableStr()
     }
 
-    override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, converter)
-    override fun toNullableType(): Type = ArrayType(elementType, Nullability.Nullable, converter)
+    override fun toNotNullType(): Type = ArrayType(elementType, Nullability.NotNull, settings)
+    override fun toNullableType(): Type = ArrayType(elementType, Nullability.Nullable, settings)
 }
 
 open class InProjectionType(val bound: Type) : NotNullType {

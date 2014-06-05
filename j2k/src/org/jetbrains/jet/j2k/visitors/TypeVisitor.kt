@@ -18,16 +18,16 @@ package org.jetbrains.jet.j2k.visitors
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
-import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import java.util.LinkedList
 import com.intellij.openapi.util.text.StringUtil
 import java.util.ArrayList
 import org.jetbrains.jet.lang.resolve.java.JvmPrimitiveType
+import org.jetbrains.jet.j2k.TypeConverter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>() {
+open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Type>() {
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
@@ -42,7 +42,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
     }
 
     override fun visitArrayType(arrayType: PsiArrayType): Type {
-        return ArrayType(converter.convertType(arrayType.getComponentType()), Nullability.Default, converter)
+        return ArrayType(converter.convertType(arrayType.getComponentType()), Nullability.Default, converter.settings)
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
@@ -53,18 +53,18 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
             if (resolvedClassTypeParams.size() == 1) {
                 if ((resolvedClassTypeParams.single() as ClassType).`type`.name == "Any") {
                     starParamList.add(StarProjectionType())
-                    return ClassType(identifier, starParamList, Nullability.Default, converter)
+                    return ClassType(identifier, starParamList, Nullability.Default, converter.settings)
                 }
                 else {
-                    return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter)
+                    return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter.settings)
                 }
             }
             else {
-                return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter)
+                return ClassType(identifier, resolvedClassTypeParams, Nullability.Default, converter.settings)
             }
         }
         else {
-            return ClassType(identifier, converter.convertTypes(classType.getParameters()), Nullability.Default, converter)
+            return ClassType(identifier, converter.convertTypes(classType.getParameters()), Nullability.Default, converter.settings)
         }
     }
 
@@ -99,7 +99,7 @@ open class TypeVisitor(private val converter: Converter) : PsiTypeVisitor<Type>(
                         ClassType(Identifier(getClassTypeName(superTypes[0])),
                                   converter.convertTypes(superTypes[0].getParameters()),
                                   Nullability.Default,
-                                  converter)
+                                  converter.settings)
                     else
                         StarProjectionType()
                     typeParams.add(boundType)

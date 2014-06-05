@@ -34,8 +34,9 @@ import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.impl.light.LightField
 
-open class ExpressionVisitor(protected val converter: Converter,
-                             private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
+class ExpressionVisitor(private val converter: Converter,
+                        private val typeConverter: TypeConverter,
+                        private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
     public var result: Expression = Expression.Empty
         protected set
 
@@ -48,7 +49,7 @@ open class ExpressionVisitor(protected val converter: Converter,
     }
 
     override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
-        val expressionType = converter.convertType(expression.getType())
+        val expressionType = typeConverter.convertType(expression.getType())
         assert(expressionType is ArrayType, "Array initializer must have array type")
         result = ArrayInitializerExpression(expressionType as ArrayType,
                                               converter.convertExpressions(expression.getInitializers()))
@@ -192,14 +193,14 @@ open class ExpressionVisitor(protected val converter: Converter,
                         val qualifier = converter.convertExpression(arguments.firstOrNull())
                         MethodCallExpression(QualifiedExpression(qualifier, Identifier(origin.getName()!!, false)),
                                                       convertArguments(expression, isExtension = true),
-                                                      converter.convertTypes(expression.getTypeArguments()),
-                                                      converter.convertType(expression.getType()).isNullable)
+                                                      typeConverter.convertTypes(expression.getTypeArguments()),
+                                                      typeConverter.convertType(expression.getType()).isNullable)
                     }
                     else {
                         MethodCallExpression(Identifier(origin.getName()!!, false),
                                                       convertArguments(expression),
-                                                      converter.convertTypes(expression.getTypeArguments()),
-                                                      converter.convertType(expression.getType()).isNullable)
+                                                      typeConverter.convertTypes(expression.getTypeArguments()),
+                                                      typeConverter.convertType(expression.getType()).isNullable)
                     }
                     return
                 }
@@ -209,8 +210,8 @@ open class ExpressionVisitor(protected val converter: Converter,
 
         result = MethodCallExpression(converter.convertExpression(methodExpr),
                                       convertArguments(expression),
-                                      converter.convertTypes(expression.getTypeArguments()),
-                                      converter.convertType(expression.getType()).isNullable)
+                                      typeConverter.convertTypes(expression.getTypeArguments()),
+                                      typeConverter.convertType(expression.getType()).isNullable)
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {
@@ -240,14 +241,14 @@ open class ExpressionVisitor(protected val converter: Converter,
         }
 
         val reference = expression.getClassReference()
-        val typeParameters = if (reference != null) converter.convertTypes(reference.getTypeParameters()) else listOf()
+        val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
         return QualifiedExpression(Identifier(constructor.getName(), false),
                                    MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
     }
 
     private fun createNewEmptyArrayWithoutInitialization(expression: PsiNewExpression): Expression {
         return ArrayWithoutInitializationExpression(
-                converter.convertType(expression.getType(), Nullability.NotNull),
+                typeConverter.convertType(expression.getType(), Nullability.NotNull),
                 converter.convertExpressions(expression.getArrayDimensions()))
     }
 
@@ -276,7 +277,7 @@ open class ExpressionVisitor(protected val converter: Converter,
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-        val isNullable = converter.convertType(expression.getType(), expression.nullability()).isNullable
+        val isNullable = typeConverter.convertType(expression.getType(), expression.nullability()).isNullable
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
         val qualifier = expression.getQualifierExpression()
@@ -368,7 +369,7 @@ open class ExpressionVisitor(protected val converter: Converter,
             result = MethodCallExpression.build(converter.convertExpression(operand), typeConversion)
         }
         else {
-            result = TypeCastExpression(converter.convertType(castType.getType()),
+            result = TypeCastExpression(typeConverter.convertType(castType.getType()),
                                         converter.convertExpression(operand))
         }
     }
