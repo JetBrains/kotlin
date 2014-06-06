@@ -29,12 +29,21 @@ import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclaration
 import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
+import org.jetbrains.jet.lang.psi.JetParameter
+import org.jetbrains.jet.lang.psi.JetClass
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
         var parent = element.getParent()
         if (element is JetPropertyAccessor) {
             parent = parent?.getParent()
+        }
+        if (element is JetParameter && element.getValOrVarNode() != null) {
+            // property declared in constructor
+            val parentClass = parent?.getParent() as? JetClass
+            if (parentClass != null) {
+                return getDiagnosticsForNonLocalClass(parentClass)
+            }
         }
 
         if (parent is JetFile) {

@@ -2719,6 +2719,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/classObject.kt");
                 }
                 
+                @TestMetadata("classPropertyInConstructor.kt")
+                public void testClassPropertyInConstructor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/classPropertyInConstructor.kt");
+                }
+                
                 @TestMetadata("extensionFunctionAndNormalFunction.kt")
                 public void testExtensionFunctionAndNormalFunction() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/extensionFunctionAndNormalFunction.kt");
