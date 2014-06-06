@@ -6,7 +6,7 @@ interface I {
 class C {
     void foo(I i) {
         if (i.getString() == null) {
-            println("null")
+            println("null");
         }
     }
 }

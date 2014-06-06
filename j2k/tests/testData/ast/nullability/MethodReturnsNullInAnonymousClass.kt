@@ -1,5 +1,3 @@
-import java.lang.Override
-
 trait Getter {
     public fun get(): String
 }

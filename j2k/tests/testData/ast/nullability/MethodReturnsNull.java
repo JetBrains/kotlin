@@ -2,10 +2,10 @@
 class C {
     String foo(boolean b) {
         if (b) {
-            return "abc"
+            return "abc";
         }
         else {
-            return null
+            return null;
         }
     }
 }

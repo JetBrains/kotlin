@@ -1,6 +1,6 @@
 //file
 class C {
     String foo(boolean b) {
-        return b ? "abc" : null
+        return b ? "abc" : null;
     }
 }

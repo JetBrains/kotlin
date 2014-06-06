@@ -1245,6 +1245,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/overrideObject.java");
         }
         
+        @TestMetadata("overrideObject2.java")
+        public void testOverrideObject2() throws Exception {
+            doTest("j2k/tests/testData/ast/function/overrideObject2.java");
+        }
+        
         @TestMetadata("ownGenericParam.java")
         public void testOwnGenericParam() throws Exception {
             doTest("j2k/tests/testData/ast/function/ownGenericParam.java");
@@ -2174,6 +2179,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
     public static class Settings extends AbstractJavaToKotlinConverterTest {
         public void testAllFilesPresentInSettings() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/settings"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+        
+        @TestMetadata("forceLocalVariableImmutability.java")
+        public void testForceLocalVariableImmutability() throws Exception {
+            doTest("j2k/tests/testData/ast/settings/forceLocalVariableImmutability.java");
         }
         
         @TestMetadata("openByDefault.java")

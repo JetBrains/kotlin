@@ -63,7 +63,7 @@ private fun filterImport(name: String, ref: PsiJavaCodeReferenceElement): String
     if (!JavaToKotlinClassMap.getInstance().mapPlatformClass(FqName(name)).isEmpty()) return null
 
     val target = ref.resolve()
-    if (target != null && target is KotlinLightClassForPackage) {
+    if (target is KotlinLightClassForPackage) {
         return quoteKeywords(target.getFqName().parent().toString()) + ".*"
     }
 

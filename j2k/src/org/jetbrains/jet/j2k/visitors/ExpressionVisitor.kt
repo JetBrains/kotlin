@@ -33,6 +33,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.getParentByType
 import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.impl.light.LightField
+import org.jetbrains.jet.lang.resolve.java.JvmAbi
 
 class ExpressionVisitor(private val converter: Converter,
                         private val typeConverter: TypeConverter,
@@ -159,15 +160,12 @@ class ExpressionVisitor(private val converter: Converter,
                 val parameterCount = target.getParameterList().getParameters().size
                 if (parameterCount == arguments.size) {
                     val propertyName = Identifier(property.getName()!!, false)
-                    var isExtension = false
+                    val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
-                        if (property.isExtensionDeclaration()) {
-                            isExtension = true
+                        if (isExtension)
                             QualifiedExpression(converter.convertExpression(arguments.firstOrNull()), propertyName)
-                        }
-                        else {
+                        else
                             propertyName
-                        }
                     }
                     else {
                         QualifiedExpression(converter.convertExpression(methodExpr.getQualifierExpression()), propertyName)
@@ -312,7 +310,7 @@ class ExpressionVisitor(private val converter: Converter,
             identifier = Identifier("size", isNullable)
         }
         else if (qualifier != null) {
-            if (referencedName == "object$" || referencedName == "instance$") {
+            if (referencedName == JvmAbi.CLASS_OBJECT_FIELD || referencedName == JvmAbi.INSTANCE_FIELD) {
                 val target = expression.getReference()?.resolve()
                 if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
                     result = converter.convertExpression(qualifier)

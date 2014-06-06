@@ -89,18 +89,15 @@ class TypeConverter(val settings: ConverterSettings) {
         var nullability = method.nullabilityFromAnnotations()
 
         if (nullability == Nullability.Default) {
-            var isInAnonymousClass = false
             method.getBody()?.accept(object: JavaRecursiveElementVisitor() {
-                override fun visitAnonymousClass(aClass: PsiAnonymousClass) {
-                    isInAnonymousClass = true
-                    super.visitAnonymousClass(aClass)
-                    isInAnonymousClass = false
-                }
-
                 override fun visitReturnStatement(statement: PsiReturnStatement) {
-                    if (!isInAnonymousClass && statement.getReturnValue()?.nullability() == Nullability.Nullable) {
+                    if (statement.getReturnValue()?.nullability() == Nullability.Nullable) {
                         nullability = Nullability.Nullable
                     }
+                }
+
+                override fun visitMethod(method: PsiMethod) {
+                    // do not go inside any other method (e.g. in anonymous class)
                 }
             })
         }
@@ -129,7 +126,7 @@ class TypeConverter(val settings: ConverterSettings) {
 
     private fun PsiExpression.nullability(): Nullability {
         return when (this) {
-            is PsiLiteralExpression -> if (getValue() != null) Nullability.NotNull else Nullability.Nullable
+            is PsiLiteralExpression -> if (getType() != PsiType.NULL) Nullability.NotNull else Nullability.Nullable
 
             is PsiNewExpression -> Nullability.NotNull
 
@@ -159,7 +156,7 @@ class TypeConverter(val settings: ConverterSettings) {
             val operationType = parent.getOperationTokenType()
             if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
                 val otherOperand = if (usage == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
-                return otherOperand?.nullability() == Nullability.Nullable
+                return otherOperand is PsiLiteralExpression && otherOperand.getType() == PsiType.NULL
             }
         }
         return false

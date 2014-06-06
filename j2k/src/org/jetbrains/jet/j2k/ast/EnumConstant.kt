@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-open class EnumConstant(
+class EnumConstant(
         identifier: Identifier,
         members: MemberComments,
         modifiers: Set<Modifier>,
