@@ -37,7 +37,7 @@ import org.jetbrains.jet.compiler.runner.OutputItemsCollectorImpl;
 import org.jetbrains.jet.compiler.runner.SimpleOutputItem;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.jps.JpsKotlinCompilerSettings;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
+import org.jetbrains.jet.jps.incremental.IncrementalCacheImpl;
 import org.jetbrains.jet.utils.PathUtil;
 import org.jetbrains.jps.ModuleChunk;
 import org.jetbrains.jps.builders.BuildTarget;
@@ -209,7 +209,7 @@ public class KotlinBuilder extends ModuleLevelBuilder {
             }
         }
 
-        IncrementalCache cache = new IncrementalCache(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
+        IncrementalCacheImpl cache = new IncrementalCacheImpl(KotlinBuilderModuleScriptGenerator.getIncrementalCacheDir(context));
 
         try {
             for (ModuleBuildTarget target : chunk.getTargets()) {
