@@ -24,8 +24,12 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*
 public abstract class InstructionVisitorWithResult<R>() {
     public abstract fun visitInstruction(instruction: Instruction): R
 
-    public open fun visitReadValue(instruction: ReadValueInstruction): R {
+    public open fun visitAccessInstruction(instruction: AccessValueInstruction): R {
         return visitInstructionWithNext(instruction)
+    }
+
+    public open fun visitReadValue(instruction: ReadValueInstruction): R {
+        return visitAccessInstruction(instruction)
     }
 
     public open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction): R {
@@ -85,7 +89,7 @@ public abstract class InstructionVisitorWithResult<R>() {
     }
 
     public open fun visitWriteValue(instruction: WriteValueInstruction): R {
-        return visitInstructionWithNext(instruction)
+        return visitAccessInstruction(instruction)
     }
 
     public open fun visitLoadUnitValue(instruction: LoadUnitValueInstruction): R {

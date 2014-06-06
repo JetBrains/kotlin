@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -94,9 +94,9 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     @Override
     public PseudoValue readVariable(
             @NotNull JetExpression expression,
-            @Nullable VariableDescriptor variableDescriptor,
-            @Nullable PseudoValue receiverValue) {
-        return getDelegateBuilder().readVariable(expression, variableDescriptor, receiverValue);
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+        return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
     }
 
     @Nullable
@@ -258,8 +258,9 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
             @NotNull JetElement assignment,
             @NotNull JetElement lValue,
             @NotNull PseudoValue rValue,
-            @Nullable PseudoValue receiverValue) {
-        getDelegateBuilder().write(assignment, lValue, rValue, receiverValue);
+            @NotNull AccessTarget target,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+        getDelegateBuilder().write(assignment, lValue, rValue, target, receiverValues);
     }
 
     @Override

@@ -22,24 +22,20 @@ import java.util.Collections
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
-import java.util.Arrays
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
-import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 public class WriteValueInstruction(
         assignment: JetElement,
+        lexicalScope: LexicalScope,
+        target: AccessTarget,
+        receiverValues: Map<PseudoValue, ReceiverValue>,
         public val lValue: JetElement,
-        public val rValue: PseudoValue,
-        public val receiverValue: PseudoValue?,
-        lexicalScope: LexicalScope
-) : InstructionWithNext(assignment, lexicalScope), InstructionWithReceivers {
-    override val receiverValues: List<PseudoValue>
-        get() = ContainerUtil.createMaybeSingletonList(receiverValue)
-
+        public val rValue: PseudoValue
+) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
-        get() = receiverValue?.let{ receiverValue -> Arrays.asList(receiverValue, rValue) } ?: Collections.singletonList(rValue)
+        get() = receiverValues.keySet() + rValue
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitWriteValue(this)
@@ -55,5 +51,5 @@ public class WriteValueInstruction(
     }
 
     override fun createCopy(): InstructionImpl =
-            WriteValueInstruction(element, lValue, rValue, receiverValue, lexicalScope)
+            WriteValueInstruction(element, lexicalScope, target, receiverValues, lValue, rValue)
 }

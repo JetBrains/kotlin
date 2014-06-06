@@ -23,25 +23,21 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionWithNext
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 public class ReadValueInstruction private (
         element: JetElement,
         lexicalScope: LexicalScope,
-        public val receiverValue: PseudoValue?,
+        target: AccessTarget,
+        receiverValues: Map<PseudoValue, ReceiverValue>,
         private var _outputValue: PseudoValue?
-) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers, InstructionWithValue {
+) : AccessValueInstruction(element, lexicalScope, target, receiverValues), InstructionWithValue {
     private fun newResultValue(factory: PseudoValueFactory) {
         _outputValue = factory.newValue(element, this)
     }
 
-    override val receiverValues: List<PseudoValue>
-        get() = ContainerUtil.createMaybeSingletonList(receiverValue)
-
     override val inputValues: List<PseudoValue>
-        get() = receiverValues
+        get() = receiverValues.keySet().toList()
 
     override val outputValue: PseudoValue
         get() = _outputValue!!
@@ -55,21 +51,22 @@ public class ReadValueInstruction private (
     }
 
     override fun toString(): String {
-        val inVal = if (receiverValue != null) "|$receiverValue" else ""
+        val inVal = if (receiverValues.empty) "" else "|${receiverValues.keySet().makeString()}"
         return "r(${render(element)}$inVal) -> $outputValue"
     }
 
     override fun createCopy(): InstructionImpl =
-            ReadValueInstruction(element, lexicalScope, receiverValue, outputValue)
+            ReadValueInstruction(element, lexicalScope, target, receiverValues, outputValue)
 
     class object {
         public fun create (
                 element: JetElement,
                 lexicalScope: LexicalScope,
-                receiverValue: PseudoValue?,
+                target: AccessTarget,
+                receiverValues: Map<PseudoValue, ReceiverValue>,
                 factory: PseudoValueFactory
         ): ReadValueInstruction {
-            return ReadValueInstruction(element, lexicalScope, receiverValue, null).let { instruction ->
+            return ReadValueInstruction(element, lexicalScope, target, receiverValues, null).let { instruction ->
                 instruction.newResultValue(factory)
                 instruction
             }

@@ -18,7 +18,8 @@ package org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval
 
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 
 public trait InstructionWithReceivers: Instruction {
-    public val receiverValues: List<PseudoValue>
+    public val receiverValues: Map<PseudoValue, ReceiverValue>
 }

@@ -20,9 +20,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -126,9 +126,12 @@ public interface JetControlFlowBuilder {
 
     @NotNull
     PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
+
     @NotNull
     PseudoValue readVariable(
-            @NotNull JetExpression expression, @Nullable VariableDescriptor variableDescriptor, @Nullable PseudoValue receiverValue
+            @NotNull JetExpression expression,
+            @NotNull ResolvedCall<?> resolvedCall,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
     @Nullable
@@ -153,7 +156,12 @@ public interface JetControlFlowBuilder {
 
     void compilationError(@NotNull JetElement element, @NotNull String message);
 
-    void write(@NotNull JetElement assignment, @NotNull JetElement lValue, @NotNull PseudoValue rValue, @Nullable PseudoValue receiverValue);
+    void write(
+            @NotNull JetElement assignment,
+            @NotNull JetElement lValue,
+            @NotNull PseudoValue rValue,
+            @NotNull AccessTarget target,
+            @NotNull Map<PseudoValue, ReceiverValue> receiverValues);
     
     // Other
     void unsupported(JetElement element);

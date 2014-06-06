@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.special.*;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
-import org.jetbrains.jet.lang.descriptors.VariableDescriptor;
 import org.jetbrains.jet.lang.psi.*;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
@@ -306,8 +305,9 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull JetElement assignment,
                 @NotNull JetElement lValue,
                 @NotNull PseudoValue rValue,
-                @Nullable PseudoValue receiverValue) {
-            add(new WriteValueInstruction(assignment, lValue, rValue, receiverValue, getCurrentScope()));
+                @NotNull AccessTarget target,
+                @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+            add(new WriteValueInstruction(assignment, getCurrentScope(), target, receiverValues, lValue, rValue));
         }
 
         @Override
@@ -402,25 +402,25 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public PseudoValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
-            return read(expression, null);
+            return read(expression);
         }
 
         @NotNull
         @Override
         public PseudoValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
-            return read(expression, null);
+            return read(expression);
         }
 
         @NotNull
         @Override
         public PseudoValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
-            return read(expression, null);
+            return read(expression);
         }
 
         @NotNull
         @Override
         public PseudoValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
-            return inputValues.isEmpty() ? read(expression, null) : magic(expression, expression, inputValues, false);
+            return inputValues.isEmpty() ? read(expression) : magic(expression, expression, inputValues, false);
         }
 
         @NotNull
@@ -448,17 +448,17 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
-            return read(expression, null);
+            return read(expression);
         }
 
         @NotNull
         @Override
         public PseudoValue readVariable(
                 @NotNull JetExpression expression,
-                @Nullable VariableDescriptor variableDescriptor,
-                @Nullable PseudoValue receiverValue
+                @NotNull ResolvedCall<?> resolvedCall,
+                @NotNull Map<PseudoValue, ReceiverValue> receiverValues
         ) {
-            return read(expression, receiverValue);
+            return read(expression, resolvedCall, receiverValues);
         }
 
         @Nullable
@@ -498,11 +498,20 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         }
 
         @NotNull
-        private PseudoValue read(@NotNull JetExpression expression, @Nullable PseudoValue receiverValue) {
+        private PseudoValue read(
+                @NotNull JetExpression expression,
+                @Nullable ResolvedCall<?> resolvedCall,
+                @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
+            AccessTarget accessTarget = resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.instance$;
             ReadValueInstruction instruction =
-                    ReadValueInstruction.object$.create(expression, getCurrentScope(), receiverValue, valueFactory);
+                    ReadValueInstruction.object$.create(expression, getCurrentScope(), accessTarget, receiverValues, valueFactory);
             add(instruction);
             return instruction.getOutputValue();
+        }
+
+        @NotNull
+        private PseudoValue read(@NotNull JetExpression expression) {
+            return read(expression, null, Collections.<PseudoValue, ReceiverValue>emptyMap());
         }
     }
 

@@ -61,12 +61,9 @@ public class CallInstruction private(
         element: JetElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
-        public val receiverValueMap: Map<PseudoValue, ReceiverValue>,
+        public override val receiverValues: Map<PseudoValue, ReceiverValue>,
         public val arguments: Map<PseudoValue, ValueParameterDescriptor>
-) : OperationInstruction(element, lexicalScope, receiverValueMap.keySet() + arguments.keySet()), InstructionWithReceivers {
-    override val receiverValues: List<PseudoValue>
-        get() = receiverValueMap.keySet().toList()
-
+) : OperationInstruction(element, lexicalScope, receiverValues.keySet() + arguments.keySet()), InstructionWithReceivers {
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitCallInstruction(this)
     }
@@ -76,7 +73,7 @@ public class CallInstruction private(
     }
 
     override fun createCopy() =
-            CallInstruction(element, lexicalScope, resolvedCall, receiverValueMap, arguments).setResult(resultValue)
+            CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(resultValue)
 
     override fun toString() =
             renderInstruction("call", "${render(element)}, ${resolvedCall.getResultingDescriptor()!!.getName()}")
