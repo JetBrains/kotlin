@@ -184,6 +184,7 @@ public class LazyPackageFragmentScopeForJavaClass(
                                                                 .map { c -> c.getFqName().sure("Nested class has no fqName: $c}") }.toList()
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        //NOTE: assuming that all sam constructors are created for interfaces which are static and should be placed in this scope
         val samConstructor = getContainingDeclaration().getCorrespondingClass().getUnsubstitutedInnerClassesScope().getClassifier(name)
                 ?.createSamConstructor()
         if (samConstructor != null) {
