@@ -12,8 +12,8 @@ class Library() {
 class User() {
     fun main() {
         val lib: Library = Library()
-        lib?.call()
-        lib?.getString()?.isEmpty()
+        lib.call()
+        lib.getString()?.isEmpty()
 
         Library().call()
         Library().getString()?.isEmpty()

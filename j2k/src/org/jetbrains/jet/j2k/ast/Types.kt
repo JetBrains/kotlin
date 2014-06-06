@@ -74,7 +74,7 @@ trait Type : Element {
     override fun toString(): String = toKotlin()
 }
 
-open class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, settings: ConverterSettings)
+class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
     override fun toKotlin(): String {
@@ -110,22 +110,22 @@ class ArrayType(val elementType: Type, nullability: Nullability, settings: Conve
     override fun toNullableType(): Type = ArrayType(elementType, Nullability.Nullable, settings)
 }
 
-open class InProjectionType(val bound: Type) : NotNullType {
+class InProjectionType(val bound: Type) : NotNullType {
     override fun toKotlin(): String = "in " + bound.toKotlin()
 }
 
-open class OutProjectionType(val bound: Type) : NotNullType {
+class OutProjectionType(val bound: Type) : NotNullType {
     override fun toKotlin(): String = "out " + bound.toKotlin()
 }
 
-open class StarProjectionType() : NotNullType {
+class StarProjectionType() : NotNullType {
     override fun toKotlin(): String = "*"
 }
 
-open class PrimitiveType(val `type`: Identifier) : NotNullType {
+class PrimitiveType(val `type`: Identifier) : NotNullType {
     override fun toKotlin(): String = `type`.toKotlin()
 }
 
-open class VarArgType(val `type`: Type) : NotNullType {
+class VarArgType(val `type`: Type) : NotNullType {
     override fun toKotlin(): String = `type`.toKotlin()
 }

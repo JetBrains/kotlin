@@ -38,6 +38,12 @@ class TypeConverter(val settings: ConverterSettings) {
     }
 
     public fun convertVariableType(variable: PsiVariable): Type {
+        return convertType(variable.getType(), variableNullability(variable))
+    }
+
+    public fun variableNullability(variable: PsiVariable): Nullability {
+        if (variable is PsiEnumConstant) return Nullability.NotNull
+
         var nullability = variable.nullabilityFromAnnotations()
 
         if (nullability == Nullability.Default) {
@@ -82,7 +88,7 @@ class TypeConverter(val settings: ConverterSettings) {
             }
         }
 
-        return convertType(variable.getType(), nullability)
+        return nullability
     }
 
     public fun convertMethodReturnType(method: PsiMethod): Type {
@@ -160,7 +166,7 @@ class TypeConverter(val settings: ConverterSettings) {
             }
         }
         else if (parent is PsiVariable && usage == parent.getInitializer() && parent.isEffectivelyFinal()) {
-            return convertVariableType(parent).isNullable
+            return variableNullability(parent) == Nullability.Nullable
         }
         return false
     }

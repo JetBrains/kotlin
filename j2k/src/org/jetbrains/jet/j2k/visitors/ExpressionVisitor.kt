@@ -358,8 +358,7 @@ class ExpressionVisitor(private val converter: Converter,
     private fun PsiReference.nullability(): Nullability {
         val target = resolve()
         return when(target) {
-            is PsiEnumConstant -> Nullability.NotNull
-            is PsiModifierListOwner -> target.nullabilityFromAnnotations()
+            is PsiVariable -> typeConverter.variableNullability(target)
             else -> Nullability.Default
         }
     }
