@@ -22,19 +22,14 @@ open class NewClassExpression(
         val qualifier: Expression = Expression.Empty,
         val anonymousClass: AnonymousClass? = null
 ) : Expression() {
+
     override fun toKotlin(): String {
-        val callOperator: String? = (if (qualifier.isNullable)
-            "?."
-        else
-            ".")
-        val qualifier: String? = (if (qualifier.isEmpty)
-            ""
-        else
-            qualifier.toKotlin() + callOperator)
-        val appliedArguments: String = arguments.toKotlin(", ")
-        return (if (anonymousClass != null)
+        val callOperator = if (qualifier.isNullable) "?." else "."
+        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin() + callOperator
+        val appliedArguments = arguments.toKotlin(", ")
+        return if (anonymousClass != null)
             "object : " + qualifier + name.toKotlin() + "(" + appliedArguments + ")" + anonymousClass.toKotlin()
         else
-            qualifier + name.toKotlin() + "(" + appliedArguments + ")")
+            qualifier + name.toKotlin() + "(" + appliedArguments + ")"
     }
 }

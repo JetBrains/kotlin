@@ -70,3 +70,40 @@ open class WhiteSpaceSeparatedElementList(
         return result
     }
 }
+
+fun Expression.operandToKotlin(operand: Expression, parenthesisForSamePrecedence: Boolean = false): String {
+    val parentPrecedence = precedence() ?: throw IllegalArgumentException("Unknown precendence for $this")
+    val kotlinCode = operand.toKotlin()
+    val operandPrecedence = operand.precedence() ?: return kotlinCode
+    val needParenthesis = parentPrecedence < operandPrecedence || parentPrecedence == operandPrecedence && parenthesisForSamePrecedence
+    return if (needParenthesis) "($kotlinCode)" else kotlinCode
+}
+
+private fun Expression.precedence(): Int? {
+    return when(this) {
+        is QualifiedExpression, is MethodCallExpression, is ArrayAccessExpression, is PostfixOperator, is BangBangExpression -> 0
+
+        is PrefixOperator -> 1
+
+        is TypeCastExpression -> 2
+
+        is BinaryExpression -> when(op) {
+            "*", "/", "%" -> 3
+            "+", "-" -> 4
+            "?:" -> 6
+            ">", "<", ">=", "<=" -> 8
+            "==", "!=", "===", "!===" -> 9
+            "&&" -> 10
+            "||" -> 11
+            else -> 5 /* simple name */
+        }
+
+        is IsOperator -> 7
+
+        is IfStatement -> 12
+
+        is AssignmentExpression -> 13
+
+        else -> null
+    }
+}

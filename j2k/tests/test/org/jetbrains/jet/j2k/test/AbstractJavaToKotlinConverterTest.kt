@@ -109,7 +109,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
         val reformattedText = convertedFile.getText()!!
 
         return if (inFunContext)
-            reformattedText.removeFirstLine().removeLastLine().trimIndent()
+            reformattedText.removeFirstLine().removeLastLine().trimIndent().trim()
         else
             reformattedText
     }

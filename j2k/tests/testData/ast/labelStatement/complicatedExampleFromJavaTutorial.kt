@@ -10,7 +10,7 @@
     foundIt = true
     break@test
 }
-System.out.println((if (foundIt)
+System.out.println(if (foundIt)
     "Found it"
 else
-    "Didn't find it"))
+    "Didn't find it")

@@ -5,7 +5,7 @@ import java.io.Serializable
 public class Language(protected var code: String) : Serializable {
 
     public fun equals(other: Language): Boolean {
-        return other.toString().equals(this.toString())
+        return other.toString() == this.toString()
     }
 
     class object {

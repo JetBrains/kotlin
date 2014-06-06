@@ -449,12 +449,8 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return result
     }
 
-    public fun convertTypeElement(element: PsiTypeElement?): TypeElement {
-        return TypeElement(if (element == null)
-                               Type.Empty
-                           else
-                               typeConverter.convertType(element.getType()))
-    }
+    public fun convertTypeElement(element: PsiTypeElement?): TypeElement
+            = TypeElement(if (element == null) Type.Empty else typeConverter.convertType(element.getType()))
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }

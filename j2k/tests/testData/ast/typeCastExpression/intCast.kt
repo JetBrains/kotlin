@@ -1,1 +1,1 @@
-(t as Int)
+t as Int

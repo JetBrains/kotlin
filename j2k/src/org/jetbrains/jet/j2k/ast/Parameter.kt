@@ -16,9 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parameter.VarValModifier, val modifiers: Collection<Modifier>) : Expression() {
-    //TODO: merge with modifiers?
-    //TODO: maybe vararg is modifier too?
+class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parameter.VarValModifier, val modifiers: Collection<Modifier>) : Element {
     public enum class VarValModifier {
         None
         Val

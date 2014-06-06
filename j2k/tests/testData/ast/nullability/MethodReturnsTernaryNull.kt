@@ -1,8 +1,8 @@
 class C() {
     fun foo(b: Boolean): String? {
-        return (if (b)
+        return if (b)
             "abc"
         else
-            null)
+            null
     }
 }

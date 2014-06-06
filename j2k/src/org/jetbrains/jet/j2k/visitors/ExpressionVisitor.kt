@@ -89,19 +89,20 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
-        result = ClassObjectAccessExpression(converter.convertTypeElement(expression.getOperand()))
+        val typeElement = converter.convertTypeElement(expression.getOperand())
+        result = MethodCallExpression(Identifier("javaClass"), listOf(), listOf(typeElement.`type`.toNotNullType()), true)
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
         val condition = expression.getCondition()
         val `type` = condition.getType()
-        val e = if (`type` != null)
+        val expr = if (`type` != null)
             converter.convertExpression(condition, `type`)
         else
             converter.convertExpression(condition)
-        result = ParenthesizedExpression(IfStatement(e,
-                                                       converter.convertExpression(expression.getThenExpression()),
-                                                       converter.convertExpression(expression.getElseExpression())))
+        result = IfStatement(expr,
+                             converter.convertExpression(expression.getThenExpression()),
+                             converter.convertExpression(expression.getElseExpression()))
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {
@@ -148,6 +149,7 @@ class ExpressionVisitor(private val converter: Converter,
         if (expression.isSuperConstructorCall() && expression.isInsidePrimaryConstructor()) return // skip it
 
         val methodExpr = expression.getMethodExpression()
+        val arguments = expression.getArgumentList().getExpressions()
         val target = methodExpr.resolve()
         if (target is KotlinLightMethod) {
             val origin = target.origin
@@ -155,7 +157,6 @@ class ExpressionVisitor(private val converter: Converter,
             if (origin is JetProperty || origin is JetPropertyAccessor) {
                 val property = if (origin is JetProperty) origin else origin.getParent() as JetProperty
                 val parameterCount = target.getParameterList().getParameters().size
-                val arguments = expression.getArgumentList().getExpressions()
                 if (parameterCount == arguments.size) {
                     val propertyName = Identifier(property.getName()!!, false)
                     var isExtension = false
@@ -189,7 +190,6 @@ class ExpressionVisitor(private val converter: Converter,
             else if (origin is JetFunction) {
                 if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
-                        val arguments = expression.getArgumentList().getExpressions()
                         val qualifier = converter.convertExpression(arguments.firstOrNull())
                         MethodCallExpression(QualifiedExpression(qualifier, Identifier(origin.getName()!!, false)),
                                                       convertArguments(expression, isExtension = true),
@@ -208,10 +208,24 @@ class ExpressionVisitor(private val converter: Converter,
             }
         }
 
+        if (target is PsiMethod && isObjectEquals(target) && arguments.size == 1) {
+            val qualifier = methodExpr.getQualifierExpression()
+            if (qualifier != null && qualifier !is PsiSuperExpression) {
+                result = BinaryExpression(converter.convertExpression(qualifier), converter.convertExpression(arguments.single()), "==")
+                return
+            }
+        }
+
         result = MethodCallExpression(converter.convertExpression(methodExpr),
                                       convertArguments(expression),
                                       typeConverter.convertTypes(expression.getTypeArguments()),
                                       typeConverter.convertType(expression.getType()).isNullable)
+    }
+
+    private fun isObjectEquals(method: PsiMethod): Boolean {
+        return method.getName() == "equals" &&
+                method.getParameterList().getParameters().size == 1 &&
+                method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
     }
 
     override fun visitNewExpression(expression: PsiNewExpression) {
@@ -269,7 +283,10 @@ class ExpressionVisitor(private val converter: Converter,
         val operand = converter.convertExpression(expression.getOperand(), expression.getOperand()!!.getType())
         val token = expression.getOperationTokenType()
         if (token == JavaTokenType.TILDE) {
-            result = MethodCallExpression.build(ParenthesizedExpression(operand), "inv", ArrayList())
+            result = MethodCallExpression.build(operand, "inv", ArrayList())
+        }
+        else if (token == JavaTokenType.EXCL && operand is BinaryExpression && operand.op == "==") { // happens when equals is converted to ==
+            result = BinaryExpression(operand.left, operand.right, "!=")
         }
         else {
             result = PrefixOperator(getOperatorString(token), operand)
@@ -375,11 +392,8 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitPolyadicExpression(expression: PsiPolyadicExpression) {
-        var parameters = ArrayList<Expression>()
-        for (operand : PsiExpression in expression.getOperands()) {
-            parameters.add(converter.convertExpression(operand, expression.getType()))
-        }
-        result = PolyadicExpression(parameters, getOperatorString(expression.getOperationTokenType()))
+        val args = expression.getOperands().map { converter.convertExpression(it, expression.getType()) }
+        result = PolyadicExpression(args, getOperatorString(expression.getOperationTokenType()))
     }
 
     private fun convertArguments(expression: PsiCallExpression, isExtension: Boolean = false): List<Expression> {

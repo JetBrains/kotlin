@@ -19,19 +19,19 @@ package org.jetbrains.jet.j2k.ast
 import java.util.ArrayList
 
 open class MethodCallExpression(
-        val methodCall: Expression,
+        val methodExpression: Expression,
         val arguments: List<Expression>,
         val typeParameters: List<Type>,
         val resultIsNullable: Boolean = false
 ) : Expression() {
 
     override val isNullable: Boolean
-        get() = methodCall.isNullable || resultIsNullable
+        get() = methodExpression.isNullable || resultIsNullable
 
     override fun toKotlin(): String {
         val typeParamsToKotlin: String = typeParameters.toKotlin(", ", "<", ">")
         val argumentsMapped = arguments.map { it.toKotlin() }
-        return methodCall.toKotlin() + typeParamsToKotlin + "(" + argumentsMapped.makeString(", ") + ")"
+        return operandToKotlin(methodExpression) + typeParamsToKotlin + "(" + argumentsMapped.makeString(", ") + ")"
     }
 
     class object {
