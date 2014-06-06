@@ -52,6 +52,7 @@ import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -332,7 +333,8 @@ public class KotlinToJVMBytecodeCompiler {
         Collection<FqName> packagesWithRemovedFiles =
                 incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null
                 ? null
-                : incrementalCacheProvider.getIncrementalCache(incrementalCacheDir).getPackagesWithRemovedFiles(moduleId, environment.getSourceFiles());
+                : IncrementalPackage.getPackagesWithRemovedFiles(
+                        incrementalCacheProvider.getIncrementalCache(incrementalCacheDir), moduleId, environment.getSourceFiles());
         GenerationState generationState = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF,
                 exhaust.getModuleDescriptor(), exhaust.getBindingContext(), sourceFiles,

@@ -168,31 +168,22 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         putPackagePartSourceData(moduleId, sourceFile, null)
     }
 
-    public override fun getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName> {
-        return getRemovedPackageParts(moduleId, compiledSourceFiles).map { it.getFqNameForClassNameWithoutDollars().parent() }
-    }
-
-    public override fun getRemovedPackageParts(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName> {
-        val sourceFileToCurrentFqNameMap = HashMap<File, FqName>()
-        for (sourceFile in compiledSourceFiles) {
-            sourceFileToCurrentFqNameMap[File(sourceFile.getVirtualFile()!!.getPath())] = sourceFile.getPackageFqName()
-        }
-
-        val result = HashSet<JvmClassName>()
+    public override fun getRemovedPackageParts(moduleId: String, compiledSourceFilesToFqName: Map<File, String>): Collection<String> {
+        val result = HashSet<String>()
 
         packageSourcesData.processKeysWithExistingMapping { key ->
             if (key!!.startsWith(moduleId + File.pathSeparator)) {
                 val indexOf = key.indexOf(File.pathSeparator)
                 val sourceFile = File(key.substring(indexOf + 1))
 
-                val packagePartClassName = JvmClassName.byInternalName(packageSourcesData[key]!!)
+                val packagePartClassName = packageSourcesData[key]!!
                 if (!sourceFile.exists()) {
                     result.add(packagePartClassName)
                 }
                 else {
-                    val previousPackageFqName = packagePartClassName.getFqNameForClassNameWithoutDollars().parent()
-                    val currentPackageFqName = sourceFileToCurrentFqNameMap[sourceFile]
-                    if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName) {
+                    val previousPackageFqName = JvmClassName.byInternalName(packagePartClassName).getFqNameForClassNameWithoutDollars().parent()
+                    val currentPackageFqName = compiledSourceFilesToFqName[sourceFile]
+                    if (currentPackageFqName != null && currentPackageFqName != previousPackageFqName.asString()) {
                         result.add(packagePartClassName)
                     }
                 }
@@ -204,8 +195,8 @@ public class IncrementalCacheImpl(baseDir: File): IncrementalCache {
         return result
     }
 
-    public override fun getPackageData(moduleId: String, fqName: FqName): ByteArray? {
-        return protoData[ClassOrPackageId(moduleId, fqName)]
+    public override fun getPackageData(moduleId: String, fqName: String): ByteArray? {
+        return protoData[ClassOrPackageId(moduleId, FqName(fqName))]
     }
 
     public fun close() {
