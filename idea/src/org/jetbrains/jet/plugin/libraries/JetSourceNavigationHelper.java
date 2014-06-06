@@ -19,11 +19,9 @@ package org.jetbrains.jet.plugin.libraries;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.impl.scopes.LibraryScopeBase;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.OrderRootType;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -31,11 +29,12 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.GlobalSearchScopesCore;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -66,10 +65,7 @@ import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.jet.plugin.libraries.MemberMatching.*;
 
@@ -114,13 +110,19 @@ public class JetSourceNavigationHelper {
         Project project = decompiledDeclaration.getProject();
         ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
-        GlobalSearchScope resultScope = GlobalSearchScope.EMPTY_SCOPE;
-        for (OrderEntry orderEntry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
-            for (VirtualFile sourceDir : orderEntry.getFiles(OrderRootType.SOURCES)) {
-                resultScope = resultScope.uniteWith(GlobalSearchScopesCore.directoryScope(project, sourceDir, true));
+        if (!projectFileIndex.isInLibraryClasses(libraryFile)) {
+            return GlobalSearchScope.EMPTY_SCOPE;
+        }
+
+        Set<VirtualFile> sourceRootSet = Sets.newLinkedHashSet();
+        for (OrderEntry entry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
+            if (entry instanceof LibraryOrSdkOrderEntry) {
+                VirtualFile[] sourceRoots = ((LibraryOrSdkOrderEntry) entry).getRootFiles(OrderRootType.SOURCES);
+                KotlinPackage.addAll(sourceRootSet, sourceRoots);
             }
         }
-        return resultScope;
+
+        return new LibraryScopeBaseFix(project, VirtualFile.EMPTY_ARRAY, ArrayUtil.toObjectArray(sourceRootSet, VirtualFile.class));
     }
 
     private static List<JetFile> getContainingFiles(@NotNull Iterable<JetNamedDeclaration> declarations) {
@@ -436,6 +438,25 @@ public class JetSourceNavigationHelper {
         @Override
         public JetDeclaration visitClass(@NotNull JetClass klass, Void data) {
             return getSourceClassOrObject(klass);
+        }
+    }
+
+    // TODO: Drop and use LibraryScopeBase after bug in LibraryScopeBase.getFileRoot() is fixed
+    static class LibraryScopeBaseFix extends LibraryScopeBase {
+        public LibraryScopeBaseFix(Project project, VirtualFile[] classes, VirtualFile[] sources) {
+            super(project, classes, sources);
+        }
+
+        @Override
+        @Nullable
+        protected VirtualFile getFileRoot(@NotNull VirtualFile file) {
+            if (myIndex.isInLibraryClasses(file)) {
+                return myIndex.getClassRootForFile(file);
+            }
+            if (myIndex.isInLibrarySource(file)) {
+                return myIndex.getSourceRootForFile(file);
+            }
+            return null;
         }
     }
 }
