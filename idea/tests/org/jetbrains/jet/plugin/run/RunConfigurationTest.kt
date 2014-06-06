@@ -45,11 +45,11 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil
 import org.jetbrains.jet.plugin.search.allScope
 
 class RunConfigurationTest: CodeInsightTestCase() {
-    private val project: Project get() = myProject!!
-    private val module: Module get() = myModule!!
+    override fun getProject() = myProject!!
+    override fun getModule() = myModule!!
 
     fun testMainInTest() {
-        val createResult = configureModule(moduleDirPath("module"), project.getBaseDir()!!)
+        val createResult = configureModule(moduleDirPath("module"), getProject().getBaseDir()!!)
 
         val runConfiguration = createConfigurationFromMain("some.main")
         val javaParameters = getJavaRunParameters(runConfiguration)
@@ -59,10 +59,10 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     fun testDependencyModuleClasspath() {
-        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), project.getBaseDir()!!).src
+        val dependencyModuleSrcDir = configureModule(moduleDirPath("module"), getProject().getBaseDir()!!).src
 
         val moduleWithDependencyDir = ApplicationManager.getApplication()!!.runWriteAction(Computable<VirtualFile> {
-            project.getBaseDir()!!.createChildDirectory(this, "moduleWithDependency")
+            getProject().getBaseDir()!!.createChildDirectory(this, "moduleWithDependency")
         })!!
 
         val moduleWithDependency = createModule("moduleWithDependency")
@@ -71,7 +71,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
         val moduleWithDependencySrcDir = configureModule(
                 moduleDirPath("moduleWithDependency"), moduleWithDependencyDir, configModule = moduleWithDependency).src
 
-        ModuleRootModificationUtil.addDependency(moduleWithDependency, module)
+        ModuleRootModificationUtil.addDependency(moduleWithDependency, getModule())
 
         val jetRunConfiguration = createConfigurationFromMain("some.test.main")
         jetRunConfiguration.setModule(moduleWithDependency)
@@ -83,21 +83,21 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
-        val mainFunction = JetTopLevelFunctionsFqnNameIndex.getInstance()!!.get(mainFqn, project, project.allScope())!!.first()
+        val mainFunction = JetTopLevelFunctionsFqnNameIndex.getInstance()!!.get(mainFqn, getProject(), getProject().allScope())!!.first()
 
         val dataContext = MapDataContext()
-        dataContext.put(Location.DATA_KEY, PsiLocation(project, mainFunction))
+        dataContext.put(Location.DATA_KEY, PsiLocation(getProject(), mainFunction))
 
         return ConfigurationContext.getFromContext(dataContext)!!.getConfiguration()!!.getConfiguration() as JetRunConfiguration
     }
 
-    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = module): CreateModuleResult {
+    private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
         val srcPath = moduleDir + "/src"
-        PsiTestUtil.createTestProjectStructure(project, configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
+        PsiTestUtil.createTestProjectStructure(getProject(), configModule, srcPath, PlatformTestCase.myFilesToDelete, true)
 
         val testPath = moduleDir + "/test"
         if (File(testPath).exists()) {
-            val testDir = PsiTestUtil.createTestProjectStructure(project, configModule, testPath, PlatformTestCase.myFilesToDelete, false)
+            val testDir = PsiTestUtil.createTestProjectStructure(getProject(), configModule, testPath, PlatformTestCase.myFilesToDelete, false)
             PsiTestUtil.addSourceRoot(getModule(), testDir, true)
         }
 
@@ -112,7 +112,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             Pair(srcOutDir, testOutDir)
         })!!
 
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        PsiDocumentManager.getInstance(getProject()).commitAllDocuments()
 
         return CreateModuleResult(configModule, srcOutDir, testOutDir)
     }

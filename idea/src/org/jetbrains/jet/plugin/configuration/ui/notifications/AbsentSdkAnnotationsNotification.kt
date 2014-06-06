@@ -24,7 +24,7 @@ import org.jetbrains.jet.plugin.versions.KotlinRuntimeLibraryUtil
 import javax.swing.event.HyperlinkEvent
 import org.jetbrains.jet.plugin.configuration.ui.AbsentJdkAnnotationsComponent
 
-public class AbsentSdkAnnotationsNotification(sdks: Collection<Sdk>, val title: String, val text: String) :
+public class AbsentSdkAnnotationsNotification(sdks: Collection<Sdk>, title: String, val text: String) :
     Notification(
             AbsentJdkAnnotationsComponent.EXTERNAL_ANNOTATIONS_GROUP_ID,
             title, text,
@@ -32,9 +32,9 @@ public class AbsentSdkAnnotationsNotification(sdks: Collection<Sdk>, val title: 
             AbsentAnnotationsListener(sdks) // Workaround for KT-4086
     )
 {
-    override fun equals(obj: Any?) = obj is AbsentSdkAnnotationsNotification && text == obj.text && title == obj.title
+    override fun equals(obj: Any?) = obj is AbsentSdkAnnotationsNotification && text == obj.text && getTitle() == obj.getTitle()
 
-    override fun hashCode(): Int = 31 * title.hashCode() + text.hashCode()
+    override fun hashCode(): Int = 31 * getTitle().hashCode() + text.hashCode()
 }
 
 fun isAndroidSdk(sdk: Sdk) = sdk.getSdkType().getName() == "Android SDK"
