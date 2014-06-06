@@ -37,16 +37,17 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
     private static final Logger LOG = Logger.getInstance(IDEVirtualFileFinder.class);
 
     @NotNull private final Project project;
+    @NotNull private final GlobalSearchScope scope;
 
-    public IDEVirtualFileFinder(@NotNull Project project) {
+    public IDEVirtualFileFinder(@NotNull Project project, @NotNull GlobalSearchScope scope) {
         this.project = project;
+        this.scope = scope;
     }
 
     @Nullable
     @Override
     public VirtualFile findVirtualFileWithHeader(@NotNull FqName className) {
-        Collection<VirtualFile> files =
-                FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, className, GlobalSearchScope.allScope(project));
+        Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, className, scope);
         if (files.isEmpty()) {
             return null;
         }
@@ -61,12 +62,12 @@ public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder imp
         JavaFileManager fileFinder = ServiceManager.getService(project, JavaFileManager.class);
 
         String qName = internalName.replace('/', '.');
-        PsiClass psiClass = fileFinder.findClass(qName, GlobalSearchScope.allScope(project));
+        PsiClass psiClass = fileFinder.findClass(qName, scope);
         if (psiClass == null) {
             int dollarIndex = qName.indexOf('$');
             assert dollarIndex > 0 : "Only inner classes could be found with this patch: " + internalName;
             String newName = qName.substring(0, dollarIndex);
-            psiClass = fileFinder.findClass(newName, GlobalSearchScope.allScope(project));
+            psiClass = fileFinder.findClass(newName, scope);
             if (psiClass != null) {
                 int i = qName.lastIndexOf('.');
                 return psiClass.getContainingFile().getVirtualFile().getParent().findChild(qName.substring(i + 1) + ".class");
