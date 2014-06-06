@@ -17,8 +17,10 @@
 package org.jetbrains.jet.lang.resolve.java.diagnostics;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.jet.lang.diagnostics.rendering.DiagnosticFactoryToRendererMap;
+import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
 
 public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
@@ -26,15 +28,22 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
     private static final Renderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
         @NotNull
         @Override
-        public String render(@NotNull ConflictingJvmDeclarationsData element) {
-            return element.getSignature().getName() + element.getSignature().getDesc();
+        public String render(@NotNull ConflictingJvmDeclarationsData data) {
+            StringBuilder sb = new StringBuilder();
+            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
+                DeclarationDescriptor descriptor = origin.getDescriptor();
+                if (descriptor != null) {
+                    sb.append("    ").append(DescriptorRenderer.COMPACT.render(descriptor)).append("\n");
+                }
+            }
+            return ("The following declarations have the same JVM signature (" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" + sb).trim();
         }
     };
 
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
     static {
-        MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: ''{0}''", CONFLICTING_JVM_DECLARATIONS_DATA);
-        MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: ''{0}''", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ErrorsJvm.ACCIDENTAL_OVERRIDE, "Accidental override: {0}", CONFLICTING_JVM_DECLARATIONS_DATA);
     }
 
 

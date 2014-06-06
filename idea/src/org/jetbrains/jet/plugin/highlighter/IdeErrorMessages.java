@@ -28,6 +28,8 @@ import static org.jetbrains.jet.lang.diagnostics.Errors.*;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.RENDER_CLASS_OR_OBJECT;
 import static org.jetbrains.jet.lang.diagnostics.rendering.Renderers.STRING;
 import static org.jetbrains.jet.lang.diagnostics.rendering.TabledDescriptorRenderer.TextElementType;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.ACCIDENTAL_OVERRIDE;
+import static org.jetbrains.jet.lang.resolve.java.diagnostics.ErrorsJvm.CONFLICTING_JVM_DECLARATIONS;
 import static org.jetbrains.jet.plugin.highlighter.HtmlTabledDescriptorRenderer.tableForTypes;
 import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
 
@@ -37,7 +39,7 @@ import static org.jetbrains.jet.plugin.highlighter.IdeRenderers.*;
  */
 public class IdeErrorMessages {
     public static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
-    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(ContainerUtil.concat(true, DefaultErrorMessages.MAPS, MAP));
+    public static final DiagnosticRenderer<Diagnostic> RENDERER = new DispatchingDiagnosticRenderer(ContainerUtil.concat(false, DefaultErrorMessages.MAPS, MAP));
 
     static {
         MAP.put(TYPE_MISMATCH, "<html>Type mismatch.<table><tr><td>Required:</td><td>{0}</td></tr><tr><td>Found:</td><td>{1}</td></tr></table></html>",
@@ -102,6 +104,9 @@ public class IdeErrorMessages {
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "<html>Overload resolution ambiguity on method ''{0}''. All these functions match. <ul>{1}</ul></html>", STRING, HTML_AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "<html>Property delegate must have a ''{0}'' method. None of the following functions is suitable. <ul>{1}</ul></html>",
                 STRING, HTML_NONE_APPLICABLE_CALLS);
+
+        MAP.put(CONFLICTING_JVM_DECLARATIONS, "<html>Platform declaration clash: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
+        MAP.put(ACCIDENTAL_OVERRIDE, "<html>Accidental override: {0}</html>", HTML_CONFLICTING_JVM_DECLARATIONS_DATA);
 
         MAP.setImmutable();
     }

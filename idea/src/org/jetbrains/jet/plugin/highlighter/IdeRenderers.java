@@ -18,8 +18,11 @@ package org.jetbrains.jet.plugin.highlighter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor;
+import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.ConflictingJvmDeclarationsData;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.renderer.DescriptorRenderer;
 import org.jetbrains.jet.renderer.Renderer;
@@ -130,6 +133,22 @@ public class IdeRenderers {
             JetType returnType = object.getReturnType();
             assert returnType != null;
             return DescriptorRenderer.HTML.renderType(returnType);
+        }
+    };
+
+    public static final Renderer<ConflictingJvmDeclarationsData> HTML_CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
+        @NotNull
+        @Override
+        public String render(@NotNull ConflictingJvmDeclarationsData data) {
+            StringBuilder sb = new StringBuilder("<ul>");
+            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
+                DeclarationDescriptor descriptor = origin.getDescriptor();
+                if (descriptor != null) {
+                    sb.append("<li>").append(DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(descriptor)).append("</li>\n");
+                }
+            }
+            sb.append("</ul>");
+            return ("The following declarations have the same JVM signature (<code>" + data.getSignature().getName() + data.getSignature().getDesc() + "</code>):<br/>\n" + sb).trim();
         }
     };
 }

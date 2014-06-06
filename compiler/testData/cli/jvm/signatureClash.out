@@ -1,6 +1,22 @@
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 5) Accidental override: 'getX()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (8, 5) Platform declaration clash: 'getA()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (9, 5) Platform declaration clash: 'getA()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: 'getB()I'
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: 'getB()I'
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
+    fun getX(): kotlin.Int
+    fun <get-x>(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (8, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+    fun getA(): kotlin.Int
+    fun <get-a>(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (9, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+    fun getA(): kotlin.Int
+    fun <get-a>(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+    fun getB(): kotlin.Int
+    fun <get-b>(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+    fun <get-b>(): kotlin.Int
+    fun getB(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+    fun getB(): kotlin.Int
+    fun <get-b>(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+    fun <get-b>(): kotlin.Int
+    fun getB(): kotlin.Int
 COMPILATION_ERROR
