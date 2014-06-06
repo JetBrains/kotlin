@@ -51,7 +51,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
-import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.MainFunctionDetector;
 import org.jetbrains.jet.utils.KotlinPaths;
@@ -327,10 +327,12 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         CompilerConfiguration configuration = environment.getConfiguration();
         File incrementalCacheDir = configuration.get(JVMConfigurationKeys.INCREMENTAL_CACHE_BASE_DIR);
+        IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+
         Collection<FqName> packagesWithRemovedFiles =
-                incrementalCacheDir == null || moduleId == null
+                incrementalCacheDir == null || moduleId == null || incrementalCacheProvider == null
                 ? null
-                : new IncrementalCache(incrementalCacheDir).getPackagesWithRemovedFiles(moduleId, environment.getSourceFiles());
+                : incrementalCacheProvider.getIncrementalCache(incrementalCacheDir).getPackagesWithRemovedFiles(moduleId, environment.getSourceFiles());
         GenerationState generationState = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.BINARIES, Progress.DEAF,
                 exhaust.getModuleDescriptor(), exhaust.getBindingContext(), sourceFiles,

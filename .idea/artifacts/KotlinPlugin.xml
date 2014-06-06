@@ -44,7 +44,14 @@
               <element id="file-copy" path="$PROJECT_DIR$/resources/manifest.properties" />
               <element id="extracted-dir" path="$PROJECT_DIR$/dependencies/cli-parser-1.1.1.jar" path-in-jar="/" />
               <element id="module-output" name="util.runtime" />
+              <element id="module-output" name="cli" />
+              <element id="module-output" name="descriptor.loader.java" />
+              <element id="module-output" name="frontend.java" />
+              <element id="module-output" name="serialization.java" />
+              <element id="module-output" name="descriptors" />
+              <element id="library" level="project" name="kotlin-runtime" />
             </element>
+            <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
           </element>
           <element id="file-copy" path="$PROJECT_DIR$/dist/kotlinc/lib/kotlin-runtime.jar" />
         </element>

@@ -37,6 +37,7 @@ import org.jetbrains.jet.lang.resolve.ImportPath;
 import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache;
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider;
 import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
@@ -145,13 +146,15 @@ public enum AnalyzerFacadeForJVM implements AnalyzerFacade {
         try {
             module.addFragmentProvider(DependencyKind.BINARIES, injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
-            if (incrementalCacheDir != null && moduleIds != null) {
+            IncrementalCacheProvider incrementalCacheProvider = IncrementalCacheProvider.object$.getInstance();
+            if (incrementalCacheDir != null && moduleIds != null && incrementalCacheProvider != null) {
+                IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(incrementalCacheDir);
                 for (String moduleId : moduleIds) {
                     module.addFragmentProvider(
                             DependencyKind.SOURCES,
                             new IncrementalPackageFragmentProvider(
                                     files, module, globalContext.getStorageManager(), injector.getDescriptorDeserializers(),
-                                    new IncrementalCache(incrementalCacheDir), moduleId, injector.getJavaDescriptorResolver()
+                                    incrementalCache, moduleId, injector.getJavaDescriptorResolver()
                             )
                     );
                 }

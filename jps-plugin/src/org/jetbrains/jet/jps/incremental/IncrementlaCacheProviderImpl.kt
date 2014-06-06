@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin.incremental
+package org.jetbrains.jet.jps.incremental
 
-import org.jetbrains.jet.lang.resolve.name.FqName
-import org.jetbrains.jet.lang.resolve.java.JvmClassName
-import org.jetbrains.jet.lang.psi.JetFile
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCacheProvider
+import java.io.File
+import org.jetbrains.jet.lang.resolve.kotlin.incremental.IncrementalCache
 
-public trait IncrementalCache {
-    public fun getPackagesWithRemovedFiles(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<FqName>
-
-    public fun getRemovedPackageParts(moduleId: String, compiledSourceFiles: Collection<JetFile>): Collection<JvmClassName>
-
-    public fun getPackageData(moduleId: String, fqName: FqName): ByteArray?
+public class IncrementalCacheProviderImpl: IncrementalCacheProvider {
+    override fun getIncrementalCache(baseDir: File): IncrementalCache {
+        return IncrementalCacheImpl(baseDir)
+    }
 }
