@@ -2799,6 +2799,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/trait.kt");
                 }
                 
+                @TestMetadata("withErrorTypes.kt")
+                public void testWithErrorTypes() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/functionAndProperty/withErrorTypes.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames")
