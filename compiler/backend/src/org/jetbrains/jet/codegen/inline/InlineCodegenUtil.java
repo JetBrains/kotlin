@@ -120,13 +120,13 @@ public class InlineCodegenUtil {
 
     @Nullable
     public static VirtualFile findVirtualFileWithHeader(@NotNull Project project, @NotNull FqName containerFqName) {
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
         return fileFinder.findVirtualFileWithHeader(containerFqName);
     }
 
     @Nullable
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalName) {
-        VirtualFileFinder fileFinder = ServiceManager.getService(project, VirtualFileFinder.class);
+        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
         return fileFinder.findVirtualFile(internalName);
     }
 
