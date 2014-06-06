@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.constants.IntegerValueConstant;
 import org.jetbrains.jet.lang.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
+import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.descriptor.SamConstructorDescriptor;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -2410,19 +2411,56 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Override
     public StackValue visitCallableReferenceExpression(@NotNull JetCallableReferenceExpression expression, StackValue data) {
-        // TODO: properties
+        ResolvedCall<?> resolvedCall = resolvedCall(expression.getCallableReference());
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
-        assert functionDescriptor != null : "Callable reference is not resolved to descriptor: " + expression.getText();
+        if (functionDescriptor != null) {
+            CallableReferenceGenerationStrategy strategy = new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
+            ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
+                                                               KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
+                                                               this, strategy, getParentCodegen());
+            closureCodegen.gen();
+            return closureCodegen.putInstanceOnStack(v, this);
+        }
 
-        CallableReferenceGenerationStrategy strategy =
-                new CallableReferenceGenerationStrategy(state, functionDescriptor, resolvedCall(expression.getCallableReference()));
-        ClosureCodegen closureCodegen = new ClosureCodegen(state, expression, functionDescriptor, null, context,
-                                                           KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
-                                                           this, strategy, getParentCodegen());
+        VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
+        if (variableDescriptor != null) {
+            VariableDescriptor descriptor = (VariableDescriptor) resolvedCall.getResultingDescriptor();
 
-        closureCodegen.gen();
+            String reflectionFieldOwner;
+            Type propertyType;
+            Type ownerType;
+            String reflectionFieldName;
 
-        return closureCodegen.putInstanceOnStack(v, this);
+            DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+            if (containingDeclaration instanceof PackageFragmentDescriptor) {
+                reflectionFieldOwner =
+                        PackageClassUtils.getPackageClassInternalName(((PackageFragmentDescriptor) containingDeclaration).getFqName());
+
+                propertyType = descriptor.isVar() ? K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE : K_TOP_LEVEL_PROPERTY_IMPL_TYPE;
+                ownerType = K_PACKAGE_IMPL_TYPE;
+                reflectionFieldName = JvmAbi.KOTLIN_PACKAGE_FIELD_NAME;
+            }
+            else if (containingDeclaration instanceof ClassDescriptor) {
+                reflectionFieldOwner = typeMapper.mapClass((ClassDescriptor) containingDeclaration).getInternalName();
+                propertyType = descriptor.isVar() ? K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE : K_MEMBER_PROPERTY_IMPL_TYPE;
+                ownerType = K_CLASS_IMPL_TYPE;
+                reflectionFieldName = JvmAbi.KOTLIN_CLASS_FIELD_NAME;
+            }
+            else {
+                throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
+            }
+
+            v.anew(propertyType);
+            v.dup();
+            v.visitLdcInsn(descriptor.getName().asString());
+            v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
+
+            v.invokespecial(propertyType.getInternalName(), "<init>",
+                            Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType), false);
+            return StackValue.onStack(propertyType);
+        }
+
+        throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
     }
 
     private static class CallableReferenceGenerationStrategy extends FunctionGenerationStrategy.CodegenBased<FunctionDescriptor> {

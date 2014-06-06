@@ -99,7 +99,7 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
     }
     
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/callableReference")
-    @InnerTestClasses({CallableReference.Function.class})
+    @InnerTestClasses({CallableReference.Function.class, CallableReference.Property.class})
     public static class CallableReference extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInCallableReference() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -418,10 +418,74 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
         
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property")
+        public static class Property extends AbstractBlackBoxCodegenTest {
+            @TestMetadata("accessViaSubclass.kt")
+            public void testAccessViaSubclass() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/accessViaSubclass.kt");
+            }
+            
+            public void testAllFilesPresentInProperty() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/codegen/boxWithStdlib/callableReference/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("delegated.kt")
+            public void testDelegated() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/delegated.kt");
+            }
+            
+            @TestMetadata("delegatedMutable.kt")
+            public void testDelegatedMutable() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/delegatedMutable.kt");
+            }
+            
+            @TestMetadata("javaBeanConvention.kt")
+            public void testJavaBeanConvention() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/javaBeanConvention.kt");
+            }
+            
+            @TestMetadata("localClassVar.kt")
+            public void testLocalClassVar() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/localClassVar.kt");
+            }
+            
+            @TestMetadata("overriddenInSubclass.kt")
+            public void testOverriddenInSubclass() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/overriddenInSubclass.kt");
+            }
+            
+            @TestMetadata("simpleExtension.kt")
+            public void testSimpleExtension() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleExtension.kt");
+            }
+            
+            @TestMetadata("simpleMember.kt")
+            public void testSimpleMember() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleMember.kt");
+            }
+            
+            @TestMetadata("simpleMutableMember.kt")
+            public void testSimpleMutableMember() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleMutableMember.kt");
+            }
+            
+            @TestMetadata("simpleMutableTopLevel.kt")
+            public void testSimpleMutableTopLevel() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleMutableTopLevel.kt");
+            }
+            
+            @TestMetadata("simpleTopLevel.kt")
+            public void testSimpleTopLevel() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/simpleTopLevel.kt");
+            }
+            
+        }
+        
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("CallableReference");
             suite.addTestSuite(CallableReference.class);
             suite.addTest(Function.innerSuite());
+            suite.addTestSuite(Property.class);
             return suite;
         }
     }

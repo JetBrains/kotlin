@@ -38,11 +38,21 @@ public class AsmTypeConstants {
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType(BUILT_INS_PACKAGE_FQ_NAME + "/PropertyMetadataImpl");
 
-    public static final Type K_CLASS_IMPL_TYPE = Type.getObjectType("kotlin/reflect/jvm/internal/KClassImpl");
-    public static final Type K_PACKAGE_IMPL_TYPE = Type.getObjectType("kotlin/reflect/jvm/internal/KPackageImpl");
+    public static final Type K_CLASS_IMPL_TYPE = reflectInternal("KClassImpl");
+    public static final Type K_PACKAGE_IMPL_TYPE = reflectInternal("KPackageImpl");
+    public static final Type K_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KTopLevelPropertyImpl");
+    public static final Type K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE = reflectInternal("KMutableTopLevelPropertyImpl");
+    public static final Type K_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMemberPropertyImpl");
+    public static final Type K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE = reflectInternal("KMutableMemberPropertyImpl");
 
     public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
 
+    @NotNull
+    private static Type reflectInternal(@NotNull String className) {
+        return Type.getObjectType("kotlin/reflect/jvm/internal/" + className);
+    }
+
+    @NotNull
     public static Type getType(@NotNull Class<?> javaClass) {
         Type type = TYPES_MAP.get(javaClass);
         if (type == null) {
