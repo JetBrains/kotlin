@@ -17,34 +17,26 @@
 package org.jetbrains.jet.codegen.state;
 
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.MultiMap;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.codegen.*;
 import org.jetbrains.jet.codegen.binding.CodegenBinding;
 import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.intrinsics.IntrinsicMethods;
-import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
+import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.reflect.ReflectionTypes;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
-import org.jetbrains.jet.lang.resolve.java.diagnostics.*;
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 
-import java.util.*;
-
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class GenerationState {
     public interface GenerateClassFilter {
@@ -153,7 +145,8 @@ public class GenerationState {
         this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
 
         this.intrinsics = new IntrinsicMethods();
-        this.classFileFactory = new ClassFileFactory(this, new BuilderfactoryForDuplicateSignatureDiagnostics(builderFactory, diagnostics));
+        this.classFileFactory = new ClassFileFactory(this, new BuilderfactoryForDuplicateSignatureDiagnostics(
+                builderFactory, typeMapper, bindingContext, diagnostics));
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
@@ -273,143 +266,5 @@ public class GenerationState {
     @Nullable
     public String getModuleId() {
         return moduleId;
-    }
-
-    private class BuilderfactoryForDuplicateSignatureDiagnostics extends SignatureCollectingClassBuilderFactory {
-
-        private final DiagnosticHolder diagnostics;
-
-        public BuilderfactoryForDuplicateSignatureDiagnostics(@NotNull ClassBuilderFactory builderFactory, DiagnosticHolder diagnostics) {
-            super(builderFactory);
-            this.diagnostics = diagnostics;
-        }
-
-        @Override
-        protected void handleClashingSignatures(
-                @NotNull ConflictingJvmDeclarationsData data
-        ) {
-            Collection<PsiElement> elements = new LinkedHashSet<PsiElement>();
-
-            boolean allDelegatedToTraitImpls = KotlinPackage.all(
-                    data.getSignatureOrigins(),
-                    new Function1<JvmDeclarationOrigin, Boolean>() {
-                        @Override
-                        public Boolean invoke(JvmDeclarationOrigin origin) {
-                            return origin.getOriginKind() == JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL;
-                        }
-                    }
-            );
-            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
-                PsiElement element = origin.getElement();
-                if (element == null || allDelegatedToTraitImpls) {
-                    element = data.getClassOrigin().getElement();
-                }
-                if (element != null) {
-                    elements.add(element);
-                }
-            }
-
-            for (PsiElement element : elements) {
-                diagnostics.report(ErrorsJvm.CONFLICTING_JVM_DECLARATIONS.on(element, data));
-            }
-        }
-
-        @Override
-        protected void onClassDone(
-                @NotNull JvmDeclarationOrigin classOrigin,
-                @Nullable String classInternalName,
-                boolean hasDuplicateSignatures
-        ) {
-            DeclarationDescriptor descriptor = classOrigin.getDescriptor();
-            if (!(descriptor instanceof ClassDescriptor)) return;
-
-            ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
-
-            MultiMap<RawSignature, CallableMemberDescriptor> groupedBySignature = MultiMap.create();
-            Queue<DeclarationDescriptor> queue =
-                    new LinkedList<DeclarationDescriptor>(classDescriptor.getDefaultType().getMemberScope().getAllDescriptors());
-            while (!queue.isEmpty()) {
-                DeclarationDescriptor member = queue.poll();
-                if (member instanceof DeclarationDescriptorWithVisibility &&
-                    ((DeclarationDescriptorWithVisibility) member).getVisibility() == Visibilities.INVISIBLE_FAKE) {
-                    // a member of super is not visible: no override
-                    continue;
-                }
-                if (member instanceof CallableMemberDescriptor &&
-                    CallResolverUtil.isOrOverridesSynthesized((CallableMemberDescriptor) member)) {
-                    // if a signature clashes with a SAM-adapter or something like that, there's no harm
-                    continue;
-                }
-                if (member instanceof PropertyDescriptor) {
-                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) member;
-
-                    PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-                    if (getter != null) {
-                        queue.add(getter);
-                    }
-                    PropertySetterDescriptor setter = propertyDescriptor.getSetter();
-                    if (setter != null) {
-                        queue.add(setter);
-                    }
-                }
-                else if (member instanceof FunctionDescriptor) {
-                    FunctionDescriptor functionDescriptor = (FunctionDescriptor) member;
-
-                    JvmMethodSignature methodSignature = typeMapper.mapSignature(functionDescriptor);
-                    RawSignature rawSignature = new RawSignature(
-                            methodSignature.getAsmMethod().getName(),
-                            methodSignature.getAsmMethod().getDescriptor(),
-                            MemberKind.METHOD
-                    );
-                    groupedBySignature.putValue(rawSignature, functionDescriptor);
-                }
-            }
-
-            signatures:
-            for (Map.Entry<RawSignature, Collection<CallableMemberDescriptor>> entry : groupedBySignature.entrySet()) {
-                RawSignature rawSignature = entry.getKey();
-                Collection<CallableMemberDescriptor> members = entry.getValue();
-
-                if (members.size() <= 1) continue;
-
-                PsiElement memberElement = null;
-                int nonFakeCount = 0;
-                for (CallableMemberDescriptor member : members) {
-                    //
-                    if (member.getKind() != FAKE_OVERRIDE) {
-                        nonFakeCount++;
-                        // If there's more than one real element, the clashing signature is already reported.
-                        // Only clashes between fake overrides are interesting here
-                        if (nonFakeCount > 1) continue signatures;
-
-                        if (member.getKind() != DELEGATION) {
-                            // Delegates don't have declarations in the code
-                            memberElement = BindingContextUtils.callableDescriptorToDeclaration(getBindingContext(), member);
-                            if (memberElement == null && member instanceof PropertyAccessorDescriptor) {
-                                memberElement = BindingContextUtils.callableDescriptorToDeclaration(
-                                        getBindingContext(),
-                                        ((PropertyAccessorDescriptor) member).getCorrespondingProperty()
-                                );
-                            }
-                        }
-                    }
-                }
-
-                PsiElement elementToReportOn = memberElement == null ? classOrigin.getElement() : memberElement;
-                if (elementToReportOn == null) return;
-
-                List<JvmDeclarationOrigin> origins = KotlinPackage.map(
-                        members,
-                        new Function1<CallableMemberDescriptor, JvmDeclarationOrigin>() {
-                            @Override
-                            public JvmDeclarationOrigin invoke(CallableMemberDescriptor descriptor) {
-                                return DiagnosticsPackage.OtherOrigin(descriptor);
-                            }
-                        });
-                ConflictingJvmDeclarationsData data =
-                        new ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins);
-                diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data));
-            }
-        }
     }
 }
