@@ -36,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.DelegatingBindingTrace;
+import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil;
 import org.jetbrains.jet.lang.resolve.java.diagnostics.*;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -332,6 +333,11 @@ public class GenerationState {
                 if (member instanceof DeclarationDescriptorWithVisibility &&
                     ((DeclarationDescriptorWithVisibility) member).getVisibility() == Visibilities.INVISIBLE_FAKE) {
                     // a member of super is not visible: no override
+                    continue;
+                }
+                if (member instanceof CallableMemberDescriptor &&
+                    CallResolverUtil.isOrOverridesSynthesized((CallableMemberDescriptor) member)) {
+                    // if a signature clashes with a SAM-adapter or something like that, there's no harm
                     continue;
                 }
                 if (member instanceof PropertyDescriptor) {
