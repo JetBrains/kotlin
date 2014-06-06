@@ -39,37 +39,37 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/Annotations");
+        doTest("idea/testData/libraries/decompiledText/Annotations/");
     }
     
     @TestMetadata("ClassWithClassObject")
     public void testClassWithClassObject() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/ClassWithClassObject");
+        doTest("idea/testData/libraries/decompiledText/ClassWithClassObject/");
     }
     
     @TestMetadata("Enum")
     public void testEnum() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/Enum");
+        doTest("idea/testData/libraries/decompiledText/Enum/");
     }
     
     @TestMetadata("NestedClasses")
     public void testNestedClasses() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/NestedClasses");
+        doTest("idea/testData/libraries/decompiledText/NestedClasses/");
     }
     
     @TestMetadata("Object")
     public void testObject() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/Object");
+        doTest("idea/testData/libraries/decompiledText/Object/");
     }
     
     @TestMetadata("SimpleClass")
     public void testSimpleClass() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/SimpleClass");
+        doTest("idea/testData/libraries/decompiledText/SimpleClass/");
     }
     
     @TestMetadata("TestPackage")
     public void testTestPackage() throws Exception {
-        doTest("idea/testData/libraries/decompiledText/TestPackage");
+        doTest("idea/testData/libraries/decompiledText/TestPackage/");
     }
     
     public static Test suite() {

@@ -38,277 +38,277 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
     
     @TestMetadata("anonymousObjectOnCallSite")
     public void testAnonymousObjectOnCallSite() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite/");
     }
     
     @TestMetadata("anonymousObjectOnCallSiteSuperParams")
     public void testAnonymousObjectOnCallSiteSuperParams() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams/");
     }
     
     @TestMetadata("anonymousObjectOnDeclarationSite")
     public void testAnonymousObjectOnDeclarationSite() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite/");
     }
     
     @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams")
     public void testAnonymousObjectOnDeclarationSiteSuperParams() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams/");
     }
     
     @TestMetadata("builders")
     public void testBuilders() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/builders");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/builders/");
     }
     
     @TestMetadata("buildersAndLambdaCapturing")
     public void testBuildersAndLambdaCapturing() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/buildersAndLambdaCapturing");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/buildersAndLambdaCapturing/");
     }
     
     @TestMetadata("captureInlinable")
     public void testCaptureInlinable() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinable");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinable/");
     }
     
     @TestMetadata("captureInlinableAndOther")
     public void testCaptureInlinableAndOther() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinableAndOther");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinableAndOther/");
     }
     
     @TestMetadata("captureThisAndReceiver")
     public void testCaptureThisAndReceiver() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureThisAndReceiver");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/captureThisAndReceiver/");
     }
     
     @TestMetadata("classObject")
     public void testClassObject() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/classObject");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/classObject/");
     }
     
     @TestMetadata("closureChain")
     public void testClosureChain() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/closureChain");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/closureChain/");
     }
     
     @TestMetadata("defaultMethod")
     public void testDefaultMethod() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/defaultMethod");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/defaultMethod/");
     }
     
     @TestMetadata("extension")
     public void testExtension() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/extension");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/extension/");
     }
     
     @TestMetadata("forEachLine")
     public void testForEachLine() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/forEachLine");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/forEachLine/");
     }
     
     @TestMetadata("generics")
     public void testGenerics() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/generics");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/generics/");
     }
     
     @TestMetadata("identityCheck")
     public void testIdentityCheck() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/identityCheck");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/identityCheck/");
     }
     
     @TestMetadata("ifBranches")
     public void testIfBranches() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/ifBranches");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/ifBranches/");
     }
     
     @TestMetadata("iinc")
     public void testIinc() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/iinc");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/iinc/");
     }
     
     @TestMetadata("inlineChain")
     public void testInlineChain() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineChain");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineChain/");
     }
     
     @TestMetadata("inlineInDefaultParameter")
     public void testInlineInDefaultParameter() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineInDefaultParameter");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/inlineInDefaultParameter/");
     }
     
     @TestMetadata("lambdaClassClash")
     public void testLambdaClassClash() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaClassClash");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaClassClash/");
     }
     
     @TestMetadata("lambdaCloning")
     public void testLambdaCloning() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaCloning");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaCloning/");
     }
     
     @TestMetadata("lambdaInLambda")
     public void testLambdaInLambda() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda/");
     }
     
     @TestMetadata("lambdaInLambda2")
     public void testLambdaInLambda2() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda2");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda2/");
     }
     
     @TestMetadata("lambdaInLambdaNoInline")
     public void testLambdaInLambdaNoInline() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambdaNoInline");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambdaNoInline/");
     }
     
     @TestMetadata("localFunInLambda")
     public void testLocalFunInLambda() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/localFunInLambda");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/localFunInLambda/");
     }
     
     @TestMetadata("noInline")
     public void testNoInline() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInline");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInline/");
     }
     
     @TestMetadata("noInlineLambdaChain")
     public void testNoInlineLambdaChain() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChain");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChain/");
     }
     
     @TestMetadata("noInlineLambdaChainWithCapturedInline")
     public void testNoInlineLambdaChainWithCapturedInline() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChainWithCapturedInline");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChainWithCapturedInline/");
     }
     
     @TestMetadata("noInlineLambdaX2")
     public void testNoInlineLambdaX2() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaX2");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaX2/");
     }
     
     @TestMetadata("params")
     public void testParams() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/params");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/params/");
     }
     
     @TestMetadata("plusAssign")
     public void testPlusAssign() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/plusAssign");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/plusAssign/");
     }
     
     @TestMetadata("regeneratedLambdaName")
     public void testRegeneratedLambdaName() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/regeneratedLambdaName");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/regeneratedLambdaName/");
     }
     
     @TestMetadata("rootConstructor")
     public void testRootConstructor() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/rootConstructor");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/rootConstructor/");
     }
     
     @TestMetadata("sameCaptured")
     public void testSameCaptured() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/sameCaptured");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/sameCaptured/");
     }
     
     @TestMetadata("severalClosures")
     public void testSeveralClosures() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/severalClosures");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/severalClosures/");
     }
     
     @TestMetadata("severalUsage")
     public void testSeveralUsage() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/severalUsage");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/severalUsage/");
     }
     
     @TestMetadata("simpleCapturingInClass")
     public void testSimpleCapturingInClass() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInClass");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInClass/");
     }
     
     @TestMetadata("simpleCapturingInPackage")
     public void testSimpleCapturingInPackage() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInPackage");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInPackage/");
     }
     
     @TestMetadata("simpleDefaultMethod")
     public void testSimpleDefaultMethod() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleDefaultMethod");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleDefaultMethod/");
     }
     
     @TestMetadata("simpleDouble")
     public void testSimpleDouble() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleDouble");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleDouble/");
     }
     
     @TestMetadata("simpleEnum")
     public void testSimpleEnum() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleEnum");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleEnum/");
     }
     
     @TestMetadata("simpleGenerics")
     public void testSimpleGenerics() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleGenerics");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleGenerics/");
     }
     
     @TestMetadata("simpleInt")
     public void testSimpleInt() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleInt");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleInt/");
     }
     
     @TestMetadata("simpleLambda")
     public void testSimpleLambda() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleLambda");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleLambda/");
     }
     
     @TestMetadata("simpleObject")
     public void testSimpleObject() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleObject");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/simpleObject/");
     }
     
     @TestMetadata("stackHeightBug")
     public void testStackHeightBug() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/stackHeightBug");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/stackHeightBug/");
     }
     
     @TestMetadata("trait")
     public void testTrait() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/trait");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/trait/");
     }
     
     @TestMetadata("tryCatch")
     public void testTryCatch() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch/");
     }
     
     @TestMetadata("tryCatch2")
     public void testTryCatch2() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch2");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch2/");
     }
     
     @TestMetadata("tryCatchFinally")
     public void testTryCatchFinally() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatchFinally");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/tryCatchFinally/");
     }
     
     @TestMetadata("use")
     public void testUse() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/use");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/use/");
     }
     
     @TestMetadata("vararg")
     public void testVararg() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/vararg");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/vararg/");
     }
     
     @TestMetadata("with")
     public void testWith() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/with");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/with/");
     }
     
     @TestMetadata("withoutInline")
     public void testWithoutInline() throws Exception {
-        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/withoutInline");
+        doBoxTestWithInlineCheck("compiler/testData/codegen/boxInline/withoutInline/");
     }
     
 }

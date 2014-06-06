@@ -38,277 +38,277 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxCodegenT
     
     @TestMetadata("anonymousObjectOnCallSite")
     public void testAnonymousObjectOnCallSite() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSite/");
     }
     
     @TestMetadata("anonymousObjectOnCallSiteSuperParams")
     public void testAnonymousObjectOnCallSiteSuperParams() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnCallSiteSuperParams/");
     }
     
     @TestMetadata("anonymousObjectOnDeclarationSite")
     public void testAnonymousObjectOnDeclarationSite() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSite/");
     }
     
     @TestMetadata("anonymousObjectOnDeclarationSiteSuperParams")
     public void testAnonymousObjectOnDeclarationSiteSuperParams() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/anonymousObjectOnDeclarationSiteSuperParams/");
     }
     
     @TestMetadata("builders")
     public void testBuilders() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/builders");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/builders/");
     }
     
     @TestMetadata("buildersAndLambdaCapturing")
     public void testBuildersAndLambdaCapturing() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/buildersAndLambdaCapturing");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/buildersAndLambdaCapturing/");
     }
     
     @TestMetadata("captureInlinable")
     public void testCaptureInlinable() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinable");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinable/");
     }
     
     @TestMetadata("captureInlinableAndOther")
     public void testCaptureInlinableAndOther() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinableAndOther");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureInlinableAndOther/");
     }
     
     @TestMetadata("captureThisAndReceiver")
     public void testCaptureThisAndReceiver() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureThisAndReceiver");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/captureThisAndReceiver/");
     }
     
     @TestMetadata("classObject")
     public void testClassObject() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/classObject");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/classObject/");
     }
     
     @TestMetadata("closureChain")
     public void testClosureChain() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/closureChain");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/closureChain/");
     }
     
     @TestMetadata("defaultMethod")
     public void testDefaultMethod() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/defaultMethod");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/defaultMethod/");
     }
     
     @TestMetadata("extension")
     public void testExtension() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/extension");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/extension/");
     }
     
     @TestMetadata("forEachLine")
     public void testForEachLine() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/forEachLine");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/forEachLine/");
     }
     
     @TestMetadata("generics")
     public void testGenerics() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/generics");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/generics/");
     }
     
     @TestMetadata("identityCheck")
     public void testIdentityCheck() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/identityCheck");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/identityCheck/");
     }
     
     @TestMetadata("ifBranches")
     public void testIfBranches() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/ifBranches");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/ifBranches/");
     }
     
     @TestMetadata("iinc")
     public void testIinc() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/iinc");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/iinc/");
     }
     
     @TestMetadata("inlineChain")
     public void testInlineChain() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/inlineChain");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/inlineChain/");
     }
     
     @TestMetadata("inlineInDefaultParameter")
     public void testInlineInDefaultParameter() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/inlineInDefaultParameter");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/inlineInDefaultParameter/");
     }
     
     @TestMetadata("lambdaClassClash")
     public void testLambdaClassClash() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaClassClash");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaClassClash/");
     }
     
     @TestMetadata("lambdaCloning")
     public void testLambdaCloning() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaCloning");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaCloning/");
     }
     
     @TestMetadata("lambdaInLambda")
     public void testLambdaInLambda() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda/");
     }
     
     @TestMetadata("lambdaInLambda2")
     public void testLambdaInLambda2() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda2");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambda2/");
     }
     
     @TestMetadata("lambdaInLambdaNoInline")
     public void testLambdaInLambdaNoInline() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambdaNoInline");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/lambdaInLambdaNoInline/");
     }
     
     @TestMetadata("localFunInLambda")
     public void testLocalFunInLambda() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/localFunInLambda");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/localFunInLambda/");
     }
     
     @TestMetadata("noInline")
     public void testNoInline() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInline");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInline/");
     }
     
     @TestMetadata("noInlineLambdaChain")
     public void testNoInlineLambdaChain() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChain");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChain/");
     }
     
     @TestMetadata("noInlineLambdaChainWithCapturedInline")
     public void testNoInlineLambdaChainWithCapturedInline() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChainWithCapturedInline");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaChainWithCapturedInline/");
     }
     
     @TestMetadata("noInlineLambdaX2")
     public void testNoInlineLambdaX2() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaX2");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/noInlineLambdaX2/");
     }
     
     @TestMetadata("params")
     public void testParams() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/params");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/params/");
     }
     
     @TestMetadata("plusAssign")
     public void testPlusAssign() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/plusAssign");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/plusAssign/");
     }
     
     @TestMetadata("regeneratedLambdaName")
     public void testRegeneratedLambdaName() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/regeneratedLambdaName");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/regeneratedLambdaName/");
     }
     
     @TestMetadata("rootConstructor")
     public void testRootConstructor() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/rootConstructor");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/rootConstructor/");
     }
     
     @TestMetadata("sameCaptured")
     public void testSameCaptured() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/sameCaptured");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/sameCaptured/");
     }
     
     @TestMetadata("severalClosures")
     public void testSeveralClosures() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/severalClosures");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/severalClosures/");
     }
     
     @TestMetadata("severalUsage")
     public void testSeveralUsage() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/severalUsage");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/severalUsage/");
     }
     
     @TestMetadata("simpleCapturingInClass")
     public void testSimpleCapturingInClass() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInClass");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInClass/");
     }
     
     @TestMetadata("simpleCapturingInPackage")
     public void testSimpleCapturingInPackage() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInPackage");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleCapturingInPackage/");
     }
     
     @TestMetadata("simpleDefaultMethod")
     public void testSimpleDefaultMethod() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleDefaultMethod");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleDefaultMethod/");
     }
     
     @TestMetadata("simpleDouble")
     public void testSimpleDouble() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleDouble");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleDouble/");
     }
     
     @TestMetadata("simpleEnum")
     public void testSimpleEnum() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleEnum");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleEnum/");
     }
     
     @TestMetadata("simpleGenerics")
     public void testSimpleGenerics() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleGenerics");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleGenerics/");
     }
     
     @TestMetadata("simpleInt")
     public void testSimpleInt() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleInt");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleInt/");
     }
     
     @TestMetadata("simpleLambda")
     public void testSimpleLambda() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleLambda");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleLambda/");
     }
     
     @TestMetadata("simpleObject")
     public void testSimpleObject() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleObject");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/simpleObject/");
     }
     
     @TestMetadata("stackHeightBug")
     public void testStackHeightBug() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/stackHeightBug");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/stackHeightBug/");
     }
     
     @TestMetadata("trait")
     public void testTrait() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/trait");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/trait/");
     }
     
     @TestMetadata("tryCatch")
     public void testTryCatch() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch/");
     }
     
     @TestMetadata("tryCatch2")
     public void testTryCatch2() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch2");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatch2/");
     }
     
     @TestMetadata("tryCatchFinally")
     public void testTryCatchFinally() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatchFinally");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/tryCatchFinally/");
     }
     
     @TestMetadata("use")
     public void testUse() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/use");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/use/");
     }
     
     @TestMetadata("vararg")
     public void testVararg() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/vararg");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/vararg/");
     }
     
     @TestMetadata("with")
     public void testWith() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/with");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/with/");
     }
     
     @TestMetadata("withoutInline")
     public void testWithoutInline() throws Exception {
-        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/withoutInline");
+        doTestMultiFileWithInlineCheck("compiler/testData/codegen/boxInline/withoutInline/");
     }
     
 }

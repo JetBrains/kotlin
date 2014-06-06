@@ -40,137 +40,137 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("CaretAtAnnotation")
         public void testCaretAtAnnotation() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtAnnotation");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtAnnotation/");
         }
         
         @TestMetadata("CaretAtConstructor")
         public void testCaretAtConstructor() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtConstructor");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtConstructor/");
         }
         
         @TestMetadata("CaretAtFabricMethod")
         public void testCaretAtFabricMethod() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtFabricMethod");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtFabricMethod/");
         }
         
         @TestMetadata("CaretAtImport")
         public void testCaretAtImport() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtImport");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtImport/");
         }
         
         @TestMetadata("CaretAtJavaType")
         public void testCaretAtJavaType() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtJavaType");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtJavaType/");
         }
         
         @TestMetadata("CaretAtModifierList")
         public void testCaretAtModifierList() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtModifierList");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtModifierList/");
         }
         
         @TestMetadata("CaretAtReceiverExtFun")
         public void testCaretAtReceiverExtFun() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtReceiverExtFun");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtReceiverExtFun/");
         }
         
         @TestMetadata("CaretAtSuperCall")
         public void testCaretAtSuperCall() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtSuperCall");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtSuperCall/");
         }
         
         @TestMetadata("CaretAtSupertypesList")
         public void testCaretAtSupertypesList() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtSupertypesList");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtSupertypesList/");
         }
         
         @TestMetadata("CaretAtTypeReference")
         public void testCaretAtTypeReference() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtTypeReference");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretAtTypeReference/");
         }
         
         @TestMetadata("CaretInClassBody")
         public void testCaretInClassBody() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretInClassBody");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/CaretInClassBody/");
         }
         
         @TestMetadata("ClassFromClass")
         public void testClassFromClass() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassFromClass");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassFromClass/");
         }
         
         @TestMetadata("ClassFromObject")
         public void testClassFromObject() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassFromObject");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassFromObject/");
         }
         
         @TestMetadata("ClassInClassObject")
         public void testClassInClassObject() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassInClassObject");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassInClassObject/");
         }
         
         @TestMetadata("ClassInPackage")
         public void testClassInPackage() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassInPackage");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/ClassInPackage/");
         }
         
         @TestMetadata("InnerClass")
         public void testInnerClass() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/InnerClass");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/InnerClass/");
         }
         
         @TestMetadata("JKJHierarchy")
         public void testJKJHierarchy() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JKJHierarchy");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JKJHierarchy/");
         }
         
         @TestMetadata("JavaFromKotlin")
         public void testJavaFromKotlin() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlin");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlin/");
         }
         
         @TestMetadata("JavaFromKotlinByRef")
         public void testJavaFromKotlinByRef() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinByRef");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinByRef/");
         }
         
         @TestMetadata("JavaFromKotlinForKotlinClass")
         public void testJavaFromKotlinForKotlinClass() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JavaFromKotlinForKotlinClass/");
         }
         
         @TestMetadata("JetInt")
         public void testJetInt() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JetInt");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/JetInt/");
         }
         
         @TestMetadata("KJKHierarchy")
         public void testKJKHierarchy() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KJKHierarchy");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KJKHierarchy/");
         }
         
         @TestMetadata("KotlinFromJava")
         public void testKotlinFromJava() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJava");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJava/");
         }
         
         @TestMetadata("KotlinFromJavaByRef")
         public void testKotlinFromJavaByRef() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJavaByRef");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromJavaByRef/");
         }
         
         @TestMetadata("KotlinFromKotlinByRef")
         public void testKotlinFromKotlinByRef() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromKotlinByRef");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/KotlinFromKotlinByRef/");
         }
         
         @TestMetadata("Object")
         public void testObject() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/Object");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/Object/");
         }
         
         @TestMetadata("TwoChildren")
         public void testTwoChildren() throws Exception {
-            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/TwoChildren");
+            doTypeClassHierarchyTest("idea/testData/hierarchy/class/type/TwoChildren/");
         }
         
     }
@@ -183,12 +183,12 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("JetList")
         public void testJetList() throws Exception {
-            doSuperClassHierarchyTest("idea/testData/hierarchy/class/super/JetList");
+            doSuperClassHierarchyTest("idea/testData/hierarchy/class/super/JetList/");
         }
         
         @TestMetadata("TwoTraits")
         public void testTwoTraits() throws Exception {
-            doSuperClassHierarchyTest("idea/testData/hierarchy/class/super/TwoTraits");
+            doSuperClassHierarchyTest("idea/testData/hierarchy/class/super/TwoTraits/");
         }
         
     }
@@ -201,42 +201,42 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("AllFromClass")
         public void testAllFromClass() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromClass");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromClass/");
         }
         
         @TestMetadata("AllFromTrait")
         public void testAllFromTrait() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromTrait");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/AllFromTrait/");
         }
         
         @TestMetadata("ClassFromClass")
         public void testClassFromClass() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromClass");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromClass/");
         }
         
         @TestMetadata("ClassFromTrait")
         public void testClassFromTrait() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromTrait");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ClassFromTrait/");
         }
         
         @TestMetadata("ObjectFromClass")
         public void testObjectFromClass() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromClass");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromClass/");
         }
         
         @TestMetadata("ObjectFromTrait")
         public void testObjectFromTrait() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromTrait");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/ObjectFromTrait/");
         }
         
         @TestMetadata("TraitFromClass")
         public void testTraitFromClass() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromClass");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromClass/");
         }
         
         @TestMetadata("TraitFromTrait")
         public void testTraitFromTrait() throws Exception {
-            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromTrait");
+            doSubClassHierarchyTest("idea/testData/hierarchy/class/sub/TraitFromTrait/");
         }
         
     }
@@ -249,72 +249,72 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("javaConstructor")
         public void testJavaConstructor() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/javaConstructor");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/javaConstructor/");
         }
         
         @TestMetadata("javaMethod")
         public void testJavaMethod() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/javaMethod");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/javaMethod/");
         }
         
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinClass");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinClass/");
         }
         
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinFunction");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinFunction/");
         }
         
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalClass");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalClass/");
         }
         
         @TestMetadata("kotlinLocalFunction")
         public void testKotlinLocalFunction() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalFunction");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinLocalFunction/");
         }
         
         @TestMetadata("kotlinNestedClass")
         public void testKotlinNestedClass() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedClass");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedClass/");
         }
         
         @TestMetadata("kotlinNestedInnerClass")
         public void testKotlinNestedInnerClass() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedInnerClass");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinNestedInnerClass/");
         }
         
         @TestMetadata("kotlinPackageFunction")
         public void testKotlinPackageFunction() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageFunction");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageFunction/");
         }
         
         @TestMetadata("kotlinPackageProperty")
         public void testKotlinPackageProperty() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageProperty");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPackageProperty/");
         }
         
         @TestMetadata("kotlinPrivateClass")
         public void testKotlinPrivateClass() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateClass");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateClass/");
         }
         
         @TestMetadata("kotlinPrivateFunction")
         public void testKotlinPrivateFunction() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateFunction");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateFunction/");
         }
         
         @TestMetadata("kotlinPrivateProperty")
         public void testKotlinPrivateProperty() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateProperty");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinPrivateProperty/");
         }
         
         @TestMetadata("kotlinProperty")
         public void testKotlinProperty() throws Exception {
-            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinProperty");
+            doCallerHierarchyTest("idea/testData/hierarchy/calls/callers/kotlinProperty/");
         }
         
     }
@@ -327,72 +327,72 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("javaConstructor")
         public void testJavaConstructor() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/javaConstructor");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/javaConstructor/");
         }
         
         @TestMetadata("javaMethod")
         public void testJavaMethod() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/javaMethod");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/javaMethod/");
         }
         
         @TestMetadata("kotlinAnonymousObject")
         public void testKotlinAnonymousObject() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject/");
         }
         
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinClass");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinClass/");
         }
         
         @TestMetadata("kotlinClassObject")
         public void testKotlinClassObject() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinClassObject");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinClassObject/");
         }
         
         @TestMetadata("kotlinEnumClass")
         public void testKotlinEnumClass() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinEnumClass");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinEnumClass/");
         }
         
         @TestMetadata("kotlinFunction")
         public void testKotlinFunction() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinFunction");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinFunction/");
         }
         
         @TestMetadata("kotlinLocalClass")
         public void testKotlinLocalClass() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalClass");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalClass/");
         }
         
         @TestMetadata("kotlinLocalFunction")
         public void testKotlinLocalFunction() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalFunction");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinLocalFunction/");
         }
         
         @TestMetadata("kotlinNestedClass")
         public void testKotlinNestedClass() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinNestedClass");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinNestedClass/");
         }
         
         @TestMetadata("kotlinObject")
         public void testKotlinObject() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinObject");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinObject/");
         }
         
         @TestMetadata("kotlinPackageFunction")
         public void testKotlinPackageFunction() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageFunction");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageFunction/");
         }
         
         @TestMetadata("kotlinPackageProperty")
         public void testKotlinPackageProperty() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageProperty");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinPackageProperty/");
         }
         
         @TestMetadata("kotlinProperty")
         public void testKotlinProperty() throws Exception {
-            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinProperty");
+            doCalleeHierarchyTest("idea/testData/hierarchy/calls/callees/kotlinProperty/");
         }
         
     }
@@ -405,32 +405,32 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
         
         @TestMetadata("javaMethodInClass")
         public void testJavaMethodInClass() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/javaMethodInClass");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/javaMethodInClass/");
         }
         
         @TestMetadata("javaMethodInInterface")
         public void testJavaMethodInInterface() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/javaMethodInInterface");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/javaMethodInInterface/");
         }
         
         @TestMetadata("kotlinFunctionInClass")
         public void testKotlinFunctionInClass() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinFunctionInClass");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinFunctionInClass/");
         }
         
         @TestMetadata("kotlinFunctionInTrait")
         public void testKotlinFunctionInTrait() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinFunctionInTrait");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinFunctionInTrait/");
         }
         
         @TestMetadata("kotlinPropertyInClass")
         public void testKotlinPropertyInClass() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinPropertyInClass");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinPropertyInClass/");
         }
         
         @TestMetadata("kotlinPropertyInTrait")
         public void testKotlinPropertyInTrait() throws Exception {
-            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinPropertyInTrait");
+            doOverrideHierarchyTest("idea/testData/hierarchy/overrides/kotlinPropertyInTrait/");
         }
         
     }

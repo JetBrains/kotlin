@@ -41,7 +41,8 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
     @Override
     public void generateBody(@NotNull Printer p, @NotNull String generatorClassFqName) {
-        p.println(doTestMethodName, "(\"", JetTestUtils.getFilePath(file), "\");");
+        String filePath = JetTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
+        p.println(doTestMethodName, "(\"", filePath, "\");");
     }
 
     @Override

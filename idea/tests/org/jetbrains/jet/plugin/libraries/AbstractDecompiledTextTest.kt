@@ -25,6 +25,7 @@ import com.intellij.testFramework.UsefulTestCase.*
 import junit.framework.Assert.*
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor
+import com.intellij.openapi.util.text.StringUtil
 
 public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
 
@@ -37,7 +38,7 @@ public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureT
         assertTrue("Expecting java class file, was: " + clsFileForClassFile!!.getClass(), clsFileForClassFile is ClsFileImpl)
         val decompiledPsiFile = (clsFileForClassFile as ClsFileImpl).getDecompiledPsiFile()
         assertNotNull(decompiledPsiFile)
-        assertSameLinesWithFile(path + ".expected.kt", decompiledPsiFile!!.getText())
+        assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", decompiledPsiFile!!.getText())
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {

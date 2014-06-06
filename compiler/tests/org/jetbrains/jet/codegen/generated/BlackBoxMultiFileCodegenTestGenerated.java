@@ -34,7 +34,7 @@ import org.jetbrains.jet.codegen.generated.AbstractBlackBoxCodegenTest;
 public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     @TestMetadata("accessorForProtected")
     public void testAccessorForProtected() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/accessorForProtected");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/accessorForProtected/");
     }
     
     public void testAllFilesPresentInBoxMultiFile() throws Exception {
@@ -43,52 +43,52 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
     
     @TestMetadata("internalVisibility")
     public void testInternalVisibility() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/internalVisibility");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/internalVisibility/");
     }
     
     @TestMetadata("kt1515")
     public void testKt1515() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1515");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1515/");
     }
     
     @TestMetadata("kt1528")
     public void testKt1528() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1528");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1528/");
     }
     
     @TestMetadata("kt1845")
     public void testKt1845() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1845");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt1845/");
     }
     
     @TestMetadata("kt2060")
     public void testKt2060() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt2060");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt2060/");
     }
     
     @TestMetadata("kt2257")
     public void testKt2257() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt2257");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/kt2257/");
     }
     
     @TestMetadata("nestedPackages")
     public void testNestedPackages() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/nestedPackages");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/nestedPackages/");
     }
     
     @TestMetadata("samWrappersDifferentFiles")
     public void testSamWrappersDifferentFiles() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/samWrappersDifferentFiles/");
     }
     
     @TestMetadata("sameFileName")
     public void testSameFileName() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/sameFileName");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/sameFileName/");
     }
     
     @TestMetadata("simple")
     public void testSimple() throws Exception {
-        doTestMultiFile("compiler/testData/codegen/boxMultiFile/simple");
+        doTestMultiFile("compiler/testData/codegen/boxMultiFile/simple/");
     }
     
 }

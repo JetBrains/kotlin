@@ -38,37 +38,37 @@ public class TopLevelMembersInvocationTestGenerated extends AbstractTopLevelMemb
     
     @TestMetadata("extensionFunction")
     public void testExtensionFunction() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/extensionFunction");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/extensionFunction/");
     }
     
     @TestMetadata("functionDifferentPackage")
     public void testFunctionDifferentPackage() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionDifferentPackage");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionDifferentPackage/");
     }
     
     @TestMetadata("functionInMultiFilePackage")
     public void testFunctionInMultiFilePackage() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFilePackage");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionInMultiFilePackage/");
     }
     
     @TestMetadata("functionSamePackage")
     public void testFunctionSamePackage() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionSamePackage");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/functionSamePackage/");
     }
     
     @TestMetadata("property")
     public void testProperty() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/property");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/property/");
     }
     
     @TestMetadata("propertyWithGetter")
     public void testPropertyWithGetter() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/propertyWithGetter");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/propertyWithGetter/");
     }
     
     @TestMetadata("twoModules")
     public void testTwoModules() throws Exception {
-        doTest("compiler/testData/codegen/topLevelMemberInvocation/twoModules");
+        doTest("compiler/testData/codegen/topLevelMemberInvocation/twoModules/");
     }
     
 }

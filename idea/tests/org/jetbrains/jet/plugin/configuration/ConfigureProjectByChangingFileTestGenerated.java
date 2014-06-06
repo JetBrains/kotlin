@@ -181,22 +181,22 @@ public class ConfigureProjectByChangingFileTestGenerated extends AbstractConfigu
         
         @TestMetadata("libraryMissed")
         public void testLibraryMissed() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/libraryMissed");
+            doTestWithMaven("idea/testData/configuration/maven/libraryMissed/");
         }
         
         @TestMetadata("pluginMissed")
         public void testPluginMissed() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/pluginMissed");
+            doTestWithMaven("idea/testData/configuration/maven/pluginMissed/");
         }
         
         @TestMetadata("simpleProject")
         public void testSimpleProject() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/simpleProject");
+            doTestWithMaven("idea/testData/configuration/maven/simpleProject/");
         }
         
         @TestMetadata("simpleProjectSnapshot")
         public void testSimpleProjectSnapshot() throws Exception {
-            doTestWithMaven("idea/testData/configuration/maven/simpleProjectSnapshot");
+            doTestWithMaven("idea/testData/configuration/maven/simpleProjectSnapshot/");
         }
         
     }

@@ -38,107 +38,107 @@ public class OptimizeImportsTestGenerated extends AbstractOptimizeImportsTest {
     
     @TestMetadata("AlreadyOptimized")
     public void testAlreadyOptimized() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/AlreadyOptimized");
+        doTest("idea/testData/editor/optimizeImports/AlreadyOptimized/");
     }
     
     @TestMetadata("ArrayAccessExpression")
     public void testArrayAccessExpression() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/ArrayAccessExpression");
+        doTest("idea/testData/editor/optimizeImports/ArrayAccessExpression/");
     }
     
     @TestMetadata("ClassMemberImported")
     public void testClassMemberImported() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/ClassMemberImported");
+        doTest("idea/testData/editor/optimizeImports/ClassMemberImported/");
     }
     
     @TestMetadata("ComponentFunction")
     public void testComponentFunction() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/ComponentFunction");
+        doTest("idea/testData/editor/optimizeImports/ComponentFunction/");
     }
     
     @TestMetadata("DefaultJsImports")
     public void testDefaultJsImports() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/DefaultJsImports");
+        doTest("idea/testData/editor/optimizeImports/DefaultJsImports/");
     }
     
     @TestMetadata("DuplicatedImports")
     public void testDuplicatedImports() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/DuplicatedImports");
+        doTest("idea/testData/editor/optimizeImports/DuplicatedImports/");
     }
     
     @TestMetadata("Enums")
     public void testEnums() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/Enums");
+        doTest("idea/testData/editor/optimizeImports/Enums/");
     }
     
     @TestMetadata("InvokeFunction")
     public void testInvokeFunction() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/InvokeFunction");
+        doTest("idea/testData/editor/optimizeImports/InvokeFunction/");
     }
     
     @TestMetadata("IteratorFunction")
     public void testIteratorFunction() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/IteratorFunction");
+        doTest("idea/testData/editor/optimizeImports/IteratorFunction/");
     }
     
     @TestMetadata("JavaStaticField")
     public void testJavaStaticField() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/JavaStaticField");
+        doTest("idea/testData/editor/optimizeImports/JavaStaticField/");
     }
     
     @TestMetadata("KotlinPackage")
     public void testKotlinPackage() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/KotlinPackage");
+        doTest("idea/testData/editor/optimizeImports/KotlinPackage/");
     }
     
     @TestMetadata("Kt1850FullQualified")
     public void testKt1850FullQualified() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/Kt1850FullQualified");
+        doTest("idea/testData/editor/optimizeImports/Kt1850FullQualified/");
     }
     
     @TestMetadata("Kt1850InnerClass")
     public void testKt1850InnerClass() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/Kt1850InnerClass");
+        doTest("idea/testData/editor/optimizeImports/Kt1850InnerClass/");
     }
     
     @TestMetadata("Kt2488EnumEntry")
     public void testKt2488EnumEntry() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/Kt2488EnumEntry");
+        doTest("idea/testData/editor/optimizeImports/Kt2488EnumEntry/");
     }
     
     @TestMetadata("Kt2709")
     public void testKt2709() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/Kt2709");
+        doTest("idea/testData/editor/optimizeImports/Kt2709/");
     }
     
     @TestMetadata("PartiallyQualified")
     public void testPartiallyQualified() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/PartiallyQualified");
+        doTest("idea/testData/editor/optimizeImports/PartiallyQualified/");
     }
     
     @TestMetadata("RemoveImportsIfGeneral")
     public void testRemoveImportsIfGeneral() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/RemoveImportsIfGeneral");
+        doTest("idea/testData/editor/optimizeImports/RemoveImportsIfGeneral/");
     }
     
     @TestMetadata("RemoveImportsIfGeneralBefore")
     public void testRemoveImportsIfGeneralBefore() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/RemoveImportsIfGeneralBefore");
+        doTest("idea/testData/editor/optimizeImports/RemoveImportsIfGeneralBefore/");
     }
     
     @TestMetadata("SamConstructor")
     public void testSamConstructor() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/SamConstructor");
+        doTest("idea/testData/editor/optimizeImports/SamConstructor/");
     }
     
     @TestMetadata("UnusedImports")
     public void testUnusedImports() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/UnusedImports");
+        doTest("idea/testData/editor/optimizeImports/UnusedImports/");
     }
     
     @TestMetadata("WithAliases")
     public void testWithAliases() throws Exception {
-        doTest("idea/testData/editor/optimizeImports/WithAliases");
+        doTest("idea/testData/editor/optimizeImports/WithAliases/");
     }
     
 }

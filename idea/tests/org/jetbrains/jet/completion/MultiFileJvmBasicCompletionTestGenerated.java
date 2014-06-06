@@ -38,82 +38,82 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
     
     @TestMetadata("CompleteFunctionWithNoSpecifiedType")
     public void testCompleteFunctionWithNoSpecifiedType() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/CompleteFunctionWithNoSpecifiedType");
+        doTest("idea/testData/completion/basic/multifile/CompleteFunctionWithNoSpecifiedType/");
     }
     
     @TestMetadata("CompleteImportedFunction")
     public void testCompleteImportedFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/CompleteImportedFunction");
+        doTest("idea/testData/completion/basic/multifile/CompleteImportedFunction/");
     }
     
     @TestMetadata("CompletionOnImportedFunction")
     public void testCompletionOnImportedFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/CompletionOnImportedFunction");
+        doTest("idea/testData/completion/basic/multifile/CompletionOnImportedFunction/");
     }
     
     @TestMetadata("DoNotCompleteWithConstraints")
     public void testDoNotCompleteWithConstraints() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/DoNotCompleteWithConstraints");
+        doTest("idea/testData/completion/basic/multifile/DoNotCompleteWithConstraints/");
     }
     
     @TestMetadata("EnumEntry")
     public void testEnumEntry() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/EnumEntry");
+        doTest("idea/testData/completion/basic/multifile/EnumEntry/");
     }
     
     @TestMetadata("ExtensionFunction")
     public void testExtensionFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/ExtensionFunction");
+        doTest("idea/testData/completion/basic/multifile/ExtensionFunction/");
     }
     
     @TestMetadata("ExtensionFunctionOnImportedFunction")
     public void testExtensionFunctionOnImportedFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/ExtensionFunctionOnImportedFunction");
+        doTest("idea/testData/completion/basic/multifile/ExtensionFunctionOnImportedFunction/");
     }
     
     @TestMetadata("ExtensionOnNullable")
     public void testExtensionOnNullable() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/ExtensionOnNullable");
+        doTest("idea/testData/completion/basic/multifile/ExtensionOnNullable/");
     }
     
     @TestMetadata("GroovyClassNameCompletionFromDefaultPackage")
     public void testGroovyClassNameCompletionFromDefaultPackage() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromDefaultPackage");
+        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromDefaultPackage/");
     }
     
     @TestMetadata("GroovyClassNameCompletionFromNonDefaultPackage")
     public void testGroovyClassNameCompletionFromNonDefaultPackage() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromNonDefaultPackage");
+        doTest("idea/testData/completion/basic/multifile/GroovyClassNameCompletionFromNonDefaultPackage/");
     }
     
     @TestMetadata("InImportedFunctionLiteralParameter")
     public void testInImportedFunctionLiteralParameter() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/InImportedFunctionLiteralParameter");
+        doTest("idea/testData/completion/basic/multifile/InImportedFunctionLiteralParameter/");
     }
     
     @TestMetadata("JavaInnerClasses")
     public void testJavaInnerClasses() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/JavaInnerClasses");
+        doTest("idea/testData/completion/basic/multifile/JavaInnerClasses/");
     }
     
     @TestMetadata("NotImportedExtensionFunction")
     public void testNotImportedExtensionFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/NotImportedExtensionFunction");
+        doTest("idea/testData/completion/basic/multifile/NotImportedExtensionFunction/");
     }
     
     @TestMetadata("NotImportedJavaClass")
     public void testNotImportedJavaClass() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/NotImportedJavaClass");
+        doTest("idea/testData/completion/basic/multifile/NotImportedJavaClass/");
     }
     
     @TestMetadata("NotImportedObject")
     public void testNotImportedObject() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/NotImportedObject");
+        doTest("idea/testData/completion/basic/multifile/NotImportedObject/");
     }
     
     @TestMetadata("TopLevelFunction")
     public void testTopLevelFunction() throws Exception {
-        doTest("idea/testData/completion/basic/multifile/TopLevelFunction");
+        doTest("idea/testData/completion/basic/multifile/TopLevelFunction/");
     }
     
 }
