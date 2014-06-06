@@ -34,10 +34,12 @@ import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 
 class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
-        private val typeMapper: JetTypeMapper,
         private val bindingContext: BindingContext,
         private val diagnostics: DiagnosticHolder
 ) : SignatureCollectingClassBuilderFactory(builderFactory) {
+
+    // Avoid errors when some classes are not loaded for some reason
+    private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES)
 
     override fun handleClashingSignatures(data: ConflictingJvmDeclarationsData) {
         val allDelegatedToTraitImpls = data.signatureOrigins.all { it.originKind == JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL }

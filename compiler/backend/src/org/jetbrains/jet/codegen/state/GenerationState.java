@@ -146,7 +146,7 @@ public class GenerationState {
 
         this.intrinsics = new IntrinsicMethods();
         this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
-                builderFactory, typeMapper, bindingContext, diagnostics));
+                builderFactory, this.bindingContext, diagnostics));
 
         this.generateNotNullAssertions = generateNotNullAssertions;
         this.generateNotNullParamAssertions = generateNotNullParamAssertions;
