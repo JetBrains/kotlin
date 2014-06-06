@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.lang.resolve.kotlin;
+package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.resolve.java.structure.JavaClass;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.annotations.Nullable
+import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
+import org.jetbrains.jet.lang.resolve.name.FqName
 
-public interface KotlinClassFinder {
+public trait KotlinClassFinder {
+    public fun findKotlinClass(fqName: FqName): KotlinJvmBinaryClass?
 
-    @Nullable
-    KotlinJvmBinaryClass findKotlinClass(@NotNull FqName fqName);
-
-    @Nullable
-    KotlinJvmBinaryClass findKotlinClass(@NotNull JavaClass javaClass);
+    public fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?
 }
