@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 trait One {
   public open fun foo() : Int
   private fun boo() = 10

@@ -6,5 +6,5 @@ trait D {
     val x: Int
 }
 
-class <!ACCIDENTAL_OVERRIDE!>C(d: D)<!> : D by d, B {
+class <!CONFLICTING_JVM_DECLARATIONS!>C(d: D)<!> : D by d, B {
 }

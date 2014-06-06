@@ -8,5 +8,5 @@ trait Bar<T> {
     fun foo(l: List<T>)
 }
 
-<!CONFLICTING_JVM_DECLARATIONS!>class Baz(f: Foo<String>, b: Bar<Int>)<!>: Foo<String> by f, Bar<Int> by b {
+class <!CONFLICTING_JVM_DECLARATIONS!>Baz(f: Foo<String>, b: Bar<Int>)<!>: Foo<String> by f, Bar<Int> by b {
 }

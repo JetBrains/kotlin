@@ -49,6 +49,7 @@ import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
+import org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmClassSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
@@ -434,8 +435,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateClassObjectBackingFieldCopies();
 
+        DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getDelegationSpecifiers());
         try {
-            generatePrimaryConstructor();
+            generatePrimaryConstructor(delegationFieldsInfo);
         }
         catch (CompilationException e) {
             throw e;
@@ -448,6 +450,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         generateTraitMethods();
+
+        generateDelegates(delegationFieldsInfo);
 
         generateSyntheticAccessors();
 
@@ -1123,7 +1127,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generatePrimaryConstructor() {
+    protected void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (ignoreIfTraitOrAnnotation()) return;
 
         if (kind != OwnerKind.IMPLEMENTATION) {
@@ -1152,7 +1156,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                           generatePrimaryConstructorImpl(callableDescriptor, codegen, closure);
+                           generatePrimaryConstructorImpl(callableDescriptor, codegen, closure, delegationFieldsInfo);
                        }
                    }
         );
@@ -1171,7 +1175,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructorImpl(
             @Nullable ConstructorDescriptor constructorDescriptor,
             @NotNull final ExpressionCodegen codegen,
-            @Nullable MutableClosure closure
+            @Nullable MutableClosure closure,
+            @NotNull DelegationFieldsInfo fieldsInfo
     ) {
         List<ValueParameterDescriptor> paramDescrs = constructorDescriptor != null
                                                      ? constructorDescriptor.getValueParameters()
@@ -1197,14 +1202,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor);
         }
 
-        int n = 0;
         for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
             if (specifier == superCall) {
                 continue;
             }
 
             if (specifier instanceof JetDelegatorByExpressionSpecifier) {
-                genCallToDelegatorByExpressionSpecifier(iv, codegen, n++, specifier);
+                genCallToDelegatorByExpressionSpecifier(iv, codegen, (JetDelegatorByExpressionSpecifier) specifier, fieldsInfo);
             }
         }
 
@@ -1275,13 +1279,95 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
+    private class DelegationFieldsInfo {
+        private class Field {
+            public final Type type;
+            public final String name;
+            public final boolean generateField;
+
+            private Field(Type type, String name, boolean generateField) {
+                this.type = type;
+                this.name = name;
+                this.generateField = generateField;
+            }
+
+            @NotNull
+            public StackValue getStackValue() {
+                return StackValue.field(type, classAsmType, name, false);
+            }
+        }
+        private final Map<JetDelegatorByExpressionSpecifier, Field> fields = new HashMap<JetDelegatorByExpressionSpecifier, Field>();
+
+        @NotNull
+        public Field getInfo(JetDelegatorByExpressionSpecifier specifier) {
+            return fields.get(specifier);
+        }
+
+        private void addField(JetDelegatorByExpressionSpecifier specifier, PropertyDescriptor propertyDescriptor) {
+            fields.put(specifier,
+                       new Field(typeMapper.mapType(propertyDescriptor), propertyDescriptor.getName().asString(), false));
+        }
+
+        private void addField(JetDelegatorByExpressionSpecifier specifier, Type type, String name) {
+            fields.put(specifier, new Field(type, name, true));
+        }
+    }
+
+    @NotNull
+    private DelegationFieldsInfo getDelegationFieldsInfo(@NotNull List<JetDelegationSpecifier> delegationSpecifiers) {
+        DelegationFieldsInfo result = new DelegationFieldsInfo();
+        int n = 0;
+        for (JetDelegationSpecifier specifier : delegationSpecifiers) {
+            if (specifier instanceof JetDelegatorByExpressionSpecifier) {
+                JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+                PropertyDescriptor propertyDescriptor = getDelegatePropertyIfAny(expression);
+
+                ClassDescriptor superClassDescriptor = getSuperClass(specifier);
+
+                if (propertyDescriptor != null &&
+                    !propertyDescriptor.isVar() &&
+                    Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
+                    // final property with backing field
+                    result.addField((JetDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
+                }
+                else {
+                    result.addField((JetDelegatorByExpressionSpecifier) specifier, typeMapper.mapType(superClassDescriptor), "$delegate_" + n);
+                }
+                n++;
+            }
+        }
+        return result;
+    }
+
+    @NotNull
+    private ClassDescriptor getSuperClass(@NotNull JetDelegationSpecifier specifier) {
+        JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
+        assert superType != null;
+
+        ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
+        assert superClassDescriptor != null;
+        return superClassDescriptor;
+    }
+
     private void genCallToDelegatorByExpressionSpecifier(
             InstructionAdapter iv,
             ExpressionCodegen codegen,
-            int n,
-            JetDelegationSpecifier specifier
+            JetDelegatorByExpressionSpecifier specifier,
+            DelegationFieldsInfo fieldsInfo
     ) {
-        JetExpression expression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+        JetExpression expression = specifier.getDelegateExpression();
+
+        DelegationFieldsInfo.Field fieldInfo = fieldsInfo.getInfo(specifier);
+        if (fieldInfo.generateField) {
+            iv.load(0, classAsmType);
+            codegen.genToJVMStack(expression);
+
+            fieldInfo.getStackValue().store(fieldInfo.type, iv);
+        }
+    }
+
+    @Nullable
+    private PropertyDescriptor getDelegatePropertyIfAny(JetExpression expression) {
         PropertyDescriptor propertyDescriptor = null;
         if (expression instanceof JetSimpleNameExpression) {
             ResolvedCall<?> call = bindingContext.get(BindingContext.RESOLVED_CALL, expression);
@@ -1301,35 +1387,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 // todo: when and if frontend will allow properties defined not as constructor parameters to be used in delegation specifier
             }
         }
-
-        JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-        assert superType != null;
-
-        ClassDescriptor superClassDescriptor = (ClassDescriptor) superType.getConstructor().getDeclarationDescriptor();
-        assert superClassDescriptor != null;
-
-        StackValue field;
-        if (propertyDescriptor != null &&
-            !propertyDescriptor.isVar() &&
-            Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor))) {
-            // final property with backing field
-            field = StackValue.field(typeMapper.mapType(propertyDescriptor), classAsmType, propertyDescriptor.getName().asString(), false);
-        }
-        else {
-            iv.load(0, classAsmType);
-            codegen.genToJVMStack(expression);
-
-            String delegateField = "$delegate_" + n;
-            Type fieldType = typeMapper.mapType(superClassDescriptor);
-            String fieldDesc = fieldType.getDescriptor();
-
-            v.newField(OtherOrigin(specifier), ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC, delegateField, fieldDesc, /*TODO*/null, null);
-
-            field = StackValue.field(fieldType, classAsmType, delegateField, false);
-            field.store(fieldType, iv);
-        }
-
-        generateDelegates(superClassDescriptor, field);
+        return propertyDescriptor;
     }
 
     private void lookupConstructorExpressionsInClosureIfPresent(final ConstructorContext constructorContext) {
@@ -1625,7 +1683,24 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.astore(OBJECT_TYPE);
     }
 
-    protected void generateDelegates(ClassDescriptor toClass, StackValue field) {
+    private void generateDelegates(DelegationFieldsInfo delegationFieldsInfo) {
+        for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
+            if (specifier instanceof JetDelegatorByExpressionSpecifier) {
+                DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((JetDelegatorByExpressionSpecifier) specifier);
+                generateDelegateField(field);
+                generateDelegates(getSuperClass(specifier), field);
+            }
+        }
+    }
+
+    private void generateDelegateField(DelegationFieldsInfo.Field fieldInfo) {
+        if (!fieldInfo.generateField) return;
+
+        v.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE | ACC_FINAL | ACC_SYNTHETIC,
+                   fieldInfo.name, fieldInfo.type.getDescriptor(), /*TODO*/null, null);
+    }
+
+    protected void generateDelegates(ClassDescriptor toClass, DelegationFieldsInfo.Field field) {
         for (DeclarationDescriptor declaration : descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
             if (declaration instanceof CallableMemberDescriptor) {
                 CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declaration;
@@ -1635,11 +1710,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         if (overriddenDescriptor.getContainingDeclaration() == toClass) {
                             if (declaration instanceof PropertyDescriptor) {
                                 propertyCodegen
-                                        .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field);
+                                        .genDelegate((PropertyDescriptor) declaration, (PropertyDescriptor) overriddenDescriptor, field.getStackValue());
                             }
                             else if (declaration instanceof FunctionDescriptor) {
                                 functionCodegen
-                                        .genDelegate((FunctionDescriptor) declaration, (FunctionDescriptor) overriddenDescriptor, field);
+                                        .genDelegate((FunctionDescriptor) declaration, (FunctionDescriptor) overriddenDescriptor, field.getStackValue());
                             }
                         }
                     }

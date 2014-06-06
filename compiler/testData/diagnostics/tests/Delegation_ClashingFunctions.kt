@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
 trait One {
     public fun foo(): Any?
 }
