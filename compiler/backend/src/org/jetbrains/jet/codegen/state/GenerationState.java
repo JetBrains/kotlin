@@ -145,7 +145,7 @@ public class GenerationState {
         this.typeMapper = new JetTypeMapper(this.bindingContext, classBuilderMode);
 
         this.intrinsics = new IntrinsicMethods();
-        this.classFileFactory = new ClassFileFactory(this, new BuilderfactoryForDuplicateSignatureDiagnostics(
+        this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
                 builderFactory, typeMapper, bindingContext, diagnostics));
 
         this.generateNotNullAssertions = generateNotNullAssertions;

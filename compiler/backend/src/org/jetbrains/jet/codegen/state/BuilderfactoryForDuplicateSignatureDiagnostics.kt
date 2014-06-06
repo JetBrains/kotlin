@@ -18,22 +18,21 @@ package org.jetbrains.jet.codegen.state
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
-import kotlin.Function1
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.codegen.ClassBuilderFactory
 import org.jetbrains.jet.codegen.SignatureCollectingClassBuilderFactory
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder
 import org.jetbrains.jet.lang.resolve.BindingContext
 import org.jetbrains.jet.lang.resolve.BindingContextUtils
-import org.jetbrains.jet.lang.resolve.calls.CallResolverUtil
 import org.jetbrains.jet.lang.resolve.java.diagnostics.*
-import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature
 import java.util.*
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+import org.jetbrains.jet.utils.addIfNotNull
+import org.jetbrains.jet.codegen.ClassBuilderMode
+import org.jetbrains.jet.lang.resolve.java.descriptor.SamAdapterDescriptor
 
-class BuilderfactoryForDuplicateSignatureDiagnostics(
+class BuilderFactoryForDuplicateSignatureDiagnostics(
         builderFactory: ClassBuilderFactory,
         private val typeMapper: JetTypeMapper,
         private val bindingContext: BindingContext,
@@ -49,9 +48,7 @@ class BuilderfactoryForDuplicateSignatureDiagnostics(
             if (element == null || allDelegatedToTraitImpls) {
                 element = data.classOrigin.element
             }
-            if (element != null) {
-                elements.add(element!!)
-            }
+            elements.addIfNotNull(element)
         }
 
         for (element in elements) {
@@ -63,34 +60,7 @@ class BuilderfactoryForDuplicateSignatureDiagnostics(
         val descriptor = classOrigin.descriptor
         if (descriptor !is ClassDescriptor) return
 
-        val groupedBySignature = MultiMap.create<RawSignature, CallableMemberDescriptor>()
-        val queue = LinkedList(descriptor.getDefaultType().getMemberScope().getAllDescriptors())
-        while (!queue.isEmpty()) {
-            val member = queue.poll()
-            if (member is DeclarationDescriptorWithVisibility && member.getVisibility() == Visibilities.INVISIBLE_FAKE) {
-                // a member of super is not visible: no override
-                continue
-            }
-            if (member is CallableMemberDescriptor && CallResolverUtil.isOrOverridesSynthesized(member)) {
-                // if a signature clashes with a SAM-adapter or something like that, there's no harm
-                continue
-            }
-            if (member is PropertyDescriptor) {
-                val getter = member.getGetter()
-                if (getter != null) {
-                    queue.add(getter)
-                }
-                val setter = member.getSetter()
-                if (setter != null) {
-                    queue.add(setter)
-                }
-            }
-            else if (member is FunctionDescriptor) {
-                val methodSignature = typeMapper.mapSignature(member)
-                val rawSignature = RawSignature(methodSignature.getAsmMethod().getName()!!, methodSignature.getAsmMethod().getDescriptor()!!, MemberKind.METHOD)
-                groupedBySignature.putValue(rawSignature, member)
-            }
-        }
+        val groupedBySignature = groupDescriptorsBySignature(descriptor)
 
         @signatures
         for ((rawSignature, members) in groupedBySignature.entrySet()!!) {
@@ -116,11 +86,45 @@ class BuilderfactoryForDuplicateSignatureDiagnostics(
             }
 
             val elementToReportOn = memberElement ?: classOrigin.element
-            if (elementToReportOn == null) return
+            if (elementToReportOn == null) return // TODO: it'd be better to report this error without any element at all
 
-            val origins = members.map { OtherOrigin(it) }
-            val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, origins)
+            val data = ConflictingJvmDeclarationsData(classInternalName, classOrigin, rawSignature, members.map { OtherOrigin(it) })
             diagnostics.report(ErrorsJvm.ACCIDENTAL_OVERRIDE.on(elementToReportOn, data))
         }
+    }
+
+    private fun groupDescriptorsBySignature(descriptor: ClassDescriptor): MultiMap<RawSignature, CallableMemberDescriptor> {
+        val groupedBySignature = MultiMap.create<RawSignature, CallableMemberDescriptor>()
+
+        fun processMember(member: DeclarationDescriptor?) {
+            // a member of super is not visible: no override
+            if (member is DeclarationDescriptorWithVisibility && member.getVisibility() == Visibilities.INVISIBLE_FAKE) return
+            // if a signature clashes with a SAM-adapter or something like that, there's no harm
+            if (member is CallableMemberDescriptor && isOrOverridesSamAdapter(member)) return
+
+            if (member is PropertyDescriptor) {
+                processMember(member.getGetter())
+                processMember(member.getSetter())
+            }
+            else if (member is FunctionDescriptor) {
+                val methodSignature = typeMapper.mapSignature(member)
+                val rawSignature = RawSignature(
+                        methodSignature.getAsmMethod().getName()!!, methodSignature.getAsmMethod().getDescriptor()!!, MemberKind.METHOD)
+                groupedBySignature.putValue(rawSignature, member)
+            }
+        }
+
+        for (member in descriptor.getDefaultType().getMemberScope().getAllDescriptors()) {
+            processMember(member)
+        }
+
+        return groupedBySignature
+    }
+
+    public fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {
+        if (descriptor is SamAdapterDescriptor<*>) return true
+
+        return descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+                && descriptor.getOverriddenDescriptors().all { isOrOverridesSamAdapter(it) }
     }
 }
