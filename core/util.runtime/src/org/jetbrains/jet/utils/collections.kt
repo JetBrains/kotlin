@@ -80,3 +80,7 @@ public fun <T> Iterable<Iterable<T>>.flatten(): List<T> {
 }
 
 public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = if (item == null) listOf() else listOf(item)
+
+public fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
+    if (t != null) add(t)
+}

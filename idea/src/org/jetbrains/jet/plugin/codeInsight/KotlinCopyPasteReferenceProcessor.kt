@@ -371,5 +371,3 @@ private fun PsiElement.isInCopiedArea(fileCopiedFrom: JetFile, startOffsets: Int
         range in TextRange(start, end)
     }
 }
-
-private fun <T : Any> MutableCollection<T>.addIfNotNull(el: T?) = ContainerUtil.addIfNotNull(this, el)
