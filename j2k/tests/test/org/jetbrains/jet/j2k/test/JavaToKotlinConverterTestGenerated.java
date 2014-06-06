@@ -1926,6 +1926,26 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/nullability/MethodResultComparedWithNull.java");
         }
         
+        @TestMetadata("MethodResultComparedWithNull2.java")
+        public void testMethodResultComparedWithNull2() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodResultComparedWithNull2.java");
+        }
+        
+        @TestMetadata("MethodResultComparedWithNull3.java")
+        public void testMethodResultComparedWithNull3() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodResultComparedWithNull3.java");
+        }
+        
+        @TestMetadata("MethodResultComparedWithNull4.java")
+        public void testMethodResultComparedWithNull4() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodResultComparedWithNull4.java");
+        }
+        
+        @TestMetadata("MethodResultInitializesNullableField.java")
+        public void testMethodResultInitializesNullableField() throws Exception {
+            doTest("j2k/tests/testData/ast/nullability/MethodResultInitializesNullableField.java");
+        }
+        
         @TestMetadata("MethodReturnsNull.java")
         public void testMethodReturnsNull() throws Exception {
             doTest("j2k/tests/testData/ast/nullability/MethodReturnsNull.java");

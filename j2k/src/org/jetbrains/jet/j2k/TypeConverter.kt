@@ -44,7 +44,7 @@ class TypeConverter(val settings: ConverterSettings) {
             val initializer = variable.getInitializer()
             if (initializer != null) {
                 val initializerNullability = initializer.nullability()
-                if (variable.hasModifierProperty(PsiModifier.FINAL)) { //TODO: replace check for final modifier with effective final
+                if (variable.isEffectivelyFinal()) {
                     nullability = initializerNullability
                 }
                 else if (initializerNullability == Nullability.Nullable) { // if variable is not final then non-nullability of initializer does not mean that variable is non-null
@@ -159,6 +159,19 @@ class TypeConverter(val settings: ConverterSettings) {
                 return otherOperand is PsiLiteralExpression && otherOperand.getType() == PsiType.NULL
             }
         }
+        else if (parent is PsiVariable && usage == parent.getInitializer() && parent.isEffectivelyFinal()) {
+            return convertVariableType(parent).isNullable
+        }
         return false
+    }
+
+    private fun PsiVariable.isEffectivelyFinal(): Boolean {
+        if (hasModifierProperty(PsiModifier.FINAL)) return true
+        return when(this) {
+            is PsiLocalVariable -> !hasWriteAccesses(getContainingMethod())
+            is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(getContainingClass()) else false
+            is PsiParameter -> true
+            else -> false
+        }
     }
 }

@@ -218,7 +218,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
                      typeConverter.convertVariableType(field),
                      convertExpression(field.getInitializer(), field.getType()),
                      field.hasModifierProperty(PsiModifier.FINAL),
-                     field.countWriteAccesses(field.getContainingClass()))
+                     field.hasWriteAccesses(field.getContainingClass()))
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {

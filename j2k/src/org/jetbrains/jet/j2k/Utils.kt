@@ -46,6 +46,9 @@ fun findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodC
 fun PsiVariable.countWriteAccesses(scope: PsiElement?): Int
         = if (scope != null) findVariableUsages(this, scope).count { PsiUtil.isAccessedForWriting(it) } else 0
 
+fun PsiVariable.hasWriteAccesses(scope: PsiElement?): Boolean
+        = if (scope != null) findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
+
 fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
     val annotations = getModifierList()?.getAnnotations() ?: return Nullability.Default
     return if (annotations.any { NOT_NULL_ANNOTATIONS.contains(it.getQualifiedName()) })

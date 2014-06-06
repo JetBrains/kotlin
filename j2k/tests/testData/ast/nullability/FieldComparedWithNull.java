@@ -1,6 +1,6 @@
 //file
 class C {
-    private String s = "";
+    private String s = x();
 
     void foo() {
         if (s == null) {

@@ -26,13 +26,13 @@ open class Field(
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
-        val writingAccesses: Int
+        private val hasWriteAccesses: Boolean
 ) : Member(comments, modifiers) {
 
     override fun toKotlin(): String {
         val declaration = commentsToKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
         return if (initializer.isEmpty)
-            declaration + (if (isVal && !isStatic() && writingAccesses != 0) "" else " = " + getDefaultInitializer(this))
+            declaration + (if (isVal && !isStatic() && hasWriteAccesses) "" else " = " + getDefaultInitializer(this))
         else
             declaration + " = " + initializer.toKotlin()
     }

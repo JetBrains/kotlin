@@ -21,6 +21,7 @@ import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.countWriteAccesses
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.hasWriteAccesses
 
 class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Statement = Statement.Empty
@@ -82,8 +83,8 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
 
         val loopVar = initialization?.getFirstChild() as? PsiLocalVariable
         val onceWritableIterator = loopVar != null
-                && loopVar.countWriteAccesses(body) == 0
-                && loopVar.countWriteAccesses(condition) == 0
+                && !loopVar.hasWriteAccesses(body)
+                && !loopVar.hasWriteAccesses(condition)
                 && loopVar.countWriteAccesses(update) == 1
 
         val operationTokenType = (condition as? PsiBinaryExpression)?.getOperationTokenType()
