@@ -100,45 +100,43 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo elseDataFlowInfo = context.dataFlowInfo;
         for (JetWhenEntry whenEntry : expression.getEntries()) {
             JetWhenCondition[] conditions = whenEntry.getConditions();
-            DataFlowInfo newDataFlowInfo;
-            WritableScope scopeToExtend;
+            DataFlowInfos infos = null;
             if (whenEntry.isElse()) {
-                scopeToExtend = newWritableScopeImpl(context, "Scope extended in when-else entry");
-                newDataFlowInfo = elseDataFlowInfo;
             }
             else if (conditions.length == 1) {
-                scopeToExtend = newWritableScopeImpl(context, "Scope extended in when entry");
-                newDataFlowInfo = context.dataFlowInfo;
                 JetWhenCondition condition = conditions[0];
                 if (condition != null) {
-                    DataFlowInfos infos = checkWhenCondition(
+                    infos = checkWhenCondition(
                             subjectExpression, subjectExpression == null,
                             subjectType, condition,
                             context, subjectDataFlowValue);
-                    newDataFlowInfo = infos.thenInfo;
-                    elseDataFlowInfo = elseDataFlowInfo.and(infos.elseInfo);
                 }
             }
             else {
-                scopeToExtend = newWritableScopeImpl(context, "pattern matching"); // We don't write to this scope
-                newDataFlowInfo = null;
+                infos = null;
                 for (JetWhenCondition condition : conditions) {
-                    DataFlowInfos infos = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition,
+                    DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition,
                                                              context, subjectDataFlowValue);
-                    if (newDataFlowInfo == null) {
-                        newDataFlowInfo = infos.thenInfo;
+                    if (infos != null) {
+                        infos = new DataFlowInfos(infos.thenInfo.or(conditionInfos.thenInfo), infos.elseInfo.and(conditionInfos.elseInfo));
                     }
                     else {
-                        newDataFlowInfo = newDataFlowInfo.or(infos.thenInfo);
+                        infos = conditionInfos;
                     }
-                    elseDataFlowInfo = elseDataFlowInfo.and(infos.elseInfo);
-                }
-                if (newDataFlowInfo == null) {
-                    newDataFlowInfo = context.dataFlowInfo;
                 }
             }
+            DataFlowInfo newDataFlowInfo;
+            if (infos == null) {
+                newDataFlowInfo = elseDataFlowInfo;
+            }
+            else {
+                newDataFlowInfo = infos.thenInfo;
+                elseDataFlowInfo = elseDataFlowInfo.and(infos.elseInfo);
+            }
+
             JetExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
+                WritableScope scopeToExtend = newWritableScopeImpl(context, "Scope extended in when entry");
                 ExpressionTypingContext newContext = contextWithExpectedType
                         .replaceScope(scopeToExtend).replaceDataFlowInfo(newDataFlowInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
