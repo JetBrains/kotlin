@@ -2014,6 +2014,16 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/IsExpression.kt");
             }
             
+            @TestMetadata("kt4332WhenBranches.kt")
+            public void testKt4332WhenBranches() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/kt4332WhenBranches.kt");
+            }
+            
+            @TestMetadata("kt5182WhenBranches.kt")
+            public void testKt5182WhenBranches() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/kt5182WhenBranches.kt");
+            }
+            
             @TestMetadata("ManyIfs.kt")
             public void testManyIfs() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/ManyIfs.kt");
@@ -2074,9 +2084,14 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/When.kt");
             }
             
-            @TestMetadata("WhenEntry.kt")
-            public void testWhenEntry() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenEntry.kt");
+            @TestMetadata("WhenEntryAs.kt")
+            public void testWhenEntryAs() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenEntryAs.kt");
+            }
+            
+            @TestMetadata("WhenEntryIs.kt")
+            public void testWhenEntryIs() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/WhenEntryIs.kt");
             }
             
             @TestMetadata("WhenIn.kt")

@@ -4,7 +4,7 @@ fun foo(x: Number, y: Int) {
         y -> {}
         else -> {}
     }
-    <!TYPE_MISMATCH!>x<!> : Int
+    <!DEBUG_INFO_AUTOCAST!>x<!> : Int
 }
 
 fun bar(x: Number) {

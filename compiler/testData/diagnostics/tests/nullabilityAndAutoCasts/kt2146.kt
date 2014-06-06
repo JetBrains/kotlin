@@ -32,8 +32,9 @@ fun f4(s: Int?): Int {
 
 fun f5(s: Int?): Int {
     return when (s) {
-        s!! -> <!DEBUG_INFO_AUTOCAST!>s<!>
         s -> <!TYPE_MISMATCH!>s<!>
+        s!! -> <!DEBUG_INFO_AUTOCAST!>s<!>
+        s -> <!DEBUG_INFO_AUTOCAST!>s<!>
         else -> 0
     }
 }

@@ -106,7 +106,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 dataFlowInfoForEntryBody = elseDataFlowInfo;
             }
             else {
-                dataFlowInfoForEntryBody = infosForCondition.thenInfo;
+                dataFlowInfoForEntryBody = infosForCondition.thenInfo.and(elseDataFlowInfo);
                 elseDataFlowInfo = elseDataFlowInfo.and(infosForCondition.elseInfo);
             }
 
