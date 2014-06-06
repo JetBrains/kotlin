@@ -42,13 +42,13 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
             // property declared in constructor
             val parentClass = parent?.getParent() as? JetClass
             if (parentClass != null) {
-                return getDiagnosticsForNonLocalClass(parentClass)
+                return getDiagnosticsForClass(parentClass)
             }
         }
 
         if (parent is JetFile) {
             if (element is JetClassOrObject) {
-                return getDiagnosticsForNonLocalClass(element)
+                return getDiagnosticsForClass(element)
             }
             return getDiagnosticsForPackage(parent as JetFile)
         }
@@ -57,7 +57,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
             val parentsParent = parent?.getParent()
 
             if (parentsParent is JetClassOrObject) {
-                return getDiagnosticsForNonLocalClass(parentsParent)
+                return getDiagnosticsForClass(parentsParent)
             }
         }
         return null
@@ -126,6 +126,6 @@ private fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
     return cache[file.getPackageFqName(), GlobalSearchScope.allScope(project)].getValue()?.extraDiagnostics
 }
 
-private fun getDiagnosticsForNonLocalClass(jetClassOrObject: JetClassOrObject): Diagnostics {
+private fun getDiagnosticsForClass(jetClassOrObject: JetClassOrObject): Diagnostics {
     return KotlinLightClassForExplicitDeclaration.getLightClassData(jetClassOrObject).extraDiagnostics
 }
