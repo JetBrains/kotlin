@@ -185,13 +185,13 @@ public class JetControlFlowProcessor {
         @NotNull
         private PseudoValue createSyntheticValue(@NotNull JetElement instructionElement, JetElement... from) {
             List<PseudoValue> values = elementsToValues(from.length > 0 ? Arrays.asList(from) : Collections.<JetElement>emptyList());
-            return builder.magic(instructionElement, null, values, defaultTypeMap(values), true);
+            return builder.magic(instructionElement, null, values, defaultTypeMap(values), true).getOutputValue();
         }
 
         @NotNull
         private PseudoValue createNonSyntheticValue(@NotNull JetElement to, @NotNull List<? extends JetElement> from) {
             List<PseudoValue> values = elementsToValues(from);
-            return builder.magic(to, to, values, defaultTypeMap(values), false);
+            return builder.magic(to, to, values, defaultTypeMap(values), false).getOutputValue();
         }
 
         @NotNull
@@ -883,7 +883,7 @@ public class JetControlFlowProcessor {
                     Collections.singletonList(loopRangeValue),
                     Collections.singletonMap(loopRangeValue, loopRangeTypeSet),
                     true
-            );
+            ).getOutputValue();
 
             if (loopParameter != null) {
                 generateInitializer(loopParameter, value);
@@ -1128,7 +1128,7 @@ public class JetControlFlowProcessor {
                                                 resolvedCall,
                                                 getReceiverValues(resolvedCall, false),
                                                 Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
-                                            )
+                                            ).getOutputValue()
                                            : createSyntheticValue(entry, initializer);
                 if (generateWriteForEntries) {
                     generateInitializer(entry, writtenValue != null ? writtenValue : createSyntheticValue(entry));

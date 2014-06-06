@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate;
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -103,16 +103,16 @@ public interface JetControlFlowBuilder {
     void loadUnit(@NotNull JetExpression expression);
 
     @NotNull
-    PseudoValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
+    ValuedInstruction loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
     @NotNull
-    PseudoValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
+    ValuedInstruction createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
     @NotNull
-    PseudoValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
+    ValuedInstruction createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
     @NotNull
-    PseudoValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
+    ValuedInstruction loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
 
     @NotNull
-    PseudoValue magic(
+    MagicInstruction magic(
             @NotNull JetElement instructionElement,
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
@@ -121,23 +121,22 @@ public interface JetControlFlowBuilder {
     );
 
     @NotNull
-    PseudoValue merge(
+    MergeInstruction merge(
             @NotNull JetExpression expression,
             @NotNull List<PseudoValue> inputValues
     );
 
     @NotNull
-    PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
-
+    ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
     @NotNull
-    PseudoValue readVariable(
+    ReadValueInstruction readVariable(
             @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
-    @Nullable
-    PseudoValue call(
+    @NotNull
+    CallInstruction call(
             @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
@@ -150,7 +149,7 @@ public interface JetControlFlowBuilder {
         NOT_NULL_ASSERTION
     }
     @NotNull
-    PseudoValue predefinedOperation(
+    OperationInstruction predefinedOperation(
             @NotNull JetExpression expression,
             @NotNull PredefinedOperation operation,
             @NotNull List<PseudoValue> inputValues

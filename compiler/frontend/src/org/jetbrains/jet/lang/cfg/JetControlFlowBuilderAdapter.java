@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
 import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate;
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.psi.*;
@@ -44,31 +44,31 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
-    public PseudoValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+    public ValuedInstruction loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
         return getDelegateBuilder().loadConstant(expression, constant);
     }
 
     @NotNull
     @Override
-    public PseudoValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+    public ValuedInstruction createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
         return getDelegateBuilder().createAnonymousObject(expression);
     }
 
     @NotNull
     @Override
-    public PseudoValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+    public ValuedInstruction createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
         return getDelegateBuilder().createFunctionLiteral(expression);
     }
 
     @NotNull
     @Override
-    public PseudoValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
+    public ValuedInstruction loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
         return getDelegateBuilder().loadStringTemplate(expression, inputValues);
     }
 
     @NotNull
     @Override
-    public PseudoValue magic(
+    public MagicInstruction magic(
             @NotNull JetElement instructionElement,
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
@@ -80,30 +80,28 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
-    public PseudoValue merge(
-            @NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues
-    ) {
+    public MergeInstruction merge(@NotNull JetExpression expression, @NotNull List<PseudoValue> inputValues) {
         return getDelegateBuilder().merge(expression, inputValues);
     }
 
     @NotNull
     @Override
-    public PseudoValue readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
+    public ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor) {
         return getDelegateBuilder().readThis(expression, parameterDescriptor);
     }
 
     @NotNull
     @Override
-    public PseudoValue readVariable(
+    public ReadValueInstruction readVariable(
             @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
         return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public PseudoValue call(
+    public CallInstruction call(
             @NotNull JetExpression expression,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
@@ -114,7 +112,7 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
-    public PseudoValue predefinedOperation(
+    public OperationInstruction predefinedOperation(
             @NotNull JetExpression expression,
             @NotNull PredefinedOperation operation,
             @NotNull List<PseudoValue> inputValues
