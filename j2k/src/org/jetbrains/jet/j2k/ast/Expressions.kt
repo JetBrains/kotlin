@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.lang.types.expressions.OperatorConventions
+
 class ArrayAccessExpression(val expression: Expression, val index: Expression, val lvalue: Boolean) : Expression() {
     override fun toKotlin() = operandToKotlin(expression) +
             (if (!lvalue && expression.isNullable) "!!" else "") +
@@ -90,4 +92,40 @@ class PolyadicExpression(val expressions: List<Expression>, val token: String) :
         val expressionsWithConversions = expressions.map { it.toKotlin() }
         return expressionsWithConversions.makeString(" " + token + " ")
     }
+}
+
+fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>) : MethodCallExpression {
+    val elementType = arrayType.elementType
+    val createArrayFunction = if (elementType.isPrimitive()) {
+            (elementType.toNotNullType().toKotlin() + "Array").decapitalize()
+        }
+        else
+            arrayType.toNotNullType().toKotlin().decapitalize()
+
+    val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
+    val afterReplace = arrayType.toNotNullType().toKotlin().replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
+
+    fun explicitConvertIfNeeded(initializer: Expression): Expression {
+        if (doubleOrFloatTypes.contains(afterReplace)) {
+            if (initializer is LiteralExpression) {
+                if (!initializer.toKotlin().contains(".")) {
+                    return LiteralExpression(initializer.literalText + ".0")
+                }
+            }
+            else {
+                val conversionFunction = when {
+                    afterReplace.contains("double") -> OperatorConventions.DOUBLE.getIdentifier()
+                    afterReplace.contains("float") -> OperatorConventions.FLOAT.getIdentifier()
+                    else -> null
+                }
+                if (conversionFunction != null) {
+                    return MethodCallExpression(QualifiedExpression(initializer, Identifier(conversionFunction)), listOf(), listOf())
+                }
+            }
+        }
+
+        return initializer
+    }
+
+    return MethodCallExpression(Identifier(createArrayFunction), initializers.map { explicitConvertIfNeeded(it) }, listOf())
 }

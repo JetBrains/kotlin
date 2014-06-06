@@ -51,8 +51,8 @@ class ExpressionVisitor(private val converter: Converter,
     override fun visitArrayInitializerExpression(expression: PsiArrayInitializerExpression) {
         val expressionType = typeConverter.convertType(expression.getType())
         assert(expressionType is ArrayType, "Array initializer must have array type")
-        result = ArrayInitializerExpression(expressionType as ArrayType,
-                                              converter.convertExpressions(expression.getInitializers()))
+        result = createArrayInitializerExpression(expressionType as ArrayType,
+                                                  converter.convertExpressions(expression.getInitializers()))
     }
 
     override fun visitAssignmentExpression(expression: PsiAssignmentExpression) {
