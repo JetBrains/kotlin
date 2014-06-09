@@ -19,7 +19,6 @@ package org.jetbrains.jet.plugin.libraries;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.impl.scopes.LibraryScopeBase;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.util.Condition;
@@ -31,7 +30,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
 import kotlin.KotlinPackage;
@@ -65,7 +63,10 @@ import org.jetbrains.jet.plugin.stubindex.JetFullClassNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelFunctionsFqnNameIndex;
 import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.jet.plugin.libraries.MemberMatching.*;
 
@@ -117,12 +118,11 @@ public class JetSourceNavigationHelper {
         Set<VirtualFile> sourceRootSet = Sets.newLinkedHashSet();
         for (OrderEntry entry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
             if (entry instanceof LibraryOrSdkOrderEntry) {
-                VirtualFile[] sourceRoots = ((LibraryOrSdkOrderEntry) entry).getRootFiles(OrderRootType.SOURCES);
-                KotlinPackage.addAll(sourceRootSet, sourceRoots);
+                KotlinPackage.addAll(sourceRootSet, entry.getFiles(OrderRootType.SOURCES));
             }
         }
 
-        return new LibraryScopeBaseFix(project, VirtualFile.EMPTY_ARRAY, ArrayUtil.toObjectArray(sourceRootSet, VirtualFile.class));
+        return new LibrarySourcesScope(project, sourceRootSet);
     }
 
     private static List<JetFile> getContainingFiles(@NotNull Iterable<JetNamedDeclaration> declarations) {
@@ -441,22 +441,38 @@ public class JetSourceNavigationHelper {
         }
     }
 
-    // TODO: Drop and use LibraryScopeBase after bug in LibraryScopeBase.getFileRoot() is fixed
-    static class LibraryScopeBaseFix extends LibraryScopeBase {
-        public LibraryScopeBaseFix(Project project, VirtualFile[] classes, VirtualFile[] sources) {
-            super(project, classes, sources);
+    private static class LibrarySourcesScope extends GlobalSearchScope {
+        private final Set<VirtualFile> sources;
+        private final ProjectFileIndex fileIndex;
+
+        public LibrarySourcesScope(Project project, Set<VirtualFile> sources) {
+            super(project);
+            fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
+            this.sources = sources;
         }
 
         @Override
-        @Nullable
-        protected VirtualFile getFileRoot(@NotNull VirtualFile file) {
-            if (myIndex.isInLibraryClasses(file)) {
-                return myIndex.getClassRootForFile(file);
+        public boolean contains(@NotNull VirtualFile file) {
+            if (fileIndex.isInLibrarySource(file)) {
+                return sources.contains(fileIndex.getSourceRootForFile(file));
             }
-            if (myIndex.isInLibrarySource(file)) {
-                return myIndex.getSourceRootForFile(file);
-            }
-            return null;
+            return false;
+        }
+
+        @Override
+        public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
+            return 0;
+        }
+
+        @Override
+        public boolean isSearchInModuleContent(@NotNull Module aModule) {
+            return false;
+        }
+
+        @Override
+        public boolean isSearchInLibraries() {
+            return true;
         }
     }
+
 }
