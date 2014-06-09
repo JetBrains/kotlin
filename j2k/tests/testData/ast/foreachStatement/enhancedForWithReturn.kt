@@ -1,2 +1,1 @@
-for (n in list)
-    return n
+for (n in list) return n

@@ -103,7 +103,8 @@ class ExpressionVisitor(private val converter: Converter,
             converter.convertExpression(condition)
         result = IfStatement(expr,
                              converter.convertExpression(expression.getThenExpression()),
-                             converter.convertExpression(expression.getElseExpression()))
+                             converter.convertExpression(expression.getElseExpression()),
+                             expression.isInSingleLine())
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {

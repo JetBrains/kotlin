@@ -348,7 +348,7 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
             }
             dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, usageReplacementMap)
             try {
-                Block(convertStatements(body.getStatements().filter{ !statementsToRemove.contains(it) }), false)
+                convertBlock(body, false, { !statementsToRemove.contains(it) })
             }
             finally {
                 dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, mapOf())
@@ -404,14 +404,12 @@ public class Converter(val project: Project, val settings: ConverterSettings) {
         return null
     }
 
-    public fun convertBlock(block: PsiCodeBlock?): Block {
+    public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = {true}): Block {
         if (block == null) return Block.Empty
 
-        return Block(convertStatements(block.getChildren().toList()), true)
-    }
-
-    public fun convertStatements(statements: List<PsiElement>): StatementList {
-        return StatementList(statements.map { if (it is PsiStatement) convertStatement(it) else convertElement(it) })
+        val filteredChildren = block.getChildren().filter { it !is PsiStatement || statementFilter(it) }
+        val statementList = StatementList(filteredChildren.map { if (it is PsiStatement) convertStatement(it) else convertElement(it) })
+        return Block(statementList, notEmpty)
     }
 
     public fun convertStatement(statement: PsiStatement?): Statement {

@@ -1,3 +1,1 @@
-do
-    return 1
-while (true)
+do return 1 while (true)

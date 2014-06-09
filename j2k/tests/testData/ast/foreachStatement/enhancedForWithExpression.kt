@@ -1,2 +1,1 @@
-for (n in list)
-    i++
+for (n in list) i++

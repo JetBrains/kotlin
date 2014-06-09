@@ -78,3 +78,17 @@ fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {
     val qualifier = ref.getQualifierExpression()
     return qualifier == null || (qualifier is PsiThisExpression && qualifier.getQualifier() == null)
 }
+
+fun PsiElement.isInSingleLine(): Boolean {
+    if (this is PsiWhiteSpace) {
+        val text = getText()!!
+        return text.indexOf('\n') < 0 && text.indexOf('\r') < 0
+    }
+
+    var child = getFirstChild()
+    while (child != null) {
+        if (!child!!.isInSingleLine()) return false
+        child = child!!.getNextSibling()
+    }
+    return true
+}

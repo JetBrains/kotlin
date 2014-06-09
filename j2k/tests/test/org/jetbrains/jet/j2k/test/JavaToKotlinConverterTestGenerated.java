@@ -712,9 +712,14 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/conditionalExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
-        @TestMetadata("simpleConditionalExpression.java")
-        public void testSimpleConditionalExpression() throws Exception {
-            doTest("j2k/tests/testData/ast/conditionalExpression/simpleConditionalExpression.java");
+        @TestMetadata("multiline.java")
+        public void testMultiline() throws Exception {
+            doTest("j2k/tests/testData/ast/conditionalExpression/multiline.java");
+        }
+        
+        @TestMetadata("simple.java")
+        public void testSimple() throws Exception {
+            doTest("j2k/tests/testData/ast/conditionalExpression/simple.java");
         }
         
     }
@@ -1316,24 +1321,29 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("j2k/tests/testData/ast/ifStatement"), Pattern.compile("^(.+)\\.java$"), true);
         }
         
-        @TestMetadata("ifStatementWithEmptyBlocks.java")
-        public void testIfStatementWithEmptyBlocks() throws Exception {
-            doTest("j2k/tests/testData/ast/ifStatement/ifStatementWithEmptyBlocks.java");
+        @TestMetadata("multiLine.java")
+        public void testMultiLine() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/multiLine.java");
         }
         
-        @TestMetadata("ifStatementWithMultilineBlocks.java")
-        public void testIfStatementWithMultilineBlocks() throws Exception {
-            doTest("j2k/tests/testData/ast/ifStatement/ifStatementWithMultilineBlocks.java");
+        @TestMetadata("singleLine.java")
+        public void testSingleLine() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/singleLine.java");
         }
         
-        @TestMetadata("ifStatementWithOneLineBlocks.java")
-        public void testIfStatementWithOneLineBlocks() throws Exception {
-            doTest("j2k/tests/testData/ast/ifStatement/ifStatementWithOneLineBlocks.java");
+        @TestMetadata("withBlocks.java")
+        public void testWithBlocks() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/withBlocks.java");
         }
         
-        @TestMetadata("ifStatementWithoutElse.java")
-        public void testIfStatementWithoutElse() throws Exception {
-            doTest("j2k/tests/testData/ast/ifStatement/ifStatementWithoutElse.java");
+        @TestMetadata("withEmptyBlocks.java")
+        public void testWithEmptyBlocks() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/withEmptyBlocks.java");
+        }
+        
+        @TestMetadata("withoutElse.java")
+        public void testWithoutElse() throws Exception {
+            doTest("j2k/tests/testData/ast/ifStatement/withoutElse.java");
         }
         
     }

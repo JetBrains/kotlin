@@ -46,48 +46,61 @@ class ReturnStatement(val expression: Expression) : Statement() {
 class IfStatement(
         val condition: Expression,
         val thenStatement: Element,
-        val elseStatement: Element
+        val elseStatement: Element,
+        singleLine: Boolean
 ) : Expression() {
-    override fun toKotlin(): String {
-        val result: String = "if (" + condition.toKotlin() + ")\n" + thenStatement.toKotlin()
-        if (!elseStatement.isEmpty) {
-            return result + "\nelse\n" + elseStatement.toKotlin()
-        }
+    private val br = if (singleLine) " " else "\n"
 
+    override fun toKotlin(): String {
+        val result = "if (" + condition.toKotlin() + ")$br" + thenStatement.toKotlin()
+        if (!elseStatement.isEmpty) {
+            return "$result${br}else$br${elseStatement.toKotlin()}"
+        }
         return result
     }
 }
 
 // Loops --------------------------------------------------------------------------------------------------
 
-open class WhileStatement(val condition: Expression, val body: Element) : Statement() {
-    override fun toKotlin() = "while (" + condition.toKotlin() + ")\n" + body.toKotlin()
+class WhileStatement(val condition: Expression, val body: Element, singleLine: Boolean) : Statement() {
+    private val br = if (singleLine) " " else "\n"
+
+    override fun toKotlin() = "while (" + condition.toKotlin() + ")$br" + body.toKotlin()
 }
 
-class DoWhileStatement(condition: Expression, body: Element) : WhileStatement(condition, body) {
-    override fun toKotlin() = "do\n" + body.toKotlin() + "\nwhile (" + condition.toKotlin() + ")"
+class DoWhileStatement(val condition: Expression, val body: Element, singleLine: Boolean) : Statement() {
+    private val br = if (singleLine) " " else "\n"
+
+    override fun toKotlin() = "do$br" + body.toKotlin() + "${br}while (" + condition.toKotlin() + ")"
 }
 
 class ForeachStatement(
         val variable: Parameter,
         val expression: Expression,
-        val body: Element
+        val body: Element,
+        singleLine: Boolean
 ) : Statement() {
-    override fun toKotlin() = "for (" + variable.identifier.toKotlin() + " in " + expression.toKotlin() + ")\n" + body.toKotlin()
+
+    private val br = if (singleLine) " " else "\n"
+
+    override fun toKotlin() = "for (" + variable.identifier.toKotlin() + " in " + expression.toKotlin() + ")$br" + body.toKotlin()
 }
 
 class ForeachWithRangeStatement(val identifier: Identifier,
-                                     val start: Expression,
-                                     val end: Expression,
-                                     val body: Element) : Statement() {
-    override fun toKotlin() = "for (" + identifier.toKotlin() + " in " + start.toKotlin() + ".." + end.toKotlin() + ") " + body.toKotlin()
+                                val start: Expression,
+                                val end: Expression,
+                                val body: Element,
+                                singleLine: Boolean) : Statement() {
+    private val br = if (singleLine) " " else "\n"
+
+    override fun toKotlin() = "for (" + identifier.toKotlin() + " in " + start.toKotlin() + ".." + end.toKotlin() + ")$br" + body.toKotlin()
 }
 
-open class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
+class BreakStatement(val label: Identifier = Identifier.Empty) : Statement() {
     override fun toKotlin() = "break" + label.withPrefix("@")
 }
 
-open class ContinueStatement(val label: Identifier = Identifier.Empty) : Statement() {
+class ContinueStatement(val label: Identifier = Identifier.Empty) : Statement() {
     override fun toKotlin() = "continue" + label.withPrefix("@")
 }
 
@@ -142,7 +155,8 @@ class SynchronizedStatement(val expression: Expression, val block: Block) : Stat
     override fun toKotlin() = "synchronized (" + expression.toKotlin() + ") " + block.toKotlin()
 }
 
-class StatementList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
+class StatementList(elements: List<Element>)
+  : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
     val statements: List<Statement>
         get() = elements.filterIsInstance(javaClass<Statement>())
 }

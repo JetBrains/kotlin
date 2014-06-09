@@ -22,6 +22,7 @@ import org.jetbrains.jet.j2k.ast.*
 import org.jetbrains.jet.j2k.countWriteAccesses
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.hasWriteAccesses
+import org.jetbrains.jet.j2k.isInSingleLine
 
 class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Statement = Statement.Empty
@@ -64,7 +65,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
             converter.convertExpression(condition, condition.getType())
         else
             converter.convertExpression(condition)
-        result = DoWhileStatement(expression, converter.convertStatement(statement.getBody()))
+        result = DoWhileStatement(expression, converter.convertStatement(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitExpressionStatement(statement: PsiExpressionStatement) {
@@ -106,7 +107,8 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
             result = ForeachWithRangeStatement(Identifier(loopVar.getName()!!),
                                                  converter.convertExpression(loopVar.getInitializer()),
                                                  endExpression,
-                                                 converter.convertStatement(body))
+                                                 converter.convertStatement(body),
+                                                 statement.isInSingleLine())
         }
         else {
             var forStatements = ArrayList<Statement>()
@@ -114,11 +116,9 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
             val bodyAndUpdate = listOf(converter.convertStatement(body),
                                        Block(listOf(converter.convertStatement(update))))
             forStatements.add(WhileStatement(
-                    if (condition == null)
-                        LiteralExpression("true")
-                    else
-                        converter.convertExpression(condition),
-                    Block(bodyAndUpdate)))
+                    if (condition == null) LiteralExpression("true") else converter.convertExpression(condition),
+                    Block(bodyAndUpdate),
+                    statement.isInSingleLine()))
             result = Block(forStatements)
         }
     }
@@ -133,15 +133,17 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         }
         result = ForeachStatement(converter.convertParameter(statement.getIterationParameter()),
                                   iterator,
-                                  converter.convertStatement(statement.getBody()))
+                                  converter.convertStatement(statement.getBody()),
+                                  statement.isInSingleLine())
     }
 
     override fun visitIfStatement(statement: PsiIfStatement) {
         val condition = statement.getCondition()
         val expression = converter.convertExpression(condition, PsiType.BOOLEAN)
         result = IfStatement(expression,
-                               converter.convertStatement(statement.getThenBranch()),
-                               converter.convertStatement(statement.getElseBranch()))
+                             converter.convertStatement(statement.getThenBranch()),
+                             converter.convertStatement(statement.getElseBranch()),
+                             statement.isInSingleLine())
     }
 
     override fun visitLabeledStatement(statement: PsiLabeledStatement) {
@@ -172,7 +174,6 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         var i = 0
         var hasDefaultCase: Boolean = false
         for (ls in cases) {
-            // TODO assert {(ls?.size()).sure() > 0}
             if (ls.size() > 0) {
                 var label = ls[0] as PsiSwitchLabelStatement
                 hasDefaultCase = hasDefaultCase || label.isDefaultCase()
@@ -181,14 +182,18 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
                 if (ls.size() > 1) {
                     pendingLabels.add(converter.convertStatement(label))
                     val slice: List<PsiElement> = ls.subList(1, (ls.size()))
+
+                    fun convertStatements(elements: List<PsiElement>): List<Statement>
+                            = elements.map { if (it is PsiStatement) converter.convertStatement(it) else null }.filterNotNull()
+
                     if (!containsBreak(slice)) {
-                        val statements = ArrayList(converter.convertStatements(slice).statements)
-                        statements.addAll(converter.convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size())).statements)
+                        val statements = ArrayList(convertStatements(slice))
+                        statements.addAll(convertStatements(getAllToNextBreak(allSwitchStatements, i + ls.size())))
                         result.add(CaseContainer(pendingLabels, statements))
                         pendingLabels = ArrayList()
                     }
                     else {
-                        result.add(CaseContainer(pendingLabels, converter.convertStatements(slice).statements))
+                        result.add(CaseContainer(pendingLabels, convertStatements(slice)))
                         pendingLabels = ArrayList()
                     }
                 }
@@ -225,12 +230,12 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     }
 
     override fun visitWhileStatement(statement: PsiWhileStatement) {
-        var condition: PsiExpression? = statement.getCondition()
-        val expression: Expression = (if (condition != null && condition?.getType() != null)
-            converter.convertExpression(condition, condition?.getType())
+        val condition = statement.getCondition()
+        val expression = if (condition?.getType() != null)
+            converter.convertExpression(condition, condition!!.getType())
         else
-            converter.convertExpression(condition))
-        result = WhileStatement(expression, converter.convertStatement(statement.getBody()))
+            converter.convertExpression(condition)
+        result = WhileStatement(expression, converter.convertStatement(statement.getBody()), statement.isInSingleLine())
     }
 
     override fun visitReturnStatement(statement: PsiReturnStatement) {

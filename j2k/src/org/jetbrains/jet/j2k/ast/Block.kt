@@ -27,7 +27,6 @@ fun Block(statements: List<Statement>, notEmpty: Boolean = false): Block {
 }
 
 class Block(val statementList: StatementList, val notEmpty: Boolean = false) : Statement() {
-
     val statements: List<Statement> = statementList.statements
 
 
@@ -43,6 +42,6 @@ class Block(val statementList: StatementList, val notEmpty: Boolean = false) : S
     }
 
     class object {
-        val Empty = Block(StatementList(ArrayList()))
+        val Empty = Block(StatementList(listOf()))
     }
 }

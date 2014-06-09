@@ -3,9 +3,6 @@ class C() {
     }
 
     fun bar(b: Boolean) {
-        foo(if (b)
-            "a"
-        else
-            null)
+        foo(if (b) "a" else null)
     }
 }

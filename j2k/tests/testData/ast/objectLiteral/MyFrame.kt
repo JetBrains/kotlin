@@ -11,7 +11,9 @@ public class Client() : Frame() {
             override fun windowClosing() {
             }
         }
+
         addWindowListener(a)
+
         addWindowListener(object : WindowAdapter() {
             override fun windowClosing() {
             }

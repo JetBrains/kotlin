@@ -1,2 +1,1 @@
-while (true)
-    return 1
+while (true) return 1
