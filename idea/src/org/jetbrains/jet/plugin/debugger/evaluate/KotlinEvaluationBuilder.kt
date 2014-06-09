@@ -270,7 +270,7 @@ package packageForDebugger
 !FUNCTION!
 """
 
-private val packageInternalName = PackageClassUtils.getPackageClassFqName(FqName("packageForDebugger")).asString().replace(".", "/")
+private val packageInternalName = PackageClassUtils.getPackageClassInternalName(FqName("packageForDebugger"))
 
 private fun createFileForDebugger(codeFragment: JetCodeFragment,
                                   extractedFunction: JetNamedFunction
