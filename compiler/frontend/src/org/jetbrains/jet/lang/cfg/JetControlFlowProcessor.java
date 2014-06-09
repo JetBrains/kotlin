@@ -1021,7 +1021,7 @@ public class JetControlFlowProcessor {
                 builder.loadUnit(expression);
             }
             else {
-                copyValue((JetExpression) KotlinPackage.lastOrNull(statements), expression);
+                copyValue(KotlinPackage.lastOrNull(statements), expression);
             }
             if (declareLexicalScope) {
                 builder.exitLexicalScope(expression);
