@@ -106,5 +106,25 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(LinkedList<T>())" }
     }
 
+    templates add f("toMap(selector: (T) -> K)") {
+        inline(true)
+        typeParam("K")
+        doc {
+            """
+            Returns Map containing all the values from the given collection indexed by *selector*
+            """
+        }
+        returns("Map<K, T>")
+        body {
+            """
+            val result = HashMap<K, T>()
+            for (element in this) {
+                result.put(selector(element), element)
+            }
+            return result
+            """
+        }
+    }
+
     return templates
 }

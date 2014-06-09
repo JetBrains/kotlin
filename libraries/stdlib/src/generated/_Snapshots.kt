@@ -508,6 +508,138 @@ public fun String.toList(): List<Char> {
 }
 
 /**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
+    val result = HashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
+    val result = HashMap<K, Boolean>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
+    val result = HashMap<K, Byte>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
+    val result = HashMap<K, Char>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
+    val result = HashMap<K, Double>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
+    val result = HashMap<K, Float>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
+    val result = HashMap<K, Int>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
+    val result = HashMap<K, Long>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
+    val result = HashMap<K, Short>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
+    val result = HashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
+    val result = HashMap<K, T>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values from the given collection indexed by *selector*
+ */
+public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
+    val result = HashMap<K, Char>()
+    for (element in this) {
+        result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
  * Returns a Set of all elements
  */
 public fun <T> Array<out T>.toSet(): Set<T> {
