@@ -2,6 +2,7 @@ package kotlinApi
 
 public open class KotlinClass {
     public var property: String = ""
+    public var nullableProperty: String? = ""
 
     class object {
         public fun staticFun(p: Int): Int = p
@@ -9,10 +10,19 @@ public open class KotlinClass {
         public var staticProperty: Int
             get() = 1
             set(value) {}
+
+        public fun nullableStaticFun(p: Int?): Int? = p
+        public var nullableStaticVar: Int? = 1
     }
 }
 
+public trait KotlinTrait {
+    public fun nullableFun(): String?
+    public fun notNullableFun(): String
+}
+
 public fun globalFunction(s: String): String = s
+public fun nullableGlobalFunction(s: String?): String? = s
 public fun globalGenericFunction<T>(t: T): T = t
 
 public fun Int.extensionFunction(): String = toString()

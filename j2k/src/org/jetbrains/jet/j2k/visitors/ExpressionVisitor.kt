@@ -34,6 +34,7 @@ import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.impl.light.LightField
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
+import org.jetbrains.jet.lang.psi.JetNullableType
 
 class ExpressionVisitor(private val converter: Converter,
                         private val typeConverter: TypeConverter,
@@ -91,7 +92,7 @@ class ExpressionVisitor(private val converter: Converter,
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val typeElement = converter.convertTypeElement(expression.getOperand())
-        result = MethodCallExpression(Identifier("javaClass"), listOf(), listOf(typeElement.`type`.toNotNullType()), true)
+        result = MethodCallExpression(Identifier("javaClass"), listOf(), listOf(typeElement.`type`.toNotNullType()), false)
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -152,6 +153,9 @@ class ExpressionVisitor(private val converter: Converter,
         val methodExpr = expression.getMethodExpression()
         val arguments = expression.getArgumentList().getExpressions()
         val target = methodExpr.resolve()
+        val isNullable = if (target is PsiMethod) typeConverter.convertMethodReturnType(target).isNullable else false
+        val typeArguments = typeConverter.convertTypes(expression.getTypeArguments())
+
         if (target is KotlinLightMethod) {
             val origin = target.origin
             val isTopLevel = origin?.getParentByType(javaClass<JetClassOrObject>(), true) == null
@@ -159,7 +163,7 @@ class ExpressionVisitor(private val converter: Converter,
                 val property = if (origin is JetProperty) origin else origin.getParent() as JetProperty
                 val parameterCount = target.getParameterList().getParameters().size
                 if (parameterCount == arguments.size) {
-                    val propertyName = Identifier(property.getName()!!, false)
+                    val propertyName = Identifier(property.getName()!!, isNullable)
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
@@ -191,18 +195,17 @@ class ExpressionVisitor(private val converter: Converter,
                         val qualifier = converter.convertExpression(arguments.firstOrNull())
                         MethodCallExpression(QualifiedExpression(qualifier, Identifier(origin.getName()!!, false)),
                                                       convertArguments(expression, isExtension = true),
-                                                      typeConverter.convertTypes(expression.getTypeArguments()),
-                                                      typeConverter.convertType(expression.getType()).isNullable)
+                                                      typeArguments,
+                                                      isNullable)
                     }
                     else {
                         MethodCallExpression(Identifier(origin.getName()!!, false),
                                                       convertArguments(expression),
-                                                      typeConverter.convertTypes(expression.getTypeArguments()),
-                                                      typeConverter.convertType(expression.getType()).isNullable)
+                                                      typeArguments,
+                                                      isNullable)
                     }
                     return
                 }
-
             }
         }
 
@@ -216,8 +219,8 @@ class ExpressionVisitor(private val converter: Converter,
 
         result = MethodCallExpression(converter.convertExpression(methodExpr),
                                       convertArguments(expression),
-                                      typeConverter.convertTypes(expression.getTypeArguments()),
-                                      typeConverter.convertType(expression.getType()).isNullable)
+                                      typeArguments,
+                                      isNullable)
     }
 
     private fun isObjectEquals(method: PsiMethod): Boolean {
