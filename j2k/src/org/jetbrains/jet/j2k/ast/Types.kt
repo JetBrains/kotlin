@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ConverterSettings
 
@@ -29,12 +28,14 @@ enum class Nullability {
     Default
 }
 
+fun Nullability.isNullable(settings: ConverterSettings) = when(this) {
+    Nullability.Nullable -> true
+    Nullability.NotNull -> false
+    Nullability.Default -> !settings.forceNotNullTypes
+}
+
 abstract class MayBeNullableType(nullability: Nullability, val settings: ConverterSettings) : Type {
-    override val isNullable: Boolean = when (nullability) {
-        Nullability.Nullable -> true
-        Nullability.NotNull -> false
-        Nullability.Default -> !settings.forceNotNullTypes
-    }
+    override val isNullable: Boolean = nullability.isNullable(settings)
 }
 
 trait NotNullType : Type {

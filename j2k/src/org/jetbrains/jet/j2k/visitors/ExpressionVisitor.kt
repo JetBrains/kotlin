@@ -34,7 +34,6 @@ import org.jetbrains.jet.lang.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.jet.lang.psi.JetPropertyAccessor
 import com.intellij.psi.impl.light.LightField
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
-import org.jetbrains.jet.lang.psi.JetNullableType
 
 class ExpressionVisitor(private val converter: Converter,
                         private val typeConverter: TypeConverter,
@@ -153,7 +152,7 @@ class ExpressionVisitor(private val converter: Converter,
         val methodExpr = expression.getMethodExpression()
         val arguments = expression.getArgumentList().getExpressions()
         val target = methodExpr.resolve()
-        val isNullable = if (target is PsiMethod) typeConverter.convertMethodReturnType(target).isNullable else false
+        val isNullable = if (target is PsiMethod) typeConverter.methodNullability(target).isNullable(converter.settings) else false
         val typeArguments = typeConverter.convertTypes(expression.getTypeArguments())
 
         if (target is KotlinLightMethod) {
@@ -295,7 +294,8 @@ class ExpressionVisitor(private val converter: Converter,
     }
 
     override fun visitReferenceExpression(expression: PsiReferenceExpression) {
-        val isNullable = typeConverter.convertType(expression.getType(), expression.nullability()).isNullable
+        val target = expression.getReference()?.resolve()
+        val isNullable = if (target is PsiVariable) typeConverter.variableNullability(target).isNullable(converter.settings) else false
         val referencedName = expression.getReferenceName()!!
         var identifier: Expression = Identifier(referencedName, isNullable)
         val qualifier = expression.getQualifierExpression()
@@ -314,7 +314,6 @@ class ExpressionVisitor(private val converter: Converter,
         }
         else if (qualifier != null) {
             if (referencedName == JvmAbi.CLASS_OBJECT_FIELD || referencedName == JvmAbi.INSTANCE_FIELD) {
-                val target = expression.getReference()?.resolve()
                 if (target is LightField) { //TODO: should be KotlinLightField with check of origin here, see KT-5188
                     result = converter.convertExpression(qualifier)
                     return
@@ -322,8 +321,6 @@ class ExpressionVisitor(private val converter: Converter,
             }
         }
         else {
-            val target = expression.getReference()?.resolve()
-
             if (target is PsiClass) {
                 if (PrimitiveType.values() any { it.getTypeName().asString() == target.getName() }) {
                     result = Identifier(target.getQualifiedName()!!, false)
@@ -356,14 +353,6 @@ class ExpressionVisitor(private val converter: Converter,
         }
 
         result = QualifiedExpression(converter.convertExpression(qualifier), identifier)
-    }
-
-    private fun PsiReference.nullability(): Nullability {
-        val target = resolve()
-        return when(target) {
-            is PsiVariable -> typeConverter.variableNullability(target)
-            else -> Nullability.Default
-        }
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {

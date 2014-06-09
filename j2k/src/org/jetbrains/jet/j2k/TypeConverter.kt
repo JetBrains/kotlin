@@ -20,8 +20,11 @@ import org.jetbrains.jet.j2k.ast.Type
 import org.jetbrains.jet.j2k.ast.Nullability
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.visitors.TypeVisitor
+import java.util.HashMap
 
 class TypeConverter(val settings: ConverterSettings) {
+    private val nullabilityCache = HashMap<PsiElement, Nullability>()
+
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
         if (`type` == null) return Type.Empty
 
@@ -33,15 +36,21 @@ class TypeConverter(val settings: ConverterSettings) {
         }
     }
 
-    public fun convertTypes(types: Array<PsiType>): List<Type> {
-        return types.map { convertType(it) }
-    }
+    public fun convertTypes(types: Array<PsiType>): List<Type>
+            = types.map { convertType(it) }
 
-    public fun convertVariableType(variable: PsiVariable): Type {
-        return convertType(variable.getType(), variableNullability(variable))
-    }
+    public fun convertVariableType(variable: PsiVariable): Type
+            = convertType(variable.getType(), variableNullability(variable))
 
     public fun variableNullability(variable: PsiVariable): Nullability {
+        val cached = nullabilityCache[variable]
+        if (cached != null) return cached
+        val value = variableNullabilityNoCache(variable)
+        nullabilityCache[variable] = value
+        return value
+    }
+
+    private fun variableNullabilityNoCache(variable: PsiVariable): Nullability {
         if (variable is PsiEnumConstant) return Nullability.NotNull
 
         var nullability = variable.nullabilityFromAnnotations()
@@ -91,7 +100,18 @@ class TypeConverter(val settings: ConverterSettings) {
         return nullability
     }
 
-    public fun convertMethodReturnType(method: PsiMethod): Type {
+    public fun convertMethodReturnType(method: PsiMethod): Type
+            = convertType(method.getReturnType(), methodNullability(method))
+
+    public fun methodNullability(method: PsiMethod): Nullability {
+        val cached = nullabilityCache[method]
+        if (cached != null) return cached
+        val value = methodNullabilityNoCache(method)
+        nullabilityCache[method] = value
+        return value
+    }
+
+    private fun methodNullabilityNoCache(method: PsiMethod): Nullability {
         var nullability = method.nullabilityFromAnnotations()
 
         if (nullability == Nullability.Default) {
@@ -117,7 +137,7 @@ class TypeConverter(val settings: ConverterSettings) {
             }
         }
 
-        return convertType(method.getReturnType(), nullability)
+        return nullability
     }
 
     private fun searchScope(element: PsiElement): PsiElement? {
