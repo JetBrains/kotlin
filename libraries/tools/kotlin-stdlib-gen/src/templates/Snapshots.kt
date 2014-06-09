@@ -62,12 +62,12 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toList()") {
         only(Maps)
         doc { "Returns a List containing all key-value pairs" }
-        returns("List<Map.Entry<K, V>>")
+        returns("List<Pair<K, V>>")
         body {
             """
-            val result = ArrayList<Map.Entry<K, V>>(size)
+            val result = ArrayList<Pair<K, V>>(size)
             for (item in this)
-                result.add(item)
+                result.add(item.key to item.value)
             return result
             """
         }

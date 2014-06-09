@@ -400,10 +400,10 @@ public fun String.toLinkedList(): LinkedList<Char> {
 /**
  * Returns a List containing all key-value pairs
  */
-public fun <K, V> Map<K, V>.toList(): List<Map.Entry<K, V>> {
-    val result = ArrayList<Map.Entry<K, V>>(size)
+public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
+    val result = ArrayList<Pair<K, V>>(size)
     for (item in this)
-        result.add(item)
+        result.add(item.key to item.value)
     return result
 }
 
