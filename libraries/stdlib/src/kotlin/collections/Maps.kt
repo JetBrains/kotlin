@@ -40,6 +40,11 @@ fun <K, V> Map.Entry<K, V>.component2(): V {
     return getValue()
 }
 
+/** Converts entry to Pair with key being first component and value being second */
+fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
+    return Pair(getKey(), getValue())
+}
+
 /**
  * Returns the value for the given key or returns the result of the defaultValue function if there was no entry for the given key
  *
