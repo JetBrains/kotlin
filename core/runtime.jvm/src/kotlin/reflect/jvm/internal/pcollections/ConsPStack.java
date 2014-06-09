@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  *
  * @author harold
  */
-public final class ConsPStack<E> implements PStack<E> {
+public final class ConsPStack<E> implements Iterable<E> {
     private static final ConsPStack<Object> EMPTY = new ConsPStack<Object>();
 
     @SuppressWarnings("unchecked")
@@ -48,7 +48,6 @@ public final class ConsPStack<E> implements PStack<E> {
         return listIterator(0);
     }
 
-    @Override
     public int size() {
         return size;
     }
@@ -111,7 +110,6 @@ public final class ConsPStack<E> implements PStack<E> {
         };
     }
 
-    @Override
     public ConsPStack<E> plus(E e) {
         return new ConsPStack<E>(e, this);
     }
@@ -126,7 +124,6 @@ public final class ConsPStack<E> implements PStack<E> {
         return new ConsPStack<E>(first, newRest);
     }
 
-    @Override
     public ConsPStack<E> minus(int i) {
         return minus(get(i));
     }

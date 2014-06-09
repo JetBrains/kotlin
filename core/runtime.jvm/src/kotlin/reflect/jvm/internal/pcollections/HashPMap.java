@@ -1,7 +1,5 @@
 package kotlin.reflect.jvm.internal.pcollections;
 
-import static java.util.Map.Entry;
-
 /**
  * A persistent map from non-null keys to non-null values.
  * <p/>
@@ -13,18 +11,18 @@ import static java.util.Map.Entry;
  *
  * @author harold
  */
-public final class HashPMap<K, V> implements PMap<K, V> {
-    public static final HashPMap<Object, Object> EMPTY = new HashPMap<Object, Object>(IntTreePMap.<PStack<Entry<Object, Object>>>empty(), 0);
+public final class HashPMap<K, V> {
+    private static final HashPMap<Object, Object> EMPTY = new HashPMap<Object, Object>(IntTreePMap.<ConsPStack<MapEntry<Object, Object>>>empty(), 0);
 
     @SuppressWarnings("unchecked")
     public static <K, V> HashPMap<K, V> empty() {
         return (HashPMap<K, V>) HashPMap.EMPTY;
     }
 
-    private final IntTreePMap<PStack<Entry<K, V>>> intMap;
+    private final IntTreePMap<ConsPStack<MapEntry<K, V>>> intMap;
     private final int size;
 
-    private HashPMap(IntTreePMap<PStack<Entry<K, V>>> intMap, int size) {
+    private HashPMap(IntTreePMap<ConsPStack<MapEntry<K, V>>> intMap, int size) {
         this.intMap = intMap;
         this.size = size;
     }
@@ -37,28 +35,25 @@ public final class HashPMap<K, V> implements PMap<K, V> {
         return keyIndexIn(getEntries(key.hashCode()), key) != -1;
     }
 
-    @Override
     public V get(Object key) {
-        PStack<Entry<K, V>> entries = getEntries(key.hashCode());
-        for (Entry<K, V> entry : entries)
+        ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
+        for (MapEntry<K, V> entry : entries)
             if (entry.getKey().equals(key))
                 return entry.getValue();
         return null;
     }
 
-    @Override
     public HashPMap<K, V> plus(K key, V value) {
-        PStack<Entry<K, V>> entries = getEntries(key.hashCode());
+        ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
         int size0 = entries.size();
         int i = keyIndexIn(entries, key);
         if (i != -1) entries = entries.minus(i);
-        entries = entries.plus(new SimpleImmutableEntry<K, V>(key, value));
+        entries = entries.plus(new MapEntry<K, V>(key, value));
         return new HashPMap<K, V>(intMap.plus(key.hashCode(), entries), size - size0 + entries.size());
     }
 
-    @Override
     public HashPMap<K, V> minus(Object key) {
-        PStack<Entry<K, V>> entries = getEntries(key.hashCode());
+        ConsPStack<MapEntry<K, V>> entries = getEntries(key.hashCode());
         int i = keyIndexIn(entries, key);
         if (i == -1) // key not in this
             return this;
@@ -69,15 +64,15 @@ public final class HashPMap<K, V> implements PMap<K, V> {
         return new HashPMap<K, V>(intMap.plus(key.hashCode(), entries), size - 1);
     }
 
-    private PStack<Entry<K, V>> getEntries(int hash) {
-        PStack<Entry<K, V>> entries = intMap.get(hash);
+    private ConsPStack<MapEntry<K, V>> getEntries(int hash) {
+        ConsPStack<MapEntry<K, V>> entries = intMap.get(hash);
         if (entries == null) return ConsPStack.empty();
         return entries;
     }
 
-    private static <K, V> int keyIndexIn(PStack<Entry<K, V>> entries, Object key) {
+    private static <K, V> int keyIndexIn(ConsPStack<MapEntry<K, V>> entries, Object key) {
         int i = 0;
-        for (Entry<K, V> entry : entries) {
+        for (MapEntry<K, V> entry : entries) {
             if (entry.getKey().equals(key))
                 return i;
             i++;
