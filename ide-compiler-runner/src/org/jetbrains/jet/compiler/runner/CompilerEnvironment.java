@@ -19,6 +19,7 @@ package org.jetbrains.jet.compiler.runner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -29,17 +30,25 @@ import static org.jetbrains.jet.cli.common.messages.CompilerMessageSeverity.ERRO
 
 public final class CompilerEnvironment {
 
-    public static CompilerEnvironment getEnvironmentFor(@NotNull KotlinPaths kotlinPaths, @Nullable File outputDir) {
-        return new CompilerEnvironment(kotlinPaths, outputDir);
+    public static CompilerEnvironment getEnvironmentFor(
+            @NotNull KotlinPaths kotlinPaths,
+            @Nullable File outputDir,
+            @Nullable ClassLoaderFactory parentFactory
+    ) {
+        return new CompilerEnvironment(kotlinPaths, outputDir, parentFactory);
     }
 
+    @NotNull
     private final KotlinPaths kotlinPaths;
     @Nullable
     private final File output;
+    @Nullable
+    private final ClassLoaderFactory parentFactory;
 
-    private CompilerEnvironment(@NotNull KotlinPaths kotlinPaths, @Nullable File output) {
+    private CompilerEnvironment(@NotNull KotlinPaths kotlinPaths, @Nullable File output, @Nullable ClassLoaderFactory parentFactory) {
         this.kotlinPaths = kotlinPaths;
         this.output = output;
+        this.parentFactory = parentFactory;
     }
 
     public boolean success() {
@@ -57,6 +66,11 @@ public final class CompilerEnvironment {
         return output;
     }
 
+    @Nullable
+    public ClassLoaderFactory getParentFactory() {
+        return parentFactory;
+    }
+
     public void reportErrorsTo(@NotNull MessageCollector messageCollector) {
         if (output == null) {
             messageCollector.report(ERROR, "[Internal Error] No output directory", NO_LOCATION);
@@ -66,5 +80,4 @@ public final class CompilerEnvironment {
                                            "or specify " + PathUtil.JPS_KOTLIN_HOME_PROPERTY + " system property", NO_LOCATION);
         }
     }
-
 }

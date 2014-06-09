@@ -48,31 +48,33 @@ public class ClassPreloadingUtils {
      *
      * @param jarFiles jars to load all classes from
      * @param classCountEstimation an estimated number of classes in a the jars
-     * @param parent (nullable) parent class loader
+     * @param parentFactory (nullable) factory for creating parent class loader, passing preloader's as parameter
      * @param handler handler to be notified on class definitions done by this class loader, or null
      * @return a class loader that reads classes from memory
      * @throws IOException on from reading the jar
      */
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoader parent, ClassHandler handler
+            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory, ClassHandler handler
     ) throws IOException {
         Map<String, ResourceData> entries = loadAllClassesFromJars(jarFiles, classCountEstimation, handler);
 
-        return createMemoryBasedClassLoader(parent, entries, handler);
+        return createMemoryBasedClassLoader(parentFactory, entries, handler);
     }
 
     public static ClassLoader preloadClasses(
-            Collection<File> jarFiles, int classCountEstimation, ClassLoader parent
+            Collection<File> jarFiles, int classCountEstimation, ClassLoaderFactory parentFactory
     ) throws IOException {
-        return preloadClasses(jarFiles, classCountEstimation, parent, null);
+        return preloadClasses(jarFiles, classCountEstimation, parentFactory, null);
     }
 
     private static ClassLoader createMemoryBasedClassLoader(
-            final ClassLoader parent,
+            final ClassLoaderFactory parentFactory,
             final Map<String, ResourceData> preloadedResources,
             final ClassHandler handler
     ) {
         return new ClassLoader(null) {
+            private final ClassLoader parent = parentFactory == null ? null : parentFactory.create(this);
+
             @Override
             public Class<?> loadClass(String name) throws ClassNotFoundException {
                 // Look in this class loader and then in the parent one
@@ -107,10 +109,28 @@ public class ClassPreloadingUtils {
             }
 
             @Override
+            public URL getResource(String name) {
+                URL resource = super.getResource(name);
+                if (resource == null && parent != null) {
+                    return parent.getResource(name);
+                }
+                return resource;
+            }
+
+            @Override
             protected URL findResource(String name) {
                 ResourceData resourceData = preloadedResources.get(name);
                 if (resourceData == null) return null;
                 return resourceData.getURL();
+            }
+
+            @Override
+            public Enumeration<URL> getResources(String name) throws IOException {
+                Enumeration<URL> resources = super.getResources(name);
+                if (!resources.hasMoreElements() && parent != null) {
+                    return parent.getResources(name);
+                }
+                return resources;
             }
 
             @Override

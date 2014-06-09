@@ -17,8 +17,11 @@
 package org.jetbrains.jet.compiler.runner;
 
 import com.intellij.util.Function;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.cli.common.messages.MessageCollector;
+import org.jetbrains.jet.preloading.ClassLoaderFactory;
 import org.jetbrains.jet.preloading.ClassPreloadingUtils;
 import org.jetbrains.jet.utils.KotlinPaths;
 
@@ -54,12 +57,17 @@ public class CompilerRunnerUtil {
         return answer;
     }
 
-    public static ClassLoader getOrCreatePreloader(KotlinPaths paths, MessageCollector messageCollector) {
+    @NotNull
+    public static ClassLoader getOrCreatePreloader(
+            @NotNull KotlinPaths paths,
+            @Nullable ClassLoaderFactory parentFactory,
+            @NotNull MessageCollector messageCollector
+    ) {
         ClassLoader answer = ourClassLoaderRef.get();
         if (answer == null) {
             try {
                 int estimatedClassNumber = 4096;
-                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, null);
+                answer = ClassPreloadingUtils.preloadClasses(kompilerClasspath(paths, messageCollector), estimatedClassNumber, parentFactory);
             }
             catch (IOException e) {
                 throw new RuntimeException(e);
@@ -112,7 +120,7 @@ public class CompilerRunnerUtil {
             MessageCollector messageCollector, PrintStream out, boolean usePreloader
     ) throws Exception {
         ClassLoader loader = usePreloader
-                             ? getOrCreatePreloader(environment.getKotlinPaths(), messageCollector)
+                             ? getOrCreatePreloader(environment.getKotlinPaths(), environment.getParentFactory(), messageCollector)
                              : getOrCreateClassLoader(environment.getKotlinPaths(), messageCollector);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, loader);

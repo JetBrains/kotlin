@@ -46,7 +46,7 @@ public final class TranslatingCompilerUtils {
         VirtualFile outputDirectoryForTests = compileContext.getModuleOutputDirectoryForTests(module);
         File outputDir = tests ? toNullableIoFile(outputDirectoryForTests) : toNullableIoFile(mainOutput);
         KotlinPaths kotlinPaths = PathUtil.getKotlinPathsForIdeaPlugin();
-        return CompilerEnvironment.getEnvironmentFor(kotlinPaths, outputDir);
+        return CompilerEnvironment.getEnvironmentFor(kotlinPaths, outputDir, null);
     }
 
     @Nullable
