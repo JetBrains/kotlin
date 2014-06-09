@@ -432,10 +432,16 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
 }
 
 /**
- * Returns a list containing all elements matching the given *predicate*
+ * Returns a map containing all key-value pairs matching the given *predicate*
  */
-public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): List<Map.Entry<K, V>> {
-    return filterTo(ArrayList<Map.Entry<K, V>>(), predicate)
+public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
+    val result = HashMap<K,V>()
+    for (entry in this) {
+        if (predicate(entry)) {
+            result.put(entry.key, entry.value)
+        }
+    }
+    return result
 }
 
 /**

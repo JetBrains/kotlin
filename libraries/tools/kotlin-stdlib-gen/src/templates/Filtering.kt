@@ -205,7 +205,21 @@ fun filtering(): List<GenericFunction> {
             return FilteringStream(this, true, predicate)
             """
         }
+
         include(Maps)
+        doc(Maps) { "Returns a map containing all key-value pairs matching the given *predicate*" }
+        returns(Maps) { "Map<K, V>" }
+        body(Maps) {
+            """
+            val result = HashMap<K,V>()
+            for (entry in this) {
+                if (predicate(entry)) {
+                    result.put(entry.key, entry.value)
+                }
+            }
+            return result
+            """
+        }
     }
 
     templates add f("filterTo(destination: C, predicate: (T) -> Boolean)") {
