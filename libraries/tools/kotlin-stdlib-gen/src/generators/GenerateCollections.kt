@@ -12,6 +12,7 @@ fun generateCollectionsAPI(outDir: File) {
     arrays().writeTo(File(outDir, "_Arrays.kt")) { build() }
     snapshots().writeTo(File(outDir, "_Snapshots.kt")) { build() }
     mapping().writeTo(File(outDir, "_Mapping.kt")) { build() }
+    sets().writeTo(File(outDir, "_Sets.kt")) { build() }
     aggregates().writeTo(File(outDir, "_Aggregates.kt")) { build() }
     guards().writeTo(File(outDir, "_Guards.kt")) { build() }
     generators().writeTo(File(outDir, "_Generators.kt")) { build() }
