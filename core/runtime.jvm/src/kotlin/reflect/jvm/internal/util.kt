@@ -18,6 +18,7 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.reflect.jvm.internal.pcollections.HashPMap
 
 // TODO: use stdlib?
 suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
@@ -47,13 +48,13 @@ private fun Class<*>.getMaybeDeclaredMethod(name: String, vararg parameterTypes:
 
 
 // TODO: should use weak references
-private val foreignKClasses: MutableMap<Class<*>, KClassImpl<*>> = ConcurrentHashMap()
+private var foreignKClasses = HashPMap.empty<Class<*>, KClassImpl<*>>()!!
 
 fun <T> foreignKotlinClass(jClass: Class<T>): KClassImpl<T> {
     val cached = foreignKClasses[jClass] as? KClassImpl<T>
     if (cached != null) return cached
     val result = KClassImpl<T>(jClass)
-    foreignKClasses.put(jClass, result)
+    foreignKClasses = foreignKClasses.plus(jClass, result)!!
     return result
 }
 
