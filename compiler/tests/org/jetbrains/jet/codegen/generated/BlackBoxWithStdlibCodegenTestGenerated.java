@@ -444,6 +444,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/javaBeanConvention.kt");
             }
             
+            @TestMetadata("kClassInstanceIsInitializedFirst.kt")
+            public void testKClassInstanceIsInitializedFirst() throws Exception {
+                doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/kClassInstanceIsInitializedFirst.kt");
+            }
+            
             @TestMetadata("localClassVar.kt")
             public void testLocalClassVar() throws Exception {
                 doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/callableReference/property/localClassVar.kt");
