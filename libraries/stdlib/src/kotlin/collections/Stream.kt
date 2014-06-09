@@ -38,13 +38,13 @@ public class TransformingStream<T, R>(val stream: Stream<T>, val transformer: (T
     }
 }
 
-class ZippingStream<T1, T2>(val stream1: Stream<T1>, val stream2: Stream<T2>) : Stream<Pair<T1, T2>> {
-    override fun iterator(): Iterator<Pair<T1, T2>> = object : AbstractIterator<Pair<T1, T2>>() {
+public class MergingStream<T1, T2, V>(val stream1: Stream<T1>, val stream2: Stream<T2>, val transform: (T1, T2) -> V) : Stream<V> {
+    override fun iterator(): Iterator<V> = object : AbstractIterator<V>() {
         val iterator1 = stream1.iterator()
         val iterator2 = stream2.iterator()
         override fun computeNext() {
             if (iterator1.hasNext() && iterator2.hasNext()) {
-                setNext(iterator1.next() to iterator2.next())
+                setNext(transform(iterator1.next(), iterator2.next()))
             } else {
                 done()
             }

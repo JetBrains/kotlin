@@ -120,6 +120,20 @@ class CollectionTest {
         }
     }
 
+    test
+    fun merge() {
+        expect(listOf("ab", "bc", "cd")) {
+            listOf("a", "b", "c").merge(listOf("b", "c", "d")) { a, b -> a + b }
+        }
+    }
+
+    test
+    fun zip() {
+        expect(listOf("a" to "b", "b" to "c", "c" to "d")) {
+            listOf("a", "b", "c").zip(listOf("b", "c", "d"))
+        }
+    }
+
     test fun partition() {
         val data = arrayListOf("foo", "bar", "something", "xyz")
         val pair = data.partition { it.size == 3 }

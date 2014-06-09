@@ -73,6 +73,13 @@ public class StreamTest {
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().drop(3).drop(4).joinToString(limit = 10))
     }
 
+    test
+    fun merge() {
+        expect(listOf("ab", "bc", "cd")) {
+            streamOf("a", "b", "c").merge(streamOf("b", "c", "d")) { a, b -> a + b }.toList()
+        }
+    }
+
     test fun toStringJoinsNoMoreThanTheFirstTenElements() {
         assertEquals("0, 1, 1, 2, 3, 5, 8, 13, 21, 34, ...", fibonacci().joinToString(limit = 10))
         assertEquals("13, 21, 34, 55, 89, 144, 233, 377, 610, 987, ...", fibonacci().filter { it > 10 }.joinToString(limit = 10))
