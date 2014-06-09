@@ -314,13 +314,6 @@ public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
 /**
  * Returns a map of the elements in original collection grouped by the result of given *toKey* function
  */
-public inline fun <V, K> Map<K, V>.groupBy(toKey: (Map.Entry<K, V>) -> K): Map<K, List<Map.Entry<K, V>>> {
-    return groupByTo(HashMap<K, MutableList<Map.Entry<K, V>>>(), toKey)
-}
-
-/**
- * Returns a map of the elements in original collection grouped by the result of given *toKey* function
- */
 public inline fun <T, K> Stream<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
     return groupByTo(HashMap<K, MutableList<T>>(), toKey)
 }
@@ -447,18 +440,6 @@ public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>
     for (element in this) {
         val key = toKey(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
-        list.add(element)
-    }
-    return map
-}
-
-/**
- * Appends elements from original collection grouped by the result of given *toKey* function to the given *map*
- */
-public inline fun <V, K> Map<K, V>.groupByTo(map: MutableMap<K, MutableList<Map.Entry<K, V>>>, toKey: (Map.Entry<K, V>) -> K): Map<K, MutableList<Map.Entry<K, V>>> {
-    for (element in this) {
-        val key = toKey(element)
-        val list = map.getOrPut(key) { ArrayList<Map.Entry<K, V>>() }
         list.add(element)
     }
     return map
