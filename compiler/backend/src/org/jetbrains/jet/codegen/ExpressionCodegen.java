@@ -2430,42 +2430,49 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
 
             String reflectionFieldOwner;
-            Type propertyType;
             Type ownerType;
             String reflectionFieldName;
+            Method factory;
 
             DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
             if (containingDeclaration instanceof PackageFragmentDescriptor) {
                 reflectionFieldOwner =
                         PackageClassUtils.getPackageClassInternalName(((PackageFragmentDescriptor) containingDeclaration).getFqName());
 
-                if (receiverParameter != null) {
-                    propertyType = descriptor.isVar() ? K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE : K_EXTENSION_PROPERTY_IMPL_TYPE;
-                }
-                else {
-                    propertyType = descriptor.isVar() ? K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE : K_TOP_LEVEL_PROPERTY_IMPL_TYPE;
-                }
-
                 ownerType = K_PACKAGE_IMPL_TYPE;
                 reflectionFieldName = JvmAbi.KOTLIN_PACKAGE_FIELD_NAME;
+
+                if (receiverParameter != null) {
+                    factory = descriptor.isVar()
+                              ? method("mutableExtensionProperty", K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType,
+                                       getType(Class.class))
+                              : method("extensionProperty", K_EXTENSION_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType,
+                                       getType(Class.class));
+                }
+                else {
+                    factory = descriptor.isVar()
+                              ? method("mutableTopLevelProperty", K_MUTABLE_TOP_LEVEL_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType)
+                              : method("topLevelProperty", K_TOP_LEVEL_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType);
+                }
             }
             else if (containingDeclaration instanceof ClassDescriptor) {
                 reflectionFieldOwner = typeMapper.mapClass((ClassDescriptor) containingDeclaration).getInternalName();
-                propertyType = descriptor.isVar() ? K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE : K_MEMBER_PROPERTY_IMPL_TYPE;
                 ownerType = K_CLASS_IMPL_TYPE;
                 reflectionFieldName = JvmAbi.KOTLIN_CLASS_FIELD_NAME;
+
+                factory = descriptor.isVar()
+                          ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType)
+                          : method("memberProperty", K_MEMBER_PROPERTY_IMPL_TYPE, JAVA_STRING_TYPE, ownerType);
             }
             else {
                 throw new UnsupportedOperationException("Unsupported callable reference container: " + containingDeclaration);
             }
 
-            v.anew(propertyType);
-            v.dup();
             v.visitLdcInsn(descriptor.getName().asString());
 
             if (containingDeclaration instanceof JavaClassDescriptor) {
                 v.aconst(Type.getObjectType(reflectionFieldOwner));
-                v.invokestatic("kotlin/reflect/jvm/internal/InternalPackage", "foreignKotlinClass",
+                v.invokestatic(REFLECTION_INTERNAL_PACKAGE, "foreignKotlinClass",
                                Type.getMethodDescriptor(K_CLASS_IMPL_TYPE, getType(Class.class)), false);
             }
             else {
@@ -2473,17 +2480,12 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.getstatic(reflectionFieldOwner, reflectionFieldName, ownerType.getDescriptor());
             }
 
-            String constructorDesc;
             if (receiverParameter != null) {
                 putJavaLangClassInstance(v, typeMapper.mapType(receiverParameter));
-                constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType, getType(Class.class));
-            }
-            else {
-                constructorDesc = Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE, ownerType);
             }
 
-            v.invokespecial(propertyType.getInternalName(), "<init>", constructorDesc, false);
-            return StackValue.onStack(propertyType);
+            v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factory.getName(), factory.getDescriptor(), false);
+            return StackValue.onStack(factory.getReturnType());
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());

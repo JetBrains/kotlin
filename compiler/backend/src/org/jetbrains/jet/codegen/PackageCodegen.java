@@ -57,12 +57,15 @@ import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
 import static org.jetbrains.jet.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
+import static org.jetbrains.jet.codegen.AsmUtil.method;
 import static org.jetbrains.jet.descriptors.serialization.NameSerializationUtil.createNameResolver;
 import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.K_PACKAGE_IMPL_TYPE;
+import static org.jetbrains.jet.lang.resolve.java.AsmTypeConstants.getType;
 import static org.jetbrains.jet.lang.resolve.java.PackageClassUtils.getPackageClassFqName;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.DiagnosticsPackage.*;
 import static org.jetbrains.jet.lang.resolve.java.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -243,10 +246,11 @@ public class PackageCodegen {
 
     private void generateKotlinPackageReflectionField() {
         MethodVisitor mv = v.newMethod(NO_ORIGIN, ACC_STATIC, "<clinit>", "()V", null, null);
-        MemberCodegen.generateReflectionObjectField(state, packageClassType, v, K_PACKAGE_IMPL_TYPE, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME,
-                                                    new InstructionAdapter(mv));
-        mv.visitInsn(RETURN);
-        FunctionCodegen.endVisit(mv, "static initializer", null);
+        Method method = method("kPackage", K_PACKAGE_IMPL_TYPE, getType(Class.class));
+        InstructionAdapter iv = new InstructionAdapter(mv);
+        MemberCodegen.generateReflectionObjectField(state, packageClassType, v, method, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, iv);
+        iv.areturn(Type.VOID_TYPE);
+        FunctionCodegen.endVisit(mv, "package facade static initializer", null);
     }
 
     private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {

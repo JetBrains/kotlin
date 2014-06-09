@@ -43,6 +43,7 @@ import org.jetbrains.jet.storage.NotNullLazyValue;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
+import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -320,21 +321,19 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
             @NotNull GenerationState state,
             @NotNull Type thisAsmType,
             @NotNull ClassBuilder classBuilder,
-            @NotNull Type kImplType,
+            @NotNull Method factory,
             @NotNull String fieldName,
             @NotNull InstructionAdapter v
     ) {
+        String type = factory.getReturnType().getDescriptor();
         // TODO: generic signature
-        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, fieldName, kImplType.getDescriptor(),
-                              null, null);
+        classBuilder.newField(NO_ORIGIN, ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, fieldName, type, null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
-        v.anew(kImplType);
-        v.dup();
         v.aconst(thisAsmType);
-        v.invokespecial(kImplType.getInternalName(), "<init>", "(Ljava/lang/Class;)V", false);
-        v.putstatic(thisAsmType.getInternalName(), fieldName, kImplType.getDescriptor());
+        v.invokestatic(REFLECTION_INTERNAL_PACKAGE, factory.getName(), factory.getDescriptor(), false);
+        v.putstatic(thisAsmType.getInternalName(), fieldName, type);
     }
 
     protected void generatePropertyMetadataArrayFieldIfNeeded(@NotNull Type thisAsmType) {

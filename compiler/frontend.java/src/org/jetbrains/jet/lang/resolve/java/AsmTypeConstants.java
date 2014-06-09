@@ -47,6 +47,8 @@ public class AsmTypeConstants {
     public static final Type K_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KExtensionPropertyImpl");
     public static final Type K_MUTABLE_EXTENSION_PROPERTY_IMPL_TYPE = reflectInternal("KMutableExtensionPropertyImpl");
 
+    public static final String REFLECTION_INTERNAL_PACKAGE = reflectInternal("InternalPackage").getInternalName();
+
     public static final Type OBJECT_REF_TYPE = Type.getObjectType("kotlin/jvm/internal/Ref$ObjectRef");
 
     @NotNull
