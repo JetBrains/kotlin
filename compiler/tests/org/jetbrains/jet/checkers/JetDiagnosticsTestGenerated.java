@@ -4464,7 +4464,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/inline")
-        @InnerTestClasses({Inline.BinaryExpressions.class, Inline.NonPublicMember.class, Inline.Regressions.class, Inline.UnaryExpressions.class})
+        @InnerTestClasses({Inline.BinaryExpressions.class, Inline.NonLocalReturns.class, Inline.NonPublicMember.class, Inline.Regressions.class, Inline.UnaryExpressions.class})
         public static class Inline extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInInline() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/inline"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -4498,6 +4498,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("extensionOnFunction.kt")
             public void testExtensionOnFunction() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inline/extensionOnFunction.kt");
+            }
+            
+            @TestMetadata("fromInlineToNoInline.kt")
+            public void testFromInlineToNoInline() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inline/fromInlineToNoInline.kt");
             }
             
             @TestMetadata("functions.kt")
@@ -4628,6 +4633,74 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 
             }
             
+            @TestMetadata("compiler/testData/diagnostics/tests/inline/nonLocalReturns")
+            public static class NonLocalReturns extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInNonLocalReturns() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/inline/nonLocalReturns"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("anonymousObjects.kt")
+                public void testAnonymousObjects() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/anonymousObjects.kt");
+                }
+                
+                @TestMetadata("anonymousObjectsNested.kt")
+                public void testAnonymousObjectsNested() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/anonymousObjectsNested.kt");
+                }
+                
+                @TestMetadata("explicitReturnType.kt")
+                public void testExplicitReturnType() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/explicitReturnType.kt");
+                }
+                
+                @TestMetadata("fromOnlyLocal.kt")
+                public void testFromOnlyLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/fromOnlyLocal.kt");
+                }
+                
+                @TestMetadata("inlineLambda.kt")
+                public void testInlineLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/inlineLambda.kt");
+                }
+                
+                @TestMetadata("labeledReturn.kt")
+                public void testLabeledReturn() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/labeledReturn.kt");
+                }
+                
+                @TestMetadata("localFun.kt")
+                public void testLocalFun() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/localFun.kt");
+                }
+                
+                @TestMetadata("nestedNonLocals.kt")
+                public void testNestedNonLocals() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nestedNonLocals.kt");
+                }
+                
+                @TestMetadata("noInlineLambda.kt")
+                public void testNoInlineLambda() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/noInlineLambda.kt");
+                }
+                
+                @TestMetadata("nonInlinedClass.kt")
+                public void testNonInlinedClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/nonInlinedClass.kt");
+                }
+                
+                @TestMetadata("propertyAccessorsAndConstructor.kt")
+                public void testPropertyAccessorsAndConstructor() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/propertyAccessorsAndConstructor.kt");
+                }
+                
+                @TestMetadata("toOnlyLocal.kt")
+                public void testToOnlyLocal() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/inline/nonLocalReturns/toOnlyLocal.kt");
+                }
+                
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/inline/nonPublicMember")
             public static class NonPublicMember extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInNonPublicMember() throws Exception {
@@ -4706,6 +4779,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 TestSuite suite = new TestSuite("Inline");
                 suite.addTestSuite(Inline.class);
                 suite.addTestSuite(BinaryExpressions.class);
+                suite.addTestSuite(NonLocalReturns.class);
                 suite.addTestSuite(NonPublicMember.class);
                 suite.addTestSuite(Regressions.class);
                 suite.addTestSuite(UnaryExpressions.class);

@@ -23,8 +23,11 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
+import org.jetbrains.jet.lang.resolve.constants.ArrayValue;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.EnumValue;
+
+import java.util.List;
 
 public class InlineUtil {
 
@@ -68,6 +71,40 @@ public class InlineUtil {
         return null;
     }
 
+    public static boolean hasOnlyLocalContinueAndBreak(@NotNull ValueParameterDescriptor descriptor) {
+        return hasInlineOption(descriptor, InlineOption.LOCAL_CONTINUE_AND_BREAK);
+    }
 
+    public static boolean hasOnlyLocalReturn(@NotNull ValueParameterDescriptor descriptor) {
+        return hasInlineOption(descriptor, InlineOption.ONLY_LOCAL_RETURN);
+    }
+
+    private static boolean hasInlineOption(@NotNull ValueParameterDescriptor descriptor, @NotNull InlineOption option) {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+        ClassDescriptor annotationClass = builtIns.getInlineOptionsClassAnnotation();
+        AnnotationDescriptor optionsAnnotation = getAnnotation(descriptor.getAnnotations(), annotationClass);
+
+        if (optionsAnnotation != null) {
+            ValueParameterDescriptor parameterDescriptor = annotationClass.getConstructors().iterator().next().getValueParameters().get(0);
+            CompileTimeConstant<?> argument = optionsAnnotation.getValueArgument(parameterDescriptor);
+
+            if (argument == null) {
+                return false;
+            } else {
+                if (argument instanceof ArrayValue) {
+                    List<CompileTimeConstant<?>> values = ((ArrayValue) argument).getValue();
+
+                    for (CompileTimeConstant<?> value : values) {
+                        if (value instanceof EnumValue) {
+                            if (((EnumValue) value).getValue().getName().asString().equals(option.name())) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 

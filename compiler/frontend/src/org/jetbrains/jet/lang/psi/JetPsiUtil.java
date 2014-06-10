@@ -884,4 +884,37 @@ public class JetPsiUtil {
         return element instanceof JetSimpleNameExpression &&
                ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
     }
+
+    @Nullable
+    public static JetExpression getParentCallIfPresent(@NotNull JetExpression expression) {
+        PsiElement parent = expression.getParent();
+        while (parent != null) {
+            if (parent instanceof JetBinaryExpression ||
+                parent instanceof JetUnaryExpression ||
+                parent instanceof JetLabeledExpression ||
+                parent instanceof JetDotQualifiedExpression ||
+                parent instanceof JetCallExpression ||
+                parent instanceof JetArrayAccessExpression ||
+                parent instanceof JetMultiDeclaration) {
+
+                if (parent instanceof JetLabeledExpression) {
+                    parent = parent.getParent();
+                    continue;
+                }
+
+                //check that it's in inlineable call would be in resolve call of parent
+                return (JetExpression) parent;
+            }
+            else if (parent instanceof JetParenthesizedExpression || parent instanceof JetBinaryExpressionWithTypeRHS) {
+                parent = parent.getParent();
+            }
+            else if (parent instanceof JetValueArgument || parent instanceof JetValueArgumentList) {
+                parent = parent.getParent();
+            }
+            else {
+                return null;
+            }
+        }
+        return null;
+    }
 }

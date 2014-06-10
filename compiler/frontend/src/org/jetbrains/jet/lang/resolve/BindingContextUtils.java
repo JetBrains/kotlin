@@ -328,17 +328,18 @@ public class BindingContextUtils {
     }
 
     @NotNull
-    public static Pair<FunctionDescriptor, PsiElement> getLambdaContainingFunction(
-            @NotNull FunctionDescriptor lambdaDescriptor,
-            @NotNull BindingContext context
+    public static Pair<FunctionDescriptor, PsiElement> getContainingFunctionSkipFunctionLiterals(
+            @NotNull BindingContext context,
+            @Nullable DeclarationDescriptor startDescriptor,
+            boolean strict
     ) {
-        FunctionDescriptor containingFunctionDescriptor = lambdaDescriptor;
-        PsiElement containingFunction;
-        do {
+        FunctionDescriptor containingFunctionDescriptor = DescriptorUtils.getParentOfType(startDescriptor, FunctionDescriptor.class, strict);
+        PsiElement containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(context, containingFunctionDescriptor) : null;
+        while (containingFunction instanceof JetFunctionLiteral) {
             containingFunctionDescriptor = DescriptorUtils.getParentOfType(containingFunctionDescriptor, FunctionDescriptor.class);
             containingFunction = containingFunctionDescriptor != null ? callableDescriptorToDeclaration(context,
                                                                                                         containingFunctionDescriptor) : null;
-        } while (containingFunction instanceof JetFunctionLiteral);
+        }
 
         return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);
     }

@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package kotlin
+package org.jetbrains.jet.lang.types.lang;
 
-public annotation class noinline
-
-public annotation class inline(public val strategy: InlineStrategy = InlineStrategy.AS_FUNCTION)
-
-public enum class InlineStrategy {
-    AS_FUNCTION
-    IN_PLACE
-}
-
-
-public annotation class inlineOptions(vararg val value: InlineOption)
-
-public enum class InlineOption {
-    LOCAL_CONTINUE_AND_BREAK
+public enum InlineOption {
+    LOCAL_CONTINUE_AND_BREAK,
     ONLY_LOCAL_RETURN
 }

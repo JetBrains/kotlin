@@ -308,6 +308,11 @@ public class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getInlineOptionsClassAnnotation() {
+        return getBuiltInClassByName("inlineOptions");
+    }
+
+    @NotNull
     public ClassDescriptor getTailRecursiveAnnotationClass() {
         return getBuiltInClassByName("tailRecursive");
     }
