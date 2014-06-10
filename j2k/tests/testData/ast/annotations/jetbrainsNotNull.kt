@@ -6,7 +6,7 @@ public class Test(str: String) {
     var myStr: String = "String2"
 
     public fun sout(str: String) {
-        System.out?.println(str)
+        System.out!!.println(str)
     }
 
     public fun dummy(str: String): String {

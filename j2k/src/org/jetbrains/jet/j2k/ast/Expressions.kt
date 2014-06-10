@@ -73,14 +73,11 @@ class SuperExpression(val identifier: Identifier) : Expression() {
 
 class QualifiedExpression(val expression: Expression, val identifier: Expression) : Expression() {
     override val isNullable: Boolean
-        get() {
-            if (!expression.isEmpty && expression.isNullable) return true
-            return identifier.isNullable
-        }
+        get() = identifier.isNullable
 
     override fun toKotlin(): String {
         if (!expression.isEmpty) {
-            return operandToKotlin(expression) + (if (expression.isNullable) "?." else ".") + identifier.toKotlin()
+            return operandToKotlin(expression) + (if (expression.isNullable) "!!." else ".") + identifier.toKotlin()
         }
 
         return identifier.toKotlin()

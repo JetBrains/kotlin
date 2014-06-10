@@ -15,8 +15,8 @@ class Bar() {
 class Test() {
     public fun test(barNotNull: Bar, barNullable: Bar?) {
         barNotNull.fooNotNull.execute()
-        barNotNull.fooNullable?.execute()
-        barNullable?.fooNotNull?.execute()
-        barNullable?.fooNullable?.execute()
+        barNotNull.fooNullable!!.execute()
+        barNullable!!.fooNotNull.execute()
+        barNullable!!.fooNullable!!.execute()
     }
 }
