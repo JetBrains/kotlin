@@ -24,14 +24,16 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.plugin.JetFileType;
 import org.jetbrains.jet.plugin.JetLightProjectDescriptor;
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
+
+import static org.jetbrains.jet.lang.resolve.ResolvePackage.resolveTopLevelClass;
 
 public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase {
 
@@ -49,11 +51,10 @@ public class SignatureMarkerProviderTest extends LightCodeInsightFixtureTestCase
         PsiFile file = myFixture.configureByText(JetFileType.INSTANCE, "val t: Thread? = null");
 
         PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass("java.lang.Thread", GlobalSearchScope.allScope(project));
-        BindingContext context = ResolvePackage.getBindingContext((JetFile) file);
-        ClassDescriptor preResolvedClass = context.get(BindingContext.CLASS, psiClass);
+        AnalyzeExhaust analysisResults = ResolvePackage.getAnalysisResults((JetFile) file);
+        ClassDescriptor preResolvedClass = analysisResults.getBindingContext().get(BindingContext.CLASS, psiClass);
 
-        ClassDescriptor reResolvedClass = JavaResolveExtension.instance$.get(project)
-                .resolveClass(new FqName("java.lang.Thread"));
+        ClassDescriptor reResolvedClass = resolveTopLevelClass(analysisResults.getModuleDescriptor(), new FqName("java.lang.Thread"));
 
         assertSame(preResolvedClass, reResolvedClass);
     }
