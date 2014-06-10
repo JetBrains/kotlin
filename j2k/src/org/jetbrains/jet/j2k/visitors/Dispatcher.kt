@@ -19,6 +19,6 @@ package org.jetbrains.jet.j2k.visitors
 import org.jetbrains.jet.j2k.Converter
 import org.jetbrains.jet.j2k.TypeConverter
 
-open class Dispatcher(converter: Converter, typeConverter: TypeConverter) {
+class Dispatcher(converter: Converter, typeConverter: TypeConverter) {
     var expressionVisitor: ExpressionVisitor = ExpressionVisitor(converter, typeConverter)
 }

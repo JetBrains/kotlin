@@ -27,7 +27,7 @@ import org.jetbrains.jet.j2k.TypeConverter
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
 
-open class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Type>() {
+class TypeVisitor(private val converter: TypeConverter) : PsiTypeVisitor<Type>() {
     override fun visitPrimitiveType(primitiveType: PsiPrimitiveType): Type {
         val name = primitiveType.getCanonicalText()
         return if (name == "void") {
