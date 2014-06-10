@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
 import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
+import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
@@ -71,9 +72,10 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
             @NotNull JetElement instructionElement,
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
+            @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
             boolean synthetic
     ) {
-        return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, synthetic);
+        return getDelegateBuilder().magic(instructionElement, valueElement, inputValues, expectedTypes, synthetic);
     }
 
     @NotNull

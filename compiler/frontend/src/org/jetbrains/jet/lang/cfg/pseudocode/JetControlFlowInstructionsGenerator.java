@@ -420,7 +420,8 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
         @NotNull
         @Override
         public PseudoValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
-            return inputValues.isEmpty() ? read(expression) : magic(expression, expression, inputValues, false);
+            if (inputValues.isEmpty()) return read(expression);
+            return magic(expression, expression, inputValues, PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues), false);
         }
 
         @NotNull
@@ -429,10 +430,12 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull JetElement instructionElement,
                 @Nullable JetElement valueElement,
                 @NotNull List<PseudoValue> inputValues,
+                @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
                 boolean synthetic
         ) {
-            MagicInstruction instruction =
-                    MagicInstruction.object$.create(instructionElement, valueElement, getCurrentScope(), synthetic, inputValues, valueFactory);
+            MagicInstruction instruction = MagicInstruction.object$.create(
+                    instructionElement, valueElement, getCurrentScope(), synthetic, inputValues, expectedTypes, valueFactory
+            );
             add(instruction);
             return instruction.getOutputValue();
         }
@@ -489,7 +492,21 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
                 @NotNull PredefinedOperation operation,
                 @NotNull List<PseudoValue> inputValues
         ) {
-            return magic(expression, expression, inputValues, false);
+            Map<PseudoValue, TypePredicate> expectedTypes;
+            switch(operation) {
+                case AND:
+                case OR:
+                    SingleType onlyBoolean = new SingleType(KotlinBuiltIns.getInstance().getBooleanType());
+                    expectedTypes = PseudocodePackage.expectedTypeFor(onlyBoolean, inputValues);
+                    break;
+                case NOT_NULL_ASSERTION:
+                    expectedTypes = PseudocodePackage.expectedTypeFor(AllTypes.instance$, inputValues);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid operation: " + operation);
+            }
+
+            return magic(expression, expression, inputValues, expectedTypes, false);
         }
 
         @Override

@@ -26,6 +26,7 @@ import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.jet.lang.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor
+import org.jetbrains.jet.lang.cfg.pseudocode.TypePredicate
 
 public abstract class OperationInstruction protected(
         element: JetElement,
@@ -102,8 +103,13 @@ public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
         val synthetic: Boolean,
-        inputValues: List<PseudoValue>
+        inputValues: List<PseudoValue>,
+        val expectedTypes: Map<PseudoValue, TypePredicate>
 ) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
+    protected fun setResult(valueElement: JetElement?, factory: PseudoValueFactory?): OperationInstruction {
+        return setResult(factory?.newValue(valueElement, this))
+    }
+
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMagic(this)
     }
@@ -113,7 +119,7 @@ public class MagicInstruction(
     }
 
     override fun createCopy() =
-            MagicInstruction(element, lexicalScope, synthetic, inputValues).setResult(resultValue)
+            MagicInstruction(element, lexicalScope, synthetic, inputValues, expectedTypes).setResult(resultValue)
 
     override fun toString() = renderInstruction("magic", render(element))
 
@@ -124,8 +130,11 @@ public class MagicInstruction(
                 lexicalScope: LexicalScope,
                 synthetic: Boolean,
                 inputValues: List<PseudoValue>,
+                expectedTypes: Map<PseudoValue, TypePredicate>,
                 factory: PseudoValueFactory
-        ): MagicInstruction = MagicInstruction(element, lexicalScope, synthetic, inputValues).setResult(factory, valueElement) as MagicInstruction
+        ): MagicInstruction = MagicInstruction(
+                element, lexicalScope, synthetic, inputValues, expectedTypes
+        ).setResult(factory, valueElement) as MagicInstruction
     }
 }
 

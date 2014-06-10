@@ -22,16 +22,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.JetControlFlowInstructionsGenerator;
-import org.jetbrains.jet.lang.cfg.pseudocode.PseudoValue;
-import org.jetbrains.jet.lang.cfg.pseudocode.Pseudocode;
-import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.cfg.pseudocode.*;
 import org.jetbrains.jet.lang.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -188,12 +184,24 @@ public class JetControlFlowProcessor {
 
         @NotNull
         private PseudoValue createSyntheticValue(@NotNull JetElement instructionElement) {
-            return builder.magic(instructionElement, null, Collections.<PseudoValue>emptyList(), true);
+            return createSyntheticValue(instructionElement, Collections.<JetElement>emptyList());
+        }
+
+        @NotNull
+        private PseudoValue createSyntheticValue(@NotNull JetElement instructionElement, @NotNull List<? extends JetElement> from) {
+            List<PseudoValue> values = elementsToValues(from);
+            return builder.magic(instructionElement, null, values, defaultTypeMap(values), true);
         }
 
         @NotNull
         private PseudoValue createNonSyntheticValue(@NotNull List<? extends JetElement> from, @NotNull JetElement to) {
-            return builder.magic(to, to, elementsToValues(from), false);
+            List<PseudoValue> values = elementsToValues(from);
+            return builder.magic(to, to, values, defaultTypeMap(values), false);
+        }
+
+        @NotNull
+        private Map<PseudoValue, TypePredicate> defaultTypeMap(List<PseudoValue> values) {
+            return PseudocodePackage.expectedTypeFor(AllTypes.instance$, values);
         }
 
         private void mergeValues(@NotNull List<JetExpression> from, @NotNull JetExpression to) {
@@ -218,10 +226,10 @@ public class JetControlFlowProcessor {
         }
 
         private List<PseudoValue> elementsToValues(List<? extends JetElement> from) {
+            if (from.isEmpty()) return Collections.emptyList();
             return KotlinPackage.filterNotNull(
-                    KotlinPackage.mapTo(
+                    KotlinPackage.map(
                             from,
-                            new LinkedHashSet<PseudoValue>(),
                             new Function1<JetElement, PseudoValue>() {
                                 @Override
                                 public PseudoValue invoke(JetElement element) {
@@ -862,12 +870,17 @@ public class JetControlFlowProcessor {
         private void writeLoopParameterAssignment(JetForExpression expression) {
             JetParameter loopParameter = expression.getLoopParameter();
             JetMultiDeclaration multiDeclaration = expression.getMultiParameter();
-
             JetExpression loopRange = expression.getLoopRange();
+
+            JetType loopRangeType = trace.get(BindingContext.EXPRESSION_TYPE, loopRange);
+            TypePredicate loopRangeTypeSet = loopRangeType != null ? new SingleType(loopRangeType) : AllTypes.instance$;
+            PseudoValue loopRangeValue = builder.getBoundValue(loopRange);
+
             PseudoValue value = builder.magic(
                     loopRange != null ? loopRange : expression,
                     null,
-                    Collections.singletonList(builder.getBoundValue(loopRange)),
+                    Collections.singletonList(loopRangeValue),
+                    Collections.singletonMap(loopRangeValue, loopRangeTypeSet),
                     true
             );
 
@@ -1058,7 +1071,10 @@ public class JetControlFlowProcessor {
                 inputExpressions.add(calleeExpression);
                 inputExpressions.add(generateAndGetReceiverIfAny(expression));
 
-                createNonSyntheticValue(inputExpressions, calleeExpression != null ? calleeExpression : expression);
+                createNonSyntheticValue(
+                        inputExpressions,
+                        calleeExpression != null ? calleeExpression : expression
+                );
             }
 
             copyValue(calleeExpression, expression);
@@ -1106,16 +1122,16 @@ public class JetControlFlowProcessor {
             generateInstructions(initializer, NOT_IN_CONDITION);
             for (JetMultiDeclarationEntry entry : declaration.getEntries()) {
                 builder.declareVariable(entry);
+
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 PseudoValue writtenValue = resolvedCall != null
                                            ? builder.call(
-                        entry,
-                        resolvedCall,
-                        getReceiverValues(resolvedCall, false),
-                        Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
-                )
-                                           : builder.magic(entry, null,
-                                                           ContainerUtil.createMaybeSingletonList(builder.getBoundValue(initializer)), true);
+                                                entry,
+                                                resolvedCall,
+                                                getReceiverValues(resolvedCall, false),
+                                                Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
+                                            )
+                                           : createSyntheticValue(entry, Collections.singletonList(initializer));
                 if (generateWriteForEntries) {
                     generateInitializer(entry, writtenValue != null ? writtenValue : createSyntheticValue(entry));
                 }
@@ -1209,9 +1225,7 @@ public class JetControlFlowProcessor {
                     JetWhenCondition condition = conditions[i];
                     condition.accept(conditionVisitor, context);
                     if (i + 1 < conditions.length) {
-                        PseudoValue conditionValue = builder.magic(
-                                condition, null, elementsToValues(Arrays.asList(subjectExpression, condition)), true
-                        );
+                        PseudoValue conditionValue = createSyntheticValue(condition, Arrays.asList(subjectExpression, condition));
                         builder.nondeterministicJump(bodyLabel, expression, conditionValue);
                     }
                 }
@@ -1221,9 +1235,7 @@ public class JetControlFlowProcessor {
                     PseudoValue conditionValue = null;
                     JetWhenCondition lastCondition = KotlinPackage.lastOrNull(conditions);
                     if (lastCondition != null) {
-                        conditionValue = builder.magic(
-                                lastCondition, null, elementsToValues(Arrays.asList(subjectExpression, lastCondition)), true
-                        );
+                        conditionValue = createSyntheticValue(lastCondition, Arrays.asList(subjectExpression, lastCondition));
                     }
                     builder.nondeterministicJump(nextLabel, expression, conditionValue);
                 }

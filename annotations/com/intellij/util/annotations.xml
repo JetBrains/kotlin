@@ -14,4 +14,10 @@
   <item name='com.intellij.util.Range T getTo()'>
     <annotation name='org.jetbrains.annotations.NotNull'/>
   </item>
+  <item name='com.intellij.util.SmartFMap com.intellij.util.SmartFMap&lt;K,V&gt; emptyMap()'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='com.intellij.util.SmartFMap com.intellij.util.SmartFMap&lt;K,V&gt; plus(K, V)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
 </root>
