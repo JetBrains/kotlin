@@ -296,6 +296,8 @@ public class JetControlFlowProcessor {
             if (resultingDescriptor instanceof ReceiverParameterDescriptor) {
                 builder.readThis(expression, (ReceiverParameterDescriptor) resultingDescriptor);
             }
+
+            copyValue(expression, expression.getInstanceReference());
         }
 
         @Override

@@ -9,6 +9,7 @@ abstract class Bar {
 fun foo() = "foo" + this.$bar
 ---------------------
 "foo"               <v0>   NEW()          
+this                <v1>   COPY
 this                <v1>   NEW()
 $bar                <v2>   NEW(<v1>)      
 this.$bar           <v2>   COPY           
