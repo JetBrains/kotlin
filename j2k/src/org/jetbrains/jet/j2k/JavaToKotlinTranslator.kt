@@ -19,7 +19,6 @@ package org.jetbrains.jet.j2k
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.core.JavaCoreProjectEnvironment
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
@@ -40,8 +39,8 @@ public object JavaToKotlinTranslator {
         return PsiFileFactory.getInstance(javaCoreEnvironment?.getProject())?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
     }
 
-    fun createFile(project: Project, text: String): PsiFile? {
-        return PsiFileFactory.getInstance(project)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text)
+    fun createFile(project: Project, text: String): PsiJavaFile {
+        return PsiFileFactory.getInstance(project)?.createFileFromText("test.java", JavaLanguage.INSTANCE, text) as PsiJavaFile
     }
 
     fun setUpJavaCoreEnvironment(): JavaCoreProjectEnvironment {
@@ -98,7 +97,7 @@ public object JavaToKotlinTranslator {
     fun generateKotlinCode(javaCode: String): String {
         val file = createFile(javaCode)
         if (file is PsiJavaFile) {
-            val converter = Converter(file.getProject(), ConverterSettings.defaultSettings)
+            val converter = Converter(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)))
             setClassIdentifiers(converter, file)
             return prettify(converter.convertFile(file).toKotlin())
         }

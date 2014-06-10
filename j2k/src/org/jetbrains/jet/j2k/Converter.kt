@@ -25,9 +25,17 @@ import org.jetbrains.jet.lang.types.expressions.OperatorConventions.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiUtil
 
-public class Converter(val project: Project, val settings: ConverterSettings) {
+public trait ConversionScope {
+    public fun contains(element: PsiElement): Boolean
+}
 
-    private val typeConverter = TypeConverter(settings)
+public class FilesConversionScope(val files: Collection<PsiJavaFile>) : ConversionScope {
+    override fun contains(element: PsiElement) = files.any { element.getContainingFile() == it }
+}
+
+public class Converter(val project: Project, val settings: ConverterSettings, val conversionScope: ConversionScope) {
+
+    private val typeConverter = TypeConverter(settings, conversionScope)
 
     private var classIdentifiersSet: MutableSet<String> = HashSet()
 

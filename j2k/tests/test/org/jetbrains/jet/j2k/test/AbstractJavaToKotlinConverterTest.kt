@@ -33,6 +33,7 @@ import org.jetbrains.jet.JetTestUtils
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.jet.j2k.FilesConversionScope
 
 abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
@@ -74,15 +75,14 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
                 else -> throw IllegalArgumentException("Unknown option: $name")
             }
         }
-        val converter = Converter(project, settings)
 
         val rawConverted = when (prefix) {
-            "element" -> elementToKotlin(converter, javaCode)
-            "expression" -> expressionToKotlin(converter, javaCode)
-            "statement" -> statementToKotlin(converter, javaCode)
-            "method" -> methodToKotlin(converter, javaCode)
-            "class" -> fileToKotlin(converter, javaCode)
-            "file" -> fileToKotlin(converter, javaCode)
+            "element" -> elementToKotlin(javaCode, settings, project)
+            "expression" -> expressionToKotlin(javaCode, settings, project)
+            "statement" -> statementToKotlin(javaCode, settings, project)
+            "method" -> methodToKotlin(javaCode, settings, project)
+            "class" -> fileToKotlin(javaCode, settings, project)
+            "file" -> fileToKotlin(javaCode, settings, project)
             else -> throw IllegalStateException("Specify what is it: file, class, method, statement or expression " +
                                                 "using the first line of test data file")
         }
@@ -114,42 +114,37 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
             reformattedText
     }
 
-    private fun elementToKotlin(converter: Converter, text: String): String {
-        val fileWithText = JavaToKotlinTranslator.createFile(converter.project, text)!!
+    private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
+        val fileWithText = JavaToKotlinTranslator.createFile(project, text)
+        val converter = Converter(project, settings, FilesConversionScope(listOf(fileWithText)))
         val element = fileWithText.getFirstChild()!!
         return converter.elementToKotlin(element)
     }
 
-    private fun fileToKotlin(converter: Converter, text: String): String {
-        return generateKotlinCode(converter, JavaToKotlinTranslator.createFile(converter.project, text))
+    private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
+        val file = JavaToKotlinTranslator.createFile(project, text)
+        val converter = Converter(project, settings, FilesConversionScope(listOf(file)))
+        return generateKotlinCode(converter, file)
     }
 
-    private fun methodToKotlin(converter: Converter, text: String?): String {
-        var result = fileToKotlin(converter, "final class C {" + text + "}").replaceAll("class C\\(\\) \\{", "")
-        result = result.substring(0, (result.lastIndexOf("}"))).trim()
-        return result
+    private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C\\(\\) \\{", "")
+        return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 
-    private fun statementToKotlin(converter: Converter, text: String?): String {
-        var result = methodToKotlin(converter, "void main() {" + text + "}")
-        val pos = result.lastIndexOf("}")
-        result = result.substring(0, pos).replaceFirst("fun main\\(\\) \\{", "").trim()
-        return result
+    private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
+        val result = methodToKotlin("void main() {" + text + "}", settings, project)
+        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main\\(\\) \\{", "").trim()
     }
 
-    private fun expressionToKotlin(converter: Converter, code: String?): String {
-        var result = statementToKotlin(converter, "final Object o =" + code + "}")
-        result = result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "").replaceFirst("val o = ", "").trim()
-        return result
+    private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
+        val result = statementToKotlin("final Object o =" + code + "}", settings, project)
+        return result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "").replaceFirst("val o = ", "").trim()
     }
 
-    private fun generateKotlinCode(converter: Converter, file: PsiFile?): String {
-        if (file is PsiJavaFile) {
-            JavaToKotlinTranslator.setClassIdentifiers(converter, file)
-            return converter.elementToKotlin(file)
-        }
-
-        return ""
+    private fun generateKotlinCode(converter: Converter, file: PsiJavaFile): String {
+        JavaToKotlinTranslator.setClassIdentifiers(converter, file)
+        return converter.elementToKotlin(file)
     }
 
     override fun getProjectJDK(): Sdk? {

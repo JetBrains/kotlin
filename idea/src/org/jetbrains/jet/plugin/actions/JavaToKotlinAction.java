@@ -26,9 +26,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiJavaFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.j2k.Converter;
 import org.jetbrains.jet.j2k.ConverterSettings;
+import org.jetbrains.jet.j2k.FilesConversionScope;
 
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class JavaToKotlinAction extends AnAction {
         assert virtualFiles != null;
         final Project project = CommonDataKeys.PROJECT.getData(e.getDataContext());
         assert project != null;
-        final List<PsiFile> selectedJavaFiles = getAllJavaFiles(virtualFiles, project);
+        final List<PsiJavaFile> selectedJavaFiles = getAllJavaFiles(virtualFiles, project);
         if (selectedJavaFiles.isEmpty()) {
             return;
         }
@@ -77,8 +79,8 @@ public class JavaToKotlinAction extends AnAction {
     }
 
     @NotNull
-    private static Converter prepareConverter(@NotNull Project project, @NotNull List<PsiFile> selectedJavaFiles) {
-        Converter converter = new Converter(project, ConverterSettings.defaultSettings);
+    private static Converter prepareConverter(@NotNull Project project, @NotNull List<PsiJavaFile> selectedJavaFiles) {
+        Converter converter = new Converter(project, ConverterSettings.defaultSettings, new FilesConversionScope(selectedJavaFiles));
         converter.clearClassIdentifiers();
         for (PsiFile f : selectedJavaFiles) {
             if (f.getFileType() instanceof JavaFileType) {

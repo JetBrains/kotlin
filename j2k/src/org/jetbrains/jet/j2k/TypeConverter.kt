@@ -22,7 +22,7 @@ import com.intellij.psi.*
 import org.jetbrains.jet.j2k.visitors.TypeVisitor
 import java.util.HashMap
 
-class TypeConverter(val settings: ConverterSettings) {
+class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
 
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
@@ -67,6 +67,8 @@ class TypeConverter(val settings: ConverterSettings) {
                 }
             }
         }
+
+        if (!conversionScope.contains(variable)) return nullability // do not analyze usages of fields out of our conversion scope
 
         if (nullability == Nullability.Default) {
             val scope = searchScope(variable)
@@ -113,6 +115,8 @@ class TypeConverter(val settings: ConverterSettings) {
 
     private fun methodNullabilityNoCache(method: PsiMethod): Nullability {
         var nullability = method.nullabilityFromAnnotations()
+
+        if (!conversionScope.contains(method)) return nullability // do not analyze body and usages of methods out of our conversion scope
 
         if (nullability == Nullability.Default) {
             method.getBody()?.accept(object: JavaRecursiveElementVisitor() {
@@ -196,7 +200,6 @@ class TypeConverter(val settings: ConverterSettings) {
         return when(this) {
             is PsiLocalVariable -> !hasWriteAccesses(getContainingMethod())
             is PsiField -> if (hasModifierProperty(PsiModifier.PRIVATE)) !hasWriteAccesses(getContainingClass()) else false
-            is PsiParameter -> true
             else -> false
         }
     }

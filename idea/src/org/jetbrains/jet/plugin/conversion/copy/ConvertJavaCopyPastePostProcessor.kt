@@ -48,44 +48,38 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): TextBlockTransferableData? {
-        if (!(file is PsiJavaFile)) {
-            return null
-        }
+        if (file !is PsiJavaFile) return null
 
         val lightFile = PsiFileFactory.getInstance(file.getProject())!!.createFileFromText(file.getText()!!, file)
         return CopiedCode(lightFile as? PsiJavaFile, startOffsets, endOffsets)
     }
 
     public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, value: TextBlockTransferableData) {
-        if (value !is CopiedCode)
-            return
+        if (value !is CopiedCode) return
+        val sourceFile = value.getFile() ?: return
 
-        if (value.getFile() == null)
-            return
-
-        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument())
-        if (file !is JetFile)
-            return
+        val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument())
+        if (targetFile !is JetFile) return
 
         val jetEditorOptions = JetEditorOptions.getInstance()!!
         val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
         if (needConvert) {
-            val text = convertCopiedCodeToKotlin(value, file.getProject())
+            val text = convertCopiedCodeToKotlin(value, sourceFile)
             if (text.isNotEmpty()) {
                 ApplicationManager.getApplication()!!.runWriteAction {
                     val startOffset = bounds.getStartOffset()
                     editor.getDocument().replaceString(bounds.getStartOffset(), bounds.getEndOffset(), text)
                     val endOffsetAfterCopy = startOffset + text.length()
                     editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
-                    CodeStyleManager.getInstance(project)!!.reformatText(file, startOffset, endOffsetAfterCopy)
-                    PsiDocumentManager.getInstance(file.getProject()).commitDocument(editor.getDocument())
+                    CodeStyleManager.getInstance(project)!!.reformatText(targetFile, startOffset, endOffsetAfterCopy)
+                    PsiDocumentManager.getInstance(targetFile.getProject()).commitDocument(editor.getDocument())
                 }
             }
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, project: Project): String {
-        val converter = Converter(project, ConverterSettings.defaultSettings)
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, file: PsiJavaFile): String {
+        val converter = Converter(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)))
         val startOffsets = code.getStartOffsets()
         val endOffsets = code.getEndOffsets()
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
@@ -93,7 +87,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         for (i in startOffsets.indices) {
             val startOffset = startOffsets[i]
             val endOffset = endOffsets[i]
-            result.append(convertRangeToKotlin(code.getFile()!!, TextRange(startOffset, endOffset), converter))
+            result.append(convertRangeToKotlin(file, TextRange(startOffset, endOffset), converter))
         }
         return StringUtil.convertLineSeparators(result.toString())
     }

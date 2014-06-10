@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.actions;
 
-import com.intellij.ide.highlighter.JavaFileType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ex.MessagesEx;
@@ -53,14 +52,14 @@ public class JavaToKotlinActionUtil {
     }
 
     @NotNull
-    /*package*/ static List<PsiFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
+    /*package*/ static List<PsiJavaFile> getAllJavaFiles(@NotNull VirtualFile[] vFiles, Project project) {
         Set<VirtualFile> filesSet = allVirtualFiles(vFiles);
         PsiManager manager = PsiManager.getInstance(project);
-        List<PsiFile> res = new ArrayList<PsiFile>();
+        List<PsiJavaFile> res = new ArrayList<PsiJavaFile>();
         for (VirtualFile file : filesSet) {
             PsiFile psiFile = manager.findFile(file);
-            if (psiFile != null && psiFile.getFileType() instanceof JavaFileType) {
-                res.add(psiFile);
+            if (psiFile != null && psiFile instanceof PsiJavaFile) {
+                res.add((PsiJavaFile)psiFile);
             }
         }
         return res;
@@ -92,7 +91,7 @@ public class JavaToKotlinActionUtil {
     }
 
     @NotNull
-    static List<VirtualFile> convertFiles(final Converter converter, List<PsiFile> allJavaFilesNear) {
+    static List<VirtualFile> convertFiles(final Converter converter, List<PsiJavaFile> allJavaFilesNear) {
         final List<VirtualFile> result = new LinkedList<VirtualFile>();
         for (final PsiFile f : allJavaFilesNear) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
@@ -108,7 +107,7 @@ public class JavaToKotlinActionUtil {
         return result;
     }
 
-    static void deleteFiles(List<PsiFile> allJavaFilesNear) {
+    static void deleteFiles(List<PsiJavaFile> allJavaFilesNear) {
         for (final PsiFile f : allJavaFilesNear) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
@@ -150,7 +149,7 @@ public class JavaToKotlinActionUtil {
         return null;
     }
 
-    static void renameFiles(@NotNull List<PsiFile> psiFiles) {
+    static void renameFiles(@NotNull List<PsiJavaFile> psiFiles) {
         for (final PsiFile f : psiFiles) {
             ApplicationManager.getApplication().runWriteAction(new Runnable() {
                 @Override
