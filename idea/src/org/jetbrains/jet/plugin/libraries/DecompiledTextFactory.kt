@@ -44,7 +44,7 @@ public fun buildDecompiledText(
         buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInPackage(packageFqName)))
     }
     else if (kind == KotlinClassHeader.Kind.CLASS) {
-        buildDecompiledText(packageFqName, listOf(resolver.resolveClass(classFqName)).filterNotNull())
+        buildDecompiledText(packageFqName, listOf(resolver.resolveTopLevelClass(classFqName)).filterNotNull())
     }
     else {
         throw UnsupportedOperationException("Unknown header kind: " + kind)

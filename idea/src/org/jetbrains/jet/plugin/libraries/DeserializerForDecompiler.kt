@@ -56,7 +56,7 @@ public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDec
 
 public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val directoryPackageFqName: FqName) : ResolverForDecompiler {
 
-    override fun resolveClass(classFqName: FqName) = classes(classFqName.toClassId())
+    override fun resolveTopLevelClass(classFqName: FqName) = classes(classFqName.toClassId())
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")

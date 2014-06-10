@@ -30,6 +30,10 @@ import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
 import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
+import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
+import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
+import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService
+import org.jetbrains.jet.plugin.project.TargetPlatform
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -54,19 +58,16 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 }
 
 class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
-    val javaDescriptorResolver = JavaResolveExtension[project]
+    val module = KotlinCacheService.getInstance(project).getGlobalLazyResolveSession(TargetPlatform.JVM).getModuleDescriptor()
 
-    override fun resolveClass(classFqName: FqName): ClassDescriptor? {
-        return javaDescriptorResolver.resolveClass(classFqName)
+    override fun resolveTopLevelClass(classFqName: FqName): ClassDescriptor? {
+        return module.resolveTopLevelClass(classFqName)
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        val packageView = javaDescriptorResolver.getModule().getPackage(packageFqName)
-        if (packageView == null) {
-            return Collections.emptyList()
-        }
+        val packageView = module.getPackage(packageFqName) ?: return listOf()
         return packageView.getMemberScope().getAllDescriptors() filter {
-            it is CallableDescriptor && DescriptorUtils.getContainingModule(it) != KotlinBuiltIns.getInstance().getBuiltInsModule()
+            it is CallableMemberDescriptor && DescriptorUtils.getContainingModule(it) != KotlinBuiltIns.getInstance().getBuiltInsModule()
         }
     }
 }
