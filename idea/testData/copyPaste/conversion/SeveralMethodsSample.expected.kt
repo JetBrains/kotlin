@@ -16,7 +16,7 @@ class A {
         }
 
         assert(element is PsiMethod) { "Method accepts only kotlin functions/properties and java methods, but '" + element.getText() + "' was found" }
-        return JetRefactoringUtil.formatPsiMethod((element as PsiMethod), true, false)
+        return JetRefactoringUtil.formatPsiMethod(element as PsiMethod, true, false)
     }
 
     protected fun getDimensionServiceKey(): String {
