@@ -5911,6 +5911,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/recovery"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("namelessInJava.kt")
+            public void testNamelessInJava() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/recovery/namelessInJava.kt");
+            }
+            
             @TestMetadata("namelessMembers.kt")
             public void testNamelessMembers() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/recovery/namelessMembers.kt");

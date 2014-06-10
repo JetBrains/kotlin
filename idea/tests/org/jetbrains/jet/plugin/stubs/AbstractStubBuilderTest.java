@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.plugin.stubs;
 
-import com.intellij.lang.FileASTNode;
 import com.intellij.psi.impl.DebugUtil;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
@@ -24,12 +23,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.stubs.elements.JetFileStubBuilder;
-import org.jetbrains.jet.lang.psi.stubs.impl.PsiJetPlaceHolderStubImpl;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 
 import java.io.File;
-
-import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.NO_NAME_FOR_LAZY_RESOLVE;
 
 public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTestCase {
     protected void doTest(@NotNull String sourcePath) {
@@ -37,7 +33,7 @@ public abstract class AbstractStubBuilderTest extends LightCodeInsightFixtureTes
         JetFileStubBuilder jetStubBuilder = new JetFileStubBuilder();
         StubElement lighterTree = jetStubBuilder.buildStubTree(file);
         String stubTree = DebugUtil.stubTreeToString(lighterTree)
-                .replace(NO_NAME_FOR_LAZY_RESOLVE.asString(), "<no name>");
+                .replace(SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME.asString(), "<no name>");
         String expectedFile = sourcePath.replace(".kt", ".expected");
         JetTestUtils.assertEqualsToFile(new File(expectedFile), stubTree);
     }

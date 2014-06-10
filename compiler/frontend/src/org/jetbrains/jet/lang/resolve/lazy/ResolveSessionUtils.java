@@ -29,18 +29,13 @@ import org.jetbrains.jet.lang.psi.JetNamedDeclarationUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.name.NamePackage;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 
 import java.util.Collection;
 import java.util.Collections;
 
 public class ResolveSessionUtils {
-
-    // This name is used as a key for the case when something has no name _due to a syntactic error_
-    // Example: fun (x: Int) = 5
-    //          There's no name for this function in the PSI
-    // The name contains a GUID to avoid clashes, if a clash happens, it's not a big deal: the code does not compile anyway
-    public static final Name NO_NAME_FOR_LAZY_RESOLVE = Name.identifier("no_name_in_PSI_for_lazy_resolve_3d19d79d_1ba9_4cd0_b7f5_b46aa3cd5d40");
 
     public static final Predicate<ClassDescriptor> NON_SINGLETON_FILTER = new Predicate<ClassDescriptor>() {
         @Override
@@ -148,7 +143,7 @@ public class ResolveSessionUtils {
 
     @NotNull
     public static Name safeNameForLazyResolve(@Nullable Name name) {
-        return name != null && !name.isSpecial() ? name : NO_NAME_FOR_LAZY_RESOLVE;
+        return SpecialNames.safeIdentifier(name);
     }
 
     @Nullable
