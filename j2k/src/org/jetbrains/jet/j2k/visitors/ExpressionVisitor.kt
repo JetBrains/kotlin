@@ -243,22 +243,23 @@ class ExpressionVisitor(private val converter: Converter,
 
     private fun createNewClassExpression(expression: PsiNewExpression): Expression {
         val anonymousClass = expression.getAnonymousClass()
-        val constructor = expression.resolveMethod()
         val classReference = expression.getClassOrAnonymousClassReference()
-        val isNotConvertedClass = classReference != null && !converter.getClassIdentifiers().contains(classReference.getQualifiedName())
-        val argumentList = expression.getArgumentList()
-        var arguments = argumentList?.getExpressions() ?: array()
-        if (constructor == null || constructor.isPrimaryConstructor() || isNotConvertedClass) {
-            return NewClassExpression(converter.convertElement(classReference),
-                                      convertArguments(expression),
-                                      converter.convertExpression(expression.getQualifier()),
-                                      if (anonymousClass != null) converter.convertAnonymousClass(anonymousClass) else null)
+        var arguments = expression.getArgumentList()?.getExpressions() ?: array()
+
+        val constructor = expression.resolveMethod()
+        if (constructor != null && !constructor.isPrimaryConstructor() && converter.conversionScope.contains(constructor)) {
+            //TODO: handle anonymous class!
+            // non-primary constructor converted to factory method in class object
+            val reference = expression.getClassReference()
+            val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
+            return QualifiedExpression(Identifier(constructor.getName(), false),
+                                       MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
         }
 
-        val reference = expression.getClassReference()
-        val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
-        return QualifiedExpression(Identifier(constructor.getName(), false),
-                                   MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
+        return NewClassExpression(converter.convertElement(classReference),
+                                  convertArguments(expression),
+                                  converter.convertExpression(expression.getQualifier()),
+                                  if (anonymousClass != null) converter.convertAnonymousClass(anonymousClass) else null)
     }
 
     private fun createNewEmptyArrayWithoutInitialization(expression: PsiNewExpression): Expression {

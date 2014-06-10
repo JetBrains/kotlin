@@ -28,19 +28,11 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.j2k.Converter;
-import org.jetbrains.jet.j2k.visitors.ClassVisitor;
 
 import java.io.IOException;
 import java.util.*;
 
 public class JavaToKotlinActionUtil {
-
-    static void setClassIdentifiers(@NotNull Converter converter, @NotNull PsiFile psiFile) {
-        ClassVisitor c = new ClassVisitor();
-        psiFile.accept(c);
-        converter.setClassIdentifiers(new HashSet<String>(c.getClassIdentifiers()));
-    }
-
     @NotNull
     private static List<VirtualFile> getChildrenRecursive(@Nullable VirtualFile baseDir) {
         List<VirtualFile> result = new LinkedList<VirtualFile>();

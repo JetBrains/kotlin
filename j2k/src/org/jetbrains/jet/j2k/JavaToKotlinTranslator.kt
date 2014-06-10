@@ -25,7 +25,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiJavaFile
-import org.jetbrains.jet.j2k.visitors.ClassVisitor
 import org.jetbrains.jet.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
@@ -87,18 +86,10 @@ public object JavaToKotlinTranslator {
         return null
     }
 
-    fun setClassIdentifiers(converter: Converter, psiFile: PsiElement) {
-        val c = ClassVisitor()
-        psiFile.accept(c)
-        converter.clearClassIdentifiers()
-        converter.setClassIdentifiers(HashSet(c.classIdentifiers))
-    }
-
     fun generateKotlinCode(javaCode: String): String {
         val file = createFile(javaCode)
         if (file is PsiJavaFile) {
             val converter = Converter(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)))
-            setClassIdentifiers(converter, file)
             return prettify(converter.convertFile(file).toKotlin())
         }
         return ""

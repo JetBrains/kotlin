@@ -37,24 +37,10 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
 
     private val typeConverter = TypeConverter(settings, conversionScope)
 
-    private var classIdentifiersSet: MutableSet<String> = HashSet()
-
     private val dispatcher: Dispatcher = Dispatcher(this, typeConverter)
 
     public var methodReturnType: PsiType? = null
         private set
-
-    public fun setClassIdentifiers(identifiers: MutableSet<String>) {
-        classIdentifiersSet = identifiers
-    }
-
-    public fun getClassIdentifiers(): Set<String> {
-        return Collections.unmodifiableSet(classIdentifiersSet)
-    }
-
-    public fun clearClassIdentifiers() {
-        classIdentifiersSet.clear()
-    }
 
     public fun elementToKotlin(element: PsiElement): String
             = convertTopElement(element)?.toKotlin() ?: ""
@@ -307,9 +293,9 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
                     val containing = method.getContainingClass()
                     if (containing != null) {
                         val hasOtherJavaSuperclasses = containing.getSuperTypes().any {
-                            val canonicalText = it.getCanonicalText()
                             //TODO: correctly check for kotlin class
-                            canonicalText != JAVA_LANG_OBJECT && !getClassIdentifiers().contains(canonicalText)
+                            val `class` = it.resolve()
+                            `class` != null && `class`.getQualifiedName() != JAVA_LANG_OBJECT && !conversionScope.contains(`class`)
                         }
                         if (hasOtherJavaSuperclasses) return true
                     }

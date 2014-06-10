@@ -124,7 +124,7 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = JavaToKotlinTranslator.createFile(project, text)
         val converter = Converter(project, settings, FilesConversionScope(listOf(file)))
-        return generateKotlinCode(converter, file)
+        return converter.elementToKotlin(file)
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
@@ -140,11 +140,6 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =" + code + "}", settings, project)
         return result.replaceFirst("val o : Any\\? =", "").replaceFirst("val o : Any = ", "").replaceFirst("val o = ", "").trim()
-    }
-
-    private fun generateKotlinCode(converter: Converter, file: PsiJavaFile): String {
-        JavaToKotlinTranslator.setClassIdentifiers(converter, file)
-        return converter.elementToKotlin(file)
     }
 
     override fun getProjectJDK(): Sdk? {
