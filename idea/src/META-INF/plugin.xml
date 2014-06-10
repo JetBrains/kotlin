@@ -386,7 +386,6 @@
     <directClassInheritorsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>
     <definitionsScopedSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinDefinitionsSearcher"/>
     <annotatedElementsSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>
-    <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinLightMethodUsagesSearcher"/>
     <methodReferencesSearch implementation="org.jetbrains.jet.plugin.search.ideaExtensions.KotlinLightPropertyAccessorsReferenceSearcher"/>
 
     <exceptionFilter implementation="org.jetbrains.jet.plugin.filters.JetExceptionFilterFactory" order="first"/>
