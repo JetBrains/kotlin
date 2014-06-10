@@ -26,12 +26,8 @@ import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
-import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.BindingTrace;
-import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
+import org.jetbrains.jet.lang.resolve.*;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.kotlinSignature.TypeTransformingVisitor;
 import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.name.FqName;
@@ -78,13 +74,12 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
                         InjectorForJavaDescriptorResolverUtil.create(commonEnvironment.getProject(), trace);
 
                 BindingContext bindingContext = trace.getBindingContext();
-                JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
 
                 AlternativeSignatureErrorFindingVisitor visitor = new AlternativeSignatureErrorFindingVisitor(bindingContext, errors);
 
                 int chunkStart = chunkIndex * CLASSES_IN_CHUNK;
                 for (FqName javaClass : affectedClasses.subList(chunkStart, Math.min(chunkStart + CLASSES_IN_CHUNK, affectedClasses.size()))) {
-                    ClassDescriptor topLevelClass = javaDescriptorResolver.resolveClass(javaClass);
+                    ClassDescriptor topLevelClass = ResolvePackage.resolveTopLevelClass(injector.getModule(), javaClass);
                     PackageViewDescriptor topLevelPackage = injector.getModule().getPackage(javaClass);
                     if (topLevelClass == null) {
                         continue;
