@@ -148,7 +148,7 @@ public class ResolveSessionUtils {
 
     @NotNull
     public static Name safeNameForLazyResolve(@Nullable Name name) {
-        return name != null ? name : NO_NAME_FOR_LAZY_RESOLVE;
+        return name != null && !name.isSpecial() ? name : NO_NAME_FOR_LAZY_RESOLVE;
     }
 
     @Nullable

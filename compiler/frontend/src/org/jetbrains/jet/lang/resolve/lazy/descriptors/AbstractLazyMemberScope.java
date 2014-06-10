@@ -42,8 +42,6 @@ import org.jetbrains.jet.utils.Printer;
 
 import java.util.*;
 
-import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
-
 public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, DP extends DeclarationProvider> implements JetScope {
     protected final ResolveSession resolveSession;
     protected final BindingTrace trace;
@@ -228,19 +226,19 @@ public abstract class AbstractLazyMemberScope<D extends DeclarationDescriptor, D
         for (JetDeclaration declaration : declarations) {
             if (declaration instanceof JetClassOrObject) {
                 JetClassOrObject classOrObject = (JetClassOrObject) declaration;
-                result.addAll(classDescriptors.invoke(safeNameForLazyResolve(classOrObject.getNameAsName())));
+                result.addAll(classDescriptors.invoke(classOrObject.getNameAsSafeName()));
             }
             else if (declaration instanceof JetFunction) {
                 JetFunction function = (JetFunction) declaration;
-                result.addAll(getFunctions(safeNameForLazyResolve(function)));
+                result.addAll(getFunctions(function.getNameAsSafeName()));
             }
             else if (declaration instanceof JetProperty) {
                 JetProperty property = (JetProperty) declaration;
-                result.addAll(getProperties(safeNameForLazyResolve(property)));
+                result.addAll(getProperties(property.getNameAsSafeName()));
             }
             else if (declaration instanceof JetParameter) {
                 JetParameter parameter = (JetParameter) declaration;
-                result.addAll(getProperties(safeNameForLazyResolve(parameter)));
+                result.addAll(getProperties(parameter.getNameAsSafeName()));
             }
             else if (declaration instanceof JetScript) {
                 result.addAll(classDescriptors.invoke(ScriptNameUtil.classNameForScript((JetScript) declaration).shortName()));

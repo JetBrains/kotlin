@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
-import org.jetbrains.jet.lang.psi.JetFile;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
 import org.jetbrains.jet.lang.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.jet.lang.resolve.name.Name;
@@ -43,13 +41,6 @@ public class LazyPackageMemberScope extends AbstractLazyMemberScope<PackageFragm
     @Override
     public PackageViewDescriptor getPackage(@NotNull Name name) {
         return null;
-    }
-
-    @Override
-    public ClassifierDescriptor getClassifier(@NotNull Name name) {
-        // TODO: creating an FqName every time may be a performance problem
-        Name actualName = resolveSession.resolveClassifierAlias(DescriptorUtils.getFqNameSafe(thisDescriptor), name);
-        return super.getClassifier(actualName);
     }
 
     @NotNull

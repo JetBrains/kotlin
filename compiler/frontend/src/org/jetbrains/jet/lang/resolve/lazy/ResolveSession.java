@@ -48,16 +48,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve;
-
 public class ResolveSession implements KotlinCodeAnalyzer {
-    private static final Function<FqName, Name> NO_ALIASES = new Function<FqName, Name>() {
-        @Override
-        public Name fun(FqName name) {
-            return null;
-        }
-    };
-
     private final LazyResolveStorageManager storageManager;
     private final ExceptionTracker exceptionTracker;
 
@@ -65,8 +56,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
 
     private final BindingTrace trace;
     private final DeclarationProviderFactory declarationProviderFactory;
-
-    private final Function<FqName, Name> classifierAliases;
 
     private final MemoizedFunctionToNullable<FqName, LazyPackageDescriptor> packages;
     private final PackageFragmentProvider packageFragmentProvider;
@@ -131,8 +120,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
         this.exceptionTracker = globalContext.getExceptionTracker();
         this.trace = lockBasedLazyResolveStorageManager.createSafeTrace(delegationTrace);
         this.module = rootDescriptor;
-
-        this.classifierAliases = NO_ALIASES;
 
         this.packages = storageManager.createMemoizedFunctionWithNullableValues(new MemoizedFunctionToNullable<FqName, LazyPackageDescriptor>() {
             @Nullable
@@ -257,7 +244,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             }
         }
         JetScope resolutionScope = getScopeProvider().getResolutionScopeForDeclaration(classOrObject);
-        Name name = safeNameForLazyResolve(classOrObject.getNameAsName());
+        Name name = classOrObject.getNameAsSafeName();
 
         // Why not use the result here. Because it may be that there is a redeclaration:
         //     class A {} class A { fun foo(): A<completion here>}
@@ -376,7 +363,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                     throw new IllegalStateException("Unknown owner kind for a type parameter: " + ownerDescriptor);
                 }
 
-                Name name = ResolveSessionUtils.safeNameForLazyResolve(parameter.getNameAsName());
+                Name name = parameter.getNameAsSafeName();
                 for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
                     if (typeParameterDescriptor.getName().equals(name)) {
                         return typeParameterDescriptor;
@@ -389,7 +376,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @Override
             public DeclarationDescriptor visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
                 JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(function);
-                scopeForDeclaration.getFunctions(safeNameForLazyResolve(function));
+                scopeForDeclaration.getFunctions(function.getNameAsSafeName());
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, function);
             }
 
@@ -401,7 +388,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
                     if (parameter.hasValOrVarNode()) {
-                        classDescriptor.getDefaultType().getMemberScope().getProperties(safeNameForLazyResolve(parameter));
+                        classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName());
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }
                     else {
@@ -417,7 +404,7 @@ public class ResolveSession implements KotlinCodeAnalyzer {
             @Override
             public DeclarationDescriptor visitProperty(@NotNull JetProperty property, Void data) {
                 JetScope scopeForDeclaration = getScopeProvider().getResolutionScopeForDeclaration(property);
-                scopeForDeclaration.getProperties(safeNameForLazyResolve(property));
+                scopeForDeclaration.getProperties(property.getNameAsSafeName());
                 return getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
             }
 
@@ -432,16 +419,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                                             JetPsiUtil.getElementTextWithContext(declaration));
         }
         return result;
-    }
-
-    @NotNull
-    public Name resolveClassifierAlias(@NotNull FqName packageName, @NotNull Name alias) {
-        // TODO: creating a new FqName object every time...
-        Name actualName = classifierAliases.fun(packageName.child(alias));
-        if (actualName == null) {
-            return alias;
-        }
-        return actualName;
     }
 
     @NotNull

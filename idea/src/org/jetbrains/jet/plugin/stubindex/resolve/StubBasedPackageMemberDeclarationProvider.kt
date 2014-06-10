@@ -29,6 +29,7 @@ import org.jetbrains.jet.plugin.stubindex.JetTopLevelPropertiesFqnNameIndex
 import org.jetbrains.jet.plugin.stubindex.PackageIndexUtil
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -66,7 +67,7 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     private fun childName(name: Name): String {
-        return fqName.child(name).asString()
+        return fqName.child(ResolveSessionUtils.safeNameForLazyResolve(name)).asString()
     }
 }
 

@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.resolve.DescriptorResolver;
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.jet.lang.resolve.lazy.LazyEntity;
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.lexer.JetTokens;
@@ -45,7 +44,7 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
         super(
                 resolveSession.getStorageManager(),
                 containingDeclaration,
-                ResolveSessionUtils.safeNameForLazyResolve(jetTypeParameter.getNameAsName()),
+                jetTypeParameter.getNameAsSafeName(),
                 jetTypeParameter.getVariance(),
                 jetTypeParameter.hasModifier(JetTokens.REIFIED_KEYWORD),
                 index

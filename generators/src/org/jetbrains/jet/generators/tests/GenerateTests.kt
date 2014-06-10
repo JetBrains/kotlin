@@ -278,6 +278,7 @@ fun main(args: Array<String>) {
         testClass(javaClass<AbstractJetPsiCheckerTest>()) {
             model("checker", recursive = false)
             model("checker/regression")
+            model("checker/recovery")
             model("checker/rendering")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")

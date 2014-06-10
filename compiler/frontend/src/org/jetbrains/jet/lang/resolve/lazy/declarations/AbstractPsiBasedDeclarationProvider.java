@@ -23,6 +23,7 @@ import com.google.common.collect.Multimap;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.lazy.ResolveSessionUtils;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassInfoUtil;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.jet.lang.resolve.lazy.data.JetScriptInfo;
@@ -107,18 +108,18 @@ public abstract class AbstractPsiBasedDeclarationProvider implements Declaration
     @NotNull
     @Override
     public List<JetNamedFunction> getFunctionDeclarations(@NotNull Name name) {
-        return Lists.newArrayList(index.invoke().functions.get(name));
+        return Lists.newArrayList(index.invoke().functions.get(ResolveSessionUtils.safeNameForLazyResolve(name)));
     }
 
     @NotNull
     @Override
     public List<JetProperty> getPropertyDeclarations(@NotNull Name name) {
-        return Lists.newArrayList(index.invoke().properties.get(name));
+        return Lists.newArrayList(index.invoke().properties.get(ResolveSessionUtils.safeNameForLazyResolve(name)));
     }
 
     @NotNull
     @Override
     public Collection<JetClassLikeInfo> getClassOrObjectDeclarations(@NotNull Name name) {
-        return index.invoke().classesAndObjects.get(name);
+        return index.invoke().classesAndObjects.get(ResolveSessionUtils.safeNameForLazyResolve(name));
     }
 }
