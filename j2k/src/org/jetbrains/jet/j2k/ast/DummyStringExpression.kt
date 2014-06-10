@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast
 
-
-open class DummyStringExpression(val string: String) : Expression() {
+class DummyStringExpression(val string: String) : Expression() {
     override fun toKotlin(): String = string
 }

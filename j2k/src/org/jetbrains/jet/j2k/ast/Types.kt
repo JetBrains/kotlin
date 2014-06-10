@@ -75,13 +75,13 @@ trait Type : Element {
     override fun toString(): String = toKotlin()
 }
 
-class ClassType(val `type`: Identifier, val parameters: List<Element>, nullability: Nullability, settings: ConverterSettings)
+class ClassType(val `type`: Identifier, val typeArgs: List<Element>, nullability: Nullability, settings: ConverterSettings)
   : MayBeNullableType(nullability, settings) {
 
     override fun toKotlin(): String {
         // TODO change to map() when KT-2051 is fixed
         val parametersToKotlin = ArrayList<String>()
-        for (param in parameters) {
+        for (param in typeArgs) {
             parametersToKotlin.add(param.toKotlin())
         }
         var params: String = if (parametersToKotlin.size() == 0)
@@ -92,8 +92,8 @@ class ClassType(val `type`: Identifier, val parameters: List<Element>, nullabili
     }
 
 
-    override fun toNotNullType(): Type = ClassType(`type`, parameters, Nullability.NotNull, settings)
-    override fun toNullableType(): Type = ClassType(`type`, parameters, Nullability.Nullable, settings)
+    override fun toNotNullType(): Type = ClassType(`type`, typeArgs, Nullability.NotNull, settings)
+    override fun toNullableType(): Type = ClassType(`type`, typeArgs, Nullability.Nullable, settings)
 }
 
 class ArrayType(val elementType: Type, nullability: Nullability, settings: ConverterSettings)

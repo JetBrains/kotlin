@@ -16,14 +16,9 @@
 
 package org.jetbrains.jet.j2k.ast
 
-open class ArrayWithoutInitializationExpression(val `type`: Type, val expressions: List<Expression>) : Expression() {
-    override fun toKotlin(): String {
-        if (`type` is ArrayType) {
-            return constructInnerType(`type`, expressions)
-        }
-
-        return getConstructorName(`type`, expressions.size() != 0)
-    }
+open class ArrayWithoutInitializationExpression(val `type`: ArrayType, val expressions: List<Expression>) : Expression() {
+    override fun toKotlin(): String
+            = constructInnerType(`type`, expressions)
 
     private fun constructInnerType(hostType: ArrayType, expressions: List<Expression>): String {
         if (expressions.size() == 1) {
@@ -38,30 +33,21 @@ open class ArrayWithoutInitializationExpression(val `type`: Type, val expression
         return getConstructorName(hostType, expressions.size() != 0)
     }
 
-    class object {
-        private open fun oneDim(`type`: Type, size: Expression): String {
-            return oneDim(`type`, size, "")
-        }
+    private fun oneDim(`type`: ArrayType, size: Expression, init: String = ""): String {
+        return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin() + init.withPrefix(", ") + ")"
+    }
 
-        private open fun oneDim(`type`: Type, size: Expression, init: String): String {
-            return getConstructorName(`type`, !init.isEmpty()) + "(" + size.toKotlin() + init.withPrefix(", ") + ")"
-        }
-
-        private open fun getConstructorName(`type`: Type, hasInit: Boolean): String {
-            return if (`type` is ArrayType)
-                when (`type`.elementType) {
-                    is PrimitiveType ->
-                        `type`.toNotNullType().toKotlin()
-                    is ArrayType ->
-                        if (hasInit)
-                            `type`.toNotNullType().toKotlin()
-                        else
-                            "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
-                    else ->
-                        "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
-                }
-            else
+    private fun getConstructorName(`type`: ArrayType, hasInit: Boolean): String {
+        return when (`type`.elementType) {
+            is PrimitiveType ->
                 `type`.toNotNullType().toKotlin()
+            is ArrayType ->
+                if (hasInit)
+                    `type`.toNotNullType().toKotlin()
+                else
+                    "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
+            else ->
+                "arrayOfNulls<" + `type`.elementType.toKotlin() + ">"
         }
     }
 }

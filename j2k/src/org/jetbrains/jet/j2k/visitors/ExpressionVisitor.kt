@@ -231,10 +231,12 @@ class ExpressionVisitor(private val converter: Converter,
 
     override fun visitNewExpression(expression: PsiNewExpression) {
         if (expression.getArrayInitializer() != null) {
-            result = createNewEmptyArray(expression)
+            result = converter.convertExpression(expression.getArrayInitializer())
         }
-        else if (expression.getArrayDimensions().size > 0) {
-            result = createNewEmptyArrayWithoutInitialization(expression)
+        else if (expression.getArrayDimensions().size > 0 && expression.getType() is PsiArrayType) {
+            result = ArrayWithoutInitializationExpression(
+                    typeConverter.convertType(expression.getType(), Nullability.NotNull) as ArrayType,
+                    converter.convertExpressions(expression.getArrayDimensions()))
         }
         else {
             result = createNewClassExpression(expression)
@@ -260,16 +262,6 @@ class ExpressionVisitor(private val converter: Converter,
                                   convertArguments(expression),
                                   converter.convertExpression(expression.getQualifier()),
                                   if (anonymousClass != null) converter.convertAnonymousClass(anonymousClass) else null)
-    }
-
-    private fun createNewEmptyArrayWithoutInitialization(expression: PsiNewExpression): Expression {
-        return ArrayWithoutInitializationExpression(
-                typeConverter.convertType(expression.getType(), Nullability.NotNull),
-                converter.convertExpressions(expression.getArrayDimensions()))
-    }
-
-    private fun createNewEmptyArray(expression: PsiNewExpression): Expression {
-        return converter.convertExpression(expression.getArrayInitializer())
     }
 
     override fun visitParenthesizedExpression(expression: PsiParenthesizedExpression) {
