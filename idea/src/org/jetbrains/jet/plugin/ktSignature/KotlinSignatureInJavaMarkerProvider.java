@@ -37,12 +37,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaBindingContext;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassDescriptor;
-import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.java.descriptor.JavaClassStaticsPackageFragmentDescriptor;
+import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaClassImpl;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.plugin.JetIcons;
@@ -137,8 +137,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return null;
         }
 
-        FqName classFqName = new FqName(qualifiedName);
-        JetScope memberScope = getScopeForMember(javaDescriptorResolver, classFqName, member);
+        JetScope memberScope = getScopeForMember(javaDescriptorResolver, member, containingClass);
 
         if (memberScope == null) {
             return null;
@@ -149,24 +148,20 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
     @Nullable
     private static JetScope getScopeForMember(
             @NotNull JavaDescriptorResolver javaDescriptorResolver,
-            @NotNull FqName classFqName,
-            @NotNull PsiMember member
+            @NotNull PsiMember member,
+            @NotNull PsiClass containingClass
     ) {
+        ClassDescriptor klass = javaDescriptorResolver.resolveClass(new JavaClassImpl(containingClass));
+        if (!(klass instanceof JavaClassDescriptor)) {
+            return null;
+        }
+        JavaClassDescriptor javaClassDescriptor = (JavaClassDescriptor) klass;
         if (member.hasModifierProperty(PsiModifier.STATIC)) {
-            PackageFragmentDescriptor packageFragment = javaDescriptorResolver.getPackageFragment(classFqName);
-            if (packageFragment == null) {
-                return null;
-            }
-
-            return packageFragment.getMemberScope();
+            JavaClassStaticsPackageFragmentDescriptor correspondingPackageFragment = javaClassDescriptor.getCorrespondingPackageFragment();
+            return correspondingPackageFragment != null ? correspondingPackageFragment.getMemberScope() : null;
         }
         else {
-            ClassDescriptor klass = javaDescriptorResolver.resolveClass(classFqName);
-            if (klass == null) {
-                return null;
-            }
-
-            return klass.getDefaultType().getMemberScope();
+            return javaClassDescriptor.getDefaultType().getMemberScope();
         }
     }
 
