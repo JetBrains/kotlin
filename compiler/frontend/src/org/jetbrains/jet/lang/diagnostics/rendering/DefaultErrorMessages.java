@@ -419,6 +419,7 @@ public class DefaultErrorMessages {
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(CONFLICTING_OVERLOADS, "''{0}'' is already defined in {1}", COMPACT_WITH_MODIFIERS, STRING);
+        MAP.put(ILLEGAL_PLATFORM_NAME, "Illegal platform name: ''{0}''", STRING);
 
         MAP.put(FUNCTION_EXPECTED, "Expression ''{0}''{1} cannot be invoked as a function. The function 'invoke()' is not found", ELEMENT_TEXT, new Renderer<JetType>() {
             @NotNull

@@ -55,6 +55,11 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("illegalPlatformName.kt")
+            public void testIllegalPlatformName() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/illegalPlatformName.kt");
+            }
+            
             @TestMetadata("platformName.kt")
             public void testPlatformName() throws Exception {
                 doTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/platformName.kt");

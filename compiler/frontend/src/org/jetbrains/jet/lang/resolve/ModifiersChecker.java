@@ -28,7 +28,9 @@ import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.diagnostics.Errors;
 import org.jetbrains.jet.lang.psi.*;
+import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lexer.JetModifierKeywordToken;
 
 import java.util.Collection;
@@ -36,6 +38,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import static org.jetbrains.jet.lang.diagnostics.Errors.ILLEGAL_MODIFIER;
+import static org.jetbrains.jet.lang.diagnostics.Errors.ILLEGAL_PLATFORM_NAME;
 import static org.jetbrains.jet.lang.diagnostics.Errors.INAPPLICABLE_ANNOTATION;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
@@ -152,15 +155,6 @@ public class ModifiersChecker {
     }
 
     private void checkPlatformNameApplicability(@NotNull DeclarationDescriptor descriptor) {
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor)) {
-            AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
-            if (annotation != null) {
-                JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
-                if (annotationEntry != null) {
-                    trace.report(INAPPLICABLE_ANNOTATION.on(annotationEntry));
-                }
-            }
-        }
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             if (propertyDescriptor.getGetter() != null) {
@@ -168,6 +162,27 @@ public class ModifiersChecker {
             }
             if (propertyDescriptor.getSetter() != null) {
                 checkPlatformNameApplicability(propertyDescriptor.getSetter());
+            }
+        }
+
+        AnnotationDescriptor annotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
+        if (annotation == null) return;
+
+        JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
+        if (annotationEntry == null) return;
+
+        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor)) {
+            trace.report(INAPPLICABLE_ANNOTATION.on(annotationEntry));
+        }
+
+        Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
+        if (!values.isEmpty()) {
+            CompileTimeConstant<?> name = values.iterator().next();
+            if (name instanceof StringValue) {
+                String value = ((StringValue) name).getValue();
+                if (value == null || !Name.isValidIdentifier(value)) {
+                    trace.report(ILLEGAL_PLATFORM_NAME.on(annotationEntry, String.valueOf(value)));
+                }
             }
         }
     }

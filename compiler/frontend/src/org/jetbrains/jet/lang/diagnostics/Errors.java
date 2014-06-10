@@ -205,6 +205,8 @@ public interface Errors {
 
     DiagnosticFactory2<JetDeclaration, CallableMemberDescriptor, String> CONFLICTING_OVERLOADS = DiagnosticFactory2.create(ERROR, DECLARATION);
 
+    DiagnosticFactory1<JetAnnotationEntry, String> ILLEGAL_PLATFORM_NAME = DiagnosticFactory1.create(ERROR);
+
     DiagnosticFactory0<JetNamedDeclaration> NON_FINAL_MEMBER_IN_FINAL_CLASS = DiagnosticFactory0.create(WARNING, modifierSetPosition(
             JetTokens.OPEN_KEYWORD));
 
