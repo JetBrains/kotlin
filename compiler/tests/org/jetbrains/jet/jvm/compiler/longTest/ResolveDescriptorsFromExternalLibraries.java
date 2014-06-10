@@ -35,8 +35,9 @@ import org.jetbrains.jet.config.CompilerConfiguration;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolver;
 import org.jetbrains.jet.di.InjectorForJavaDescriptorResolverUtil;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.resolve.BindingTraceContext;
-import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
+import org.jetbrains.jet.lang.resolve.ResolvePackage;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.utils.PathUtil;
 
@@ -169,7 +170,7 @@ public class ResolveDescriptorsFromExternalLibraries {
 
         InjectorForJavaDescriptorResolver injector = InjectorForJavaDescriptorResolverUtil.create(
                 jetCoreEnvironment.getProject(), new BindingTraceContext());
-        JavaDescriptorResolver javaDescriptorResolver = injector.getJavaDescriptorResolver();
+        ModuleDescriptor moduleDescriptor = injector.getModule();
 
         boolean hasErrors;
         try {
@@ -201,7 +202,7 @@ public class ResolveDescriptorsFromExternalLibraries {
                 String className = entryName.substring(0, entryName.length() - ".class".length()).replace("/", ".");
 
                 try {
-                    ClassDescriptor clazz = javaDescriptorResolver.resolveClass(new FqName(className));
+                    ClassDescriptor clazz = ResolvePackage.resolveTopLevelClass(moduleDescriptor, new FqName(className));
                     if (clazz == null) {
                         throw new IllegalStateException("class not found by name " + className + " in " + libDescription);
                     }
