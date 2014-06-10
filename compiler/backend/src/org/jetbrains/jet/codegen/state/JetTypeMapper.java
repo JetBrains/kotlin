@@ -680,6 +680,11 @@ public class JetTypeMapper {
     }
 
     private void writeFormalTypeParameter(@NotNull TypeParameterDescriptor typeParameterDescriptor, @NotNull BothSignatureWriter sw) {
+        if (classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && typeParameterDescriptor.getName().isSpecial()) {
+            // If a type parameter has no name, the code below fails, but it should recover in case of light classes
+            return;
+        }
+
         sw.writeFormalTypeParameter(typeParameterDescriptor.getName().asString());
 
         classBound:
