@@ -28,7 +28,6 @@ fun foo(b: B) : Int {
 b                    <v1>   NEW()
 object : A by b {}   <v2>   NEW()    
 o                    <v3>   NEW()    
-foo                  <v4>   NEW(<v3>)
-foo()                <v4>   COPY     
-o.foo()              <v4>   COPY     
+foo()                <v4>   NEW(<v3>)
+o.foo()              <v4>   COPY
 =====================

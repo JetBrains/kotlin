@@ -15,7 +15,6 @@ fun foo() {
 fun local(x: Int) = x + b
 ---------------------
 x       <v1>   NEW()
-+       <v3>   NEW(<v1>, <v2>)
 b       <v2>   NEW()
-x + b   <v3>   COPY
+x + b   <v3>   NEW(<v1>, <v2>)
 =====================

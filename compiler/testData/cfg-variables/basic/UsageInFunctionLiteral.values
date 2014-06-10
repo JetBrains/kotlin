@@ -17,12 +17,10 @@ fun foo() {
     }
 ---------------------
 x                      <v1>   NEW()
-+                      <v3>   NEW(<v1>, <v2>)
-a                      <v2>   NEW()          
-x + a                  <v3>   COPY           
-use                    <v5>   NEW(<v4>)      
+a                      <v2>   NEW()
+x + a                  <v3>   NEW(<v1>, <v2>)
 a                      <v4>   NEW()          
-use(a)                 <v5>   COPY           
+use(a)                 <v5>   NEW(<v4>)
 val y = x + a use(a)   <v5>   COPY           
 =====================
 == use ==

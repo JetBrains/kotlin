@@ -103,13 +103,13 @@ public interface JetControlFlowBuilder {
     void loadUnit(@NotNull JetExpression expression);
 
     @NotNull
-    ValuedInstruction loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
+    InstructionWithValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant);
     @NotNull
-    ValuedInstruction createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
+    InstructionWithValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression);
     @NotNull
-    ValuedInstruction createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
+    InstructionWithValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression);
     @NotNull
-    ValuedInstruction loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
+    InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues);
 
     @NotNull
     MagicInstruction magic(
@@ -130,14 +130,16 @@ public interface JetControlFlowBuilder {
     ReadValueInstruction readThis(@NotNull JetExpression expression, @Nullable ReceiverParameterDescriptor parameterDescriptor);
     @NotNull
     ReadValueInstruction readVariable(
-            @NotNull JetExpression expression,
+            @NotNull JetElement instructionElement,
+            @NotNull JetExpression valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues
     );
 
     @NotNull
     CallInstruction call(
-            @NotNull JetExpression expression,
+            @NotNull JetElement instructionElement,
+            @Nullable JetExpression valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments

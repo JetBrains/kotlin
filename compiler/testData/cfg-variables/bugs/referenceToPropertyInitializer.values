@@ -12,16 +12,14 @@ class TestFunctionLiteral {
         sum(x - 1) + x
     }
 ---------------------
-sum              <v5>   NEW(<v1>, <v4>)
+sum              <v1>   NEW()
 x                <v2>   NEW()          
--                <v4>   NEW(<v2>, <v3>)
-1                <v3>   NEW()          
-x - 1            <v4>   COPY           
-sum(x - 1)       <v5>   COPY           
-+                <v7>   NEW(<v5>, <v6>)
+1                <v3>   NEW()
+x - 1            <v4>   NEW(<v2>, <v3>)
+sum(x - 1)       <v5>   NEW(<v1>, <v4>)
 x                <v6>   NEW()          
-sum(x - 1) + x   <v7>   COPY           
-sum(x - 1) + x   <v7>   COPY           
+sum(x - 1) + x   <v7>   NEW(<v5>, <v6>)
+sum(x - 1) + x   <v7>   COPY
 =====================
 == A ==
 open class A(val a: A)
@@ -56,7 +54,6 @@ class TestOther {
 }
 ---------------------
 x       <v0>   NEW()          
-+       <v2>   NEW(<v0>, <v1>)
-1       <v1>   NEW()          
-x + 1   <v2>   COPY           
+1       <v1>   NEW()
+x + 1   <v2>   NEW(<v0>, <v1>)
 =====================

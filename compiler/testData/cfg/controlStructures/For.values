@@ -6,12 +6,10 @@ fun t1() {
 }
 ---------------------
 1               <v0>   NEW()          
-..              <v2>   NEW(<v0>, <v1>)
-2               <v1>   NEW()          
-1..2            <v2>   COPY
-doSmth          <v5>   NEW(<v4>)      
+2               <v1>   NEW()
+1..2            <v2>   NEW(<v0>, <v1>)
 i               <v4>   NEW()          
-doSmth(i)       <v5>   COPY           
+doSmth(i)       <v5>   NEW(<v4>)
 { doSmth(i) }   <v5>   COPY           
 =====================
 == doSmth ==

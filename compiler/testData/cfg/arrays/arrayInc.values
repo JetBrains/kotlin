@@ -6,7 +6,6 @@ fun foo(a: Array<Int>) {
 a            <v5>   NEW()
 0            <v6>   NEW()
 a[0]         <v3>   NEW(<v1>, <v2>)
-++           <v4>   NEW(<v3>)
 a[0]++       <v7>   NEW(<v5>, <v6>, <v4>)
 { a[0]++ }   <v7>   COPY
 =====================

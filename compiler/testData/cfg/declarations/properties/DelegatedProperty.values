@@ -12,8 +12,7 @@ fun get(_this: Any, p: PropertyMetadata): Int = 0
 == a ==
 val a = Delegate()
 ---------------------
-Delegate     <v0>   NEW()
-Delegate()   <v0>   COPY 
+Delegate()   <v0>   NEW()
 =====================
 == b ==
 val b by a

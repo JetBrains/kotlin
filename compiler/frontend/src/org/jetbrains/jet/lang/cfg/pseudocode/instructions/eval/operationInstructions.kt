@@ -82,13 +82,14 @@ public class CallInstruction private(
     class object {
         fun create (
                 element: JetElement,
+                valueElement: JetElement?,
                 lexicalScope: LexicalScope,
                 resolvedCall: ResolvedCall<*>,
                 receiverValues: Map<PseudoValue, ReceiverValue>,
                 arguments: Map<PseudoValue, ValueParameterDescriptor>,
                 factory: PseudoValueFactory?
         ): CallInstruction =
-                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory) as CallInstruction
+                CallInstruction(element, lexicalScope, resolvedCall, receiverValues, arguments).setResult(factory, valueElement) as CallInstruction
     }
 }
 
@@ -106,10 +107,6 @@ public class MagicInstruction(
         inputValues: List<PseudoValue>,
         val expectedTypes: Map<PseudoValue, TypePredicate>
 ) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
-    protected fun setResult(valueElement: JetElement?, factory: PseudoValueFactory?): OperationInstruction {
-        return setResult(factory?.newValue(valueElement, this))
-    }
-
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitMagic(this)
     }

@@ -28,9 +28,8 @@ fun t2() {
 ---------------------
 1       <v0>   NEW()          
 2       <v1>   NEW()          
->       <v3>   NEW(<v1>, <v2>)
-3       <v2>   NEW()          
-2 > 3   <v3>   COPY           
+3       <v2>   NEW()
+2 > 3   <v3>   NEW(<v1>, <v2>)
 2       <v4>   NEW()          
 { 2 }   <v4>   COPY           
 =====================
@@ -65,9 +64,8 @@ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v1>   COPY
     }
 ---------------------
 2       <v0>   NEW()          
->       <v2>   NEW(<v0>, <v1>)
-3       <v1>   NEW()          
-2 > 3   <v2>   COPY           
+3       <v1>   NEW()
+2 > 3   <v2>   NEW(<v0>, <v1>)
 =====================
 == t4 ==
 fun t4() {
@@ -101,9 +99,8 @@ fun t4() {
 ---------------------
 1       <v0>   NEW()          
 2       <v1>   NEW()          
->       <v3>   NEW(<v1>, <v2>)
-3       <v2>   NEW()          
-2 > 3   <v3>   COPY           
+3       <v2>   NEW()
+2 > 3   <v3>   NEW(<v1>, <v2>)
 2       <v4>   NEW()          
 { 2 }   <v4>   COPY           
 =====================
@@ -124,9 +121,8 @@ fun t5() {
 true    <v0>   NEW()          
 1       <v1>   NEW()          
 2       <v2>   NEW()          
->       <v4>   NEW(<v2>, <v3>)
-3       <v3>   NEW()          
-2 > 3   <v4>   COPY           
+3       <v3>   NEW()
+2 > 3   <v4>   NEW(<v2>, <v3>)
 2       <v5>   NEW()          
 { 2 }   <v5>   COPY           
 =====================
@@ -148,9 +144,8 @@ fun t6() {
 true                                                                       <v0>   NEW()          
 1                                                                          <v1>   NEW()          
 2                                                                          <v2>   NEW()          
->                                                                          <v4>   NEW(<v2>, <v3>)
-3                                                                          <v3>   NEW()          
-2 > 3                                                                      <v4>   COPY           
+3                                                                          <v3>   NEW()
+2 > 3                                                                      <v4>   NEW(<v2>, <v3>)
 5                                                                          <v5>   NEW()          
 { @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v5>   COPY           
 2                                                                          <v6>   NEW()          
@@ -175,9 +170,8 @@ fun t7() {
 true    <v0>   NEW()          
 1       <v1>   NEW()          
 2       <v2>   NEW()          
->       <v4>   NEW(<v2>, <v3>)
-3       <v3>   NEW()          
-2 > 3   <v4>   COPY           
+3       <v3>   NEW()
+2 > 3   <v4>   NEW(<v2>, <v3>)
 2       <v5>   NEW()          
 { 2 }   <v5>   COPY           
 =====================
@@ -196,14 +190,12 @@ fun t8(a : Int) {
 }
 ---------------------
 1       <v1>   NEW()
-..      <v3>   NEW(<v1>, <v2>)
 a       <v2>   NEW()
-1..a    <v3>   COPY
+1..a    <v3>   NEW(<v1>, <v2>)
 1       <v5>   NEW()
 2       <v6>   NEW()
->       <v8>   NEW(<v6>, <v7>)
 3       <v7>   NEW()
-2 > 3   <v8>   COPY
+2 > 3   <v8>   NEW(<v6>, <v7>)
 2       <v9>   NEW()
 { 2 }   <v9>   COPY
 =====================
@@ -223,14 +215,12 @@ fun t9(a : Int) {
 }
 ---------------------
 1                                                                                 <v1>    NEW()
-..                                                                                <v3>    NEW(<v1>, <v2>)
-a                                                                                 <v2>    NEW()          
-1..a                                                                              <v3>    COPY
+a                                                                                 <v2>    NEW()
+1..a                                                                              <v3>    NEW(<v1>, <v2>)
 1                                                                                 <v5>    NEW()          
 2                                                                                 <v6>    NEW()          
->                                                                                 <v8>    NEW(<v6>, <v7>)
-3                                                                                 <v7>    NEW()          
-2 > 3                                                                             <v8>    COPY           
+3                                                                                 <v7>    NEW()
+2 > 3                                                                             <v8>    NEW(<v6>, <v7>)
 5                                                                                 <v9>    NEW()          
 { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v9>    COPY           
 2                                                                                 <v10>   NEW()          
@@ -253,14 +243,12 @@ fun t10(a : Int) {
 }
 ---------------------
 1       <v1>   NEW()
-..      <v3>   NEW(<v1>, <v2>)
 a       <v2>   NEW()
-1..a    <v3>   COPY
+1..a    <v3>   NEW(<v1>, <v2>)
 1       <v5>   NEW()
 2       <v6>   NEW()
->       <v8>   NEW(<v6>, <v7>)
 3       <v7>   NEW()
-2 > 3   <v8>   COPY
+2 > 3   <v8>   NEW(<v6>, <v7>)
 2       <v9>   NEW()
 { 2 }   <v9>   COPY
 =====================
@@ -288,9 +276,8 @@ fun t12() : Int {
 }
 ---------------------
 1               <v0>   NEW()    
-doSmth          <v2>   NEW(<v1>)
-3               <v1>   NEW()    
-doSmth(3)       <v2>   COPY     
+3               <v1>   NEW()
+doSmth(3)       <v2>   NEW(<v1>)
 { doSmth(3) }   <v2>   COPY     
 =====================
 == t13 ==
@@ -307,13 +294,11 @@ fun t13() : Int {
 }
 ---------------------
 1                                                                                                   <v0>   NEW()    
-doSmth                                                                                              <v5>   NEW(<v4>)
-2                                                                                                   <v4>   NEW()    
-doSmth(2)                                                                                           <v5>   COPY     
+2                                                                                                   <v4>   NEW()
+doSmth(2)                                                                                           <v5>   NEW(<v4>)
 { doSmth(2) }                                                                                       <v5>   COPY     
-doSmth                                                                                              <v2>   NEW(<v1>)
-3                                                                                                   <v1>   NEW()    
-doSmth(3)                                                                                           <v2>   COPY     
+3                                                                                                   <v1>   NEW()
+doSmth(3)                                                                                           <v2>   NEW(<v1>)
 { doSmth(3) }                                                                                       <v2>   COPY     
 try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) }       <v5>   COPY     
 { try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } finally { doSmth(3) } }   <v5>   COPY     
@@ -329,9 +314,8 @@ fun t14() : Int {
 }
 ---------------------
 1                                                                             <v0>   NEW()    
-doSmth                                                                        <v3>   NEW(<v2>)
-2                                                                             <v2>   NEW()    
-doSmth(2)                                                                     <v3>   COPY     
+2                                                                             <v2>   NEW()
+doSmth(2)                                                                     <v3>   NEW(<v2>)
 { doSmth(2) }                                                                 <v3>   COPY     
 try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) }       <v3>   COPY     
 { try { return 1 } catch (e: UnsupportedOperationException) { doSmth(2) } }   <v3>   COPY     
@@ -351,9 +335,8 @@ fun t15() : Int {
 ---------------------
 1               <v0>   NEW()
 2               <v4>   NEW()
-doSmth          <v2>   NEW(<v1>)
 3               <v1>   NEW()
-doSmth(3)       <v2>   COPY
+doSmth(3)       <v2>   NEW(<v1>)
 { doSmth(3) }   <v2>   COPY
 =====================
 == t16 ==
@@ -369,14 +352,12 @@ fun t16() : Int {
     }
 }
 ---------------------
-doSmth                                                                                              <v1>   NEW(<v0>)
-1                                                                                                   <v0>   NEW()    
-doSmth(1)                                                                                           <v1>   COPY     
+1                                                                                                   <v0>   NEW()
+doSmth(1)                                                                                           <v1>   NEW(<v0>)
 { doSmth(1) }                                                                                       <v1>   COPY     
 2                                                                                                   <v3>   NEW()
-doSmth                                                                                              <v5>   NEW(<v4>)
-3                                                                                                   <v4>   NEW()    
-doSmth(3)                                                                                           <v5>   COPY     
+3                                                                                                   <v4>   NEW()
+doSmth(3)                                                                                           <v5>   NEW(<v4>)
 { doSmth(3) }                                                                                       <v5>   COPY     
 try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) }       <v1>   COPY     
 { try { doSmth(1) } catch (e: UnsupportedOperationException) { return 2 } finally { doSmth(3) } }   <v1>   COPY     

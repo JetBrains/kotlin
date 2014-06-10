@@ -32,8 +32,8 @@ public class ReadValueInstruction private (
         receiverValues: Map<PseudoValue, ReceiverValue>,
         private var _outputValue: PseudoValue?
 ) : AccessValueInstruction(element, lexicalScope, target, receiverValues), InstructionWithValue {
-    private fun newResultValue(factory: PseudoValueFactory) {
-        _outputValue = factory.newValue(element, this)
+    private fun newResultValue(factory: PseudoValueFactory, valueElement: JetElement) {
+        _outputValue = factory.newValue(valueElement, this)
     }
 
     override val inputValues: List<PseudoValue>
@@ -61,13 +61,14 @@ public class ReadValueInstruction private (
     class object {
         public fun create (
                 element: JetElement,
+                valueElement: JetElement,
                 lexicalScope: LexicalScope,
                 target: AccessTarget,
                 receiverValues: Map<PseudoValue, ReceiverValue>,
                 factory: PseudoValueFactory
         ): ReadValueInstruction {
             return ReadValueInstruction(element, lexicalScope, target, receiverValues, null).let { instruction ->
-                instruction.newResultValue(factory)
+                instruction.newResultValue(factory, valueElement)
                 instruction
             }
         }

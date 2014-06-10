@@ -44,25 +44,25 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
 
     @NotNull
     @Override
-    public ValuedInstruction loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
+    public InstructionWithValue loadConstant(@NotNull JetExpression expression, @Nullable CompileTimeConstant<?> constant) {
         return getDelegateBuilder().loadConstant(expression, constant);
     }
 
     @NotNull
     @Override
-    public ValuedInstruction createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
+    public InstructionWithValue createAnonymousObject(@NotNull JetObjectLiteralExpression expression) {
         return getDelegateBuilder().createAnonymousObject(expression);
     }
 
     @NotNull
     @Override
-    public ValuedInstruction createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
+    public InstructionWithValue createFunctionLiteral(@NotNull JetFunctionLiteralExpression expression) {
         return getDelegateBuilder().createFunctionLiteral(expression);
     }
 
     @NotNull
     @Override
-    public ValuedInstruction loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
+    public InstructionWithValue loadStringTemplate(@NotNull JetStringTemplateExpression expression, @NotNull List<PseudoValue> inputValues) {
         return getDelegateBuilder().loadStringTemplate(expression, inputValues);
     }
 
@@ -93,21 +93,23 @@ public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuil
     @NotNull
     @Override
     public ReadValueInstruction readVariable(
-            @NotNull JetExpression expression,
+            @NotNull JetElement instructionElement,
+            @NotNull JetExpression valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues) {
-        return getDelegateBuilder().readVariable(expression, resolvedCall, receiverValues);
+        return getDelegateBuilder().readVariable(instructionElement, valueElement, resolvedCall, receiverValues);
     }
 
     @NotNull
     @Override
     public CallInstruction call(
-            @NotNull JetExpression expression,
+            @NotNull JetElement instructionElement,
+            @Nullable JetExpression valueElement,
             @NotNull ResolvedCall<?> resolvedCall,
             @NotNull Map<PseudoValue, ReceiverValue> receiverValues,
             @NotNull Map<PseudoValue, ValueParameterDescriptor> arguments
     ) {
-        return getDelegateBuilder().call(expression, resolvedCall, receiverValues, arguments);
+        return getDelegateBuilder().call(instructionElement, valueElement, resolvedCall, receiverValues, arguments);
     }
 
     @NotNull

@@ -5,8 +5,8 @@ fun test(array: Array<(Int)->Unit>) {
 ---------------------
 array              <v1>   NEW()
 11                 <v2>   NEW()
-array[11]          <v5>   NEW(<v3>, <v4>)
+array[11]          <v3>   NEW(<v1>, <v2>)
 3                  <v4>   NEW()
-array[11](3)       <v5>   COPY
+array[11](3)       <v5>   NEW(<v3>, <v4>)
 { array[11](3) }   <v5>   COPY
 =====================

@@ -20,31 +20,24 @@ fun f(a : Boolean) : Unit {
 1                                                                                                        <v1>    NEW()
 a                                                                                                        <v2>    NEW()            
 2                                                                                                        <v3>    NEW()            
-toLong                                                                                                   <v4>    NEW(<v3>)        
-toLong()                                                                                                 <v4>    COPY             
-2.toLong()                                                                                               <v4>    COPY             
-foo                                                                                                      <v7>    NEW(<v5>, <v6>)  
-a                                                                                                        <v5>    NEW()            
+toLong()                                                                                                 <v4>    NEW(<v3>)
+2.toLong()                                                                                               <v4>    COPY
+a                                                                                                        <v5>    NEW()
 3                                                                                                        <v6>    NEW()            
-foo(a, 3)                                                                                                <v7>    COPY             
-genfun                                                                                                   <v8>    NEW()            
-genfun<Any>()                                                                                            <v8>    COPY             
-flfun                                                                                                    <v10>   NEW(<v9>)        
+foo(a, 3)                                                                                                <v7>    NEW(<v5>, <v6>)
+genfun<Any>()                                                                                            <v8>    NEW()
 {1}                                                                                                      <v9>    NEW()            
-flfun {1}                                                                                                <v10>   COPY             
+flfun {1}                                                                                                <v10>   NEW(<v9>)
 3                                                                                                        <v11>   NEW()            
-equals                                                                                                   <v13>   NEW(<v11>, <v12>)
-4                                                                                                        <v12>   NEW()            
-equals(4)                                                                                                <v13>   COPY             
+4                                                                                                        <v12>   NEW()
+equals(4)                                                                                                <v13>   NEW(<v11>, <v12>)
 3.equals(4)                                                                                              <v13>   COPY             
 3                                                                                                        <v14>   NEW()            
-equals                                                                                                   <v16>   NEW(<v14>, <v15>)
-4                                                                                                        <v15>   NEW()            
-3 equals 4                                                                                               <v16>   COPY             
+4                                                                                                        <v15>   NEW()
+3 equals 4                                                                                               <v16>   NEW(<v14>, <v15>)
 1                                                                                                        <v17>   NEW()            
-+                                                                                                        <v19>   NEW(<v17>, <v18>)
-2                                                                                                        <v18>   NEW()            
-1 + 2                                                                                                    <v19>   COPY             
+2                                                                                                        <v18>   NEW()
+1 + 2                                                                                                    <v19>   NEW(<v17>, <v18>)
 a                                                                                                        <v20>   NEW()            
 true                                                                                                     <v21>   NEW()            
 a && true                                                                                                <v22>   NEW(<v20>, <v21>)
