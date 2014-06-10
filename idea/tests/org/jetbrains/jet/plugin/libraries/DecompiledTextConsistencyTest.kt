@@ -27,6 +27,9 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import java.util.Collections
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
+import org.jetbrains.jet.lang.descriptors.CallableDescriptor
+import org.jetbrains.jet.lang.resolve.DescriptorUtils
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -58,10 +61,12 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        val packageFragment = javaDescriptorResolver.getPackageFragment(packageFqName)
-        if (packageFragment == null) {
+        val packageView = javaDescriptorResolver.getModule().getPackage(packageFqName)
+        if (packageView == null) {
             return Collections.emptyList()
         }
-        return packageFragment.getMemberScope().getAllDescriptors() filter { it !is ClassDescriptor }
+        return packageView.getMemberScope().getAllDescriptors() filter {
+            it is CallableDescriptor && DescriptorUtils.getContainingModule(it) != KotlinBuiltIns.getInstance().getBuiltInsModule()
+        }
     }
 }
