@@ -42,15 +42,14 @@ class ListSpecificTest {
     }
 
     Test fun mutableList() {
-        val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
+        val items = listOf("beverage", "location", "name")
 
         var list = arrayListOf<String>()
-        for (e in map) {
-            list += e.getKey()
-            list += e.getValue()
+        for (item in items) {
+            list += item
         }
 
-        assertEquals(6, list.size())
-        assertEquals("beverage,beer,location,Mells,name,James", list.makeString(","))
+        assertEquals(3, list.size())
+        assertEquals("beverage,location,name", list.join(","))
     }
 }
