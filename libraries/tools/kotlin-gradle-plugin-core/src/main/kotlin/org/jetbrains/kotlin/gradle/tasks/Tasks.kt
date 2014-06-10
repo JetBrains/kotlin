@@ -34,7 +34,9 @@ public open class KotlinCompile(): AbstractCompile() {
 
     val srcDirsRoots = HashSet<File>()
     val compiler = K2JVMCompiler()
-    val logger = Logging.getLogger(getClass())
+
+    private val _logger = Logging.getLogger(getClass())
+    override fun getLogger() = _logger
 
     public var kotlinOptions: K2JVMCompilerArguments = K2JVMCompilerArguments();
 
@@ -111,7 +113,7 @@ public open class KotlinCompile(): AbstractCompile() {
 
         args.outputDir = if (StringUtils.isEmpty(kotlinOptions.outputDir)) { kotlinDestinationDir?.getPath() } else { kotlinOptions.outputDir }
 
-        val embeddedAnnotations = getAnnotations(getProject(), logger)
+        val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kotlinOptions.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
         args.annotations = allAnnotations.makeString(File.pathSeparator)
@@ -124,7 +126,7 @@ public open class KotlinCompile(): AbstractCompile() {
             throw GradleException(CompilerArgumentsUtil.getWrongInlineOptionErrorMessage(args.inline))
         }
 
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradleMessageCollector(getLogger())
         getLogger().debug("Calling compiler")
         val exitCode = compiler.exec(messageCollector, args)
 
@@ -145,8 +147,8 @@ public open class KotlinCompile(): AbstractCompile() {
 
 public open class KDoc(): SourceTask() {
 
-
-    val logger = Logging.getLogger(getClass())
+    private val _logger = Logging.getLogger(getClass())
+    override fun getLogger() = _logger
 
     public var kdocArgs: KDocArguments = KDocArguments()
 
@@ -179,8 +181,8 @@ public open class KDoc(): SourceTask() {
         // Drop compiled sources to temp. Why KDoc compiles anything after all?!
         args.outputDir = getTemporaryDir()?.getAbsolutePath()
 
-        logger.warn(args.src)
-        val embeddedAnnotations = getAnnotations(getProject(), logger)
+        getLogger().warn(args.src)
+        val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = (kdocArgs.annotations ?: "").split(File.pathSeparatorChar).toList()
         val allAnnotations = if (kdocArgs.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map {it.getPath()})
         args.annotations = allAnnotations.makeString(File.pathSeparator)
@@ -191,7 +193,7 @@ public open class KDoc(): SourceTask() {
 
         val compiler = KDocCompiler()
 
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradleMessageCollector(getLogger())
         val exitCode = compiler.exec(messageCollector, args);
 
         when (exitCode) {
