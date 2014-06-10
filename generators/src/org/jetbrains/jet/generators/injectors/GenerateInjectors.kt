@@ -34,7 +34,11 @@ import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingUtils
 import org.jetbrains.jet.lang.resolve.calls.CallResolver
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.jet.lang.resolve.java.lazy.ModuleClassResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava
+import org.jetbrains.jet.lang.resolve.java.lazy.SingleModuleClassResolver
+import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinderFactory
 
 // NOTE: After making changes, you need to re-generate the injectors.
 //       To do that, you can run main in this file.
@@ -95,6 +99,8 @@ private fun generatorForTopDownAnalyzerForJvm() =
             publicField(javaClass<JavaDescriptorResolver>())
             publicField(javaClass<DeserializationGlobalContextForJava>())
 
+            field(javaClass <GlobalSearchScope>(),
+                  init = GivenExpression(javaClass<GlobalSearchScope>().getName() + ".allScope(project)"))
             fields(
                     javaClass<JavaClassFinderImpl>(),
                     javaClass<TraceBasedExternalSignatureResolver>(),
@@ -104,7 +110,8 @@ private fun generatorForTopDownAnalyzerForJvm() =
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<MutablePackageFragmentProvider>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
-                    javaClass<JavaSourceElementFactoryImpl>()
+                    javaClass<JavaSourceElementFactoryImpl>(),
+                    javaClass<SingleModuleClassResolver>()
             )
             field(javaClass<VirtualFileFinder>(), init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
         }
@@ -123,6 +130,9 @@ private fun generatorForJavaDescriptorResolver() =
             publicField(javaClass<JavaDescriptorResolver>())
             publicField(javaClass<JavaClassFinderImpl>())
 
+            field(javaClass <GlobalSearchScope>(),
+                  init = GivenExpression(javaClass<GlobalSearchScope>().getName() + ".allScope(project)"))
+
             fields(
                     javaClass<TraceBasedExternalSignatureResolver>(),
                     javaClass<TraceBasedJavaResolverCache>(),
@@ -130,7 +140,8 @@ private fun generatorForJavaDescriptorResolver() =
                     javaClass<PsiBasedMethodSignatureChecker>(),
                     javaClass<PsiBasedExternalAnnotationResolver>(),
                     javaClass<JavaPropertyInitializerEvaluatorImpl>(),
-                    javaClass<JavaSourceElementFactoryImpl>()
+                    javaClass<JavaSourceElementFactoryImpl>(),
+                    javaClass<SingleModuleClassResolver>()
             )
             field(javaClass<VirtualFileFinder>(),
                   init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
@@ -139,21 +150,24 @@ private fun generatorForJavaDescriptorResolver() =
 private fun generatorForLazyResolveWithJava() =
         generator("compiler/frontend.java/src", "org.jetbrains.jet.di", "InjectorForLazyResolveWithJava") {
             parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContextImpl>(), useAsContext = true)
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
+            parameter(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true)
+            parameter(javaClass<GlobalSearchScope>(), name = "moduleContentScope")
             parameters(
+                    javaClass<BindingTrace>(),
                     javaClass<DeclarationProviderFactory>(),
-                    javaClass<BindingTrace>()
+                    javaClass<ModuleClassResolver>()
             )
 
-            publicField(javaClass<ModuleDescriptorImpl>(), name = "module", useAsContext = true,
-                        init = GivenExpression("org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM.createJavaModule(\"<fake-jdr-module>\")"))
             publicFields(
                     javaClass<ResolveSession>(),
                     javaClass<JavaDescriptorResolver>()
             )
 
             field(javaClass<VirtualFileFinder>(),
-                  init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
+                  init = GivenExpression(javaClass<VirtualFileFinderFactory>().getName()
+                                         + ".SERVICE.getInstance(project).create(moduleContentScope)")
+            )
             fields(
                     javaClass<JavaClassFinderImpl>(),
                     javaClass<TraceBasedExternalSignatureResolver>(),
@@ -208,7 +222,7 @@ private fun generatorForBodyResolve() =
 private fun generatorForLazyResolve() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForLazyResolve") {
             parameter(javaClass<Project>())
-            parameter(javaClass<GlobalContextImpl>(), useAsContext = true)
+            parameter(javaClass<GlobalContext>(), useAsContext = true)
             parameter(javaClass<ModuleDescriptorImpl>(), useAsContext = true)
             parameter(javaClass<DeclarationProviderFactory>())
             parameter(javaClass<BindingTrace>())

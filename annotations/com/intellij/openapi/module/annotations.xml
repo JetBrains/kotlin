@@ -1,0 +1,6 @@
+<root>
+  <item
+      name='com.intellij.openapi.module.ModuleManager com.intellij.openapi.module.ModuleManager getInstance(com.intellij.openapi.project.Project)'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+</root>

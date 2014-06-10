@@ -70,7 +70,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         val jetEditorOptions = JetEditorOptions.getInstance()!!
         val needConvert = jetEditorOptions.isEnableJavaToKotlinConversion() && (jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project))
         if (needConvert) {
-            val text = convertCopiedCodeToKotlin(value, sourceFile)
+            val text = convertCopiedCodeToKotlin(value, sourceFile, targetFile)
             if (text.isNotEmpty()) {
                 ApplicationManager.getApplication()!!.runWriteAction {
                     val startOffset = bounds.getStartOffset()
@@ -84,11 +84,11 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         }
     }
 
-    private fun convertCopiedCodeToKotlin(code: CopiedCode, file: PsiJavaFile): String {
-        val converter = Converter.create(file.getProject(),
+    private fun convertCopiedCodeToKotlin(code: CopiedCode, fileCopiedFrom: PsiJavaFile, fileCopiedTo: JetFile): String {
+        val converter = Converter.create(fileCopiedFrom.getProject(),
                                          ConverterSettings.defaultSettings,
-                                         FilesConversionScope(listOf(file)),
-                                         J2kPostProcessor)
+                                         FilesConversionScope(listOf(fileCopiedFrom)),
+                                         J2kPostProcessor(fileCopiedTo))
         val startOffsets = code.getStartOffsets()
         val endOffsets = code.getEndOffsets()
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
@@ -96,7 +96,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
         for (i in startOffsets.indices) {
             val startOffset = startOffsets[i]
             val endOffset = endOffsets[i]
-            result.append(convertRangeToKotlin(file, TextRange(startOffset, endOffset), converter))
+            result.append(convertRangeToKotlin(fileCopiedFrom, TextRange(startOffset, endOffset), converter))
         }
         return StringUtil.convertLineSeparators(result.toString())
     }

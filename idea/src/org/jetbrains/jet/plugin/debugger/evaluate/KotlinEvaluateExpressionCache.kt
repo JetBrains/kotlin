@@ -102,7 +102,10 @@ class KotlinEvaluateExpressionCache(val project: Project) {
 
         return runReadAction {
             val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))
-            if (classes.isEmpty()) null else JavaResolveExtension[project].resolveClass(JavaClassImpl(classes.first()))
+            if (classes.isEmpty()) null else {
+                val clazz = classes.first()
+                JavaResolveExtension.getResolver(project, clazz).resolveClass(JavaClassImpl(clazz))
+            }
         }
     }
 

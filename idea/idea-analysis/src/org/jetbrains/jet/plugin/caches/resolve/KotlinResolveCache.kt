@@ -38,7 +38,6 @@ import com.intellij.openapi.roots.libraries.LibraryUtil
 import org.jetbrains.jet.lang.resolve.LibrarySourceHacks
 import org.jetbrains.jet.plugin.project.TargetPlatform
 import org.jetbrains.jet.plugin.project.ResolveSessionForBodies
-import org.jetbrains.jet.analyzer.AnalyzerFacade
 import java.util.HashMap
 import com.intellij.psi.PsiElement
 import org.jetbrains.jet.lang.resolve.BindingContext
@@ -64,43 +63,37 @@ import org.jetbrains.jet.analyzer.analyzeInContext
 import org.jetbrains.jet.lang.resolve.BindingTraceContext
 import org.jetbrains.jet.lang.types.TypeUtils
 import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 
 public trait CacheExtension<T> {
     public val platform: TargetPlatform
-    public fun getData(setup: AnalyzerFacade.Setup): T
+    public fun getData(resolverProvider: ModuleResolverProvider): T
 }
-
-private class SessionAndSetup(
-        val platform: TargetPlatform,
-        val resolveSessionForBodies: ResolveSessionForBodies,
-        val setup: AnalyzerFacade.Setup
-)
 
 private class KotlinResolveCache(
         val project: Project,
-        setupProvider: () -> CachedValueProvider.Result<SessionAndSetup>
+        setupProvider: () -> CachedValueProvider.Result<ModuleResolverProvider>
 ) {
 
-    private val setupCache = SynchronizedCachedValue(project, setupProvider, trackValue = false)
+    private val resolverCache = SynchronizedCachedValue(project, setupProvider, trackValue = false)
 
-    public fun getLazyResolveSession(): ResolveSessionForBodies = setupCache.getValue().resolveSessionForBodies
-
-    public fun <T> get(extension: CacheExtension<T>): T {
-        val sessionAndSetup = setupCache.getValue()
-        assert(extension.platform == sessionAndSetup.platform,
-               "Extension $extension declares platfrom ${extension.platform} which is incompatible with ${sessionAndSetup.platform}")
-        return extension.getData(sessionAndSetup.setup)
+    public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
+        return resolverCache.getValue().resolveSessionForBodiesByModule(element.getModuleInfo())
     }
 
-    private val analysisResults = CachedValuesManager.getManager(project).createCachedValue ({
-        val resolveSession = getLazyResolveSession()
+    public fun <T> get(extension: CacheExtension<T>): T {
+        return extension.getData(resolverCache.getValue())
+    }
+
+    private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
+    {
+        val resolverProvider = resolverCache.getValue()
         val results = object : SLRUCache<JetFile, PerFileAnalysisCache>(2, 3) {
             override fun createValue(file: JetFile?): PerFileAnalysisCache {
-                return PerFileAnalysisCache(file!!, resolveSession)
+                return PerFileAnalysisCache(file!!, resolverProvider.resolveSessionForBodiesByModule(file.getModuleInfo()))
             }
         }
-
-        CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolveSession.getExceptionTracker())
+        CachedValueProvider.Result(results, PsiModificationTracker.MODIFICATION_COUNT, resolverProvider.exceptionTracker)
     }, false)
 
     fun getAnalysisResultsForElements(elements: Collection<JetElement>): AnalyzeExhaust {
@@ -118,7 +111,8 @@ private class KotlinResolveCache(
         return if (error != null)
                    AnalyzeExhaust.error(bindingContext, error.getError())
                else
-                   AnalyzeExhaust.success(bindingContext, getLazyResolveSession().getModuleDescriptor())
+                    //TODO: (module refactoring) several elements are passed here in debugger
+                   AnalyzeExhaust.success(bindingContext, getLazyResolveSession(elements.first()).getModuleDescriptor())
     }
 }
 

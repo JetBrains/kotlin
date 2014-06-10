@@ -35,6 +35,7 @@ import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.jet.lang.psi.JetClassOrObject;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -423,5 +424,12 @@ public class KotlinLightClassForPackage extends KotlinWrappingLightClass impleme
         catch (Throwable e) {
             return KotlinLightClassForPackage.class.getSimpleName() + ":" + e.toString();
         }
+    }
+
+    //NOTE: this is only needed to compute plugin module info
+    @NotNull
+    @ReadOnly
+    public final Collection<JetFile> getFiles() {
+        return files;
     }
 }

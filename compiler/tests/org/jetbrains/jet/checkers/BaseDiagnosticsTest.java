@@ -27,6 +27,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -355,7 +356,8 @@ public abstract class BaseDiagnosticsTest extends JetLiteFixture {
             Set<Diagnostic> jvmSignatureDiagnostics = new HashSet<Diagnostic>();
             Collection<JetDeclaration> declarations = PsiTreeUtil.findChildrenOfType(jetFile, JetDeclaration.class);
             for (JetDeclaration declaration : declarations) {
-                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics());
+                Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(declaration, bindingContext.getDiagnostics(),
+                                                                                   GlobalSearchScope.allScope(getProject()));
                 if (diagnostics == null) continue;
                 jvmSignatureDiagnostics.addAll(diagnostics.forElement(declaration));
             }

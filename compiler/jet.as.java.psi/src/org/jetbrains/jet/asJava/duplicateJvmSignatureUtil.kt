@@ -32,9 +32,18 @@ import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetClass
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
-import org.jetbrains.jet.lang.psi.JetClassObject
 
-public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
+public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
+    fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
+        val project = file.getProject()
+        val cache = KotlinLightClassForPackage.FileStubCache.getInstance(project)
+        return cache[file.getPackageFqName(), moduleScope].getValue()?.extraDiagnostics
+    }
+
+    fun getDiagnosticsForClass(jetClassOrObject: JetClassOrObject): Diagnostics {
+        return KotlinLightClassForExplicitDeclaration.getLightClassData(jetClassOrObject).extraDiagnostics
+    }
+
     fun doGetDiagnostics(): Diagnostics? {
         var parent = element.getParent()
         if (element is JetPropertyAccessor) {
@@ -133,14 +142,4 @@ private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDecla
         TRAIT_IMPL -> this.classOrigin.originKind != TRAIT_IMPL
         else -> false
     }
-}
-
-private fun getDiagnosticsForPackage(file: JetFile): Diagnostics? {
-    val project = file.getProject()
-    val cache = KotlinLightClassForPackage.FileStubCache.getInstance(project)
-    return cache[file.getPackageFqName(), GlobalSearchScope.allScope(project)].getValue()?.extraDiagnostics
-}
-
-private fun getDiagnosticsForClass(jetClassOrObject: JetClassOrObject): Diagnostics {
-    return KotlinLightClassForExplicitDeclaration.getLightClassData(jetClassOrObject).extraDiagnostics
 }

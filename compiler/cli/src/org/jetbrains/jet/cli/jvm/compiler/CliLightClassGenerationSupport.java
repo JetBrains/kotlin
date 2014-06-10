@@ -45,9 +45,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.util.slicedmap.WritableSlice;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
@@ -190,6 +188,14 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
             }
         }
         return result;
+    }
+
+    @NotNull
+    @Override
+    public List<KotlinLightPackageClassInfo> findPackageClassesInfos(
+            @NotNull FqName fqName, @NotNull GlobalSearchScope wholeScope
+    ) {
+        return Collections.singletonList(new KotlinLightPackageClassInfo(findFilesForPackage(fqName, wholeScope), wholeScope));
     }
 
     @Override

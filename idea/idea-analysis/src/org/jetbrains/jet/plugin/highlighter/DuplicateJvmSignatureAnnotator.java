@@ -20,6 +20,7 @@ import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.lang.annotation.Annotator;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.asJava.AsJavaPackage;
 import org.jetbrains.jet.lang.psi.JetDeclaration;
@@ -30,6 +31,8 @@ import org.jetbrains.jet.plugin.ProjectRootsUtil;
 import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.TargetPlatform;
 import org.jetbrains.jet.plugin.project.TargetPlatformDetector;
+
+import static org.jetbrains.jet.plugin.caches.resolve.ResolvePackage.getModuleInfo;
 
 public class DuplicateJvmSignatureAnnotator implements Annotator {
 
@@ -42,7 +45,8 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         if (!(file instanceof JetFile) || TargetPlatformDetector.getPlatform((JetFile) file) != TargetPlatform.JVM) return;
 
         Diagnostics otherDiagnostics = ResolvePackage.getBindingContext((JetElement) element).getDiagnostics();
-        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics);
+        GlobalSearchScope moduleScope = getModuleInfo(element).contentScope();
+        Diagnostics diagnostics = AsJavaPackage.getJvmSignatureDiagnostics(element, otherDiagnostics, moduleScope);
         
         if (diagnostics == null) return;
         JetPsiChecker.annotateElement(element, holder, diagnostics);

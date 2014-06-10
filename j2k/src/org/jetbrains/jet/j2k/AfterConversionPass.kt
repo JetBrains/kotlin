@@ -25,10 +25,13 @@ import org.jetbrains.jet.lang.psi.JetUnaryExpression
 import org.jetbrains.jet.lang.psi.JetProperty
 import com.intellij.psi.PsiFile
 import org.jetbrains.jet.lang.resolve.BindingContext
+import com.intellij.psi.PsiElement
 
 class AfterConversionPass(val project: Project, val postProcessor: PostProcessor) {
     public fun run(kotlinCode: String): String {
-        val kotlinFile = JetPsiFactory(project).createFile(kotlinCode)
+        val kotlinFile = JetPsiFactory(project).createAnalyzableFile(
+                "fileForAfterConversionPass.kt", kotlinCode, postProcessor.contextToAnalyzeIn
+        )
         val bindingContext = postProcessor.analyzeFile(kotlinFile)
 
         val fixes = bindingContext.getDiagnostics().map {

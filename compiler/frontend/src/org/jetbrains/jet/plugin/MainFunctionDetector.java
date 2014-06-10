@@ -53,15 +53,8 @@ public class MainFunctionDetector {
         };
     }
 
-    /** Uses the {@code resolveSession} to resolve the function declaration. Suitable when the function declaration is not resolved yet. */
-    public MainFunctionDetector(@NotNull final ResolveSession resolveSession) {
-        this.getFunctionDescriptor = new NotNullFunction<JetNamedFunction, FunctionDescriptor>() {
-            @NotNull
-            @Override
-            public FunctionDescriptor fun(JetNamedFunction function) {
-                return (FunctionDescriptor) resolveSession.resolveToDescriptor(function);
-            }
-        };
+    public MainFunctionDetector(@NotNull NotNullFunction<JetNamedFunction, FunctionDescriptor> functionResolver) {
+        this.getFunctionDescriptor = functionResolver;
     }
 
     public boolean hasMain(@NotNull List<JetDeclaration> declarations) {

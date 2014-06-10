@@ -62,7 +62,7 @@ public class ModuleDescriptorImpl(
         })
     }
 
-    private val isInitialized: Boolean
+    public val isInitialized: Boolean
         get() = packageFragmentProviderForModuleContent != null
 
     public fun addDependencyOnModule(dependency: ModuleDescriptorImpl) {

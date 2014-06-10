@@ -31,6 +31,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.Function;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +45,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.jet.lang.resolve.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.jet.plugin.JetIcons;
 import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension;
-import org.jetbrains.jet.plugin.caches.resolve.ResolvePackage;
 import org.jetbrains.jet.plugin.project.ProjectStructureUtil;
-import org.jetbrains.jet.plugin.project.TargetPlatform;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -76,7 +75,8 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Project project = elements.get(0).getProject();
+        PsiElement firstElement = elements.get(0);
+        Project project = firstElement.getProject();
         if (!isMarkersEnabled(project)) {
             return;
         }
@@ -85,17 +85,13 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             return;
         }
 
-        Module module = ModuleUtilCore.findModuleForPsiElement(elements.get(0));
+        Module module = ModuleUtilCore.findModuleForPsiElement(firstElement);
         if (module != null && !ProjectStructureUtil.isUsedInKotlinJavaModule(module)) {
             return;
         }
 
-        BindingContext bindingContext = ResolvePackage.getLazyResolveSession(project, TargetPlatform.JVM).getBindingContext();
-
-        JavaDescriptorResolver javaDescriptorResolver = JavaResolveExtension.INSTANCE$.get(project);
-
         for (PsiElement element : elements) {
-            if (!(element instanceof PsiMember)) {
+            if (!(element instanceof PsiMember) || element instanceof PsiClass) {
                 continue;
             }
 
@@ -103,7 +99,17 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             if (member.hasModifierProperty(PsiModifier.PRIVATE)) {
                 continue;
             }
+
+            PsiClass containingClass = member.getContainingClass();
+            if (containingClass != null && PsiUtil.isLocalOrAnonymousClass(containingClass)) {
+                continue;
+            }
+
             PsiModifierListOwner annotationOwner = KotlinSignatureUtil.getAnnotationOwner(element);
+
+            JavaResolveExtension resolveExtension = JavaResolveExtension.INSTANCE$;
+            BindingContext bindingContext = resolveExtension.getContext(project, annotationOwner);
+            JavaDescriptorResolver javaDescriptorResolver = resolveExtension.getResolver(project, annotationOwner);
 
             DeclarationDescriptor memberDescriptor = getDescriptorForMember(javaDescriptorResolver, annotationOwner);
 

@@ -1,11 +1,11 @@
 package dependency
 
-class Foo<T> {
+public class Foo<T> {
 }
 
-class FooIterator<T> {
+public class FooIterator<T> {
 }
 
-fun <T> Foo<T>.iterator() = FooIterator<T>()
-fun <T> FooIterator<T>.hasNext() = false
-fun <T> FooIterator<T>.next() = throw IllegalStateException()
+public fun <T> Foo<T>.iterator(): FooIterator<T> = FooIterator<T>()
+public fun <T> FooIterator<T>.hasNext(): Boolean = false
+public fun <T> FooIterator<T>.next(): T = throw IllegalStateException()

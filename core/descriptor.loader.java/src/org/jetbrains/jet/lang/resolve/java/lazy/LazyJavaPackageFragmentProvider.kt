@@ -47,7 +47,8 @@ public class LazyJavaPackageFragmentProvider(
             outerContext.methodSignatureChecker,
             outerContext.javaResolverCache,
             outerContext.javaPropertyInitializerEvaluator,
-            outerContext.sourceElementFactory
+            outerContext.sourceElementFactory,
+            outerContext.moduleClassResolver
     )
 
     override fun getModule() = _module
@@ -105,13 +106,8 @@ public class LazyJavaPackageFragmentProvider(
 
     private inner class FragmentClassResolver : LazyJavaClassResolver {
         override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
-            // TODO: there's no notion of module separation here. We must refuse to resolve classes from other modules
             val fqName = javaClass.getFqName()
             if (fqName != null) {
-                // TODO: this should be handled by module separation logic
-                val builtinClass = DescriptorResolverUtils.getKotlinBuiltinClassDescriptor(fqName)
-                if (builtinClass != null) return builtinClass
-
                 if (javaClass.getOriginKind() == JavaClass.OriginKind.KOTLIN_LIGHT_CLASS) {
                     return c.javaResolverCache.getClassResolvedFromSource(fqName)
                 }
@@ -121,8 +117,7 @@ public class LazyJavaPackageFragmentProvider(
                 return c.lookupBinaryClass(javaClass) ?: topLevelClasses(javaClass)
             }
             val outerClassScope = resolveClass(outerClass)?.getUnsubstitutedInnerClassesScope()
-            val nestedClass = outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
-            return nestedClass ?: c.javaResolverCache.getClass(javaClass)
+            return outerClassScope?.getClassifier(javaClass.getName()) as? ClassDescriptor
         }
     }
 }

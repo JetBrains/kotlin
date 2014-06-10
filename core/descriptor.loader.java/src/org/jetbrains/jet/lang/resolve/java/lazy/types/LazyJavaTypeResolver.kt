@@ -113,7 +113,7 @@ class LazyJavaTypeResolver(
                     }
 
                     val classData = javaToKotlinClassMap.mapKotlinClass(fqName, howThisTypeIsUsedEffectively)
-                                    ?: c.javaClassResolver.resolveClass(classifier)
+                                    ?: c.moduleClassResolver.resolveClass(classifier)
 
                     classData?.getTypeConstructor()
                         ?: ErrorUtils.createErrorTypeConstructor("Unresolved java classifier: " + javaType.getPresentableText())

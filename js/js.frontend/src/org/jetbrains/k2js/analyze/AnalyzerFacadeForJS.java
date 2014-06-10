@@ -21,22 +21,17 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
 import org.jetbrains.jet.context.ContextPackage;
 import org.jetbrains.jet.context.GlobalContextImpl;
-import org.jetbrains.jet.di.InjectorForLazyResolve;
 import org.jetbrains.jet.di.InjectorForTopDownAnalyzerForJs;
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.*;
-import org.jetbrains.jet.lang.resolve.lazy.ResolveSession;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory;
-import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactoryService;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.k2js.config.Config;
@@ -120,36 +115,6 @@ public final class AnalyzerFacadeForJS {
                 return notLibFile;
             }
         };
-    }
-
-    @NotNull
-    public static ResolveSession getLazyResolveSession(
-            @NotNull Collection<JetFile> syntheticFiles,
-            @NotNull GlobalSearchScope filesScope,
-            @NotNull Config config
-    ) {
-        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        DeclarationProviderFactory declarationProviderFactory = DeclarationProviderFactoryService.OBJECT$
-                .createDeclarationProviderFactory(
-                        config.getProject(),
-                        globalContext.getStorageManager(),
-                        //TODO: lib files are not really synthetic
-                        Config.withJsLibAdded(syntheticFiles, config),
-                        filesScope
-                );
-        ModuleDescriptorImpl module = createJsModule("<lazy module>");
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        module.seal();
-
-        ResolveSession session = new InjectorForLazyResolve(
-                config.getProject(),
-                globalContext,
-                module,
-                declarationProviderFactory,
-                new BindingTraceContext()).getResolveSession();
-        module.initialize(session.getPackageFragmentProvider());
-        return session;
     }
 
     @NotNull

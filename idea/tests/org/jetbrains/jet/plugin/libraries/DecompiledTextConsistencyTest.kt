@@ -25,15 +25,13 @@ import org.jetbrains.jet.lang.resolve.java.PackageClassUtils
 import com.intellij.openapi.project.Project
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
-import java.util.Collections
-import org.jetbrains.jet.plugin.caches.resolve.JavaResolveExtension
-import org.jetbrains.jet.lang.descriptors.CallableDescriptor
 import org.jetbrains.jet.lang.resolve.DescriptorUtils
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.resolve.resolveTopLevelClass
 import org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor
-import org.jetbrains.jet.plugin.caches.resolve.KotlinCacheService
-import org.jetbrains.jet.plugin.project.TargetPlatform
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.resolve.java.AnalyzerFacadeForJVM
+import org.jetbrains.jet.lang.resolve.BindingTraceContext
 
 public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
@@ -58,8 +56,16 @@ public class DecompiledTextConsistencyTest : JetLightCodeInsightFixtureTestCase(
 }
 
 class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompiler {
-    val module = KotlinCacheService.getInstance(project).getGlobalLazyResolveSession(TargetPlatform.JVM).getModuleDescriptor()
-
+    val module: ModuleDescriptor = run {
+        val module = AnalyzerFacadeForJVM.createJavaModule("<module for resolving stdlib with java top down analysis>")
+        module.addDependencyOnModule(module)
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
+        module.seal()
+        AnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
+                project, listOf(), BindingTraceContext(), { false },
+                module, null, null
+        ).getModuleDescriptor()
+    }
     override fun resolveTopLevelClass(classFqName: FqName): ClassDescriptor? {
         return module.resolveTopLevelClass(classFqName)
     }
