@@ -1,7 +1,6 @@
 package kotlin.reflect.jvm.internal.pcollections;
 
 import java.util.Iterator;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,7 +10,7 @@ import java.util.NoSuchElementException;
  *
  * @author harold
  */
-public final class ConsPStack<E> implements Iterable<E> {
+final class ConsPStack<E> implements Iterable<E> {
     private static final ConsPStack<Object> EMPTY = new ConsPStack<Object>();
 
     @SuppressWarnings("unchecked")
@@ -36,8 +35,10 @@ public final class ConsPStack<E> implements Iterable<E> {
     }
 
     public E get(int index) {
+        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
+
         try {
-            return listIterator(index).next();
+            return iterator(index).next();
         } catch (NoSuchElementException e) {
             throw new IndexOutOfBoundsException("Index: " + index);
         }
@@ -45,38 +46,20 @@ public final class ConsPStack<E> implements Iterable<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return listIterator(0);
+        return iterator(0);
     }
 
     public int size() {
         return size;
     }
 
-    public ListIterator<E> listIterator(final int index) {
-        if (index < 0 || index > size) throw new IndexOutOfBoundsException();
-
-        return new ListIterator<E>() {
-            int i = index;
+    private Iterator<E> iterator(final int index) {
+        return new Iterator<E>() {
             ConsPStack<E> next = subList(index);
 
             @Override
             public boolean hasNext() {
                 return next.size > 0;
-            }
-
-            @Override
-            public boolean hasPrevious() {
-                return i > 0;
-            }
-
-            @Override
-            public int nextIndex() {
-                return index;
-            }
-
-            @Override
-            public int previousIndex() {
-                return index - 1;
             }
 
             @Override
@@ -87,24 +70,7 @@ public final class ConsPStack<E> implements Iterable<E> {
             }
 
             @Override
-            public E previous() {
-                System.err.println("ConsPStack.listIterator().previous() is inefficient, don't use it!");
-                next = subList(index - 1); // go from beginning...
-                return next.first;
-            }
-
-            @Override
-            public void add(E o) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
             public void remove() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void set(E o) {
                 throw new UnsupportedOperationException();
             }
         };
@@ -114,7 +80,7 @@ public final class ConsPStack<E> implements Iterable<E> {
         return new ConsPStack<E>(e, this);
     }
 
-    public ConsPStack<E> minus(Object e) {
+    private ConsPStack<E> minus(Object e) {
         if (size == 0) return this;
         if (first.equals(e)) // found it
             return rest; // don't recurse (only remove one)
@@ -128,7 +94,7 @@ public final class ConsPStack<E> implements Iterable<E> {
         return minus(get(i));
     }
 
-    public ConsPStack<E> subList(int start) {
+    private ConsPStack<E> subList(int start) {
         if (start < 0 || start > size)
             throw new IndexOutOfBoundsException();
         if (start == 0)

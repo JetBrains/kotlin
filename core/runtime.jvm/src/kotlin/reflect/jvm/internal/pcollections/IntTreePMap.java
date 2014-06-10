@@ -19,7 +19,7 @@ package kotlin.reflect.jvm.internal.pcollections;
  *
  * @author harold
  */
-public final class IntTreePMap<V> {
+final class IntTreePMap<V> {
     private static final IntTreePMap<Object> EMPTY = new IntTreePMap<Object>(IntTree.EMPTYNODE);
 
     @SuppressWarnings("unchecked")
