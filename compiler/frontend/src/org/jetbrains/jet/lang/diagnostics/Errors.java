@@ -106,7 +106,8 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, Collection<JetModifierKeywordToken>> INCOMPATIBLE_MODIFIERS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> ILLEGAL_MODIFIER = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(Severity.WARNING);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 

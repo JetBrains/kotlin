@@ -27,6 +27,8 @@ import org.jetbrains.jet.codegen.signature.BothSignatureWriter;
 import org.jetbrains.jet.config.IncrementalCompilation;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
+import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
+import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.jet.lang.psi.JetDelegatorToSuperCall;
 import org.jetbrains.jet.lang.psi.JetFile;
@@ -34,6 +36,8 @@ import org.jetbrains.jet.lang.resolve.BindingContext;
 import org.jetbrains.jet.lang.resolve.BindingContextUtils;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
+import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
+import org.jetbrains.jet.lang.resolve.constants.StringValue;
 import org.jetbrains.jet.lang.resolve.java.AsmTypeConstants;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
@@ -42,6 +46,7 @@ import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.mapping.KotlinToJavaTypesMap;
+import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -50,6 +55,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.jet.codegen.AsmUtil.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.*;
@@ -512,6 +518,9 @@ public class JetTypeMapper {
 
     @NotNull
     private static String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
+        String platformName = getPlatformName(descriptor);
+        if (platformName != null) return platformName;
+
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();
             if (isAnnotationClass(property.getContainingDeclaration())) {
@@ -531,6 +540,20 @@ public class JetTypeMapper {
         else {
             return descriptor.getName().asString();
         }
+    }
+
+    @Nullable
+    private static String getPlatformName(@NotNull Annotated descriptor) {
+        AnnotationDescriptor platformNameAnnotation = descriptor.getAnnotations().findAnnotation(new FqName("kotlin.platform.platformName"));
+        if (platformNameAnnotation == null) return null;
+
+        Map<ValueParameterDescriptor, CompileTimeConstant<?>> arguments = platformNameAnnotation.getAllValueArguments();
+        if (arguments.isEmpty()) return null;
+
+        CompileTimeConstant<?> name = arguments.values().iterator().next();
+        if (!(name instanceof StringValue)) return null;
+
+        return ((StringValue) name).getValue();
     }
 
     @NotNull

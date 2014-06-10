@@ -137,7 +137,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
 
         scope.addVariableDescriptor(propertyDescriptor);
-        ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(property);
+        ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
         return DataFlowUtils.checkStatementType(property, context, dataFlowInfo);
     }
 
@@ -174,7 +174,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         components.expressionTypingServices.resolveValueParameters(function.getValueParameters(), functionDescriptor.getValueParameters(),
                                                                 scope, context.dataFlowInfo, context.trace, /* needCompleteAnalysis = */ true);
 
-        ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function);
+        ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor);
         return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
     }
 

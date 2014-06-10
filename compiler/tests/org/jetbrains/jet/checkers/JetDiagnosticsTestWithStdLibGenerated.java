@@ -38,7 +38,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
     }
     
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
-    @InnerTestClasses({Annotations.AnnotationParameterMustBeConstant.class})
+    @InnerTestClasses({Annotations.AnnotationApplicability.class, Annotations.AnnotationParameterMustBeConstant.class})
     public static class Annotations extends AbstractJetDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInAnnotations() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -47,6 +47,19 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         @TestMetadata("ClassObjectAnnotatedWithItsClass.kt")
         public void testClassObjectAnnotatedWithItsClass() throws Exception {
             doTest("compiler/testData/diagnostics/testsWithStdLib/annotations/ClassObjectAnnotatedWithItsClass.kt");
+        }
+        
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability")
+        public static class AnnotationApplicability extends AbstractJetDiagnosticsTestWithStdLib {
+            public void testAllFilesPresentInAnnotationApplicability() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("platformName.kt")
+            public void testPlatformName() throws Exception {
+                doTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationApplicability/platformName.kt");
+            }
+            
         }
         
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameterMustBeConstant")
@@ -80,6 +93,7 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         public static Test innerSuite() {
             TestSuite suite = new TestSuite("Annotations");
             suite.addTestSuite(Annotations.class);
+            suite.addTestSuite(AnnotationApplicability.class);
             suite.addTestSuite(AnnotationParameterMustBeConstant.class);
             return suite;
         }

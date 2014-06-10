@@ -65,6 +65,7 @@ public class DefaultErrorMessages {
             }
         });
         MAP.put(ILLEGAL_MODIFIER, "Illegal modifier ''{0}''", TO_STRING);
+        MAP.put(INAPPLICABLE_ANNOTATION, "Inapplicable annotation");
 
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in trait");
