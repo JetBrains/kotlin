@@ -21,24 +21,41 @@ import java.util.ArrayList
 class MethodCallExpression(
         val methodExpression: Expression,
         val arguments: List<Expression>,
-        val typeParameters: List<Type>,
-        override val isNullable: Boolean = false
+        val typeArguments: List<Type>,
+        override val isNullable: Boolean
 ) : Expression() {
 
     override fun toKotlin(): String {
         return operandToKotlin(methodExpression) +
-                typeParameters.toKotlin(", ", "<", ">") +
+                typeArguments.toKotlin(", ", "<", ">") +
                 "(" +
                 arguments.map { it.toKotlin() }.makeString(", ") +
                 ")"
     }
 
     class object {
-        public fun build(receiver: Expression, methodName: String, arguments: List<Expression> = ArrayList()): MethodCallExpression {
-            return MethodCallExpression(QualifiedExpression(receiver, Identifier(methodName, false)),
+        public fun buildNotNull(receiver: Expression?,
+                         methodName: String,
+                         arguments: List<Expression> = listOf(),
+                         typeArguments: List<Type> = listOf()): MethodCallExpression
+                = build(receiver, methodName, arguments, typeArguments, false)
+
+        public fun buildNullable(receiver: Expression?,
+                         methodName: String,
+                         arguments: List<Expression> = listOf(),
+                         typeArguments: List<Type> = listOf()): MethodCallExpression
+                = build(receiver, methodName, arguments, typeArguments, true)
+
+        public fun build(receiver: Expression?,
+                         methodName: String,
+                         arguments: List<Expression>,
+                         typeArguments: List<Type>,
+                         isNullable: Boolean): MethodCallExpression {
+            val identifier = Identifier(methodName, false)
+            return MethodCallExpression(if (receiver != null) QualifiedExpression(receiver, identifier) else identifier,
                                         arguments,
-                                        listOf(),
-                                        false)
+                                        typeArguments,
+                                        isNullable)
         }
     }
 }

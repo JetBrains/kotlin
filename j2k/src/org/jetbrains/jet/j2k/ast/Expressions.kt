@@ -116,7 +116,7 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
                     else -> null
                 }
                 if (conversionFunction != null) {
-                    return MethodCallExpression(QualifiedExpression(initializer, Identifier(conversionFunction)), listOf(), listOf())
+                    return MethodCallExpression.buildNotNull(initializer, conversionFunction)
                 }
             }
         }
@@ -124,5 +124,5 @@ fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Ex
         return initializer
     }
 
-    return MethodCallExpression(Identifier(createArrayFunction), initializers.map { explicitConvertIfNeeded(it) }, listOf())
+    return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers.map { explicitConvertIfNeeded(it) })
 }

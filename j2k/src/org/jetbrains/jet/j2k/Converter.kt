@@ -481,7 +481,7 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
             if (isConversionNeeded(actualType, expectedType) && expression !is LiteralExpression) {
                 val conversion = PRIMITIVE_TYPE_CONVERSIONS[expectedType?.getCanonicalText()]
                 if (conversion != null) {
-                    expression = MethodCallExpression.build(expression, conversion)
+                    expression = MethodCallExpression.buildNotNull(expression, conversion)
                 }
             }
 

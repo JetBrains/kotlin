@@ -82,7 +82,7 @@ class ExpressionVisitor(private val converter: Converter,
         val lhs = converter.convertExpression(expression.getLOperand(), expression.getType())
         val rhs = converter.convertExpression(expression.getROperand(), expression.getType())
         if (expression.getOperationSign().getTokenType() == JavaTokenType.GTGTGT) {
-            result = MethodCallExpression.build(lhs, "ushr", listOf(rhs))
+            result = MethodCallExpression.buildNotNull(lhs, "ushr", listOf(rhs))
         }
         else {
             result = BinaryExpression(lhs, rhs, getOperatorString(expression.getOperationSign().getTokenType()))
@@ -91,7 +91,7 @@ class ExpressionVisitor(private val converter: Converter,
 
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val typeElement = converter.convertTypeElement(expression.getOperand())
-        result = MethodCallExpression(Identifier("javaClass"), listOf(), listOf(typeElement.`type`.toNotNullType()), false)
+        result = MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeElement.`type`.toNotNullType()))
     }
 
     override fun visitConditionalExpression(expression: PsiConditionalExpression) {
@@ -193,16 +193,18 @@ class ExpressionVisitor(private val converter: Converter,
                 if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
                         val qualifier = converter.convertExpression(arguments.firstOrNull())
-                        MethodCallExpression(QualifiedExpression(qualifier, Identifier(origin.getName()!!, false)),
-                                                      convertArguments(expression, isExtension = true),
-                                                      typeArguments,
-                                                      isNullable)
+                        MethodCallExpression.build(qualifier,
+                                                   origin.getName()!!,
+                                                   convertArguments(expression, isExtension = true),
+                                                   typeArguments,
+                                                   isNullable)
                     }
                     else {
-                        MethodCallExpression(Identifier(origin.getName()!!, false),
-                                                      convertArguments(expression),
-                                                      typeArguments,
-                                                      isNullable)
+                        MethodCallExpression.build(null,
+                                                   origin.getName()!!,
+                                                   convertArguments(expression),
+                                                   typeArguments,
+                                                   isNullable)
                     }
                     return
                 }
@@ -255,7 +257,7 @@ class ExpressionVisitor(private val converter: Converter,
             val reference = expression.getClassReference()
             val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
             return QualifiedExpression(Identifier(constructor.getName(), false),
-                                       MethodCallExpression(Identifier("init"), converter.convertExpressions(arguments), typeParameters, false))
+                                       MethodCallExpression.buildNotNull(null, "init", converter.convertExpressions(arguments), typeParameters))
         }
 
         return NewClassExpression(converter.convertElement(classReference),
@@ -277,7 +279,7 @@ class ExpressionVisitor(private val converter: Converter,
         val operand = converter.convertExpression(expression.getOperand(), expression.getOperand()!!.getType())
         val token = expression.getOperationTokenType()
         if (token == JavaTokenType.TILDE) {
-            result = MethodCallExpression.build(operand, "inv", ArrayList())
+            result = MethodCallExpression.buildNotNull(operand, "inv")
         }
         else if (token == JavaTokenType.EXCL && operand is BinaryExpression && operand.op == "==") { // happens when equals is converted to ==
             result = BinaryExpression(operand.left, operand.right, "!=")
@@ -366,7 +368,7 @@ class ExpressionVisitor(private val converter: Converter,
         val typeText = castType.getType().getCanonicalText()
         val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
         if (operandType is PsiPrimitiveType && typeConversion != null) {
-            result = MethodCallExpression.build(converter.convertExpression(operand), typeConversion)
+            result = MethodCallExpression.buildNotNull(converter.convertExpression(operand), typeConversion)
         }
         else {
             result = TypeCastExpression(typeConverter.convertType(castType.getType()),
