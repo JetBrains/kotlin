@@ -70,9 +70,9 @@ L5:
     mark(Test())
     call(Test, <init>) -> <v15>
     w(t|<v15>)
-    r(1) -> <v16>
-    r(t) -> <v17>
-    w(t.x|<v17>, <v16>)
+    r(t) -> <v16>
+    r(1) -> <v17>
+    w(t.x|<v16>, <v17>)
     mark(t.x += 1)
     mark(t.x)
     r(t) -> <v18>

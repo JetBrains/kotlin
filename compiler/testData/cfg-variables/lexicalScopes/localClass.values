@@ -13,14 +13,14 @@ fun foo() {
 }
 ---------------------
 "before"                                                                             <v0>   NEW()
-x                                                                                    <v2>   NEW()
-"after"                                                                              <v3>   NEW()
-{ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" }   <v3>   COPY 
+x                                                                                    <v3>   NEW(<v2>)
+"after"                                                                              <v4>   NEW()
+{ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" }   <v4>   COPY
 =====================
 == foo ==
 fun foo() {
             val b = x
         }
 ---------------------
-x   <v0>   NEW()
+x   <v1>   NEW(<v0>)
 =====================

@@ -12,14 +12,14 @@ class TestFunctionLiteral {
         sum(x - 1) + x
     }
 ---------------------
-sum              <v1>   NEW()
-x                <v2>   NEW()          
-1                <v3>   NEW()
-x - 1            <v4>   NEW(<v2>, <v3>)
-sum(x - 1)       <v5>   NEW(<v1>, <v4>)
-x                <v6>   NEW()          
-sum(x - 1) + x   <v7>   NEW(<v5>, <v6>)
-sum(x - 1) + x   <v7>   COPY
+sum              <v2>   NEW(<v1>)
+x                <v3>   NEW()
+1                <v4>   NEW()
+x - 1            <v5>   NEW(<v3>, <v4>)
+sum(x - 1)       <v6>   NEW(<v2>, <v5>)
+x                <v7>   NEW()
+sum(x - 1) + x   <v8>   NEW(<v6>, <v7>)
+sum(x - 1) + x   <v8>   COPY
 =====================
 == A ==
 open class A(val a: A)
@@ -37,23 +37,23 @@ class TestObjectLiteral {
     }
 }
 ---------------------
-obj                                                            <v0>   NEW()
-obj                                                            <v1>   NEW()
-object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v2>   NEW()
+obj                                                            <v1>   NEW(<v0>)
+obj                                                            <v3>   NEW(<v2>)
+object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v4>   NEW()
 =====================
 == foo ==
 fun foo() {
             val y = obj
         }
 ---------------------
-obj   <v0>   NEW()
+obj   <v1>   NEW(<v0>)
 =====================
 == TestOther ==
 class TestOther {
     val x: Int = x + 1
 }
 ---------------------
-x       <v0>   NEW()          
-1       <v1>   NEW()
-x + 1   <v2>   NEW(<v0>, <v1>)
+x       <v1>   NEW(<v0>)
+1       <v2>   NEW()
+x + 1   <v3>   NEW(<v1>, <v2>)
 =====================

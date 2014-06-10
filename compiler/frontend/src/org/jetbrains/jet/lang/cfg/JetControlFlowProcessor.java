@@ -453,23 +453,29 @@ public class JetControlFlowProcessor {
                 return;
             }
 
-            PseudoValue rhsValue = rhsDeferredValue.invoke();
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
             AccessTarget accessTarget = AccessTarget.BlackBox.instance$;
+            boolean unsupported = false;
             if (left instanceof JetSimpleNameExpression || left instanceof JetQualifiedExpression) {
                 accessTarget = getResolvedCallAccessTarget(PsiUtilPackage.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
-                    receiverValues = getReceiverValues(((AccessTarget.Call) accessTarget).getResolvedCall(), true);
+                    receiverValues = getReceiverValues(lhs, ((AccessTarget.Call) accessTarget).getResolvedCall(), true);
                 }
             }
             else if (left instanceof JetProperty) {
                 accessTarget = getDeclarationAccessTarget(left);
             }
             else {
-                builder.unsupported(parentExpression); // TODO
+                unsupported = true;
             }
 
-            recordWrite(left, accessTarget, rhsValue, receiverValues, parentExpression);
+            PseudoValue rhsValue = rhsDeferredValue.invoke();
+            if (unsupported) {
+                builder.unsupported(parentExpression); // TODO
+            }
+            else {
+                recordWrite(left, accessTarget, rhsValue, receiverValues, parentExpression);
+            }
         }
 
         private void generateArrayAssignment(
@@ -491,7 +497,7 @@ public class JetControlFlowProcessor {
 
             generateInstructions(lhs.getArrayExpression(), NOT_IN_CONDITION);
 
-            Map<PseudoValue, ReceiverValue> receiverValues = getReceiverValues(setResolvedCall, false);
+            Map<PseudoValue, ReceiverValue> receiverValues = getReceiverValues(lhs, setResolvedCall, false);
             SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues =
                     getArraySetterArguments(rhsDeferredValue, setResolvedCall);
 
@@ -1139,7 +1145,7 @@ public class JetControlFlowProcessor {
                                                 entry,
                                                 entry,
                                                 resolvedCall,
-                                                getReceiverValues(resolvedCall, false),
+                                                getReceiverValues(initializer, resolvedCall, false),
                                                 Collections.<PseudoValue, ValueParameterDescriptor>emptyMap()
                                             ).getOutputValue()
                                            : createSyntheticValue(entry, initializer);
@@ -1392,7 +1398,7 @@ public class JetControlFlowProcessor {
             }
 
             CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
-            Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall, true);
+            Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(callExpression, resolvedCall, true);
             SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
             for (ValueParameterDescriptor parameterDescriptor : resultingDescriptor.getValueParameters()) {
                 ResolvedValueArgument argument = resolvedCall.getValueArguments().get(parameterDescriptor);
@@ -1410,15 +1416,19 @@ public class JetControlFlowProcessor {
         }
 
         @NotNull
-        private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall, boolean generateInstructions) {
+        private Map<PseudoValue, ReceiverValue> getReceiverValues(
+                JetExpression callExpression,
+                ResolvedCall<?> resolvedCall,
+                boolean generateInstructions) {
             SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            receiverValues = getReceiverValues(resolvedCall.getThisObject(), generateInstructions, receiverValues);
-            receiverValues = getReceiverValues(resolvedCall.getReceiverArgument(), generateInstructions, receiverValues);
+            receiverValues = getReceiverValues(callExpression, resolvedCall.getThisObject(), generateInstructions, receiverValues);
+            receiverValues = getReceiverValues(callExpression, resolvedCall.getReceiverArgument(), generateInstructions, receiverValues);
             return receiverValues;
         }
 
         @NotNull
         private SmartFMap<PseudoValue, ReceiverValue> getReceiverValues(
+                JetExpression callExpression,
                 ReceiverValue receiver,
                 boolean generateInstructions,
                 SmartFMap<PseudoValue, ReceiverValue> receiverValues
@@ -1426,7 +1436,9 @@ public class JetControlFlowProcessor {
             if (!receiver.exists()) return receiverValues;
 
             if (receiver instanceof ThisReceiver) {
-                // TODO: Receiver is passed implicitly: no expression to tie the read to
+                if (generateInstructions) {
+                    receiverValues = receiverValues.plus(createSyntheticValue(callExpression), receiver);
+                }
             }
             else if (receiver instanceof ExpressionReceiver) {
                 JetExpression expression = ((ExpressionReceiver) receiver).getExpression();

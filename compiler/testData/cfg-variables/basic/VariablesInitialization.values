@@ -21,8 +21,8 @@ fun bar(foo: Foo) {
 foo                      <v1>   NEW()
 c                        <v2>   NEW(<v1>)
 foo.c                    <v2>   COPY     
-foo                      <v4>   NEW()    
-2                        <v3>   NEW()    
+foo                      <v3>   NEW()
+2                        <v4>   NEW()
 42                       <v5>   NEW()    
 { foo.c foo.c = 2 42 }   <v5>   COPY     
 =====================

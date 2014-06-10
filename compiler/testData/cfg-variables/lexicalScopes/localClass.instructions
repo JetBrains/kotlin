@@ -22,13 +22,14 @@ L0:
     w(x|<v1>)                                                                                   INIT: in: {x=D} out: {x=ID}
   3 mark({ val a = x })                                                                         INIT: in: {x=ID} out: {x=ID}
     v(val a = x)                                                                                INIT: in: {x=ID} out: {a=D, x=ID}
-    r(x) -> <v2>                                                                                INIT: in: {a=D, x=ID} out: {a=D, x=ID}
-    w(a|<v2>)                                                                                   INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
+    magic(x) -> <v2>                                                                            INIT: in: {a=D, x=ID} out: {a=D, x=ID}
+    r(x|<v2>) -> <v3>
+    w(a|<v3>)                                                                                   INIT: in: {a=D, x=ID} out: {a=ID, x=ID}
   2 jmp?(L2)                                                                                    INIT: in: {x=ID} out: {x=ID}
     d(fun foo() { val b = x })                                                                                                             USE: in: {x=READ} out: {x=READ}
 L2:
     mark("after")
-    r("after") -> <v3>
+    r("after") -> <v4>
 L1:
   1 <END>                                                                                       INIT: in: {} out: {}
 error:
@@ -44,9 +45,10 @@ fun foo() {
 L3:
   3 <START>                INIT: in: {} out: {}
   4 mark({ val b = x })
-    v(val b = x)           INIT: in: {} out: {b=D}        USE: in: {x=READ} out: {x=READ}
-    r(x) -> <v0>           INIT: in: {b=D} out: {b=D}     USE: in: {} out: {x=READ}
-    w(b|<v0>)              INIT: in: {b=D} out: {b=ID}
+    v(val b = x)           INIT: in: {} out: {b=D}
+    magic(x) -> <v0>       INIT: in: {b=D} out: {b=D}     USE: in: {x=READ} out: {x=READ}
+    r(x|<v0>) -> <v1>                                     USE: in: {} out: {x=READ}
+    w(b|<v1>)              INIT: in: {b=D} out: {b=ID}
 L4:
   3 <END>                  INIT: in: {} out: {}
 error:

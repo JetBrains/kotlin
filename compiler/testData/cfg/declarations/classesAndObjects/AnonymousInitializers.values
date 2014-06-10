@@ -16,6 +16,6 @@ class AnonymousInitializers() {
 }
 ---------------------
 34   <v0>   NEW()
-12   <v1>   NEW()
-13   <v2>   NEW()
+12   <v2>   NEW()
+13   <v4>   NEW()
 =====================

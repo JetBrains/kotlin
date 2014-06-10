@@ -39,9 +39,9 @@ L0:
     mark(foo.c)
     r(foo) -> <v1>                                                                USE: in: {c=READ, foo=READ} out: {c=READ, foo=READ}
     r(c|<v1>) -> <v2>                                                             USE: in: {c=ONLY_WRITTEN_NEVER_READ, foo=READ} out: {c=READ, foo=READ}
-    r(2) -> <v3>                                                                  USE: in: {c=ONLY_WRITTEN_NEVER_READ, foo=READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
-    r(foo) -> <v4>                                                                USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
-    w(foo.c|<v4>, <v3>)             INIT: in: {foo=ID} out: {c=I, foo=ID}         USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
+    r(foo) -> <v3>                                                                USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ, foo=READ}
+    r(2) -> <v4>                                                                  USE: in: {c=ONLY_WRITTEN_NEVER_READ} out: {c=ONLY_WRITTEN_NEVER_READ}
+    w(foo.c|<v3>, <v4>)             INIT: in: {foo=ID} out: {c=I, foo=ID}         USE: in: {} out: {c=ONLY_WRITTEN_NEVER_READ}
     r(42) -> <v5>                   INIT: in: {c=I, foo=ID} out: {c=I, foo=ID}
 L1:
   1 <END>
