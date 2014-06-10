@@ -101,17 +101,25 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY);
+    }
+
+    protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) throws Exception {
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.ALL);
+    }
+
+    protected void doTestCompiledKotlin(@NotNull String ktFileName, @NotNull ConfigurationKind configurationKind) throws Exception {
         File ktFile = new File(ktFileName);
         File txtFile = new File(ktFileName.replaceFirst("\\.kt$", ".txt"));
         AnalyzeExhaust exhaust = compileKotlinToDirAndGetAnalyzeExhaust(Collections.singletonList(ktFile), tmpdir, getTestRootDisposable(),
-                                                                        ConfigurationKind.JDK_ONLY);
+                                                                        configurationKind);
 
         PackageViewDescriptor packageFromSource = exhaust.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
         assert packageFromSource != null;
         junit.framework.Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), ConfigurationKind.JDK_ONLY).first;
+                tmpdir, getTestRootDisposable(), configurationKind).first;
 
         for (DeclarationDescriptor descriptor : packageFromBinary.getMemberScope().getAllDescriptors()) {
             if (descriptor instanceof ClassDescriptor) {

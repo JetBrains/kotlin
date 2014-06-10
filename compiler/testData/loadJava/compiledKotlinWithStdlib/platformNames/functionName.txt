@@ -1,0 +1,12 @@
+package test
+
+test.A(s = "2": kotlin.String) internal var v: kotlin.Int
+    kotlin.platform.platformName(name = "vget": kotlin.String) test.A(s = "3": kotlin.String) internal fun <get-v>(): kotlin.Int
+    kotlin.platform.platformName(name = "vset": kotlin.String) test.A(s = "4": kotlin.String) internal fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+test.A(s = "1": kotlin.String) kotlin.platform.platformName(name = "bar": kotlin.String) internal fun foo(): kotlin.String
+
+internal final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ s: kotlin.String)
+    internal final val s: kotlin.String
+        internal final fun <get-s>(): kotlin.String
+}
