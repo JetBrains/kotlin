@@ -18,7 +18,6 @@ package org.jetbrains.jet.lang.resolve;
 
 import com.google.common.collect.Lists;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ScriptDescriptor;
 import org.jetbrains.jet.lang.descriptors.ValueParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
@@ -27,28 +26,13 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.psi.JetScript;
-import org.jetbrains.jet.lang.resolve.name.FqName;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
-import org.jetbrains.jet.lang.types.JetType;
-import org.jetbrains.jet.lang.types.TypeUtils;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 // SCRIPT: Resolve script parameters
-public class ScriptParameterResolver {
+public final class ScriptParameterResolver {
     @NotNull
-    private DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver;
-
-    @Inject
-    public void setDependencyClassByQualifiedNameResolver(@NotNull DependencyClassByQualifiedNameResolver dependencyClassByQualifiedNameResolver) {
-        this.dependencyClassByQualifiedNameResolver = dependencyClassByQualifiedNameResolver;
-    }
-
-    @NotNull
-    public List<ValueParameterDescriptor> resolveScriptParameters(
+    public static List<ValueParameterDescriptor> resolveScriptParameters(
             @NotNull JetScript declaration,
             @NotNull ScriptDescriptor scriptDescriptor
     ) {
@@ -67,31 +51,15 @@ public class ScriptParameterResolver {
     }
 
     @NotNull
-    private ClassDescriptor resolveClass(@NotNull FqName className) {
-        ClassDescriptor classDescriptor = dependencyClassByQualifiedNameResolver.resolveClass(className);
-        if (classDescriptor == null) {
-            throw new IllegalStateException("dependency class not found by name: " + className);
-        }
-        return classDescriptor;
-    }
-
-    @NotNull
-    public JetType resolveTypeName(@NotNull JetTypeName typeName) {
-        List<JetType> typeArguments = new ArrayList<JetType>();
-        for (JetTypeName typeArgumentName : typeName.getArguments()) {
-            typeArguments.add(resolveTypeName(typeArgumentName));
-        }
-        ClassDescriptor classDescriptor = resolveClass(typeName.getClassName());
-        return TypeUtils.substituteParameters(classDescriptor, typeArguments);
-    }
-
-
-    @NotNull
-    private ValueParameterDescriptor resolveScriptParameter(
+    private static ValueParameterDescriptor resolveScriptParameter(
             @NotNull AnalyzerScriptParameter scriptParameter,
             int index,
-            @NotNull ScriptDescriptor script) {
-        JetType type = resolveTypeName(scriptParameter.getType());
-        return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(), type, false, null);
+            @NotNull ScriptDescriptor script
+    ) {
+        return new ValueParameterDescriptorImpl(script, null, index, Annotations.EMPTY, scriptParameter.getName(),
+                                                scriptParameter.getType(), false, null);
+    }
+
+    private ScriptParameterResolver() {
     }
 }

@@ -80,7 +80,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     private DescriptorResolver descriptorResolver;
     private TypeResolver typeResolver;
     private QualifiedExpressionResolver qualifiedExpressionResolver;
-    private ScriptParameterResolver scriptParameterResolver;
     private ScriptBodyResolver scriptBodyResolver;
 
     @Inject
@@ -111,11 +110,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
     @Inject
     public void setScopeProvider(ScopeProvider scopeProvider) {
         this.scopeProvider = scopeProvider;
-    }
-
-    @Inject
-    public void setScriptParameterResolver(ScriptParameterResolver scriptParameterResolver) {
-        this.scriptParameterResolver = scriptParameterResolver;
     }
 
     @Inject
@@ -177,7 +171,6 @@ public class ResolveSession implements KotlinCodeAnalyzer {
                     public LazyScriptDescriptor invoke(JetScript script) {
                         return new LazyScriptDescriptor(
                                 ResolveSession.this,
-                                scriptParameterResolver,
                                 scriptBodyResolver,
                                 script,
                                 ScriptHeaderResolver.getScriptPriority(script)

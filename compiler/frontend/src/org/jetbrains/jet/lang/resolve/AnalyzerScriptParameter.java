@@ -18,21 +18,17 @@ package org.jetbrains.jet.lang.resolve;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
+import org.jetbrains.jet.lang.types.JetType;
 
 public class AnalyzerScriptParameter {
     @NotNull
     private final Name name;
     @NotNull
-    private final JetTypeName type;
+    private final JetType type;
 
-    public AnalyzerScriptParameter(@NotNull Name name, @NotNull JetTypeName type) {
+    public AnalyzerScriptParameter(@NotNull Name name, @NotNull JetType type) {
         this.name = name;
         this.type = type;
-    }
-
-    public AnalyzerScriptParameter(@NotNull String name, @NotNull String type) {
-        this(Name.identifier(name), JetTypeName.parse(type));
     }
 
     @NotNull
@@ -41,7 +37,7 @@ public class AnalyzerScriptParameter {
     }
 
     @NotNull
-    public JetTypeName getType() {
+    public JetType getType() {
         return type;
     }
 }

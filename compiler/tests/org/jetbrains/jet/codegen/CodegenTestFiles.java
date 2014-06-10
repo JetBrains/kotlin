@@ -28,7 +28,8 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.psi.JetFile;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -121,23 +122,29 @@ public class CodegenTestFiles {
                 String valueString = scriptParametersMatcher.group(3);
                 Object value;
 
+                JetType jetType;
+                KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
                 if (type.equals("kotlin.String")) {
                     value = valueString;
+                    jetType = builtIns.getStringType();
                 }
                 else if (type.equals("kotlin.Long")) {
                     value = Long.parseLong(valueString);
+                    jetType = builtIns.getLongType();
                 }
                 else if (type.equals("kotlin.Int")) {
                     value = Integer.parseInt(valueString);
+                    jetType = builtIns.getIntType();
                 }
                 else if (type.equals("kotlin.Array<kotlin.String>")) {
                     value = valueString.split(" ");
+                    jetType = builtIns.getArrayType(builtIns.getStringType());
                 }
                 else {
                     throw new AssertionError("TODO: " + type);
                 }
 
-                scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), JetTypeName.parse(type)));
+                scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), jetType));
                 scriptParameterValues.add(value);
             }
 

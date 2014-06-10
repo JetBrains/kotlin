@@ -33,7 +33,7 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinition;
 import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.KotlinPaths;
 import org.jetbrains.jet.utils.PathUtil;
 import org.junit.Test;
@@ -106,6 +106,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<AnalyzerScriptParameter> numIntParam() {
-        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JetTypeName.parse("kotlin.Int")));
+        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), KotlinBuiltIns.getInstance().getIntType()));
     }
 }

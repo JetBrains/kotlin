@@ -25,7 +25,6 @@ import org.jetbrains.jet.lang.PlatformToKotlinClassMap;
 import org.jetbrains.jet.lang.resolve.TopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.LazyTopDownAnalyzer;
 import org.jetbrains.jet.lang.resolve.MutablePackageFragmentProvider;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl;
 import org.jetbrains.jet.lang.resolve.BodyResolver;
 import org.jetbrains.jet.lang.resolve.AnnotationResolver;
 import org.jetbrains.jet.lang.resolve.calls.CallResolver;
@@ -51,7 +50,6 @@ import org.jetbrains.jet.lang.resolve.DeclarationResolver;
 import org.jetbrains.jet.lang.resolve.ImportsResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.ScriptHeaderResolver;
-import org.jetbrains.jet.lang.resolve.ScriptParameterResolver;
 import org.jetbrains.jet.lang.resolve.OverloadResolver;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.TypeHierarchyResolver;
@@ -71,7 +69,6 @@ public class InjectorForTopDownAnalyzerBasic {
     private final TopDownAnalyzer topDownAnalyzer;
     private final LazyTopDownAnalyzer lazyTopDownAnalyzer;
     private final MutablePackageFragmentProvider mutablePackageFragmentProvider;
-    private final DependencyClassByQualifiedNameResolverDummyImpl dependencyClassByQualifiedNameResolverDummy;
     private final BodyResolver bodyResolver;
     private final AnnotationResolver annotationResolver;
     private final CallResolver callResolver;
@@ -97,7 +94,6 @@ public class InjectorForTopDownAnalyzerBasic {
     private final ImportsResolver importsResolver;
     private final JetImportsFactory jetImportsFactory;
     private final ScriptHeaderResolver scriptHeaderResolver;
-    private final ScriptParameterResolver scriptParameterResolver;
     private final OverloadResolver overloadResolver;
     private final OverrideResolver overrideResolver;
     private final TypeHierarchyResolver typeHierarchyResolver;
@@ -117,7 +113,6 @@ public class InjectorForTopDownAnalyzerBasic {
         this.topDownAnalyzer = new TopDownAnalyzer();
         this.lazyTopDownAnalyzer = new LazyTopDownAnalyzer();
         this.mutablePackageFragmentProvider = new MutablePackageFragmentProvider(getModuleDescriptor());
-        this.dependencyClassByQualifiedNameResolverDummy = new DependencyClassByQualifiedNameResolverDummyImpl();
         this.bodyResolver = new BodyResolver();
         this.annotationResolver = new AnnotationResolver();
         this.callResolver = new CallResolver();
@@ -143,7 +138,6 @@ public class InjectorForTopDownAnalyzerBasic {
         this.importsResolver = new ImportsResolver();
         this.jetImportsFactory = new JetImportsFactory();
         this.scriptHeaderResolver = new ScriptHeaderResolver();
-        this.scriptParameterResolver = new ScriptParameterResolver();
         this.overloadResolver = new OverloadResolver();
         this.overrideResolver = new OverrideResolver();
         this.typeHierarchyResolver = new TypeHierarchyResolver();
@@ -249,10 +243,7 @@ public class InjectorForTopDownAnalyzerBasic {
         jetImportsFactory.setProject(project);
 
         scriptHeaderResolver.setPackageFragmentProvider(mutablePackageFragmentProvider);
-        scriptHeaderResolver.setScriptParameterResolver(scriptParameterResolver);
         scriptHeaderResolver.setTrace(bindingTrace);
-
-        scriptParameterResolver.setDependencyClassByQualifiedNameResolver(dependencyClassByQualifiedNameResolverDummy);
 
         overloadResolver.setTrace(bindingTrace);
 

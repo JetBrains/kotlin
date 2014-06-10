@@ -42,18 +42,11 @@ public class ScriptHeaderResolver {
     @NotNull
     private MutablePackageFragmentProvider packageFragmentProvider;
     @NotNull
-    private ScriptParameterResolver scriptParameterResolver;
-    @NotNull
     private BindingTrace trace;
 
     @Inject
     public void setPackageFragmentProvider(@NotNull MutablePackageFragmentProvider packageFragmentProvider) {
         this.packageFragmentProvider = packageFragmentProvider;
-    }
-
-    @Inject
-    public void setScriptParameterResolver(@NotNull ScriptParameterResolver scriptParameterResolver) {
-        this.scriptParameterResolver = scriptParameterResolver;
     }
 
     @Inject
@@ -90,12 +83,12 @@ public class ScriptHeaderResolver {
         return priority == null ? 0 : priority;
     }
 
-    public void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
+    public static void resolveScriptDeclarations(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<JetScript, ScriptDescriptor> e : c.getScripts().entrySet()) {
             JetScript declaration = e.getKey();
             ScriptDescriptorImpl descriptor = (ScriptDescriptorImpl) e.getValue();
 
-            List<ValueParameterDescriptor> valueParameters = scriptParameterResolver.resolveScriptParameters(
+            List<ValueParameterDescriptor> valueParameters = ScriptParameterResolver.resolveScriptParameters(
                     declaration,
                     descriptor
             );

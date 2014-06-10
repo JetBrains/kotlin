@@ -53,7 +53,6 @@ import org.jetbrains.jet.lang.resolve.calls.CandidateResolver;
 import org.jetbrains.jet.lang.psi.JetImportsFactory;
 import org.jetbrains.jet.lang.resolve.lazy.ScopeProvider;
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
-import org.jetbrains.jet.lang.resolve.ScriptParameterResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
@@ -105,7 +104,6 @@ public class InjectorForLazyResolveWithJava {
     private final JetImportsFactory jetImportsFactory;
     private final ScopeProvider scopeProvider;
     private final ScriptBodyResolver scriptBodyResolver;
-    private final ScriptParameterResolver scriptParameterResolver;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
@@ -160,7 +158,6 @@ public class InjectorForLazyResolveWithJava {
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
-        this.scriptParameterResolver = new ScriptParameterResolver();
         this.descriptorDeserializers = new DescriptorDeserializers();
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
         this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
@@ -172,7 +169,6 @@ public class InjectorForLazyResolveWithJava {
         this.resolveSession.setQualifiedExpressionResolver(qualifiedExpressionResolver);
         this.resolveSession.setScopeProvider(scopeProvider);
         this.resolveSession.setScriptBodyResolver(scriptBodyResolver);
-        this.resolveSession.setScriptParameterResolver(scriptParameterResolver);
         this.resolveSession.setTypeResolver(typeResolver);
 
         javaClassFinder.setProject(project);
@@ -241,8 +237,6 @@ public class InjectorForLazyResolveWithJava {
         jetImportsFactory.setProject(project);
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
-
-        scriptParameterResolver.setDependencyClassByQualifiedNameResolver(javaDescriptorResolver);
 
         deserializedDescriptorResolver.setDeserializers(descriptorDeserializers);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);

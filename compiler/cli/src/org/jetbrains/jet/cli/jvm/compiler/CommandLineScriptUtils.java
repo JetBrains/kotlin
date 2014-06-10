@@ -18,24 +18,21 @@ package org.jetbrains.jet.cli.jvm.compiler;
 
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.ref.JetTypeName;
+import org.jetbrains.jet.lang.types.JetType;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.jet.lang.types.lang.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-
 public class CommandLineScriptUtils {
     private static final Name ARGS_NAME = Name.identifier("args");
-
-    private static final JetTypeName ARGS_TYPE =
-            JetTypeName.parse(BUILT_INS_PACKAGE_FQ_NAME + ".Array<" + BUILT_INS_PACKAGE_FQ_NAME + ".String>");
 
     private CommandLineScriptUtils() {
     }
 
     public static List<AnalyzerScriptParameter> scriptParameters() {
-        AnalyzerScriptParameter argsParameter = new AnalyzerScriptParameter(ARGS_NAME, ARGS_TYPE);
+        JetType arrayOfStrings = KotlinBuiltIns.getInstance().getArrayType(KotlinBuiltIns.getInstance().getStringType());
+        AnalyzerScriptParameter argsParameter = new AnalyzerScriptParameter(ARGS_NAME, arrayOfStrings);
         return Collections.singletonList(argsParameter);
     }
 

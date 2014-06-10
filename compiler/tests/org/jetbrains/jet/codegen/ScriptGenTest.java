@@ -24,6 +24,8 @@ import org.jetbrains.jet.lang.parsing.JetScriptDefinitionProvider;
 import org.jetbrains.jet.lang.resolve.AnalyzerScriptParameter;
 import org.jetbrains.jet.lang.resolve.ScriptNameUtil;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
 import org.jetbrains.jet.utils.UtilsPackage;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
@@ -35,7 +37,8 @@ public class ScriptGenTest extends CodegenTestCase {
     protected Object scriptInstance;
 
     public static final JetScriptDefinition FIB_SCRIPT_DEFINITION =
-            new JetScriptDefinition(".lang.kt", new AnalyzerScriptParameter("num", "kotlin.Int"));
+            new JetScriptDefinition(".lang.kt",
+                                    new AnalyzerScriptParameter(Name.identifier("num"), KotlinBuiltIns.getInstance().getIntType()));
 
     @Override
     protected void setUp() throws Exception {

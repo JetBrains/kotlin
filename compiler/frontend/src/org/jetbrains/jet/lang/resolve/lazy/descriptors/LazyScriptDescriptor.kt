@@ -26,15 +26,9 @@ import org.jetbrains.jet.lang.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
 import org.jetbrains.jet.lang.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.jet.lang.resolve.BindingContext
-import org.jetbrains.jet.lang.psi.JetFile
 import org.jetbrains.kotlin.util.sure
 import org.jetbrains.jet.lang.resolve.ScriptParameterResolver
-import org.jetbrains.jet.lang.resolve.TopDownAnalysisParameters
 import org.jetbrains.jet.lang.resolve.ScriptBodyResolver
-import org.jetbrains.jet.lang.resolve.lazy.data.JetClassLikeInfo
-import org.jetbrains.jet.lang.resolve.ScriptNameUtil
-import org.jetbrains.jet.lang.descriptors.ClassKind
-import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.descriptors.impl.ScriptCodeDescriptor
 import org.jetbrains.jet.lang.types.DeferredType
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
@@ -43,17 +37,11 @@ import org.jetbrains.jet.lang.resolve.scopes.ChainedScope
 import org.jetbrains.jet.lang.resolve.lazy.ForceResolveUtil
 import org.jetbrains.jet.lang.types.TypeSubstitutor
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.jet.lang.psi.JetParameter
-import org.jetbrains.jet.lang.psi.JetTypeParameter
 import org.jetbrains.jet.lang.resolve.scopes.RedeclarationHandler
-import org.jetbrains.jet.lang.psi.JetCallableDeclaration
 import org.jetbrains.jet.lang.resolve.scopes.WritableScope
-import org.jetbrains.jet.lang.resolve.BindingTrace
-import org.jetbrains.jet.lang.resolve.TemporaryBindingTrace
 
 public class LazyScriptDescriptor(
         val resolveSession: ResolveSession,
-        scriptParameterResolver: ScriptParameterResolver,
         scriptBodyResolver: ScriptBodyResolver,
         val jetScript: JetScript,
         val _priority: Int
@@ -82,7 +70,7 @@ public class LazyScriptDescriptor(
         val result = ScriptCodeDescriptor(this)
         result.initialize(
                 _implicitReceiver,
-                scriptParameterResolver.resolveScriptParameters(jetScript, this),
+                ScriptParameterResolver.resolveScriptParameters(jetScript, this),
                 DeferredType.create(resolveSession.getStorageManager(), resolveSession.getTrace()) {
                     scriptBodyResolver.resolveScriptReturnType(jetScript, this, resolveSession.getTrace())
                 }
