@@ -95,7 +95,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
         }
 
-        for(member in membersToRemove) {
+        for (member in membersToRemove) {
             convertedElements.remove(member)
         }
 
@@ -105,11 +105,27 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val primaryConstructor = constructors.map { it.member }.filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
         val secondaryConstructors = constructors.filter { it.member is SecondaryConstructor }
 
+        // do not convert private static methods into class object if possible
+        val useClassObject = if (psiClass.isEnum()) {
+            false
+        }
+        else {
+            val members = membersMap.keySet().filter { it !is PsiMethod || !it.isConstructor() }
+            val classObjectMembers = members.filter { it !is PsiClass && it.hasModifierProperty(PsiModifier.STATIC) }
+            val nestedClasses = members.filterIsInstance(javaClass<PsiClass>()).filter { it.hasModifierProperty(PsiModifier.STATIC) }
+            if (classObjectMembers.all { it is PsiMethod && it.hasModifierProperty(PsiModifier.PRIVATE) }) {
+                nestedClasses.any { nestedClass -> classObjectMembers.any { findMethodCalls(it as PsiMethod, nestedClass).isNotEmpty() } }
+            }
+            else {
+                true
+            }
+        }
+
         val normalMembers = ArrayList<MemberWithComments>()
         val classObjectMembers = ArrayList<MemberWithComments>()
-        for((psiMember, member) in membersMap) {
+        for ((psiMember, member) in membersMap) {
             if (member.member is Constructor) continue
-            if (!psiClass.isEnum() && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+            if (useClassObject && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
                 classObjectMembers.add(member)
             }
             else {

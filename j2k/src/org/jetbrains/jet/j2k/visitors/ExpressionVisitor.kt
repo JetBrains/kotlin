@@ -328,7 +328,7 @@ class ExpressionVisitor(private val converter: Converter,
             if (target is PsiMember
                     && target.hasModifierProperty(PsiModifier.STATIC)
                     && target.getContainingClass() != null
-                    && PsiTreeUtil.getParentOfType(expression, javaClass<PsiClass>()) != target.getContainingClass()
+                    && !PsiTreeUtil.isAncestor(target.getContainingClass(), expression, true)
                     && !isStaticallyImported(target, expression)) {
                 var member: PsiMember = target
                 var code = Identifier(referencedName).toKotlin()
