@@ -29,6 +29,7 @@ import org.jetbrains.jet.lang.resolve.BindingTrace;
 import org.jetbrains.jet.lang.resolve.java.JvmAbi;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
+import org.jetbrains.jet.lang.resolve.name.SpecialNames;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
@@ -297,8 +298,9 @@ public class CodegenBinding {
     private static String getAsmTypeImpl(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor klass) {
         DeclarationDescriptor container = klass.getContainingDeclaration();
 
+        Name name = SpecialNames.safeIdentifier(klass.getName());
         if (container instanceof PackageFragmentDescriptor) {
-            String shortName = klass.getName().getIdentifier();
+            String shortName = name.getIdentifier();
             FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
             return fqName.isRoot() ? shortName : fqName.asString().replace('.', '/') + '/' + shortName;
         }
@@ -312,7 +314,7 @@ public class CodegenBinding {
             case CLASS_OBJECT:
                 return containerInternalName + JvmAbi.CLASS_OBJECT_SUFFIX;
             default:
-                return containerInternalName + "$" + klass.getName().getIdentifier();
+                return containerInternalName + "$" + name.getIdentifier();
         }
     }
 

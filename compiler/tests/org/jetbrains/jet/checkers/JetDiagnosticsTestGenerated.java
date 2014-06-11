@@ -2552,6 +2552,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
             
+            @TestMetadata("missingNames.kt")
+            public void testMissingNames() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/missingNames.kt");
+            }
+            
             @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides")
             public static class AccidentalOverrides extends AbstractJetDiagnosticsTest {
                 public void testAllFilesPresentInAccidentalOverrides() throws Exception {

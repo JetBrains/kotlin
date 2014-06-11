@@ -49,6 +49,7 @@ import java.util.*;
 import static org.jetbrains.jet.codegen.JvmCodegenUtil.peekFromStack;
 import static org.jetbrains.jet.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.jet.lang.resolve.BindingContext.*;
+import static org.jetbrains.jet.lang.resolve.name.SpecialNames.safeIdentifier;
 import static org.jetbrains.jet.lexer.JetTokens.*;
 
 class CodegenAnnotatingVisitor extends JetVisitorVoid {
@@ -229,8 +230,9 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
     private String getName(ClassDescriptor classDescriptor) {
         String base = peekFromStack(nameStack);
-        return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? classDescriptor.getName()
-                        .asString() : base + '/' + classDescriptor.getName() : base + '$' + classDescriptor.getName();
+        Name descriptorName = safeIdentifier(classDescriptor.getName());
+        return DescriptorUtils.isTopLevelDeclaration(classDescriptor) ? base.isEmpty() ? descriptorName
+                        .asString() : base + '/' + descriptorName : base + '$' + descriptorName;
     }
 
     @Override
@@ -344,7 +346,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
             nameStack.push(nameForClassOrPackageMember);
         }
         else {
-            nameStack.push(peekFromStack(nameStack) + '$' + property.getName());
+            nameStack.push(peekFromStack(nameStack) + '$' + safeIdentifier(property.getNameAsSafeName()).asString());
         }
         super.visitProperty(property);
         nameStack.pop();
@@ -381,7 +383,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         String peek = peekFromStack(nameStack);
-        String name = descriptor.getName().asString();
+        String name = safeIdentifier(descriptor.getName()).asString();
         if (containingDeclaration instanceof ClassDescriptor) {
             return peek + '$' + name;
         }
