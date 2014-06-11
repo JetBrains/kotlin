@@ -66,7 +66,7 @@ class JDIEval(
         )
     }
 
-    override fun loadString(str: String): Value = vm.mirrorOf(str)!!.asValue()
+    override fun loadString(str: String): Value = vm.mirrorOf(str).asValue()
 
     override fun newInstance(classType: Type): Value {
         return NewObjectValue(classType)
@@ -253,12 +253,7 @@ class JDIEval(
                 val dimensions = name.count { it == '[' }
                 val baseTypeName = if (dimensions > 0) name.substring(0, name.indexOf('[')) else name
 
-                val primitiveType = primitiveTypes[baseTypeName]
-                val baseType = if (primitiveType != null)
-                    primitiveType
-                else {
-                    Type.getType("L$baseTypeName;").asReferenceType()
-                }
+                val baseType = primitiveTypes[baseTypeName] ?: Type.getType("L$baseTypeName;").asReferenceType()
 
                 if (dimensions == 0)
                     baseType
