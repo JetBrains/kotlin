@@ -78,8 +78,25 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     public fun convertFile(javaFile: PsiJavaFile): File {
-        val fileMembers = FileMemberList(javaFile.getChildren().map { convertTopElement(it) }.filterNotNull())
-        return File(fileMembers, createMainFunction(javaFile))
+        var convertedChildren = javaFile.getChildren().map {
+            if (it is PsiImportList) {
+                val importList = convertImportList(it)
+                typeConverter.importList = importList
+                importList
+            }
+            else {
+                convertTopElement(it)
+            }
+        }.filterNotNull()
+
+        typeConverter.importList = null
+        if (typeConverter.importsToAdd.isNotEmpty()) {
+            val importList = convertedChildren.filterIsInstance(javaClass<ImportList>()).first()
+            val newImportList = ImportList(importList.imports + typeConverter.importsToAdd)
+            convertedChildren = convertedChildren.map { if (it == importList) newImportList else it }
+        }
+
+        return File(FileMemberList(convertedChildren), createMainFunction(javaFile))
     }
 
     public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {

@@ -28,7 +28,7 @@ class Import(val name: String) : Element {
     override fun toKotlin() = "import " + name
 }
 
-class ImportList(private val imports: List<Import>) : Element {
+class ImportList(public val imports: List<Import>) : Element {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 

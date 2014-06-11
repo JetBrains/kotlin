@@ -21,14 +21,30 @@ import org.jetbrains.jet.j2k.ast.Nullability
 import com.intellij.psi.*
 import org.jetbrains.jet.j2k.visitors.TypeVisitor
 import java.util.HashMap
+import java.util.HashSet
+import org.jetbrains.jet.j2k.ast.Import
+import org.jetbrains.jet.j2k.ast.ImportList
 
 class TypeConverter(val settings: ConverterSettings, val conversionScope: ConversionScope) {
     private val nullabilityCache = HashMap<PsiElement, Nullability>()
+    private val classesToImport = HashSet<String>()
+
+    public var importList: ImportList? = null
+        set(value) {
+            $importList = value
+            importNames = importList?.imports?.mapTo(HashSet<String>()) { it.name } ?: setOf()
+
+        }
+    public var importNames: Set<String> = setOf()
+        private set
+
+    public val importsToAdd: Collection<Import>
+        get() = classesToImport.map { Import(it) }
 
     public fun convertType(`type`: PsiType?, nullability: Nullability = Nullability.Default): Type {
         if (`type` == null) return Type.Empty
 
-        val result = `type`.accept<Type>(TypeVisitor(this))!!
+        val result = `type`.accept<Type>(TypeVisitor(this, classesToImport))!!
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()
