@@ -4,7 +4,7 @@ trait Getter {
 
 class C() {
     fun foo(b: Boolean): String {
-        val getter = object : Getter() {
+        val getter = object : Getter {
             override fun get(): String? {
                 return null
             }

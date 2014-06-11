@@ -91,6 +91,19 @@ class PolyadicExpression(val expressions: List<Expression>, val token: String) :
     }
 }
 
+class LambdaExpression(val arguments: String?, val statementList: StatementList) : Expression() {
+    override fun toKotlin(): String {
+        val statementsText = statementList.toKotlin().trim()
+        if (arguments != null) {
+            val br = if (statementsText.indexOf('\n') < 0 && statementsText.indexOf('\r') < 0) " " else "\n"
+            return "{ $arguments ->$br$statementsText }"
+        }
+        else {
+            return "{ $statementsText }"
+        }
+    }
+}
+
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType.isPrimitive()) {

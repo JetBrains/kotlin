@@ -19,6 +19,8 @@ public open class KotlinClass {
 public trait KotlinTrait {
     public fun nullableFun(): String?
     public fun notNullableFun(): String
+
+    public fun nonAbstractFun(): Int = 1
 }
 
 public fun globalFunction(s: String): String = s

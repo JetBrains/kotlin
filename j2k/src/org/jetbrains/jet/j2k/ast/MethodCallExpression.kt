@@ -16,46 +16,54 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.ArrayList
-
 class MethodCallExpression(
         val methodExpression: Expression,
         val arguments: List<Expression>,
         val typeArguments: List<Type>,
-        override val isNullable: Boolean
+        override val isNullable: Boolean,
+        val lambdaArgument: LambdaExpression? = null
 ) : Expression() {
 
     override fun toKotlin(): String {
-        return operandToKotlin(methodExpression) +
-                typeArguments.toKotlin(", ", "<", ">") +
-                "(" +
-                arguments.map { it.toKotlin() }.makeString(", ") +
-                ")"
+        val builder = StringBuilder()
+        builder.append(operandToKotlin(methodExpression))
+        builder.append(typeArguments.toKotlin(", ", "<", ">"))
+        if (arguments.isNotEmpty() || lambdaArgument == null) {
+            builder.append("(").append(arguments.map { it.toKotlin() }.makeString(", ")).append(")")
+        }
+        if (lambdaArgument != null) {
+            builder.append(lambdaArgument.toKotlin())
+        }
+        return builder.toString()
     }
 
     class object {
         public fun buildNotNull(receiver: Expression?,
-                         methodName: String,
-                         arguments: List<Expression> = listOf(),
-                         typeArguments: List<Type> = listOf()): MethodCallExpression
-                = build(receiver, methodName, arguments, typeArguments, false)
+                                methodName: String,
+                                arguments: List<Expression> = listOf(),
+                                typeArguments: List<Type> = listOf(),
+                                lambdaArgument: LambdaExpression? = null): MethodCallExpression
+                = build(receiver, methodName, arguments, typeArguments, false, lambdaArgument)
 
         public fun buildNullable(receiver: Expression?,
-                         methodName: String,
-                         arguments: List<Expression> = listOf(),
-                         typeArguments: List<Type> = listOf()): MethodCallExpression
-                = build(receiver, methodName, arguments, typeArguments, true)
+                                 methodName: String,
+                                 arguments: List<Expression> = listOf(),
+                                 typeArguments: List<Type> = listOf(),
+                                 lambdaArgument: LambdaExpression? = null): MethodCallExpression
+                = build(receiver, methodName, arguments, typeArguments, true, lambdaArgument)
 
         public fun build(receiver: Expression?,
                          methodName: String,
                          arguments: List<Expression>,
                          typeArguments: List<Type>,
-                         isNullable: Boolean): MethodCallExpression {
+                         isNullable: Boolean,
+                         lambdaArgument: LambdaExpression? = null): MethodCallExpression {
             val identifier = Identifier(methodName, false)
             return MethodCallExpression(if (receiver != null) QualifiedExpression(receiver, identifier) else identifier,
                                         arguments,
                                         typeArguments,
-                                        isNullable)
+                                        isNullable,
+                                        lambdaArgument)
         }
     }
 }

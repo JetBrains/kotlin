@@ -20,7 +20,9 @@ import com.intellij.psi.*
 import org.jetbrains.jet.j2k.*
 import org.jetbrains.jet.j2k.ast.*
 
-class ElementVisitor(private val converter: Converter, private val typeConverter: TypeConverter) : JavaElementVisitor() {
+class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
+    private val typeConverter = converter.typeConverter
+
     public var result: Element = Element.Empty
         protected set
 

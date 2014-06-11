@@ -33,14 +33,28 @@ public class FilesConversionScope(val files: Collection<PsiJavaFile>) : Conversi
     override fun contains(element: PsiElement) = files.any { element.getContainingFile() == it }
 }
 
-public class Converter(val project: Project, val settings: ConverterSettings, val conversionScope: ConversionScope) {
+public class Converter private(val project: Project, val settings: ConverterSettings, val conversionScope: ConversionScope, val state: Converter.State) {
+    private class State(val typeConverter: TypeConverter,
+                        val methodReturnType: PsiType?,
+                        val expressionVisitorFactory: (Converter) -> ExpressionVisitor,
+                        val statementVisitorFactory: (Converter) -> StatementVisitor)
 
-    private val typeConverter = TypeConverter(settings, conversionScope)
+    val typeConverter: TypeConverter get() = state.typeConverter
+    val methodReturnType: PsiType? get() = state.methodReturnType
 
-    private val dispatcher: Dispatcher = Dispatcher(this, typeConverter)
+    class object {
+        public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter
+                = Converter(project, settings, conversionScope, State(TypeConverter(settings, conversionScope), null, { ExpressionVisitor(it) }, { StatementVisitor(it) }))
+    }
 
-    public var methodReturnType: PsiType? = null
-        private set
+    fun withMethodReturnType(methodReturnType: PsiType?): Converter
+            = Converter(project, settings, conversionScope, State(typeConverter, methodReturnType, state.expressionVisitorFactory, state.statementVisitorFactory))
+
+    fun withExpressionVisitor(factory: (Converter) -> ExpressionVisitor): Converter
+            = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, factory, state.statementVisitorFactory))
+
+    fun withStatementVisitor(factory: (Converter) -> StatementVisitor): Converter
+            = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, state.expressionVisitorFactory, factory))
 
     public fun elementToKotlin(element: PsiElement): String
             = convertTopElement(element)?.toKotlin() ?: ""
@@ -65,8 +79,8 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
         return File(fileMembers, createMainFunction(javaFile))
     }
 
-    public fun convertAnonymousClass(anonymousClass: PsiAnonymousClass): AnonymousClass {
-        return AnonymousClass(this, convertClassBody(anonymousClass))
+    public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
+        return AnonymousClassBody(this, convertClassBody(anonymousClass), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false)
     }
 
     private fun convertClassBody(psiClass: PsiClass): List<Element> {
@@ -216,7 +230,10 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
     }
 
     private fun convertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
-        methodReturnType = method.getReturnType()
+        return withMethodReturnType(method.getReturnType()).doConvertMethod(method, membersToRemove)
+    }
+
+    private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         val returnType = typeConverter.convertMethodReturnType(method)
 
         val modifiers = convertModifiers(method)
@@ -340,13 +357,8 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
                     usageReplacementMap.put(parameter, field.getName()!!)
                 }
             }
-            dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, usageReplacementMap)
-            try {
-                convertBlock(body, false, { !statementsToRemove.contains(it) })
-            }
-            finally {
-                dispatcher.expressionVisitor = ExpressionVisitor(this, typeConverter, mapOf())
-            }
+
+            withExpressionVisitor { ExpressionVisitor(it, usageReplacementMap) }.convertBlock(body, false, { !statementsToRemove.contains(it) })
         }
         else {
             Block.Empty
@@ -409,7 +421,7 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
     public fun convertStatement(statement: PsiStatement?): Statement {
         if (statement == null) return Statement.Empty
 
-        val statementVisitor: StatementVisitor = StatementVisitor(this)
+        val statementVisitor = state.statementVisitorFactory(this)
         statement.accept(statementVisitor)
         return statementVisitor.result
     }
@@ -420,7 +432,7 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
     public fun convertExpression(expression: PsiExpression?): Expression {
         if (expression == null) return Expression.Empty
 
-        val expressionVisitor = dispatcher.expressionVisitor
+        val expressionVisitor = state.expressionVisitorFactory(this)
         expression.accept(expressionVisitor)
         return expressionVisitor.result
     }
@@ -428,17 +440,9 @@ public class Converter(val project: Project, val settings: ConverterSettings, va
     public fun convertElement(element: PsiElement?): Element {
         if (element == null) return Element.Empty
 
-        val elementVisitor = ElementVisitor(this, typeConverter)
+        val elementVisitor = ElementVisitor(this)
         element.accept(elementVisitor)
         return elementVisitor.result
-    }
-
-    fun convertElements(elements: Array<out PsiElement?>): List<Element> {
-        val result = ArrayList<Element>()
-        for (element in elements) {
-            result.add(convertElement(element))
-        }
-        return result
     }
 
     public fun convertTypeElement(element: PsiTypeElement?): TypeElement

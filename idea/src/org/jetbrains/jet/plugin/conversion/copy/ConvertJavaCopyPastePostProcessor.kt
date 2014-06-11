@@ -79,7 +79,7 @@ public class ConvertJavaCopyPastePostProcessor() : CopyPastePostProcessor<TextBl
     }
 
     private fun convertCopiedCodeToKotlin(code: CopiedCode, file: PsiJavaFile): String {
-        val converter = Converter(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)))
+        val converter = Converter.create(file.getProject(), ConverterSettings.defaultSettings, FilesConversionScope(listOf(file)))
         val startOffsets = code.getStartOffsets()
         val endOffsets = code.getEndOffsets()
         assert(startOffsets.size == endOffsets.size) { "Must have the same size" }

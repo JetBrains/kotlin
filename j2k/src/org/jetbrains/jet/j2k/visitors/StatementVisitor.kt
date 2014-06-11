@@ -23,10 +23,11 @@ import org.jetbrains.jet.j2k.countWriteAccesses
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.hasWriteAccesses
 import org.jetbrains.jet.j2k.isInSingleLine
+import org.jetbrains.jet.j2k.getContainingMethod
 
-class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
+open class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     public var result: Statement = Statement.Empty
-        private set
+        protected set
 
     override fun visitAssertStatement(statement: PsiAssertStatement) {
         result = AssertStatement(converter.convertExpression(statement.getAssertCondition()),
@@ -56,7 +57,7 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     }
 
     override fun visitDeclarationStatement(statement: PsiDeclarationStatement) {
-        result = DeclarationStatement(converter.convertElements(statement.getDeclaredElements()))
+        result = DeclarationStatement(statement.getDeclaredElements().map { converter.convertElement(it) })
     }
 
     override fun visitDoWhileStatement(statement: PsiDoWhileStatement) {
@@ -217,16 +218,76 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
         result = ThrowStatement(converter.convertExpression(statement.getException()))
     }
 
-    override fun visitTryStatement(statement: PsiTryStatement) {
-        val catches = ArrayList<CatchStatement>()
-        val catchBlocks = statement.getCatchBlocks()
-        val catchBlockParameters = statement.getCatchBlockParameters()
-        for (i in 0..catchBlocks.size - 1) {
-            catches.add(CatchStatement(converter.convertParameter(catchBlockParameters[i], Nullability.NotNull),
-                                       converter.convertBlock(catchBlocks[i])))
+    override fun visitTryStatement(tryStatement: PsiTryStatement) {
+        val tryBlock = tryStatement.getTryBlock()
+        val catchesConverted = run {
+            val catchBlocks = tryStatement.getCatchBlocks()
+            val catchBlockParameters = tryStatement.getCatchBlockParameters()
+            catchBlocks.indices.map {
+                CatchStatement(converter.convertParameter(catchBlockParameters[it], Nullability.NotNull),
+                               converter.convertBlock(catchBlocks[it]))
+            }
         }
-        result = TryStatement(converter.convertBlock(statement.getTryBlock()),
-                                catches, converter.convertBlock(statement.getFinallyBlock()))
+        val finallyConverted = converter.convertBlock(tryStatement.getFinallyBlock())
+
+        val resourceList = tryStatement.getResourceList()
+        if (resourceList != null) {
+            val variables = resourceList.getResourceVariables()
+            if (variables.isNotEmpty()) {
+                var wrapResultStatement: (Expression) -> Statement = { it }
+                var converterForBody = converter
+
+                val returns = collectReturns(tryBlock)
+                //TODO: support other returns when non-local returns supported by Kotlin
+                if (returns.size == 1 && returns.single() == tryBlock!!.getStatements().last()) {
+                    wrapResultStatement = { ReturnStatement(it) }
+                    converterForBody = converter.withStatementVisitor { object : StatementVisitor(it) {
+                        override fun visitReturnStatement(statement: PsiReturnStatement) {
+                            if (statement == returns.single()) {
+                                result = converter.convertExpression(statement.getReturnValue(), tryStatement.getContainingMethod()?.getReturnType())
+                            }
+                            else {
+                                super.visitReturnStatement(statement)
+                            }
+                        }
+                    }}
+                }
+
+                var bodyConverted = converterForBody.convertBlock(tryBlock)
+                var statementList = bodyConverted.statementList
+                var expression: Expression = Expression.Empty
+                for (variable in variables.reverse()) {
+                    val lambda = LambdaExpression(Identifier(variable.getName()!!).toKotlin(), statementList)
+                    expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
+                    statementList = StatementList(listOf(expression))
+                }
+
+                if (catchesConverted.isEmpty() && finallyConverted.isEmpty) {
+                    result = wrapResultStatement(expression)
+                    return
+                }
+
+                bodyConverted = Block(StatementList(listOf(wrapResultStatement(expression))), true)
+                result = TryStatement(bodyConverted, catchesConverted, finallyConverted)
+                return
+            }
+        }
+
+        result = TryStatement(converter.convertBlock(tryBlock), catchesConverted, finallyConverted)
+    }
+
+    private fun collectReturns(block: PsiCodeBlock?): Collection<PsiReturnStatement> {
+        val returns = ArrayList<PsiReturnStatement>()
+        block?.accept(object: JavaRecursiveElementVisitor() {
+            override fun visitReturnStatement(statement: PsiReturnStatement) {
+                returns.add(statement)
+            }
+
+            override fun visitMethod(method: PsiMethod) {
+                // do not go inside any other method (e.g. in anonymous class)
+            }
+        })
+        return returns
     }
 
     override fun visitWhileStatement(statement: PsiWhileStatement) {
@@ -241,10 +302,10 @@ class StatementVisitor(public val converter: Converter) : JavaElementVisitor() {
     override fun visitReturnStatement(statement: PsiReturnStatement) {
         val returnValue = statement.getReturnValue()
         val methodReturnType = converter.methodReturnType
-        val expression = (if (returnValue != null && methodReturnType != null)
+        val expression = if (returnValue != null && methodReturnType != null)
             converter.convertExpression(returnValue, methodReturnType)
         else
-            converter.convertExpression(returnValue))
+            converter.convertExpression(returnValue)
         result = ReturnStatement(expression)
     }
 

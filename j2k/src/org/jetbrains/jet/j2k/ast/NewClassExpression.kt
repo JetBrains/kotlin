@@ -16,20 +16,25 @@
 
 package org.jetbrains.jet.j2k.ast
 
-open class NewClassExpression(
+class NewClassExpression(
         val name: Element,
         val arguments: List<Expression>,
         val qualifier: Expression = Expression.Empty,
-        val anonymousClass: AnonymousClass? = null
+        val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
 
     override fun toKotlin(): String {
-        val callOperator = if (qualifier.isNullable) "?." else "."
+        val callOperator = if (qualifier.isNullable) "!!." else "."
         val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin() + callOperator
         val appliedArguments = arguments.toKotlin(", ")
-        return if (anonymousClass != null)
-            "object : " + qualifier + name.toKotlin() + "(" + appliedArguments + ")" + anonymousClass.toKotlin()
-        else
+        return if (anonymousClass != null) {
+            if (anonymousClass.extendsTrait)
+                "object : " + qualifier + name.toKotlin() + anonymousClass.toKotlin()
+            else
+                "object : " + qualifier + name.toKotlin() + "(" + appliedArguments + ")" + anonymousClass.toKotlin()
+        }
+        else{
             qualifier + name.toKotlin() + "(" + appliedArguments + ")"
+        }
     }
 }

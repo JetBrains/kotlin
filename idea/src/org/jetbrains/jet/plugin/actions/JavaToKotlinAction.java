@@ -52,7 +52,7 @@ public class JavaToKotlinAction extends AnAction {
             return;
         }
 
-        final Converter converter = new Converter(project, ConverterSettings.defaultSettings, new FilesConversionScope(selectedJavaFiles));
+        final Converter converter = Converter.object$.create(project, ConverterSettings.defaultSettings, new FilesConversionScope(selectedJavaFiles));
         CommandProcessor.getInstance().executeCommand(
                 project,
                 new Runnable() {

@@ -36,8 +36,9 @@ import com.intellij.psi.impl.light.LightField
 import org.jetbrains.jet.lang.resolve.java.JvmAbi
 
 class ExpressionVisitor(private val converter: Converter,
-                        private val typeConverter: TypeConverter,
                         private val usageReplacementMap: Map<PsiVariable, String> = mapOf()) : JavaElementVisitor() {
+    private val typeConverter = converter.typeConverter
+
     public var result: Expression = Expression.Empty
         protected set
 
@@ -263,7 +264,7 @@ class ExpressionVisitor(private val converter: Converter,
         return NewClassExpression(converter.convertElement(classReference),
                                   convertArguments(expression),
                                   converter.convertExpression(expression.getQualifier()),
-                                  if (anonymousClass != null) converter.convertAnonymousClass(anonymousClass) else null)
+                                  if (anonymousClass != null) converter.convertAnonymousClassBody(anonymousClass) else null)
     }
 
     override fun visitParenthesizedExpression(expression: PsiParenthesizedExpression) {

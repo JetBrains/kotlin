@@ -14,11 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.jet.j2k.visitors
+package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.Converter
-import org.jetbrains.jet.j2k.TypeConverter
+import java.util.Collections
 
-class Dispatcher(converter: Converter, typeConverter: TypeConverter) {
-    var expressionVisitor: ExpressionVisitor = ExpressionVisitor(converter, typeConverter)
+class AnonymousClassBody(converter: Converter, bodyElements: List<Element>, val extendsTrait: Boolean)
+: Class(converter,
+        Identifier(""),
+        MemberComments.Empty,
+        setOf(),
+        TypeParameterList.Empty,
+        listOf(),
+        listOf(),
+        listOf(),
+        bodyElements) {
+    override fun toKotlin() = bodyToKotlin()
 }

@@ -116,14 +116,14 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
 
     private fun elementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val fileWithText = JavaToKotlinTranslator.createFile(project, text)
-        val converter = Converter(project, settings, FilesConversionScope(listOf(fileWithText)))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(fileWithText)))
         val element = fileWithText.getFirstChild()!!
         return converter.elementToKotlin(element)
     }
 
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = JavaToKotlinTranslator.createFile(project, text)
-        val converter = Converter(project, settings, FilesConversionScope(listOf(file)))
+        val converter = Converter.create(project, settings, FilesConversionScope(listOf(file)))
         return converter.elementToKotlin(file)
     }
 
