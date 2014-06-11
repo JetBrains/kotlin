@@ -1127,7 +1127,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    protected void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
+    private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
         if (ignoreIfTraitOrAnnotation()) return;
 
         if (kind != OwnerKind.IMPLEMENTATION) {
