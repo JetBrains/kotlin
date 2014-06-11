@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.hierarchy.calls;
 
+import com.google.common.collect.Maps;
 import com.intellij.ide.hierarchy.HierarchyNodeDescriptor;
 import com.intellij.ide.hierarchy.call.CallerMethodsTreeStructure;
 import com.intellij.openapi.application.ReadActionProcessor;
@@ -105,8 +106,7 @@ public abstract class KotlinCallerMethodsTreeStructure extends KotlinCallTreeStr
             PsiElement element = getTargetElement(descriptor);
 
             SearchScope searchScope = getSearchScope(scopeType, basePsiClass);
-            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap =
-                    new HashMap<PsiElement, HierarchyNodeDescriptor>();
+            Map<PsiElement, HierarchyNodeDescriptor> methodToDescriptorMap = Maps.newHashMap();
 
             Object[] javaCallers = null;
             if (element instanceof PsiMethod) {

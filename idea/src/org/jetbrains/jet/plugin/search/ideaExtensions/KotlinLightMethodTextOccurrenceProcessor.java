@@ -32,9 +32,7 @@ public class KotlinLightMethodTextOccurrenceProcessor extends MethodTextOccurren
     }
 
     @Override
-    protected boolean processInexactReference(
-            PsiReference ref, PsiElement refElement, PsiMethod method, Processor<PsiReference> consumer
-    ) {
+    protected boolean processInexactReference(PsiReference ref, PsiElement refElement, PsiMethod method, Processor<PsiReference> consumer) {
         if (refElement instanceof JetNamedFunction) {
             PsiMethod lightMethod = LightClassUtil.getLightClassMethod((JetNamedFunction) refElement);
             if (lightMethod != null) return super.processInexactReference(ref, lightMethod, method, consumer);
