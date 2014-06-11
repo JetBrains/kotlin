@@ -29,6 +29,10 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
     public var result: Statement = Statement.Empty
         protected set
 
+    public fun reset() {
+        result = Statement.Empty
+    }
+
     override fun visitAssertStatement(statement: PsiAssertStatement) {
         val descriptionExpr = statement.getAssertDescription()
         val condition = converter.convertExpression(statement.getAssertCondition())

@@ -42,6 +42,9 @@ public class Converter private(val project: Project, val settings: ConverterSett
     val typeConverter: TypeConverter get() = state.typeConverter
     val methodReturnType: PsiType? get() = state.methodReturnType
 
+    private val expressionVisitor = state.expressionVisitorFactory(this)
+    private val statementVisitor = state.statementVisitorFactory(this)
+
     class object {
         public fun create(project: Project, settings: ConverterSettings, conversionScope: ConversionScope): Converter
                 = Converter(project, settings, conversionScope, State(TypeConverter(settings, conversionScope), null, { ExpressionVisitor(it) }, { StatementVisitor(it) }))
@@ -488,7 +491,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     public fun convertStatement(statement: PsiStatement?): Statement {
         if (statement == null) return Statement.Empty
 
-        val statementVisitor = state.statementVisitorFactory(this)
+        statementVisitor.reset()
         statement.accept(statementVisitor)
         return statementVisitor.result
     }
@@ -499,7 +502,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     public fun convertExpression(expression: PsiExpression?): Expression {
         if (expression == null) return Expression.Empty
 
-        val expressionVisitor = state.expressionVisitorFactory(this)
+        expressionVisitor.reset()
         expression.accept(expressionVisitor)
         return expressionVisitor.result
     }

@@ -42,6 +42,10 @@ class ExpressionVisitor(private val converter: Converter,
     public var result: Expression = Expression.Empty
         protected set
 
+    public fun reset() {
+        result = Expression.Empty
+    }
+
     override fun visitArrayAccessExpression(expression: PsiArrayAccessExpression) {
         val assignment = PsiTreeUtil.getParentOfType(expression, javaClass<PsiAssignmentExpression>())
         val lvalue = assignment != null && expression == assignment.getLExpression();
