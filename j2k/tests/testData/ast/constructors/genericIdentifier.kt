@@ -7,18 +7,18 @@ public class Identifier<T> private(private val myName: T, private var myHasDolla
 
     class object {
 
-        public fun <T> init(name: T): Identifier<T> {
+        public fun <T> create(name: T): Identifier<T> {
             val __ = Identifier(name, false)
             return __
         }
 
-        public fun <T> init(name: T, isNullable: Boolean): Identifier<T> {
+        public fun <T> create(name: T, isNullable: Boolean): Identifier<T> {
             val __ = Identifier(name, false)
             __.myNullable = isNullable
             return __
         }
 
-        public fun <T> init(name: T, hasDollar: Boolean, isNullable: Boolean): Identifier<T> {
+        public fun <T> create(name: T, hasDollar: Boolean, isNullable: Boolean): Identifier<T> {
             val __ = Identifier(name, hasDollar)
             __.myNullable = isNullable
             return __
@@ -29,9 +29,9 @@ public class Identifier<T> private(private val myName: T, private var myHasDolla
 public class User() {
     class object {
         public fun main() {
-            val i1 = Identifier.init<String>("name", false, true)
-            val i2 = Identifier.init<String>("name", false)
-            val i3 = Identifier.init<String>("name")
+            val i1 = Identifier.create<String>("name", false, true)
+            val i2 = Identifier.create<String>("name", false)
+            val i3 = Identifier.create<String>("name")
         }
     }
 }

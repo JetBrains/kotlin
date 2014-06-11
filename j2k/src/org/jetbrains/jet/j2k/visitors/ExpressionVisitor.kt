@@ -262,7 +262,7 @@ class ExpressionVisitor(private val converter: Converter,
             val reference = expression.getClassReference()
             val typeParameters = if (reference != null) typeConverter.convertTypes(reference.getTypeParameters()) else listOf()
             return QualifiedExpression(Identifier(constructor.getName(), false),
-                                       MethodCallExpression.buildNotNull(null, "init", converter.convertExpressions(arguments), typeParameters))
+                                       MethodCallExpression.buildNotNull(null, "create", converter.convertExpressions(arguments), typeParameters))
         }
 
         return NewClassExpression(converter.convertElement(classReference),
