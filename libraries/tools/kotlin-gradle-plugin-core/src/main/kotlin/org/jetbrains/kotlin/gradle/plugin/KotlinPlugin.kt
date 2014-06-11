@@ -30,7 +30,6 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.LibraryVariant
 import com.android.build.gradle.api.ApkVariant
 import com.android.builder.model.BuildType
-import com.android.builder.BuilderConstants
 import com.android.build.gradle.api.TestVariant
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -142,9 +141,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                     val kotlinDirSet = kotlinSourceSet.getKotlin()
                     kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
-                    sourceSet.getAllJava().source(kotlinDirSet)
-                    sourceSet.getAllSource().source(kotlinDirSet)
-                    sourceSet.getResources()?.getFilter()?.exclude(KSpec({ elem ->
+                    AndroidGradleWrapper.srcDir(sourceSet, kotlinDirSet)
+                    AndroidGradleWrapper.getResourceFilter(sourceSet)?.exclude(KSpec({ elem ->
                         kotlinDirSet.contains(elem.getFile())
                     }))
                     project.getLogger().debug("Created kotlin sourceDirectorySet at ${kotlinDirSet.getSrcDirs()}")
@@ -178,7 +176,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
         val logger = project.getLogger()
         val kotlinOptions = getExtention<K2JVMCompilerArguments>(androidExt, "kotlinOptions")
         val sourceSets = androidExt.getSourceSets()
-        val mainSourceSet = sourceSets.getByName(BuilderConstants.MAIN)
+        //TODO: change to BuilderConstants.MAIN - it was relocated in 0.11 plugin
+        val mainSourceSet = sourceSets.getByName("main")
         val testSourceSet = try {
             sourceSets.getByName("instrumentTest")
         } catch (e: UnknownDomainObjectException) {
@@ -187,13 +186,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
 
         for (variant in variants) {
             if (variant is LibraryVariant || variant is ApkVariant) {
-                val buildType: BuildType = if (variant is LibraryVariant) {
-                    variant.getBuildType()
-                } else {
-                    (variant as ApkVariant).getBuildType()
-                }
+                val buildTypeSourceSetName = AndroidGradleWrapper.getVariantName(variant)
 
-                val buildTypeSourceSetName = buildType.getName()
                 logger.debug("Variant build type is [$buildTypeSourceSetName]")
                 val buildTypeSourceSet : AndroidSourceSet? = sourceSets.findByName(buildTypeSourceSetName)
 
@@ -216,17 +210,17 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                 val javaSourceList = ArrayList<Any?>()
 
                 if (variant is TestVariant) {
-                    javaSourceList.addAll(testSourceSet.getJava().getSrcDirs())
+                    javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(testSourceSet))
                     val testKotlinSource = getExtention<KotlinSourceSet>(testSourceSet, "kotlin")
                     kotlinTask.source(testKotlinSource.getKotlin())
                 } else {
-                    javaSourceList.addAll(mainSourceSet.getJava().getSrcDirs())
+                    javaSourceList.addAll(AndroidGradleWrapper.getJavaSrcDirs(mainSourceSet))
                     val mainKotlinSource = getExtention<KotlinSourceSet>(mainSourceSet, "kotlin")
                     kotlinTask.source(mainKotlinSource.getKotlin())
                 }
 
                 if (null != buildTypeSourceSet) {
-                    javaSourceList.add(buildTypeSourceSet.getJava().getSrcDirs())
+                    javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(buildTypeSourceSet))
                     kotlinTask.source(getExtention<KotlinSourceSet>(buildTypeSourceSet, "kotlin").getKotlin())
                 }
                 javaSourceList.add(Callable<File?>{ variant.getProcessResources().getSourceOutputDir() })
@@ -239,7 +233,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                        val flavourSourceSetName = buildTypeSourceSetName + flavour.getName()
                         val flavourSourceSet : AndroidSourceSet? = sourceSets.findByName(flavourSourceSetName)
                         if (flavourSourceSet != null) {
-                            javaSourceList.add(flavourSourceSet.getJava())
+                            javaSourceList.add(AndroidGradleWrapper.getJavaSrcDirs(flavourSourceSet))
                             kotlinTask.source((buildTypeSourceSet as ExtensionAware).getExtensions().getByName("kotlin"))
                         }
                     }
