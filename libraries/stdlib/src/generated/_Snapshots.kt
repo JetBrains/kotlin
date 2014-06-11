@@ -511,7 +511,7 @@ public fun String.toList(): List<Char> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = HashMap<K, T>()
+    val result = LinkedHashMap<K, T>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -522,7 +522,7 @@ public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
-    val result = HashMap<K, Boolean>()
+    val result = LinkedHashMap<K, Boolean>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -533,7 +533,7 @@ public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boole
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
-    val result = HashMap<K, Byte>()
+    val result = LinkedHashMap<K, Byte>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -544,7 +544,7 @@ public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
-    val result = HashMap<K, Char>()
+    val result = LinkedHashMap<K, Char>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -555,7 +555,7 @@ public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
-    val result = HashMap<K, Double>()
+    val result = LinkedHashMap<K, Double>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -566,7 +566,7 @@ public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double>
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
-    val result = HashMap<K, Float>()
+    val result = LinkedHashMap<K, Float>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -577,7 +577,7 @@ public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
-    val result = HashMap<K, Int>()
+    val result = LinkedHashMap<K, Int>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -588,7 +588,7 @@ public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
-    val result = HashMap<K, Long>()
+    val result = LinkedHashMap<K, Long>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -599,7 +599,7 @@ public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
-    val result = HashMap<K, Short>()
+    val result = LinkedHashMap<K, Short>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -610,7 +610,7 @@ public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = HashMap<K, T>()
+    val result = LinkedHashMap<K, T>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -621,7 +621,7 @@ public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = HashMap<K, T>()
+    val result = LinkedHashMap<K, T>()
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -632,7 +632,7 @@ public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
-    val result = HashMap<K, Char>()
+    val result = LinkedHashMap<K, Char>()
     for (element in this) {
         result.put(selector(element), element)
     }

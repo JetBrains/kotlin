@@ -117,7 +117,7 @@ fun snapshots(): List<GenericFunction> {
         returns("Map<K, T>")
         body {
             """
-            val result = HashMap<K, T>()
+            val result = LinkedHashMap<K, T>()
             for (element in this) {
                 result.put(selector(element), element)
             }

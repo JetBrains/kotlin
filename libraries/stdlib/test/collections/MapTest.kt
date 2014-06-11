@@ -1,14 +1,12 @@
 package test.collections
 
 import kotlin.test.*
-
-import java.util.*
 import org.junit.Test as test
 
 class MapTest {
 
     test fun getOrElse() {
-        val data = hashMapOf<String, Int>()
+        val data = mapOf<String, Int>()
         val a = data.getOrElse("foo") { 2 }
         assertEquals(2, a)
 
@@ -16,7 +14,7 @@ class MapTest {
         assertEquals(3, b)
         assertEquals(0, data.size())
 
-        val empty = hashMapOf<String, Int?>()
+        val empty = mapOf<String, Int?>()
         val c = empty.getOrElse("") { null }
         assertEquals(null, c)
     }
@@ -91,7 +89,7 @@ class MapTest {
     }
 
     test fun contains() {
-        val map = hashMapOf("a" to 1, "b" to 2)
+        val map = mapOf("a" to 1, "b" to 2)
         assert("a" in map)
         assert("c" !in map)
     }
@@ -121,7 +119,7 @@ class MapTest {
     }
 
     test fun createUsingPairs() {
-        val map = hashMapOf(Pair("a", 1), Pair("b", 2))
+        val map = mapOf(Pair("a", 1), Pair("b", 2))
         assertEquals(2, map.size)
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
@@ -135,7 +133,7 @@ class MapTest {
     }
 
     test fun createUsingTo() {
-        val map = hashMapOf("a" to 1, "b" to 2)
+        val map = mapOf("a" to 1, "b" to 2)
         assertEquals(2, map.size)
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
@@ -158,8 +156,8 @@ class MapTest {
     }
 
     test fun toSortedMap() {
-        val map = hashMapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
-        val sorted = map.toSortedMap<String, Int>()
+        val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
+        val sorted = map.toSortedMap()
         assertEquals(1, sorted["a"])
         assertEquals(2, sorted["b"])
         assertEquals(3, sorted["c"])
@@ -167,7 +165,7 @@ class MapTest {
     }
 
     test fun toSortedMapWithComparator() {
-        val map = hashMapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
+        val map = mapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
         val c = comparator<String>{ a, b ->
             val answer = a.length() - b.length()
             if (answer == 0) a.compareTo(b) else answer
@@ -180,7 +178,7 @@ class MapTest {
     }
 
     test fun toProperties() {
-        val map = hashMapOf("a" to "A", "b" to "B")
+        val map = mapOf("a" to "A", "b" to "B")
         val prop = map.toProperties()
         assertEquals(2, prop.size)
         assertEquals("A", prop.getProperty("a", "fail"))

@@ -17,7 +17,7 @@ public fun listOf<T>(vararg values: T): List<T> = if (values.size == 0) stdlib_e
 public fun listOf<T>(): List<T> = stdlib_emptyList()
 
 /** Returns a new read-only map of given pairs, where the first value is the key, and the second is value */
-public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size == 0) stdlib_emptyMap() else hashMapOf(*values)
+public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size == 0) stdlib_emptyMap() else linkedMapOf(*values)
 
 /** Returns an empty read-only map */
 public fun mapOf<K, V>(): Map<K, V> = stdlib_emptyMap()
@@ -36,6 +36,19 @@ public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(Hash
  */
 public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
     val answer = HashMap<K, V>(values.size)
+    answer.putAll(*values)
+    return answer
+}
+
+/**
+ * Returns a new [[LinkedHashMap]] populated with the given pairs where the first value in each pair
+ * is the key and the second value is the value. This map preserves insertion order so iterating through
+ * the map's entries will be in the same order
+ *
+ * @includeFunctionBody ../../test/collections/MapTest.kt createLinkedMap
+ */
+public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
+    val answer = LinkedHashMap<K, V>(values.size)
     answer.putAll(*values)
     return answer
 }

@@ -1,7 +1,6 @@
 package kotlin
 
-import java.util.Collections
-import java.util.HashMap
+import java.util.*
 
 // Map APIs
 
@@ -129,7 +128,7 @@ public fun <K, V> MutableMap<K, V>.putAll(values: Iterable<Pair<K,V>>): Unit {
  * @includeFunctionBody ../../test/collections/MapTest.kt mapValues
  */
 public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> R): Map<K, R> {
-    return mapValuesTo(HashMap<K, R>(this.size), transform)
+    return mapValuesTo(LinkedHashMap<K, R>(this.size), transform)
 }
 
 /**
@@ -138,14 +137,14 @@ public inline fun <K, V, R> Map<K, V>.mapValues(transform: (Map.Entry<K, V>) -> 
  * @includeFunctionBody ../../test/collections/MapTest.kt mapKeys
  */
 public inline fun <K, V, R> Map<K, V>.mapKeys(transform: (Map.Entry<K, V>) -> R): Map<R, V> {
-    return mapKeysTo(HashMap<R, V>(this.size), transform)
+    return mapKeysTo(LinkedHashMap<R, V>(this.size), transform)
 }
 
 /**
  * Returns a map containing all key-value pairs matching keys with the given *predicate*
  */
 public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K, V> {
-    val result = HashMap<K, V>()
+    val result = LinkedHashMap<K, V>()
     for (entry in this) {
         if (predicate(entry.key)) {
             result.put(entry.key, entry.value)
@@ -158,7 +157,7 @@ public inline fun <K, V> Map<K, V>.filterKeys(predicate: (K) -> Boolean): Map<K,
  * Returns a map containing all key-value pairs matching values with the given *predicate*
  */
 public inline fun <K, V> Map<K, V>.filterValues(predicate: (V) -> Boolean): Map<K, V> {
-    val result = HashMap<K, V>()
+    val result = LinkedHashMap<K, V>()
     for (entry in this) {
         if (predicate(entry.value)) {
             result.put(entry.key, entry.value)
@@ -184,7 +183,7 @@ public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterTo(destination: C
  * Returns a map containing all key-value pairs matching the given *predicate*
  */
 public inline fun <K, V> Map<K, V>.filter(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
-    return filterTo(HashMap<K, V>(), predicate)
+    return filterTo(LinkedHashMap<K, V>(), predicate)
 }
 
 /**
@@ -203,7 +202,7 @@ public inline fun <K, V, C : MutableMap<K, V>> Map<K, V>.filterNotTo(destination
  * Returns a map containing all key-value pairs matching the given *predicate*
  */
 public inline fun <K, V> Map<K, V>.filterNot(predicate: (Map.Entry<K, V>) -> Boolean): Map<K, V> {
-    return filterNotTo(HashMap<K, V>(), predicate)
+    return filterNotTo(LinkedHashMap<K, V>(), predicate)
 }
 
 /**
@@ -217,7 +216,7 @@ public fun <K, V> MutableMap<K, V>.plusAssign(pair: Pair<K, V>) {
  * Returns a map containing all key-value pairs from the given collection
  */
 public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
-    val result = HashMap<K, V>()
+    val result = LinkedHashMap<K, V>()
     for (element in this) {
         result.put(element.first, element.second)
     }
