@@ -2978,6 +2978,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
             }
             
+            @TestMetadata("PrivateClassMembers.kt")
+            public void testPrivateClassMembers() throws Exception {
+                doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
+            }
+            
             @TestMetadata("PrivateTopLevelFun.kt")
             public void testPrivateTopLevelFun() throws Exception {
                 doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");

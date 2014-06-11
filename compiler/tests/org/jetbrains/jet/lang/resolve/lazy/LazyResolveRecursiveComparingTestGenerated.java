@@ -1456,6 +1456,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClass.kt");
             }
             
+            @TestMetadata("PrivateClassMembers.kt")
+            public void testPrivateClassMembers() throws Exception {
+                doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PrivateClassMembers.kt");
+            }
+            
             @TestMetadata("PrivateTopLevelFun.kt")
             public void testPrivateTopLevelFun() throws Exception {
                 doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/visibility/PrivateTopLevelFun.kt");
