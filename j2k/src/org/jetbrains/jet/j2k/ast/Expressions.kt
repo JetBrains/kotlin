@@ -104,6 +104,10 @@ class LambdaExpression(val arguments: String?, val statementList: StatementList)
     }
 }
 
+class StarExpression(val methodCall: MethodCallExpression) : Expression() {
+    override fun toKotlin() = "*" + methodCall.toKotlin()
+}
+
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType.isPrimitive()) {

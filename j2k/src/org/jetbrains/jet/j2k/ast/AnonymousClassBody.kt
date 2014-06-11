@@ -19,15 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import java.util.Collections
 
-class AnonymousClassBody(converter: Converter, body: ClassBody, val extendsTrait: Boolean)
-: Class(converter,
-        Identifier(""),
-        MemberComments.Empty,
-        setOf(),
-        TypeParameterList.Empty,
-        listOf(),
-        listOf(),
-        listOf(),
-        body) {
+class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
+: Class(Identifier(""), MemberComments.Empty, listOf(), setOf(), TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
     override fun toKotlin() = body.toKotlin(null)
 }

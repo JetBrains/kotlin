@@ -16,26 +16,26 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
-
 class Enum(
-        converter: Converter,
         name: Identifier,
         comments: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
         body: ClassBody
-) : Class(converter, name, comments, modifiers, typeParameterList,
+) : Class(name, comments, annotations, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, body) {
 
     override fun primaryConstructorSignatureToKotlin(): String
         = body.primaryConstructor?.signatureToKotlin() ?: ""
 
     override fun toKotlin(): String {
-        return modifiersToKotlin() +
+        return commentsToKotlin() +
+                annotations.toKotlin() +
+                modifiersToKotlin() +
                 "enum class " + name.toKotlin() +
                 primaryConstructorSignatureToKotlin() +
                 typeParameterList.toKotlin() +

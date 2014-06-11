@@ -36,6 +36,8 @@ class Identifier(
 
     private fun quote(str: String): String = "`" + str + "`"
 
+    override fun toString() = if (isNullable) "$name?" else name
+
     class object {
         val Empty = Identifier("")
 

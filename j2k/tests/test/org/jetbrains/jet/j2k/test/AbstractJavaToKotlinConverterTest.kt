@@ -41,11 +41,17 @@ abstract class AbstractJavaToKotlinConverterTest() : LightIdeaTestCase() {
     override fun setUp() {
         super.setUp()
 
+        fun addFile(fileName: String, packageName: String) {
+            val code = FileUtil.loadFile(File("j2k/tests/testData/$fileName"), true)
+            val root = LightPlatformTestCase.getSourceRoot()!!
+            val dir = root.findChild(packageName) ?: root.createChildDirectory(null, packageName)
+            val file = dir.createChildData(null, fileName)!!
+            file.getOutputStream(null)!!.writer().use { it.write(code) }
+        }
+
         ApplicationManager.getApplication()!!.runWriteAction{
-            val kotlinApiFileName = "KotlinApi.kt"
-            val kotlinCode = FileUtil.loadFile(File("j2k/tests/testData/$kotlinApiFileName"), true)
-            val kotlinFile = LightPlatformTestCase.getSourceRoot()!!.createChildData(null, kotlinApiFileName)!!
-            kotlinFile.getOutputStream(null)!!.writer().use { it.write(kotlinCode) }
+            addFile("KotlinApi.kt", "kotlinApi")
+            addFile("JavaApi.java", "javaApi")
         }
     }
 

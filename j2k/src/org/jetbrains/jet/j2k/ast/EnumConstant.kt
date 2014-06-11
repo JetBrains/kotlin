@@ -19,17 +19,18 @@ package org.jetbrains.jet.j2k.ast
 class EnumConstant(
         identifier: Identifier,
         members: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         `type`: Type,
         params: Element
-) : Field(identifier, members, modifiers, `type`.toNotNullType(), params, true, false) {
+) : Field(identifier, members, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
 
     override fun toKotlin(): String {
         if (initializer.toKotlin().isEmpty()) {
-            return identifier.toKotlin()
+            return annotations.toKotlin() + identifier.toKotlin()
         }
 
-        return identifier.toKotlin() + " : " + `type`.toKotlin() + "(" + initializer.toKotlin() + ")"
+        return annotations.toKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin() + "(" + initializer.toKotlin() + ")"
     }
 
 

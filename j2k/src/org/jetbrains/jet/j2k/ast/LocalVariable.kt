@@ -20,6 +20,7 @@ import org.jetbrains.jet.j2k.ConverterSettings
 
 class LocalVariable(
         private val identifier: Identifier,
+        private val annotations: List<Annotation>,
         private val modifiers: Set<Modifier>,
         private val typeCalculator: () -> Type /* we use lazy type calculation for better performance */,
         private val initializer: Expression,
@@ -28,16 +29,16 @@ class LocalVariable(
 ) : Element {
 
     override fun toKotlin(): String {
-        val varVal = if (isVal) "val" else "var"
+        val start = annotations.toKotlin() + if (isVal) "val" else "var"
         return if (initializer.isEmpty) {
-            "$varVal ${identifier.toKotlin()} : ${typeCalculator().toKotlin()}"
+            "$start ${identifier.toKotlin()} : ${typeCalculator().toKotlin()}"
         }
         else {
             val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
             if (shouldSpecifyType)
-                "$varVal ${identifier.toKotlin()} : ${typeCalculator().toKotlin()} = ${initializer.toKotlin()}"
+                "$start ${identifier.toKotlin()} : ${typeCalculator().toKotlin()} = ${initializer.toKotlin()}"
             else
-                "$varVal ${identifier.toKotlin()} = ${initializer.toKotlin()}"
+                "$start ${identifier.toKotlin()} = ${initializer.toKotlin()}"
         }
     }
 }

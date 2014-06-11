@@ -22,15 +22,16 @@ import java.util.ArrayList
 open class Field(
         val identifier: Identifier,
         comments: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         val `type`: Type,
         val initializer: Element,
         val isVal: Boolean,
         private val hasWriteAccesses: Boolean
-) : Member(comments, modifiers) {
+) : Member(comments, annotations, modifiers) {
 
     override fun toKotlin(): String {
-        val declaration = commentsToKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
+        val declaration = commentsToKotlin() + annotations.toKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
         return if (initializer.isEmpty)
             declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this))
         else

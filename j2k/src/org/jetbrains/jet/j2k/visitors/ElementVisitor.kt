@@ -28,11 +28,12 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
 
     override fun visitLocalVariable(variable: PsiLocalVariable) {
         result = LocalVariable(Identifier(variable.getName()!!),
-                                 converter.convertModifiers(variable),
-                                 { typeConverter.convertVariableType(variable) },
-                                 converter.convertExpression(variable.getInitializer(), variable.getType()),
-                                 converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
-                                 converter.settings)
+                               converter.convertAnnotations(variable),
+                               converter.convertModifiers(variable),
+                               { typeConverter.convertVariableType(variable) },
+                               converter.convertExpression(variable.getInitializer(), variable.getType()),
+                               converter.settings.forceLocalVariableImmutability || variable.hasModifierProperty(PsiModifier.FINAL),
+                               converter.settings)
     }
 
     override fun visitExpressionList(list: PsiExpressionList) {

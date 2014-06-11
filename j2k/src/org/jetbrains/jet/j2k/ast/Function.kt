@@ -23,13 +23,14 @@ open class Function(
         val converter: Converter,
         val name: Identifier,
         comments: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         val `type`: Type,
         val typeParameterList: TypeParameterList,
         val parameterList: ParameterList,
         var block: Block?,
         val isInTrait: Boolean
-) : Member(comments, modifiers) {
+) : Member(comments, annotations, modifiers) {
 
     private fun modifiersToKotlin(): String {
         val resultingModifiers = ArrayList<Modifier>()
@@ -58,11 +59,12 @@ open class Function(
 
     override fun toKotlin(): String {
         return commentsToKotlin() +
-        modifiersToKotlin() +
-        "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
-        "(${parameterList.toKotlin()})" +
-        returnTypeToKotlin() +
-        typeParameterList.whereToKotlin() +
-        block?.toKotlin()
+                annotations.toKotlin() +
+                modifiersToKotlin() +
+                "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
+                "(${parameterList.toKotlin()})" +
+                returnTypeToKotlin() +
+                typeParameterList.whereToKotlin() +
+                block?.toKotlin()
     }
 }

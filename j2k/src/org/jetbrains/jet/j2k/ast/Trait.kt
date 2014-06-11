@@ -19,18 +19,16 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
 
-class Trait(
-        converter: Converter,
-        name: Identifier,
-        comments: MemberComments,
-        modifiers: Set<Modifier>,
-        typeParameterList: TypeParameterList,
-        extendsTypes: List<Type>,
-        baseClassParams: List<Expression>,
-        implementsTypes: List<Type>,
-        body: ClassBody
-) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, body) {
+class Trait(name: Identifier,
+            comments: MemberComments,
+            annotations: List<Annotation>,
+            modifiers: Set<Modifier>,
+            typeParameterList: TypeParameterList,
+            extendsTypes: List<Type>,
+            baseClassParams: List<Expression>,
+            implementsTypes: List<Type>,
+            body: ClassBody
+) : Class(name, comments, annotations, modifiers, typeParameterList, extendsTypes, baseClassParams, implementsTypes, body) {
 
     override val keyword: String
         get() = "trait"

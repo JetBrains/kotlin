@@ -16,7 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parameter.VarValModifier, val modifiers: Collection<Modifier>) : Element {
+class Parameter(val identifier: Identifier,
+                val `type`: Type,
+                val varVal: Parameter.VarValModifier,
+                val annotations: List<Annotation>,
+                val modifiers: Collection<Modifier>) : Element {
     public enum class VarValModifier {
         None
         Val
@@ -26,6 +30,7 @@ class Parameter(val identifier: Identifier, val `type`: Type, val varVal: Parame
     override fun toKotlin(): String {
         val builder = StringBuilder()
 
+        builder.append(annotations.toKotlin())
         builder.append(modifiers.toKotlin())
 
         if (`type` is VarArgType) {

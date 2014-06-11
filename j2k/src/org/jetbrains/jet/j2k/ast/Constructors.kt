@@ -23,17 +23,19 @@ import java.util.ArrayList
 abstract class Constructor(
         converter: Converter,
         comments: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         parameterList: ParameterList,
         block: Block
-) : Function(converter, Identifier.Empty, comments, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
+) : Function(converter, Identifier.Empty, comments, annotations, modifiers, Type.Empty, TypeParameterList.Empty, parameterList, block, false)
 
 class PrimaryConstructor(converter: Converter,
                          comments: MemberComments,
+                         annotations: List<Annotation>,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, modifiers, parameterList, block) {
+  : Constructor(converter, comments, annotations, modifiers, parameterList, block) {
 
     public fun signatureToKotlin(): String {
         val accessModifier = modifiers.accessModifier()
@@ -46,10 +48,11 @@ class PrimaryConstructor(converter: Converter,
 
 class SecondaryConstructor(converter: Converter,
                          comments: MemberComments,
+                         annotations: List<Annotation>,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)
-  : Constructor(converter, comments, modifiers, parameterList, block) {
+  : Constructor(converter, comments, annotations, modifiers, parameterList, block) {
 
     public fun toInitFunction(containingClass: Class): Function {
         val modifiers = HashSet(modifiers)
@@ -58,7 +61,7 @@ class SecondaryConstructor(converter: Converter,
         val block = Block(statements)
         val typeParameters = ArrayList<TypeParameter>()
         typeParameters.addAll(containingClass.typeParameterList.parameters)
-        return Function(converter, Identifier("create"), MemberComments.Empty, modifiers,
+        return Function(converter, Identifier("create"), comments, annotations, modifiers,
                         ClassType(containingClass.name, typeParameters, Nullability.NotNull, converter.settings),
                         TypeParameterList(typeParameters), parameterList, block, false)
     }

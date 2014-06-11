@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,19 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import java.util.HashSet
 
-//TODO: is a member?
-class Initializer(val block: Block, modifiers: Set<Modifier>) : Member(MemberComments.Empty, listOf(), modifiers) {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>) : Element {
     override fun toKotlin(): String {
-        return block.toKotlin()
+        if (arguments.isEmpty()) return name.toKotlin()
+
+        return name.toKotlin() + "(" + arguments.map {
+            if (it.first != null)
+                it.first!!.toKotlin() + " = " + it.second.toKotlin()
+            else
+                it.second.toKotlin()
+        }.makeString(", ") + ")"
     }
 }
+
+fun List<Annotation>.toKotlin(): String = if (isNotEmpty()) map { it.toKotlin() }.makeString("\n") + "\n" else ""

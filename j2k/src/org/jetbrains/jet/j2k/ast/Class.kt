@@ -16,23 +16,23 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
 
 open class Class(
-        val converter: Converter,
         val name: Identifier,
         comments: MemberComments,
+        annotations: List<Annotation>,
         modifiers: Set<Modifier>,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,
         val baseClassParams: List<Expression>,
         val implementsTypes: List<Type>,
         val body: ClassBody
-) : Member(comments, modifiers) {
+) : Member(comments, annotations, modifiers) {
 
     override fun toKotlin(): String =
             commentsToKotlin() +
+            annotations.toKotlin() +
             modifiersToKotlin() +
             keyword + " " + name.toKotlin() +
             typeParameterList.toKotlin() +
