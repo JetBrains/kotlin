@@ -17,13 +17,11 @@
 package org.jetbrains.jet.plugin.compiler;
 
 import com.intellij.diagnostic.PluginException;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
@@ -34,7 +32,6 @@ import org.jetbrains.jet.plugin.JetFileType;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.Set;
 
 import static org.jetbrains.jet.compiler.runner.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX;
@@ -48,19 +45,10 @@ public class JetCompilerManager implements ProjectComponent {
     private static final Set<String> FILE_EXTS_WHICH_NEEDS_REFRESH = ContainerUtil.immutableSet(".js", ".map");
 
     public JetCompilerManager(Project project, CompilerManager manager) {
-        manager.addTranslatingCompiler(new K2JvmTranslatingCompiler(),
-                                       Collections.<FileType>singleton(JetFileType.INSTANCE),
-                                       Collections.singleton(StdFileTypes.CLASS));
-        manager.addTranslatingCompiler(new K2JsTranslatingCompiler(),
-                                       Collections.<FileType>singleton(JetFileType.INSTANCE),
-                                       Collections.<FileType>singleton(StdFileTypes.JS));
         manager.addCompilableFileType(JetFileType.INSTANCE);
-
         manager.addCompilationStatusListener(new CompilationStatusListener() {
             @Override
-            public void compilationFinished(
-                    boolean aborted, int errors, int warnings, CompileContext compileContext
-            ) {
+            public void compilationFinished(boolean aborted, int errors, int warnings, CompileContext compileContext) {
                 for (CompilerMessage error : compileContext.getMessages(CompilerMessageCategory.ERROR)) {
                     String message = error.getMessage();
                     if (message.startsWith(INTERNAL_ERROR_PREFIX) || message.startsWith(PREFIX_WITH_COMPILER_NAME)) {
@@ -112,7 +100,7 @@ public class JetCompilerManager implements ProjectComponent {
         private final String text;
 
         public KotlinCompilerException(String text) {
-            super("", PluginManager.getPluginByClassName(JetCompilerManager.class.getName()));
+            super("", PluginManagerCore.getPluginByClassName(JetCompilerManager.class.getName()));
             this.text = text;
         }
 
@@ -122,10 +110,11 @@ public class JetCompilerManager implements ProjectComponent {
         }
 
         @Override
-        public void printStackTrace(PrintStream s) {
+        public void printStackTrace(@NotNull PrintStream s) {
             s.print(text);
         }
 
+        @NotNull
         @Override
         public synchronized Throwable fillInStackTrace() {
             return this;
