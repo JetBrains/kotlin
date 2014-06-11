@@ -44,8 +44,8 @@ public class CheckerTestUtil {
         public int compare(@NotNull Diagnostic o1, @NotNull Diagnostic o2) {
             List<TextRange> ranges1 = o1.getTextRanges();
             List<TextRange> ranges2 = o2.getTextRanges();
-            if (ranges1.size() != ranges2.size()) return ranges1.size() - ranges2.size();
-            for (int i = 0; i < ranges1.size(); i++) {
+            int minNumberOfRanges = ranges1.size() < ranges2.size() ? ranges1.size() : ranges2.size();
+            for (int i = 0; i < minNumberOfRanges; i++) {
                 TextRange range1 = ranges1.get(i);
                 TextRange range2 = ranges2.get(i);
                 int startOffset1 = range1.getStartOffset();
@@ -61,7 +61,7 @@ public class CheckerTestUtil {
                     return endOffset2 - endOffset1;
                 }
             }
-            return 0;
+            return ranges1.size() - ranges2.size();
         }
     };
     private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!\\w+(,\\s*\\w+)*!>)|(<!>)");
@@ -439,41 +439,39 @@ public class CheckerTestUtil {
         }
     }
 
-    private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(Collection<Diagnostic> diagnostics) {
-        List<Diagnostic> list = Lists.newArrayList(diagnostics);
-        Collections.sort(list, DIAGNOSTIC_COMPARATOR);
-
-        List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
-        DiagnosticDescriptor currentDiagnosticDescriptor = null;
-        for (Diagnostic diagnostic : list) {
-            List<TextRange> textRanges = diagnostic.getTextRanges();
+    @NotNull
+    private static List<DiagnosticDescriptor> getSortedDiagnosticDescriptors(@NotNull Collection<Diagnostic> diagnostics) {
+        LinkedListMultimap<TextRange, Diagnostic> diagnosticsGroupedByRanges = LinkedListMultimap.create();
+        for (Diagnostic diagnostic : diagnostics) {
             if (!diagnostic.isValid()) continue;
-
-            TextRange textRange = textRanges.get(0);
-            if (currentDiagnosticDescriptor != null && currentDiagnosticDescriptor.equalRange(textRange)) {
-                currentDiagnosticDescriptor.diagnostics.add(diagnostic);
-            }
-            else {
-                currentDiagnosticDescriptor = new DiagnosticDescriptor(textRange.getStartOffset(), textRange.getEndOffset(), diagnostic);
-                diagnosticDescriptors.add(currentDiagnosticDescriptor);
+            for (TextRange textRange : diagnostic.getTextRanges()) {
+                diagnosticsGroupedByRanges.put(textRange, diagnostic);
             }
         }
+        List<DiagnosticDescriptor> diagnosticDescriptors = Lists.newArrayList();
+        for (TextRange range : diagnosticsGroupedByRanges.keySet()) {
+            diagnosticDescriptors.add(
+                    new DiagnosticDescriptor(range.getStartOffset(), range.getEndOffset(), diagnosticsGroupedByRanges.get(range)));
+        }
+        Collections.sort(diagnosticDescriptors, new Comparator<DiagnosticDescriptor>() {
+            @Override
+            public int compare(DiagnosticDescriptor d1, DiagnosticDescriptor d2) {
+                // Start early -- go first; start at the same offset, the one who end later is the outer, i.e. goes first
+                return (d1.start != d2.start) ? d1.start - d2.start : d2.end - d1.end;
+            }
+        });
         return diagnosticDescriptors;
     }
 
     private static class DiagnosticDescriptor {
         private final int start;
         private final int end;
-        private final List<Diagnostic> diagnostics = Lists.newArrayList();
+        private final List<Diagnostic> diagnostics;
 
-        DiagnosticDescriptor(int start, int end, Diagnostic diagnostic) {
+        DiagnosticDescriptor(int start, int end, List<Diagnostic> diagnostics) {
             this.start = start;
             this.end = end;
-            this.diagnostics.add(diagnostic);
-        }
-
-        public boolean equalRange(TextRange textRange) {
-            return start == textRange.getStartOffset() && end == textRange.getEndOffset();
+            this.diagnostics = diagnostics;
         }
 
         public Multiset<String> getDiagnosticTypeStrings() {

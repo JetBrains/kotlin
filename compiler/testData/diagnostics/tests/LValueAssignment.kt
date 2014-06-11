@@ -134,7 +134,7 @@ class Test() {
         (a : Array<Int>)[4]++
         (<!VARIABLE_EXPECTED!>ab.getArray()<!> : Array<Int>)[54] += 43
 
-        this<!NO_SET_METHOD!><!UNRESOLVED_REFERENCE!>[<!>54]<!> = 34
+        this<!NO_SET_METHOD!><!UNRESOLVED_REFERENCE!>[<!>54<!UNRESOLVED_REFERENCE!>]<!><!> = 34
     }
 }
 
