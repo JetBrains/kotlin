@@ -3,7 +3,7 @@ class Base() {
 }
 
 class A() : Base() {
-    class C() {
+    inner class C() {
         fun test() {
             super@A.foo()
         }

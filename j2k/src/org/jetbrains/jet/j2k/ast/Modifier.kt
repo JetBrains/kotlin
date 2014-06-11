@@ -20,10 +20,10 @@ enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
     PROTECTED: Modifier("protected")
     PRIVATE: Modifier("private")
-    STATIC: Modifier("static")
     ABSTRACT: Modifier("abstract")
     OPEN: Modifier("open")
     OVERRIDE: Modifier("override")
+    INNER: Modifier("inner")
 
     public fun toKotlin(): String = name
 }

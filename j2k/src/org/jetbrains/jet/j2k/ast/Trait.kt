@@ -28,9 +28,9 @@ class Trait(
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
-        bodyElements: List<Element>
+        body: ClassBody
 ) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
+          extendsTypes, baseClassParams, implementsTypes, body) {
 
     override val keyword: String
         get() = "trait"

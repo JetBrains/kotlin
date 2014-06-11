@@ -53,7 +53,6 @@ class SecondaryConstructor(converter: Converter,
 
     public fun toInitFunction(containingClass: Class): Function {
         val modifiers = HashSet(modifiers)
-        modifiers.add(Modifier.STATIC)
         val statements = ArrayList(block?.statements ?: listOf())
         statements.add(ReturnStatement(Identifier("__")))
         val block = Block(statements)

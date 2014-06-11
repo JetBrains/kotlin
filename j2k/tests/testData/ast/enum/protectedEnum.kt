@@ -1,1 +1,1 @@
-protected enum class Test {}
+protected enum class Test

@@ -1,1 +1,1 @@
-enum class A : I {}
+enum class A : I

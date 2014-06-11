@@ -27,12 +27,12 @@ class Enum(
         extendsTypes: List<Type>,
         baseClassParams: List<Expression>,
         implementsTypes: List<Type>,
-        bodyElements: List<Element>
+        body: ClassBody
 ) : Class(converter, name, comments, modifiers, typeParameterList,
-          extendsTypes, baseClassParams, implementsTypes, bodyElements) {
+          extendsTypes, baseClassParams, implementsTypes, body) {
 
     override fun primaryConstructorSignatureToKotlin(): String
-        = classMembers.primaryConstructor?.signatureToKotlin() ?: ""
+        = body.primaryConstructor?.signatureToKotlin() ?: ""
 
     override fun toKotlin(): String {
         return modifiersToKotlin() +
@@ -40,9 +40,6 @@ class Enum(
                 primaryConstructorSignatureToKotlin() +
                 typeParameterList.toKotlin() +
                 implementTypesToKotlin() +
-                " {" +
-                classMembers.allMembers.toKotlin() +
-                primaryConstructorBodyToKotlin() +
-                "}"
+                body.toKotlin(this)
     }
 }

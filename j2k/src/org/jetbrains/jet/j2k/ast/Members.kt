@@ -17,6 +17,12 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
+import com.intellij.psi.PsiClass
+import org.jetbrains.jet.j2k.Converter
+import java.util.HashSet
+import com.intellij.psi.PsiMember
+import java.util.LinkedHashMap
+import com.intellij.psi.PsiElement
 
 class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NoSpace) {
     class object {
@@ -25,56 +31,43 @@ class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(e
 }
 
 abstract class Member(val comments: MemberComments, val modifiers: Set<Modifier>) : Element {
-    fun isStatic(): Boolean = modifiers.contains(Modifier.STATIC)
     fun commentsToKotlin(): String = comments.toKotlin()
 }
 
 //member itself and all the elements before it in the code (comments, whitespaces)
-class MemberHolder(val member: Member, val elements: List<Element>)
+class MemberWithComments(val member: Member, val elements: List<Element>)
 
 class MemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine) {
     val members: List<Member>
         get() = elements.filter { it is Member }.map { it as Member }
 }
 
-class ClassMembers private(
+class ClassBody (
         val primaryConstructor: PrimaryConstructor?,
         val secondaryConstructors: MemberList,
-        val allMembers: MemberList,
-        val staticMembers: MemberList,
-        val nonStaticMembers: MemberList) {
-    class object {
-        public fun fromBodyElements(elements: List<Element>): ClassMembers {
-            val groups = splitInGroups(elements)
-            val constructors = groups.filter { it.member is Constructor }
-            val primaryConstructor = constructors.map { it.member }.filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
-            val secondaryConstructors = constructors.filter { it.member is SecondaryConstructor }
-            val nonConstructors = groups.filter { it.member !is Constructor }
-            val staticMembers = nonConstructors.filter { it.member.isStatic() }
-            val nonStaticMembers = nonConstructors.filter { !it.member.isStatic() }
-            return ClassMembers(primaryConstructor,
-                                secondaryConstructors.toMemberList(),
-                                nonConstructors.toMemberList(),
-                                staticMembers.toMemberList(),
-                                nonStaticMembers.toMemberList())
-        }
-    }
-}
+        val normalMembers: MemberList,
+        val classObjectMembers: MemberList) {
 
-private fun List<MemberHolder>.toMemberList() = MemberList(flatMap { it.elements })
+    fun toKotlin(containingClass: Class?): String {
+        val innerBody = normalMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin(containingClass)
+        return if (innerBody.trim().isNotEmpty()) " {" + innerBody + "}" else ""
+    }
 
-private fun splitInGroups(elements: List<Element>): List<MemberHolder> {
-    val result = ArrayList<Pair<Member, MutableList<Element>>>()
-    var currentGroup = ArrayList<Element>()
-    for (element in elements) {
-        currentGroup.add(element)
-        if (element is Member) {
-            result.add(element to currentGroup)
-            currentGroup = ArrayList()
+    private fun primaryConstructorBodyToKotlin(): String {
+        val constructor = primaryConstructor
+        if (constructor != null && !(constructor.block?.isEmpty ?: true)) {
+            return "\n" + constructor.bodyToKotlin() + "\n"
         }
+        return ""
     }
-    if (result.isNotEmpty()) {
-        result.last!!.second.addAll(currentGroup)
+
+    private fun classObjectToKotlin(containingClass: Class?): String {
+        val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions(containingClass)
+        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && classObjectMembers.isEmpty()) return ""
+        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${classObjectMembers.toKotlin()}}"
     }
-    return result map { MemberHolder(it.first, it.second) }
+
+    private fun secondaryConstructorsAsStaticInitFunctions(containingClass: Class?): MemberList {
+        return MemberList(secondaryConstructors.elements.map { if (it is SecondaryConstructor && containingClass != null) it.toInitFunction(containingClass) else it })
+    }
 }

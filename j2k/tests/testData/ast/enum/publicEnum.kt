@@ -1,1 +1,1 @@
-public enum class Test {}
+public enum class Test

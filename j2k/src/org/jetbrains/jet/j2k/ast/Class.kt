@@ -28,7 +28,7 @@ open class Class(
         val extendsTypes: List<Type>,
         val baseClassParams: List<Expression>,
         val implementsTypes: List<Type>,
-        val bodyElements: List<Element>
+        val body: ClassBody
 ) : Member(comments, modifiers) {
 
     override fun toKotlin(): String =
@@ -39,27 +39,13 @@ open class Class(
             primaryConstructorSignatureToKotlin() +
             implementTypesToKotlin() +
             typeParameterList.whereToKotlin().withPrefix(" ") +
-            bodyToKotlin()
+            body.toKotlin(this)
 
     protected open val keyword: String
         get() = "class"
 
-    protected val classMembers: ClassMembers = ClassMembers.fromBodyElements(bodyElements)
-
     protected open fun primaryConstructorSignatureToKotlin(): String
-            = classMembers.primaryConstructor?.signatureToKotlin() ?: "()"
-
-    protected fun primaryConstructorBodyToKotlin(): String {
-        val constructor = classMembers.primaryConstructor
-        if (constructor != null && !(constructor.block?.isEmpty ?: true)) {
-            return "\n" + constructor.bodyToKotlin() + "\n"
-        }
-        return ""
-    }
-
-    private fun secondaryConstructorsAsStaticInitFunctions(): MemberList {
-        return MemberList(classMembers.secondaryConstructors.elements.map { if (it is SecondaryConstructor) it.toInitFunction(this) else it })
-    }
+            = body.primaryConstructor?.signatureToKotlin() ?: "()"
 
     private fun baseClassSignatureWithParams(): List<String> {
         if (keyword.equals("class") && extendsTypes.size() == 1) {
@@ -91,18 +77,10 @@ open class Class(
             modifierList.add(Modifier.OPEN)
         }
 
+        if (modifiers.contains(Modifier.INNER)) {
+            modifierList.add(Modifier.INNER)
+        }
+
         return modifierList.toKotlin()
-    }
-
-    fun bodyToKotlin(): String {
-        val innerBody = classMembers.nonStaticMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin()
-        return if (innerBody.trim().isNotEmpty()) " {" + innerBody + "}" else ""
-    }
-
-    private fun classObjectToKotlin(): String {
-        val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions()
-        val staticMembers = classMembers.staticMembers
-        if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && staticMembers.isEmpty()) return ""
-        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${staticMembers.toKotlin()}}"
     }
 }

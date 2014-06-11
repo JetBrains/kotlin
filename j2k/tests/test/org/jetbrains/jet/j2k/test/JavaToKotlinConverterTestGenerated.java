@@ -621,9 +621,24 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/class/genericClass.java");
         }
         
+        @TestMetadata("innerClassInInterface.java")
+        public void testInnerClassInInterface() throws Exception {
+            doTest("j2k/tests/testData/ast/class/innerClassInInterface.java");
+        }
+        
         @TestMetadata("innerEmptyClass.java")
         public void testInnerEmptyClass() throws Exception {
             doTest("j2k/tests/testData/ast/class/innerEmptyClass.java");
+        }
+        
+        @TestMetadata("innerEnum.java")
+        public void testInnerEnum() throws Exception {
+            doTest("j2k/tests/testData/ast/class/innerEnum.java");
+        }
+        
+        @TestMetadata("innerInterface.java")
+        public void testInnerInterface() throws Exception {
+            doTest("j2k/tests/testData/ast/class/innerInterface.java");
         }
         
         @TestMetadata("innerStaticClass.java")

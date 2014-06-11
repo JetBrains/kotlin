@@ -4,7 +4,7 @@ class Base() {
 }
 
 class A() : Base() {
-    class C() {
+    inner class C() {
         fun test() {
             this@A.foo()
         }

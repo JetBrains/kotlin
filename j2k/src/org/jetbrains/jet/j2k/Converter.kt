@@ -83,18 +83,65 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return AnonymousClassBody(this, convertClassBody(anonymousClass), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false)
     }
 
-    private fun convertClassBody(psiClass: PsiClass): List<Element> {
+    private fun convertClassBody(psiClass: PsiClass): ClassBody {
         val membersToRemove = HashSet<PsiMember>()
-        val convertedMembers = LinkedHashMap<PsiElement, Element>()
+        val convertedElements = LinkedHashMap<PsiElement, Element>()
         var inBody = false
         val lBrace = psiClass.getLBrace()
         for (element in psiClass.getChildren()) {
             if (element == lBrace) inBody = true
             if (inBody) {
-                convertedMembers.put(element, convertMember(element, membersToRemove))
+                convertedElements.put(element, convertMember(element, membersToRemove))
             }
         }
-        return convertedMembers.keySet().filter { !membersToRemove.contains(it) }.map { convertedMembers[it]!! }
+
+        for(member in membersToRemove) {
+            convertedElements.remove(member)
+        }
+
+        val membersMap = splitIntoMembers(convertedElements)
+
+        val constructors = membersMap.values().filter { it.member is Constructor }
+        val primaryConstructor = constructors.map { it.member }.filterIsInstance(javaClass<PrimaryConstructor>()).firstOrNull()
+        val secondaryConstructors = constructors.filter { it.member is SecondaryConstructor }
+
+        val normalMembers = ArrayList<MemberWithComments>()
+        val classObjectMembers = ArrayList<MemberWithComments>()
+        for((psiMember, member) in membersMap) {
+            if (member.member is Constructor) continue
+            if (!psiClass.isEnum() && psiMember !is PsiClass && psiMember.hasModifierProperty(PsiModifier.STATIC)) {
+                classObjectMembers.add(member)
+            }
+            else {
+                normalMembers.add(member)
+            }
+        }
+
+        return ClassBody(primaryConstructor,
+                         secondaryConstructors.toMemberList(),
+                         normalMembers.toMemberList(),
+                         classObjectMembers.toMemberList())
+
+    }
+
+    private fun List<MemberWithComments>.toMemberList() = MemberList(flatMap { it.elements })
+
+    private fun splitIntoMembers(elements: Map<PsiElement, Element>): Map<PsiMember, MemberWithComments> {
+        val result = LinkedHashMap<PsiMember, MemberWithComments>()
+        var currentGroup = ArrayList<Element>()
+        var lastMember: PsiMember? = null
+        for ((psiElement, element) in elements) {
+            currentGroup.add(element)
+            if (element is Member) {
+                result.put(psiElement as PsiMember, MemberWithComments(element, currentGroup))
+                currentGroup = ArrayList()
+                lastMember = psiElement
+            }
+        }
+        if (lastMember != null) {
+            (result[lastMember]!!.elements as MutableList).addAll(currentGroup)
+        }
+        return result
     }
 
     private fun convertMember(element: PsiElement, membersToRemove: MutableSet<PsiMember>): Element = when(element) {
@@ -123,16 +170,16 @@ public class Converter private(val project: Project, val settings: ConverterSett
         val implementsTypes = convertToNotNullableTypes(psiClass.getImplementsListTypes())
         val extendsTypes = convertToNotNullableTypes(psiClass.getExtendsListTypes())
         val name = Identifier(psiClass.getName()!!)
-        val classBodyElements = ArrayList(convertClassBody(psiClass))
+        var classBody = convertClassBody(psiClass)
 
         when {
-            psiClass.isInterface() -> return Trait(this, name, getComments(psiClass), modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBodyElements)
+            psiClass.isInterface() -> return Trait(this, name, getComments(psiClass), modifiers, typeParameters, extendsTypes, listOf(), implementsTypes, classBody)
 
-            psiClass.isEnum() -> return Enum(this, name, getComments(psiClass), modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBodyElements)
+            psiClass.isEnum() -> return Enum(this, name, getComments(psiClass), modifiers, typeParameters, listOf(), listOf(), implementsTypes, classBody)
 
             else -> {
                 if (psiClass.getPrimaryConstructor() == null && psiClass.getConstructors().size > 1) {
-                    generateArtificialPrimaryConstructor(name, classBodyElements)
+                    classBody = generateArtificialPrimaryConstructor(name, classBody)
                 }
 
                 val baseClassParams: List<Expression> = run {
@@ -151,46 +198,52 @@ public class Converter private(val project: Project, val settings: ConverterSett
                     modifiers.add(Modifier.OPEN)
                 }
 
-                return Class(this, name, getComments(psiClass), modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBodyElements)
+                if (psiClass.getContainingClass() != null && !psiClass.hasModifierProperty(PsiModifier.STATIC)) {
+                    modifiers.add(Modifier.INNER)
+                }
+
+                return Class(this, name, getComments(psiClass), modifiers, typeParameters, extendsTypes, baseClassParams, implementsTypes, classBody)
             }
         }
     }
 
-    private fun generateArtificialPrimaryConstructor(className: Identifier, classBodyElements: MutableList<Element>) {
-        val finalOrWithEmptyInitializerFields = classBodyElements.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.toKotlin().isEmpty() }
+    private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
+        assert(classBody.primaryConstructor == null)
+
+        val finalOrWithEmptyInitializerFields = classBody.normalMembers.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.toKotlin().isEmpty() }
         val initializers = HashMap<String, String>()
-        for (element in classBodyElements) {
-            if (element is SecondaryConstructor) {
-                for (field in finalOrWithEmptyInitializerFields) {
-                    initializers.put(field.identifier.toKotlin(), getDefaultInitializer(field))
-                }
+        for (constructor in classBody.secondaryConstructors.members) {
+            constructor as SecondaryConstructor
 
-                val newStatements = ArrayList<Statement>()
-                for (statement in element.block!!.statements) {
-                    var keepStatement = true
-                    if (statement is AssignmentExpression) {
-                        val assignee = statement.left
-                        if (assignee is QualifiedExpression) {
-                            for (field in finalOrWithEmptyInitializerFields) {
-                                val id = field.identifier.toKotlin()
-                                if (assignee.identifier.toKotlin().endsWith("." + id)) {
-                                    initializers.put(id, statement.right.toKotlin())
-                                    keepStatement = false
-                                }
-
-                            }
-                        }
-
-                    }
-
-                    if (keepStatement) {
-                        newStatements.add(statement)
-                    }
-
-                }
-                newStatements.add(0, DummyStringExpression("val __ = " + createPrimaryConstructorInvocation(className.toKotlin(), finalOrWithEmptyInitializerFields, initializers)))
-                element.block = Block(newStatements)
+            for (field in finalOrWithEmptyInitializerFields) {
+                initializers.put(field.identifier.toKotlin(), getDefaultInitializer(field))
             }
+
+            val newStatements = ArrayList<Statement>()
+            for (statement in constructor.block!!.statements) {
+                var keepStatement = true
+                if (statement is AssignmentExpression) {
+                    val assignee = statement.left
+                    if (assignee is QualifiedExpression) {
+                        for (field in finalOrWithEmptyInitializerFields) {
+                            val id = field.identifier.toKotlin()
+                            if (assignee.identifier.toKotlin().endsWith("." + id)) {
+                                initializers.put(id, statement.right.toKotlin())
+                                keepStatement = false
+                            }
+
+                        }
+                    }
+
+                }
+
+                if (keepStatement) {
+                    newStatements.add(statement)
+                }
+
+            }
+            newStatements.add(0, DummyStringExpression("val __ = " + createPrimaryConstructorInvocation(className.toKotlin(), finalOrWithEmptyInitializerFields, initializers)))
+            constructor.block = Block(newStatements)
         }
 
         //TODO: comments?
@@ -198,12 +251,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val varValModifier = if (field.isVal) Parameter.VarValModifier.Val else Parameter.VarValModifier.Var
             Parameter(field.identifier, field.`type`, varValModifier, field.modifiers.filter { ACCESS_MODIFIERS.contains(it) })
         }
-        classBodyElements.add(PrimaryConstructor(this,
-                                                 MemberComments.Empty,
-                                                 setOf(Modifier.PRIVATE),
-                                                 ParameterList(parameters),
-                                                 Block.Empty))
-        classBodyElements.removeAll(finalOrWithEmptyInitializerFields)
+
+        val primaryConstructor = PrimaryConstructor(this, MemberComments.Empty, setOf(Modifier.PRIVATE), ParameterList(parameters), Block.Empty)
+        val updatedMembers = MemberList(classBody.normalMembers.elements.filter { !finalOrWithEmptyInitializerFields.contains(it) })
+        return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers)
     }
 
     private fun convertInitializer(initializer: PsiClassInitializer): Initializer {
@@ -509,7 +560,6 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
     private val MODIFIERS_MAP = listOf(
             PsiModifier.ABSTRACT to Modifier.ABSTRACT,
-            PsiModifier.STATIC to Modifier.STATIC,
             PsiModifier.PUBLIC to Modifier.PUBLIC,
             PsiModifier.PROTECTED to Modifier.PROTECTED,
             PsiModifier.PRIVATE to Modifier.PRIVATE

@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import java.util.Collections
 
-class AnonymousClassBody(converter: Converter, bodyElements: List<Element>, val extendsTrait: Boolean)
+class AnonymousClassBody(converter: Converter, body: ClassBody, val extendsTrait: Boolean)
 : Class(converter,
         Identifier(""),
         MemberComments.Empty,
@@ -28,6 +28,6 @@ class AnonymousClassBody(converter: Converter, bodyElements: List<Element>, val 
         listOf(),
         listOf(),
         listOf(),
-        bodyElements) {
-    override fun toKotlin() = bodyToKotlin()
+        body) {
+    override fun toKotlin() = body.toKotlin(null)
 }

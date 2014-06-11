@@ -1,1 +1,1 @@
-enum class Test {}
+enum class Test

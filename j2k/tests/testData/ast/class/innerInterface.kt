@@ -1,0 +1,3 @@
+class A() {
+    trait I
+}
