@@ -98,6 +98,8 @@ abstract class JetNamedDeclarationStub<T extends PsiJetStubWithFqName> extends J
     @Nullable
     @Override
     public FqName getFqName() {
+        // TODO: stubs do not agree with PSI here in case where there's no name:
+        // stubs return a normalized name, and PSI returns null
         T stub = getStub();
         if (stub != null) {
             return stub.getFqName();
