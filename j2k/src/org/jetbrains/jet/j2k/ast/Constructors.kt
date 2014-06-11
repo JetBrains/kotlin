@@ -23,7 +23,7 @@ import java.util.ArrayList
 abstract class Constructor(
         converter: Converter,
         comments: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         parameterList: ParameterList,
         block: Block
@@ -31,7 +31,7 @@ abstract class Constructor(
 
 class PrimaryConstructor(converter: Converter,
                          comments: MemberComments,
-                         annotations: List<Annotation>,
+                         annotations: Annotations,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)
@@ -48,7 +48,7 @@ class PrimaryConstructor(converter: Converter,
 
 class SecondaryConstructor(converter: Converter,
                          comments: MemberComments,
-                         annotations: List<Annotation>,
+                         annotations: Annotations,
                          modifiers: Set<Modifier>,
                          parameterList: ParameterList,
                          block: Block)

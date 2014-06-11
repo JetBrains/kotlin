@@ -8,4 +8,20 @@ import javaApi.*;
 @Anon5(1)
 @Anon6({"x", "y"})
 class C {
+    @Anon5(1) @Deprecated private int field1 = 0;
+
+    @Anon5(1)
+    private int field2 = 0;
+
+    @Anon5(1) int field3 = 0;
+
+    @Anon5(1)
+    int field4 = 0;
+
+    @Anon6({})
+    void foo(@Deprecated int p1, @Deprecated @Anon5(2) char p2) {
+        @Deprecated @Anon5(3) char c = 'a';
+    }
+
+    @Anon5(1) void bar(){}
 }

@@ -21,7 +21,7 @@ import java.util.ArrayList
 open class Class(
         val name: Identifier,
         comments: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         val typeParameterList: TypeParameterList,
         val extendsTypes: List<Type>,

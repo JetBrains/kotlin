@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 class EnumConstant(
         identifier: Identifier,
         members: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         `type`: Type,
         params: Element

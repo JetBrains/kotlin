@@ -20,6 +20,6 @@ import org.jetbrains.jet.j2k.Converter
 import java.util.Collections
 
 class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
-: Class(Identifier(""), MemberComments.Empty, listOf(), setOf(), TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
+: Class(Identifier(""), MemberComments.Empty, Annotations.Empty, setOf(), TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
     override fun toKotlin() = body.toKotlin(null)
 }

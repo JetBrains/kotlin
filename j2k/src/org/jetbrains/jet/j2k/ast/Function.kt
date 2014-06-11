@@ -23,7 +23,7 @@ open class Function(
         val converter: Converter,
         val name: Identifier,
         comments: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         val `type`: Type,
         val typeParameterList: TypeParameterList,

@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 class Parameter(val identifier: Identifier,
                 val `type`: Type,
                 val varVal: Parameter.VarValModifier,
-                val annotations: List<Annotation>,
+                val annotations: Annotations,
                 val modifiers: Collection<Modifier>) : Element {
     public enum class VarValModifier {
         None

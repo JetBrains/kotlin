@@ -19,7 +19,7 @@ package org.jetbrains.jet.j2k.ast
 class Enum(
         name: Identifier,
         comments: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         typeParameterList: TypeParameterList,
         extendsTypes: List<Type>,

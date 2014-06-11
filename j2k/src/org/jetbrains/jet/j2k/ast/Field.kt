@@ -22,7 +22,7 @@ import java.util.ArrayList
 open class Field(
         val identifier: Identifier,
         comments: MemberComments,
-        annotations: List<Annotation>,
+        annotations: Annotations,
         modifiers: Set<Modifier>,
         val `type`: Type,
         val initializer: Element,

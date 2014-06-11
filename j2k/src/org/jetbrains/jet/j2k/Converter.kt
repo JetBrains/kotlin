@@ -72,7 +72,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         is PsiComment -> Comment(element.getText()!!)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element, false)
-        is PsiAnnotation -> convertAnnotation(element)
+        is PsiAnnotation -> convertAnnotation(element, false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: ""))
         is PsiWhiteSpace -> WhiteSpace(element.getText()!!)
         else -> null
@@ -290,7 +290,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             Parameter(field.identifier, field.`type`, varValModifier, field.annotations, field.modifiers.filter { ACCESS_MODIFIERS.contains(it) })
         }
 
-        val primaryConstructor = PrimaryConstructor(this, MemberComments.Empty, listOf(), setOf(Modifier.PRIVATE), ParameterList(parameters), Block.Empty)
+        val primaryConstructor = PrimaryConstructor(this, MemberComments.Empty, Annotations.Empty, setOf(Modifier.PRIVATE), ParameterList(parameters), Block.Empty)
         val updatedMembers = MemberList(classBody.normalMembers.elements.filter { !finalOrWithEmptyInitializerFields.contains(it) })
         return ClassBody(primaryConstructor, classBody.secondaryConstructors, updatedMembers, classBody.classObjectMembers)
     }
@@ -418,7 +418,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     private fun convertPrimaryConstructor(constructor: PsiMethod,
-                                          annotations: List<Annotation>,
+                                          annotations: Annotations,
                                           modifiers: Set<Modifier>,
                                           comments: MemberComments,
                                           membersToRemove: MutableSet<PsiMember>): PrimaryConstructor {
@@ -610,14 +610,30 @@ public class Converter private(val project: Project, val settings: ConverterSett
             PsiModifier.PRIVATE to Modifier.PRIVATE
     )
 
-    public fun convertAnnotations(owner: PsiModifierListOwner): List<Annotation> {
-        return owner.getModifierList()?.getAnnotations()
-                ?.filter { it.getQualifiedName() !in ANNOTATIONS_TO_REMOVE }
-                ?.map { convertAnnotation(it) }
-                ?.filterNotNull() ?: listOf()
+    public fun convertAnnotations(owner: PsiModifierListOwner): Annotations {
+        val modifierList = owner.getModifierList()
+        val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in ANNOTATIONS_TO_REMOVE }
+        if (annotations == null || annotations.isEmpty()) return Annotations.Empty
+
+        val newLines = run {
+            if (!modifierList!!.isInSingleLine()) {
+                true
+            }
+            else {
+                var child: PsiElement? = modifierList
+                while(true) {
+                    child = child!!.getNextSibling()
+                    if (child == null || child!!.getTextLength() != 0) break
+                }
+                if (child is PsiWhiteSpace) !child!!.isInSingleLine() else false
+            }
+        }
+
+        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull()
+        return Annotations(list, newLines)
     }
 
-    public fun convertAnnotation(annotation: PsiAnnotation): Annotation? {
+    public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
         val name = Identifier((annotation.getNameReferenceElement() ?: return null).getText()!!)
         val annotationClass = annotation.getNameReferenceElement()?.resolve() as? PsiClass
         val lastMethod = annotationClass?.getMethods()?.lastOrNull()
@@ -653,7 +669,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
             attrValues.map { attrName to it }
         }
-        return Annotation(name, arguments)
+        return Annotation(name, arguments, brackets)
     }
 
     private val TYPE_MAP: Map<String, String> = mapOf(

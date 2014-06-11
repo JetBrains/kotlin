@@ -30,7 +30,7 @@ class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(e
     }
 }
 
-abstract class Member(val comments: MemberComments, val annotations: List<Annotation>, val modifiers: Set<Modifier>) : Element {
+abstract class Member(val comments: MemberComments, val annotations: Annotations, val modifiers: Set<Modifier>) : Element {
     fun commentsToKotlin(): String = comments.toKotlin()
 }
 

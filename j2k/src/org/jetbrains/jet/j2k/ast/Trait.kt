@@ -21,7 +21,7 @@ import java.util.ArrayList
 
 class Trait(name: Identifier,
             comments: MemberComments,
-            annotations: List<Annotation>,
+            annotations: Annotations,
             modifiers: Set<Modifier>,
             typeParameterList: TypeParameterList,
             extendsTypes: List<Type>,

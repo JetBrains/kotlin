@@ -18,17 +18,32 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.HashSet
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>) : Element {
-    override fun toKotlin(): String {
-        if (arguments.isEmpty()) return name.toKotlin()
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element {
+    private fun surroundWithBrackets(text: String) = if (brackets) "[$text]" else text
 
-        return name.toKotlin() + "(" + arguments.map {
+    override fun toKotlin(): String {
+        if (arguments.isEmpty()) {
+            return surroundWithBrackets(name.toKotlin())
+        }
+
+        val argsText = arguments.map {
             if (it.first != null)
                 it.first!!.toKotlin() + " = " + it.second.toKotlin()
             else
                 it.second.toKotlin()
-        }.makeString(", ") + ")"
+        }.makeString(", ")
+        return surroundWithBrackets(name.toKotlin() + "(" + argsText + ")")
     }
 }
 
-fun List<Annotation>.toKotlin(): String = if (isNotEmpty()) map { it.toKotlin() }.makeString("\n") + "\n" else ""
+class Annotations(val annotations: List<Annotation>, val newLines: Boolean) {
+    private val br = if (newLines) "\n" else " "
+
+    fun toKotlin(): String = if (annotations.isNotEmpty()) annotations.map { it.toKotlin() }.makeString(br) + br else ""
+
+    fun plus(other: Annotations) = Annotations(annotations + other.annotations, newLines || other.newLines)
+
+    class object {
+        val Empty = Annotations(listOf(), false)
+    }
+}
