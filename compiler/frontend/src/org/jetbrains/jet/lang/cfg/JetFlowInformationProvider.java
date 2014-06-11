@@ -258,15 +258,16 @@ public class JetFlowInformationProvider {
 
     private Set<JetElement> collectUnreachableCode() {
         Set<JetElement> unreachableElements = Sets.newHashSet();
-        for (Instruction deadInstruction : pseudocode.getDeadInstructions()) {
-            if (!(deadInstruction instanceof JetElementInstruction)
-                    || deadInstruction instanceof LoadUnitValueInstruction
-                    || deadInstruction instanceof MergeInstruction
-                    || (deadInstruction instanceof MagicInstruction && ((MagicInstruction) deadInstruction).getSynthetic())) continue;
+        for (Instruction instruction : pseudocode.getDeadInstructions()) {
+            if (!PseudocodeUtil.isDeadInAllCopies(instruction)) continue;
+            if (!(instruction instanceof JetElementInstruction)
+                    || instruction instanceof LoadUnitValueInstruction
+                    || instruction instanceof MergeInstruction
+                    || (instruction instanceof MagicInstruction && ((MagicInstruction) instruction).getSynthetic())) continue;
 
-            JetElement element = ((JetElementInstruction) deadInstruction).getElement();
+            JetElement element = ((JetElementInstruction) instruction).getElement();
 
-            if (deadInstruction instanceof JumpInstruction) {
+            if (instruction instanceof JumpInstruction) {
                 boolean isJumpElement = element instanceof JetBreakExpression
                                         || element instanceof JetContinueExpression
                                         || element instanceof JetReturnExpression

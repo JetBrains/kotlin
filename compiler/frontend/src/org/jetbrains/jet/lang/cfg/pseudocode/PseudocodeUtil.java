@@ -85,4 +85,12 @@ public class PseudocodeUtil {
         }
         return BindingContextUtils.extractVariableDescriptorIfAny(bindingContext, element, onlyReference);
     }
+
+    public static boolean isDeadInAllCopies(@NotNull Instruction instruction) {
+        boolean allCopiesAreDead = instruction.getDead();
+        for (Instruction copy : instruction.getCopies()) {
+            allCopiesAreDead = allCopiesAreDead && copy.getDead();
+        }
+        return allCopiesAreDead;
+    }
 }

@@ -26,6 +26,8 @@ public trait Instruction {
     public val previousInstructions: MutableCollection<Instruction>
     public val nextInstructions: Collection<Instruction>
 
+    public val dead: Boolean
+
     public val lexicalScope: LexicalScope
 
     public val inputValues: List<PseudoValue>

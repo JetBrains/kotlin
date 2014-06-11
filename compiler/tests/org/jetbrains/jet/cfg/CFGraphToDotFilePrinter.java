@@ -44,7 +44,7 @@ public class CFGraphToDotFilePrinter {
         int[] count = new int[1];
         Map<Instruction, String> nodeToName = new HashMap<Instruction, String>();
         for (Pseudocode pseudocode : pseudocodes) {
-            dumpNodes(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName, Sets
+            dumpNodes(pseudocode.getInstructionsIncludingDeadCode(), out, count, nodeToName, Sets
                     .newHashSet(pseudocode.getInstructions()));
         }
         int i = 0;
@@ -61,7 +61,7 @@ public class CFGraphToDotFilePrinter {
             out.println("subgraph cluster_" + i + " {\n" +
                         "label=\"" + label + "\";\n" +
                         "color=blue;\n");
-            dumpEdges(((PseudocodeImpl)pseudocode).getAllInstructions(), out, count, nodeToName);
+            dumpEdges(pseudocode.getInstructionsIncludingDeadCode(), out, count, nodeToName);
             out.println("}");
             i++;
         }
@@ -76,7 +76,7 @@ public class CFGraphToDotFilePrinter {
                 public void visitLocalFunctionDeclarationInstruction(LocalFunctionDeclarationInstruction instruction) {
                     int index = count[0];
 //                    instruction.getBody().dumpSubgraph(out, "subgraph cluster_" + index, count, "color=blue;\nlabel = \"f" + index + "\";", nodeToName);
-                    printEdge(out, nodeToName.get(instruction), nodeToName.get(((PseudocodeImpl)instruction.getBody()).getAllInstructions().get(0)), null);
+                    printEdge(out, nodeToName.get(instruction), nodeToName.get(instruction.getBody().getInstructionsIncludingDeadCode().get(0)), null);
                     visitInstructionWithNext(instruction);
                 }
 

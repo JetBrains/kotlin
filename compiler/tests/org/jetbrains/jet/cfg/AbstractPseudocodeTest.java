@@ -179,7 +179,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
             @NotNull StringBuilder out,
             @NotNull Function3<Instruction, /*next*/Instruction, /*prev*/Instruction, String> getInstructionData
     ) {
-        List<Instruction> instructions = pseudocode.getAllInstructions();
+        List<Instruction> instructions = pseudocode.getInstructionsIncludingDeadCode();
         Set<Instruction> remainedAfterPostProcessInstructions = Sets.newHashSet(pseudocode.getInstructions());
         List<PseudocodeImpl.PseudocodeLabel> labels = pseudocode.getLabels();
         int instructionColumnWidth = countInstructionColumnWidth(instructions);

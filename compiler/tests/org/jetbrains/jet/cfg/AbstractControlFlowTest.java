@@ -19,9 +19,8 @@ package org.jetbrains.jet.cfg;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.jet.lang.cfg.pseudocode.instructions.InstructionImpl;
 import org.jetbrains.jet.lang.cfg.pseudocode.PseudocodeImpl;
+import org.jetbrains.jet.lang.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.jet.lang.resolve.BindingContext;
 
 import java.util.*;
@@ -34,7 +33,7 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
             @NotNull StringBuilder out,
             @NotNull BindingContext bindingContext
     ) {
-        final int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getAllInstructions());
+        final int nextInstructionsColumnWidth = countNextInstructionsColumnWidth(pseudocode.getInstructionsIncludingDeadCode());
 
         dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
             @Override
@@ -107,9 +106,9 @@ public abstract class AbstractControlFlowTest extends AbstractPseudocodeTest {
     @Override
     protected void checkPseudocode(PseudocodeImpl pseudocode) {
         //check edges directions
-        Collection<Instruction> instructions = pseudocode.getAllInstructions();
+        Collection<Instruction> instructions = pseudocode.getInstructionsIncludingDeadCode();
         for (Instruction instruction : instructions) {
-            if (!((InstructionImpl)instruction).getDead()) {
+            if (!instruction.getDead()) {
                 for (Instruction nextInstruction : instruction.getNextInstructions()) {
                     assertTrue("instruction '" + instruction + "' has '" + nextInstruction + "' among next instructions list, but not vice versa",
                                nextInstruction.getPreviousInstructions().contains(instruction));

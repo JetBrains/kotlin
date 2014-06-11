@@ -53,7 +53,7 @@ public abstract class InstructionImpl(public override val lexicalScope: LexicalS
         _dead = true
     }
 
-    public val dead: Boolean get() = _dead
+    override val dead: Boolean get() = _dead
 
     public fun copy(): Instruction {
         return updateCopyInfo(createCopy())

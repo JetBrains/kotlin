@@ -183,30 +183,10 @@ public class PseudocodeImpl implements Pseudocode {
         return Lists.newArrayList(traversedInstructions);
     }
 
-    //for tests only
-    @NotNull
-    public List<Instruction> getAllInstructions() {
-        return mutableInstructionList;
-    }
-
     @Override
     @NotNull
-    public List<Instruction> getDeadInstructions() {
-        List<Instruction> deadInstructions = Lists.newArrayList();
-        for (Instruction instruction : mutableInstructionList) {
-            if (isDead(instruction)) {
-                deadInstructions.add(instruction);
-            }
-        }
-        return deadInstructions;
-    }
-
-    private static boolean isDead(@NotNull Instruction instruction) {
-        if (!((InstructionImpl)instruction).getDead()) return false;
-        for (Instruction copy : instruction.getCopies()) {
-            if (!((InstructionImpl)copy).getDead()) return false;
-        }
-        return true;
+    public List<Instruction> getInstructionsIncludingDeadCode() {
+        return mutableInstructionList;
     }
 
     //for tests only

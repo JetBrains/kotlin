@@ -49,7 +49,7 @@ public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
                 pseudocodeVariablesData.getVariableUseStatusData();
         final String initPrefix = "    INIT:";
         final String usePrefix  = "    USE:";
-        final int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getAllInstructions(), variableInitializers);
+        final int initializersColumnWidth = countDataColumnWidth(initPrefix, pseudocode.getInstructionsIncludingDeadCode(), variableInitializers);
 
         dumpInstructions(pseudocode, out, new Function3<Instruction, Instruction, Instruction, String>() {
             @Override
