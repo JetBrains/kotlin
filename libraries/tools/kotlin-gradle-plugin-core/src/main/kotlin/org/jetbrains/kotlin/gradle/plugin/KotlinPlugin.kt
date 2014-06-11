@@ -141,10 +141,15 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler): Plug
                     val kotlinDirSet = kotlinSourceSet.getKotlin()
                     kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
-                    AndroidGradleWrapper.srcDir(sourceSet, kotlinDirSet)
-                    AndroidGradleWrapper.getResourceFilter(sourceSet)?.exclude(KSpec({ elem ->
+
+                    /*TODO: before 0.11 gradle android plugin there was:
+                      sourceSet.getAllJava().source(kotlinDirSet)
+                      sourceSet.getAllSource().source(kotlinDirSet)
+                      AndroidGradleWrapper.getResourceFilter(sourceSet)?.exclude(KSpec({ elem ->
                         kotlinDirSet.contains(elem.getFile())
-                    }))
+                      }))
+                     but those methods were removed so commented as temporary hack*/
+
                     project.getLogger().debug("Created kotlin sourceDirectorySet at ${kotlinDirSet.getSrcDirs()}")
                 }
             }
