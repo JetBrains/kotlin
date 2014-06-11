@@ -248,6 +248,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/assertStatement/withStringDetail.java");
         }
         
+        @TestMetadata("withStringDetail2.java")
+        public void testWithStringDetail2() throws Exception {
+            doTest("j2k/tests/testData/ast/assertStatement/withStringDetail2.java");
+        }
+        
     }
     
     @TestMetadata("j2k/tests/testData/ast/assignmentExpression")

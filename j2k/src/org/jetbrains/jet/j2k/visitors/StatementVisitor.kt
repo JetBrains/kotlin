@@ -30,8 +30,20 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
         protected set
 
     override fun visitAssertStatement(statement: PsiAssertStatement) {
-        result = AssertStatement(converter.convertExpression(statement.getAssertCondition()),
-                                   converter.convertExpression(statement.getAssertDescription()))
+        val descriptionExpr = statement.getAssertDescription()
+        val condition = converter.convertExpression(statement.getAssertCondition())
+        if (descriptionExpr == null) {
+            result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition))
+        }
+        else {
+            val description = converter.convertExpression(descriptionExpr)
+            if (descriptionExpr is PsiLiteralExpression) {
+                result = MethodCallExpression.buildNotNull(null, "assert", listOf(condition, description))
+            }
+            else {
+                result = MethodCallExpression.build(null, "assert", listOf(condition), listOf(), false, LambdaExpression(null, StatementList(listOf(description))))
+            }
+        }
     }
 
     override fun visitBlockStatement(statement: PsiBlockStatement) {
