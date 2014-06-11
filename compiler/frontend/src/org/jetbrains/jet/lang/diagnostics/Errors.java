@@ -17,9 +17,11 @@
 package org.jetbrains.jet.lang.diagnostics;
 
 import com.google.common.collect.ImmutableSet;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiNameIdentifierOwner;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.psi.*;
@@ -446,7 +448,13 @@ public interface Errors {
 
     // Control flow / Data flow
 
-    DiagnosticFactory0<JetElement> UNREACHABLE_CODE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<JetElement, List<TextRange>> UNREACHABLE_CODE = DiagnosticFactory1.create(
+            WARNING, PositioningStrategies.markTextRangesFromDiagnostic(new Function1<Diagnostic, List<TextRange>>() {
+                @Override
+                public List<TextRange> invoke(Diagnostic diagnostic) {
+                    return UNREACHABLE_CODE.cast(diagnostic).getA();
+                }
+            }));
 
     DiagnosticFactory0<JetVariableDeclaration> VARIABLE_WITH_NO_TYPE_NO_INITIALIZER = DiagnosticFactory0.create(ERROR, NAME_IDENTIFIER);
 

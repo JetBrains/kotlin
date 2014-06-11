@@ -27,7 +27,12 @@ import java.util.List;
 
 public class PositioningStrategy<E extends PsiElement> {
     @NotNull
-    public List<TextRange> mark(@NotNull E element) {
+    public List<TextRange> markDiagnostic(@NotNull ParametrizedDiagnostic<? extends E> diagnostic) {
+        return mark(diagnostic.getPsiElement());
+    }
+
+    @NotNull
+    protected List<TextRange> mark(@NotNull E element) {
         return markElement(element);
     }
 

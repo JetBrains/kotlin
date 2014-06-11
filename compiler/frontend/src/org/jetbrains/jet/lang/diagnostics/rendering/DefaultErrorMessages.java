@@ -212,7 +212,7 @@ public class DefaultErrorMessages {
         MAP.put(INITIALIZATION_USING_BACKING_FIELD_OPEN_SETTER,
                 "Setter of this property can be overridden, so initialization using backing field required", NAME);
 
-        MAP.put(UNREACHABLE_CODE, "Unreachable code");
+        MAP.put(UNREACHABLE_CODE, "Unreachable code", TO_STRING);
 
         MAP.put(MANY_CLASS_OBJECTS, "Only one class object is allowed per class");
         MAP.put(CLASS_OBJECT_NOT_ALLOWED, "A class object is not allowed here");

@@ -3,20 +3,20 @@ fun bar(<!UNUSED_PARAMETER!>a<!>: Any, <!UNUSED_PARAMETER!>b<!>: Any) {}
 
 fun test(arr: Array<Int>) {
     while (true) {
-        <!UNREACHABLE_CODE!>foo<!>(break)
+        <!UNREACHABLE_CODE!>foo(<!>break<!UNREACHABLE_CODE!>)<!>
     }
 
 
     while (true) {
-        <!UNREACHABLE_CODE!>bar<!>(arr, break)
+        <!UNREACHABLE_CODE!>bar(<!>arr, break<!UNREACHABLE_CODE!>)<!>
     }
 
     while (true) {
-        <!UNREACHABLE_CODE!>arr[break]<!>
+        arr<!UNREACHABLE_CODE!>[<!>break<!UNREACHABLE_CODE!>]<!>
     }
 
     while (true) {
-        <!UNREACHABLE_CODE!>arr[1] = break<!>
+        arr[1] <!UNREACHABLE_CODE!>=<!> break
     }
 
     while (true) {
@@ -32,7 +32,7 @@ fun test(arr: Array<Int>) {
 
     while (true) {
         var <!UNUSED_VARIABLE!>x<!> = 1
-        <!UNREACHABLE_CODE!>x = break<!>
+        <!UNREACHABLE_CODE!>x =<!> break
     }
 
     // TODO: bug, should be fixed in CFA
@@ -50,6 +50,6 @@ fun test(arr: Array<Int>) {
     }
 
     while (true) {
-        <!USELESS_ELVIS!>break<!> ?: <!UNREACHABLE_CODE!>null<!>
+        <!USELESS_ELVIS!>break<!> <!UNREACHABLE_CODE!>?: null<!>
     }
 }

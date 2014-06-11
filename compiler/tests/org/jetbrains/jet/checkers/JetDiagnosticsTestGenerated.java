@@ -469,11 +469,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest("compiler/testData/diagnostics/tests/UnitValue.kt");
         }
         
-        @TestMetadata("UnreachableCode.kt")
-        public void testUnreachableCode() throws Exception {
-            doTest("compiler/testData/diagnostics/tests/UnreachableCode.kt");
-        }
-        
         @TestMetadata("Unresolved.kt")
         public void testUnresolved() throws Exception {
             doTest("compiler/testData/diagnostics/tests/Unresolved.kt");
@@ -1239,7 +1234,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis")
-        @InnerTestClasses({ControlFlowAnalysis.DefiniteReturn.class})
+        @InnerTestClasses({ControlFlowAnalysis.DeadCode.class, ControlFlowAnalysis.DefiniteReturn.class})
         public static class ControlFlowAnalysis extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInControlFlowAnalysis() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -1258,11 +1253,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("checkPropertyAccessor.kt")
             public void testCheckPropertyAccessor() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkPropertyAccessor.kt");
-            }
-            
-            @TestMetadata("DeadCode.kt")
-            public void testDeadCode() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/DeadCode.kt");
             }
             
             @TestMetadata("definiteReturnInWhen.kt")
@@ -1338,21 +1328,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("kt2369.kt")
             public void testKt2369() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2369.kt");
-            }
-            
-            @TestMetadata("kt2585_1.kt")
-            public void testKt2585_1() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_1.kt");
-            }
-            
-            @TestMetadata("kt2585_2.kt")
-            public void testKt2585_2() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_2.kt");
-            }
-            
-            @TestMetadata("kt2585_3.kt")
-            public void testKt2585_3() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/kt2585_3.kt");
             }
             
             @TestMetadata("kt2845.kt")
@@ -1455,14 +1430,117 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/UninitializedOrReassignedVariables.kt");
             }
             
-            @TestMetadata("unreachableCode.kt")
-            public void testUnreachableCode() throws Exception {
-                doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unreachableCode.kt");
-            }
-            
             @TestMetadata("varInitializationInIfInCycle.kt")
             public void testVarInitializationInIfInCycle() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/varInitializationInIfInCycle.kt");
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode")
+            public static class DeadCode extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInDeadCode() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("commasAndWhitespaces.kt")
+                public void testCommasAndWhitespaces() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/commasAndWhitespaces.kt");
+                }
+                
+                @TestMetadata("deadCallInInvokeCall.kt")
+                public void testDeadCallInInvokeCall() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCallInInvokeCall.kt");
+                }
+                
+                @TestMetadata("deadCallInReceiver.kt")
+                public void testDeadCallInReceiver() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCallInReceiver.kt");
+                }
+                
+                @TestMetadata("deadCodeDifferentExamples.kt")
+                public void testDeadCodeDifferentExamples() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeDifferentExamples.kt");
+                }
+                
+                @TestMetadata("deadCodeFromDifferentSources.kt")
+                public void testDeadCodeFromDifferentSources() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeFromDifferentSources.kt");
+                }
+                
+                @TestMetadata("deadCodeInArrayAccess.kt")
+                public void testDeadCodeInArrayAccess() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInArrayAccess.kt");
+                }
+                
+                @TestMetadata("deadCodeInAssignment.kt")
+                public void testDeadCodeInAssignment() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInAssignment.kt");
+                }
+                
+                @TestMetadata("deadCodeInBinaryExpressions.kt")
+                public void testDeadCodeInBinaryExpressions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInBinaryExpressions.kt");
+                }
+                
+                @TestMetadata("deadCodeInCalls.kt")
+                public void testDeadCodeInCalls() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInCalls.kt");
+                }
+                
+                @TestMetadata("deadCodeInDeadCode.kt")
+                public void testDeadCodeInDeadCode() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInDeadCode.kt");
+                }
+                
+                @TestMetadata("deadCodeInIf.kt")
+                public void testDeadCodeInIf() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInIf.kt");
+                }
+                
+                @TestMetadata("deadCodeInInnerExpressions.kt")
+                public void testDeadCodeInInnerExpressions() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInInnerExpressions.kt");
+                }
+                
+                @TestMetadata("deadCodeInLocalDeclarations.kt")
+                public void testDeadCodeInLocalDeclarations() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInLocalDeclarations.kt");
+                }
+                
+                @TestMetadata("deadCodeInLoops.kt")
+                public void testDeadCodeInLoops() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInLoops.kt");
+                }
+                
+                @TestMetadata("deadCodeInReturn.kt")
+                public void testDeadCodeInReturn() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInReturn.kt");
+                }
+                
+                @TestMetadata("deadCodeInUnaryExpr.kt")
+                public void testDeadCodeInUnaryExpr() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInUnaryExpr.kt");
+                }
+                
+                @TestMetadata("deadCodeInWhileFromBreak.kt")
+                public void testDeadCodeInWhileFromBreak() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/deadCodeInWhileFromBreak.kt");
+                }
+                
+                @TestMetadata("kt2585_1.kt")
+                public void testKt2585_1() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_1.kt");
+                }
+                
+                @TestMetadata("kt2585_2.kt")
+                public void testKt2585_2() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_2.kt");
+                }
+                
+                @TestMetadata("kt2585_3.kt")
+                public void testKt2585_3() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/kt2585_3.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn")
@@ -1491,6 +1569,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             public static Test innerSuite() {
                 TestSuite suite = new TestSuite("ControlFlowAnalysis");
                 suite.addTestSuite(ControlFlowAnalysis.class);
+                suite.addTestSuite(DeadCode.class);
                 suite.addTestSuite(DefiniteReturn.class);
                 return suite;
             }

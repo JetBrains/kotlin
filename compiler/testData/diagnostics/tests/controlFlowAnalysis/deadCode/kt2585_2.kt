@@ -2,7 +2,7 @@
 
 fun foo() {
     try {
-        <!UNREACHABLE_CODE!>throw RuntimeException()<!>
+        <!UNREACHABLE_CODE!>throw<!> RuntimeException()
     } catch (e: Exception) {
         <!UNREACHABLE_CODE!>return<!>     // <- Wrong UNREACHABLE_CODE
     } finally {

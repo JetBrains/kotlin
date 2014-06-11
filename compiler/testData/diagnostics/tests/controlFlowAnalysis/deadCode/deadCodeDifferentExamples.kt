@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun t1() : Int{
   return 0
@@ -46,7 +47,7 @@ fun t3() : Any {
   <!UNREACHABLE_CODE!>1<!>
 }
 
-fun t4(<!UNUSED_PARAMETER!>a<!> : Boolean) : Int {
+fun t4(a : Boolean) : Int {
   do {
     return 1
   }
@@ -54,7 +55,7 @@ fun t4(<!UNUSED_PARAMETER!>a<!> : Boolean) : Int {
   <!UNREACHABLE_CODE!>1<!>
 }
 
-fun t4break(<!UNUSED_PARAMETER!>a<!> : Boolean) : Int {
+fun t4break(a : Boolean) : Int {
   do {
     break
   }
@@ -109,7 +110,7 @@ fun t7() : Int {
     <!UNREACHABLE_CODE!>2<!>
   }
   catch (<!TYPE_MISMATCH!>e : Any<!>) {
-    <!UNUSED_EXPRESSION!>2<!>
+    2
   }
   return 1 // this is OK, like in Java
 }
@@ -127,16 +128,16 @@ fun t8() : Int {
 }
 
 fun blockAndAndMismatch() : Boolean {
-  <!UNREACHABLE_CODE!>(return true) || (return false)<!>
+  (return true) <!UNREACHABLE_CODE!>|| (return false)<!>
   <!UNREACHABLE_CODE!>return true<!>
 }
 
 fun tf() : Int {
-  try {<!UNREACHABLE_CODE!>return 1<!>} finally{return 1}
+  try {<!UNREACHABLE_CODE!>return<!> 1} finally{return 1}
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
-fun failtest(<!UNUSED_PARAMETER!>a<!> : Int) : Int {
+fun failtest(a : Int) : Int {
   if (fail() || <!UNREACHABLE_CODE!>true<!>) <!UNREACHABLE_CODE!>{
 
   }<!>
@@ -144,8 +145,8 @@ fun failtest(<!UNUSED_PARAMETER!>a<!> : Int) : Int {
 }
 
 fun foo(a : Nothing) : Unit {
-  <!UNUSED_EXPRESSION!>1<!>
-  <!UNUSED_EXPRESSION!>a<!>
+  1
+  a
   <!UNREACHABLE_CODE!>2<!>
 }
 
@@ -161,7 +162,7 @@ fun nullIsNotNothing() : Unit {
     fail()
 }
 
-fun returnInWhile(<!UNUSED_PARAMETER!>a<!>: Int) {
+fun returnInWhile(a: Int) {
     do {return}
     while (<!UNREACHABLE_CODE!>1 > a<!>)
 }

@@ -126,12 +126,12 @@ fun t8() : Int {
 }
 
 fun blockAndAndMismatch() : Boolean {
-  <warning>(return true) || (return false)</warning>
+  (return true) <warning>|| (return false)</warning>
   <warning>return true</warning>
 }
 
 fun tf() : Int {
-  try {<warning>return 1</warning>} finally{return 1}
+  try {<warning>return</warning> 1} finally{return 1}
   <warning>return 1</warning>
 }
 

@@ -124,9 +124,9 @@ public class JetFlowInformationProvider {
     }
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
-        Set<JetElement> unreachableElements = collectUnreachableCode();
-        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, unreachableElements);
-        reportUnreachableCode(unreachableElements);
+        UnreachableCode unreachableCode = collectUnreachableCode();
+        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, unreachableCode);
+        reportUnreachableCode(unreachableCode);
 
         markTailCalls();
     }
@@ -209,7 +209,7 @@ public class JetFlowInformationProvider {
         }
     }
 
-    public void checkDefiniteReturn(final @NotNull JetType expectedReturnType, @NotNull final Set<JetElement> unreachableElements) {
+    public void checkDefiniteReturn(final @NotNull JetType expectedReturnType, @NotNull final UnreachableCode unreachableCode) {
         assert subroutine instanceof JetDeclarationWithBody;
         JetDeclarationWithBody function = (JetDeclarationWithBody) subroutine;
 
@@ -236,7 +236,7 @@ public class JetFlowInformationProvider {
 
                     if (blockBody && !noExpectedType(expectedReturnType)
                             && !KotlinBuiltIns.getInstance().isUnit(expectedReturnType)
-                            && !unreachableElements.contains(element)) {
+                            && !unreachableCode.getElements().contains(element)) {
                         noReturnError[0] = true;
                     }
                 }
@@ -247,19 +247,17 @@ public class JetFlowInformationProvider {
         }
     }
 
-    private void reportUnreachableCode(@NotNull Set<JetElement> unreachableElements) {
-        // This is needed in order to highlight only '1 < 2' and not '1', '<' and '2' as well
-        Set<JetElement> rootUnreachableElements = JetPsiUtil.findRootExpressions(unreachableElements);
-
-        for (JetElement element : rootUnreachableElements) {
-            trace.report(UNREACHABLE_CODE.on(element));
+    private void reportUnreachableCode(@NotNull UnreachableCode unreachableCode) {
+        for (JetElement element : unreachableCode.getElements()) {
+            trace.report(UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)));
         }
     }
 
-    private Set<JetElement> collectUnreachableCode() {
+    @NotNull
+    private UnreachableCode collectUnreachableCode() {
+        Set<JetElement> reachableElements = Sets.newHashSet();
         Set<JetElement> unreachableElements = Sets.newHashSet();
-        for (Instruction instruction : pseudocode.getDeadInstructions()) {
-            if (!PseudocodeUtil.isDeadInAllCopies(instruction)) continue;
+        for (Instruction instruction : pseudocode.getInstructionsIncludingDeadCode()) {
             if (!(instruction instanceof JetElementInstruction)
                     || instruction instanceof LoadUnitValueInstruction
                     || instruction instanceof MergeInstruction
@@ -275,9 +273,14 @@ public class JetFlowInformationProvider {
                 if (!isJumpElement) continue;
             }
 
-            unreachableElements.add(element);
+            if (PseudocodeUtil.isDeadInAllCopies(instruction)) {
+                unreachableElements.add(element);
+            }
+            else {
+                reachableElements.add(element);
+            }
         }
-        return unreachableElements;
+        return new UnreachableCodeImpl(reachableElements, unreachableElements);
     }
 
 ////////////////////////////////////////////////////////////////////////////////

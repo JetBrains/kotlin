@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE
 //KT-2445 Calling method with function with generic parameter causes compile-time exception
 package a
 
@@ -7,4 +8,4 @@ fun main(args: Array<String>) {
     }
 }
 
-fun test<R>(callback: (R) -> Unit):Unit = <!UNREACHABLE_CODE!>callback<!>(null!!)
+fun test<R>(callback: (R) -> Unit):Unit = callback(null!!)

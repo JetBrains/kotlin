@@ -1,7 +1,7 @@
 package c
 
 fun test1() {
-    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>r<!>: Nothing = null!!<!>
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>r<!>: Nothing =<!> null!!
 }
 
 fun test2(a: A) {

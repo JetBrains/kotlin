@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -UNREACHABLE_CODE
 //KT-2838 Type inference failed on passing null as a nullable argument
 package a
 
@@ -9,9 +10,9 @@ fun test(a: Int) {
     bar(a, <!NULL_FOR_NONNULL_TYPE!>null<!>)
 }
 fun test1(a: Int) {
-    <!UNREACHABLE_CODE!>foo<!>(a, throw Exception())
+    foo(a, throw Exception())
 }
 
 fun test2(a: Int) {
-    <!UNREACHABLE_CODE!>bar<!>(a, throw Exception())
+    bar(a, throw Exception())
 }
