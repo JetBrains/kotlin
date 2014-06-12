@@ -882,7 +882,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context.trace, "trace to resolve 'equals(Any?)' interpreting as of type Any? an expression:", right);
         traceInterpretingRightAsNullableAny.record(EXPRESSION_TYPE, right, KotlinBuiltIns.getInstance().getNullableAnyType());
 
-        Call call = CallMaker.makeCallWithExpressions(operationSign, receiver, null, operationSign, Collections.singletonList(right));
+        Call call = CallMaker.makeCallWithExpressions(expression, receiver, null, operationSign, Collections.singletonList(right));
         ExpressionTypingContext newContext = context.replaceBindingTrace(traceInterpretingRightAsNullableAny);
         OverloadResolutionResults<FunctionDescriptor> resolutionResults =
                 components.callResolver.resolveCallWithGivenName(newContext, call, operationSign, OperatorConventions.EQUALS);

@@ -32,16 +32,16 @@ L3:
     magic(x: Int) -> <v0>                   INIT: in: {x=D} out: {x=D}
     w(x|<v0>)                               INIT: in: {x=D} out: {x=ID}
   3 mark(sum(x - 1) + x)                    INIT: in: {x=ID} out: {x=ID}
-    mark(sum(x - 1) + x)
-    mark(sum(x - 1))
     magic(sum) -> <v1>                                                      USE: in: {sum=READ, x=READ} out: {sum=READ, x=READ}
     r(sum|<v1>) -> <v2>                                                     USE: in: {x=READ} out: {sum=READ, x=READ}
-    mark(x - 1)
     r(x) -> <v3>
     r(1) -> <v4>
+    mark(x - 1)
     call(-, minus|<v3>, <v4>) -> <v5>
+    mark(sum(x - 1))
     call(sum, invoke|<v2>, <v5>) -> <v6>                                    USE: in: {x=READ} out: {x=READ}
     r(x) -> <v7>                                                            USE: in: {} out: {x=READ}
+    mark(sum(x - 1) + x)
     call(+, plus|<v6>, <v7>) -> <v8>
 L4:
   2 <END>
@@ -127,10 +127,10 @@ class TestOther {
 L0:
   1 <START>                             INIT: in: {} out: {}
     v(val x: Int = x + 1)               INIT: in: {} out: {x=D}
-    mark(x + 1)                         INIT: in: {x=D} out: {x=D}
-    magic(x) -> <v0>                                                    USE: in: {x=READ} out: {x=READ}
+    magic(x) -> <v0>                    INIT: in: {x=D} out: {x=D}      USE: in: {x=READ} out: {x=READ}
     r(x|<v0>) -> <v1>                                                   USE: in: {} out: {x=READ}
     r(1) -> <v2>
+    mark(x + 1)
     call(+, plus|<v1>, <v2>) -> <v3>
     w(x|<v3>)                           INIT: in: {x=D} out: {x=ID}
 L1:

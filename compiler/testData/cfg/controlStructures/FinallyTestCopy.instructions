@@ -140,11 +140,11 @@ fun testCopy2() {
 L0:
   1 <START>
   2 mark({ while (cond()) { try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } } })
-    mark(while (cond()) { try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } })
 L2 [loop entry point]:
 L5 [condition entry point]:
-    mark(cond())                                                                                                                                                                      PREV:[mark(while (cond()) { try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } }), jmp(L2 [loop entry point]), jmp(L2 [loop entry point])]
+    mark(cond())                                                                                                                                                                      PREV:[mark({ while (cond()) { try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } } }), jmp(L2 [loop entry point]), jmp(L2 [loop entry point])]
     call(cond, cond) -> <v0>
+    mark(while (cond()) { try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } })
     jf(L3 [loop exit point]|<v0>)                                                                                                                                                     NEXT:[read (Unit), mark({ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } })]
 L4 [body entry point]:
   3 mark({ try { doSmth() } catch (e: NullPointerException) { doSmth1() } catch (e: Exception) { doSmth2() } finally { if (cond()) return else continue } })
@@ -256,11 +256,11 @@ L4 [afterCatches]:
 L3 [onExceptionToFinallyBlock]:
 L7 [start finally]:
   3 mark({ while (cond()); })                                                                                                                                        PREV:[jmp?(L3 [onExceptionToFinallyBlock])]
-    mark(while (cond()))
 L8 [loop entry point]:
 L11 [condition entry point]:
-    mark(cond())                                                                                                                                                     PREV:[mark(while (cond())), jmp(L8 [loop entry point])]
+    mark(cond())                                                                                                                                                     PREV:[mark({ while (cond()); }), jmp(L8 [loop entry point])]
     call(cond, cond) -> <v5>
+    mark(while (cond()))
     jf(L9 [loop exit point]|<v5>)                                                                                                                                    NEXT:[read (Unit), jmp(L8 [loop entry point])]
 L10 [body entry point]:
     jmp(L8 [loop entry point])                                                                                                                                       NEXT:[mark(cond())]
@@ -270,9 +270,9 @@ L12 [finish finally]:
   2 jmp(error)                                                                                                                                                       NEXT:[<ERROR>]
 L6 [skipFinallyToErrorBlock]:
   3 mark({ while (cond()); })                                                                                                                                        PREV:[jmp(L6 [skipFinallyToErrorBlock])]
-    mark(while (cond()))
-    mark(cond())                                                                                                                                                     PREV:[mark(while (cond())), jmp(copy L8 [loop entry point])]
+    mark(cond())                                                                                                                                                     PREV:[mark({ while (cond()); }), jmp(copy L8 [loop entry point])]
     call(cond, cond) -> <v5>
+    mark(while (cond()))
     jf(copy L9 [loop exit point]|<v5>)                                                                                                                               NEXT:[read (Unit), jmp(copy L8 [loop entry point])]
     jmp(copy L8 [loop entry point])                                                                                                                                  NEXT:[mark(cond())]
     read (Unit)                                                                                                                                                      PREV:[jf(copy L9 [loop exit point]|<v5>)]
@@ -311,9 +311,9 @@ L2 [onExceptionToFinallyBlock]:
 L4 [start finally]:
   3 mark({ if(list != null) { } })                                 PREV:[jmp?(L2 [onExceptionToFinallyBlock])]
     mark(if(list != null) { })
-    mark(list != null)
     r(list) -> <v2>
     r(null) -> <v3>
+    mark(list != null)
     call(!=, equals|<v2>, <v3>) -> <v4>
     jf(L5|<v4>)                                                    NEXT:[read (Unit), mark({ })]
   4 mark({ })
@@ -327,9 +327,9 @@ L7 [finish finally]:
 L3 [skipFinallyToErrorBlock]:
   3 mark({ if(list != null) { } })                                 PREV:[jmp(L3 [skipFinallyToErrorBlock])]
     mark(if(list != null) { })
-    mark(list != null)
     r(list) -> <v2>
     r(null) -> <v3>
+    mark(list != null)
     call(!=, equals|<v2>, <v3>) -> <v4>
     jf(copy L5|<v4>)                                               NEXT:[read (Unit), mark({ })]
   4 mark({ })

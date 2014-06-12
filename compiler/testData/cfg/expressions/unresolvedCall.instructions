@@ -10,10 +10,10 @@ L0:
     w(a|<v0>)
   2 mark({ a.foo() })
     mark(a.foo())
-    mark(foo())
     error(foo, No resolved call)
     error(foo, No resolved call)
     r(a) -> <v1>
+    mark(foo())
     magic(foo()|<v1>) -> <v2>
 L1:
   1 <END>                           NEXT:[<SINK>]

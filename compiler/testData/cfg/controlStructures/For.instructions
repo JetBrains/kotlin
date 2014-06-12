@@ -8,10 +8,9 @@ fun t1() {
 L0:
   1 <START>
   2 mark({ for (i in 1..2) { doSmth(i) } })
-  3 mark(for (i in 1..2) { doSmth(i) })
-    mark(1..2)
-    r(1) -> <v0>
+  3 r(1) -> <v0>
     r(2) -> <v1>
+    mark(1..2)
     call(.., rangeTo|<v0>, <v1>) -> <v2>
     v(i)
 L3:
@@ -20,9 +19,10 @@ L4 [loop entry point]:
 L5 [body entry point]:
     magic(1..2|<v2>) -> <v3>                   PREV:[jmp?(L2), jmp?(L4 [loop entry point])]
     w(i|<v3>)
+    mark(for (i in 1..2) { doSmth(i) })
   4 mark({ doSmth(i) })
-    mark(doSmth(i))
     r(i) -> <v4>
+    mark(doSmth(i))
     call(doSmth, doSmth|<v4>) -> <v5>
   3 jmp?(L4 [loop entry point])                NEXT:[magic(1..2|<v2>) -> <v3>, read (Unit)]
 L2:

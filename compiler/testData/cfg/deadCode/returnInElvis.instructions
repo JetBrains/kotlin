@@ -7,6 +7,7 @@ L0:
   1 <START>
   2 mark({ return ?: null })
     ret L1                      NEXT:[<END>]
+-   mark(return ?: null)        PREV:[]
 -   jt(L2)                      NEXT:[r(null) -> <v0>, <END>]      PREV:[]
 -   r(null) -> <v0>             PREV:[]
 L1:

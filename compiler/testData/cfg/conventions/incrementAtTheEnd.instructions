@@ -10,8 +10,8 @@ L0:
     v(var i = 1)
     r(1) -> <v0>
     w(i|<v0>)
-    mark(i++)
     r(i) -> <v1>
+    mark(i++)
     call(++, inc|<v1>) -> <v2>
     w(i|<v2>)
 L1:

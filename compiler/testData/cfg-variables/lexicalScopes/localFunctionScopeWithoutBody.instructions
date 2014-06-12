@@ -33,10 +33,10 @@ L3:
   3 <START>                             INIT: in: {} out: {}
     v(x: Int)                           INIT: in: {} out: {x=D}
     magic(x: Int) -> <v0>               INIT: in: {x=D} out: {x=D}
-    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}
-    mark(x + b)                         INIT: in: {x=ID} out: {x=ID}    USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
-    r(x) -> <v1>                                                        USE: in: {b=READ} out: {b=READ, x=READ}
+    w(x|<v0>)                           INIT: in: {x=D} out: {x=ID}     USE: in: {b=READ, x=READ} out: {b=READ, x=READ}
+    r(x) -> <v1>                        INIT: in: {x=ID} out: {x=ID}    USE: in: {b=READ} out: {b=READ, x=READ}
     r(b) -> <v2>                                                        USE: in: {} out: {b=READ}
+    mark(x + b)
     call(+, plus|<v1>, <v2>) -> <v3>
 L4:
     <END>
