@@ -1,0 +1,1 @@
+fun foo(i: Int = 1) = i + 2

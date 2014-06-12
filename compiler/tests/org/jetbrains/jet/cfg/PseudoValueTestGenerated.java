@@ -33,7 +33,7 @@ import org.jetbrains.jet.cfg.AbstractPseudoValueTest;
 @InnerTestClasses({PseudoValueTestGenerated.Cfg.class, PseudoValueTestGenerated.Cfg_variables.class})
 public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
     @TestMetadata("compiler/testData/cfg")
-    @InnerTestClasses({Cfg.Arrays.class, Cfg.Basic.class, Cfg.Bugs.class, Cfg.ControlStructures.class, Cfg.Conventions.class, Cfg.DeadCode.class, Cfg.Declarations.class, Cfg.Expressions.class, Cfg.TailCalls.class})
+    @InnerTestClasses({Cfg.Arrays.class, Cfg.Basic.class, Cfg.Bugs.class, Cfg.ControlStructures.class, Cfg.Conventions.class, Cfg.DeadCode.class, Cfg.Declarations.class, Cfg.Expressions.class, Cfg.Functions.class, Cfg.TailCalls.class})
     public static class Cfg extends AbstractPseudoValueTest {
         public void testAllFilesPresentInCfg() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -408,6 +408,19 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             
         }
         
+        @TestMetadata("compiler/testData/cfg/functions")
+        public static class Functions extends AbstractPseudoValueTest {
+            public void testAllFilesPresentInFunctions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/cfg/functions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+            
+            @TestMetadata("DefaultValuesForArguments.kt")
+            public void testDefaultValuesForArguments() throws Exception {
+                doTest("compiler/testData/cfg/functions/DefaultValuesForArguments.kt");
+            }
+            
+        }
+        
         @TestMetadata("compiler/testData/cfg/tailCalls")
         public static class TailCalls extends AbstractPseudoValueTest {
             public void testAllFilesPresentInTailCalls() throws Exception {
@@ -452,6 +465,7 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             suite.addTestSuite(DeadCode.class);
             suite.addTest(Declarations.innerSuite());
             suite.addTestSuite(Expressions.class);
+            suite.addTestSuite(Functions.class);
             suite.addTestSuite(TailCalls.class);
             return suite;
         }

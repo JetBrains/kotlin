@@ -1001,7 +1001,10 @@ public class JetControlFlowProcessor {
             builder.declareParameter(parameter);
             JetExpression defaultValue = parameter.getDefaultValue();
             if (defaultValue != null) {
+                Label skipDefaultValue = builder.createUnboundLabel("after default value for parameter " + parameter.getName());
+                builder.nondeterministicJump(skipDefaultValue, defaultValue, null);
                 generateInstructions(defaultValue, context);
+                builder.bindLabel(skipDefaultValue);
             }
             generateInitializer(parameter, createSyntheticValue(parameter));
         }

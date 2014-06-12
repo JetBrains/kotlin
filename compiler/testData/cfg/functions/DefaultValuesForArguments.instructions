@@ -1,0 +1,22 @@
+== foo ==
+fun foo(i: Int = 1) = i + 2
+---------------------
+L0:
+  1 <START>
+    v(i: Int = 1)
+    jmp?(L2 [after default value for parameter i])    NEXT:[magic(i: Int = 1) -> <v1>, r(1) -> <v0>]
+    r(1) -> <v0>
+L2 [after default value for parameter i]:
+    magic(i: Int = 1) -> <v1>                         PREV:[jmp?(L2 [after default value for parameter i]), r(1) -> <v0>]
+    w(i|<v1>)
+    r(i) -> <v2>
+    r(2) -> <v3>
+    mark(i + 2)
+    call(+, plus|<v2>, <v3>) -> <v4>
+L1:
+    <END>                                             NEXT:[<SINK>]
+error:
+    <ERROR>                                           PREV:[]
+sink:
+    <SINK>                                            PREV:[<ERROR>, <END>]
+=====================
