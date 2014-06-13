@@ -22,3 +22,8 @@ public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
  * Converts receiver to body parameter
  */
 public inline fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
+
+/**
+ * Executes f with receiver
+ */
+public inline fun <T : Any, R> T.letWith(f: T.() -> R): R = f()
