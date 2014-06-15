@@ -50,8 +50,8 @@ public val CharSequence.size: Int
 public val String.size: Int
     get() = length()
 
-public val String.indices : IntRange
-    get() = 0..size
+public val String.indices: IntRange
+    get() = 0..length() - 1
 
 /**
  * Returns a subsequence specified by given set of indices.
