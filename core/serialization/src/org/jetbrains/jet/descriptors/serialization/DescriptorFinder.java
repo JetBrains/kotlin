@@ -27,20 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 public interface DescriptorFinder {
-    DescriptorFinder EMPTY = new DescriptorFinder() {
-        @Nullable
-        @Override
-        public ClassDescriptor findClass(@NotNull ClassId classId) {
-            return null;
-        }
-
-        @NotNull
-        @Override
-        public Collection<Name> getClassNames(@NotNull FqName packageName) {
-            return Collections.emptyList();
-        }
-    };
-
     @Nullable
     ClassDescriptor findClass(@NotNull ClassId classId);
 
