@@ -17,7 +17,10 @@
 package org.jetbrains.jet.plugin.conversion.copy;
 
 import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.jet.plugin.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
 import org.jetbrains.jet.plugin.editor.JetEditorOptions;
 
@@ -25,6 +28,12 @@ public abstract class AbstractJavaToKotlinCopyPasteConversionTest extends LightC
 
     private static final String BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion";
     private JetEditorOptions oldState = null;
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
+    }
 
     @Override
     protected void setUp() throws Exception {
