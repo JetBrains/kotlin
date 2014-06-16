@@ -68,24 +68,6 @@ class TypeVisitor(private val converter: TypeConverter, private val classesToImp
         }
     }
 
-    private val toKotlinTypesMap = mapOf(
-            CommonClassNames.JAVA_LANG_OBJECT to "kotlin.Any",
-            CommonClassNames.JAVA_LANG_BYTE to "kotlin.Byte",
-            CommonClassNames.JAVA_LANG_CHARACTER to "kotlin.Char",
-            CommonClassNames.JAVA_LANG_DOUBLE to "kotlin.Double",
-            CommonClassNames.JAVA_LANG_FLOAT to "kotlin.Float",
-            CommonClassNames.JAVA_LANG_INTEGER to "kotlin.Int",
-            CommonClassNames.JAVA_LANG_LONG to "kotlin.Long",
-            CommonClassNames.JAVA_LANG_SHORT to "kotlin.Short",
-            CommonClassNames.JAVA_LANG_BOOLEAN to "kotlin.Boolean",
-            CommonClassNames.JAVA_LANG_ITERABLE to "kotlin.Iterable",
-            CommonClassNames.JAVA_UTIL_ITERATOR to "kotlin.Iterator",
-            CommonClassNames.JAVA_UTIL_LIST to "kotlin.List",
-            CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.Collection",
-            CommonClassNames.JAVA_UTIL_SET to "kotlin.Set",
-            CommonClassNames.JAVA_UTIL_MAP to "kotlin.Map"
-    )
-
     private fun constructClassTypeIdentifier(classType: PsiClassType): Identifier {
         val psiClass = classType.resolve()
         if (psiClass != null) {
@@ -154,5 +136,25 @@ class TypeVisitor(private val converter: TypeConverter, private val classesToImp
 
     override fun visitEllipsisType(ellipsisType: PsiEllipsisType): Type {
         return VarArgType(converter.convertType(ellipsisType.getComponentType()))
+    }
+
+    class object {
+        private val toKotlinTypesMap: Map<String, String> = mapOf(
+                CommonClassNames.JAVA_LANG_OBJECT to "kotlin.Any",
+                CommonClassNames.JAVA_LANG_BYTE to "kotlin.Byte",
+                CommonClassNames.JAVA_LANG_CHARACTER to "kotlin.Char",
+                CommonClassNames.JAVA_LANG_DOUBLE to "kotlin.Double",
+                CommonClassNames.JAVA_LANG_FLOAT to "kotlin.Float",
+                CommonClassNames.JAVA_LANG_INTEGER to "kotlin.Int",
+                CommonClassNames.JAVA_LANG_LONG to "kotlin.Long",
+                CommonClassNames.JAVA_LANG_SHORT to "kotlin.Short",
+                CommonClassNames.JAVA_LANG_BOOLEAN to "kotlin.Boolean",
+                CommonClassNames.JAVA_LANG_ITERABLE to "kotlin.Iterable",
+                CommonClassNames.JAVA_UTIL_ITERATOR to "kotlin.Iterator",
+                CommonClassNames.JAVA_UTIL_LIST to "kotlin.List",
+                CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.Collection",
+                CommonClassNames.JAVA_UTIL_SET to "kotlin.Set",
+                CommonClassNames.JAVA_UTIL_MAP to "kotlin.Map"
+        )
     }
 }
