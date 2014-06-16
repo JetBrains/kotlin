@@ -670,7 +670,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 else {
                     val expectedTypeConverted = typeConverter.convertType(expectedType)
                     if (expectedTypeConverted is ArrayType) {
-                        val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted)
+                        val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted, needExplicitType = false)
                         listOf(if (isVararg) StarExpression(array) else array)
                     }
                     else {

@@ -108,13 +108,14 @@ class StarExpression(val methodCall: MethodCallExpression) : Expression() {
     override fun toKotlin() = "*" + methodCall.toKotlin()
 }
 
-fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>) : MethodCallExpression {
+fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean) : MethodCallExpression {
     val elementType = arrayType.elementType
-    val createArrayFunction = if (elementType.isPrimitive()) {
+    val createArrayFunction = if (elementType.isPrimitive())
             (elementType.toNotNullType().toKotlin() + "Array").decapitalize()
-        }
-        else
+        else if (needExplicitType)
             arrayType.toNotNullType().toKotlin().decapitalize()
+        else
+            "array"
 
     val doubleOrFloatTypes = setOf("double", "float", "java.lang.double", "java.lang.float")
     val afterReplace = arrayType.toNotNullType().toKotlin().replace("Array", "").toLowerCase().replace(">", "").replace("<", "").replace("?", "")
