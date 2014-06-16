@@ -26,14 +26,19 @@ import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 import java.util.Collections
+import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
+import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
 
 public class JavaDescriptorFinder(
-        private val javaDescriptorResolver: DependencyClassByQualifiedNameResolver,
+        private val javaDescriptorResolver: JavaDescriptorResolver,
         private val javaPackageFragmentProvider: JavaPackageFragmentProvider
 ) : DescriptorFinder {
 
     override fun findClass(classId: ClassId): ClassDescriptor? {
-        return javaDescriptorResolver.resolveClass(kotlinFqNameToJavaFqName(classId.asSingleFqName()))
+        val lazyJavaPackageFragmentProvider = javaDescriptorResolver.getPackageFragmentProvider() as LazyJavaPackageFragmentProvider
+        val c = lazyJavaPackageFragmentProvider.c
+        val kotlinJvmBinaryClass = c.kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(classId.asSingleFqName())) ?: return null
+        return lazyJavaPackageFragmentProvider.resolveKotlinBinaryClass(kotlinJvmBinaryClass)
     }
 
     override fun getClassNames(packageName: FqName): Collection<Name> {
