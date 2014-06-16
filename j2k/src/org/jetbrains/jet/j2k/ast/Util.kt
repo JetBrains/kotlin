@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 
-fun List<Node>.toKotlin(separator: String, prefix: String = "", postfix: String = ""): String
+fun List<Element>.toKotlin(separator: String, prefix: String = "", postfix: String = ""): String
         = if (isNotEmpty()) map { it.toKotlin() }.makeString(separator, prefix, postfix) else ""
 
 fun String.withSuffix(suffix: String): String = if (isEmpty()) "" else this + suffix

@@ -16,9 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
+trait Element {
+    public fun toKotlin(): String
 
-trait Element : Node {
-    val isEmpty: Boolean get() = false
+    public val isEmpty: Boolean get() = false
 
     object Empty : Element {
         override fun toKotlin() = ""
