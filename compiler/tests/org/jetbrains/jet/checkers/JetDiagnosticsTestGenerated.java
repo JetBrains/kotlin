@@ -2855,6 +2855,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/delegationBy.kt");
                 }
                 
+                @TestMetadata("enum.kt")
+                public void testEnum() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/enum.kt");
+                }
+                
                 @TestMetadata("innerClassField.kt")
                 public void testInnerClassField() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/innerClassField.kt");
