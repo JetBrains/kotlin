@@ -2835,6 +2835,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("classObject.kt")
+                public void testClassObject() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/classObject.kt");
+                }
+                
                 @TestMetadata("dataClassCopy.kt")
                 public void testDataClassCopy() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/dataClassCopy.kt");
@@ -2853,6 +2858,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("innerClassField.kt")
                 public void testInnerClassField() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/innerClassField.kt");
+                }
+                
+                @TestMetadata("instance.kt")
+                public void testInstance() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/instance.kt");
                 }
                 
             }
