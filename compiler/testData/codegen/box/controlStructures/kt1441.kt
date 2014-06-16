@@ -1,7 +1,7 @@
 class Foo {
   var rnd = 10
 
-  public fun equals(that : Any) : Boolean = that is Foo && (that.rnd == rnd)
+  public override fun equals(that : Any?) : Boolean = that is Foo && (that.rnd == rnd)
 }
 
 fun box() : String {

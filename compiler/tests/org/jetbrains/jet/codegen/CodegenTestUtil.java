@@ -30,8 +30,8 @@ import org.jetbrains.jet.codegen.inline.InlineCodegenUtil;
 import org.jetbrains.jet.codegen.state.GenerationState;
 import org.jetbrains.jet.codegen.state.Progress;
 import org.jetbrains.jet.config.CompilerConfiguration;
-import org.jetbrains.jet.lang.diagnostics.DiagnosticHolder;
 import org.jetbrains.jet.lang.resolve.AnalyzingUtils;
+import org.jetbrains.jet.lang.resolve.BindingTraceContext;
 import org.jetbrains.jet.lang.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.jet.utils.UtilsPackage;
 
@@ -57,6 +57,7 @@ public class CodegenTestUtil {
         analyzeExhaust.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analyzeExhaust.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
+        BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
         GenerationState state = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                 analyzeExhaust.getModuleDescriptor(), analyzeExhaust.getBindingContext(), files.getPsiFiles(),
@@ -66,9 +67,13 @@ public class CodegenTestUtil {
                 configuration.get(JVMConfigurationKeys.ENABLE_INLINE, InlineCodegenUtil.DEFAULT_INLINE_FLAG),
                 null,
                 null,
-                DiagnosticHolder.DO_NOTHING
+                forExtraDiagnostics
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
+
+        // For JVM-specific errors
+        AnalyzingUtils.throwExceptionOnErrors(forExtraDiagnostics.getBindingContext());
+
         return state.getFactory();
     }
 

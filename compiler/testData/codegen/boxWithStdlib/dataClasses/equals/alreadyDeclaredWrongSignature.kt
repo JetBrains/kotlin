@@ -1,7 +1,3 @@
-data class A(val x: Int) {
-  fun equals(other: Any): Boolean = false
-}
-
 data class B(val x: Int) {
   fun equals(other: B): Boolean = false
 }
@@ -20,8 +16,6 @@ data class E(val x: Int) {
 }
 
 fun box(): String {
-  javaClass<A>().getDeclaredMethod("equals", javaClass<Any>())
-
   javaClass<B>().getDeclaredMethod("equals", javaClass<Any>())
   javaClass<B>().getDeclaredMethod("equals", javaClass<B>())
 
