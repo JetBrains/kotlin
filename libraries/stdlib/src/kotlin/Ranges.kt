@@ -1,11 +1,20 @@
 package kotlin
 
-public data class ComparableRange<T: Comparable<T>> (
+public class ComparableRange<T: Comparable<T>> (
         public override val start: T,
         public override val end: T
 ): Range<T> {
-    public override fun contains(item: T): Boolean {
+    override fun contains(item: T): Boolean {
         return start <= item && item <= end
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is ComparableRange<*> && (isEmpty() && other.isEmpty() ||
+                start == other.start && end == other.end)
+    }
+
+    override fun hashCode(): Int {
+        return if (isEmpty()) -1 else 31 * start.hashCode() + end.hashCode()
     }
 }
 

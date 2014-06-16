@@ -153,6 +153,53 @@ public class RangeTest {
         assertTrue(("range".."progression").isEmpty())
     }
 
+    test fun emptyEquals() {
+        assertTrue(IntRange.EMPTY == IntRange.EMPTY)
+        assertEquals(IntRange.EMPTY, IntRange.EMPTY)
+        assertEquals(0L..42L, 0L..42L)
+        assertEquals(3 downTo 0, 3 downTo 0)
+
+        assertEquals(2..1, 1..0)
+        assertEquals(2L..1L, 1L..0L)
+        assertEquals(2.toShort()..1.toShort(), 1.toShort()..0.toShort())
+        assertEquals(2.toByte()..1.toByte(), 1.toByte()..0.toByte())
+        assertEquals(0f..-3.14f, 3.14f..0f)
+        assertEquals(-2.0..-3.0, 3.0..2.0)
+        assertEquals('b'..'a', 'c'..'b')
+
+        assertTrue(1 downTo 2 == 2 downTo 3)
+        assertTrue(-1L downTo 0L == -2L downTo -1L)
+        assertEquals(-1f downTo 1f, -2f downTo 2f)
+        assertEquals(-4.0 downTo -3.0, -2.0 downTo -1.0)
+        assertEquals('j'..'a' step 4, 'u'..'q' step 2)
+
+        assertFalse(0..1 == IntRange.EMPTY)
+        assertFalse(1f downTo 2f == 2f downTo 1f)
+
+        assertEquals("range".."progression", "hashcode".."equals")
+        assertFalse(("aa".."bb") == ("aaa".."bbb"))
+    }
+
+    test fun emptyHashCode() {
+        assertEquals((0..42).hashCode(), (0..42).hashCode())
+        assertEquals((1.23..4.56).hashCode(), (1.23..4.56).hashCode())
+
+        assertEquals((0..-1).hashCode(), IntRange.EMPTY.hashCode())
+        assertEquals((2L..1L).hashCode(), (1L..0L).hashCode())
+        assertEquals((0.toShort()..-1.toShort()).hashCode(), (42.toShort()..0.toShort()).hashCode())
+        assertEquals((0.toByte()..-1.toByte()).hashCode(), (42.toByte()..0.toByte()).hashCode())
+        assertEquals((0f..-3.14f).hashCode(), (2.39f..1.41f).hashCode())
+        assertEquals((0.0..-10.0).hashCode(), (10.0..0.0).hashCode())
+        assertEquals(('z'..'x').hashCode(), ('l'..'k').hashCode())
+
+        assertEquals((1 downTo 2).hashCode(), (2 downTo 3).hashCode())
+        assertEquals((1L downTo 2L).hashCode(), (2L downTo 3L).hashCode())
+        assertEquals((1.0 downTo 2.0).hashCode(), (2.0 downTo 3.0).hashCode())
+        assertEquals(('a' downTo 'b').hashCode(), ('c' downTo 'd').hashCode())
+
+        assertEquals(("range".."progression").hashCode(), ("hashcode".."equals").hashCode())
+    }
+
     test fun comparableRange() {
         val range = "island".."isle"
         assertFalse("apple" in range)

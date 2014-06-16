@@ -45,11 +45,16 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             val constructor = checkNaN + checkZero
 
             val hashCode = when (kind) {
-                BYTE, CHAR, SHORT -> "= 31 * (31 * start.toInt() + end) + increment"
-                INT -> "= 31 * (31 * start + end) + increment"
-                LONG -> "= (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
-                FLOAT -> "= 31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")}"
+                BYTE, CHAR, SHORT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)"
+                INT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * (31 * start + end) + increment)"
+                LONG -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("start")} + ${hashLong("end")}) + ${hashLong("increment")}).toInt()"
+                FLOAT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}) + ${floatToIntBits("increment")})"
                 DOUBLE -> "{\n" +
+                "        if (isEmpty()) return -1\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        var result = ${hashLong("temp")}\n" +
                 "        temp = ${doubleToLongBits("end")}\n" +
@@ -74,7 +79,8 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
-        other is $progression && ${compare("start")} && ${compare("end")} && ${compare("increment")}
+        other is $progression && (isEmpty() && other.isEmpty() ||
+        ${compare("start")} && ${compare("end")} && ${compare("increment")})
 
     override fun hashCode(): Int $hashCode
 

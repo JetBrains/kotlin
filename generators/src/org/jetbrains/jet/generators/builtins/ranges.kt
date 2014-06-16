@@ -45,11 +45,16 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             fun compare(v: String) = areEqualNumbers(kind, v)
 
             val hashCode = when (kind) {
-                BYTE, CHAR, SHORT -> "= 31 * start.toInt() + end"
-                INT -> "= 31 * start + end"
-                LONG -> "= (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
-                FLOAT -> "= 31 * ${floatToIntBits("start")} + ${floatToIntBits("end")}"
+                BYTE, CHAR, SHORT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * start.toInt() + end)"
+                INT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * start + end)"
+                LONG -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * ${hashLong("start")} + ${hashLong("end")}).toInt()"
+                FLOAT -> "=\n" +
+                "        if (isEmpty()) -1 else (31 * ${floatToIntBits("start")} + ${floatToIntBits("end")})"
                 DOUBLE -> "{\n" +
+                "        if (isEmpty()) return -1\n" +
                 "        var temp = ${doubleToLongBits("start")}\n" +
                 "        val result = ${hashLong("temp")}\n" +
                 "        temp = ${doubleToLongBits("end")}\n" +
@@ -69,7 +74,8 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun isEmpty(): Boolean = start > end
 
     override fun equals(other: Any?): Boolean =
-        other is $range && ${compare("start")} && ${compare("end")}
+        other is $range && (isEmpty() && other.isEmpty() ||
+        ${compare("start")} && ${compare("end")})
 
     override fun hashCode(): Int $hashCode
 
