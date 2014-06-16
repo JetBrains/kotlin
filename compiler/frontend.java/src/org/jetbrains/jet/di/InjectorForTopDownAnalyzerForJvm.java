@@ -321,15 +321,14 @@ public class InjectorForTopDownAnalyzerForJvm implements InjectorForTopDownAnaly
         deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
 
-        annotationDescriptorLoader.setClassResolver(javaDescriptorResolver);
         annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
         annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
+        annotationDescriptorLoader.setModule(moduleDescriptor);
         annotationDescriptorLoader.setStorage(descriptorDeserializersStorage);
 
-        descriptorDeserializersStorage.setClassResolver(javaDescriptorResolver);
         descriptorDeserializersStorage.setErrorReporter(traceBasedErrorReporter);
+        descriptorDeserializersStorage.setModule(moduleDescriptor);
 
-        constantDescriptorLoader.setClassResolver(javaDescriptorResolver);
         constantDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
         constantDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
         constantDescriptorLoader.setStorage(descriptorDeserializersStorage);

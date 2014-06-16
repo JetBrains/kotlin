@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
@@ -29,9 +30,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.java.PackageClassUtils;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isClassObject;
 import static org.jetbrains.jet.lang.resolve.DescriptorUtils.isTrait;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
@@ -39,13 +38,10 @@ import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.ko
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
 public abstract class BaseDescriptorLoader {
-    protected DependencyClassByQualifiedNameResolver classResolver;
     protected KotlinClassFinder kotlinClassFinder;
     protected ErrorReporter errorReporter;
 
     protected DescriptorDeserializersStorage storage;
-
-    public abstract void setClassResolver(@NotNull DependencyClassByQualifiedNameResolver classResolver);
 
     public abstract void setKotlinClassFinder(@NotNull KotlinClassFinder kotlinClassFinder);
 

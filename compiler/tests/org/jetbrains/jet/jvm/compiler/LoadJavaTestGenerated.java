@@ -1627,6 +1627,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("AnnotationInClassObject.kt")
+                public void testAnnotationInClassObject() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/AnnotationInClassObject.kt");
+                }
+                
                 @TestMetadata("ClassInClassObject.kt")
                 public void testClassInClassObject() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassInClassObject.kt");
@@ -1647,6 +1652,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
                 }
                 
+                @TestMetadata("DollarsInAnnotationName.kt")
+                public void testDollarsInAnnotationName() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/DollarsInAnnotationName.kt");
+                }
+                
                 @TestMetadata("EnumArgument.kt")
                 public void testEnumArgument() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/EnumArgument.kt");
@@ -1655,6 +1665,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("MultipleAnnotations.kt")
                 public void testMultipleAnnotations() throws Exception {
                     doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/MultipleAnnotations.kt");
+                }
+                
+                @TestMetadata("NestedAnnotation.kt")
+                public void testNestedAnnotation() throws Exception {
+                    doTestCompiledKotlin("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedAnnotation.kt");
                 }
                 
                 @TestMetadata("NestedClass.kt")

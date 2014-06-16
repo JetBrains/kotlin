@@ -18,6 +18,11 @@ package org.jetbrains.jet.lang.resolve.java;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jet.lang.resolve.name.FqName;
+import org.jetbrains.jet.lang.resolve.name.Name;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class JvmClassName {
     @NotNull
@@ -74,6 +79,28 @@ public class JvmClassName {
     @NotNull
     public String getInternalName() {
         return internalName;
+    }
+
+    @NotNull
+    public FqName getPackageFqName() {
+        int packageNameEnd = internalName.lastIndexOf("/");
+        if (packageNameEnd == -1) {
+            return FqName.ROOT;
+        }
+        return FqName.fromSegments(Arrays.asList(internalName.substring(0, packageNameEnd).split("/")));
+    }
+
+    @NotNull
+    public FqName getHeuristicClassFqName() {
+        String name = internalName.substring(internalName.lastIndexOf("/") + 1);
+        char[] chars = name.toCharArray();
+        //treat all 'stand-alone' dollars as dots, except for last and first char of class name
+        for (int i = 1; i < chars.length - 1; ++i) {
+            if (name.charAt(i) == '$' && name.charAt(i - 1) != '$' && name.charAt(i + 1) != '$') {
+                chars[i] = '.';
+            }
+        }
+        return new FqName(new String(chars));
     }
 
     @Override

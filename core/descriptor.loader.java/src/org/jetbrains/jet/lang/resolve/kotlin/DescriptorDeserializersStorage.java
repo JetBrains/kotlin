@@ -19,13 +19,13 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
 import org.jetbrains.jet.lang.resolve.constants.ConstantsPackage;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.resolver.ErrorReporter;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 import org.jetbrains.jet.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.jet.storage.StorageManager;
 
@@ -34,8 +34,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class DescriptorDeserializersStorage {
-    private DependencyClassByQualifiedNameResolver classResolver;
     private ErrorReporter errorReporter;
+    private ModuleDescriptor module;
 
     private final MemoizedFunctionToNotNull<KotlinJvmBinaryClass, Storage> storage;
 
@@ -57,8 +57,8 @@ public class DescriptorDeserializersStorage {
     }
 
     @Inject
-    public void setClassResolver(DependencyClassByQualifiedNameResolver classResolver) {
-        this.classResolver = classResolver;
+    public void setModule(ModuleDescriptor module) {
+        this.module = module;
     }
 
     @Inject
@@ -137,7 +137,7 @@ public class DescriptorDeserializersStorage {
                         result = new ArrayList<AnnotationDescriptor>();
                         memberAnnotations.put(paramSignature, result);
                     }
-                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, classResolver);
+                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, module);
                 }
             }
 
@@ -152,7 +152,7 @@ public class DescriptorDeserializersStorage {
                 @Nullable
                 @Override
                 public KotlinJvmBinaryClass.AnnotationArgumentVisitor visitAnnotation(@NotNull JvmClassName className) {
-                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, classResolver);
+                    return AnnotationDescriptorLoader.resolveAnnotation(className, result, module);
                 }
 
                 @Override

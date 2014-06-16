@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.storage.LockBasedStorageManager
 import java.util.Collections
-import org.jetbrains.jet.lang.resolve.java.resolver.DescriptorResolverUtils
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinBinaryClassCache
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils
@@ -55,6 +54,9 @@ public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDec
 }
 
 public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val directoryPackageFqName: FqName) : ResolverForDecompiler {
+
+    private val moduleDescriptor =
+            ModuleDescriptorImpl(Name.special("<module for building decompiled sources>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
     override fun resolveTopLevelClass(classFqName: FqName) = classes(classFqName.toClassId())
 
@@ -100,19 +102,13 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val deserializerStorage = DescriptorDeserializersStorage(storageManager);
     {
-        deserializerStorage.setClassResolver {
-            fqName ->
-            classes(fqName.toClassId())
-        }
+        deserializerStorage.setModule(moduleDescriptor)
         deserializerStorage.setErrorReporter(LOGGING_REPORTER)
     }
 
     private val annotationLoader = AnnotationDescriptorLoader();
     {
-        annotationLoader.setClassResolver {
-            fqName ->
-            classes(fqName.toClassId())
-        }
+        annotationLoader.setModule(moduleDescriptor)
         annotationLoader.setKotlinClassFinder(localClassFinder)
         annotationLoader.setErrorReporter(LOGGING_REPORTER)
         annotationLoader.setStorage(deserializerStorage)
@@ -120,10 +116,6 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val constantLoader = ConstantDescriptorLoader();
     {
-        constantLoader.setClassResolver {
-            fqName ->
-            classes(fqName.toClassId())
-        }
         constantLoader.setKotlinClassFinder(localClassFinder)
         constantLoader.setErrorReporter(LOGGING_REPORTER)
         constantLoader.setStorage(deserializerStorage)
@@ -149,9 +141,6 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         }
     }
 
-    private val moduleDescriptor =
-            ModuleDescriptorImpl(Name.special("<module for building decompiled sources>"), listOf(), PlatformToKotlinClassMap.EMPTY);
-
     {
         moduleDescriptor.addFragmentProvider(DependencyKind.BUILT_INS,
                                              KotlinBuiltIns.getInstance().getBuiltInsModule().getPackageFragmentProvider())
@@ -166,13 +155,8 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     }
 
     private fun resolveClassByClassId(classId: ClassId): ClassDescriptor? {
-        val binaryClass = localClassFinder.findKotlinClass(classId)
-        if (binaryClass != null) {
-            return deserializeBinaryClass(binaryClass)
-        }
-        val fullFqName = classId.asSingleFqName()
-        assert(fullFqName.isSafe(), "Safe fq name expected here, got $fullFqName instead")
-        return MissingDependencyErrorClassDescriptor(ErrorUtils.getErrorModule(), fullFqName.toSafe())
+        val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
+        return deserializeBinaryClass(binaryClass)
     }
 
     private fun deserializeBinaryClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor {

@@ -30,7 +30,7 @@ private fun findInnerClass(classDescriptor: ClassDescriptor, name: Name): ClassD
     }
 }
 
-fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? {
+public fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? {
     val packageViewDescriptor = getPackage(classId.getPackageFqName()) ?: return null
     val segments = classId.getRelativeClassName().pathSegments()
     val topLevelClass = packageViewDescriptor.getMemberScope().getClassifier(segments.first!!) as? ClassDescriptor ?: return null

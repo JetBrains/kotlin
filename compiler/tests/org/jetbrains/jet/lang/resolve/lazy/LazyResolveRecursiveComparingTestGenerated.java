@@ -95,6 +95,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/compiledKotlin/annotations/classes"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
                 
+                @TestMetadata("AnnotationInClassObject.kt")
+                public void testAnnotationInClassObject() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/AnnotationInClassObject.kt");
+                }
+                
                 @TestMetadata("ClassInClassObject.kt")
                 public void testClassInClassObject() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/ClassInClassObject.kt");
@@ -115,6 +120,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/Deprecated.kt");
                 }
                 
+                @TestMetadata("DollarsInAnnotationName.kt")
+                public void testDollarsInAnnotationName() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/DollarsInAnnotationName.kt");
+                }
+                
                 @TestMetadata("EnumArgument.kt")
                 public void testEnumArgument() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/EnumArgument.kt");
@@ -123,6 +133,11 @@ public class LazyResolveRecursiveComparingTestGenerated extends AbstractLazyReso
                 @TestMetadata("MultipleAnnotations.kt")
                 public void testMultipleAnnotations() throws Exception {
                     doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/MultipleAnnotations.kt");
+                }
+                
+                @TestMetadata("NestedAnnotation.kt")
+                public void testNestedAnnotation() throws Exception {
+                    doTestCheckingPrimaryConstructorsAndAccessors("compiler/testData/loadJava/compiledKotlin/annotations/classes/NestedAnnotation.kt");
                 }
                 
                 @TestMetadata("NestedClass.kt")

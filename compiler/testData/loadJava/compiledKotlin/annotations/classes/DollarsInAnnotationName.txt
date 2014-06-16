@@ -1,0 +1,9 @@
+package test
+
+internal final annotation class $$$$$$ : kotlin.Annotation {
+    /*primary*/ public constructor $$$$$$()
+}
+
+test.$$$$$$() internal final class A {
+    /*primary*/ public constructor A()
+}
