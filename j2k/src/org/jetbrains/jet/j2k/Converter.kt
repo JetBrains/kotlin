@@ -634,6 +634,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
     }
 
     public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
+        val qualifiedName = annotation.getQualifiedName()
+        if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
+            return Annotation(Identifier("deprecated"), listOf(null to LiteralExpression("\"\"")), brackets) //TODO: insert comment
+        }
+
         val name = Identifier((annotation.getNameReferenceElement() ?: return null).getText()!!)
         val annotationClass = annotation.getNameReferenceElement()?.resolve() as? PsiClass
         val lastMethod = annotationClass?.getMethods()?.lastOrNull()

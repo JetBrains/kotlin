@@ -7,7 +7,7 @@ Anon4("x", "y")
 Anon5(1)
 Anon6(array<String>("x", "y"))
 class C() {
-    Anon5(1) Deprecated private var field1: Int = 0
+    Anon5(1) deprecated("") private var field1: Int = 0
 
     Anon5(1)
     private var field2: Int = 0
@@ -18,8 +18,8 @@ class C() {
     var field4: Int = 0
 
     Anon6(array<String>())
-    fun foo(Deprecated p1: Int, Deprecated Anon5(2) p2: Char) {
-        [Deprecated] [Anon5(3)] val c = 'a'
+    fun foo(deprecated("") p1: Int, deprecated("") Anon5(2) p2: Char) {
+        [deprecated("")] [Anon5(3)] val c = 'a'
     }
 
     Anon5(1) fun bar() {
