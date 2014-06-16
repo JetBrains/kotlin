@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.newvfs.impl.VirtualDirectoryImpl;
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.impl.file.impl.FileManager;
@@ -36,7 +36,6 @@ import org.jetbrains.jet.plugin.references.BuiltInsReferenceResolver;
 import org.jetbrains.jet.test.util.UtilPackage;
 import org.jetbrains.jet.testing.ReferenceUtils;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -66,12 +65,12 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VirtualDirectoryImpl.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.allowRootAccess(JetTestCaseBuilder.getHomeDirectory());
     }
 
     @Override
     protected void tearDown() throws Exception {
-        VirtualDirectoryImpl.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
+        VfsRootAccess.disallowRootAccess(JetTestCaseBuilder.getHomeDirectory());
 
         Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
         FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
