@@ -54,6 +54,10 @@ public class JavaVisibilities {
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", false) {
         @Override
         protected boolean isVisible(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+            if (areInSamePackage(what, from)) {
+                return true;
+            }
+
             ClassDescriptor fromClass = DescriptorUtils.getParentOfType(from, ClassDescriptor.class, false);
             if (fromClass == null) return false;
 
