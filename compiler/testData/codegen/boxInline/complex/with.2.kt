@@ -1,5 +1,7 @@
 package test
 
+import kotlin.InlineOption.*
+
 public class Data()
 
 public class Input(val d: Data) : Closeable {
@@ -27,4 +29,4 @@ public fun Input.copyTo(output: Output, size: Int): Long {
 }
 
 
-public inline fun with2<T>(receiver : T, body :  T.() -> Unit) : Unit = {receiver.body()}()
+public inline fun with2<T>(receiver : T, inlineOptions(ONLY_LOCAL_RETURN) body :  T.() -> Unit) : Unit = {receiver.body()}()

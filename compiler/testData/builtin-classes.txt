@@ -762,6 +762,42 @@ public trait Function9</*0*/ in P1, /*1*/ in P2, /*2*/ in P3, /*3*/ in P4, /*4*/
     public abstract fun invoke(/*0*/ p1: P1, /*1*/ p2: P2, /*2*/ p3: P3, /*3*/ p4: P4, /*4*/ p5: P5, /*5*/ p6: P6, /*6*/ p7: P7, /*7*/ p8: P8, /*8*/ p9: P9): R
 }
 
+public final enum class InlineOption : kotlin.Enum<kotlin.InlineOption> {
+    /*primary*/ private constructor InlineOption()
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    public class object <class-object-for-InlineOption> {
+        /*primary*/ private constructor <class-object-for-InlineOption>()
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineOption
+        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineOption>
+    }
+
+    public enum entry LOCAL_CONTINUE_AND_BREAK : kotlin.InlineOption {
+        /*primary*/ private constructor LOCAL_CONTINUE_AND_BREAK()
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-LOCAL_CONTINUE_AND_BREAK> : kotlin.InlineOption.LOCAL_CONTINUE_AND_BREAK {
+            /*primary*/ private constructor <class-object-for-LOCAL_CONTINUE_AND_BREAK>()
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+
+    public enum entry ONLY_LOCAL_RETURN : kotlin.InlineOption {
+        /*primary*/ private constructor ONLY_LOCAL_RETURN()
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+        public class object <class-object-for-ONLY_LOCAL_RETURN> : kotlin.InlineOption.ONLY_LOCAL_RETURN {
+            /*primary*/ private constructor <class-object-for-ONLY_LOCAL_RETURN>()
+            public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+            public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        }
+    }
+}
+
 public final enum class InlineStrategy : kotlin.Enum<kotlin.InlineStrategy> {
     /*primary*/ private constructor InlineStrategy()
     public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
@@ -1438,6 +1474,12 @@ public final annotation class inline : kotlin.Annotation {
     /*primary*/ public constructor inline(/*0*/ strategy: kotlin.InlineStrategy = ...)
     public final val strategy: kotlin.InlineStrategy
         public final fun <get-strategy>(): kotlin.InlineStrategy
+}
+
+public final annotation class inlineOptions : kotlin.Annotation {
+    /*primary*/ public constructor inlineOptions(/*0*/ vararg value: kotlin.InlineOption /*kotlin.Array<kotlin.InlineOption>*/)
+    internal final val value: kotlin.Array<kotlin.InlineOption>
+        internal final fun <get-value>(): kotlin.Array<kotlin.InlineOption>
 }
 
 public final annotation class noinline : kotlin.Annotation {

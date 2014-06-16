@@ -1,5 +1,7 @@
 package test
 
+import kotlin.InlineOption.*
+
 abstract class A<R> {
     abstract fun getO() : R
 
@@ -8,7 +10,7 @@ abstract class A<R> {
     abstract fun getParam() : R
 }
 
-inline fun <R> doWork(jobO: ()-> R, jobK: ()-> R, param: R) : A<R> {
+inline fun <R> doWork(inlineOptions(ONLY_LOCAL_RETURN) jobO: ()-> R, inlineOptions(ONLY_LOCAL_RETURN) jobK: ()-> R, param: R) : A<R> {
     val s = object : A<R>() {
 
         override fun getO(): R {
@@ -25,7 +27,7 @@ inline fun <R> doWork(jobO: ()-> R, jobK: ()-> R, param: R) : A<R> {
     return s;
 }
 
-inline fun <R> doWorkInConstructor(jobO: ()-> R, jobK: ()-> R, param: R) : A<R> {
+inline fun <R> doWorkInConstructor(inlineOptions(ONLY_LOCAL_RETURN) jobO: ()-> R, inlineOptions(ONLY_LOCAL_RETURN) jobK: ()-> R, param: R) : A<R> {
     val s = object : A<R>() {
 
         val p = param;

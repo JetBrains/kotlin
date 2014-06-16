@@ -1,6 +1,8 @@
 package zzz
 
-inline fun calc(lambda: () -> Int): Int {
+import kotlin.InlineOption.*
+
+inline fun calc(inlineOptions(ONLY_LOCAL_RETURN) lambda: () -> Int): Int {
     return doCalc { lambda() }
 }
 

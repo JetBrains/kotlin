@@ -69,7 +69,7 @@ class Title() : TagWithText("title")
 abstract class BodyTag(name: String) : TagWithText(name) {
     inline fun b(init: B.() -> Unit) = initTag(B(), init)
     inline fun p(init: P.() -> Unit) = initTag(P(), init)
-    inline fun pNoInline(init: P.() -> Unit) = initTag(P(), init)
+    fun pNoInline(init: P.() -> Unit) = initTag(P(), init)
     inline fun h1(init: H1.() -> Unit) = initTag(H1(), init)
     inline fun ul(init: UL.() -> Unit) = initTag(UL(), init)
     inline fun a(href: String, init: A.() -> Unit) {

@@ -1,8 +1,10 @@
 package foo;
 
+import kotlin.InlineOption.*
+
 class Foo {
 
-    inline fun inlineFoo(s: () -> Unit) {
+    inline fun inlineFoo(inlineOptions(ONLY_LOCAL_RETURN) s: () -> Unit) {
         {
             s()
         }()

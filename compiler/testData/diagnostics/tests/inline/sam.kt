@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -NON_LOCAL_RETURN_NOT_ALLOWED
 // FILE: Run.java
 public interface Run {
     public int run();

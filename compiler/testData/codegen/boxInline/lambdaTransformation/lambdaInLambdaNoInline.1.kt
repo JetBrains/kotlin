@@ -1,5 +1,7 @@
 import test.*
 
+import kotlin.InlineOption.*
+
 fun test1(param: String): String {
     var result = "fail1"
     noInlineFun(param) { a ->
@@ -22,7 +24,7 @@ fun test11(param: String): String {
     return result
 }
 
-inline fun test2(param: () -> String): String {
+inline fun test2(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
     var result = "fail1"
     noInlineFun("stub") { a ->
         concat(param()) {
@@ -33,7 +35,7 @@ inline fun test2(param: () -> String): String {
     return result
 }
 
-inline fun test22(param: () -> String): String {
+inline fun test22(inlineOptions(ONLY_LOCAL_RETURN) param: () -> String): String {
     var result = "fail1"
     {{result = param()}()}()
 
