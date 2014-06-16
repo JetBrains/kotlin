@@ -3172,6 +3172,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin"), Pattern.compile("^(.+)\\.kt$"), false);
         }
         
+        @TestMetadata("InheritJavaField.kt")
+        public void testInheritJavaField() throws Exception {
+            doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritJavaField.kt");
+        }
+        
         @TestMetadata("InheritParameterName.kt")
         public void testInheritParameterName() throws Exception {
             doTestKotlinAgainstCompiledJavaWithKotlin("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritParameterName.kt");
