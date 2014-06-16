@@ -34,7 +34,8 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDescriptorFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage;
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer;
@@ -63,7 +64,8 @@ public class InjectorForJavaDescriptorResolver {
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private final DescriptorDeserializers descriptorDeserializers;
+    private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final JavaDescriptorFinder javaDescriptorFinder;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final DescriptorDeserializersStorage descriptorDeserializersStorage;
     private final ConstantDescriptorDeserializer constantDescriptorDeserializer;
@@ -90,10 +92,11 @@ public class InjectorForJavaDescriptorResolver {
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModule());
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModule());
         this.memberFilter = org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter.ALWAYS_TRUE;
-        this.descriptorDeserializers = new DescriptorDeserializers();
+        this.javaDescriptorFinder = new JavaDescriptorFinder(getJavaDescriptorResolver(), lazyJavaPackageFragmentProvider);
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
         this.constantDescriptorDeserializer = new ConstantDescriptorDeserializer();
+        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(lockBasedStorageManager, javaDescriptorFinder, annotationDescriptorDeserializer, constantDescriptorDeserializer, lazyJavaPackageFragmentProvider, memberFilter);
+        this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
 
         this.javaClassFinder.setProject(project);
 
@@ -108,15 +111,8 @@ public class InjectorForJavaDescriptorResolver {
         psiBasedMethodSignatureChecker.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
         psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
-        deserializedDescriptorResolver.setDeserializers(descriptorDeserializers);
+        deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
-        deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
-        deserializedDescriptorResolver.setMemberFilter(memberFilter);
-        deserializedDescriptorResolver.setStorageManager(lockBasedStorageManager);
-
-        descriptorDeserializers.setAnnotationDescriptorDeserializer(annotationDescriptorDeserializer);
-        descriptorDeserializers.setConstantDescriptorDeserializer(constantDescriptorDeserializer);
 
         annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);

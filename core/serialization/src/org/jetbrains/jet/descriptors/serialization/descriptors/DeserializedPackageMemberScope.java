@@ -18,7 +18,11 @@ package org.jetbrains.jet.descriptors.serialization.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
+import org.jetbrains.jet.descriptors.serialization.PackageData;
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -26,54 +30,43 @@ import org.jetbrains.jet.lang.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe;
 import org.jetbrains.jet.lang.resolve.name.Name;
-import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class DeserializedPackageMemberScope extends DeserializedMemberScope {
-    private final DescriptorFinder descriptorFinder;
 
     private final FqName packageFqName;
+    private final DeserializationContext context;
 
     public DeserializedPackageMemberScope(
-            @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull Deserializers deserializers,
-            @NotNull MemberFilter memberFilter,
-            @NotNull DescriptorFinder descriptorFinder,
             @NotNull ProtoBuf.Package proto,
-            @NotNull NameResolver nameResolver
+            @NotNull DeserializationContext context
     ) {
-        super(storageManager, packageDescriptor,
-              DescriptorDeserializer.create(storageManager, packageDescriptor, nameResolver, descriptorFinder, deserializers),
-              getFilteredMembers(packageDescriptor, proto, memberFilter, nameResolver));
-        this.descriptorFinder = descriptorFinder;
+        super(context.withTypes(packageDescriptor), getFilteredMembers(packageDescriptor, proto, context));
+        this.context = context;
         this.packageFqName = packageDescriptor.getFqName();
     }
 
     public DeserializedPackageMemberScope(
-            @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull Deserializers deserializers,
-            @NotNull MemberFilter memberFilter,
-            @NotNull DescriptorFinder descriptorFinder,
-            @NotNull PackageData packageData
+            @NotNull PackageData packageData,
+            @NotNull DeserializationGlobalContext context
     ) {
-        this(storageManager, packageDescriptor, deserializers, memberFilter, descriptorFinder, packageData.getPackageProto(),
-             packageData.getNameResolver());
+        this(packageDescriptor, packageData.getPackageProto(), context.withNameResolver(packageData.getNameResolver()));
     }
 
     @Nullable
     @Override
     protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
-        return descriptorFinder.findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
+        return context.getDescriptorFinder().findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
     }
 
     @Override
     protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-        for (Name className : descriptorFinder.getClassNames(packageFqName)) {
+        for (Name className : context.getDescriptorFinder().getClassNames(packageFqName)) {
             ClassDescriptor classDescriptor = getClassDescriptor(className);
 
             if (classDescriptor != null) {
@@ -97,12 +90,11 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     private static Collection<ProtoBuf.Callable> getFilteredMembers(
             @NotNull PackageFragmentDescriptor packageDescriptor,
             @NotNull ProtoBuf.Package packageProto,
-            @NotNull MemberFilter memberFilter,
-            @NotNull NameResolver nameResolver
+            @NotNull DeserializationContext context
     ) {
         List<ProtoBuf.Callable> result = new ArrayList<ProtoBuf.Callable>();
         for (ProtoBuf.Callable member : packageProto.getMemberList()) {
-            if (memberFilter.acceptPackagePartClass(packageDescriptor, member, nameResolver)) {
+            if (context.getMemberFilter().acceptPackagePartClass(packageDescriptor, member, context.getNameResolver())) {
                 result.add(member);
             }
         }

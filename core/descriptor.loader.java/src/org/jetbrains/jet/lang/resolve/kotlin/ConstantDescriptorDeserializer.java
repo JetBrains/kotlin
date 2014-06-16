@@ -28,7 +28,7 @@ import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver;
 
 import javax.inject.Inject;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
 
 public class ConstantDescriptorDeserializer extends BaseDescriptorDeserializer implements ConstantDeserializer {

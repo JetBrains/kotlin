@@ -19,15 +19,20 @@ package org.jetbrains.jet.descriptors.serialization;
 import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.descriptors.*;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
-import org.jetbrains.jet.lang.descriptors.impl.*;
+import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertyGetterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.PropertySetterDescriptorImpl;
+import org.jetbrains.jet.lang.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.jet.lang.resolve.DescriptorFactory;
 import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.constants.CompileTimeConstant;
-import org.jetbrains.jet.lang.types.Variance;
-import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,86 +40,16 @@ import java.util.List;
 
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
-import static org.jetbrains.jet.descriptors.serialization.TypeDeserializer.TypeParameterResolver.NONE;
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
+import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
+
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 
 public class DescriptorDeserializer {
 
-    @NotNull
-    public static DescriptorDeserializer create(
-            @NotNull StorageManager storageManager,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver,
-            @NotNull DescriptorFinder descriptorFinder,
-            @NotNull Deserializers deserializers
-    ) {
-        return new DescriptorDeserializer(storageManager,
-                new TypeDeserializer(storageManager, null, nameResolver, descriptorFinder,
-                                     "Deserializer for " + containingDeclaration.getName(), NONE),
-                containingDeclaration, nameResolver, deserializers);
-    }
+    private final DeserializationContextWithTypes context;
 
-    @NotNull
-    public static DescriptorDeserializer create(
-            @NotNull StorageManager storageManager,
-            @NotNull TypeDeserializer typeDeserializer,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver,
-            @NotNull Deserializers deserializers
-    ) {
-        return new DescriptorDeserializer(storageManager, typeDeserializer, containingDeclaration, nameResolver, deserializers);
-    }
-
-    private final DeclarationDescriptor containingDeclaration;
-    private final NameResolver nameResolver;
-    private final TypeDeserializer typeDeserializer;
-    private final Deserializers deserializers;
-
-    private final StorageManager storageManager;
-
-    private DescriptorDeserializer(
-            @NotNull StorageManager storageManager,
-            @NotNull TypeDeserializer typeDeserializer,
-            @NotNull DeclarationDescriptor containingDeclaration,
-            @NotNull NameResolver nameResolver,
-            @NotNull Deserializers deserializers
-    ) {
-        this.storageManager = storageManager;
-        this.typeDeserializer = typeDeserializer;
-        this.containingDeclaration = containingDeclaration;
-        this.nameResolver = nameResolver;
-        this.deserializers = deserializers;
-    }
-
-    @NotNull
-    public TypeDeserializer getTypeDeserializer() {
-        return typeDeserializer;
-    }
-
-    @NotNull
-    public NameResolver getNameResolver() {
-        return nameResolver;
-    }
-
-    @NotNull
-    public DescriptorDeserializer createChildDeserializer(
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull final List<TypeParameter> typeParameterProtos,
-            @NotNull final List<TypeParameterDescriptor> typeParameters
-    ) {
-        TypeDeserializer childTypeDeserializer = new TypeDeserializer(
-                storageManager,
-                typeDeserializer, "Child deserializer for " + descriptor.getName(),
-                new TypeDeserializer.TypeParameterResolver() {
-                    @NotNull
-                    @Override
-                    public List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer) {
-                        List<DeserializedTypeParameterDescriptor> descriptors = typeParameters(typeParameterProtos, typeDeserializer);
-                        typeParameters.addAll(descriptors);
-                        return descriptors;
-                    }
-                });
-        return create(storageManager, childTypeDeserializer, descriptor, nameResolver, deserializers);
+    public DescriptorDeserializer(@NotNull DeserializationContextWithTypes context) {
+        this.context = context;
     }
 
     @NotNull
@@ -137,25 +72,25 @@ public class DescriptorDeserializer {
         final int flags = proto.getFlags();
 
         DeserializedPropertyDescriptor property = new DeserializedPropertyDescriptor(
-                containingDeclaration,
+                context.getContainingDeclaration(),
                 null,
                 getAnnotations(proto, flags, AnnotatedCallableKind.PROPERTY),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags)),
                 Flags.CALLABLE_KIND.get(flags) == Callable.CallableKind.VAR,
-                nameResolver.getName(proto.getName()),
-                memberKind(Flags.MEMBER_KIND.get(flags)),
+                context.getNameResolver().getName(proto.getName()),
+                SerializationPackage.memberKind(Flags.MEMBER_KIND.get(flags)),
                 proto,
-                nameResolver
+                context.getNameResolver()
         );
 
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
-        DescriptorDeserializer local = createChildDeserializer(property, proto.getTypeParameterList(), typeParameters);
+        DeserializationContextWithTypes local = context.childContext(property, proto.getTypeParameterList(), typeParameters);
         property.setType(
-                local.typeDeserializer.type(proto.getReturnType()),
+                local.getTypeDeserializer().type(proto.getReturnType()),
                 typeParameters,
                 getExpectedThisObject(),
-                local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
+                local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null)
         );
 
         PropertyGetterDescriptorImpl getter = null;
@@ -168,7 +103,8 @@ public class DescriptorDeserializer {
                 getter = new PropertyGetterDescriptorImpl(property,
                                                           getAnnotations(proto, getterFlags, AnnotatedCallableKind.PROPERTY_GETTER),
                                                           modality(Flags.MODALITY.get(getterFlags)),
-                                                          visibility(Flags.VISIBILITY.get(getterFlags)), isNotDefault, !isNotDefault,
+                                                          visibility(Flags.VISIBILITY.get(getterFlags)),
+                                                          isNotDefault, !isNotDefault,
                                                           property.getKind(), null);
             }
             else {
@@ -184,11 +120,13 @@ public class DescriptorDeserializer {
                 setter = new PropertySetterDescriptorImpl(property,
                                                           getAnnotations(proto, setterFlags, AnnotatedCallableKind.PROPERTY_SETTER),
                                                           modality(Flags.MODALITY.get(setterFlags)),
-                                                          visibility(Flags.VISIBILITY.get(setterFlags)), isNotDefault, !isNotDefault,
+                                                          visibility(Flags.VISIBILITY.get(setterFlags)), isNotDefault,
+                                                          !isNotDefault,
                                                           property.getKind(), null);
-                DescriptorDeserializer setterLocal = local.createChildDeserializer(setter, Collections.<TypeParameter>emptyList(),
-                                                                                   Collections.<TypeParameterDescriptor>emptyList());
-                List<ValueParameterDescriptor> valueParameters = setterLocal.valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
+                DeserializationContextWithTypes setterLocal = local.childContext(setter, Collections.<TypeParameter>emptyList(),
+                                                                                 Collections.<TypeParameterDescriptor>emptyList());
+                List<ValueParameterDescriptor> valueParameters
+                        = setterLocal.getDeserializer().valueParameters(proto, AnnotatedCallableKind.PROPERTY_SETTER);
                 assert valueParameters.size() == 1 : "Property setter should have a single value parameter: " + setter;
                 setter.initialize(valueParameters.get(0));
             }
@@ -199,15 +137,16 @@ public class DescriptorDeserializer {
 
         if (Flags.HAS_CONSTANT.get(flags)) {
             property.setCompileTimeInitializer(
-                    storageManager.createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
+                    context.getStorageManager().createNullableLazyValue(new Function0<CompileTimeConstant<?>>() {
                         @Nullable
                         @Override
                         public CompileTimeConstant<?> invoke() {
+                            DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
                             assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
                                     : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-                            return deserializers.getConstantDeserializer().loadPropertyConstant(
+                            return context.getConstantDeserializer().loadPropertyConstant(
                                                             (ClassOrPackageFragmentDescriptor) containingDeclaration,
-                                                            proto, nameResolver,
+                                                            proto, context.getNameResolver(),
                                                             AnnotatedCallableKind.PROPERTY);
                         }
                     })
@@ -223,18 +162,18 @@ public class DescriptorDeserializer {
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
         int flags = proto.getFlags();
         DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
-                containingDeclaration, proto,
-                deserializers,
-                nameResolver
+                context.getContainingDeclaration(), proto,
+                context.getAnnotationDeserializer(),
+                context.getNameResolver()
         );
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
-        DescriptorDeserializer local = createChildDeserializer(function, proto.getTypeParameterList(), typeParameters);
+        DeserializationContextWithTypes local = context.childContext(function, proto.getTypeParameterList(), typeParameters);
         function.initialize(
-                local.typeDeserializer.typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
+                local.getTypeDeserializer().typeOrNull(proto.hasReceiverType() ? proto.getReceiverType() : null),
                 getExpectedThisObject(),
                 typeParameters,
-                local.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
-                local.typeDeserializer.type(proto.getReturnType()),
+                local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.getTypeDeserializer().type(proto.getReturnType()),
                 modality(Flags.MODALITY.get(flags)),
                 visibility(Flags.VISIBILITY.get(flags))
         );
@@ -243,33 +182,34 @@ public class DescriptorDeserializer {
 
     @Nullable
     private ReceiverParameterDescriptor getExpectedThisObject() {
+        DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
         return containingDeclaration instanceof ClassDescriptor
                ? ((ClassDescriptor) containingDeclaration).getThisAsReceiverParameter() : null;
     }
 
     @NotNull
     private CallableMemberDescriptor loadConstructor(@NotNull Callable proto) {
-        ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
+        ClassDescriptor classDescriptor = (ClassDescriptor) context.getContainingDeclaration();
         ConstructorDescriptorImpl descriptor = ConstructorDescriptorImpl.create(
                 classDescriptor,
                 getAnnotations(proto, proto.getFlags(), AnnotatedCallableKind.FUNCTION),
                 // TODO: primary
                 true);
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
-        DescriptorDeserializer local = createChildDeserializer(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
+        DeserializationContextWithTypes local = context.childContext(descriptor, Collections.<TypeParameter>emptyList(), typeParameters);
         descriptor.initialize(
                 classDescriptor.getTypeConstructor().getParameters(),
-                local.valueParameters(proto, AnnotatedCallableKind.FUNCTION),
+                local.getDeserializer().valueParameters(proto, AnnotatedCallableKind.FUNCTION),
                 visibility(Flags.VISIBILITY.get(proto.getFlags())),
                 DescriptorUtils.isConstructorOfStaticNestedClass(descriptor)
         );
-        descriptor.setReturnType(local.typeDeserializer.type(proto.getReturnType()));
+        descriptor.setReturnType(local.getTypeDeserializer().type(proto.getReturnType()));
         return descriptor;
     }
 
     @NotNull
     private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        return getAnnotations(containingDeclaration, proto, flags, kind, deserializers.getAnnotationDeserializer(), nameResolver);
+        return getAnnotations(context.getContainingDeclaration(), proto, flags, kind, context.getAnnotationDeserializer(), context.getNameResolver());
     }
 
     public static Annotations getAnnotations(
@@ -288,71 +228,6 @@ public class DescriptorDeserializer {
                : Annotations.EMPTY;
     }
 
-    public static CallableMemberDescriptor.Kind memberKind(Callable.MemberKind memberKind) {
-        switch (memberKind) {
-            case DECLARATION:
-                return CallableMemberDescriptor.Kind.DECLARATION;
-            case FAKE_OVERRIDE:
-                return CallableMemberDescriptor.Kind.FAKE_OVERRIDE;
-            case DELEGATION:
-                return CallableMemberDescriptor.Kind.DELEGATION;
-            case SYNTHESIZED:
-                return CallableMemberDescriptor.Kind.SYNTHESIZED;
-        }
-        throw new IllegalArgumentException("Unknown member kind: " + memberKind);
-    }
-
-    @NotNull
-    public static Modality modality(@NotNull ProtoBuf.Modality modality) {
-        switch (modality) {
-            case FINAL:
-                return Modality.FINAL;
-            case OPEN:
-                return Modality.OPEN;
-            case ABSTRACT:
-                return Modality.ABSTRACT;
-        }
-        throw new IllegalArgumentException("Unknown modality: " + modality);
-    }
-
-    @NotNull
-    public static Visibility visibility(@NotNull ProtoBuf.Visibility visibility) {
-        switch (visibility) {
-            case INTERNAL:
-                return Visibilities.INTERNAL;
-            case PRIVATE:
-                return Visibilities.PRIVATE;
-            case PROTECTED:
-                return Visibilities.PROTECTED;
-            case PUBLIC:
-                return Visibilities.PUBLIC;
-            case EXTRA:
-                throw new UnsupportedOperationException("Extra visibilities are not supported yet"); // TODO
-        }
-        throw new IllegalArgumentException("Unknown visibility: " + visibility);
-    }
-
-    @NotNull
-    public static ClassKind classKind(@NotNull ProtoBuf.Class.Kind kind) {
-        switch (kind) {
-            case CLASS:
-                return ClassKind.CLASS;
-            case TRAIT:
-                return ClassKind.TRAIT;
-            case ENUM_CLASS:
-                return ClassKind.ENUM_CLASS;
-            case ENUM_ENTRY:
-                return ClassKind.ENUM_ENTRY;
-            case ANNOTATION_CLASS:
-                return ClassKind.ANNOTATION_CLASS;
-            case OBJECT:
-                return ClassKind.OBJECT;
-            case CLASS_OBJECT:
-                return ClassKind.CLASS_OBJECT;
-        }
-        throw new IllegalArgumentException("Unknown class kind: " + kind);
-    }
-
     @NotNull
     public List<DeserializedTypeParameterDescriptor> typeParameters(
             @NotNull List<TypeParameter> protos,
@@ -362,11 +237,11 @@ public class DescriptorDeserializer {
         for (int i = 0; i < protos.size(); i++) {
             TypeParameter proto = protos.get(i);
             DeserializedTypeParameterDescriptor descriptor = new DeserializedTypeParameterDescriptor(
-                    storageManager,
+                    context.getStorageManager(),
                     typeDeserializer,
                     proto,
-                    containingDeclaration,
-                    nameResolver.getName(proto.getName()),
+                    context.getContainingDeclaration(),
+                    context.getNameResolver().getName(proto.getName()),
                     variance(proto.getVariance()),
                     proto.getReified(),
                     i
@@ -376,21 +251,9 @@ public class DescriptorDeserializer {
         return result;
     }
 
-    private static Variance variance(TypeParameter.Variance proto) {
-        switch (proto) {
-            case IN:
-                return Variance.IN_VARIANCE;
-            case OUT:
-                return Variance.OUT_VARIANCE;
-            case INV:
-                return Variance.INVARIANT;
-        }
-        throw new IllegalStateException("Unknown projection: " + proto);
-    }
-
     @NotNull
     private List<ValueParameterDescriptor> valueParameters(@NotNull Callable callable, @NotNull AnnotatedCallableKind kind) {
-        DeclarationDescriptor containerOfCallable = containingDeclaration.getContainingDeclaration();
+        DeclarationDescriptor containerOfCallable = context.getContainingDeclaration().getContainingDeclaration();
         assert containerOfCallable instanceof ClassOrPackageFragmentDescriptor
                 : "Only members in classes or package fragments should be serialized: " + containerOfCallable;
         ClassOrPackageFragmentDescriptor classOrPackage = (ClassOrPackageFragmentDescriptor) containerOfCallable;
@@ -400,14 +263,14 @@ public class DescriptorDeserializer {
         for (int i = 0; i < protos.size(); i++) {
             Callable.ValueParameter proto = protos.get(i);
             result.add(new ValueParameterDescriptorImpl(
-                    containingDeclaration,
+                    context.getContainingDeclaration(),
                     null,
                     i,
                     getAnnotations(classOrPackage, callable, kind, proto),
-                    nameResolver.getName(proto.getName()),
-                    typeDeserializer.type(proto.getType()),
+                    context.getNameResolver().getName(proto.getName()),
+                    context.getTypeDeserializer().type(proto.getType()),
                     Flags.DECLARES_DEFAULT_VALUE.get(proto.getFlags()),
-                    typeDeserializer.typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null))
+                    context.getTypeDeserializer().typeOrNull(proto.hasVarargElementType() ? proto.getVarargElementType() : null))
             );
         }
         return result;
@@ -421,7 +284,8 @@ public class DescriptorDeserializer {
             @NotNull Callable.ValueParameter valueParameter
     ) {
         return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
-               ? deserializers.getAnnotationDeserializer().loadValueParameterAnnotations(classOrPackage, callable, nameResolver, kind, valueParameter)
+               ? context.getAnnotationDeserializer()
+                        .loadValueParameterAnnotations(classOrPackage, callable, context.getNameResolver(), kind, valueParameter)
                : Annotations.EMPTY;
     }
 }

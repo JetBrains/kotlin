@@ -23,8 +23,6 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassOrPackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
-
 public interface AnnotationDeserializer {
     AnnotationDeserializer UNSUPPORTED = new AnnotationDeserializer() {
         @NotNull

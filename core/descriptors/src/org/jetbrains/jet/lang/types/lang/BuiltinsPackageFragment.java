@@ -20,9 +20,8 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
-import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
+import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl;
@@ -52,9 +51,13 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        // TODO: support annotations
-        members = new DeserializedPackageMemberScope(storageManager, this, Deserializers.UNSUPPORTED, MemberFilter.ALWAYS_TRUE,
-                                                     new BuiltInsDescriptorFinder(storageManager), loadPackage(), nameResolver);
+        DeserializationContext context = new DeserializationContext(
+                storageManager, new BuiltInsDescriptorFinder(storageManager),
+                // TODO: support annotations
+                AnnotationDeserializer.UNSUPPORTED, ConstantDeserializer.UNSUPPORTED, packageFragmentProvider,
+                MemberFilter.ALWAYS_TRUE, nameResolver
+        );
+        members = new DeserializedPackageMemberScope(this, loadPackage(), context);
     }
 
     @NotNull
@@ -119,7 +122,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, Deserializers.UNSUPPORTED, packageFragmentProvider);
+            super(storageManager, AnnotationDeserializer.UNSUPPORTED, ConstantDeserializer.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override

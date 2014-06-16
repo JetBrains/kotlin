@@ -56,7 +56,8 @@ import org.jetbrains.jet.lang.resolve.ScriptBodyResolver;
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider;
 import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
-import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers;
+import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
+import org.jetbrains.jet.lang.resolve.kotlin.JavaDescriptorFinder;
 import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage;
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer;
@@ -107,7 +108,8 @@ public class InjectorForLazyResolveWithJava {
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
     private final GlobalJavaResolverContext globalJavaResolverContext;
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
-    private final DescriptorDeserializers descriptorDeserializers;
+    private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
+    private final JavaDescriptorFinder javaDescriptorFinder;
     private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
     private final DescriptorDeserializersStorage descriptorDeserializersStorage;
     private final ConstantDescriptorDeserializer constantDescriptorDeserializer;
@@ -158,10 +160,11 @@ public class InjectorForLazyResolveWithJava {
         this.jetImportsFactory = new JetImportsFactory();
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
-        this.descriptorDeserializers = new DescriptorDeserializers();
+        this.javaDescriptorFinder = new JavaDescriptorFinder(getJavaDescriptorResolver(), lazyJavaPackageFragmentProvider);
         this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
         this.constantDescriptorDeserializer = new ConstantDescriptorDeserializer();
+        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(lockBasedStorageManager, javaDescriptorFinder, annotationDescriptorDeserializer, constantDescriptorDeserializer, lazyJavaPackageFragmentProvider, memberFilter);
+        this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
         this.resolveSession.setDescriptorResolver(descriptorResolver);
@@ -238,15 +241,8 @@ public class InjectorForLazyResolveWithJava {
 
         scriptBodyResolver.setExpressionTypingServices(expressionTypingServices);
 
-        deserializedDescriptorResolver.setDeserializers(descriptorDeserializers);
+        deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
-        deserializedDescriptorResolver.setJavaDescriptorResolver(javaDescriptorResolver);
-        deserializedDescriptorResolver.setJavaPackageFragmentProvider(lazyJavaPackageFragmentProvider);
-        deserializedDescriptorResolver.setMemberFilter(memberFilter);
-        deserializedDescriptorResolver.setStorageManager(lockBasedStorageManager);
-
-        descriptorDeserializers.setAnnotationDescriptorDeserializer(annotationDescriptorDeserializer);
-        descriptorDeserializers.setConstantDescriptorDeserializer(constantDescriptorDeserializer);
 
         annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
         annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);

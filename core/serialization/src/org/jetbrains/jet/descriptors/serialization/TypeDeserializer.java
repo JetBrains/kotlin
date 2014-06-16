@@ -21,6 +21,8 @@ import kotlin.Function0;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor;
@@ -30,11 +32,12 @@ import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.types.*;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.NotNullLazyValue;
-import org.jetbrains.jet.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.variance;
 
 public class TypeDeserializer {
 
@@ -48,11 +51,10 @@ public class TypeDeserializer {
         };
 
         @NotNull
+        @ReadOnly
         List<DeserializedTypeParameterDescriptor> getTypeParameters(@NotNull TypeDeserializer typeDeserializer);
     }
 
-    private final NameResolver nameResolver;
-    private final DescriptorFinder descriptorFinder;
     private final TypeDeserializer parent;
 
     // never written to after constructor returns
@@ -62,45 +64,29 @@ public class TypeDeserializer {
 
     private final String debugName;
 
-    private final StorageManager storageManager;
+    private final DeserializationContext context;
 
     public TypeDeserializer(
-            @NotNull StorageManager storageManager,
-            @NotNull TypeDeserializer parent,
-            @NotNull String debugName,
-            @NotNull TypeParameterResolver typeParameterResolver
-    ) {
-        this(storageManager, parent, parent.nameResolver, parent.descriptorFinder, debugName, typeParameterResolver);
-    }
-
-    public TypeDeserializer(
-            @NotNull StorageManager storageManager,
+            @NotNull DeserializationContext context,
             @Nullable TypeDeserializer parent,
-            @NotNull NameResolver nameResolver,
-            @NotNull DescriptorFinder descriptorFinder,
             @NotNull String debugName,
             @NotNull TypeParameterResolver typeParameterResolver
     ) {
-        this.storageManager = storageManager;
         this.parent = parent;
-        this.nameResolver = nameResolver;
-        this.descriptorFinder = descriptorFinder;
         this.debugName = debugName + (parent == null ? "" : ". Child of " + parent.debugName);
+        this.context = context;
 
         for (DeserializedTypeParameterDescriptor typeParameterDescriptor : typeParameterResolver.getTypeParameters(this)) {
             typeParameterDescriptors.put(typeParameterDescriptor.getProtoId(), typeParameterDescriptor);
         }
 
-        this.classDescriptors = storageManager.createMemoizedFunctionWithNullableValues(new Function1<Integer, ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke(Integer fqNameIndex) {
-                return computeClassDescriptor(fqNameIndex);
-            }
-        });
-    }
-
-    /* package */ DescriptorFinder getDescriptorFinder() {
-        return descriptorFinder;
+        this.classDescriptors = context.getStorageManager().createMemoizedFunctionWithNullableValues(
+                new Function1<Integer, ClassDescriptor>() {
+                    @Override
+                    public ClassDescriptor invoke(Integer fqNameIndex) {
+                        return computeClassDescriptor(fqNameIndex);
+                    }
+                });
     }
 
     @Nullable
@@ -122,7 +108,7 @@ public class TypeDeserializer {
         TypeConstructor typeConstructor = typeConstructor(constructorProto);
         if (typeConstructor == null) {
             String message = constructorProto.getKind() == ProtoBuf.Type.Constructor.Kind.CLASS
-                             ? nameResolver.getClassId(id).asSingleFqName().asString()
+                             ? context.getNameResolver().getClassId(id).asSingleFqName().asString()
                              : "Unknown type parameter " + id;
             typeConstructor = ErrorUtils.createErrorType(message).getConstructor();
         }
@@ -159,8 +145,8 @@ public class TypeDeserializer {
 
     @Nullable
     private ClassDescriptor computeClassDescriptor(int fqNameIndex) {
-        ClassId classId = nameResolver.getClassId(fqNameIndex);
-        return descriptorFinder.findClass(classId);
+        ClassId classId = context.getNameResolver().getClassId(fqNameIndex);
+        return context.getDescriptorFinder().findClass(classId);
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {
@@ -172,22 +158,7 @@ public class TypeDeserializer {
     }
 
     private TypeProjection typeProjection(ProtoBuf.Type.Argument proto) {
-        return new TypeProjectionImpl(
-                variance(proto.getProjection()),
-                type(proto.getType())
-        );
-    }
-
-    private static Variance variance(ProtoBuf.Type.Argument.Projection proto) {
-        switch (proto) {
-            case IN:
-                return Variance.IN_VARIANCE;
-            case OUT:
-                return Variance.OUT_VARIANCE;
-            case INV:
-                return Variance.INVARIANT;
-        }
-        throw new IllegalStateException("Unknown projection: " + proto);
+        return new TypeProjectionImpl(variance(proto.getProjection()), type(proto.getType()));
     }
 
     @NotNull
@@ -215,13 +186,13 @@ public class TypeDeserializer {
             this.typeProto = proto;
             this.arguments = typeArguments(proto.getArgumentList());
 
-            this.constructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
+            this.constructor = context.getStorageManager().createLazyValue(new Function0<TypeConstructor>() {
                 @Override
                 public TypeConstructor invoke() {
                     return typeConstructor(typeProto);
                 }
             });
-            this.memberScope = storageManager.createLazyValue(new Function0<JetScope>() {
+            this.memberScope = context.getStorageManager().createLazyValue(new Function0<JetScope>() {
                 @Override
                 public JetScope invoke() {
                     return computeMemberScope();

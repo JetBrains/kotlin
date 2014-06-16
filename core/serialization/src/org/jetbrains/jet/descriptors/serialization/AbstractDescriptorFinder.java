@@ -19,8 +19,8 @@ package org.jetbrains.jet.descriptors.serialization;
 import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
+import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
@@ -28,26 +28,21 @@ import org.jetbrains.jet.storage.StorageManager;
 
 public abstract class AbstractDescriptorFinder implements DescriptorFinder {
     private final MemoizedFunctionToNullable<ClassId, ClassDescriptor> findClass;
-    private final Deserializers deserializers;
 
     public AbstractDescriptorFinder(
-            @NotNull final StorageManager storageManager,
-            @NotNull Deserializers deserializers,
-            @NotNull final PackageFragmentProvider packageFragmentProvider
+            @NotNull StorageManager storageManager,
+            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull ConstantDeserializer constantDeserializer,
+            @NotNull PackageFragmentProvider packageFragmentProvider
     ) {
-        this.deserializers = deserializers;
-
+        final DeserializationGlobalContext deserializationGlobalContext =
+                new DeserializationGlobalContext(storageManager, this, annotationDeserializer, constantDeserializer,
+                                                 packageFragmentProvider, MemberFilter.ALWAYS_TRUE);
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<ClassId, ClassDescriptor>() {
             @Override
             public ClassDescriptor invoke(ClassId classId) {
                 ClassData classData = getClassData(classId);
-                if (classData == null) {
-                    return null;
-                }
-
-                AbstractDescriptorFinder _this = AbstractDescriptorFinder.this;
-                return new DeserializedClassDescriptor(storageManager, _this.deserializers, _this, packageFragmentProvider,
-                                                classData.getNameResolver(), classData.getClassProto());
+                return classData == null ? null : new DeserializedClassDescriptor(deserializationGlobalContext, classData);
             }
         });
     }

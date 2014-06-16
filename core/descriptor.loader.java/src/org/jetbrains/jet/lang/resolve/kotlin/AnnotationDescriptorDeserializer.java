@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers.AnnotatedCallableKind;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
 
 public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer implements AnnotationDeserializer {
