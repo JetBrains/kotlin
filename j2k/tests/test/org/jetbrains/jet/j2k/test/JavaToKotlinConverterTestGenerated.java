@@ -1305,6 +1305,11 @@ public class JavaToKotlinConverterTestGenerated extends AbstractJavaToKotlinConv
             doTest("j2k/tests/testData/ast/function/public.java");
         }
         
+        @TestMetadata("throws.java")
+        public void testThrows() throws Exception {
+            doTest("j2k/tests/testData/ast/function/throws.java");
+        }
+        
         @TestMetadata("varVararg.java")
         public void testVarVararg() throws Exception {
             doTest("j2k/tests/testData/ast/function/varVararg.java");

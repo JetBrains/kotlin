@@ -1,6 +1,7 @@
 import java.io.*
 
 public class C() {
+    throws(javaClass<IOException>())
     fun foo() {
         try {
             FileInputStream("foo").use { stream ->

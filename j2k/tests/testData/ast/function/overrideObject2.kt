@@ -13,6 +13,7 @@ class X() : Base() {
         return super.toString()
     }
 
+    throws(javaClass<CloneNotSupportedException>())
     protected fun clone(): Any {
         return super.clone()
     }

@@ -9,6 +9,7 @@ class Test() : Base() {
         return super.equals(o)
     }
 
+    throws(javaClass<CloneNotSupportedException>())
     override fun clone(): Any {
         return super.clone()
     }
@@ -17,6 +18,7 @@ class Test() : Base() {
         return super.toString()
     }
 
+    throws(javaClass<Throwable>())
     override fun finalize() {
         super.finalize()
     }
@@ -31,6 +33,7 @@ class Base() {
         return super.equals(o)
     }
 
+    throws(javaClass<CloneNotSupportedException>())
     protected fun clone(): Any {
         return super.clone()
     }
@@ -39,6 +42,7 @@ class Base() {
         return super.toString()
     }
 
+    throws(javaClass<Throwable>())
     protected fun finalize() {
         super.finalize()
     }

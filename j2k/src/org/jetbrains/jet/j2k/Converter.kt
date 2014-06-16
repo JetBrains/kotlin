@@ -328,7 +328,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun doConvertMethod(method: PsiMethod, membersToRemove: MutableSet<PsiMember>): Function {
         val returnType = typeConverter.convertMethodReturnType(method)
 
-        val annotations = convertAnnotations(method)
+        val annotations = convertAnnotations(method) + convertThrows(method)
         val modifiers = convertModifiers(method)
 
         val comments = getComments(method)
@@ -681,6 +681,15 @@ public class Converter private(val project: Project, val settings: ConverterSett
 
             else -> listOf(DummyStringExpression(value?.getText() ?: ""))
         }
+    }
+
+    private fun convertThrows(method: PsiMethod): Annotations {
+        val types = method.getThrowsList().getReferencedTypes()
+        if (types.isEmpty()) return Annotations.Empty
+        return Annotations(listOf(Annotation(Identifier("throws"),
+                                             types.map { null to MethodCallExpression.buildNotNull(null, "javaClass", listOf(), listOf(typeConverter.convertType(it, Nullability.NotNull))) },
+                                             false)),
+                           true)
     }
 
     private val TYPE_MAP: Map<String, String> = mapOf(
