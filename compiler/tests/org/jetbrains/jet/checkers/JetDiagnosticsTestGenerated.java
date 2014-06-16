@@ -2865,6 +2865,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/instance.kt");
                 }
                 
+                @TestMetadata("propertyMetadataCache.kt")
+                public void testPropertyMetadataCache() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/specialNames/propertyMetadataCache.kt");
+                }
+                
             }
             
             @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/traitImpl")

@@ -77,9 +77,7 @@ public class PackagePartCodegen extends MemberCodegen<JetFile> {
 
     @Override
     protected void generateSyntheticParts() {
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
-        }
+        generatePropertyMetadataArrayFieldIfNeeded(packagePartType);
     }
 
     @Override

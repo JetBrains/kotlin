@@ -334,6 +334,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.PROPERTY_METADATA_ARRAY_NAME,
                    "[" + PROPERTY_METADATA_TYPE, null, null);
 
+        if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
+
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
         iv.newarray(PROPERTY_METADATA_TYPE);

@@ -467,9 +467,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateDelegatedPropertyMetadataArray() {
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
-        }
+        generatePropertyMetadataArrayFieldIfNeeded(classAsmType);
     }
 
     private boolean isGenericToArrayPresent() {
