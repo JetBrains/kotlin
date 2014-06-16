@@ -132,6 +132,11 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
             doTest("compiler/testData/compileJavaAgainstKotlin/method/ArrayOfIntegerArray.kt");
         }
         
+        @TestMetadata("ClashingSignaturesWithoutReturnType.kt")
+        public void testClashingSignaturesWithoutReturnType() throws Exception {
+            doTest("compiler/testData/compileJavaAgainstKotlin/method/ClashingSignaturesWithoutReturnType.kt");
+        }
+        
         @TestMetadata("DefaultMethod.kt")
         public void testDefaultMethod() throws Exception {
             doTest("compiler/testData/compileJavaAgainstKotlin/method/DefaultMethod.kt");
