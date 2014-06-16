@@ -19,7 +19,9 @@ package org.jetbrains.jet.lang.resolve.kotlin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassData;
+import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
+import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -54,6 +56,17 @@ public final class DeserializedDescriptorResolver {
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
             return new DeserializedClassDescriptor(context, classData);
+        }
+        return null;
+    }
+    @Nullable
+    public ClassDescriptor resolveClassCached(@NotNull KotlinJvmBinaryClass kotlinClass) {
+        String[] data = readData(kotlinClass, CLASS);
+        if (data != null) {
+            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
+            NameResolver nameResolver = classData.getNameResolver();
+            ClassId classId = nameResolver.getClassId(classData.getClassProto().getFqName());
+            return context.getClassDeserializer().deserializeClass(classId);
         }
         return null;
     }

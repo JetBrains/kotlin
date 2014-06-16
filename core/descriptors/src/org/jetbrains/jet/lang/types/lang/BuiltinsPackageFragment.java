@@ -22,10 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.*;
-import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl;
-import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
+import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
@@ -44,22 +41,22 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final PackageFragmentProvider packageFragmentProvider;
-    private final ModuleDescriptor module;
+    private final DeserializationContext deserializationContext;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
-        this.module = module;
         nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(getFqName())));
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        DeserializationContext context = new DeserializationContext(
-                storageManager, module, new BuiltInsDescriptorFinder(storageManager),
+        BuiltInsDescriptorFinder descriptorFinder = new BuiltInsDescriptorFinder(storageManager);
+        deserializationContext = new DeserializationContext(
+                storageManager, module, descriptorFinder,
                 // TODO: support annotations
                 AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
-                nameResolver
+                new ClassDeserializer(storageManager, descriptorFinder), nameResolver
         );
-        members = new DeserializedPackageMemberScope(this, loadPackage(), context);
+        members = new DeserializedPackageMemberScope(this, loadPackage(), deserializationContext);
     }
 
     @NotNull
@@ -119,13 +116,11 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         }
     }
 
-    private class BuiltInsDescriptorFinder extends AbstractDescriptorFinder {
+    private class BuiltInsDescriptorFinder implements DescriptorFinder {
         private final NotNullLazyValue<Collection<Name>> classNames;
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, module, AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider);
-
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
                 @NotNull
@@ -154,8 +149,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         }
 
         @Nullable
-        @Override
-        protected ClassData getClassData(@NotNull ClassId classId) {
+        private ClassData getClassData(@NotNull ClassId classId) {
             InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
             if (stream == null) {
                 return null;
@@ -177,6 +171,13 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
             catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+
+        @Nullable
+        @Override
+        public ClassDescriptor findClass(@NotNull ClassId classId) {
+            ClassData classData = getClassData(classId);
+            return classData == null ? null : new DeserializedClassDescriptor(deserializationContext, classData);
         }
 
         @NotNull

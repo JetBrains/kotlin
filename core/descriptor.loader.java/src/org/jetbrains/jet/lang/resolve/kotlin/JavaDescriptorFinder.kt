@@ -36,7 +36,7 @@ public class JavaDescriptorFinder(
         val lazyJavaPackageFragmentProvider = javaDescriptorResolver.getPackageFragmentProvider() as LazyJavaPackageFragmentProvider
         val c = lazyJavaPackageFragmentProvider.c
         val kotlinJvmBinaryClass = c.kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(classId.asSingleFqName())) ?: return null
-        return lazyJavaPackageFragmentProvider.resolveKotlinBinaryClass(kotlinJvmBinaryClass)
+        return c.deserializedDescriptorResolver.resolveClass(kotlinJvmBinaryClass)
     }
 
     override fun getClassNames(packageName: FqName): Collection<Name> {

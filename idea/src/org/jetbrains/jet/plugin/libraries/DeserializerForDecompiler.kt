@@ -58,7 +58,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
     private val moduleDescriptor =
             ModuleDescriptorImpl(Name.special("<module for building decompiled sources>"), listOf(), PlatformToKotlinClassMap.EMPTY)
 
-    override fun resolveTopLevelClass(classFqName: FqName) = classes(classFqName.toClassId())
+    override fun resolveTopLevelClass(classFqName: FqName) = deserializationContext.classDeserializer.deserializeClass(classFqName.toClassId())
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
         assert(packageFqName == directoryPackageFqName, "Was called for $packageFqName but only $directoryPackageFqName is expected.")
@@ -95,10 +95,6 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         }
     }
     private val storageManager = LockBasedStorageManager.NO_LOCKS
-    private val classes = storageManager.createMemoizedFunctionWithNullableValues {
-        (classId: ClassId) ->
-        resolveClassByClassId(classId)
-    }
 
     private val deserializerStorage = DescriptorDeserializersStorage(storageManager);
     {
@@ -123,7 +119,7 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
 
     private val descriptorFinder = object : DescriptorFinder {
         override fun findClass(classId: ClassId): ClassDescriptor? {
-            return classes(classId)
+            return resolveClassByClassId(classId)
         }
 
         override fun getClassNames(packageName: FqName): Collection<Name> {

@@ -98,9 +98,7 @@ public class LazyJavaPackageFragmentProvider(
 
     override fun getSubPackagesOf(fqName: FqName) = getPackageFragment(fqName)?.getMemberScope()?.getSubPackages().orEmpty()
 
-    internal val resolveKotlinBinaryClass = c.storageManager.createMemoizedFunctionWithNullableValues {
-        (kotlinClass: KotlinJvmBinaryClass) -> c.deserializedDescriptorResolver.resolveClass(kotlinClass)
-    }
+    fun resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinaryClass) = c.deserializedDescriptorResolver.resolveClassCached(kotlinClass)
 
     fun getClass(javaClass: JavaClass): ClassDescriptor? = c.javaClassResolver.resolveClass(javaClass)
 
