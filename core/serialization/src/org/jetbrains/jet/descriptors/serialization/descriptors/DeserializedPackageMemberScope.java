@@ -64,7 +64,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
 
     @Override
     protected void addAllClassDescriptors(@NotNull Collection<DeclarationDescriptor> result) {
-        for (Name className : context.getDescriptorFinder().getClassNames(packageFqName)) {
+        for (Name className : context.getClassDataFinder().getClassNames(packageFqName)) {
             ClassDescriptor classDescriptor = getClassDescriptor(className);
 
             if (classDescriptor != null) {

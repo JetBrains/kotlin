@@ -18,12 +18,23 @@ package org.jetbrains.jet.descriptors.serialization
 
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.storage.StorageManager
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
+import kotlin.properties.Delegates
 
-public class ClassDeserializer(val storageManager: StorageManager, val descriptorFinder: DescriptorFinder) {
+public class ClassDeserializer(val storageManager: StorageManager, val classDataFinder: ClassDataFinder) {
     private val classes = storageManager.createMemoizedFunctionWithNullableValues {
         (classId: ClassId) ->
-        descriptorFinder.findClass(classId)
+        val classData = classDataFinder.findClassData(classId)
+        if (classData != null) {
+            DeserializedClassDescriptor(context, classData)
+        }
+        else {
+            null
+        }
     }
+
+    var context: DeserializationGlobalContext by Delegates.notNull()
 
     public fun deserializeClass(classId: ClassId): ClassDescriptor? = classes(classId)
 }

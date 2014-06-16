@@ -25,9 +25,9 @@ import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 public class DeserializationGlobalContextForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
-        descriptorFinder: JavaDescriptorFinder,
+        classDataFinder: JavaClassDataFinder,
         annotationLoader: AnnotationDescriptorLoader,
         constantLoader: ConstantDescriptorLoader,
         packageFragmentProvider: LazyJavaPackageFragmentProvider
-) : DeserializationGlobalContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
+) : DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
                                  constantLoader, packageFragmentProvider)

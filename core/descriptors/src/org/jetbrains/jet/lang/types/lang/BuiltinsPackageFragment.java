@@ -41,7 +41,6 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final PackageFragmentProvider packageFragmentProvider;
-    private final DeserializationContext deserializationContext;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
@@ -49,12 +48,12 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
-        BuiltInsDescriptorFinder descriptorFinder = new BuiltInsDescriptorFinder(storageManager);
-        deserializationContext = new DeserializationContext(
-                storageManager, module, descriptorFinder,
+        BuiltInsClassDataFinder builtInsClassDataFinder = new BuiltInsClassDataFinder(storageManager);
+        DeserializationContext deserializationContext = new DeserializationContext(
+                storageManager, module, builtInsClassDataFinder,
                 // TODO: support annotations
                 AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
-                new ClassDeserializer(storageManager, descriptorFinder), nameResolver
+                new ClassDeserializer(storageManager, builtInsClassDataFinder), nameResolver
         );
         members = new DeserializedPackageMemberScope(this, loadPackage(), deserializationContext);
     }
@@ -116,10 +115,10 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         }
     }
 
-    private class BuiltInsDescriptorFinder implements DescriptorFinder {
+    private class BuiltInsClassDataFinder implements ClassDataFinder {
         private final NotNullLazyValue<Collection<Name>> classNames;
 
-        public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
+        public BuiltInsClassDataFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override
@@ -149,7 +148,8 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         }
 
         @Nullable
-        private ClassData getClassData(@NotNull ClassId classId) {
+        @Override
+        public ClassData findClassData(@NotNull ClassId classId) {
             InputStream stream = getStreamNullable(BuiltInsSerializationUtil.getClassMetadataPath(classId));
             if (stream == null) {
                 return null;
@@ -171,13 +171,6 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
             catch (IOException e) {
                 throw new IllegalStateException(e);
             }
-        }
-
-        @Nullable
-        @Override
-        public ClassDescriptor findClass(@NotNull ClassId classId) {
-            ClassData classData = getClassData(classId);
-            return classData == null ? null : new DeserializedClassDescriptor(deserializationContext, classData);
         }
 
         @NotNull

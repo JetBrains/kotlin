@@ -17,9 +17,8 @@
 package org.jetbrains.jet.plugin.libraries
 
 import org.jetbrains.jet.descriptors.serialization.ClassId
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
+import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.jet.lang.descriptors.*
 import org.jetbrains.jet.lang.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.jet.lang.resolve.kotlin.KotlinJvmBinaryClass
@@ -43,7 +42,7 @@ import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext
 import org.jetbrains.jet.lang.PlatformToKotlinClassMap
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns
-import org.jetbrains.jet.lang.types.ErrorUtils
+import org.jetbrains.jet.descriptors.serialization.ClassData
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
@@ -117,9 +116,15 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         constantLoader.setStorage(deserializerStorage)
     }
 
-    private val descriptorFinder = object : DescriptorFinder {
-        override fun findClass(classId: ClassId): ClassDescriptor? {
-            return resolveClassByClassId(classId)
+    private val classDataFinder = object : ClassDataFinder {
+        override fun findClassData(classId: ClassId): ClassData? {
+            val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
+            val data = binaryClass.getClassHeader().annotationData
+            if (data == null) {
+                LOG.error("Annotation data missing for ${binaryClass.getClassName()}")
+                return null
+            }
+            return JavaProtoBufUtil.readClassDataFrom(data)
         }
 
         override fun getClassNames(packageName: FqName): Collection<Name> {
@@ -143,25 +148,11 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         moduleDescriptor.addFragmentProvider(DependencyKind.SOURCES, packageFragmentProvider)
         moduleDescriptor.addFragmentProvider(DependencyKind.BINARIES, PackageFragmentProviderForMissingDependencies(moduleDescriptor))
     }
-    val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
+    val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, classDataFinder, annotationLoader,
                                                               constantLoader, packageFragmentProvider)
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
         return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
-    }
-
-    private fun resolveClassByClassId(classId: ClassId): ClassDescriptor? {
-        val binaryClass = localClassFinder.findKotlinClass(classId) ?: return null
-        return deserializeBinaryClass(binaryClass)
-    }
-
-    private fun deserializeBinaryClass(kotlinClass: KotlinJvmBinaryClass): ClassDescriptor {
-        val data = kotlinClass.getClassHeader().annotationData
-        if (data == null) {
-            LOG.error("Annotation data missing for ${kotlinClass.getClassName()}")
-        }
-        val classData = JavaProtoBufUtil.readClassDataFrom(data!!)
-        return DeserializedClassDescriptor(deserializationContext, classData)
     }
 
     // we need a "magic" way to obtain ClassId from FqName

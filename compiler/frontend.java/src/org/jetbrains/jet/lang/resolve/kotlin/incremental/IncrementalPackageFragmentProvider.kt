@@ -27,7 +27,6 @@ import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl
 import org.jetbrains.jet.lang.resolve.scopes.JetScope
 import org.jetbrains.jet.storage.StorageManager
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.descriptors.serialization.ClassId

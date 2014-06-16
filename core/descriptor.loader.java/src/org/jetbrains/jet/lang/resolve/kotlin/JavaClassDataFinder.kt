@@ -17,7 +17,7 @@
 package org.jetbrains.jet.lang.resolve.kotlin
 
 import org.jetbrains.jet.descriptors.serialization.ClassId
-import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
+import org.jetbrains.jet.descriptors.serialization.ClassDataFinder
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
@@ -26,17 +26,24 @@ import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqN
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver
 import org.jetbrains.jet.lang.resolve.java.lazy.LazyJavaPackageFragmentProvider
+import org.jetbrains.jet.descriptors.serialization.ClassData
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil
+import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.jet.lang.resolve.kotlin.header.KotlinClassHeader
 
-public class JavaDescriptorFinder(
+//TODO: correct dependencies
+public class JavaClassDataFinder(
         private val javaDescriptorResolver: JavaDescriptorResolver,
         private val javaPackageFragmentProvider: JavaPackageFragmentProvider
-) : DescriptorFinder {
+) : ClassDataFinder {
 
-    override fun findClass(classId: ClassId): ClassDescriptor? {
+    override fun findClassData(classId: ClassId): ClassData? {
         val lazyJavaPackageFragmentProvider = javaDescriptorResolver.getPackageFragmentProvider() as LazyJavaPackageFragmentProvider
         val c = lazyJavaPackageFragmentProvider.c
         val kotlinJvmBinaryClass = c.kotlinClassFinder.findKotlinClass(kotlinFqNameToJavaFqName(classId.asSingleFqName())) ?: return null
-        return c.deserializedDescriptorResolver.resolveClass(kotlinJvmBinaryClass)
+        val deserializedDescriptorResolver = c.deserializedDescriptorResolver
+        val data = deserializedDescriptorResolver.readData(kotlinJvmBinaryClass, KotlinClassHeader.Kind.CLASS) ?: return null
+        return JavaProtoBufUtil.readClassDataFrom(data)
     }
 
     override fun getClassNames(packageName: FqName): Collection<Name> {

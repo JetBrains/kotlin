@@ -22,7 +22,6 @@ import org.jetbrains.jet.descriptors.serialization.ClassData;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
@@ -55,15 +54,6 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, CLASS);
         if (data != null) {
             ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
-            return new DeserializedClassDescriptor(context, classData);
-        }
-        return null;
-    }
-    @Nullable
-    public ClassDescriptor resolveClassCached(@NotNull KotlinJvmBinaryClass kotlinClass) {
-        String[] data = readData(kotlinClass, CLASS);
-        if (data != null) {
-            ClassData classData = JavaProtoBufUtil.readClassDataFrom(data);
             NameResolver nameResolver = classData.getNameResolver();
             ClassId classId = nameResolver.getClassId(classData.getClassProto().getFqName());
             return context.getClassDeserializer().deserializeClass(classId);
@@ -81,7 +71,7 @@ public final class DeserializedDescriptorResolver {
     }
 
     @Nullable
-    private String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
+    public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull KotlinClassHeader.Kind expectedKind) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
         if (header.getKind() == KotlinClassHeader.Kind.INCOMPATIBLE_ABI_VERSION) {
             errorReporter.reportIncompatibleAbiVersion(kotlinClass, header.getVersion());

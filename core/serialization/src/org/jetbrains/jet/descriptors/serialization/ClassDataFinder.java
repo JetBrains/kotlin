@@ -26,9 +26,9 @@ import org.jetbrains.jet.lang.resolve.name.Name;
 import java.util.Collection;
 import java.util.Collections;
 
-public interface DescriptorFinder {
+public interface ClassDataFinder {
     @Nullable
-    ClassDescriptor findClass(@NotNull ClassId classId);
+    ClassData findClassData(@NotNull ClassId classId);
 
     @ReadOnly
     @NotNull
