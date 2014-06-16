@@ -59,19 +59,19 @@ public class RangeTest {
     }
 
     test fun longRange() {
-        val range = -5.toLong()..9.toLong()
-        assertFalse(-10000000.toLong() in range)
-        assertFalse(-6.toLong() in range)
+        val range = -5L..9L
+        assertFalse(-10000000L in range)
+        assertFalse(-6L in range)
 
-        assertTrue(-5.toLong() in range)
-        assertTrue(-4.toLong() in range)
-        assertTrue(0.toLong() in range)
-        assertTrue(3.toLong() in range)
-        assertTrue(8.toLong() in range)
-        assertTrue(9.toLong() in range)
+        assertTrue(-5L in range)
+        assertTrue(-4L in range)
+        assertTrue(0L in range)
+        assertTrue(3L in range)
+        assertTrue(8L in range)
+        assertTrue(9L in range)
 
-        assertFalse(10.toLong() in range)
-        assertFalse(10000000.toLong() in range)
+        assertFalse(10L in range)
+        assertFalse(10000000L in range)
         
         assertFalse(range.isEmpty())
     }
@@ -115,21 +115,21 @@ public class RangeTest {
     }
 
     test fun floatRange() {
-        val range = -1.0.toFloat()..3.14159.toFloat()
-        assertFalse(-1e30.toFloat() in range)
-        assertFalse(-100.0.toFloat() in range)
-        assertFalse(-1.00001.toFloat() in range)
+        val range = -1.0f..3.14159f
+        assertFalse(-1e30f in range)
+        assertFalse(-100.0f in range)
+        assertFalse(-1.00001f in range)
 
-        assertTrue(-1.0.toFloat() in range)
-        assertTrue(-0.99999.toFloat() in range)
-        assertTrue(0.0.toFloat() in range)
-        assertTrue(1.5.toFloat() in range)
-        assertTrue(3.1415.toFloat() in range)
-        assertTrue(3.14159.toFloat() in range)
+        assertTrue(-1.0f in range)
+        assertTrue(-0.99999f in range)
+        assertTrue(0.0f in range)
+        assertTrue(1.5f in range)
+        assertTrue(3.1415f in range)
+        assertTrue(3.14159f in range)
 
-        assertFalse(3.15.toFloat() in range)
-        assertFalse(10.0.toFloat() in range)
-        assertFalse(1e30.toFloat() in range)
+        assertFalse(3.15f in range)
+        assertFalse(10.0f in range)
+        assertFalse(1e30f in range)
 
         assertFalse(range.isEmpty())
     }
