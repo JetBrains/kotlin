@@ -146,7 +146,7 @@ public class TypeDeserializer {
     @Nullable
     private ClassDescriptor computeClassDescriptor(int fqNameIndex) {
         ClassId classId = context.getNameResolver().getClassId(fqNameIndex);
-        return context.getDescriptorFinder().findClass(classId);
+        return SerializationPackage.findClassAcrossModuleDependencies(context.getModuleDescriptor(), classId);
     }
 
     private List<TypeProjection> typeArguments(List<ProtoBuf.Type.Argument> protos) {

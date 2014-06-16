@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
 import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentProvider;
 import org.jetbrains.jet.storage.MemoizedFunctionToNullable;
 import org.jetbrains.jet.storage.StorageManager;
@@ -31,12 +32,13 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     public AbstractDescriptorFinder(
             @NotNull StorageManager storageManager,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull AnnotationLoader annotationLoader,
             @NotNull ConstantLoader constantLoader,
             @NotNull PackageFragmentProvider packageFragmentProvider
     ) {
         final DeserializationGlobalContext deserializationGlobalContext =
-                new DeserializationGlobalContext(storageManager, this, annotationLoader, constantLoader,
+                new DeserializationGlobalContext(storageManager, moduleDescriptor, this, annotationLoader, constantLoader,
                                                  packageFragmentProvider);
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<ClassId, ClassDescriptor>() {
             @Override

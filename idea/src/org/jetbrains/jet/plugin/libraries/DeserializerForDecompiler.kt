@@ -148,11 +148,12 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
         }
     }
 
-    val deserializationContext = DeserializationGlobalContext(storageManager, descriptorFinder, annotationLoader,
+    val moduleDescriptor = ErrorUtils.getErrorModule()
+    val deserializationContext = DeserializationGlobalContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
                                                               constantLoader, packageFragmentProvider)
 
     private fun createDummyPackageFragment(fqName: FqName): MutablePackageFragmentDescriptor {
-        return MutablePackageFragmentDescriptor(ErrorUtils.getErrorModule(), fqName)
+        return MutablePackageFragmentDescriptor(moduleDescriptor, fqName)
     }
 
     private fun resolveClassByClassId(classId: ClassId): ClassDescriptor? {

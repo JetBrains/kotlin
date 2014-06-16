@@ -44,15 +44,17 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
     private final DeserializedPackageMemberScope members;
     private final NameResolver nameResolver;
     private final PackageFragmentProvider packageFragmentProvider;
+    private final ModuleDescriptor module;
 
     public BuiltinsPackageFragment(@NotNull StorageManager storageManager, @NotNull ModuleDescriptor module) {
         super(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+        this.module = module;
         nameResolver = NameSerializationUtil.deserializeNameResolver(getStream(BuiltInsSerializationUtil.getNameTableFilePath(getFqName())));
 
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
         DeserializationContext context = new DeserializationContext(
-                storageManager, new BuiltInsDescriptorFinder(storageManager),
+                storageManager, module, new BuiltInsDescriptorFinder(storageManager),
                 // TODO: support annotations
                 AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
                 nameResolver
@@ -122,7 +124,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider);
+            super(storageManager, module, AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override

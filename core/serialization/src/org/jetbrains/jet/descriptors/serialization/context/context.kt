@@ -28,16 +28,26 @@ import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
+import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
+import org.jetbrains.jet.lang.descriptors.ClassDescriptor
+import org.jetbrains.jet.descriptors.serialization.ClassId
+import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
+import org.jetbrains.jet.lang.resolve.scopes.JetScope
+import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
+import org.jetbrains.jet.lang.resolve.name.Name
+import org.jetbrains.jet.lang.resolve.name.SpecialNames
+import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 
 public open class DeserializationGlobalContext(
         public val storageManager: StorageManager,
+        public val moduleDescriptor: ModuleDescriptor,
         public val descriptorFinder: DescriptorFinder,
         public val annotationLoader: AnnotationLoader,
         public val constantLoader: ConstantLoader,
         public val packageFragmentProvider: PackageFragmentProvider
 ) {
     public fun withNameResolver(nameResolver: NameResolver): DeserializationContext {
-        return DeserializationContext(storageManager, descriptorFinder, annotationLoader,
+        return DeserializationContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
                                       constantLoader, packageFragmentProvider, nameResolver)
     }
 }
@@ -45,12 +55,13 @@ public open class DeserializationGlobalContext(
 
 public open class DeserializationContext(
         storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
         descriptorFinder: DescriptorFinder,
         annotationLoader: AnnotationLoader,
         constantLoader: ConstantLoader,
         packageFragmentProvider: PackageFragmentProvider,
         public val nameResolver: NameResolver
-) : DeserializationGlobalContext(storageManager, descriptorFinder, annotationLoader,
+) : DeserializationGlobalContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
                                  constantLoader, packageFragmentProvider) {
     fun withTypes(containingDeclaration: DeclarationDescriptor): DeserializationContextWithTypes {
         val typeDeserializer = TypeDeserializer(this, null, "Deserializer for ${containingDeclaration.getName()}",
@@ -59,10 +70,9 @@ public open class DeserializationContext(
     }
 
     fun withTypes(containingDeclaration: DeclarationDescriptor, typeDeserializer: TypeDeserializer): DeserializationContextWithTypes {
-        return DeserializationContextWithTypes(storageManager, descriptorFinder, annotationLoader,
-                                               constantLoader, packageFragmentProvider,
-                                               nameResolver, containingDeclaration,
-                                               typeDeserializer)
+        return DeserializationContextWithTypes(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
+                                               constantLoader, packageFragmentProvider, 
+                                               nameResolver, containingDeclaration, typeDeserializer)
     }
 
 }
@@ -70,6 +80,7 @@ public open class DeserializationContext(
 
 class DeserializationContextWithTypes(
         storageManager: StorageManager,
+        moduleDescriptor: ModuleDescriptor,
         descriptorFinder: DescriptorFinder,
         annotationLoader: AnnotationLoader,
         constantLoader: ConstantLoader,
@@ -77,7 +88,7 @@ class DeserializationContextWithTypes(
         nameResolver: NameResolver,
         val containingDeclaration: DeclarationDescriptor,
         val typeDeserializer: TypeDeserializer
-) : DeserializationContext(storageManager, descriptorFinder, annotationLoader,
+) : DeserializationContext(storageManager, moduleDescriptor, descriptorFinder, annotationLoader,
                            constantLoader, packageFragmentProvider, nameResolver) {
     val deserializer: MemberDeserializer = MemberDeserializer(this)
 
