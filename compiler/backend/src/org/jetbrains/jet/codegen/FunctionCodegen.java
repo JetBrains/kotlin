@@ -149,6 +149,8 @@ public class FunctionCodegen extends ParentCodegenAware {
 
         generateJetValueParameterAnnotations(mv, functionDescriptor, jvmSignature);
 
+        generateBridges(functionDescriptor);
+
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES || isAbstractMethod(functionDescriptor, methodContextKind)) {
             generateLocalVariableTable(
                     mv,
@@ -167,8 +169,6 @@ public class FunctionCodegen extends ParentCodegenAware {
         endVisit(mv, null, origin.getElement());
 
         methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
-
-        generateBridges(functionDescriptor);
     }
 
     private void generateParameterAnnotations(

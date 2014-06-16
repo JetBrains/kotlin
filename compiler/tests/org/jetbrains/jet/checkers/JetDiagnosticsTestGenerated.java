@@ -2546,7 +2546,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         }
         
         @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature")
-        @InnerTestClasses({DuplicateJvmSignature.AccidentalOverrides.class, DuplicateJvmSignature.Erasure.class, DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.SpecialNames.class, DuplicateJvmSignature.TraitImpl.class})
+        @InnerTestClasses({DuplicateJvmSignature.AccidentalOverrides.class, DuplicateJvmSignature.Bridges.class, DuplicateJvmSignature.Erasure.class, DuplicateJvmSignature.FunctionAndProperty.class, DuplicateJvmSignature.SpecialNames.class, DuplicateJvmSignature.TraitImpl.class})
         public static class DuplicateJvmSignature extends AbstractJetDiagnosticsTest {
             public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), true);
@@ -2631,6 +2631,29 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("traitPropertyOverriddenByFunctionNoImpl.kt")
                 public void testTraitPropertyOverriddenByFunctionNoImpl() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitPropertyOverriddenByFunctionNoImpl.kt");
+                }
+                
+            }
+            
+            @TestMetadata("compiler/testData/diagnostics/tests/duplicateJvmSignature/bridges")
+            public static class Bridges extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInBridges() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), "org.jetbrains.jet.generators.tests.TestsPackage", new File("compiler/testData/diagnostics/tests/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+                
+                @TestMetadata("class.kt")
+                public void testClass() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/bridges/class.kt");
+                }
+                
+                @TestMetadata("fakeOverrideTrait.kt")
+                public void testFakeOverrideTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/bridges/fakeOverrideTrait.kt");
+                }
+                
+                @TestMetadata("trait.kt")
+                public void testTrait() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/bridges/trait.kt");
                 }
                 
             }
@@ -2856,6 +2879,7 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 TestSuite suite = new TestSuite("DuplicateJvmSignature");
                 suite.addTestSuite(DuplicateJvmSignature.class);
                 suite.addTestSuite(AccidentalOverrides.class);
+                suite.addTestSuite(Bridges.class);
                 suite.addTestSuite(Erasure.class);
                 suite.addTestSuite(FunctionAndProperty.class);
                 suite.addTestSuite(SpecialNames.class);
