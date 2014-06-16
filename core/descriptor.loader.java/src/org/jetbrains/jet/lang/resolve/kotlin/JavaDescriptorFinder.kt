@@ -25,6 +25,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
 import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
+import java.util.Collections
 
 public class JavaDescriptorFinder(
         private val javaDescriptorResolver: DependencyClassByQualifiedNameResolver,
@@ -36,6 +37,6 @@ public class JavaDescriptorFinder(
     }
 
     override fun getClassNames(packageName: FqName): Collection<Name> {
-        return javaPackageFragmentProvider.getClassNamesInPackage(packageName)
+        return Collections.emptyList()
     }
 }

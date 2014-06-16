@@ -56,8 +56,6 @@ public abstract class LazyJavaPackageFragmentScope(
         }
     }
 
-    public abstract override fun getAllClassNames(): Collection<Name>
-
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
     abstract fun getSubPackages(): Collection<FqName>
