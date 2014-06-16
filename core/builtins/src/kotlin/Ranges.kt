@@ -26,6 +26,8 @@ public class ByteRange(public override val start: Byte, public override val end:
 
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, end, 1)
 
+    override fun isEmpty(): Boolean = start > end
+
     override fun equals(other: Any?): Boolean =
         other is ByteRange && start == other.start && end == other.end
 
@@ -43,6 +45,8 @@ public class CharRange(public override val start: Char, public override val end:
     override fun contains(item: Char): Boolean = start <= item && item <= end
 
     override fun iterator(): CharIterator = CharProgressionIterator(start, end, 1)
+
+    override fun isEmpty(): Boolean = start > end
 
     override fun equals(other: Any?): Boolean =
         other is CharRange && start == other.start && end == other.end
@@ -62,6 +66,8 @@ public class ShortRange(public override val start: Short, public override val en
 
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, end, 1)
 
+    override fun isEmpty(): Boolean = start > end
+
     override fun equals(other: Any?): Boolean =
         other is ShortRange && start == other.start && end == other.end
 
@@ -79,6 +85,8 @@ public class IntRange(public override val start: Int, public override val end: I
     override fun contains(item: Int): Boolean = start <= item && item <= end
 
     override fun iterator(): IntIterator = IntProgressionIterator(start, end, 1)
+
+    override fun isEmpty(): Boolean = start > end
 
     override fun equals(other: Any?): Boolean =
         other is IntRange && start == other.start && end == other.end
@@ -98,6 +106,8 @@ public class LongRange(public override val start: Long, public override val end:
 
     override fun iterator(): LongIterator = LongProgressionIterator(start, end, 1)
 
+    override fun isEmpty(): Boolean = start > end
+
     override fun equals(other: Any?): Boolean =
         other is LongRange && start == other.start && end == other.end
 
@@ -116,6 +126,8 @@ public class FloatRange(public override val start: Float, public override val en
 
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, end, 1.0f)
 
+    override fun isEmpty(): Boolean = start > end
+
     override fun equals(other: Any?): Boolean =
         other is FloatRange && java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0
 
@@ -133,6 +145,8 @@ public class DoubleRange(public override val start: Double, public override val 
     override fun contains(item: Double): Boolean = start <= item && item <= end
 
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, end, 1.0)
+
+    override fun isEmpty(): Boolean = start > end
 
     override fun equals(other: Any?): Boolean =
         other is DoubleRange && java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0

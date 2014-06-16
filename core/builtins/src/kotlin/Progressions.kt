@@ -29,6 +29,8 @@ public class ByteProgression(
 
     override fun iterator(): ByteIterator = ByteProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
         other is ByteProgression && start == other.start && end == other.end && increment == other.increment
 
@@ -47,6 +49,8 @@ public class CharProgression(
     }
 
     override fun iterator(): CharIterator = CharProgressionIterator(start, end, increment)
+
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
         other is CharProgression && start == other.start && end == other.end && increment == other.increment
@@ -67,6 +71,8 @@ public class ShortProgression(
 
     override fun iterator(): ShortIterator = ShortProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
         other is ShortProgression && start == other.start && end == other.end && increment == other.increment
 
@@ -86,6 +92,8 @@ public class IntProgression(
 
     override fun iterator(): IntIterator = IntProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
         other is IntProgression && start == other.start && end == other.end && increment == other.increment
 
@@ -104,6 +112,8 @@ public class LongProgression(
     }
 
     override fun iterator(): LongIterator = LongProgressionIterator(start, end, increment)
+
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
         other is LongProgression && start == other.start && end == other.end && increment == other.increment
@@ -125,6 +135,8 @@ public class FloatProgression(
 
     override fun iterator(): FloatIterator = FloatProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
         other is FloatProgression && java.lang.Float.compare(start, other.start) == 0 && java.lang.Float.compare(end, other.end) == 0 && java.lang.Float.compare(increment, other.increment) == 0
 
@@ -144,6 +156,8 @@ public class DoubleProgression(
     }
 
     override fun iterator(): DoubleIterator = DoubleProgressionIterator(start, end, increment)
+
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
 
     override fun equals(other: Any?): Boolean =
         other is DoubleProgression && java.lang.Double.compare(start, other.start) == 0 && java.lang.Double.compare(end, other.end) == 0 && java.lang.Double.compare(increment, other.increment) == 0

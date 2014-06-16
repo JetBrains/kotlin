@@ -71,6 +71,8 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, increment)
 
+    public fun isEmpty(): Boolean = if (increment > 0) start > end else start < end
+
     override fun equals(other: Any?): Boolean =
         other is $progression && ${compare("start")} && ${compare("end")} && ${compare("increment")}
 

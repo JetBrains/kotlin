@@ -66,6 +66,8 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(start, end, $increment)
 
+    override fun isEmpty(): Boolean = start > end
+
     override fun equals(other: Any?): Boolean =
         other is $range && ${compare("start")} && ${compare("end")}
 

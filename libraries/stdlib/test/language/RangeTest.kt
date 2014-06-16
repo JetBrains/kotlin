@@ -18,6 +18,8 @@ public class RangeTest {
 
         assertFalse(10 in range)
         assertFalse(9000 in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun byteRange() {
@@ -34,6 +36,8 @@ public class RangeTest {
 
         assertFalse(10.toByte() in range)
         assertFalse(111.toByte() in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun shortRange() {
@@ -50,6 +54,8 @@ public class RangeTest {
 
         assertFalse(10.toShort() in range)
         assertFalse(239.toShort() in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun longRange() {
@@ -66,6 +72,8 @@ public class RangeTest {
 
         assertFalse(10.toLong() in range)
         assertFalse(10000000.toLong() in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun charRange() {
@@ -82,6 +90,8 @@ public class RangeTest {
 
         assertFalse('z' in range)
         assertFalse('\u1000' in range)
+        
+        assertFalse(range.isEmpty())
     }
 
     test fun doubleRange() {
@@ -100,6 +110,8 @@ public class RangeTest {
         assertFalse(3.15 in range)
         assertFalse(10.0 in range)
         assertFalse(1e200 in range)
+
+        assertFalse(range.isEmpty())
     }
 
     test fun floatRange() {
@@ -118,6 +130,27 @@ public class RangeTest {
         assertFalse(3.15.toFloat() in range)
         assertFalse(10.0.toFloat() in range)
         assertFalse(1e30.toFloat() in range)
+
+        assertFalse(range.isEmpty())
+    }
+
+    test fun isEmpty() {
+        assertTrue((2..1).isEmpty())
+        assertTrue((2L..0L).isEmpty())
+        assertTrue((1.toShort()..-1.toShort()).isEmpty())
+        assertTrue((0.toByte()..-1.toByte()).isEmpty())
+        assertTrue((0f..-3.14f).isEmpty())
+        assertTrue((-2.72..-3.14).isEmpty())
+        assertTrue(('z'..'x').isEmpty())
+
+        assertTrue((1 downTo 2).isEmpty())
+        assertTrue((0L downTo 2L).isEmpty())
+        assertFalse((2 downTo 1).isEmpty())
+        assertFalse((2L downTo 0L).isEmpty())
+        assertTrue(('a' downTo 'z').isEmpty())
+        assertTrue(('z'..'a' step 2).isEmpty())
+
+        assertTrue(("range".."progression").isEmpty())
     }
 
     test fun comparableRange() {
@@ -131,5 +164,7 @@ public class RangeTest {
 
         assertFalse("item" in range)
         assertFalse("trail" in range)
+
+        assertFalse(range.isEmpty())
     }
 }
