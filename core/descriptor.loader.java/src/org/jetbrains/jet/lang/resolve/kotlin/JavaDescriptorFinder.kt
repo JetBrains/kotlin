@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.lang.resolve.kotlin
 
-import org.jetbrains.annotations.Nullable
 import org.jetbrains.jet.descriptors.serialization.ClassId
 import org.jetbrains.jet.descriptors.serialization.DescriptorFinder
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.lang.resolve.java.resolver.JavaPackageFragmentProvider
 import org.jetbrains.jet.lang.resolve.name.FqName
 import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolver
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName
 import java.util.Collections
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver

@@ -28,7 +28,6 @@ import org.jetbrains.jet.lang.resolve.java.resolver.*
 import org.jetbrains.jet.lang.resolve.kotlin.VirtualFileFinder
 import org.jetbrains.jet.lang.resolve.lazy.ResolveSession
 import org.jetbrains.jet.lang.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.jet.lang.types.DependencyClassByQualifiedNameResolverDummyImpl
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingServices
 import org.jetbrains.jet.di.*
 import org.jetbrains.jet.lang.types.expressions.ExpressionTypingComponents
@@ -81,15 +80,11 @@ private fun DependencyInjectorGenerator.commonForTopDownAnalyzer() {
 private fun generatorForTopDownAnalyzerBasic() =
         generator("compiler/frontend/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerBasic") {
             commonForTopDownAnalyzer()
-
-            field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
         }
 
 private fun generatorForTopDownAnalyzerForJs() =
         generator("js/js.translator/src", "org.jetbrains.jet.di", "InjectorForTopDownAnalyzerForJs") {
             commonForTopDownAnalyzer()
-
-            field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
         }
 
 private fun generatorForTopDownAnalyzerForJvm() =
@@ -216,8 +211,6 @@ private fun generatorForLazyResolve() =
             parameter(javaClass<BindingTrace>())
 
             publicField(javaClass<ResolveSession>())
-
-            field(javaClass<DependencyClassByQualifiedNameResolverDummyImpl>())
         }
 
 private fun generator(
