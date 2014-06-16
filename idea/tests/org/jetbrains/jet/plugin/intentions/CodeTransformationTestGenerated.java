@@ -413,6 +413,11 @@ public class CodeTransformationTestGenerated extends AbstractCodeTransformationT
             doTestIfThenToElvis("idea/testData/intentions/branched/ifThenToElvis/ifAsExpression.kt");
         }
         
+        @TestMetadata("ifAsPartOfExpression.kt")
+        public void testIfAsPartOfExpression() throws Exception {
+            doTestIfThenToElvis("idea/testData/intentions/branched/ifThenToElvis/ifAsPartOfExpression.kt");
+        }
+        
         @TestMetadata("lhsEqualsNull.kt")
         public void testLhsEqualsNull() throws Exception {
             doTestIfThenToElvis("idea/testData/intentions/branched/ifThenToElvis/lhsEqualsNull.kt");

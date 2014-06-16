@@ -31,6 +31,8 @@ import org.jetbrains.jet.plugin.intentions.branchedTransformations.inlineLeftSid
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.jet.plugin.intentions.branchedTransformations.throwsNullPointerExceptionWithNoArguments
 import org.jetbrains.jet.lang.psi.JetThrowExpression
+import org.jetbrains.jet.lang.psi.JetPsiUtil
+import org.jetbrains.jet.lang.psi.JetExpression
 
 public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>("if.then.to.elvis", javaClass()) {
 
@@ -73,7 +75,12 @@ public class IfThenToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
                 }
 
         val resultingExprString = "${left.getText()} ?: ${right.getText()}"
-        val elvis = element.replace(resultingExprString) as JetBinaryExpression
+        val resultingExpression = JetPsiUtil.deparenthesize(element.replace(resultingExprString) as? JetExpression)
+
+        assert(resultingExpression is JetBinaryExpression,
+               "Unexpected expression type: ${resultingExpression?.javaClass}, expected JetBinaryExpression, element = '${element.getText()}'")
+
+        val elvis= resultingExpression as JetBinaryExpression
         elvis.inlineLeftSideIfApplicableWithPrompt(editor)
     }
 }
