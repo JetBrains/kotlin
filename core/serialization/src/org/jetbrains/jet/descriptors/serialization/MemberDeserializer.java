@@ -39,11 +39,11 @@ import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
 import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
 
-public class DescriptorDeserializer {
+public class MemberDeserializer {
 
     private final DeserializationContextWithTypes context;
 
-    public DescriptorDeserializer(@NotNull DeserializationContextWithTypes context) {
+    public MemberDeserializer(@NotNull DeserializationContextWithTypes context) {
         this.context = context;
     }
 

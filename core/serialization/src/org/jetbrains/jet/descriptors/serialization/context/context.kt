@@ -24,7 +24,7 @@ import org.jetbrains.jet.descriptors.serialization.NameResolver
 import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor
 import org.jetbrains.jet.descriptors.serialization.TypeDeserializer
-import org.jetbrains.jet.descriptors.serialization.DescriptorDeserializer
+import org.jetbrains.jet.descriptors.serialization.MemberDeserializer
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor
@@ -83,7 +83,7 @@ class DeserializationContextWithTypes(
         val typeDeserializer: TypeDeserializer
 ) : DeserializationContext(storageManager, descriptorFinder, annotationLoader,
                            constantLoader, packageFragmentProvider, memberFilter, nameResolver) {
-    val deserializer: DescriptorDeserializer = DescriptorDeserializer(this)
+    val deserializer: MemberDeserializer = MemberDeserializer(this)
 
     public fun childContext(
             descriptor: DeclarationDescriptor,

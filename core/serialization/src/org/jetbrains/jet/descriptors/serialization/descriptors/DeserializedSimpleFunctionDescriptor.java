@@ -87,10 +87,10 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
             @NotNull AnnotationLoader annotationLoader,
             @NotNull NameResolver nameResolver
     ) {
-        Annotations annotations = DescriptorDeserializer.getAnnotations(containingDeclaration, proto, proto.getFlags(),
-                                                                        AnnotatedCallableKind.FUNCTION,
-                                                                        annotationLoader,
-                                                                        nameResolver);
+        Annotations annotations = MemberDeserializer.getAnnotations(containingDeclaration, proto, proto.getFlags(),
+                                                                    AnnotatedCallableKind.FUNCTION,
+                                                                    annotationLoader,
+                                                                    nameResolver);
         return new DeserializedSimpleFunctionDescriptor(
                 containingDeclaration,
                 null,
