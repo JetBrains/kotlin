@@ -32,6 +32,14 @@ public @interface Anon6 {
     int intValue() default 10;
 }
 
+public @interface Anon7 {
+    Class[] value();
+}
+
+public @interface Anon8 {
+    Class[] classes();
+}
+
 public enum E {
     A, B, C
 }

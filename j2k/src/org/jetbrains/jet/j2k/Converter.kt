@@ -629,7 +629,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             }
         }
 
-        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull()
+        val list = annotations.map { convertAnnotation(it, owner is PsiLocalVariable) }.filterNotNull() //TODO: brackets are also needed for local classes
         return Annotations(list, newLines)
     }
 
@@ -649,32 +649,38 @@ public class Converter private(val project: Project, val settings: ConverterSett
             val attrName = it.getName()?.let { Identifier(it) }
             val value = it.getValue()
 
-            val attrValues = when(value) {
-                is PsiExpression -> listOf(convertExpression(it.getValue() as? PsiExpression, expectedType))
-
-                is PsiArrayInitializerMemberValue -> {
-                    val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
-                    if (isVarArg && it.getName() == null) {
-                        value.getInitializers().map { DummyStringExpression(it.getText()!!)/*TODO*/ }
-                    }
-                    else {
-                        val expectedTypeConverted = typeConverter.convertType(expectedType)
-                        if (expectedTypeConverted is ArrayType) {
-                            val array = createArrayInitializerExpression(expectedTypeConverted, value.getInitializers().map { DummyStringExpression(it.getText()!!)/*TODO*/ })
-                            listOf(if (isVarArg) StarExpression(array) else array)
-                        }
-                        else {
-                            listOf(DummyStringExpression(value.getText()!!))
-                        }
-                    }
-                }
-
-                else -> listOf(DummyStringExpression(value?.getText() ?: ""))
-            }
+            val isVarArg = method == lastMethod /* converted to vararg in Kotlin */
+            val attrValues = convertAttributeValue(value, expectedType, isVarArg, it.getName() == null)
 
             attrValues.map { attrName to it }
         }
         return Annotation(name, arguments, brackets)
+    }
+
+    private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<Expression> {
+        return when(value) {
+            is PsiExpression -> listOf(convertExpression(value as? PsiExpression, expectedType))
+
+            is PsiArrayInitializerMemberValue -> {
+                val componentType = (expectedType as? PsiArrayType)?.getComponentType()
+                val componentsConverted = value.getInitializers().map { convertAttributeValue(it, componentType, false, true).single() }
+                if (isVararg && isUnnamed) {
+                    componentsConverted
+                }
+                else {
+                    val expectedTypeConverted = typeConverter.convertType(expectedType)
+                    if (expectedTypeConverted is ArrayType) {
+                        val array = createArrayInitializerExpression(expectedTypeConverted, componentsConverted)
+                        listOf(if (isVararg) StarExpression(array) else array)
+                    }
+                    else {
+                        listOf(DummyStringExpression(value.getText()!!))
+                    }
+                }
+            }
+
+            else -> listOf(DummyStringExpression(value?.getText() ?: ""))
+        }
     }
 
     private val TYPE_MAP: Map<String, String> = mapOf(

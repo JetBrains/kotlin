@@ -6,6 +6,8 @@ Anon3(e = E.A, stringArray = array<String>(), value = *array<String>("a", "b"))
 Anon4("x", "y")
 Anon5(1)
 Anon6(array<String>("x", "y"))
+Anon7(javaClass<String>(), javaClass<StringBuilder>())
+Anon8(classes = *array<Class<*>>(javaClass<String>(), javaClass<StringBuilder>()))
 class C() {
     Anon5(1) deprecated("") private var field1: Int = 0
 

@@ -7,6 +7,8 @@ import javaApi.*;
 @Anon4({"x", "y"})
 @Anon5(1)
 @Anon6({"x", "y"})
+@Anon7({ String.class, StringBuilder.class })
+@Anon8(classes = { String.class, StringBuilder.class })
 class C {
     @Anon5(1) @Deprecated private int field1 = 0;
 
