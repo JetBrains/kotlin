@@ -22,6 +22,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
+import org.jetbrains.jet.descriptors.serialization.context.ContextPackage;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
@@ -141,7 +142,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return fragments.iterator().next();
         }
         else {
-            ClassDescriptor result = context.getDescriptorFinder().findClass(classId.getOuterClassId());
+            ClassDescriptor result = ContextPackage.deserializeClass(context, classId.getOuterClassId());
             return result != null ? result : ErrorUtils.getErrorModule();
         }
     }
@@ -245,7 +246,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
             return new DeserializedClassDescriptor(context, classObjectProto.getData());
         }
 
-        return context.getDescriptorFinder().findClass(classId.createNestedClassId(getClassObjectName(getName())));
+        return ContextPackage.deserializeClass(context, classId.createNestedClassId(getClassObjectName(getName())));
     }
 
     @NotNull
@@ -488,7 +489,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
                                 .create(storageManager, DeserializedClassDescriptor.this, name, enumMemberNames);
                     }
                     if (nestedClassNames.contains(name)) {
-                        return context.getDescriptorFinder().findClass(classId.createNestedClassId(name));
+                        return ContextPackage.deserializeClass(context, classId.createNestedClassId(name));
                     }
                     return null;
                 }

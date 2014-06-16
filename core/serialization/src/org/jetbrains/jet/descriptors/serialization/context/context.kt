@@ -31,12 +31,6 @@ import org.jetbrains.jet.descriptors.serialization.descriptors.ConstantLoader
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor
 import org.jetbrains.jet.descriptors.serialization.ClassId
-import org.jetbrains.jet.lang.descriptors.PackageViewDescriptor
-import org.jetbrains.jet.lang.resolve.scopes.JetScope
-import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
-import org.jetbrains.jet.lang.resolve.name.Name
-import org.jetbrains.jet.lang.resolve.name.SpecialNames
-import org.jetbrains.jet.lang.descriptors.ClassifierDescriptor
 
 public open class DeserializationGlobalContext(
         public val storageManager: StorageManager,
@@ -109,4 +103,8 @@ class DeserializationContextWithTypes(
         return withTypes(descriptor, childTypeDeserializer)
     }
 
+}
+
+fun DeserializationGlobalContext.deserializeClass(classId: ClassId): ClassDescriptor? {
+    return descriptorFinder.findClass(classId)
 }

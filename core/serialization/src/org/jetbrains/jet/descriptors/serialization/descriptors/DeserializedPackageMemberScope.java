@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.ClassId;
 import org.jetbrains.jet.descriptors.serialization.PackageData;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
+import org.jetbrains.jet.descriptors.serialization.context.ContextPackage;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContext;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationGlobalContext;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
@@ -58,7 +59,7 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     @Nullable
     @Override
     protected ClassDescriptor getClassDescriptor(@NotNull Name name) {
-        return context.getDescriptorFinder().findClass(new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
+        return ContextPackage.deserializeClass(context, new ClassId(packageFqName, FqNameUnsafe.topLevel(name)));
     }
 
     @Override
