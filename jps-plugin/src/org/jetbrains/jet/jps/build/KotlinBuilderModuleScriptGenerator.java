@@ -16,7 +16,6 @@
 
 package org.jetbrains.jet.jps.build;
 
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -100,9 +99,7 @@ public class KotlinBuilderModuleScriptGenerator {
 
         if (noSources) return null;
 
-        String scriptFilename = context.getProjectDescriptor().dataManager.getDataPaths().getDataStorageRoot().getName()
-                   + "#" + StringUtil.sanitizeJavaIdentifier(chunk.getName());
-        File scriptFile = new File(PathManager.getTempPath() + File.separator + scriptFilename + ".script." + FACTORY.getFileExtension());
+        File scriptFile = File.createTempFile("kjps", StringUtil.sanitizeJavaIdentifier(chunk.getName()) + ".script.xml");
 
         writeScriptToFile(context, builder.asText(), scriptFile);
 
