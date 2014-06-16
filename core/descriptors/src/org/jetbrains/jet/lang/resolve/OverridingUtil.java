@@ -346,9 +346,10 @@ public class OverridingUtil {
             @NotNull DescriptorSink sink
     ) {
         Collection<CallableMemberDescriptor> visibleOverridables = filterVisibleFakeOverrides(current, overridables);
-        Modality modality = getMinimalModality(visibleOverridables);
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
+
+        Modality modality = getMinimalModality(effectiveOverridden);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
         CallableMemberDescriptor mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
         CallableMemberDescriptor fakeOverride =

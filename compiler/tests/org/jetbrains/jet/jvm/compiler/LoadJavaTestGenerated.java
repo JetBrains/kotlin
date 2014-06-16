@@ -64,6 +64,16 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/PackageLocalVisibility.java");
         }
         
+        @TestMetadata("PrivateMembers.java")
+        public void testPrivateMembers() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/PrivateMembers.java");
+        }
+        
+        @TestMetadata("PrivateMembersInHierarchy.java")
+        public void testPrivateMembersInHierarchy() throws Exception {
+            doTestCompiledJava("compiler/testData/loadJava/compiledJava/PrivateMembersInHierarchy.java");
+        }
+        
         @TestMetadata("RawTypeWithUpperBound.java")
         public void testRawTypeWithUpperBound() throws Exception {
             doTestCompiledJava("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");

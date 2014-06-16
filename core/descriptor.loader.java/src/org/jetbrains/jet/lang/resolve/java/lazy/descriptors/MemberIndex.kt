@@ -41,13 +41,7 @@ object EMPTY_MEMBER_INDEX : MemberIndex {
     override fun getAllFieldNames() = listOf<Name>()
 }
 
-open class ClassMemberIndex(val jClass: JavaClass, filter: (JavaMember) -> Boolean) : MemberIndex {
-    private val memberFilter = {
-        (m: JavaMember) ->
-        filter(m) &&
-        m.getVisibility() != Visibilities.PRIVATE
-    }
-
+open class ClassMemberIndex(val jClass: JavaClass, val memberFilter: (JavaMember) -> Boolean) : MemberIndex {
     private val methodFilter = {
         (m: JavaMethod) ->
         memberFilter(m) &&

@@ -270,6 +270,7 @@ public class GenerateMockJdk {
             "javax/swing/SwingConstants.class",
             "javax/swing/SwingUtilities.class",
             "javax/swing/table/TableModel.class",
+            "sun/util/calendar/BaseCalendar.class",
             "META-INF/",
             "META-INF/MANIFEST.MF",
     };
