@@ -2603,6 +2603,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/privateClassFunctionOverriddenByProperty.kt");
                 }
                 
+                @TestMetadata("require.kt")
+                public void testRequire() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/require.kt");
+                }
+                
                 @TestMetadata("traitFunctionOverriddenByProperty.kt")
                 public void testTraitFunctionOverriddenByProperty() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/traitFunctionOverriddenByProperty.kt");
