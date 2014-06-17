@@ -20,7 +20,7 @@ class Parameter(val identifier: Identifier,
                 val `type`: Type,
                 val varVal: Parameter.VarValModifier,
                 val annotations: Annotations,
-                val modifiers: Collection<Modifier>) : Element {
+                val modifiers: Collection<Modifier>) : Element() {
     public enum class VarValModifier {
         None
         Val

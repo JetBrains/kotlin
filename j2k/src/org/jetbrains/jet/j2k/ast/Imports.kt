@@ -24,11 +24,11 @@ import org.jetbrains.jet.lang.resolve.java.mapping.JavaToKotlinClassMap
 import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 
-class Import(val name: String) : Element {
+class Import(val name: String) : Element() {
     override fun toKotlin() = "import " + name
 }
 
-class ImportList(public val imports: List<Import>) : Element {
+class ImportList(public val imports: List<Import>) : Element() {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 

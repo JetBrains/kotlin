@@ -26,7 +26,7 @@ class LocalVariable(
         private val initializer: Expression,
         private val isVal: Boolean,
         private val settings: ConverterSettings
-) : Element {
+) : Element() {
 
     override fun toKotlin(): String {
         val start = annotations.toKotlin() + if (isVal) "val" else "var"

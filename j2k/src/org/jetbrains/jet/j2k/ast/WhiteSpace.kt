@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 
-class WhiteSpace(val text: String) : Element {
+class WhiteSpace(val text: String) : Element() {
     override fun toKotlin() = text
 
     override val isEmpty: Boolean

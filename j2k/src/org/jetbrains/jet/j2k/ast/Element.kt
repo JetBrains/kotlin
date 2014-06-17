@@ -16,17 +16,17 @@
 
 package org.jetbrains.jet.j2k.ast
 
-trait Element {
-    public fun toKotlin(): String
+abstract class Element {
+    public abstract fun toKotlin(): String
 
-    public val isEmpty: Boolean get() = false
+    public open val isEmpty: Boolean get() = false
 
-    object Empty : Element {
+    object Empty : Element() {
         override fun toKotlin() = ""
         override val isEmpty: Boolean get() = true
     }
 }
 
-class Comment(val text: String) : Element {
+class Comment(val text: String) : Element() {
     override fun toKotlin() = text
 }

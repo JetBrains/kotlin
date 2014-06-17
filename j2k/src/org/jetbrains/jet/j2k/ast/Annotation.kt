@@ -18,7 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.HashSet
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element {
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element() {
     private fun surroundWithBrackets(text: String) = if (brackets) "[$text]" else text
 
     override fun toKotlin(): String {

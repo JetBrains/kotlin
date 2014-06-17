@@ -21,11 +21,12 @@ import org.jetbrains.jet.j2k.Converter
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
 
-class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element {
+class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
     fun hasWhere(): Boolean = extendsTypes.size() > 1
+
     fun getWhereToKotlin(): String {
         if (hasWhere()) {
-            return name.toKotlin() + " : " + extendsTypes.get(1).toKotlin()
+            return name.toKotlin() + " : " + extendsTypes[1].toKotlin()
         }
 
         return ""
@@ -33,14 +34,14 @@ class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Elemen
 
     override fun toKotlin(): String {
         if (extendsTypes.size() > 0) {
-            return name.toKotlin() + " : " + extendsTypes [0].toKotlin()
+            return name.toKotlin() + " : " + extendsTypes[0].toKotlin()
         }
 
         return name.toKotlin()
     }
 }
 
-class TypeParameterList(val parameters: List<TypeParameter>) : Element {
+class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
     override fun toKotlin(): String = if (!parameters.isEmpty())
         parameters.map {
             it.toKotlin()

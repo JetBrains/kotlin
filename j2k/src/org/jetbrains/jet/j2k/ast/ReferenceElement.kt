@@ -16,6 +16,6 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class ReferenceElement(val reference: Identifier, val types: List<Type>) : Element {
+class ReferenceElement(val reference: Identifier, val types: List<Type>) : Element() {
     override fun toKotlin() = reference.toKotlin() + types.toKotlin(", ", "<", ">")
 }

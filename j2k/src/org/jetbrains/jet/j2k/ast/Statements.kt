@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 
-abstract class Statement() : Element {
+abstract class Statement() : Element() {
     object Empty : Statement() {
         override fun toKotlin() = ""
 

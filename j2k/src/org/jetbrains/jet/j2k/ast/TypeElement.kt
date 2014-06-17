@@ -16,7 +16,7 @@
 
 package org.jetbrains.jet.j2k.ast
 
-class TypeElement(val `type`: Type) : Element {
+class TypeElement(val `type`: Type) : Element() {
     override fun toKotlin() = `type`.toKotlin()
 
     fun toKotlinNotNull(): String = `type`.toNotNullType().toKotlin()

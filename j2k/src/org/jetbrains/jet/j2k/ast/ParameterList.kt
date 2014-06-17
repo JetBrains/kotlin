@@ -17,7 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 
-open class ParameterList(val parameters: List<Parameter>) : Element {
+open class ParameterList(val parameters: List<Parameter>) : Element() {
     override fun toKotlin() = parameters.map { it.toKotlin() }.makeString(", ")
 }
 
