@@ -74,8 +74,9 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
         }
 
         override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
-            val jvmDiagnostics = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
-            val (conflicting, other) = result.forElement(element).partition { it.getFactory() in jvmDiagnostics }
+            val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
+            fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
+            val (conflicting, other) = result.forElement(element).partition { it.getFactory() in jvmDiagnosticFactories }
             if (alreadyReported(psiElement)) {
                 // CONFLICTING_OVERLOADS already reported, no need to duplicate it
                 return other
@@ -83,7 +84,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 
             val filtered = arrayListOf<Diagnostic>()
             conflicting.groupBy {
-                cast(it, jvmDiagnostics).getA().signature.name
+                it.data().signature.name
             }.forEach {
                 val diagnostics = it.getValue()
                 if (diagnostics.size <= 1) {
@@ -99,7 +100,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
                                             // in case of implementation copied from a super trait there will be both diagnostics on the same signature
                                             me.getFactory() == ACCIDENTAL_OVERRIDE && other.getFactory() == CONFLICTING_JVM_DECLARATIONS
                                                // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
-                                               || cast(other, jvmDiagnostics).getA() higherThan cast(me, jvmDiagnostics).getA()
+                                               || other.data() higherThan me.data()
                                             )
                                 }
                             }
