@@ -93,7 +93,7 @@ public class GenerationState {
     @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
 
-    private final JvmFunctionImplTypes functionImplTypes;
+    private final JvmRuntimeTypes runtimeTypes;
 
     @NotNull
     private final ModuleDescriptor module;
@@ -153,7 +153,7 @@ public class GenerationState {
         this.generateClassFilter = generateClassFilter;
 
         ReflectionTypes reflectionTypes = new ReflectionTypes(module);
-        this.functionImplTypes = new JvmFunctionImplTypes(reflectionTypes);
+        this.runtimeTypes = new JvmRuntimeTypes(reflectionTypes);
     }
 
     @NotNull
@@ -220,8 +220,8 @@ public class GenerationState {
     }
 
     @NotNull
-    public JvmFunctionImplTypes getJvmFunctionImplTypes() {
-        return functionImplTypes;
+    public JvmRuntimeTypes getJvmRuntimeTypes() {
+        return runtimeTypes;
     }
 
     public boolean isInlineEnabled() {
