@@ -8,15 +8,15 @@ ERROR: $TESTDATA_DIR$/signatureClash.kt: (9, 5) Platform declaration clash: The 
     fun getA(): kotlin.Int
     fun <get-a>(): kotlin.Int
 ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun getB(): kotlin.Int
-    fun <get-b>(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
 ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
-    fun getB(): kotlin.Int
-    fun <get-b>(): kotlin.Int
-ERROR: $TESTDATA_DIR$/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (16, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+    fun <get-tr>(): kotlin.Int
+    fun getTr(): kotlin.Int
+ERROR: $TESTDATA_DIR$/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+    fun <get-tr>(): kotlin.Int
+    fun getTr(): kotlin.Int
 COMPILATION_ERROR

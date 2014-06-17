@@ -11,3 +11,11 @@ class A : B() {
 
 fun getB(): Int = 1
 val b: Int = 1
+
+trait Tr {
+    fun getTr() = 1
+}
+
+class SubTr : Tr {
+    val tr = 1
+}

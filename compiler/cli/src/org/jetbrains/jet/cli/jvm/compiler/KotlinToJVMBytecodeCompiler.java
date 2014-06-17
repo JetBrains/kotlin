@@ -30,6 +30,7 @@ import kotlin.modules.Module;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.analyzer.AnalyzeExhaust;
+import org.jetbrains.jet.asJava.FilteredJvmDiagnostics;
 import org.jetbrains.jet.cli.common.CLIConfigurationKeys;
 import org.jetbrains.jet.cli.common.CompilerPlugin;
 import org.jetbrains.jet.cli.common.CompilerPluginContext;
@@ -346,7 +347,10 @@ public class KotlinToJVMBytecodeCompiler {
         );
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
         AnalyzerWithCompilerReport.reportDiagnostics(
-                diagnosticHolder.getBindingContext().getDiagnostics(),
+                new FilteredJvmDiagnostics(
+                        diagnosticHolder.getBindingContext().getDiagnostics(),
+                        exhaust.getBindingContext().getDiagnostics()
+                ),
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         );
         return generationState;

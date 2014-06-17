@@ -66,52 +66,62 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
     val result = doGetDiagnostics()
     if (result == null) return null
 
-    return object : Diagnostics by result {
+    return FilteredJvmDiagnostics(result, otherDiagnostics)
+}
 
-        private fun alreadyReported(psiElement: PsiElement): Boolean {
-            return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf(CONFLICTING_OVERLOADS, REDECLARATION) }
-                    || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
+class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnostics: Diagnostics) : Diagnostics by jvmDiagnostics {
+
+    private fun alreadyReported(psiElement: PsiElement): Boolean {
+        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf(CONFLICTING_OVERLOADS, REDECLARATION) }
+                || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
+    }
+
+    override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
+        val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
+        fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
+        val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.getFactory() in jvmDiagnosticFactories }
+        if (alreadyReported(psiElement)) {
+            // CONFLICTING_OVERLOADS already reported, no need to duplicate it
+            return other
         }
 
-        override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
-            val jvmDiagnosticFactories = setOf(CONFLICTING_JVM_DECLARATIONS, ACCIDENTAL_OVERRIDE)
-            fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).getA()
-            val (conflicting, other) = result.forElement(element).partition { it.getFactory() in jvmDiagnosticFactories }
-            if (alreadyReported(psiElement)) {
-                // CONFLICTING_OVERLOADS already reported, no need to duplicate it
-                return other
+        val filtered = arrayListOf<Diagnostic>()
+        conflicting.groupBy {
+            it.data().signature.name
+        }.forEach {
+            val diagnostics = it.getValue()
+            if (diagnostics.size <= 1) {
+                filtered.addAll(diagnostics)
             }
-
-            val filtered = arrayListOf<Diagnostic>()
-            conflicting.groupBy {
-                it.data().signature.name
-            }.forEach {
-                val diagnostics = it.getValue()
-                if (diagnostics.size <= 1) {
-                    filtered.addAll(diagnostics)
-                }
-                else {
-                    filtered.addAll(
-                            diagnostics.filter {
-                                me ->
-                                diagnostics.none {
-                                    other ->
-                                    me != other && (
-                                            // in case of implementation copied from a super trait there will be both diagnostics on the same signature
-                                            me.getFactory() == ACCIDENTAL_OVERRIDE && other.getFactory() == CONFLICTING_JVM_DECLARATIONS
-                                               // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
-                                               || other.data() higherThan me.data()
-                                            )
-                                }
+            else {
+                filtered.addAll(
+                        diagnostics.filter {
+                            me ->
+                            diagnostics.none {
+                                other ->
+                                me != other && (
+                                        // in case of implementation copied from a super trait there will be both diagnostics on the same signature
+                                        me.getFactory() == ACCIDENTAL_OVERRIDE && other.getFactory() == CONFLICTING_JVM_DECLARATIONS
+                                                // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
+                                                || other.data() higherThan me.data()
+                                        )
                             }
-                    )
-                }
+                        }
+                )
             }
-
-            return filtered + other
         }
+
+        return filtered + other
+    }
+
+    override fun all(): Collection<Diagnostic> {
+        return jvmDiagnostics.all()
+            .map { it.getPsiElement() }
+            .toSet()
+            .flatMap { forElement(it) }
     }
 }
+
 
 private fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDeclarationsData): Boolean {
     return when (other.classOrigin.originKind) {
