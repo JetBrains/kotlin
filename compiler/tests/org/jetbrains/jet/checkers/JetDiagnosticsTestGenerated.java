@@ -2103,6 +2103,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/kt4332WhenBranches.kt");
             }
             
+            @TestMetadata("kt5155WhenBranches.kt")
+            public void testKt5155WhenBranches() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/kt5155WhenBranches.kt");
+            }
+            
             @TestMetadata("kt5182WhenBranches.kt")
             public void testKt5182WhenBranches() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/dataFlowInfoTraversal/kt5182WhenBranches.kt");

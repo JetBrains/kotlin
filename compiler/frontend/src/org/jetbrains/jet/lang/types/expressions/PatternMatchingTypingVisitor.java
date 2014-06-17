@@ -100,21 +100,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         DataFlowInfo elseDataFlowInfo = context.dataFlowInfo;
         for (JetWhenEntry whenEntry : expression.getEntries()) {
             DataFlowInfos infosForCondition = getDataFlowInfosForEntryCondition(
-                    whenEntry, context, subjectExpression, subjectType, subjectDataFlowValue);
-            DataFlowInfo dataFlowInfoForEntryBody;
-            if (infosForCondition == null) {
-                dataFlowInfoForEntryBody = elseDataFlowInfo;
-            }
-            else {
-                dataFlowInfoForEntryBody = infosForCondition.thenInfo.and(elseDataFlowInfo);
-                elseDataFlowInfo = elseDataFlowInfo.and(infosForCondition.elseInfo);
-            }
+                    whenEntry, context.replaceDataFlowInfo(elseDataFlowInfo), subjectExpression, subjectType, subjectDataFlowValue);
+            elseDataFlowInfo = elseDataFlowInfo.and(infosForCondition.elseInfo);
 
             JetExpression bodyExpression = whenEntry.getExpression();
             if (bodyExpression != null) {
                 WritableScope scopeToExtend = newWritableScopeImpl(context, "Scope extended in when entry");
                 ExpressionTypingContext newContext = contextWithExpectedType
-                        .replaceScope(scopeToExtend).replaceDataFlowInfo(dataFlowInfoForEntryBody).replaceContextDependency(INDEPENDENT);
+                        .replaceScope(scopeToExtend).replaceDataFlowInfo(infosForCondition.thenInfo).replaceContextDependency(INDEPENDENT);
                 CoercionStrategy coercionStrategy = isStatement ? CoercionStrategy.COERCION_TO_UNIT : CoercionStrategy.NO_COERCION;
                 JetTypeInfo typeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                         scopeToExtend, Collections.singletonList(bodyExpression), coercionStrategy, newContext, context.trace);
@@ -141,7 +134,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         return JetTypeInfo.create(null, commonDataFlowInfo);
     }
 
-    @Nullable
+    @NotNull
     private DataFlowInfos getDataFlowInfosForEntryCondition(
             @NotNull JetWhenEntry whenEntry,
             @NotNull ExpressionTypingContext context,
@@ -149,13 +142,12 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetType subjectType,
             @NotNull DataFlowValue subjectDataFlowValue
     ) {
-        JetWhenCondition[] conditions = whenEntry.getConditions();
         if (whenEntry.isElse()) {
-            return null;
+            return new DataFlowInfos(context.dataFlowInfo);
         }
 
         DataFlowInfos infos = null;
-        for (JetWhenCondition condition : conditions) {
+        for (JetWhenCondition condition : whenEntry.getConditions()) {
             DataFlowInfos conditionInfos = checkWhenCondition(subjectExpression, subjectExpression == null, subjectType, condition,
                                                               context, subjectDataFlowValue);
             if (infos != null) {
@@ -165,7 +157,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 infos = conditionInfos;
             }
         }
-        return infos;
+        return infos != null ? infos : new DataFlowInfos(context.dataFlowInfo);
     }
 
     private DataFlowInfos checkWhenCondition(
@@ -237,6 +229,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         private DataFlowInfos(DataFlowInfo thenInfo, DataFlowInfo elseInfo) {
             this.thenInfo = thenInfo;
             this.elseInfo = elseInfo;
+        }
+
+        private DataFlowInfos(DataFlowInfo info) {
+            this(info, info);
         }
     }
 
