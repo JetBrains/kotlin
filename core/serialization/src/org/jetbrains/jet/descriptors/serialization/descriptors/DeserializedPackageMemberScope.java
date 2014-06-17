@@ -41,13 +41,12 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
             @NotNull StorageManager storageManager,
             @NotNull PackageFragmentDescriptor packageDescriptor,
             @NotNull Deserializers deserializers,
-            @NotNull MemberFilter memberFilter,
             @NotNull DescriptorFinder descriptorFinder,
             @NotNull PackageData packageData
     ) {
         super(storageManager, packageDescriptor,
               DescriptorDeserializer.create(storageManager, packageDescriptor, packageData.getNameResolver(), descriptorFinder, deserializers),
-              getFilteredMembers(packageDescriptor, packageData.getPackageProto(), memberFilter, packageData.getNameResolver()));
+              packageData.getPackageProto().getMemberList());
         this.descriptorFinder = descriptorFinder;
         this.packageFqName = packageDescriptor.getFqName();
     }
@@ -78,21 +77,5 @@ public class DeserializedPackageMemberScope extends DeserializedMemberScope {
     @Override
     protected ReceiverParameterDescriptor getImplicitReceiver() {
         return null;
-    }
-
-    @NotNull
-    private static Collection<ProtoBuf.Callable> getFilteredMembers(
-            @NotNull PackageFragmentDescriptor packageDescriptor,
-            @NotNull ProtoBuf.Package packageProto,
-            @NotNull MemberFilter memberFilter,
-            @NotNull NameResolver nameResolver
-    ) {
-        List<ProtoBuf.Callable> result = new ArrayList<ProtoBuf.Callable>();
-        for (ProtoBuf.Callable member : packageProto.getMemberList()) {
-            if (memberFilter.acceptPackagePartClass(packageDescriptor, member, nameResolver)) {
-                result.add(member);
-            }
-        }
-        return result;
     }
 }

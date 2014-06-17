@@ -22,7 +22,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.*;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.jet.descriptors.serialization.descriptors.Deserializers;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.descriptors.ModuleDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptorImpl;
@@ -53,7 +52,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         packageFragmentProvider = new BuiltinsPackageFragmentProvider();
 
         // TODO: support annotations
-        members = new DeserializedPackageMemberScope(storageManager, this, Deserializers.UNSUPPORTED, MemberFilter.ALWAYS_TRUE,
+        members = new DeserializedPackageMemberScope(storageManager, this, Deserializers.UNSUPPORTED,
                                                      new BuiltInsDescriptorFinder(storageManager), new PackageData(nameResolver, loadPackage()));
     }
 

@@ -43,7 +43,6 @@ import org.jetbrains.jet.lang.resolve.name.FqNameUnsafe
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializers
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage
 import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter
 import org.jetbrains.jet.lang.resolve.java.structure.JavaClass
 
 public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForDecompiler {
@@ -71,7 +70,6 @@ public class DeserializerForDecompiler(val packageDirectory: VirtualFile, val di
                 storageManager,
                 createDummyPackageFragment(packageFqName),
                 deserializers,
-                MemberFilter.ALWAYS_TRUE,
                 descriptorFinder,
                 JavaProtoBufUtil.readPackageDataFrom(annotationData)
         )

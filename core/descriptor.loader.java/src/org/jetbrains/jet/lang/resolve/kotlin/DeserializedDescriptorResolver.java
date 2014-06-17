@@ -24,7 +24,6 @@ import org.jetbrains.jet.descriptors.serialization.DescriptorFinder;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBufUtil;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedClassDescriptor;
 import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPackageMemberScope;
-import org.jetbrains.jet.descriptors.serialization.descriptors.MemberFilter;
 import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.jet.lang.resolve.java.JavaDescriptorResolver;
@@ -110,7 +109,6 @@ public final class DeserializedDescriptorResolver {
         String[] data = readData(kotlinClass, PACKAGE_FACADE);
         if (data != null) {
             return new DeserializedPackageMemberScope(storageManager, descriptor, deserializers,
-                                                      MemberFilter.ALWAYS_TRUE,
                                                       javaDescriptorFinder, JavaProtoBufUtil.readPackageDataFrom(data));
         }
         return null;

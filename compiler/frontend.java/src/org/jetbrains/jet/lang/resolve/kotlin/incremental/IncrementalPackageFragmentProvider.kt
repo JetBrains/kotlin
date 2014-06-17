@@ -40,6 +40,11 @@ import org.jetbrains.jet.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.jet.storage.NotNullLazyValue
 import org.jetbrains.jet.lang.psi.JetNamedFunction
 import org.jetbrains.jet.lang.psi.JetProperty
+import org.jetbrains.jet.descriptors.serialization.ProtoBuf
+import org.jetbrains.jet.lang.resolve.kotlin.PackagePartClassUtils
+import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf
+import org.jetbrains.jet.lang.resolve.java.JvmClassName
+import org.jetbrains.jet.descriptors.serialization.PackageData
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
@@ -52,7 +57,10 @@ public class IncrementalPackageFragmentProvider(
 
 ) : PackageFragmentProvider {
 
-    val memberFilter = CliSourcesMemberFilter(sourceFiles, incrementalCache.getRemovedPackageParts(moduleId, sourceFiles))
+    val packagePartsToNotLoadFromCache = (
+            sourceFiles.map { PackagePartClassUtils.getPackagePartInternalName(it) }
+                    + incrementalCache.getRemovedPackageParts(moduleId, sourceFiles).map { it.getInternalName() }
+            ).toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
     val fqNameToPackageFragment = HashMap<FqName, PackageFragmentDescriptor>()
 
@@ -107,21 +115,31 @@ public class IncrementalPackageFragmentProvider(
                 JetScope.EMPTY
             }
             else {
-                val packageData = JavaProtoBufUtil.readPackageDataFrom(packageDataBytes)
-                DeserializedPackageMemberScope(
-                        storageManager,
-                        this,
-                        deserializers,
-                        memberFilter,
-                        descriptorFinder,
-                        packageData
-                )
+                IncrementalPackageScope(JavaProtoBufUtil.readPackageDataFrom(packageDataBytes))
             }
-
         }
 
         override fun getMemberScope(): JetScope {
             return _memberScope()
+        }
+
+        private inner class IncrementalPackageScope(val packageData: PackageData) : DeserializedPackageMemberScope(
+                storageManager, this@IncrementalPackageFragment, deserializers, descriptorFinder, packageData
+        ) {
+            override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
+                return allMemberProtos
+                        .filter {
+                            member ->
+                            if (member.hasExtension(JavaProtoBuf.implClassName)) {
+                                val shortName = packageData.getNameResolver().getName(member.getExtension(JavaProtoBuf.implClassName)!!)
+                                val internalName = JvmClassName.byFqNameWithoutInnerClasses(fqName.child(shortName)).getInternalName()
+                                internalName !in packagePartsToNotLoadFromCache
+                            }
+                            else {
+                                true
+                            }
+                        }
+            }
         }
     }
 }
