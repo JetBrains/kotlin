@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2013 JetBrains s.r.o.
+ * Copyright 2010-2014 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,14 @@ import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.ExpectedHighlightingData;
+import org.jetbrains.jet.JetTestUtils;
 import org.jetbrains.jet.plugin.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.jet.plugin.PluginTestCaseBase;
+import org.jetbrains.jet.testing.HighlightTestDataUtil;
 
+import java.io.File;
 import java.util.List;
 
 public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureTestCase {
@@ -87,7 +91,22 @@ public class OverrideImplementLineMarkerTest extends JetLightCodeInsightFixtureT
             myFixture.doHighlighting();
 
             List<LineMarkerInfo> markers = DaemonCodeAnalyzerImpl.getLineMarkers(document, project);
-            data.checkLineMarkers(markers, document.getText());
+
+            try {
+                data.checkLineMarkers(markers, document.getText());
+            }
+            catch (AssertionError error) {
+                try {
+                    String actualTextWithTestData = HighlightTestDataUtil.insertInfoTags(markers, false, myFixture.getFile().getText());
+                    JetTestUtils.assertEqualsToFile(new File(getTestDataPath(), fileName()), actualTextWithTestData);
+                }
+                catch (FileComparisonFailure failure) {
+                    throw new FileComparisonFailure(error.getMessage() + "\n" + failure.getMessage(),
+                                                    failure.getExpected(),
+                                                    failure.getActual(),
+                                                    failure.getFilePath());
+                }
+            }
         }
         catch (Exception exc) {
             throw new RuntimeException(exc);
