@@ -85,11 +85,11 @@ class TypeVisitor(private val converter: TypeConverter, private val classesToImp
         if (classType is PsiClassReferenceType) {
             val reference = classType.getReference()
             if (reference.isQualified()) {
-                var result = Identifier(reference.getReferenceName()!!).toKotlin()
+                var result = Identifier.toKotlin(reference.getReferenceName()!!)
                 var qualifier = reference.getQualifier()
                 while (qualifier != null) {
                     val codeRefElement = qualifier as PsiJavaCodeReferenceElement
-                    result = Identifier(codeRefElement.getReferenceName()!!).toKotlin() + "." + result
+                    result = Identifier.toKotlin(codeRefElement.getReferenceName()!!) + "." + result
                     qualifier = codeRefElement.getQualifier()
                 }
                 return Identifier(result)

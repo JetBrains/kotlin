@@ -57,12 +57,16 @@ class SecondaryConstructor(converter: Converter,
     public fun toInitFunction(containingClass: Class): Function {
         val modifiers = HashSet(modifiers)
         val statements = ArrayList(block?.statements ?: listOf())
-        statements.add(ReturnStatement(Identifier("__")))
+        statements.add(ReturnStatement(tempValIdentifier))
         val block = Block(statements)
         val typeParameters = ArrayList<TypeParameter>()
         typeParameters.addAll(containingClass.typeParameterList.parameters)
         return Function(converter, Identifier("create"), comments, annotations, modifiers,
                         ClassType(containingClass.name, typeParameters, Nullability.NotNull, converter.settings),
                         TypeParameterList(typeParameters), parameterList, block, false)
+    }
+
+    class object {
+        public val tempValIdentifier: Identifier = Identifier("__", false)
     }
 }

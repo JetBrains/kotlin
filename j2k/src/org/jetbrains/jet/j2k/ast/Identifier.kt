@@ -26,13 +26,15 @@ class Identifier(
     override val isEmpty: Boolean
         get() = name.isEmpty()
 
-    override fun toKotlin(): String {
+    private fun identifierToKotlin(): String {
         if (quotingNeeded && ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$")) {
             return quote(name)
         }
 
         return name
     }
+
+    override fun toKotlin(): String = identifierToKotlin()
 
     private fun quote(str: String): String = "`" + str + "`"
 
@@ -43,6 +45,8 @@ class Identifier(
 
         val ONLY_KOTLIN_KEYWORDS: Set<String> = setOf(
                 "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
-        );
+        )
+
+        fun toKotlin(name: String): String = Identifier(name).identifierToKotlin()
     }
 }

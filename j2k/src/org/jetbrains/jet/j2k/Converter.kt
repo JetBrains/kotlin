@@ -60,7 +60,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, state.expressionVisitorFactory, factory))
 
     public fun elementToKotlin(element: PsiElement): String
-            = convertTopElement(element)?.toKotlin() ?: ""
+            = convertTopElement(element)?.toKotlin(/*CommentConverter(element)*/) ?: ""
 
     private fun convertTopElement(element: PsiElement?): Element? = when(element) {
         is PsiJavaFile -> convertFile(element)
@@ -69,7 +69,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         is PsiField -> convertField(element)
         is PsiStatement -> convertStatement(element)
         is PsiExpression -> convertExpression(element)
-        is PsiComment -> Comment(element.getText()!!)
+        is PsiComment -> Comment(element.getText()!!/*, listOf(element)*/)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element, false)
         is PsiAnnotation -> convertAnnotation(element, false)
@@ -78,7 +78,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         else -> null
     }
 
-    public fun convertFile(javaFile: PsiJavaFile): File {
+    fun convertFile(javaFile: PsiJavaFile): File {
         var convertedChildren = javaFile.getChildren().map {
             if (it is PsiImportList) {
                 val importList = convertImportList(it)
@@ -100,7 +100,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return File(FileMemberList(convertedChildren), createMainFunction(javaFile))
     }
 
-    public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
+    fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
         return AnonymousClassBody(convertClassBody(anonymousClass), anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false)
     }
 
@@ -248,13 +248,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
     private fun generateArtificialPrimaryConstructor(className: Identifier, classBody: ClassBody): ClassBody {
         assert(classBody.primaryConstructor == null)
 
-        val finalOrWithEmptyInitializerFields = classBody.normalMembers.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.toKotlin().isEmpty() }
-        val initializers = HashMap<String, String>()
+        val finalOrWithEmptyInitializerFields = classBody.normalMembers.members.filterIsInstance(javaClass<Field>()).filter { it.isVal || it.initializer.isEmpty }
+        val initializers = HashMap<Field, Expression>()
         for (constructor in classBody.secondaryConstructors.members) {
             constructor as SecondaryConstructor
 
             for (field in finalOrWithEmptyInitializerFields) {
-                initializers.put(field.identifier.toKotlin(), getDefaultInitializer(field))
+                initializers.put(field, getDefaultInitializer(field))
             }
 
             val newStatements = ArrayList<Statement>()
@@ -262,11 +262,11 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 var keepStatement = true
                 if (statement is AssignmentExpression) {
                     val assignee = statement.left
-                    if (assignee is QualifiedExpression) {
+                    if (assignee is QualifiedExpression && (assignee.qualifier as? Identifier)?.name == SecondaryConstructor.tempValIdentifier.name) {
+                        val name = (assignee.identifier as Identifier).name
                         for (field in finalOrWithEmptyInitializerFields) {
-                            val id = field.identifier.toKotlin()
-                            if (assignee.identifier.toKotlin().endsWith("." + id)) {
-                                initializers.put(id, statement.right.toKotlin())
+                            if (name == field.identifier.name) {
+                                initializers.put(field, statement.right)
                                 keepStatement = false
                             }
 
@@ -280,7 +280,16 @@ public class Converter private(val project: Project, val settings: ConverterSett
                 }
 
             }
-            newStatements.add(0, DummyStringExpression("val __ = " + createPrimaryConstructorInvocation(className.toKotlin(), finalOrWithEmptyInitializerFields, initializers)))
+
+            val initializer = MethodCallExpression.buildNotNull(null, className.name, finalOrWithEmptyInitializerFields.map { initializers[it]!! })
+            val localVar = LocalVariable(SecondaryConstructor.tempValIdentifier,
+                                         Annotations.Empty,
+                                         setOf(),
+                                         { ClassType(className, listOf(), Nullability.NotNull, settings) },
+                                         initializer,
+                                         true,
+                                         settings)
+            newStatements.add(0, DeclarationStatement(listOf(localVar)))
             constructor.block = Block(newStatements)
         }
 
@@ -506,7 +515,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return null
     }
 
-    public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = {true}): Block {
+    fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = {true}): Block {
         if (block == null) return Block.Empty
 
         val filteredChildren = block.getChildren().filter { it !is PsiStatement || statementFilter(it) }
@@ -514,7 +523,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Block(statementList, notEmpty)
     }
 
-    public fun convertStatement(statement: PsiStatement?): Statement {
+    fun convertStatement(statement: PsiStatement?): Statement {
         if (statement == null) return Statement.Empty
 
         statementVisitor.reset()
@@ -522,10 +531,10 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return statementVisitor.result
     }
 
-    public fun convertExpressions(expressions: Array<PsiExpression>): List<Expression>
+    fun convertExpressions(expressions: Array<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
-    public fun convertExpression(expression: PsiExpression?): Expression {
+    fun convertExpression(expression: PsiExpression?): Expression {
         if (expression == null) return Expression.Empty
 
         expressionVisitor.reset()
@@ -533,7 +542,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return expressionVisitor.result
     }
 
-    public fun convertElement(element: PsiElement?): Element {
+    fun convertElement(element: PsiElement?): Element {
         if (element == null) return Element.Empty
 
         val elementVisitor = ElementVisitor(this)
@@ -541,16 +550,16 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return elementVisitor.result
     }
 
-    public fun convertTypeElement(element: PsiTypeElement?): TypeElement
+    fun convertTypeElement(element: PsiTypeElement?): TypeElement
             = TypeElement(if (element == null) Type.Empty else typeConverter.convertType(element.getType()))
 
     private fun convertToNotNullableTypes(types: Array<out PsiType?>): List<Type>
             = types.map { typeConverter.convertType(it, Nullability.NotNull) }
 
-    public fun convertParameterList(parameterList: PsiParameterList): ParameterList
+    fun convertParameterList(parameterList: PsiParameterList): ParameterList
             = ParameterList(parameterList.getParameters().map { convertParameter(it) })
 
-    public fun convertParameter(parameter: PsiParameter,
+    fun convertParameter(parameter: PsiParameter,
                                 nullability: Nullability = Nullability.Default,
                                 varValModifier: Parameter.VarValModifier = Parameter.VarValModifier.None,
                                 modifiers: Collection<Modifier> = listOf()): Parameter {
@@ -562,7 +571,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Parameter(Identifier(parameter.getName()!!), `type`, varValModifier, convertAnnotations(parameter), modifiers)
     }
 
-    public fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
+    fun convertExpression(argument: PsiExpression?, expectedType: PsiType?): Expression {
         if (argument == null) return Identifier.Empty
 
         var expression = convertExpression(argument)
@@ -590,17 +599,13 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return expression
     }
 
-    private fun createPrimaryConstructorInvocation(s: String, fields: List<Field>, initializers: Map<String, String>): String {
-        return s + "(" + fields.map { initializers[it.identifier.toKotlin()] }.makeString(", ") + ")"
-    }
-
-    public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
+    fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
         if (identifier == null) return Identifier.Empty
 
         return Identifier(identifier.getText()!!)
     }
 
-    public fun convertModifiers(owner: PsiModifierListOwner): MutableSet<Modifier>
+    fun convertModifiers(owner: PsiModifierListOwner): MutableSet<Modifier>
             = HashSet(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
 
     private val MODIFIERS_MAP = listOf(
@@ -610,7 +615,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             PsiModifier.PRIVATE to Modifier.PRIVATE
     )
 
-    public fun convertAnnotations(owner: PsiModifierListOwner): Annotations {
+    fun convertAnnotations(owner: PsiModifierListOwner): Annotations {
         val modifierList = owner.getModifierList()
         val annotations = modifierList?.getAnnotations()?.filter { it.getQualifiedName() !in ANNOTATIONS_TO_REMOVE }
         if (annotations == null || annotations.isEmpty()) return Annotations.Empty
@@ -633,7 +638,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
         return Annotations(list, newLines)
     }
 
-    public fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
+    private fun convertAnnotation(annotation: PsiAnnotation, brackets: Boolean): Annotation? {
         val qualifiedName = annotation.getQualifiedName()
         if (qualifiedName == CommonClassNames.JAVA_LANG_DEPRECATED && annotation.getParameterList().getAttributes().isEmpty()) {
             return Annotation(Identifier("deprecated"), listOf(null to LiteralExpression("\"\"")), brackets) //TODO: insert comment

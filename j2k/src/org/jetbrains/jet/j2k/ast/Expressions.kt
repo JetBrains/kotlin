@@ -71,13 +71,13 @@ class SuperExpression(val identifier: Identifier) : Expression() {
     override fun toKotlin() = "super" + identifier.withPrefix("@")
 }
 
-class QualifiedExpression(val expression: Expression, val identifier: Expression) : Expression() {
+class QualifiedExpression(val qualifier: Expression, val identifier: Expression) : Expression() {
     override val isNullable: Boolean
         get() = identifier.isNullable
 
     override fun toKotlin(): String {
-        if (!expression.isEmpty) {
-            return operandToKotlin(expression) + (if (expression.isNullable) "!!." else ".") + identifier.toKotlin()
+        if (!qualifier.isEmpty) {
+            return operandToKotlin(qualifier) + (if (qualifier.isNullable) "!!." else ".") + identifier.toKotlin()
         }
 
         return identifier.toKotlin()

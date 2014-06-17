@@ -33,7 +33,7 @@ open class Field(
     override fun toKotlin(): String {
         val declaration = commentsToKotlin() + annotations.toKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
         return if (initializer.isEmpty)
-            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this))
+            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin())
         else
             declaration + " = " + initializer.toKotlin()
     }

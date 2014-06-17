@@ -16,14 +16,12 @@
 
 package org.jetbrains.jet.j2k
 
-import org.jetbrains.jet.j2k.ast.Identifier
-import org.jetbrains.jet.j2k.ast.Field
 import org.jetbrains.jet.lang.types.expressions.OperatorConventions
-import org.jetbrains.jet.j2k.ast.Nullability
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.jet.j2k.ast.*
 
 fun quoteKeywords(packageName: String): String = packageName.split("\\.").map { Identifier(it).toKotlin() }.makeString(".")
 
@@ -59,19 +57,22 @@ fun PsiModifierListOwner.nullabilityFromAnnotations(): Nullability {
         Nullability.Default
 }
 
-fun getDefaultInitializer(field: Field): String {
-    if (field.`type`.isNullable) {
-        return "null"
+fun getDefaultInitializer(field: Field): Expression {
+    val t = field.`type`
+    if (t.isNullable) {
+        return LiteralExpression("null")
     }
-    else {
-        return when(field.`type`.toKotlin()) {
-            "Boolean" -> "false"
-            "Char" -> "' '"
-            "Double" -> "0." + OperatorConventions.DOUBLE + "()"
-            "Float" -> "0." + OperatorConventions.FLOAT + "()"
-            else -> "0"
+
+    if (t is PrimitiveType) {
+        when(t.`type`.name) {
+            "Boolean" -> return LiteralExpression("false")
+            "Char" -> return LiteralExpression("' '")
+            "Double" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.DOUBLE.toString())
+            "Float" -> return MethodCallExpression.buildNotNull(LiteralExpression("0"), OperatorConventions.FLOAT.toString())
         }
     }
+
+    return LiteralExpression("0")
 }
 
 fun isQualifierEmptyOrThis(ref: PsiReferenceExpression): Boolean {

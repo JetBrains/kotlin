@@ -273,7 +273,7 @@ open class StatementVisitor(public val converter: Converter) : JavaElementVisito
                 var statementList = bodyConverted.statementList
                 var expression: Expression = Expression.Empty
                 for (variable in variables.reverse()) {
-                    val lambda = LambdaExpression(Identifier(variable.getName()!!).toKotlin(), statementList)
+                    val lambda = LambdaExpression(Identifier.toKotlin(variable.getName()!!), statementList)
                     expression = MethodCallExpression.build(converter.convertExpression(variable.getInitializer()), "use", listOf(), listOf(), false, lambda)
                     statementList = StatementList(listOf(expression))
                 }

@@ -124,7 +124,7 @@ public class JavaToKotlinActionUtil {
             if (psiFile instanceof PsiJavaFile && virtualFile != null) {
                 String result = "";
                 try {
-                    result = converter.convertFile((PsiJavaFile) psiFile).toKotlin();
+                    result = converter.elementToKotlin(psiFile);
                 } catch (Exception e) {
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();

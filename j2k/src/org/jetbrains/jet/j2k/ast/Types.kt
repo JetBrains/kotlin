@@ -79,15 +79,7 @@ class ClassType(val `type`: Identifier, val typeArgs: List<Element>, nullability
   : MayBeNullableType(nullability, settings) {
 
     override fun toKotlin(): String {
-        // TODO change to map() when KT-2051 is fixed
-        val parametersToKotlin = ArrayList<String>()
-        for (param in typeArgs) {
-            parametersToKotlin.add(param.toKotlin())
-        }
-        var params: String = if (parametersToKotlin.size() == 0)
-            ""
-        else
-            "<" + parametersToKotlin.makeString(", ") + ">"
+        var params = if (typeArgs.isEmpty()) "" else typeArgs.map { it.toKotlin() }.makeString(", ", "<", ">")
         return `type`.toKotlin() + params + isNullableStr()
     }
 

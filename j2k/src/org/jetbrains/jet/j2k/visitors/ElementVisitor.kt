@@ -46,11 +46,11 @@ class ElementVisitor(private val converter: Converter) : JavaElementVisitor() {
             result = ReferenceElement(Identifier(reference.getReferenceName()!!), types)
         }
         else {
-            var code = Identifier(reference.getReferenceName()!!).toKotlin()
+            var code = Identifier.toKotlin(reference.getReferenceName()!!)
             var qualifier = reference.getQualifier()
             while (qualifier != null) {
                 val p = qualifier as PsiJavaCodeReferenceElement
-                code = Identifier(p.getReferenceName()!!).toKotlin() + "." + code
+                code = Identifier.toKotlin(p.getReferenceName()!!) + "." + code
                 qualifier = p.getQualifier()
             }
             result = ReferenceElement(Identifier(code), types)

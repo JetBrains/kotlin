@@ -306,7 +306,7 @@ class ExpressionVisitor(private val converter: Converter,
         val insideSecondaryConstructor = containingConstructor != null && !containingConstructor.isPrimaryConstructor()
 
         if (insideSecondaryConstructor && (expression.getReference()?.resolve() as? PsiField)?.getContainingClass() == containingConstructor!!.getContainingClass()) {
-            identifier = QualifiedExpression(Identifier("__", false), Identifier(referencedName, isNullable))
+            identifier = QualifiedExpression(SecondaryConstructor.tempValIdentifier, Identifier(referencedName, isNullable))
         }
         else if (insideSecondaryConstructor && expression.isThisConstructorCall()) {
             identifier = Identifier("val __ = " + (containingConstructor?.getContainingClass()?.getNameIdentifier()?.getText() ?: ""))
@@ -336,9 +336,9 @@ class ExpressionVisitor(private val converter: Converter,
                     && !PsiTreeUtil.isAncestor(target.getContainingClass(), expression, true)
                     && !isStaticallyImported(target, expression)) {
                 var member: PsiMember = target
-                var code = Identifier(referencedName).toKotlin()
+                var code = Identifier.toKotlin(referencedName)
                 while (member.getContainingClass() != null) {
-                    code = Identifier(member.getContainingClass()!!.getName()!!).toKotlin() + "." + code
+                    code = Identifier.toKotlin(member.getContainingClass()!!.getName()!!) + "." + code
                     member = member.getContainingClass()!!
                 }
                 result = Identifier(code, false, false)
@@ -354,7 +354,7 @@ class ExpressionVisitor(private val converter: Converter,
 
         }
 
-        result = QualifiedExpression(converter.convertExpression(qualifier), identifier)
+        result = if (qualifier != null) QualifiedExpression(converter.convertExpression(qualifier), identifier) else identifier
     }
 
     override fun visitSuperExpression(expression: PsiSuperExpression) {
