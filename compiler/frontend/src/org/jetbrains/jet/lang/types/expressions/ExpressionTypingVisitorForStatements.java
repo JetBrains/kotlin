@@ -175,6 +175,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                                                                 scope, context.dataFlowInfo, context.trace, /* needCompleteAnalysis = */ true);
 
         ModifiersChecker.create(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor);
+        if (!function.hasBody()) {
+            context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
+        }
         return DataFlowUtils.checkStatementType(function, context, context.dataFlowInfo);
     }
 
