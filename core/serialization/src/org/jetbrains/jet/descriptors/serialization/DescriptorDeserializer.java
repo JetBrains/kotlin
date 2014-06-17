@@ -20,10 +20,7 @@ import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.context.DeserializationContextWithTypes;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedPropertyDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedSimpleFunctionDescriptor;
-import org.jetbrains.jet.descriptors.serialization.descriptors.DeserializedTypeParameterDescriptor;
+import org.jetbrains.jet.descriptors.serialization.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotations;
 import org.jetbrains.jet.lang.descriptors.impl.ConstructorDescriptorImpl;
@@ -41,8 +38,6 @@ import java.util.List;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.Callable;
 import static org.jetbrains.jet.descriptors.serialization.ProtoBuf.TypeParameter;
 import static org.jetbrains.jet.descriptors.serialization.SerializationPackage.*;
-
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 
 public class DescriptorDeserializer {
 
@@ -144,10 +139,9 @@ public class DescriptorDeserializer {
                             DeclarationDescriptor containingDeclaration = context.getContainingDeclaration();
                             assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
                                     : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-                            return context.getConstantDeserializer().loadPropertyConstant(
-                                                            (ClassOrPackageFragmentDescriptor) containingDeclaration,
-                                                            proto, context.getNameResolver(),
-                                                            AnnotatedCallableKind.PROPERTY);
+                            return context.getConstantLoader().loadPropertyConstant(
+                                    (ClassOrPackageFragmentDescriptor) containingDeclaration, proto,
+                                    context.getNameResolver(), AnnotatedCallableKind.PROPERTY);
                         }
                     })
             );
@@ -162,9 +156,7 @@ public class DescriptorDeserializer {
     private CallableMemberDescriptor loadFunction(@NotNull Callable proto) {
         int flags = proto.getFlags();
         DeserializedSimpleFunctionDescriptor function = DeserializedSimpleFunctionDescriptor.create(
-                context.getContainingDeclaration(), proto,
-                context.getAnnotationDeserializer(),
-                context.getNameResolver()
+                context.getContainingDeclaration(), proto, context.getAnnotationLoader(), context.getNameResolver()
         );
         List<TypeParameterDescriptor> typeParameters = new ArrayList<TypeParameterDescriptor>(proto.getTypeParameterCount());
         DeserializationContextWithTypes local = context.childContext(function, proto.getTypeParameterList(), typeParameters);
@@ -209,7 +201,7 @@ public class DescriptorDeserializer {
 
     @NotNull
     private Annotations getAnnotations(@NotNull Callable proto, int flags, @NotNull AnnotatedCallableKind kind) {
-        return getAnnotations(context.getContainingDeclaration(), proto, flags, kind, context.getAnnotationDeserializer(), context.getNameResolver());
+        return getAnnotations(context.getContainingDeclaration(), proto, flags, kind, context.getAnnotationLoader(), context.getNameResolver());
     }
 
     public static Annotations getAnnotations(
@@ -217,15 +209,13 @@ public class DescriptorDeserializer {
             @NotNull Callable proto,
             int flags,
             @NotNull AnnotatedCallableKind kind,
-            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull AnnotationLoader annotationLoader,
             @NotNull NameResolver nameResolver
     ) {
         assert containingDeclaration instanceof ClassOrPackageFragmentDescriptor
                 : "Only members in classes or package fragments should be serialized: " + containingDeclaration;
-        return Flags.HAS_ANNOTATIONS.get(flags)
-               ? annotationDeserializer
-                       .loadCallableAnnotations((ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind)
-               : Annotations.EMPTY;
+        return Flags.HAS_ANNOTATIONS.get(flags) ? annotationLoader.loadCallableAnnotations(
+                (ClassOrPackageFragmentDescriptor) containingDeclaration, proto, nameResolver, kind) : Annotations.EMPTY;
     }
 
     @NotNull
@@ -283,9 +273,8 @@ public class DescriptorDeserializer {
             @NotNull AnnotatedCallableKind kind,
             @NotNull Callable.ValueParameter valueParameter
     ) {
-        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags())
-               ? context.getAnnotationDeserializer()
-                        .loadValueParameterAnnotations(classOrPackage, callable, context.getNameResolver(), kind, valueParameter)
+        return Flags.HAS_ANNOTATIONS.get(valueParameter.getFlags()) ? context.getAnnotationLoader()
+                       .loadValueParameterAnnotations(classOrPackage, callable, context.getNameResolver(), kind, valueParameter)
                : Annotations.EMPTY;
     }
 }

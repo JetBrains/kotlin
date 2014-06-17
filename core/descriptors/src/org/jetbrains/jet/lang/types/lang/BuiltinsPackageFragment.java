@@ -54,7 +54,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
         DeserializationContext context = new DeserializationContext(
                 storageManager, new BuiltInsDescriptorFinder(storageManager),
                 // TODO: support annotations
-                AnnotationDeserializer.UNSUPPORTED, ConstantDeserializer.UNSUPPORTED, packageFragmentProvider,
+                AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider,
                 MemberFilter.ALWAYS_TRUE, nameResolver
         );
         members = new DeserializedPackageMemberScope(this, loadPackage(), context);
@@ -122,7 +122,7 @@ class BuiltinsPackageFragment extends PackageFragmentDescriptorImpl {
 
         public BuiltInsDescriptorFinder(@NotNull StorageManager storageManager) {
             // TODO: support annotations
-            super(storageManager, AnnotationDeserializer.UNSUPPORTED, ConstantDeserializer.UNSUPPORTED, packageFragmentProvider);
+            super(storageManager, AnnotationLoader.UNSUPPORTED, ConstantLoader.UNSUPPORTED, packageFragmentProvider);
 
             classNames = storageManager.createLazyValue(new Function0<Collection<Name>>() {
                 @Override

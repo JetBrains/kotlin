@@ -58,9 +58,9 @@ import org.jetbrains.jet.lang.resolve.java.lazy.GlobalJavaResolverContext;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializedDescriptorResolver;
 import org.jetbrains.jet.lang.resolve.kotlin.DeserializationGlobalContextForJava;
 import org.jetbrains.jet.lang.resolve.kotlin.JavaDescriptorFinder;
-import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.kotlin.AnnotationDescriptorLoader;
 import org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage;
-import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.kotlin.ConstantDescriptorLoader;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.PreDestroy;
 
@@ -110,9 +110,9 @@ public class InjectorForLazyResolveWithJava {
     private final DeserializedDescriptorResolver deserializedDescriptorResolver;
     private final DeserializationGlobalContextForJava deserializationGlobalContextForJava;
     private final JavaDescriptorFinder javaDescriptorFinder;
-    private final AnnotationDescriptorDeserializer annotationDescriptorDeserializer;
+    private final AnnotationDescriptorLoader annotationDescriptorLoader;
     private final DescriptorDeserializersStorage descriptorDeserializersStorage;
-    private final ConstantDescriptorDeserializer constantDescriptorDeserializer;
+    private final ConstantDescriptorLoader constantDescriptorLoader;
     
     public InjectorForLazyResolveWithJava(
         @NotNull Project project,
@@ -161,9 +161,9 @@ public class InjectorForLazyResolveWithJava {
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.javaDescriptorFinder = new JavaDescriptorFinder(getJavaDescriptorResolver(), lazyJavaPackageFragmentProvider);
-        this.annotationDescriptorDeserializer = new AnnotationDescriptorDeserializer();
-        this.constantDescriptorDeserializer = new ConstantDescriptorDeserializer();
-        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(lockBasedStorageManager, javaDescriptorFinder, annotationDescriptorDeserializer, constantDescriptorDeserializer, lazyJavaPackageFragmentProvider, memberFilter);
+        this.annotationDescriptorLoader = new AnnotationDescriptorLoader();
+        this.constantDescriptorLoader = new ConstantDescriptorLoader();
+        this.deserializationGlobalContextForJava = new DeserializationGlobalContextForJava(lockBasedStorageManager, javaDescriptorFinder, annotationDescriptorLoader, constantDescriptorLoader, lazyJavaPackageFragmentProvider, memberFilter);
         this.descriptorDeserializersStorage = new DescriptorDeserializersStorage(lockBasedStorageManager);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);
@@ -244,18 +244,18 @@ public class InjectorForLazyResolveWithJava {
         deserializedDescriptorResolver.setContext(deserializationGlobalContextForJava);
         deserializedDescriptorResolver.setErrorReporter(traceBasedErrorReporter);
 
-        annotationDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
-        annotationDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
-        annotationDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
-        annotationDescriptorDeserializer.setStorage(descriptorDeserializersStorage);
+        annotationDescriptorLoader.setClassResolver(javaDescriptorResolver);
+        annotationDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
+        annotationDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
+        annotationDescriptorLoader.setStorage(descriptorDeserializersStorage);
 
         descriptorDeserializersStorage.setClassResolver(javaDescriptorResolver);
         descriptorDeserializersStorage.setErrorReporter(traceBasedErrorReporter);
 
-        constantDescriptorDeserializer.setClassResolver(javaDescriptorResolver);
-        constantDescriptorDeserializer.setErrorReporter(traceBasedErrorReporter);
-        constantDescriptorDeserializer.setKotlinClassFinder(virtualFileFinder);
-        constantDescriptorDeserializer.setStorage(descriptorDeserializersStorage);
+        constantDescriptorLoader.setClassResolver(javaDescriptorResolver);
+        constantDescriptorLoader.setErrorReporter(traceBasedErrorReporter);
+        constantDescriptorLoader.setKotlinClassFinder(virtualFileFinder);
+        constantDescriptorLoader.setStorage(descriptorDeserializersStorage);
 
         javaClassFinder.initialize();
 

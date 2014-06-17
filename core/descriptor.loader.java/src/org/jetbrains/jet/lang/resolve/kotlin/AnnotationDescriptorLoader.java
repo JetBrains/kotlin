@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jet.descriptors.serialization.JavaProtoBuf;
 import org.jetbrains.jet.descriptors.serialization.NameResolver;
 import org.jetbrains.jet.descriptors.serialization.ProtoBuf;
-import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationDeserializer;
+import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotationLoader;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.jet.lang.descriptors.annotations.AnnotationDescriptorImpl;
@@ -49,7 +49,7 @@ import java.util.Map;
 import org.jetbrains.jet.descriptors.serialization.descriptors.AnnotatedCallableKind;
 import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStorage.MemberSignature;
 
-public class AnnotationDescriptorDeserializer extends BaseDescriptorDeserializer implements AnnotationDeserializer {
+public class AnnotationDescriptorLoader extends BaseDescriptorLoader implements AnnotationLoader {
     @Inject
     @Override
     public void setStorage(@NotNull DescriptorDeserializersStorage storage) {

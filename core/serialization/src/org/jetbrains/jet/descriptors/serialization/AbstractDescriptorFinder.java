@@ -31,12 +31,12 @@ public abstract class AbstractDescriptorFinder implements DescriptorFinder {
 
     public AbstractDescriptorFinder(
             @NotNull StorageManager storageManager,
-            @NotNull AnnotationDeserializer annotationDeserializer,
-            @NotNull ConstantDeserializer constantDeserializer,
+            @NotNull AnnotationLoader annotationLoader,
+            @NotNull ConstantLoader constantLoader,
             @NotNull PackageFragmentProvider packageFragmentProvider
     ) {
         final DeserializationGlobalContext deserializationGlobalContext =
-                new DeserializationGlobalContext(storageManager, this, annotationDeserializer, constantDeserializer,
+                new DeserializationGlobalContext(storageManager, this, annotationLoader, constantLoader,
                                                  packageFragmentProvider, MemberFilter.ALWAYS_TRUE);
         this.findClass = storageManager.createMemoizedFunctionWithNullableValues(new Function1<ClassId, ClassDescriptor>() {
             @Override

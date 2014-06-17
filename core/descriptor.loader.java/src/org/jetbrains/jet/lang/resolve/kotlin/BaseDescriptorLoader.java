@@ -38,7 +38,7 @@ import static org.jetbrains.jet.lang.resolve.kotlin.DescriptorDeserializersStora
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.kotlinFqNameToJavaFqName;
 import static org.jetbrains.jet.lang.resolve.kotlin.DeserializedResolverUtils.naiveKotlinFqName;
 
-public abstract class BaseDescriptorDeserializer {
+public abstract class BaseDescriptorLoader {
     protected DependencyClassByQualifiedNameResolver classResolver;
     protected KotlinClassFinder kotlinClassFinder;
     protected ErrorReporter errorReporter;

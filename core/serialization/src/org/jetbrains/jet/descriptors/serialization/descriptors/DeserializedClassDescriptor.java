@@ -180,7 +180,7 @@ public class DeserializedClassDescriptor extends AbstractClassDescriptor impleme
         if (!Flags.HAS_ANNOTATIONS.get(classProto.getFlags())) {
             return Annotations.EMPTY;
         }
-        return context.getAnnotationDeserializer().loadClassAnnotations(this, classProto);
+        return context.getAnnotationLoader().loadClassAnnotations(this, classProto);
     }
 
     @NotNull

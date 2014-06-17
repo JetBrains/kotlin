@@ -53,7 +53,7 @@ import org.jetbrains.jet.lang.resolve.java.JvmAnnotationNames;
 import org.jetbrains.jet.lang.resolve.java.JvmClassName;
 import org.jetbrains.jet.lang.resolve.java.jvmSignature.JvmMethodSignature;
 import org.jetbrains.jet.lang.resolve.java.lazy.descriptors.LazyJavaPackageFragmentScope;
-import org.jetbrains.jet.lang.resolve.kotlin.BaseDescriptorDeserializer;
+import org.jetbrains.jet.lang.resolve.kotlin.BaseDescriptorLoader;
 import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
@@ -370,7 +370,7 @@ public class PackageCodegen {
     @NotNull
     public static String getPackagePartInternalName(@NotNull DeserializedCallableMemberDescriptor callable) {
         FqName packageFqName = ((PackageFragmentDescriptor) callable.getContainingDeclaration()).getFqName();
-        FqName packagePartFqName = packageFqName.child(BaseDescriptorDeserializer.getPackagePartClassName(callable));
+        FqName packagePartFqName = packageFqName.child(BaseDescriptorLoader.getPackagePartClassName(callable));
         return JvmClassName.byFqNameWithoutInnerClasses(packagePartFqName).getInternalName();
     }
 }

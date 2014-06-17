@@ -84,12 +84,12 @@ public class DeserializedSimpleFunctionDescriptor extends SimpleFunctionDescript
     public static DeserializedSimpleFunctionDescriptor create(
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull ProtoBuf.Callable proto,
-            @NotNull AnnotationDeserializer annotationDeserializer,
+            @NotNull AnnotationLoader annotationLoader,
             @NotNull NameResolver nameResolver
     ) {
         Annotations annotations = DescriptorDeserializer.getAnnotations(containingDeclaration, proto, proto.getFlags(),
                                                                         AnnotatedCallableKind.FUNCTION,
-                                                                        annotationDeserializer,
+                                                                        annotationLoader,
                                                                         nameResolver);
         return new DeserializedSimpleFunctionDescriptor(
                 containingDeclaration,
