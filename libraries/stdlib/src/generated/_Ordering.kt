@@ -134,7 +134,7 @@ public fun <T> Iterable<T>.sortBy(comparator: Comparator<T>): List<T> {
 /**
  * Returns a sorted list of all elements, ordered by results of specified *order* function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(order: (T) -> R): List<T> {
+public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
     java.util.Collections.sort(sortedList, sortBy)
@@ -144,7 +144,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(order: (T) -> R): L
 /**
  * Returns a sorted list of all elements, ordered by results of specified *order* function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(order: (T) -> R): List<T> {
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> order(x).compareTo(order(y)) }
     java.util.Collections.sort(sortedList, sortBy)
@@ -164,7 +164,7 @@ public fun <T : Comparable<T>> Iterable<T>.sortDescending(): List<T> {
 /**
  * Returns a sorted list of all elements, in descending order by results of specified *order* function.
  */
-public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(order: (T) -> R): List<T> {
+public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> -order(x).compareTo(order(y)) }
     java.util.Collections.sort(sortedList, sortBy)
@@ -174,7 +174,7 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortDescendingBy(order: (T
 /**
  * Returns a sorted list of all elements, in descending order by results of specified *order* function.
  */
-public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(order: (T) -> R): List<T> {
+public inline fun <T, R : Comparable<R>> Iterable<T>.sortDescendingBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) order: (T) -> R): List<T> {
     val sortedList = toArrayList()
     val sortBy: Comparator<T> = comparator<T> {(x: T, y: T) -> -order(x).compareTo(order(y)) }
     java.util.Collections.sort(sortedList, sortBy)
