@@ -125,8 +125,11 @@ public class JetFlowInformationProvider {
 
     public void checkFunction(@Nullable JetType expectedReturnType) {
         UnreachableCode unreachableCode = collectUnreachableCode();
-        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, unreachableCode);
         reportUnreachableCode(unreachableCode);
+
+        if (subroutine instanceof JetFunctionLiteral) return;
+
+        checkDefiniteReturn(expectedReturnType != null ? expectedReturnType : NO_EXPECTED_TYPE, unreachableCode);
 
         markTailCalls();
     }
@@ -196,7 +199,7 @@ public class JetFlowInformationProvider {
             JetElement element = localDeclarationInstruction.getElement();
             if (element instanceof JetDeclarationWithBody) {
                 JetDeclarationWithBody localDeclaration = (JetDeclarationWithBody) element;
-                if (localDeclaration instanceof JetFunctionLiteral) continue;
+
                 CallableDescriptor functionDescriptor =
                         (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
                 JetType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
