@@ -6,12 +6,14 @@ import java.util.*
 import org.junit.Test as test
 
 class ComplexMapJsTest : MapJsTest() {
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     // hashMapOf returns ComlpexHashMap because it is Generic
-    override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf<String, Int>()
+    override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf()
 }
 
 class PrimitiveMapJsTest : MapJsTest() {
-    override fun emptyMutableMap(): MutableMap<String, Int> = HashMap<String, Int>()
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
+    override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
 }
 
 abstract class MapJsTest {
@@ -102,12 +104,26 @@ abstract class MapJsTest {
 
     test fun mapValues() {
         val map = createTestMap()
-        assertEquals(VALUES, map.values().toSortedList())
+        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
     }
 
     test fun mapKeySet() {
         val map = createTestMap()
-        assertEquals(KEYS.toSortedList(), map.keySet().toSortedList())
+        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+    }
+
+    test fun mapEntrySet() {
+        val map = createTestMap()
+
+        val actualKeys = ArrayList<String>()
+        val actualValues = ArrayList<Int>()
+        for (e in map.entrySet()) {
+            actualKeys.add(e.getKey())
+            actualValues.add(e.getValue())
+        }
+
+        assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), actualValues.toNormalizedList())
     }
 
     test fun mapContainsKey() {
@@ -194,6 +210,35 @@ abstract class MapJsTest {
         assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
+    }
+
+    test fun mapIteratorImplicitly() {
+        val map = createTestMap()
+
+        val actualKeys = ArrayList<String>()
+        val actualValues = ArrayList<Int>()
+        for (e in map) {
+            actualKeys.add(e.getKey())
+            actualValues.add(e.getValue())
+        }
+
+        assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), actualValues.toNormalizedList())
+    }
+
+    test fun mapIteratorExplicitly() {
+        val map = createTestMap()
+
+        val actualKeys = ArrayList<String>()
+        val actualValues = ArrayList<Int>()
+        val iterator = map.iterator()
+        for (e in iterator) {
+            actualKeys.add(e.getKey())
+            actualValues.add(e.getValue())
+        }
+
+        assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), actualValues.toNormalizedList())
     }
 
     /*
@@ -312,7 +357,10 @@ abstract class MapJsTest {
 
     // Helpers
 
-    fun emptyMap(): Map<String, Int> = HashMap<String, Int>()
+    abstract fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T>
+
+    fun emptyMap(): Map<String, Int> = emptyMutableMap()
+
     abstract fun emptyMutableMap(): MutableMap<String, Int>
 
     fun createTestMap(): Map<String, Int> = createTestMutableMap()

@@ -17,6 +17,27 @@
 (function () {
     "use strict";
 
+    /**
+     * @class
+     * @constructor
+     * @param {K} key
+     * @param {V} value
+     * @template K, V
+     */
+    function Entry(key, value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    Entry.prototype.getKey = function () {
+        return this.key;
+    };
+
+    Entry.prototype.getValue = function () {
+        return this.value;
+    };
+
+
     /** @const */
     var FUNCTION = "function";
     var arrayRemoveAt = (typeof Array.prototype.splice == FUNCTION) ?
@@ -400,26 +421,36 @@
             }
             return res;
         };
+
+        this.entrySet = function () {
+            var result = new Kotlin.ComplexHashSet();
+            var entries = this._entries();
+            var i = entries.length;
+            while (i--) {
+                var entry = entries[i];
+                result.add_za3rmp$(new Entry(entry[0], entry[1]));
+            }
+
+            return result;
+        }
     };
 
     Kotlin.HashTable = Hashtable;
-})();
 
-/**
- * @interface
- * @template Key, Value
- */
-Kotlin.Map = Kotlin.createClassNow();
+    /**
+     * @interface
+     * @template Key, Value
+     */
+    Kotlin.Map = Kotlin.createClassNow();
 
-Kotlin.HashMap = Kotlin.createClassNow(Kotlin.Map,
-    function () {
-        Kotlin.HashTable.call(this);
-    }
-);
+    Kotlin.HashMap = Kotlin.createClassNow(Kotlin.Map,
+        function () {
+            Kotlin.HashTable.call(this);
+        }
+    );
 
-Kotlin.ComplexHashMap = Kotlin.HashMap;
+    Kotlin.ComplexHashMap = Kotlin.HashMap;
 
-(function () {
     /**
      * @class
      * @implements Kotlin.Iterator.<Value>
@@ -529,6 +560,17 @@ Kotlin.ComplexHashMap = Kotlin.HashMap;
                         this.$size++;
                     }
                 }
+            },
+            entrySet: function () {
+                var result = new Kotlin.ComplexHashSet();
+                var map = this.map;
+                for (var key in map) {
+                    if (map.hasOwnProperty(key)) {
+                        result.add_za3rmp$(new Entry(key, map[key]));
+                    }
+                }
+
+                return result;
             },
             keySet: function () {
                 var result = new Kotlin.PrimitiveHashSet();
