@@ -31,6 +31,7 @@ import org.jetbrains.jet.lang.diagnostics.Errors.*
 import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory.*
 import org.jetbrains.jet.lang.psi.JetParameter
 import org.jetbrains.jet.lang.psi.JetClass
+import org.jetbrains.jet.lang.diagnostics.DiagnosticFactory
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics): Diagnostics? {
     fun doGetDiagnostics(): Diagnostics? {
@@ -72,7 +73,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
 class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnostics: Diagnostics) : Diagnostics by jvmDiagnostics {
 
     private fun alreadyReported(psiElement: PsiElement): Boolean {
-        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf(CONFLICTING_OVERLOADS, REDECLARATION) }
+        return otherDiagnostics.forElement(psiElement).any { it.getFactory() in setOf<DiagnosticFactory<*>>(CONFLICTING_OVERLOADS, REDECLARATION, NOTHING_TO_OVERRIDE) }
                 || psiElement is JetPropertyAccessor && alreadyReported(psiElement.getParent()!!)
     }
 

@@ -2593,6 +2593,11 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/genericClassFunction.kt");
                 }
                 
+                @TestMetadata("overridesNothing.kt")
+                public void testOverridesNothing() throws Exception {
+                    doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/overridesNothing.kt");
+                }
+                
                 @TestMetadata("phantomClashWithSamAdapter.kt")
                 public void testPhantomClashWithSamAdapter() throws Exception {
                     doTest("compiler/testData/diagnostics/tests/duplicateJvmSignature/accidentalOverrides/phantomClashWithSamAdapter.kt");
