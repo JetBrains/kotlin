@@ -19,6 +19,7 @@ package org.jetbrains.jet.j2k.ast
 import org.jetbrains.jet.j2k.Converter
 import java.util.HashSet
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.CommentConverter
 
 abstract class Constructor(
         converter: Converter,
@@ -37,13 +38,13 @@ class PrimaryConstructor(converter: Converter,
                          block: Block)
   : Constructor(converter, comments, annotations, modifiers, parameterList, block) {
 
-    public fun signatureToKotlin(): String {
+    public fun signatureToKotlin(commentConverter: CommentConverter): String {
         val accessModifier = modifiers.accessModifier()
         val modifiersString = if (accessModifier != null && accessModifier != Modifier.PUBLIC) " " + accessModifier.toKotlin() else ""
-        return modifiersString + "(" + parameterList.toKotlin() + ")"
+        return modifiersString + "(" + parameterList.toKotlin(commentConverter) + ")"
     }
 
-    public fun bodyToKotlin(): String = block!!.toKotlin()
+    public fun bodyToKotlin(commentConverter: CommentConverter): String = block!!.toKotlin(commentConverter)
 }
 
 class SecondaryConstructor(converter: Converter,

@@ -30,12 +30,18 @@ open class Field(
         private val hasWriteAccesses: Boolean
 ) : Member(comments, annotations, modifiers) {
 
-    override fun toKotlin(): String {
-        val declaration = commentsToKotlin() + annotations.toKotlin() + modifiersToKotlin() + (if (isVal) "val " else "var ") + identifier.toKotlin() + " : " + `type`.toKotlin()
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        val declaration = commentsToKotlin(commentConverter) +
+                annotations.toKotlin(commentConverter) +
+                modifiersToKotlin() +
+                (if (isVal) "val " else "var ") +
+                identifier.toKotlin(commentConverter) +
+                " : " +
+                `type`.toKotlin(commentConverter)
         return if (initializer.isEmpty)
-            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin())
+            declaration + (if (isVal && hasWriteAccesses) "" else " = " + getDefaultInitializer(this).toKotlin(commentConverter))
         else
-            declaration + " = " + initializer.toKotlin()
+            declaration + " = " + initializer.toKotlin(commentConverter)
     }
 
     private fun modifiersToKotlin(): String {

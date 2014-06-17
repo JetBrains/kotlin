@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class EnumConstant(
         identifier: Identifier,
         members: MemberComments,
@@ -25,12 +27,12 @@ class EnumConstant(
         params: Element
 ) : Field(identifier, members, annotations, modifiers, `type`.toNotNullType(), params, true, false) {
 
-    override fun toKotlin(): String {
-        if (initializer.toKotlin().isEmpty()) {
-            return annotations.toKotlin() + identifier.toKotlin()
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        if (initializer.toKotlin(commentConverter).isEmpty()) {
+            return annotations.toKotlin(commentConverter) + identifier.toKotlin(commentConverter)
         }
 
-        return annotations.toKotlin() + identifier.toKotlin() + " : " + `type`.toKotlin() + "(" + initializer.toKotlin() + ")"
+        return annotations.toKotlin(commentConverter) + identifier.toKotlin(commentConverter) + " : " + `type`.toKotlin(commentConverter) + "(" + initializer.toKotlin(commentConverter) + ")"
     }
 
 

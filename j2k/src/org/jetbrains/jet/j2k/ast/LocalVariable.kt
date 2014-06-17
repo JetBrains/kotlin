@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import org.jetbrains.jet.j2k.ConverterSettings
+import org.jetbrains.jet.j2k.CommentConverter
 
 class LocalVariable(
         private val identifier: Identifier,
@@ -28,17 +29,17 @@ class LocalVariable(
         private val settings: ConverterSettings
 ) : Element() {
 
-    override fun toKotlin(): String {
-        val start = annotations.toKotlin() + if (isVal) "val" else "var"
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        val start = annotations.toKotlin(commentConverter) + if (isVal) "val" else "var"
         return if (initializer.isEmpty) {
-            "$start ${identifier.toKotlin()} : ${typeCalculator().toKotlin()}"
+            "$start ${identifier.toKotlin(commentConverter)} : ${typeCalculator().toKotlin(commentConverter)}"
         }
         else {
             val shouldSpecifyType = settings.specifyLocalVariableTypeByDefault
             if (shouldSpecifyType)
-                "$start ${identifier.toKotlin()} : ${typeCalculator().toKotlin()} = ${initializer.toKotlin()}"
+                "$start ${identifier.toKotlin(commentConverter)} : ${typeCalculator().toKotlin(commentConverter)} = ${initializer.toKotlin(commentConverter)}"
             else
-                "$start ${identifier.toKotlin()} = ${initializer.toKotlin()}"
+                "$start ${identifier.toKotlin(commentConverter)} = ${initializer.toKotlin(commentConverter)}"
         }
     }
 }

@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class MethodCallExpression(
         val methodExpression: Expression,
         val arguments: List<Expression>,
@@ -24,15 +26,15 @@ class MethodCallExpression(
         val lambdaArgument: LambdaExpression? = null
 ) : Expression() {
 
-    override fun toKotlin(): String {
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
         val builder = StringBuilder()
-        builder.append(operandToKotlin(methodExpression))
-        builder.append(typeArguments.toKotlin(", ", "<", ">"))
+        builder.append(operandToKotlin(methodExpression, commentConverter))
+        builder.append(typeArguments.toKotlin(commentConverter, ", ", "<", ">"))
         if (arguments.isNotEmpty() || lambdaArgument == null) {
-            builder.append("(").append(arguments.map { it.toKotlin() }.makeString(", ")).append(")")
+            builder.append("(").append(arguments.map { it.toKotlin(commentConverter) }.makeString(", ")).append(")")
         }
         if (lambdaArgument != null) {
-            builder.append(lambdaArgument.toKotlin())
+            builder.append(lambdaArgument.toKotlin(commentConverter))
         }
         return builder.toString()
     }

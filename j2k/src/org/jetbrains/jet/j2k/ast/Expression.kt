@@ -16,12 +16,14 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 
 abstract class Expression() : Statement() {
     open val isNullable: Boolean get() = false
 
     object Empty : Expression() {
-        override fun toKotlin() = ""
+        override fun toKotlinImpl(commentConverter: CommentConverter) = ""
 
         override val isEmpty: Boolean get() = true
     }

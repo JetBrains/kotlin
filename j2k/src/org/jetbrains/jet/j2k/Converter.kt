@@ -60,7 +60,7 @@ public class Converter private(val project: Project, val settings: ConverterSett
             = Converter(project, settings, conversionScope, State(typeConverter, state.methodReturnType, state.expressionVisitorFactory, factory))
 
     public fun elementToKotlin(element: PsiElement): String
-            = convertTopElement(element)?.toKotlin(/*CommentConverter(element)*/) ?: ""
+            = convertTopElement(element)?.toKotlin(CommentConverter(element)) ?: ""
 
     private fun convertTopElement(element: PsiElement?): Element? = when(element) {
         is PsiJavaFile -> convertFile(element)

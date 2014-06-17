@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class Enum(
         name: Identifier,
         comments: MemberComments,
@@ -29,17 +31,17 @@ class Enum(
 ) : Class(name, comments, annotations, modifiers, typeParameterList,
           extendsTypes, baseClassParams, implementsTypes, body) {
 
-    override fun primaryConstructorSignatureToKotlin(): String
-        = body.primaryConstructor?.signatureToKotlin() ?: ""
+    override fun primaryConstructorSignatureToKotlin(commentConverter: CommentConverter): String
+        = body.primaryConstructor?.signatureToKotlin(commentConverter) ?: ""
 
-    override fun toKotlin(): String {
-        return commentsToKotlin() +
-                annotations.toKotlin() +
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        return commentsToKotlin(commentConverter) +
+                annotations.toKotlin(commentConverter) +
                 modifiersToKotlin() +
-                "enum class " + name.toKotlin() +
-                primaryConstructorSignatureToKotlin() +
-                typeParameterList.toKotlin() +
-                implementTypesToKotlin() +
-                body.toKotlin(this)
+                "enum class " + name.toKotlin(commentConverter) +
+                primaryConstructorSignatureToKotlin(commentConverter) +
+                typeParameterList.toKotlin(commentConverter) +
+                implementTypesToKotlin(commentConverter) +
+                body.toKotlin(this, commentConverter)
     }
 }

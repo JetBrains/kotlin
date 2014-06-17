@@ -20,7 +20,7 @@ import com.intellij.psi.*
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.ast.Element
 
-class CommentConverter(private val topElement: PsiElement) {
+class CommentConverter(private val topElement: PsiElement?) {
     private enum class CommentPlacement {
         Before
         SameLineBefore
@@ -42,7 +42,7 @@ class CommentConverter(private val topElement: PsiElement) {
 
     private val allComments: List<CommentInfo> = run {
         val list = ArrayList<CommentInfo>()
-        topElement.accept(object : JavaRecursiveElementVisitor(){
+        topElement?.accept(object : JavaRecursiveElementVisitor(){
             override fun visitComment(comment: PsiComment) {
                 list.add(CommentInfo(comment))
             }
@@ -55,4 +55,8 @@ class CommentConverter(private val topElement: PsiElement) {
 
     }
     */
+
+    class object {
+        val Dummy: CommentConverter = CommentConverter(null)
+    }
 }

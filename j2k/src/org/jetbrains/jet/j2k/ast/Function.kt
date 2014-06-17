@@ -18,6 +18,7 @@ package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
 import org.jetbrains.jet.j2k.Converter
+import org.jetbrains.jet.j2k.CommentConverter
 
 open class Function(
         val converter: Converter,
@@ -55,16 +56,14 @@ open class Function(
         return resultingModifiers.toKotlin()
     }
 
-    private fun returnTypeToKotlin() = if (!`type`.isUnit()) " : " + `type`.toKotlin() + " " else " "
-
-    override fun toKotlin(): String {
-        return commentsToKotlin() +
-                annotations.toKotlin() +
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        return commentsToKotlin(commentConverter) +
+                annotations.toKotlin(commentConverter) +
                 modifiersToKotlin() +
-                "fun ${typeParameterList.toKotlin().withSuffix(" ")}${name.toKotlin()}" +
-                "(${parameterList.toKotlin()})" +
-                returnTypeToKotlin() +
-                typeParameterList.whereToKotlin() +
-                block?.toKotlin()
+                "fun ${typeParameterList.toKotlin(commentConverter).withSuffix(" ")}${name.toKotlin(commentConverter)}" +
+                "(${parameterList.toKotlin(commentConverter)})" +
+                (if (!`type`.isUnit()) " : " + `type`.toKotlin(commentConverter) + " " else " ") +
+                typeParameterList.whereToKotlin(commentConverter) +
+                block?.toKotlin(commentConverter)
     }
 }

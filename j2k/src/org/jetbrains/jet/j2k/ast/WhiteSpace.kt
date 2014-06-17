@@ -16,9 +16,11 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 
 class WhiteSpace(val text: String) : Element() {
-    override fun toKotlin() = text
+    override fun toKotlinImpl(commentConverter: CommentConverter) = text
 
     override val isEmpty: Boolean
         get() = text.isEmpty()

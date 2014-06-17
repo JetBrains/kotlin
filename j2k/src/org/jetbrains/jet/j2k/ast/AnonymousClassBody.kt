@@ -16,10 +16,9 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
-import java.util.Collections
+import org.jetbrains.jet.j2k.CommentConverter
 
 class AnonymousClassBody(body: ClassBody, val extendsTrait: Boolean)
 : Class(Identifier(""), MemberComments.Empty, Annotations.Empty, setOf(), TypeParameterList.Empty, listOf(), listOf(), listOf(), body) {
-    override fun toKotlin() = body.toKotlin(null)
+    override fun toKotlinImpl(commentConverter: CommentConverter) = body.toKotlin(null, commentConverter)
 }

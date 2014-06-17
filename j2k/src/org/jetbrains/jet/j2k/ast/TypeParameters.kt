@@ -20,37 +20,39 @@ import com.intellij.psi.PsiTypeParameter
 import org.jetbrains.jet.j2k.Converter
 import com.intellij.psi.PsiTypeParameterList
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.CommentConverter
 
 class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
     fun hasWhere(): Boolean = extendsTypes.size() > 1
 
-    fun getWhereToKotlin(): String {
+    fun whereToKotlin(commentConverter: CommentConverter): String {
         if (hasWhere()) {
-            return name.toKotlin() + " : " + extendsTypes[1].toKotlin()
+            return name.toKotlin(commentConverter) + " : " + extendsTypes[1].toKotlin(commentConverter)
         }
 
         return ""
     }
 
-    override fun toKotlin(): String {
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
         if (extendsTypes.size() > 0) {
-            return name.toKotlin() + " : " + extendsTypes[0].toKotlin()
+            return name.toKotlin(commentConverter) + " : " + extendsTypes[0].toKotlin(commentConverter)
         }
 
-        return name.toKotlin()
+        return name.toKotlin(commentConverter)
     }
 }
 
 class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
-    override fun toKotlin(): String = if (!parameters.isEmpty())
-        parameters.map {
-            it.toKotlin()
-        }.makeString(", ", "<", ">")
-    else ""
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        return if (parameters.isNotEmpty())
+            parameters.map { it.toKotlin(commentConverter) }.makeString(", ", "<", ">")
+        else
+            ""
+    }
 
-    fun whereToKotlin(): String {
+    fun whereToKotlin(commentConverter: CommentConverter): String {
         if (hasWhere()) {
-            val wheres = parameters.map { it.getWhereToKotlin() }
+            val wheres = parameters.map { it.whereToKotlin(commentConverter) }
             return "where " + wheres.makeString(", ")
         }
         return ""
@@ -71,7 +73,9 @@ fun Converter.convertTypeParameter(psiTypeParameter: PsiTypeParameter): TypePara
     return convertElement(psiTypeParameter) as TypeParameter
 }
 
-fun Converter.convertTypeParameterList(psiTypeParameterlist: PsiTypeParameterList?): TypeParameterList {
-    return if (psiTypeParameterlist == null) TypeParameterList.Empty
-    else TypeParameterList(psiTypeParameterlist.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
+fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?): TypeParameterList {
+    return if (typeParameterList != null)
+        TypeParameterList(typeParameterList.getTypeParameters()!!.toList().map { convertTypeParameter(it) })
+    else
+        TypeParameterList.Empty
 }

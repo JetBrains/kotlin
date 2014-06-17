@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class DummyStringExpression(val string: String) : Expression() {
-    override fun toKotlin(): String = string
+    override fun toKotlinImpl(commentConverter: CommentConverter): String = string
 }

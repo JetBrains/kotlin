@@ -16,8 +16,10 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 
 open class ParameterList(val parameters: List<Parameter>) : Element() {
-    override fun toKotlin() = parameters.map { it.toKotlin() }.makeString(", ")
+    override fun toKotlinImpl(commentConverter: CommentConverter) = parameters.map { it.toKotlin(commentConverter) }.makeString(", ")
 }
 

@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class NewClassExpression(
         val name: Element,
         val arguments: List<Expression>,
@@ -23,18 +25,18 @@ class NewClassExpression(
         val anonymousClass: AnonymousClassBody? = null
 ) : Expression() {
 
-    override fun toKotlin(): String {
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
         val callOperator = if (qualifier.isNullable) "!!." else "."
-        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin() + callOperator
-        val appliedArguments = arguments.toKotlin(", ")
+        val qualifier = if (qualifier.isEmpty) "" else qualifier.toKotlin(commentConverter) + callOperator
+        val appliedArguments = arguments.toKotlin(commentConverter, ", ")
         return if (anonymousClass != null) {
             if (anonymousClass.extendsTrait)
-                "object : " + qualifier + name.toKotlin() + anonymousClass.toKotlin()
+                "object : " + qualifier + name.toKotlin(commentConverter) + anonymousClass.toKotlin(commentConverter)
             else
-                "object : " + qualifier + name.toKotlin() + "(" + appliedArguments + ")" + anonymousClass.toKotlin()
+                "object : " + qualifier + name.toKotlin(commentConverter) + "(" + appliedArguments + ")" + anonymousClass.toKotlin(commentConverter)
         }
         else{
-            qualifier + name.toKotlin() + "(" + appliedArguments + ")"
+            qualifier + name.toKotlin(commentConverter) + "(" + appliedArguments + ")"
         }
     }
 }

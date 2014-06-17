@@ -17,12 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
-import com.intellij.psi.PsiClass
-import org.jetbrains.jet.j2k.Converter
-import java.util.HashSet
-import com.intellij.psi.PsiMember
-import java.util.LinkedHashMap
-import com.intellij.psi.PsiElement
+import org.jetbrains.jet.j2k.CommentConverter
 
 class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NoSpace) {
     class object {
@@ -31,7 +26,7 @@ class MemberComments(elements: List<Element>) : WhiteSpaceSeparatedElementList(e
 }
 
 abstract class Member(val comments: MemberComments, val annotations: Annotations, val modifiers: Set<Modifier>) : Element() {
-    fun commentsToKotlin(): String = comments.toKotlin()
+    fun commentsToKotlin(commentConverter: CommentConverter): String = comments.toKotlin(commentConverter)
 }
 
 //member itself and all the elements before it in the code (comments, whitespaces)
@@ -48,23 +43,25 @@ class ClassBody (
         val normalMembers: MemberList,
         val classObjectMembers: MemberList) {
 
-    fun toKotlin(containingClass: Class?): String {
-        val innerBody = normalMembers.toKotlin() + primaryConstructorBodyToKotlin() + classObjectToKotlin(containingClass)
+    fun toKotlin(containingClass: Class?, commentConverter: CommentConverter): String {
+        val innerBody = normalMembers.toKotlin(commentConverter) +
+                primaryConstructorBodyToKotlin(commentConverter) +
+                classObjectToKotlin(containingClass, commentConverter)
         return if (innerBody.trim().isNotEmpty()) " {" + innerBody + "}" else ""
     }
 
-    private fun primaryConstructorBodyToKotlin(): String {
+    private fun primaryConstructorBodyToKotlin(commentConverter: CommentConverter): String {
         val constructor = primaryConstructor
         if (constructor != null && !(constructor.block?.isEmpty ?: true)) {
-            return "\n" + constructor.bodyToKotlin() + "\n"
+            return "\n" + constructor.bodyToKotlin(commentConverter) + "\n"
         }
         return ""
     }
 
-    private fun classObjectToKotlin(containingClass: Class?): String {
+    private fun classObjectToKotlin(containingClass: Class?, commentConverter: CommentConverter): String {
         val secondaryConstructorsAsStaticInitFunctions = secondaryConstructorsAsStaticInitFunctions(containingClass)
         if (secondaryConstructorsAsStaticInitFunctions.isEmpty() && classObjectMembers.isEmpty()) return ""
-        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin()}${classObjectMembers.toKotlin()}}"
+        return "\nclass object {${secondaryConstructorsAsStaticInitFunctions.toKotlin(commentConverter)}${classObjectMembers.toKotlin(commentConverter)}}"
     }
 
     private fun secondaryConstructorsAsStaticInitFunctions(containingClass: Class?): MemberList {

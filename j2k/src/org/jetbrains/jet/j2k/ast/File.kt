@@ -16,10 +16,12 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class FileMemberList(elements: List<Element>) : WhiteSpaceSeparatedElementList(elements, WhiteSpace.NewLine, false)
 
 class PackageStatement(val packageName: String) : Element() {
-    override fun toKotlin(): String = "package " + packageName
+    override fun toKotlinImpl(commentConverter: CommentConverter): String = "package " + packageName
 }
 
 class File(
@@ -27,7 +29,7 @@ class File(
         val mainFunction: String
 ) : Element() {
 
-    override fun toKotlin(): String {
-        return body.toKotlin() + mainFunction
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        return body.toKotlin(commentConverter) + mainFunction
     }
 }

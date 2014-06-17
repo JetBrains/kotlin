@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 
 class Identifier(
         val name: String,
@@ -26,7 +28,7 @@ class Identifier(
     override val isEmpty: Boolean
         get() = name.isEmpty()
 
-    private fun identifierToKotlin(): String {
+    private fun toKotlin(): String {
         if (quotingNeeded && ONLY_KOTLIN_KEYWORDS.contains(name) || name.contains("$")) {
             return quote(name)
         }
@@ -34,7 +36,7 @@ class Identifier(
         return name
     }
 
-    override fun toKotlin(): String = identifierToKotlin()
+    override fun toKotlinImpl(commentConverter: CommentConverter): String = toKotlin()
 
     private fun quote(str: String): String = "`" + str + "`"
 
@@ -47,6 +49,6 @@ class Identifier(
                 "package", "as", "type", "val", "var", "fun", "is", "in", "object", "when", "trait", "This"
         )
 
-        fun toKotlin(name: String): String = Identifier(name).identifierToKotlin()
+        fun toKotlin(name: String): String = Identifier(name).toKotlin()
     }
 }

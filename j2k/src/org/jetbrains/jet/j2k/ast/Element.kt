@@ -16,17 +16,21 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 abstract class Element {
-    public abstract fun toKotlin(): String
+    public fun toKotlin(commentConverter: CommentConverter): String = toKotlinImpl(commentConverter)
+
+    protected abstract fun toKotlinImpl(commentConverter: CommentConverter): String
 
     public open val isEmpty: Boolean get() = false
 
     object Empty : Element() {
-        override fun toKotlin() = ""
+        override fun toKotlinImpl(commentConverter: CommentConverter) = ""
         override val isEmpty: Boolean get() = true
     }
 }
 
 class Comment(val text: String) : Element() {
-    override fun toKotlin() = text
+    override fun toKotlinImpl(commentConverter: CommentConverter) = text
 }

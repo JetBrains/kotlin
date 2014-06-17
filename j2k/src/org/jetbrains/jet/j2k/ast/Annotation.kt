@@ -16,30 +16,32 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import java.util.HashSet
+import org.jetbrains.jet.j2k.CommentConverter
 
 class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Expression>>, val brackets: Boolean) : Element() {
     private fun surroundWithBrackets(text: String) = if (brackets) "[$text]" else text
 
-    override fun toKotlin(): String {
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
         if (arguments.isEmpty()) {
-            return surroundWithBrackets(name.toKotlin())
+            return surroundWithBrackets(name.toKotlin(commentConverter))
         }
 
         val argsText = arguments.map {
             if (it.first != null)
-                it.first!!.toKotlin() + " = " + it.second.toKotlin()
+                it.first!!.toKotlin(commentConverter) + " = " + it.second.toKotlin(commentConverter)
             else
-                it.second.toKotlin()
+                it.second.toKotlin(commentConverter)
         }.makeString(", ")
-        return surroundWithBrackets(name.toKotlin() + "(" + argsText + ")")
+        return surroundWithBrackets(name.toKotlin(commentConverter) + "(" + argsText + ")")
     }
 }
 
-class Annotations(val annotations: List<Annotation>, val newLines: Boolean) {
+class Annotations(val annotations: List<Annotation>, val newLines: Boolean) : Element() {
     private val br = if (newLines) "\n" else " "
 
-    fun toKotlin(): String = if (annotations.isNotEmpty()) annotations.map { it.toKotlin() }.makeString(br) + br else ""
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
+        return if (annotations.isNotEmpty()) annotations.map { it.toKotlin(commentConverter) }.makeString(br) + br else ""
+    }
 
     fun plus(other: Annotations) = Annotations(annotations + other.annotations, newLines || other.newLines)
 

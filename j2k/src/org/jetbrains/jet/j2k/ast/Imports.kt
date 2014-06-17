@@ -25,14 +25,14 @@ import com.intellij.psi.PsiJavaCodeReferenceElement
 import org.jetbrains.jet.asJava.KotlinLightClassForPackage
 
 class Import(val name: String) : Element() {
-    override fun toKotlin() = "import " + name
+    override fun toKotlinImpl(commentConverter: CommentConverter) = "import " + name
 }
 
 class ImportList(public val imports: List<Import>) : Element() {
     override val isEmpty: Boolean
         get() = imports.isEmpty()
 
-    override fun toKotlin() = imports.toKotlin("\n")
+    override fun toKotlinImpl(commentConverter: CommentConverter) = imports.toKotlin(commentConverter, "\n")
 }
 
 public fun Converter.convertImportList(importList: PsiImportList): ImportList =

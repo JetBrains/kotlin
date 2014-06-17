@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 enum class Modifier(val name: String) {
     PUBLIC: Modifier("public")
     PROTECTED: Modifier("protected")

@@ -16,8 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
-import org.jetbrains.jet.j2k.Converter
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.CommentConverter
 
 class Trait(name: Identifier,
             comments: MemberComments,
@@ -33,7 +33,7 @@ class Trait(name: Identifier,
     override val keyword: String
         get() = "trait"
 
-    override fun primaryConstructorSignatureToKotlin() = ""
+    override fun primaryConstructorSignatureToKotlin(commentConverter: CommentConverter) = ""
 
     override fun modifiersToKotlin(): String {
         val modifierList = ArrayList<Modifier>()

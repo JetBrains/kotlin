@@ -16,6 +16,8 @@
 
 package org.jetbrains.jet.j2k.ast
 
+import org.jetbrains.jet.j2k.CommentConverter
+
 class ReferenceElement(val reference: Identifier, val types: List<Type>) : Element() {
-    override fun toKotlin() = reference.toKotlin() + types.toKotlin(", ", "<", ">")
+    override fun toKotlinImpl(commentConverter: CommentConverter) = reference.toKotlin(commentConverter) + types.toKotlin(commentConverter, ", ", "<", ">")
 }

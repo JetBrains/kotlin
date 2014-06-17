@@ -17,6 +17,7 @@
 package org.jetbrains.jet.j2k.ast
 
 import java.util.ArrayList
+import org.jetbrains.jet.j2k.CommentConverter
 
 fun Block(statements: List<Statement>, notEmpty: Boolean = false): Block {
     val elements = ArrayList<Element>()
@@ -33,9 +34,9 @@ class Block(val statementList: StatementList, val notEmpty: Boolean = false) : S
     override val isEmpty: Boolean
         get() = !notEmpty && statements.all { it.isEmpty }
 
-    override fun toKotlin(): String {
+    override fun toKotlinImpl(commentConverter: CommentConverter): String {
         if (!isEmpty) {
-            return "{${statementList.toKotlin()}}"
+            return "{${statementList.toKotlin(commentConverter)}}"
         }
 
         return ""
