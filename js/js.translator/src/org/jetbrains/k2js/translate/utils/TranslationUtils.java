@@ -267,13 +267,13 @@ public final class TranslationUtils {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getReceiverParameter();
         if (receiverParameter != null) {
-            argTypes.append(getJetTypeName(receiverParameter.getType())).append(".");
+            argTypes.append(getJetTypeFqName(receiverParameter.getType())).append(".");
         }
 
         argTypes.append(StringUtil.join(descriptor.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
             @Override
             public String fun(ValueParameterDescriptor descriptor) {
-                return getJetTypeName(descriptor.getType());
+                return getJetTypeFqName(descriptor.getType());
             }
         }, ","));
 
@@ -281,12 +281,12 @@ public final class TranslationUtils {
     }
 
     @NotNull
-    private static String getJetTypeName(@NotNull JetType jetType) {
+    public static String getJetTypeFqName(@NotNull JetType jetType) {
         ClassifierDescriptor declaration = jetType.getConstructor().getDeclarationDescriptor();
         assert declaration != null;
 
         if (declaration instanceof TypeParameterDescriptor) {
-            return getJetTypeName(((TypeParameterDescriptor) declaration).getUpperBoundsAsType());
+            return getJetTypeFqName(((TypeParameterDescriptor) declaration).getUpperBoundsAsType());
         }
 
         return getFqName(declaration).asString();

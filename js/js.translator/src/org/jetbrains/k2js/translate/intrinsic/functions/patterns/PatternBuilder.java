@@ -23,6 +23,7 @@ import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.OverrideResolver;
 import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.k2js.translate.context.Namer;
+import org.jetbrains.k2js.translate.utils.TranslationUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -127,7 +128,7 @@ public final class PatternBuilder {
     public static class DescriptorPredicateImpl implements DescriptorPredicate {
         private final String[] names;
 
-        private boolean receiverParameterExists;
+        private String receiverFqName;
 
         private boolean checkOverridden;
 
@@ -135,8 +136,8 @@ public final class PatternBuilder {
             this.names = names;
         }
 
-        public DescriptorPredicateImpl receiverExists() {
-            this.receiverParameterExists = true;
+        public DescriptorPredicateImpl isExtensionOf(String receiverFqName) {
+            this.receiverFqName = receiverFqName;
             return this;
         }
 
@@ -167,8 +168,13 @@ public final class PatternBuilder {
 
         @Override
         public boolean apply(@NotNull FunctionDescriptor functionDescriptor) {
-            if ((functionDescriptor.getReceiverParameter() == null) == receiverParameterExists) {
-                return false;
+            ReceiverParameterDescriptor actualReceiver = functionDescriptor.getReceiverParameter();
+            if (actualReceiver != null) {
+                if (receiverFqName == null) return false;
+
+                String actualReceiverFqName = TranslationUtils.getJetTypeFqName(actualReceiver.getType());
+
+                if (!actualReceiverFqName.equals(receiverFqName)) return false;
             }
 
             if (!(functionDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {

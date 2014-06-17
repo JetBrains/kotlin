@@ -159,18 +159,18 @@ public final class TopLevelFIF extends CompositeFIF {
 
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_EQUALS);
-        add(pattern("kotlin", "toString").receiverExists(), TO_STRING);
-        add(pattern("kotlin", "equals").receiverExists(), KOTLIN_EQUALS);
-        add(pattern("kotlin", "identityEquals").receiverExists(), IDENTITY_EQUALS);
+        add(pattern("kotlin", "toString").isExtensionOf("kotlin.Any"), TO_STRING);
+        add(pattern("kotlin", "equals").isExtensionOf("kotlin.Any"), KOTLIN_EQUALS);
+        add(pattern("kotlin", "identityEquals").isExtensionOf("kotlin.Any"), IDENTITY_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
         add(pattern("kotlin", "PropertyMetadataImpl", "<init>"), PROPERTY_METADATA_IMPL);
-        add(pattern("kotlin", "iterator").receiverExists(), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("js", "set").receiverExists(), NATIVE_MAP_SET);
+        add(pattern("js", "set").isExtensionOf("kotlin.MutableMap"), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
