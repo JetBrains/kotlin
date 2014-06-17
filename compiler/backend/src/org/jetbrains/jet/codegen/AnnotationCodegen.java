@@ -19,7 +19,6 @@ package org.jetbrains.jet.codegen;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.jet.codegen.state.JetTypeMapper;
 import org.jetbrains.jet.lang.descriptors.*;
 import org.jetbrains.jet.lang.descriptors.annotations.Annotated;
@@ -30,7 +29,6 @@ import org.jetbrains.jet.lang.psi.JetClass;
 import org.jetbrains.jet.lang.psi.JetModifierList;
 import org.jetbrains.jet.lang.psi.JetModifierListOwner;
 import org.jetbrains.jet.lang.resolve.BindingContext;
-import org.jetbrains.jet.lang.resolve.DescriptorUtils;
 import org.jetbrains.jet.lang.resolve.calls.model.ResolvedCall;
 import org.jetbrains.jet.lang.resolve.constants.*;
 import org.jetbrains.jet.lang.resolve.constants.StringValue;
@@ -38,6 +36,7 @@ import org.jetbrains.jet.lang.resolve.name.FqName;
 import org.jetbrains.jet.lang.types.JetType;
 import org.jetbrains.jet.lang.types.TypeUtils;
 import org.jetbrains.jet.lang.types.lang.KotlinBuiltIns;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -46,7 +45,34 @@ import java.util.*;
 import static org.jetbrains.jet.lang.resolve.BindingContextUtils.descriptorToDeclaration;
 
 public abstract class AnnotationCodegen {
-    public static final FqName VOLATILE_FQ_NAME = new FqName("kotlin.volatile");
+
+    public static final class JvmFlagAnnotation {
+        private final FqName fqName;
+        private final int jvmFlag;
+
+        public JvmFlagAnnotation(@NotNull String fqName, int jvmFlag) {
+            this.fqName = new FqName(fqName);
+            this.jvmFlag = jvmFlag;
+        }
+
+        public boolean hasAnnotation(@NotNull Annotated annotated) {
+            return annotated.getAnnotations().findAnnotation(fqName) != null;
+        }
+
+        public int getJvmFlag() {
+            return jvmFlag;
+        }
+    }
+
+    public static final List<JvmFlagAnnotation> FIELD_FLAGS = Arrays.asList(
+            new JvmFlagAnnotation("kotlin.jvm.volatile", Opcodes.ACC_VOLATILE),
+            new JvmFlagAnnotation("kotlin.jvm.transient", Opcodes.ACC_TRANSIENT)
+    );
+
+    public static final List<JvmFlagAnnotation> METHOD_FLAGS = Arrays.asList(
+            new JvmFlagAnnotation("kotlin.jvm.strictfp", Opcodes.ACC_STRICT),
+            new JvmFlagAnnotation("kotlin.jvm.synchronized", Opcodes.ACC_SYNCHRONIZED)
+    );
 
     private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {};
 
@@ -91,7 +117,6 @@ public abstract class AnnotationCodegen {
 
             AnnotationDescriptor annotationDescriptor = bindingContext.get(BindingContext.ANNOTATION, annotationEntry);
             if (annotationDescriptor == null) continue; // Skipping annotations if they are not resolved. Needed for JetLightClass generation
-            if (isVolatile(annotationDescriptor)) continue;
 
             String descriptor = genAnnotation(annotationDescriptor);
             if (descriptor != null) {
@@ -147,11 +172,6 @@ public abstract class AnnotationCodegen {
     private static boolean isBareTypeParameterWithNullableUpperBound(@NotNull JetType type) {
         ClassifierDescriptor classifier = type.getConstructor().getDeclarationDescriptor();
         return !type.isNullable() && classifier instanceof TypeParameterDescriptor && TypeUtils.hasNullableSuperType(type);
-    }
-
-    private static boolean isVolatile(@NotNull AnnotationDescriptor annotationDescriptor) {
-        ClassifierDescriptor classDescriptor = annotationDescriptor.getType().getConstructor().getDeclarationDescriptor();
-        return classDescriptor != null && DescriptorUtils.getFqName(classDescriptor).equals(VOLATILE_FQ_NAME.toUnsafe());
     }
 
     public void generateAnnotationDefaultValue(@NotNull CompileTimeConstant value, @NotNull JetType expectedType) {

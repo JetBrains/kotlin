@@ -48,6 +48,11 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/defaultParameterValues.kt");
         }
         
+        @TestMetadata("jvmFlags.kt")
+        public void testJvmFlags() throws Exception {
+            doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/jvmFlags.kt");
+        }
+        
         @TestMetadata("kotlinPropertyFromClassObjectAsParameter.kt")
         public void testKotlinPropertyFromClassObjectAsParameter() throws Exception {
             doTestWithStdlib("compiler/testData/codegen/boxWithStdlib/annotations/kotlinPropertyFromClassObjectAsParameter.kt");
