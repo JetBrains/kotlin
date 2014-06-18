@@ -590,6 +590,99 @@
                 return this.map;
             }
     });
+
+    function LinkedHashMap() {
+        Kotlin.ComplexHashMap.call(this);
+        this.orderedKeys = [];
+
+        this.super_put_wn2jw4$ = this.put_wn2jw4$;
+        this.put_wn2jw4$ = function(key, value) {
+            if (!this.containsKey_za3rmp$(key)) {
+                this.orderedKeys.push(key);
+            }
+
+            return this.super_put_wn2jw4$(key, value);
+        };
+
+        this.super_remove_za3rmp$ = this.remove_za3rmp$;
+        this.remove_za3rmp$ = function(key) {
+            var i = this.orderedKeys.indexOf(key);
+            if (i != -1) {
+                this.orderedKeys.splice(i, 1);
+            }
+
+            return this.super_remove_za3rmp$(key);
+        };
+
+        this.super_clear = this.clear;
+        this.clear = function() {
+            this.super_clear();
+            this.orderedKeys = [];
+        };
+
+        this.keySet = function() {
+            // TODO return special Set which unsupported adding
+            var set = new Kotlin.LinkedHashSet();
+            set.map = this;
+            return set;
+        };
+
+        this.values = function() {
+            var set = new Kotlin.LinkedHashSet();
+
+            for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
+                set.add_za3rmp$(this.get_za3rmp$(c[i]));
+            }
+
+            return set;
+        };
+
+        this.entrySet = function() {
+            var set = new Kotlin.LinkedHashSet();
+
+            for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
+                set.add_za3rmp$(new Entry(c[i], this.get_za3rmp$(c[i])));
+            }
+
+            return set;
+        };
+    }
+
+    LinkedHashMap.prototype = Object.create(Kotlin.ComplexHashMap);
+
+    Kotlin.LinkedHashMap = LinkedHashMap;
+
+
+    Kotlin.LinkedHashSet = Kotlin.createClassNow(Kotlin.AbstractCollection,
+        /** @constructs */
+        function () {
+            this.map = new Kotlin.LinkedHashMap();
+        },
+        /** @lends {Kotlin.LinkedHashSet.prototype} */
+        {
+            size: function () {
+                return this.map.size()
+            },
+            contains_za3rmp$: function (element) {
+                return this.map.containsKey_za3rmp$(element);
+            },
+            iterator: function () {
+                return new SetIterator(this);
+            },
+            add_za3rmp$: function (element) {
+                return this.map.put_wn2jw4$(element, true) == null;
+            },
+            remove_za3rmp$: function (element) {
+                return this.map.remove_za3rmp$(element) != null;
+            },
+            clear: function () {
+                this.map.clear();
+            },
+            toArray: function () {
+                return this.map.orderedKeys.slice();
+            }
+    });
+
 }());
 
 /**

@@ -3,6 +3,7 @@ package test.collections
 import kotlin.test.*
 import org.junit.Test
 import java.util.HashSet
+import java.util.LinkedHashSet
 
 class ComplexSetJsTest : SetJsTest() {
     // hashSetOf returns ComlpexHashSet because it is Generic
@@ -11,6 +12,10 @@ class ComplexSetJsTest : SetJsTest() {
 
 class PrimitiveSetJsTest : SetJsTest() {
     override fun createEmptyMutableSet(): MutableSet<String> = HashSet<String>()
+}
+
+class LinkedHashSetTest : SetJsTest() {
+    override fun createEmptyMutableSet(): MutableSet<String> = LinkedHashSet<String>()
 }
 
 abstract class SetJsTest {

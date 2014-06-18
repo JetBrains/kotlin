@@ -16,6 +16,11 @@ class PrimitiveMapJsTest : MapJsTest() {
     override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
 }
 
+class LinkedHashMapTest : MapJsTest() {
+    override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toList()
+    override fun emptyMutableMap(): MutableMap<String, Int> = LinkedHashMap()
+}
+
 abstract class MapJsTest {
     //TODO: replace `array(...).toList()` to `listOf(...)`
     val KEYS = array("zero", "one", "two", "three").toList()
