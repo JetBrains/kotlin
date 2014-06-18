@@ -25,10 +25,9 @@ import com.sun.jdi
 
 fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Value> {
     val isStatic = (methodNode.access and ACC_STATIC) != 0
-    assert(isStatic, "Instance methods are not supported: $methodNode")
 
     val params = Type.getArgumentTypes(methodNode.desc)
-    assert(params.size == arguments.size(), "Wrong number of arguments for $methodNode: $arguments")
+    assert(arguments.size() == (if (isStatic) params.size else params.size + 1), "Wrong number of arguments for $methodNode: $arguments")
 
     val frame = Frame<Value>(methodNode.maxLocals, methodNode.maxStack)
     frame.setReturn(makeNotInitializedValue(Type.getReturnType(methodNode.desc)))

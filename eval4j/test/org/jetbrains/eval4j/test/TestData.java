@@ -16,8 +16,8 @@
 
 package org.jetbrains.eval4j.test;
 
-class TestData {
-    static void returnVoid() {
+class TestData extends BaseTestData {
+   static void returnVoid() {
     }
 
     static boolean returnBoolean() {
@@ -691,6 +691,27 @@ class TestData {
         long l = 1;
         Long[] IFEQ_L = new Long[] { b ? 100L : 200L };
     }
+
+    @Override
+    String superCall() {
+        return "Derived";
+    }
+
+    String testInvokeSpecialForSuperCall() {
+        return super.superCall();
+    }
+
+    static String testInvokeSpecial() {
+        TestData td = new TestData();
+        return td.invokeSpecialPrivateFun("");
+    }
+
+    private String invokeSpecialPrivateFun(String s) { return "Base"; }
+
+    public TestData() {
+    }
 }
+
+
 
 

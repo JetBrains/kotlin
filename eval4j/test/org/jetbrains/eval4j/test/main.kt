@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 fun suite(): TestSuite = buildTestSuite {
     methodNode, ownerClass, expected ->
-    object : TestCase("test" + methodNode.name.capitalize()) {
+    object : TestCase(getTestName(methodNode.name)) {
 
             override fun runTest() {
                 val value = interpreterLoop(
@@ -62,7 +62,9 @@ fun initFrame(
     var local = 0
     if ((m.access and ACC_STATIC) == 0) {
         val ctype = Type.getObjectType(owner)
-        current.setLocal(local++, makeNotInitializedValue(ctype))
+        val newInstance = REFLECTION_EVAL.newInstance(ctype)
+        val thisValue = REFLECTION_EVAL.invokeMethod(newInstance, MethodDescription(owner, "<init>", "()V", false), listOf(), true)
+        current.setLocal(local++, thisValue)
     }
 
     val args = Type.getArgumentTypes(m.desc)
@@ -265,7 +267,7 @@ object REFLECTION_EVAL : Eval {
             }
             else {
                 // TODO
-                throw UnsupportedOperationException("invokespecial is not suported yet")
+                throw UnsupportedOperationException("invokespecial is not suported in reflection eval")
             }
         }
         val obj = instance.obj().checkNull()

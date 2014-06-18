@@ -21,6 +21,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import com.sun.jdi
 import com.sun.jdi.ClassNotLoadedException
 import com.sun.tools.jdi.ReferenceTypeImpl
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.Method
 
 val CLASS = Type.getType(javaClass<Class<*>>())
 val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
@@ -213,27 +215,31 @@ class JDIEval(
     }
 
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
-        if (invokespecial) {
-            if (methodDesc.name == "<init>") {
-                // Constructor call
-                val ctor = findMethod(methodDesc)
-                val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
-                val args = mapArguments(arguments, ctor.safeArgumentTypes())
-                val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
-                instance.value = result
-                return result.asValue()
-            }
-            else {
-                // TODO
-                throw UnsupportedOperationException("invokespecial is not suported yet")
-            }
+        if (invokespecial && methodDesc.name == "<init>") {
+            // Constructor call
+            val ctor = findMethod(methodDesc)
+            val _class = (instance as NewObjectValue).asmType.asReferenceType() as jdi.ClassType
+            val args = mapArguments(arguments, ctor.safeArgumentTypes())
+            val result = mayThrow { _class.newInstance(thread, ctor, args, invokePolicy) }
+            instance.value = result
+            return result.asValue()
+        }
+
+        fun doInvokeMethod(obj: ObjectReference, method: Method, policy: Int): Value {
+            val args = mapArguments(arguments, method.safeArgumentTypes())
+            val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }
+            return result.asValue()
         }
 
         val obj = instance.jdiObj.checkNull()
-        val method = findMethod(methodDesc, instance.jdiObj!!.referenceType() ?: methodDesc.ownerType.asReferenceType())
-        val args = mapArguments(arguments, method.safeArgumentTypes())
-        val result = mayThrow { obj.invokeMethod(thread, method, args, invokePolicy) }
-        return result.asValue()
+        if (invokespecial) {
+            val method = findMethod(methodDesc)
+            return doInvokeMethod(obj, method, invokePolicy or ObjectReference.INVOKE_NONVIRTUAL)
+        }
+        else {
+            val method = findMethod(methodDesc, obj.referenceType() ?: methodDesc.ownerType.asReferenceType())
+            return doInvokeMethod(obj, method, invokePolicy)
+        }
     }
 
     private fun mapArguments(arguments: List<Value>, expecetedTypes: List<jdi.Type>): List<jdi.Value?> {
