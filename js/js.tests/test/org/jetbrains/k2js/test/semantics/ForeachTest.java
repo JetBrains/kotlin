@@ -33,4 +33,8 @@ public final class ForeachTest extends AbstractExpressionTest {
     public void testLabeledFor() throws Exception {
         fooBoxTest();
     }
+
+    public void testForWithOneStmWhen() throws Exception {
+        fooBoxTest();
+    }
 }
